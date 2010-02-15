@@ -1,4 +1,4 @@
-// File : main.j
+// File : main.j Archipel Project
 // Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 // 
 // This program is free software: you can redistribute it and/or modify
