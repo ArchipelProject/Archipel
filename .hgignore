@@ -1,3 +1,4 @@
 syntax: glob
 .DS_Store
 *~
+TNStrophe*
