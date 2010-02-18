@@ -21,7 +21,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNStropheConnection.j"
+@import "StropheCappuccino/TNStropheConnection.j"
 
 TNStropheConnectionSuccessNotification = @"TNStropheConnectionSuccessNotification";
 TNStropheDisconnectionNotification = @"TNStropheDisconnectionNotification";

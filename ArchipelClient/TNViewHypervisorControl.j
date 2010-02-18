@@ -20,9 +20,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNStropheConnection.j";
-@import "TNStropheStanza.j"
-@import "TNStropheRoster.j";
+@import "StropheCappuccino/Connection.j";
+@import "StropheCappuccino/TNStropheStanza.j"
+@import "StropheCappuccino/TNStropheRoster.j";
 
 
 trinityTypeHypervisorControl        = @"trinity:hypervisor:control";

@@ -25,7 +25,7 @@
 @import "TNAlertRemoveContact.j"
 @import "TNDatasourceRoster.j"
 @import "TNOutlineViewRoster.j"
-@import "TNStropheRoster.j"
+@import "StropheCappuccino/TNStropheRoster.j"
 @import "TNToolbar.j"
 @import "TNViewHypervisorControl.j"
 @import "TNViewHypervisorControl.j"
