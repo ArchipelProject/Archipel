@@ -20,8 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNStropheConnection.j"
-@import "TNStropheRoster.j"
+@import "StropheCappuccino/TNStropheConnection.j"
+@import "StropheCappuccino/TNStropheRoster.j"
 
 
 @implementation TNDatasourceRoster  : TNStropheRoster 
