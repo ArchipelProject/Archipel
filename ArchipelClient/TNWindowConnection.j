@@ -75,7 +75,7 @@ TNStropheConnectionFailNotification = @"TNStropheConnectionFailNotification";
     
     
     [self setStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
-    [[self strophe] setConnectionDelegate:self];                                      
+    [[self strophe] setDelegate:self];                                      
     [[self strophe] connect];    
 }
 
