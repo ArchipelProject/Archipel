@@ -25,6 +25,7 @@
 @import "StropheCappuccino/TNStropheRoster.j";
 
 
+
 trinityTypeHypervisorControl        = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc   = @"alloc";
 trinityTypeHypervisorControlFree    = @"free";
