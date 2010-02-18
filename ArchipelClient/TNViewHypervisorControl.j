@@ -20,7 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "StropheCappuccino/Connection.j";
+@import "StropheCappuccino/TNStropheConnection.j";
 @import "StropheCappuccino/TNStropheStanza.j"
 @import "StropheCappuccino/TNStropheRoster.j";
 
