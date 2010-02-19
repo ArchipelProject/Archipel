@@ -85,6 +85,7 @@ class TrinityHypervisor(TrinityBase):
         self.database_file = database_file;
         self.__manage_persistance()
         TrinityBase.__init__(self, jid, password)
+        self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
         
     
     

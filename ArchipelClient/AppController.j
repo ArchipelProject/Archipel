@@ -210,7 +210,25 @@ logger = nil;
    var index    = [rosterOutlineView selectedRowIndexes];
    var item     = [rosterOutlineView itemAtRow:[index firstIndex]];
    
-   [self loadHypervisorControlPanelForItem:item];
+   if ([item type] == "group")
+   {
+       [rightView setDocumentView:nil];
+       return
+   }
+    
+    
+   var vCard    = [item vCard];
+ 
+   
+   if ($(vCard.firstChild).text() == "hypervisor")
+   {
+       [self loadHypervisorControlPanelForItem:item];
+   }
+   else
+   {
+       [rightView setDocumentView:nil];
+   }
+   
    [[self propertiesView] setEntry:item];
    [[self propertiesView] reload];
 }

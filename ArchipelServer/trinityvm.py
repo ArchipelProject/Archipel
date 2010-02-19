@@ -29,6 +29,11 @@ class TrinityVM(TrinityBase):
     ###  Super methods overrided
     ######################################################################################################
     
+    def __init__(self, jid, password):
+        TrinityBase.__init__(self, jid, password)
+        self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
+    
+    
     def register_handler(self):
         """
         this method registers the events handlers.

@@ -89,11 +89,14 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
         var entry = [[self roster] getContactFromJID:jid];
         if (entry) 
         {
-            var name = [entry nickname] + " (" + jid +")";
-            var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:@""]
-            [item setImage:[entry statusIcon]];
-            [item setStringValue:jid];
-            [[self popupDeleteMachine] addItem:item];
+            if ($([entry vCard].firstChild).text() == "virtualmachine")
+            {
+                var name = [entry nickname] + " (" + jid +")";
+                var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:@""]
+                [item setImage:[entry statusIcon]];
+                [item setStringValue:jid];
+                [[self popupDeleteMachine] addItem:item];
+            }
         }
     }
 }
