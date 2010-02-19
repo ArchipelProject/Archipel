@@ -244,7 +244,27 @@ class TrinityBase(object):
               log(self, LOG_LEVEL_ERROR, "stanza sent form unauthorized JID {0}".format(jid))
               return False
     
+              
+    def set_vcard_entity_type(self, entity_type):
+        """
+        allows to define a vCard type for the entry
+        
+        @type vcard_content: String
+        @param vcard_content: a string representation of the XML vCard.
+        """
+        log(self, LOG_LEVEL_DEBUG, "vcard making started");
 
+        node_iq = (xmpp.Iq(typ='set', xmlns=None))
+        
+        type_node = xmpp.Node(tag="TYPE");
+        type_node.setData(entity_type);
+        
+        node_iq.addChild(name="vCard", payload=[type_node], namespace="vcard-temp")
+        
+        self.xmppclient.send(node_iq)
+        log(self, LOG_LEVEL_DEBUG, "vcard information sent with type: {0}".format(entity_type))        
+    
+    
     def set_loop_status(self, status):
         """
         this method is used to stop the main loop
