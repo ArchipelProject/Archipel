@@ -37,6 +37,8 @@ class TrinityBase(object):
         log(self, LOG_LEVEL_INFO, "jid defined as {0}".format(jid))
         self.ressource = socket.gethostname()
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
+        self.roster = None
+        self.registered_actions_to_perform_on_connection = [];
     
     
     def _connect_xmpp(self):
@@ -75,6 +77,8 @@ class TrinityBase(object):
         log(self, LOG_LEVEL_INFO, "initial presence sent")    
         self.roster = self.xmppclient.getRoster()
         log(self, LOG_LEVEL_INFO, "roster retreived")
+        
+        self.perform_all_registered_actions();
     
     
     def _inband_registration(self):
@@ -116,17 +120,71 @@ class TrinityBase(object):
     
 
     def register_handler(self):
-           """
-           this method have to be overloaded in order to register handler for 
-           XMPP events
-           """
-           if (self.auto_register):
-               self.xmppclient.RegisterHandler('iq', self._process_iq_registration, ns="jabber:iq:register")
+        """
+        this method have to be overloaded in order to register handler for 
+        XMPP events
+        """
+        self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
+        self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
+        if (self.auto_register):
+            self.xmppclient.RegisterHandler('iq', self._process_iq_registration, ns="jabber:iq:register")
+    
+
+    def __process_presence_subscribe(self, conn, presence):
+        """
+        Invoked when new jabber presence subscription is received.
+
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type presence: xmpp.Protocol.Iq
+        @param presence: the received IQ
+        """
+        log(self, LOG_LEVEL_DEBUG, "Subscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
+        conn.send(xmpp.Presence(to=presence.getFrom(), typ="subscribed"))
+        self.add_jid(presence.getFrom())
+    
+
+    def __process_presence_unsubscribe(self, conn, presence):
+        """
+        Invoked when new jabber presence unsubscribtion is received.
+
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type presence: xmpp.Protocol.Iq
+        @param presence: the received IQ
+        """
+        log(self, LOG_LEVEL_DEBUG, "Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
+        conn.send(xmpp.Presence(to=presence.getFrom(), typ="unsubscribed"))
+        self.remove_jid(presence.getFrom())
     
 
     ######################################################################################################
     ### Public method
     ######################################################################################################
+        
+    def register_actions_to_perform_on_auth(self, method_name, args=[]):
+        """
+        Allows object to register actions (method of this class) to perform
+        when the XMPP Client will be online. It is usefull to add_jid directly at launch.
+        
+        @type method_name: string
+        @param method_name: the name of the method to launch
+        @type args: Array
+        @param args: an array containing the arguments to pass to the method
+        """
+        self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args})    
+    
+    
+    def perform_all_registered_actions(self):
+        """
+        Parse the all the registered actions, and execute them
+        """
+        for action in self.registered_actions_to_perform_on_connection:
+            if hasattr(self, action["name"]):
+                m = getattr(self, action["name"])
+                m(action["args"]);
+        self.registered_actions_to_perform_on_connection = [];
+    
         
     def connect(self):
         """
@@ -151,7 +209,6 @@ class TrinityBase(object):
         @param jid: this jid to add
         """
         #log(self, LOG_LEVEL_INFO, "adding JID {0} to roster".format(jid))
-        self.roster = self.xmppclient.getRoster()
         self.roster.Subscribe(jid)
         self.roster.Authorize(jid)
         self.roster.setItem(jid, groups=groups)

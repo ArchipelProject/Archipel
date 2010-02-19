@@ -28,7 +28,8 @@
     @outlet CPTextField     entryName;
     @outlet CPTextField     entryRessource;
     @outlet CPTextField     entryStatus;
-
+    @outlet CPTextField     newNickName;
+    
     TNStropheRoster         roster          @accessors;
     TNStropheRosterEntry    entry           @accessors;
     CPSplitView             parentSplitView @accessors;
@@ -37,7 +38,7 @@
 
 - (id)initWithFrame:(CPRect)aRect 
 {
-    aRect.size.height = 150;
+    aRect.size.height = 200;
     self = [super initWithFrame:aRect];
     
     return self;
@@ -123,6 +124,15 @@
     var theGroup = [sender title]
     var theJid = [entry jid];
     [[self roster] changeGroup:theGroup forJID:theJid];
+    [[self groupSelector] selectItemWithTitle:theGroup];
 }
 
+- (IBAction)changeNickName:(id)sender
+{
+    var theJid = [entry jid];
+    var theName = [sender stringValue];
+    [sender setStringValue:@""];
+    [[self roster] changeNickname:theName forJID:theJid];
+    [[self entryName] setStringValue:theName];
+}
 @end

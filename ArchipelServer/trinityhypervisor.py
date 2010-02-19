@@ -80,7 +80,8 @@ class TrinityHypervisor(TrinityBase):
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
         self.virtualmachines = {};
-        self.xmppserveraddr = "10.68.142.23"
+        self.xmppserveraddr = jid.split("/")[0].split("@")[1];
+        log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
         self.database_file = database_file;
         self.__manage_persistance()
         TrinityBase.__init__(self, jid, password)
@@ -161,9 +162,27 @@ class TrinityHypervisor(TrinityBase):
         """
         reply = None
         
-        domain_uuid = str(iq.getQueryPayload()[0])
-        vm_password = "password" #temp method
         
+        query = iq.getQueryChildren();
+        print query;
+        
+        domain_uuid = None;
+        nickname = None;
+        for node in query:
+            if node.getName() == "jid":
+                domain_uuid = query[0].getCDATA();
+            if node.getName() == "nickname":
+                nickname = query[1].getCDATA();
+        
+        
+        if not domain_uuid:
+            log(self, LOG_LEVEL_ERROR, "IQ malformed missing UUID")
+            reply = iq.buildReply('error')
+            reply.setQueryPayload(["missing UUID"])
+            return reply
+            
+        vm_password = "password" #temp method
+                
         vm_jid = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
         vm = self.__create_threaded_vm(vm_jid, vm_password)
         
@@ -173,10 +192,10 @@ class TrinityHypervisor(TrinityBase):
         self.add_jid(vm_jid, [GROUP_VM])
         
         log(self, LOG_LEVEL_INFO, "adding myself ({0}) to the VM's roster".format(self.jid))
-        vm.get_instance().add_jid(self.jid, [GROUP_HYPERVISOR])
+        vm.get_instance().register_actions_to_perform_on_auth("add_jid", self.jid);
         
         log(self, LOG_LEVEL_INFO, "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
-        vm.get_instance().add_jid(iq.getFrom().getStripped())
+        vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
         
         log(self, LOG_LEVEL_INFO, "registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid,vm_password, datetime.datetime.now(), 'no comment'))
@@ -201,8 +220,9 @@ class TrinityHypervisor(TrinityBase):
         """
         reply = None
         
-        domain_uuid = str(iq.getQueryPayload()[0])
-        vm_jid = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
+        vm_jid = str(iq.getQueryPayload()[0])
+        domain_uuid = vm_jid.split("@")[0];
+        
         try:
             vm = self.virtualmachines[domain_uuid];
         except KeyError as ex:
@@ -232,10 +252,9 @@ class TrinityHypervisor(TrinityBase):
         reply = iq.buildReply('success')
         nodes = []
         for item in self.roster.getItems():
-            if self.roster.getGroups(item) and GROUP_VM in self.roster.getGroups(item):
-                n = xmpp.Node("item")
-                n.addData(item)
-                nodes.append(n)
+            n = xmpp.Node("item")
+            n.addData(item)
+            nodes.append(n)
         reply.setQueryPayload(nodes)
         return reply
         

@@ -3,7 +3,7 @@
 import trinity
 
 
-hyp = trinity.TrinityHypervisor("virt-hypervisor@10.68.142.23", "password")
+hyp = trinity.TrinityHypervisor("localhypervisor@pulsar.local", "password")
 hyp.connect()
 hyp.loop()
 

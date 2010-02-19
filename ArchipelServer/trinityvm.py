@@ -36,7 +36,6 @@ class TrinityVM(TrinityBase):
         """
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, ns="trinity:vm:control")
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_definition, ns="trinity:vm:definition")
-        self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
         #self.xmppclient.RegisterHandler('message', self.__process_message)
 
         TrinityBase.register_handler(self)
@@ -418,19 +417,4 @@ class TrinityVM(TrinityBase):
             reply = self.__undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
-
-    def __process_presence_subscribe(self, conn, presence):
-        """
-        Invoked when new jabber presence is received.
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type presence: xmpp.Protocol.Iq
-        @param presence: the received IQ
-        """
-        
-        log(self, LOG_LEVEL_DEBUG, "Subscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
-        conn.send(xmpp.Presence(to=presence.getFrom(), typ="subscribed"))
-        self.add_jid(presence.getFrom())
     
