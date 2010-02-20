@@ -1,3 +1,27 @@
+/*
+ * Objective-J.js
+ * Objective-J
+ *
+ * Created by Francisco Tolmasky.
+ * Copyright 2008-2010, 280 North, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+
+
 
 var FILE = require("file"),
     OS = require("os"),
@@ -7,25 +31,27 @@ var FILE = require("file"),
     CLEAN = require("jake/clean").CLEAN,
     CLOBBER = require("jake/clean").CLOBBER,
     base64 = require("base64"),
-    environment = require("objective-j/jake/environment");
+    ObjectiveJ = require("objective-j"),
+    environment = require("objective-j/jake/environment"),
+    task = Jake.task;
 
 var Task = Jake.Task,
     filedir = Jake.filedir;
 
-function isImage(/*String*/ aFilename)
+function isImage( aFilename)
 {
-    return  FILE.isFile(aFilename) &&
+    return FILE.isFile(aFilename) &&
             UTIL.has([".png", ".jpg", ".jpeg", ".gif", ".tif", ".tiff"], FILE.extension(aFilename).toLowerCase());
 }
 
-function mimeType(/*String*/ aFilename)
+function mimeType( aFilename)
 {
-    return  {
-                ".png"  : "image/png",
-                ".jpg"  : "image/jpeg",
+    return {
+                ".png" : "image/png",
+                ".jpg" : "image/jpeg",
                 ".jpeg" : "image/jpeg",
-                ".gif"  : "image/gif",
-                ".tif"  : "image/tiff",
+                ".gif" : "image/gif",
+                ".tif" : "image/tiff",
                 ".tiff" : "image/tiff"
             }[FILE.extension(aFilename).toLowerCase()];
 }
@@ -34,7 +60,7 @@ function BundleTask(aName, anApplication)
 {
     Task.apply(this, arguments);
 
-    this.setEnvironments([environment.Browsers, environment.CommonJS]);
+    this.setEnvironments([environment.Browser, environment.CommonJS]);
 
     this._author = null;
     this._email = null;
@@ -66,7 +92,7 @@ function BundleTask(aName, anApplication)
 BundleTask.__proto__ = Task;
 BundleTask.prototype.__proto__ = Task.prototype;
 
-BundleTask.defineTask = function(/*String*/ aName, /*Function*/ aFunction)
+BundleTask.defineTask = function( aName, aFunction)
 {
     var bundleTask = Task.defineTask.apply(this, [aName]);
 
@@ -91,18 +117,11 @@ BundleTask.prototype.setEnvironments = function(environments)
 
     else
         this._environments = [environments];
-
-    this._flattenedEnvironments = environment.Environment.flattenedEnvironments(this._environments);
 }
 
 BundleTask.prototype.environments = function()
 {
     return this._environments;
-}
-
-BundleTask.prototype.flattenedEnvironments = function()
-{
-    return this._flattenedEnvironments;
 }
 
 BundleTask.prototype.setAuthor = function(anAuthor)
@@ -161,13 +180,12 @@ BundleTask.prototype.setSources = function(sources, environments)
         this._sources = sources;
     else
     {
-        if (Array.isArray(environments))
-            environments = environment.Environment.flattenedEnvironments(environments);
-        else
-            environments = environments.flattenedEnvironments();
-
         if (!this._sources)
             this._sources = { };
+
+
+        if (!Array.isArray(environments))
+            environments = [environments];
 
         environments.forEach(function(anEnvironment)
         {
@@ -268,7 +286,7 @@ BundleTask.prototype.flattensSources = function()
     return this._flattensSources;
 }
 
-BundleTask.prototype.setFlattensSources = function(/*Boolean*/ shouldFlattenSources)
+BundleTask.prototype.setFlattensSources = function( shouldFlattenSources)
 {
     this._flattensSources = shouldFlattenSources;
 }
@@ -318,6 +336,26 @@ BundleTask.prototype.buildProductStaticPathForEnvironment = function(anEnvironme
     return FILE.join(this.buildProductPath(), anEnvironment.name() + ".environment", this.productName() + ".sj");
 }
 
+BundleTask.prototype.buildProductMHTMLPathForEnvironment = function(anEnvironment)
+{
+    return FILE.join(this.buildProductPath(), anEnvironment.name() + ".environment", "MHTMLPaths.txt");
+}
+
+BundleTask.prototype.buildProductMHTMLDataPathForEnvironment = function(anEnvironment)
+{
+    return FILE.join(this.buildProductPath(), anEnvironment.name() + ".environment", "MHTMLData.txt");
+}
+
+BundleTask.prototype.buildProductMHTMLTestPathForEnvironment = function(anEnvironment)
+{
+    return FILE.join(this.buildProductPath(), anEnvironment.name() + ".environment", "MHTMLTest.txt");
+}
+
+BundleTask.prototype.buildProductDataURLPathForEnvironment = function(anEnvironment)
+{
+    return FILE.join(this.buildProductPath(), anEnvironment.name() + ".environment", "dataURLs.txt");
+}
+
 BundleTask.prototype.defineTasks = function()
 {
     this.defineResourceTasks();
@@ -325,6 +363,7 @@ BundleTask.prototype.defineTasks = function()
     this.defineInfoPlistTask();
     this.defineLicenseTask();
     this.defineStaticTask();
+    this.defineSpritedImagesTask();
 
     CLEAN.include(this.buildIntermediatesProductPath());
     CLOBBER.include(this.buildProductPath());
@@ -337,39 +376,37 @@ BundleTask.prototype.packageType = function()
 
 BundleTask.prototype.infoPlist = function()
 {
-    var infoPlistPath = this.infoPlistPath(),
-        objj_dictionary = require("objective-j").objj_dictionary;
+    var infoPlistPath = this.infoPlistPath();
 
     if (infoPlistPath && FILE.exists(infoPlistPath))
-        var infoPlist = require("objective-j/plist").readPlist(infoPlistPath);
+        var infoPlist = CFPropertyList.propertyListFromString(FILE.read(infoPlistPath, { charset:"UTF-8" }));
     else
-        var infoPlist = new objj_dictionary();
+        var infoPlist = new CFMutableDictionary();
 
-    // FIXME: Should all of these unconditionally overwrite?
-    infoPlist.setValue("CPBundleInfoDictionaryVersion", 6.0);
-    infoPlist.setValue("CPBundleName", this.productName());
-    infoPlist.setValue("CPBundleIdentifier", this.identifier());
-    infoPlist.setValue("CPBundleVersion", this.version());
-    infoPlist.setValue("CPBundlePackageType", this.packageType());
-    infoPlist.setValue("CPBundleEnvironments", this.flattenedEnvironments().map(function(anEnvironment)
+
+    infoPlist.setValueForKey("CPBundleInfoDictionaryVersion", 6.0);
+    infoPlist.setValueForKey("CPBundleName", this.productName());
+    infoPlist.setValueForKey("CPBundleIdentifier", this.identifier());
+    infoPlist.setValueForKey("CPBundleVersion", this.version());
+    infoPlist.setValueForKey("CPBundlePackageType", this.packageType());
+    infoPlist.setValueForKey("CPBundleEnvironments", this.environments().map(function(anEnvironment)
     {
         return anEnvironment.name();
     }));
-    infoPlist.setValue("CPBundleExecutable", this.productName() + ".sj");
+    infoPlist.setValueForKey("CPBundleExecutable", this.productName() + ".sj");
+    infoPlist.setValueForKey("CPBundleEnvironmentsWithImageSprites", this.environments().filter(
+    function(anEnvironment)
+    {
+        return anEnvironment.spritesImages();
+    }).map(function(anEnvironment)
+    {
+        return anEnvironment.name();
+    }));
 
     var principalClass = this.principalClass();
 
     if (principalClass)
-        infoPlist.setValue("CPPrincipalClass", principalClass);
-
-    var replacedFiles = this._replacedFiles,
-        replacedFilesDictionary = new objj_dictionary();
-
-    for (var engine in replacedFiles)
-        if (replacedFiles.hasOwnProperty(engine))
-            replacedFilesDictionary.setValue(engine, replacedFiles[engine]);
-
-    infoPlist.setValue("CPBundleReplacedFiles", replacedFilesDictionary);
+        infoPlist.setValueForKey("CPPrincipalClass", principalClass);
 
     return infoPlist;
 }
@@ -381,7 +418,7 @@ BundleTask.prototype.defineInfoPlistTask = function()
 
     filedir (infoPlistProductPath, function()
     {
-        require("objective-j/plist").writePlist(infoPlistProductPath, bundleTask.infoPlist());
+        FILE.write(infoPlistProductPath, CFPropertyList.stringFromPropertyList(bundleTask.infoPlist(), CFPropertyList.Format280North_v1_0), { charset:"UTF-8" });
     });
 
     var infoPlistPath = this.infoPlistPath();
@@ -389,9 +426,9 @@ BundleTask.prototype.defineInfoPlistTask = function()
     if (infoPlistPath && FILE.exists(infoPlistPath))
         filedir (infoPlistProductPath, [infoPlistPath]);
 
-    // FIXME: ? We do this because adding a .j file should cause Info.plist to be updated.
-    // Any better way to handle this? Perhaps this should happen unconditionally.
-    this.flattenedEnvironments().forEach(function(/*Environment*/ anEnvironment)
+
+
+    this.environments().forEach(function( anEnvironment)
     {
         if (!anEnvironment.spritesImages())
             return;
@@ -402,15 +439,15 @@ BundleTask.prototype.defineInfoPlistTask = function()
     this.enhance([infoPlistProductPath]);
 }
 
-BundleTask.License  =   {
-                            LGPL_v2_1   : "LGPL_v2_1",
-                            MIT         : "MIT"
+BundleTask.License = {
+                            LGPL_v2_1 : "LGPL_v2_1",
+                            MIT : "MIT"
                         };
 
-var LICENSES_PATH   = FILE.join(FILE.absolute(FILE.dirname(module.path)), "LICENSES"),
-    LICENSE_PATHS   =   {
+var LICENSES_PATH = FILE.join(FILE.absolute(FILE.dirname(module.path)), "LICENSES"),
+    LICENSE_PATHS = {
                             "LGPL_v2_1" : FILE.join(LICENSES_PATH, "LGPL-v2.1"),
-                            "MIT"       : FILE.join(LICENSES_PATH, "MIT")
+                            "MIT" : FILE.join(LICENSES_PATH, "MIT")
                         };
 
 BundleTask.prototype.defineLicenseTask = function()
@@ -438,10 +475,10 @@ BundleTask.prototype.resourcesPath = function()
 
 BundleTask.prototype.defineResourceTask = function(aResourcePath, aDestinationPath)
 {
-    // Don't sprite images larger than 32KB, IE 8 doesn't like it.
+
     if (this.spritesResources() && isImage(aResourcePath) && FILE.size(aResourcePath) < 32768)
     {
-        this.flattenedEnvironments().forEach(function(/*Environment*/ anEnvironment)
+        this.environments().forEach(function( anEnvironment)
         {
             if (!anEnvironment.spritesImages())
                 return;
@@ -451,19 +488,22 @@ BundleTask.prototype.defineResourceTask = function(aResourcePath, aDestinationPa
 
             filedir (spritedDestinationPath, function()
             {
-                FILE.write(spritedDestinationPath, base64.encode(FILE.read(aResourcePath, { mode : 'b'})), { charset:"UTF-8" });
+                FILE.write(spritedDestinationPath, base64.encode(FILE.read(aResourcePath, "b")), { charset:"UTF-8" });
             });
 
-            // Add this as a dependency unconditionally because we need to set up the URL map either way.
-            filedir (this.buildProductStaticPathForEnvironment(anEnvironment), [spritedDestinationPath]);
+            filedir (this.buildProductDataURLPathForEnvironment(anEnvironment), [spritedDestinationPath]);
+            filedir (this.buildProductMHTMLPathForEnvironment(anEnvironment), [spritedDestinationPath]);
+            filedir (this.buildProductMHTMLDataPathForEnvironment(anEnvironment), [spritedDestinationPath]);
+            filedir (this.buildProductMHTMLTestPathForEnvironment(anEnvironment), [spritedDestinationPath]);
+
         }, this);
     }
 
     var extension = FILE.extension(aResourcePath),
         extensionless = aResourcePath.substr(0, aResourcePath.length - extension.length);
-    // NOT:
-    // (extname === ".cib" && (FILE.exists(extensionless + '.xib') || FILE.exists(extensionless + '.nib')) ||
-    // (extname === ".xib" || extname === ".nib") && !this.shouldIncludeNibsAndXibs())
+
+
+
     if ((extension !== ".cib" || !FILE.exists(extensionless + ".xib") && !FILE.exists(extensionless + ".nib")) &&
         ((extension !== ".xib" && extension !== ".nib") || this.includesNibsAndXibs()))
     {
@@ -495,7 +535,7 @@ BundleTask.prototype.defineResourceTask = function(aResourcePath, aDestinationPa
 
         filedir (cibDestinationPath, [aResourcePath], function()
         {
-            OS.system("nib2cib " + aResourcePath + " "  + cibDestinationPath + " " + nib2cibFlags);
+            OS.system("nib2cib " + aResourcePath + " " + cibDestinationPath + " " + nib2cibFlags);
         });
 
         this.enhance([cibDestinationPath]);
@@ -513,7 +553,7 @@ function directoryInCommon(filenames)
         if (directory === ".")
             directory = "";
 
-        // Empty string is an acceptable common directory.
+
         if (aCommonDirectory === null)
             aCommonDirectory = directory;
 
@@ -539,12 +579,12 @@ BundleTask.prototype.defineResourceTasks = function()
     var resources = [],
         basePath = null;
 
-    // Resolve resources. Consider any file passed in as a resource.
+
     this._resources.forEach(function(aResourcePath)
     {
         if (FILE.isDirectory(aResourcePath))
         {
-            // Add the directory itself as well since it is a legitimate resource as well.
+
             resources = resources.concat(aResourcePath, FILE.glob(aResourcePath + "/**"));
         }
         else
@@ -565,9 +605,127 @@ BundleTask.prototype.defineResourceTasks = function()
     }, this);
 }
 
+
+var RESOURCES_PATH = FILE.join(FILE.absolute(FILE.dirname(module.path)), "RESOURCES"),
+    MHTMLTestPath = FILE.join(RESOURCES_PATH, "MHTMLTest.txt");
+
+BundleTask.prototype.defineSpritedImagesTask = function()
+{
+    this.environments().forEach(function( anEnvironment)
+    {
+        if (!anEnvironment.spritesImages())
+            return;
+
+        var folder = anEnvironment.name() + ".environment",
+            resourcesPath = FILE.join(this.buildIntermediatesProductPath(), folder, "Resources", "");
+
+        function isDataResource( aFilename)
+        {
+            return FILE.isFile(aFilename) && aFilename.indexOf(resourcesPath) === 0 && isImage(aFilename);
+        }
+
+        var productName = this.productName(),
+            dataURLPath = this.buildProductDataURLPathForEnvironment(anEnvironment);
+
+        filedir (dataURLPath, function(aTask)
+        {
+            TERM.stream.print("Creating data URLs file... \0green(" + dataURLPath +"\0)");
+
+            var dataURLStream = FILE.open(dataURLPath, "w+", { charset:"UTF-8" });
+
+            dataURLStream.write("@STATIC;1.0;");
+
+            aTask.prerequisites().forEach(function(aFilename)
+            {
+                if (!isDataResource(aFilename))
+                    return;
+
+                var resourcePath = "Resources/" + FILE.relative(resourcesPath, aFilename);
+
+                dataURLStream.write("u;" + resourcePath.length + ";" + resourcePath);
+
+                var contents = "data:" + mimeType(aFilename) +
+                                ";base64," + FILE.read(aFilename, "b").decodeToString("UTF-8");
+
+                dataURLStream.write(contents.length + ";" + contents);
+            });
+
+            dataURLStream.write("e;");
+            dataURLStream.close();
+        });
+
+        this.enhance([dataURLPath]);
+
+        var MHTMLPath = this.buildProductMHTMLPathForEnvironment(anEnvironment);
+
+        filedir (MHTMLPath, function(aTask)
+        {
+            TERM.stream.print("Creating MHTML paths file... \0green(" + MHTMLPath +"\0)");
+
+            var MHTMLStream = FILE.open(MHTMLPath, "w+", { charset:"UTF-8" });
+
+            MHTMLStream.write("@STATIC;1.0;");
+
+            aTask.prerequisites().forEach(function(aFilename)
+            {
+                if (!isDataResource(aFilename))
+                    return;
+
+                var resourcePath = "Resources/" + FILE.relative(resourcesPath, aFilename);
+
+                MHTMLStream.write("u;" + resourcePath.length + ";" + resourcePath);
+            });
+
+            MHTMLStream.close();
+        });
+
+        this.enhance([MHTMLPath]);
+
+        var MHTMLDataPath = this.buildProductMHTMLDataPathForEnvironment(anEnvironment);
+
+        filedir (MHTMLDataPath, function(aTask)
+        {
+            TERM.stream.print("Creating MHTML images file... \0green(" + MHTMLDataPath +"\0)");
+
+            var MHTMLDataStream = FILE.open(MHTMLDataPath, "w+", { charset:"UTF-8" });
+
+            MHTMLDataStream.write("/*\r\nContent-Type: multipart/related; boundary=\"_ANY_STRING_WILL_DO_AS_A_SEPARATOR\"\r\n\r\n");
+
+            aTask.prerequisites().forEach(function(aFilename)
+            {
+                if (!isDataResource(aFilename))
+                    return;
+
+                var resourcePath = "Resources/" + FILE.relative(resourcesPath, aFilename);
+
+                MHTMLDataStream.write("--_ANY_STRING_WILL_DO_AS_A_SEPARATOR\r\n");
+                MHTMLDataStream.write("Content-Location:" + resourcePath + "\r\nContent-Transfer-Encoding:base64\r\n\r\n");
+                MHTMLDataStream.write(FILE.read(aFilename, "b").decodeToString("UTF-8"));
+                MHTMLDataStream.write("\r\n");
+            });
+
+            MHTMLDataStream.write("*/");
+            MHTMLDataStream.close();
+        });
+
+        this.enhance([MHTMLDataPath]);
+
+        var MHTMLTestDestinationPath = this.buildProductMHTMLTestPathForEnvironment(anEnvironment);
+
+        filedir (MHTMLTestDestinationPath, function(aTask)
+        {
+            TERM.stream.print("Copying MHTML test file... \0green(" + MHTMLTestDestinationPath +"\0)");
+
+            FILE.copy(MHTMLTestPath, MHTMLTestDestinationPath);
+        });
+
+        this.enhance([MHTMLTestDestinationPath]);
+    }, this);
+}
+
 BundleTask.prototype.defineStaticTask = function()
 {
-    this.flattenedEnvironments().forEach(function(/*Environment*/ anEnvironment)
+    this.environments().forEach(function( anEnvironment)
     {
         var folder = anEnvironment.name() + ".environment",
             sourcesPath = FILE.join(this.buildIntermediatesProductPath(), folder, "Sources", ""),
@@ -580,14 +738,13 @@ BundleTask.prototype.defineStaticTask = function()
         {
             TERM.stream.print("Creating static file... \0green(" + staticPath +"\0)");
 
-            var fileStream = FILE.open(staticPath, "w+", { charset:"UTF-8" }),
-                MHTMLContents = "";
+            var fileStream = FILE.open(staticPath, "w+", { charset:"UTF-8" });
 
             fileStream.write("@STATIC;1.0;");
 
             aTask.prerequisites().forEach(function(aFilename)
             {
-                // Our prerequisites will contain directories due to filedir.
+
                 if (!FILE.isFile(aFilename))
                     return;
 
@@ -597,56 +754,28 @@ BundleTask.prototype.defineStaticTask = function()
                 {
                     var relativePath = flattensSources ? FILE.basename(aFilename) : FILE.relative(sourcesPath, aFilename);
 
+
+
                     fileStream.write("p;" + relativePath.length + ";" + relativePath);
 
-                    // FIXME: We need to do this for now due to file.read adding newlines. Revert when fixed.
-                    //fileStream.write(FILE.read(aFilename, { charset:"UTF-8" }));
-                    fileStream.write(FILE.read(aFilename, { mode:"b" }).decodeToString("UTF-8"));
+                    var fileContents = FILE.read(aFilename, "b").decodeToString("UTF-8");
+
+                    fileStream.write("t;" + fileContents.length + ";" + fileContents);
                 }
 
-                else if (aFilename.indexOf(resourcesPath) === 0)
+                else if (aFilename.indexOf(resourcesPath) === 0 && !isImage(aFilename))
                 {
-                    var contents = "",
-                        resourcePath = "Resources/" + FILE.relative(resourcesPath, aFilename);
+                    var resourcePath = "Resources/" + FILE.relative(resourcesPath, aFilename);
 
-                    if (isImage(aFilename))
-                    {
-                        fileStream.write("u;");
+                    fileStream.write("p;");
 
-                        if (anEnvironment.spritesImagesAsDataURLs())
-                            contents = "data:" + mimeType(aFilename) + ";base64," + FILE.read(aFilename, { charset:"UTF-8" });
-
-                        else if (anEnvironment.spritesImagesAsMHTML())
-                        {
-                            contents = "mhtml:" + FILE.join(folder, productName + ".sj!") + resourcePath;
-
-                            if (!MHTMLContents.length)
-                                MHTMLContents = "/*\r\nContent-Type: multipart/related; boundary=\"_ANY_STRING_WILL_DO_AS_A_SEPARATOR\"\r\n\r\n";
-
-                            MHTMLContents += "--_ANY_STRING_WILL_DO_AS_A_SEPARATOR\r\n";
-                            MHTMLContents += "Content-Location:" + resourcePath + "\r\nContent-Transfer-Encoding:base64\r\n\r\n";
-                            MHTMLContents += FILE.read(aFilename, { charset:"UTF-8" });
-                            MHTMLContents += "\r\n";
-                        }
-
-                        contents = contents.length + ";" + contents;
-                    }
-                    else
-                    {
-                        fileStream.write("p;");
-
-                        contents = FILE.read(aFilename, { charset:"UTF-8" });
-                    }
+                    contents = FILE.read(aFilename, "b").decodeToString("UTF-8");
 
                     fileStream.write(resourcePath.length + ";" + resourcePath + contents);
                 }
             }, this);
 
             fileStream.write("e;");
-
-            if (MHTMLContents.length > 0)
-                fileStream.write(MHTMLContents + "*/");
-
             fileStream.close();
         });
 
@@ -670,10 +799,9 @@ BundleTask.prototype.defineSourceTasks = function()
     else if (compilerFlags.join)
         compilerFlags = compilerFlags.join(" ");
 
-    var environments = this.flattenedEnvironments(),
-        flattensSources = this.flattensSources();
+    var flattensSources = this.flattensSources();
 
-    environments.forEach(function(/*Environment*/ anEnvironment)
+    this.environments().forEach(function( anEnvironment)
     {
         var environmentSources = sources,
             folder = anEnvironment.name() + ".environment",
@@ -694,9 +822,9 @@ BundleTask.prototype.defineSourceTasks = function()
             basePath = directoryInCommon(environmentSources),
             basePathLength = basePath.length;
 
-        environmentSources.forEach(function(/*String*/ aFilename)
+        environmentSources.forEach(function( aFilename)
         {
-            // if this file doesn't exist or isn't a .j file, don't preprocess it.
+
             if (!FILE.exists(aFilename) || FILE.extension(aFilename) !== '.j')
                 return;
 
@@ -724,6 +852,6 @@ exports.BundleTask = BundleTask;
 
 exports.bundle = function(aName, aFunction)
 {
-    // No .apply necessary because the parameters aren't variable.
+
     return BundleTask.defineTask(aName, aFunction);
 }

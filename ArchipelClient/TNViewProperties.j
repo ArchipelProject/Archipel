@@ -22,13 +22,13 @@
 
 @implementation TNViewProperties: CPView 
 {
-    @outlet CPImageView     entryStatusIcon;
-    @outlet CPPopUpButton   groupSelector;
-    @outlet CPTextField     entryDomain;
-    @outlet CPTextField     entryName;
-    @outlet CPTextField     entryRessource;
-    @outlet CPTextField     entryStatus;
-    @outlet CPTextField     newNickName;
+    @outlet CPImageView     entryStatusIcon @accessors;
+    @outlet CPPopUpButton   groupSelector   @accessors;
+    @outlet CPTextField     entryDomain     @accessors;
+    @outlet CPTextField     entryName       @accessors;
+    @outlet CPTextField     entryRessource  @accessors;
+    @outlet CPTextField     entryStatus     @accessors;
+    @outlet CPTextField     newNickName     @accessors;
     
     TNStropheRoster         roster          @accessors;
     TNStropheRosterEntry    entry           @accessors;

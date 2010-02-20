@@ -1,31 +1,42 @@
+/*
+ * Objective-J.js
+ * Objective-J
+ *
+ * Created by Francisco Tolmasky.
+ * Copyright 2008-2010, 280 North, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ */
+
+
+
 
 var environments = { };
 
-function Environment(/*String*/ aName)
+function Environment( aName)
 {
     this._name = aName;
     this._compilerFlags = [];
-    this._spritesImagesAsMHTML = false;
-    this._spritesImagesAsDataURLs = false;
-    
+    this._spritesImages = false;
+
     environments[aName] = this;
 }
 
-Environment.environmentWithName = function(/*String*/ aName)
+Environment.environmentWithName = function( aName)
 {
     return environments[aName];
-}
-
-Environment.flattenedEnvironments = function(/*Array*/ environments)
-{
-    var flattenedEnvironments = [];
-
-    environments.forEach(function(/*Environment*/ anEnvironment)
-    {
-        Array.prototype.push.apply(flattenedEnvironments, anEnvironment.flattenedEnvironments());
-    });
-
-    return flattenedEnvironments;
 }
 
 Environment.prototype.name = function()
@@ -38,11 +49,6 @@ Environment.prototype.toString = function()
     return this._name;
 }
 
-Environment.prototype.flattenedEnvironments = function()
-{
-    return [this];
-}
-
 Environment.prototype.compilerFlags = function()
 {
     return this._compilerFlags;
@@ -53,29 +59,14 @@ Environment.prototype.setCompilerFlags = function(flags)
     this._compilerFlags = flags;
 }
 
-Environment.prototype.setSpritesImagesAsMHTML = function(/*Boolean*/ shouldSpriteImagesAsMHTML)
+Environment.prototype.setSpritesImages = function( shouldSpriteImages)
 {
-    this._spritesImagesAsMHTML = !!shouldSpriteImagesAsMHTML;
-}
-
-Environment.prototype.spritesImagesAsMHTML = function()
-{
-    return this._spritesImagesAsMHTML;
-}
-
-Environment.prototype.setSpritesImagesAsDataURLs = function(/*Boolean*/ shouldSpriteImagesAsDataURLs)
-{
-    this._spritesImagesAsDataURLs = !!shouldSpriteImagesAsDataURLs;
-}
-
-Environment.prototype.spritesImagesAsDataURLs = function()
-{
-    return this._spritesImagesAsDataURLs;
+    this._spritesImages = !!shouldSpriteImages;
 }
 
 Environment.prototype.spritesImages = function()
 {
-    return this.spritesImagesAsMHTML() || this.spritesImagesAsDataURLs();
+    return this._spritesImages;
 }
 
 exports.Environment = Environment;
@@ -88,56 +79,9 @@ CommonJS.setCompilerFlags(["-DPLATFORM_COMMONJS"]);
 
 exports.CommonJS = CommonJS;
 
-var W3C = new Environment("W3C");
+var Browser = new Environment("Browser");
 
-W3C.setCompilerFlags(["-DPLATFORM_BROWSER", "-DPLATFORM_DOM"]);
-W3C.setSpritesImagesAsDataURLs(true);
+Browser.setCompilerFlags(["-DPLATFORM_BROWSER", "-DPLATFORM_DOM"]);
+Browser.setSpritesImages(true);
 
-exports.W3C = W3C;
-
-var IE7 = new Environment("IE7");
-
-IE7.setCompilerFlags(["-DPLATFORM_BROWSER", "-DPLATFORM_DOM"]);
-IE7.setSpritesImagesAsMHTML(true);
-
-exports.IE7 = IE7;
-
-var IE8 = new Environment("IE8");
-
-IE8.setCompilerFlags(["-DPLATFORM_BROWSER", "-DPLATFORM_DOM"]);
-IE8.setSpritesImagesAsDataURLs(true);
-
-exports.IE8 = IE8;
-
-function EnvironmentCollection(/*String*/ aName, /*Array*/ environments)
-{
-    this._name = aName;
-    this._environments = environments;
-
-    environments[aName] = this;
-}
-
-EnvironmentCollection.prototype.name = function()
-{
-    return this._name;
-}
-
-EnvironmentCollection.prototype.toString = function()
-{
-    return this._name;
-}
-
-EnvironmentCollection.prototype.flattenedEnvironments = function()
-{
-    var environments = [];
-
-    this._environments.forEach(function(anEnvironment)
-    {
-        Array.prototype.push.apply(environments, anEnvironment.flattenedEnvironments());
-    });
-
-    return environments;
-}
-
-exports.Browsers = new EnvironmentCollection("Browsers", [W3C, IE7, IE8]);
-
+exports.Browser = Browser;

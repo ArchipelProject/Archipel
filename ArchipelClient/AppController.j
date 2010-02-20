@@ -38,22 +38,22 @@ logger = nil;
 
 @implementation AppController : CPObject
 {
-	@outlet CPView				leftView;	
-	@outlet CPView              filterView;
-	@outlet CPTextField         filterField;
-	@outlet CPScrollView		rightView;
-    @outlet CPSplitView         leftSplitView;
-    @outlet CPWindow            theWindow;
-	@outlet TNViewLog           logView;        
-	@outlet TNViewProperties    propertiesView;
-	@outlet TNWindowAddContact  addContactWindow;
-	@outlet TNWindowAddGroup    addGroupWindow;
-    @outlet TNWindowConnection  connectionWindow;
+	@outlet CPView				leftView            @accessors;	
+	@outlet CPView              filterView          @accessors;
+	@outlet CPTextField         filterField         @accessors;
+	@outlet CPScrollView		rightView           @accessors;
+    @outlet CPSplitView         leftSplitView       @accessors;
+    @outlet CPWindow            theWindow           @accessors;
+	@outlet TNViewLog           logView             @accessors;        
+	@outlet TNViewProperties    propertiesView      @accessors;
+	@outlet TNWindowAddContact  addContactWindow    @accessors;
+	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
+    @outlet TNWindowConnection  connectionWindow    @accessors;
 		
-	TNDatasourceRoster          mainRoster;
-	TNOutlineViewRoster		    rosterOutlineView;
-	TNToolbar		            hypervisorToolbar;
-    TNViewHypervisorControl     currentRightViewContent;
+	TNDatasourceRoster          _mainRoster;
+	TNOutlineViewRoster		    _rosterOutlineView;
+	TNToolbar		            _hypervisorToolbar;
+    TNViewHypervisorControl     _currentRightViewContent;
     
     BOOL    connected   @accessors(getter=isConnected, setter=setConnected:);
 }
@@ -70,12 +70,12 @@ logger = nil;
     [theWindow orderOut:nil];
     
     // toolbar
-    hypervisorToolbar = [[TNToolbar alloc] initWithTarget:self];
-    [theWindow setToolbar:hypervisorToolbar];
+    _hypervisorToolbar = [[TNToolbar alloc] initWithTarget:self];
+    [theWindow setToolbar:_hypervisorToolbar];
     
     //outlineview
-    rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(5,5,0,0)];    
-    [rosterOutlineView setDelegate:self];
+    _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(5,5,0,0)];    
+    [_rosterOutlineView setDelegate:self];
     
     // logger view
     [logView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
@@ -86,8 +86,8 @@ logger = nil;
 	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 	[scrollView setAutohidesScrollers:YES];
 	[[scrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-	[scrollView addSubview:rosterOutlineView];
-	[scrollView setDocumentView:rosterOutlineView];
+	[scrollView addSubview:_rosterOutlineView];
+	[scrollView setDocumentView:_rosterOutlineView];
     [[self leftView] addSubview:scrollView];
     
     // right view
@@ -123,34 +123,34 @@ logger = nil;
 - (void)loadHypervisorControlPanelForItem:(TNHypervisor)item 
 {
     var controller = [[CPViewController alloc] initWithCibName: @"HypervisorControlView" bundle:[CPBundle mainBundle]];
-    currentRightViewContent = [controller view];
+    _currentRightViewContent = [controller view];
     
-    [currentRightViewContent setFrame:[[rightView contentView] frame]];
-    [currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
-    [currentRightViewContent setHypervisor:item andRoster:mainRoster];
+    [_currentRightViewContent setFrame:[[rightView contentView] frame]];
+    [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
+    [_currentRightViewContent setHypervisor:item andRoster:_mainRoster];
     
-    //[currentRightViewContent setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
-    [rightView setDocumentView:currentRightViewContent]
+    //[_currentRightViewContent setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
+    [rightView setDocumentView:_currentRightViewContent]
 }
 
 
 // Toolbar actions
 - (IBAction)toolbarItemLogoutClick:(id)sender 
 {
-    [mainRoster disconnect];
+    [_mainRoster disconnect];
 }
 
 - (IBAction)toolbarItemAddContactClick:(id)sender 
 {
-    [[self addContactWindow] setRoster:mainRoster];
+    [[self addContactWindow] setRoster:_mainRoster];
     [[self addContactWindow] orderFront:nil];
 }
 
 - (IBAction)toolbarItemDeleteContactClick:(id)sender 
 {
-    var index   = [[rosterOutlineView selectedRowIndexes] firstIndex];
-    var theJid  = [rosterOutlineView itemAtRow:index];
-    var alert   = [[TNAlertRemoveContact alloc] initWithJid:[theJid jid] roster:mainRoster];
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var theJid  = [_rosterOutlineView itemAtRow:index];
+    var alert   = [[TNAlertRemoveContact alloc] initWithJid:[theJid jid] roster:_mainRoster];
     
     if (alert)
         [alert runModal];
@@ -158,7 +158,7 @@ logger = nil;
 
 - (IBAction)toolbarItemAddGroupClick:(id)sender 
 {
-    [[self addGroupWindow] setRoster:mainRoster];
+    [[self addGroupWindow] setRoster:_mainRoster];
     [[self addGroupWindow] orderFront:nil];
 }
 
@@ -171,12 +171,12 @@ logger = nil;
     [[self theWindow] orderFront:nil];
     [self setConnected:YES];
     
-    mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification userInfo]];
-    [mainRoster setDelegate:self];
-    [mainRoster setFilterField:[self filterField]];
-    [[self propertiesView] setRoster:mainRoster];
+    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification userInfo]];
+    [_mainRoster setDelegate:self];
+    [_mainRoster setFilterField:[self filterField]];
+    [[self propertiesView] setRoster:_mainRoster];
     // ask roster
-    [mainRoster getRoster];
+    [_mainRoster getRoster];
 }
 
 - (void)logoutStrophe:(CPNotification)aNotification 
@@ -198,7 +198,7 @@ logger = nil;
 // roster delegates
 - (void)didReceiveSubscriptionRequest:(id)requestStanza 
 {
-    var alert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:mainRoster];
+    var alert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
     
     [alert runModal];
 }
@@ -207,8 +207,8 @@ logger = nil;
 // outline view delegate
 - (void)outlineViewSelectionDidChange:(CPNotification)notification 
 {
-   var index    = [rosterOutlineView selectedRowIndexes];
-   var item     = [rosterOutlineView itemAtRow:[index firstIndex]];
+   var index    = [_rosterOutlineView selectedRowIndexes];
+   var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
    
    if ([item type] == "group")
    {

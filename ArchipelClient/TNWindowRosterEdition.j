@@ -21,11 +21,11 @@
 
 @implementation TNWindowRosterEdition: CPWindow 
 {
-    @outlet CPImageView entryStatusIcon;
-    @outlet CPTextField entryDomain;
-    @outlet CPTextField entryName;
-    @outlet CPTextField entryRessource;
-    @outlet CPTextField entryStatus;
+    @outlet CPImageView entryStatusIcon     @accessors;
+    @outlet CPTextField entryDomain         @accessors;
+    @outlet CPTextField entryName           @accessors;
+    @outlet CPTextField entryRessource      @accessors;
+    @outlet CPTextField entryStatus         @accessors;
 
     id  item @accessors;
 }

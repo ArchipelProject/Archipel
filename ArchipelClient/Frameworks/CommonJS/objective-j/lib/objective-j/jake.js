@@ -1,9 +1,9 @@
 /*
- * jake.js
+ * Objective-J.js
  * Objective-J
  *
  * Created by Francisco Tolmasky.
- * Copyright 2008, 280 North, Inc.
+ * Copyright 2008-2010, 280 North, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,19 +21,12 @@
  */
 
 var FILE = require("file");
-
-
 var BUNDLE_TASK = require("objective-j/jake/bundletask");
-
 exports.BundleTask = BUNDLE_TASK.BundleTask;
 exports.bundle = BUNDLE_TASK.bundle;
-
 var FRAMEWORK_TASK = require("objective-j/jake/frameworktask");
-
 exports.FrameworkTask = FRAMEWORK_TASK.FrameworkTask;
 exports.framework = FRAMEWORK_TASK.framework;
-
 var APPLICATION_TASK = require("objective-j/jake/applicationtask");
-
 exports.ApplicationTask = APPLICATION_TASK.ApplicationTask;
 exports.app = APPLICATION_TASK.app;

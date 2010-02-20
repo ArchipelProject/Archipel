@@ -29,12 +29,12 @@ TNStropheConnectionFailNotification = @"TNStropheConnectionFailNotification";
 
 @implementation TNWindowConnection: CPWindow 
 {
-    @outlet CPImageView spinning;
-    @outlet CPTextField jid;
-    @outlet CPTextField message;
-    @outlet CPTextField password;
-    @outlet CPTextField boshService;
-    @outlet CPCheckBox  credentialRemember;
+    @outlet CPImageView spinning            @accessors;
+    @outlet CPTextField jid                 @accessors;
+    @outlet CPTextField message             @accessors;
+    @outlet CPTextField password            @accessors;
+    @outlet CPTextField boshService         @accessors;
+    @outlet CPCheckBox  credentialRemember  @accessors;
     
     TNStropheConnection     strophe         @accessors;
     CPCookie                cookieLogin     @accessors;

@@ -40,13 +40,14 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 @implementation TNViewHypervisorControl: CPView 
 {
-    @outlet CPTextField     jid;
-    @outlet CPTextField     mainTitle;
-    @outlet CPButton        buttonCreateVM;
-    @outlet CPPopUpButton   popupDeleteMachine;
-    @outlet CPButton        buttonDeleteVM;
+    @outlet CPTextField     jid                 @accessors;
+    @outlet CPTextField     mainTitle           @accessors;
+    @outlet CPButton        buttonCreateVM      @accessors;
+    @outlet CPPopUpButton   popupDeleteMachine  @accessors;
+    @outlet CPButton        buttonDeleteVM      @accessors;
     
-    TNStropheRoster         roster  @accessors;
+    TNStropheRoster         roster              @accessors;
+    
     TNStropheRosterEntry    _hypervisor;
 }
 

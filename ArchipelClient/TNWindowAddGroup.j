@@ -22,7 +22,7 @@
 
 @implementation TNWindowAddGroup: CPWindow 
 {
-    @outlet CPTextField newGroupName;
+    @outlet CPTextField newGroupName    @accessors;
     
     TNStropheRoster     roster @accessors;
 }

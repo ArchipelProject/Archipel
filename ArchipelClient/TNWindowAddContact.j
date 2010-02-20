@@ -22,10 +22,10 @@
 
 @implementation TNWindowAddContact: CPWindow 
 {
-    @outlet CPPopUpButton   newContactGroup;
-    @outlet CPTextField     newContactJid;
-    @outlet CPTextField     newContactName;
-    @outlet CPTextField     newContactNewGroup;
+    @outlet CPPopUpButton   newContactGroup     @accessors;
+    @outlet CPTextField     newContactJid       @accessors;
+    @outlet CPTextField     newContactName      @accessors;
+    @outlet CPTextField     newContactNewGroup  @accessors;
     
     CPString        group   @accessors;
     TNStropheRoster roster  @accessors;    
