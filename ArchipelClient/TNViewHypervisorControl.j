@@ -52,6 +52,7 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (void)setHypervisor:(TNStropheRosterEntry)aHypervisor andRoster:(TNStropheRoster)theRoster
 {
+    [[self popupDeleteMachine] removeAllItems];
     _hypervisor = aHypervisor;
     [self setRoster:theRoster];
     

@@ -41,7 +41,7 @@
 
         _dataViewForRoot = [[CPTextField alloc] init];
     	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
-    	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"505d6d"]];
+    	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
     	[_dataViewForRoot setTextShadowColor:[CPColor grayColor]];
     	[_dataViewForRoot setTextShadowOffset:CGSizeMake(0.4, 0.4)];
@@ -59,9 +59,14 @@
     var itemLevel       = [_outlineView levelForItem:outlineViewItem];
     
     if (itemLevel == 0)
+    {
         return _dataViewForRoot;
+    }
     else
+    {
         return _dataViewForOther;
+    }
+        
 }
 @end
 

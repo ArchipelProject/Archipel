@@ -129,7 +129,7 @@ logger = nil;
     [currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
     [currentRightViewContent setHypervisor:item andRoster:mainRoster];
     
-    [currentRightViewContent setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
+    //[currentRightViewContent setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setDocumentView:currentRightViewContent]
 }
 

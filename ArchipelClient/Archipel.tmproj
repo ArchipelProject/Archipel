@@ -26,14 +26,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>39</integer>
+				<integer>67</integer>
 				<key>line</key>
-				<integer>214</integer>
+				<integer>210</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>197</integer>
+			<integer>198</integer>
 		</dict>
 		<key>Archipel.doxygen</key>
 		<dict>
@@ -330,44 +330,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>22</integer>
 				<key>line</key>
-				<integer>66</integer>
+				<integer>28</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>43</integer>
+			<integer>70</integer>
 		</dict>
 		<key>TNOutlineTableColumn.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>9</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>30</integer>
+				<integer>52</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>2</integer>
-				<key>line</key>
-				<integer>30</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>9</integer>
-				<key>line</key>
-				<integer>30</integer>
-			</dict>
+			<integer>39</integer>
 		</dict>
 		<key>TNOutlineViewRoster.j</key>
 		<dict>
@@ -402,44 +386,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>57</integer>
+				<integer>47</integer>
 				<key>line</key>
-				<integer>97</integer>
+				<integer>54</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>67</integer>
+			<integer>45</integer>
 		</dict>
 		<key>TNViewLog.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>13</integer>
+				<integer>27</integer>
 				<key>line</key>
-				<integer>66</integer>
+				<integer>43</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>20</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>11</integer>
-				<key>line</key>
-				<integer>66</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>15</integer>
-				<key>line</key>
-				<integer>66</integer>
-			</dict>
+			<integer>16</integer>
 		</dict>
 		<key>TNViewProperties.j</key>
 		<dict>

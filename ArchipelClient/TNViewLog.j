@@ -41,6 +41,7 @@
     [[columnText headerView] sizeToFit];
     
     var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
+    [columnDate setWidth:160];
     
     [[self logTable] addTableColumn:columnDate];
     [[self logTable] addTableColumn:columnText];
