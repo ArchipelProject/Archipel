@@ -1,1 +1,0 @@
-@STATIC;1.0;u;27;Resources/dark-checkers.pngu;28;Resources/light-checkers.pngu;23;Resources/selection.png
