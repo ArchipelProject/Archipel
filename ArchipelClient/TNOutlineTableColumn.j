@@ -43,11 +43,13 @@
     	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
     	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
-    	[_dataViewForRoot setTextShadowColor:[CPColor grayColor]];
-    	[_dataViewForRoot setTextShadowOffset:CGSizeMake(0.4, 0.4)];
-
+    	//[_dataViewForRoot setTextShadowColor:[CPColor whiteColor]];
+    	//[_dataViewForRoot setTextShadowOffset:CGSizeMake(0.4, 0.4)];
+        //[_dataViewForRoot setBackgroundColor:[CPColor whiteColor]];
+        
     	_dataViewForOther = [[CPTextField alloc] init];
-    	[_dataViewForOther setAutoresizingMask: CPViewWidthSizable];
+    	//[_dataViewForOther setAutoresizingMask: CPViewWidthSizable];
+    	//[_dataViewForOther setBackgroundColor:[CPColor whiteColor]];
     }
 	
     return self;
@@ -93,7 +95,7 @@
 {
     var outlineViewItem = [_outlineView itemAtRow:aRowIndex];
     var itemLevel       = [_outlineView levelForItem:outlineViewItem];
-    
+
     if (itemLevel == 0)
     {
         return [[CPTextField alloc] initWithFrame:CGRectMake(0,0, 16, 16)];
@@ -101,10 +103,9 @@
     else
     {
         var imageView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0, 16, 16)];
-        [imageView setAutoresizingMask: CPViewMaxXMargin ];
-        [imageView setImage:[[CPImage alloc] initWithContentsOfFile:@"../Resources/StatusIcons/Offline.png" size:CGSizeMake(16, 16)]];
+        //[imageView setAutoresizingMask: CPViewWidthSizable | CPViewMaxXMargin ];
         [imageView setImageScaling:CPScaleProportionally];
-        
+        //[imageView setBackgroundColor:[CPColor blueColor]];
         return imageView;
     }
 }

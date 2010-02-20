@@ -42,20 +42,24 @@
     	[self setIndentationPerLevel:10];
 
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
-        [columnLabel setMinWidth:170];
+        //[columnLabel setMinWidth:170];
         [columnLabel setResizingMask:CPTableColumnAutoresizingMask];
         [self addTableColumn:columnLabel];  
 
         var columnStatus = [[TNOutlineTableColumnStatus alloc] initWithIdentifier:"statusIcon" outlineView:self];
-        [columnStatus setMaxWidth:16];
-        [columnStatus setMinWidth:16];
-        [columnStatus setResizingMask: CPTableColumnNoResizing];
+        //[columnStatus setMaxWidth:16];
+        //[columnStatus setMinWidth:16];
+        [columnStatus setResizingMask: CPTableColumnAutoresizingMask];
         [self addTableColumn:columnStatus];
 
     	[self setOutlineTableColumn:columnLabel];
-
+        
+        [self setAllowsColumnReordering:YES];
+        [self setAllowsColumnResizing:YES];
+        [self setAllowsColumnSelection:YES];
+        
     	var center = [CPNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
+        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrieved object:nil];   
     }
     
 	return self;
@@ -84,7 +88,20 @@
     [roster setOutlineView:self];
     [self expandAll];
 }
-
-
-
 @end
+
+// @implementation CPColor (tableview)
+// 
+// + (CPColor)selectionColor
+// {
+//     console.log("HELLO");
+//     return [CPColor redColor];
+// }
+// 
+// + (CPColor)selectionColorSourceView
+// {
+//     console.log("HELLO");
+//     return [CPColor colorWithPatternImage:[CPImage redImage]];
+// }
+// 
+// @end

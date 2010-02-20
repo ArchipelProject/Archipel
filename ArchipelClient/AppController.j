@@ -204,7 +204,10 @@ logger = nil;
 }
 
 
+
+
 // outline view delegate
+// this have to move into the TNOutlineViewRoster
 - (void)outlineViewSelectionDidChange:(CPNotification)notification 
 {
    var index    = [_rosterOutlineView selectedRowIndexes];
@@ -215,12 +218,11 @@ logger = nil;
        [rightView setDocumentView:nil];
        return
    }
-    
-    
+
    var vCard    = [item vCard];
  
    
-   if ($(vCard.firstChild).text() == "hypervisor")
+   if (vCard && ($(vCard.firstChild).text() == "hypervisor"))
    {
        [self loadHypervisorControlPanelForItem:item];
    }

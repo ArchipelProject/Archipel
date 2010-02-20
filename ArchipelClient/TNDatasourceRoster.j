@@ -39,15 +39,22 @@
         
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterPresenceUpdated object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];  
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrieved object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContact object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContact object:nil];
+        
+        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdated object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactNicknameUpdated object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdated object:nil];
+        
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroup object:nil];
     }
      
     return self;
 }
 
-- (void)setFilterField:(CPTextField)aField {
+- (void)setFilterField:(CPTextField)aField
+{
     filterField = aField;
     [[self filterField] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
     
@@ -64,13 +71,24 @@
 }
                        
 - (void)updateOutlineView:(CPNotification)aNotification 
-{    
+{
     [[self outlineView] reloadData];
-    [[self outlineView] expandAll];
 }
 
+- (void)updateOutlineViewItem:(CPNotification)aNotification
+{
+    [[self outlineView] reloadItem:[aNotification object]];
+}
+
+- (void)updateOutlineViewGroupItem:(CPNotification)aNotification
+{
+
+    [[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
+}
+
+
 - (int)outlineView:(CPOutlineView)outlineView numberOfChildrenOfItem:(id)item 
-{    
+{
     if (!item) 
     {
 	    //return [[self groups] count];
@@ -106,18 +124,20 @@
 {
     var cid = [tableColumn identifier];
 
-    if (cid == "nickname")
+    if (cid == @"nickname")
     {
         return item;
     }
-    else if (cid == "statusIcon") 
+    else if (cid == @"statusIcon") 
     {
-        if ([item type] == "contact")
+        if ([item type] == @"contact")
             return [item statusIcon];
         else
             return nil;
     }
 }
+
+
 
 - (CPArray)getEntriesMatching:(CPString)aFilter 
 {
