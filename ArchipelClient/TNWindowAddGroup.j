@@ -50,7 +50,6 @@
         [alert setWindowStyle:CPHUDBackgroundWindowMask];
         [alert setAlertStyle:CPInformationalAlertStyle];
         [alert addButtonWithTitle:@"OK"];
-        
         [self orderOut:nil];
     }
     

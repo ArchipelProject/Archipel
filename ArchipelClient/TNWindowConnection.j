@@ -21,6 +21,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "TNViewLog.j"
 @import "StropheCappuccino/TNStrophe.j";
 
 TNStropheConnectionSuccessNotification  = @"TNStropheConnectionSuccessNotification";
@@ -72,11 +73,10 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
         [cookiePassword setValue:[password stringValue]  expires:[CPDate distantFuture] domain:""];
         [cookieService setValue:[boshService stringValue]  expires:[CPDate distantFuture] domain:""];
     }
-    
-    
+
     [self setStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
     [[self strophe] setDelegate:self];                                      
-    [[self strophe] connect];    
+    [[self strophe] connect];   
 }
 
 //TNStrophe delegate
@@ -90,6 +90,8 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     var center = [CPNotificationCenter defaultCenter];    
     [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self strophe]];
     [[self spinning] setHidden:YES];
+    
+    [[TNViewLog sharedLogger] log:@"Strophe is now connected"];
 }
 
 - (void)onStropheConnectFail:(TNStrophe)strophe
@@ -98,7 +100,8 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [center postNotificationName:TNStropheConnectionFailNotification object:self userInfo:[self strophe]];
     [[self spinning] setHidden:YES];
     [[self message] setStringValue:@"strophe connection failed"];
-    [logger log:"TNStropheConnectionFailNotification has been sent."];
+    
+    [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
 }
 
 - (void)onStropheDisconnected:(TNStrophe)strophe
@@ -112,10 +115,7 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [cookieLogin setValue:"" expires:[CPDate distantFuture] domain:""];
     [cookiePassword setValue:""  expires:[CPDate distantFuture] domain:""];
     [cookieService setValue:""  expires:[CPDate distantFuture] domain:""];
+    
+    [[TNViewLog sharedLogger] log:@"Strophe is disconnected"];
 }
-
-
-
-
-
 @end

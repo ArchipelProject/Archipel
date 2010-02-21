@@ -21,6 +21,8 @@
 @import <AppKit/AppKit.j>
 @import <AppKit/CPViewAnimation.j>
 
+@import "StropheCappuccino/TNStrophe.j";
+
 @implementation TNViewProperties: CPView 
 {
     @outlet CPPopUpButton   groupSelector   @accessors;
@@ -55,7 +57,16 @@
     [[self entryName]  setFont:[CPFont boldSystemFontOfSize:13]];
     [[self entryName]  setTextColor:[CPColor colorWithHexString:@"8D929D"]];
     
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didGroupAdded:) name:TNStropheRosterAddedGroupNotification object:nil];
+    
     [self setHidden:YES];
+}
+
+- (void)didGroupAdded:(CPNotification)aNotification
+{
+    if (![self isHidden])
+        [self reload];
 }
 
 - (void)hide 

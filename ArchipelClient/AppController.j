@@ -35,26 +35,26 @@
 @import "TNWindowAddGroup.j"
 @import "TNWindowConnection.j"
 
-logger = nil;
-
 @implementation AppController : CPObject
 {
 	@outlet CPView				leftView            @accessors;	
 	@outlet CPView              filterView          @accessors;
 	@outlet CPTextField         filterField         @accessors;
-	@outlet CPScrollView		rightView           @accessors;
+	@outlet CPView		        rightView           @accessors;
     @outlet CPSplitView         leftSplitView       @accessors;
     @outlet CPWindow            theWindow           @accessors;
-	@outlet TNViewLog           logView             @accessors;        
+	
 	@outlet TNViewProperties    propertiesView      @accessors;
 	@outlet TNWindowAddContact  addContactWindow    @accessors;
 	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
     @outlet TNWindowConnection  connectionWindow    @accessors;
-		
+    
 	TNDatasourceRoster          _mainRoster;
 	TNOutlineViewRoster		    _rosterOutlineView;
 	TNToolbar		            _hypervisorToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
+    CPScrollView                _rightScrollView;
+    CPScrollView                _outlineScrollView;
     
     BOOL    connected   @accessors(getter=isConnected, setter=setConnected:);
 }
@@ -66,7 +66,7 @@ logger = nil;
 }
 
 - (void)awakeFromCib
-{
+{    
     //hide main window
     [theWindow orderOut:nil];
     
@@ -78,29 +78,32 @@ logger = nil;
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(5,5,0,0)];    
     [_rosterOutlineView setDelegate:self];
     
-    // logger view
-    [logView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
-    logger = logView;
-    
     // init scroll view of the outline view
-	var scrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
-	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-	[scrollView setAutohidesScrollers:YES];
-	[[scrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-	[scrollView addSubview:_rosterOutlineView];
-	[scrollView setDocumentView:_rosterOutlineView];
-    [[self leftView] addSubview:scrollView];
+	_outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
+	[_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+	[_outlineScrollView setAutohidesScrollers:YES];
+	[[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+	[_outlineScrollView setDocumentView:_rosterOutlineView];
+    
+    // left view
+    [[self leftView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [[self leftView] addSubview:_outlineScrollView];
+    
+    // right scrollview
+    _rightScrollView = [[CPScrollView alloc] initWithFrame:[[self rightView] bounds]];
+	[_rightScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+	[_rightScrollView setAutohidesScrollers:YES];
     
     // right view
     [[self rightView] setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [[self rightView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [[self leftView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [[self rightView] addSubview:_rightScrollView];
+    
     
     //connection window
     [[self connectionWindow] center];
     [[self connectionWindow] orderFront:nil];
     
-   
     // properties view
     [[self leftSplitView] setIsPaneSplitter:YES];
     [[self leftSplitView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
@@ -108,11 +111,9 @@ logger = nil;
     [[self leftSplitView] addSubview:[self propertiesView]];
     [[self leftSplitView] setPosition:[[self leftSplitView] bounds].size.height ofDividerAtIndex:0];
     
-
     // filter view. it is unused for now.
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/gradientGray.png"]]];
     
-
     // notifications
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
@@ -124,24 +125,39 @@ logger = nil;
 - (void)loadHypervisorControlPanelForItem:(TNStropheContact)item 
 {
     var controller = [[CPViewController alloc] initWithCibName: @"HypervisorControlView" bundle:[CPBundle mainBundle]];
+    
     _currentRightViewContent = [controller view];
     
-    [_currentRightViewContent setFrame:[[rightView contentView] frame]];
+    [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
+    var frame = [_rightScrollView frame];
+    //if (frame.size.height < [_currentRightViewContent frame].size.height)
+    frame.size.height = [_currentRightViewContent frame].size.height;
+    
+    [_currentRightViewContent setFrame:frame];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
     [_currentRightViewContent setContact:item andRoster:_mainRoster];
     [_currentRightViewContent initialize];
-    [rightView setDocumentView:_currentRightViewContent]
+    
+    [_rightScrollView setDocumentView:_currentRightViewContent];
 }
 
 - (void)loadVirtualMachineControlPanelForItem:(TNStropheContact)item
 {
     var controller = [[CPViewController alloc] initWithCibName: @"VirtualMachineControlView" bundle:[CPBundle mainBundle]];
-    _currentRightViewContent = [controller view];
+   
+    _currentRightViewContent = [controller view]; 
     
-    [_currentRightViewContent setFrame:[[rightView contentView] frame]];
+    [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
+    
+    var frame = [_rightScrollView frame];
+    //if (frame.size.height < [_currentRightViewContent frame].size.height)
+    frame.size.height = [_currentRightViewContent frame].size.height;
+        
+    [_currentRightViewContent setFrame:frame];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
     [_currentRightViewContent setContact:item andRoster:_mainRoster];
-    [rightView setDocumentView:_currentRightViewContent]
+    
+    [_rightScrollView setDocumentView:_currentRightViewContent]
 }
 
 // Toolbar actions
@@ -172,11 +188,22 @@ logger = nil;
     [[self addGroupWindow] orderFront:nil];
 }
 
+- (IBAction)toolbarItemViewLogClick:(id)sender
+{
+    if (![[TNViewLog sharedLogger] superview])
+    {
+        var bounds = [[theWindow contentView] bounds];
+        [[TNViewLog sharedLogger] setFrame:bounds];
+        [[theWindow contentView] addSubview:[TNViewLog sharedLogger]];
+    }       
+    else
+        [[TNViewLog sharedLogger] removeFromSuperview];
+}
+
 
 // strophe 
 - (void)loginStrophe:(CPNotification)aNotification 
 {
-    [[self logView] log:"strophe connected notif received"];
     [[self connectionWindow] orderOut:nil];
     [[self theWindow] orderFront:nil];
     [self setConnected:YES];
@@ -185,13 +212,11 @@ logger = nil;
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:[self filterField]];
     [[self propertiesView] setRoster:_mainRoster];
-    // ask roster
     [_mainRoster getRoster];
 }
 
 - (void)logoutStrophe:(CPNotification)aNotification 
 {
-    [[self logView] log:"strophe disconnection notif received"];
     [[self theWindow] orderOut:nil];
     [[self connectionWindow] orderFront:nil];
     [self setConnected:NO];
@@ -200,8 +225,6 @@ logger = nil;
 - (void)onMessage:(id)message 
 {
     var theMessage = [[TNStropheMessage alloc] initWithStropheMessage:message];
-    
-    [[self logView] log:@"Message from: " + [theMessage from] + " : " + [theMessage message]];
 }
 
 
@@ -239,15 +262,10 @@ logger = nil;
    }
    else //if (vCard && ($(vCard.firstChild).text() == "virtualmachine"))
    {
-       [rightView setDocumentView:nil];
+       [_rightScrollView setDocumentView:nil];
    }
    
    [[self propertiesView] setEntry:item];
    [[self propertiesView] reload];
 }
-
-
-
-
-
 @end

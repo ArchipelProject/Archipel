@@ -19,29 +19,41 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+var theSharedLogger;
+
 @implementation TNViewLog: CPScrollView 
 {
     CPArray       logs      @accessors;
     CPTableView   logTable  @accessors;
-
 }
 
-- (void)awakeFromCib 
++ (id)sharedLogger
 {
-    var logs = [[CPArray alloc] init];
+    if (!theSharedLogger)
+        theSharedLogger = [[TNViewLog alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+        
+    return theSharedLogger;
+}
+
+- (id)initWithFrame:(CGRect)aFrame
+{
+    self = [super initWithFrame:aFrame];
     
-    [self setLogTable:[[CPTableView alloc] initWithFrame:[[self contentView] bounds]]];
-    [[self logTable] setCornerView:null];
+    [self setLogs:[[CPArray alloc] init]];
+    
+    [self setLogTable:[[CPTableView alloc] initWithFrame:[[self contentView] frame]]];
+
     [[self logTable] setUsesAlternatingRowBackgroundColors:YES];
-    
+    [[self logTable] setAllowsColumnResizing:YES];
+
     var columnText = [[CPTableColumn alloc] initWithIdentifier:@"content"];
-    [columnText setWidth:500];
-    [columnText setResizingMask:CPTableColumnAutoresizingMask] ;
+    [columnText setWidth:768];
+    [columnText setResizingMask:CPTableColumnAutoresizingMask ] ;
     [[columnText headerView] setStringValue:@"Content"];
-    [[columnText headerView] sizeToFit];
     
     var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
-    [columnDate setWidth:160];
+    [columnDate setWidth:260];
+    [[columnDate headerView] setStringValue:@"Date"];
     
     [[self logTable] addTableColumn:columnDate];
     [[self logTable] addTableColumn:columnText];
@@ -49,6 +61,15 @@
     [[self logTable] setDataSource:self];
     
     [self setDocumentView:[self logTable]];
+    
+    theSharedLogger = self;
+    
+    return self;
+}
+
+- (void)awakeFromCib 
+{
+
 }
 
 - (void)log:(CPString)aString 
@@ -56,6 +77,8 @@
     [[self logs] insertObject:{ "date" : [CPDate date], "content" : aString} atIndex:0];
     [[self logTable] reloadData];
 }
+
+
 
 // tableView delegate
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 

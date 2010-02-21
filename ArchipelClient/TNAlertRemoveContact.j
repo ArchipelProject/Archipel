@@ -53,7 +53,9 @@
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
 {
     if (returnCode == 0)
+    {
         [[self roster] removeContact:[self jid]];
+    }
 }
 
 @end
