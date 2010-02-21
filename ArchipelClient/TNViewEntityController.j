@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "StropheCappuccino/TNStrophe.j";
 
 @implementation TNViewEntityController: CPView 
 {
