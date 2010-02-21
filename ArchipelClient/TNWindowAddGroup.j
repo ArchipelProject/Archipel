@@ -20,6 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "StropheCappuccino/TNStrophe.j";
+
 @implementation TNWindowAddGroup: CPWindow 
 {
     @outlet CPTextField newGroupName    @accessors;

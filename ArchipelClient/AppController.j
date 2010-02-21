@@ -106,7 +106,7 @@ logger = nil;
     [[self leftSplitView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[[self leftSplitView] subviews][1] removeFromSuperview];
     [[self leftSplitView] addSubview:[self propertiesView]];
-    [[self propertiesView] setParentSplitView:[self leftSplitView]];
+    [[self leftSplitView] setPosition:[[self leftSplitView] bounds].size.height ofDividerAtIndex:0];
     
 
     // filter view. it is unused for now.

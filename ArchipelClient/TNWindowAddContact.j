@@ -20,26 +20,15 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "StropheCappuccino/TNStrophe.j";
+
 @implementation TNWindowAddContact: CPWindow 
 {
     @outlet CPPopUpButton   newContactGroup     @accessors;
     @outlet CPTextField     newContactJid       @accessors;
     @outlet CPTextField     newContactName      @accessors;
-    @outlet CPTextField     newContactNewGroup  @accessors;
     
-    CPString        group   @accessors;
     TNStropheRoster roster  @accessors;    
-}
-
-- (void)awakeFromCib
-{
-   group = [[CPString alloc] init];
-}
-
-- (IBAction)selectGroup:(id)sender
-{
-    //console.log("group set to " + [sender title]);
-    [self setGroup:[sender title]];
 }
 
 - (IBAction) orderFront:(id) sender
@@ -47,24 +36,28 @@
     var groups = [roster groups];
     var i;
     
-    [self setGroup:@"General"];
+    [[self newContactJid] setStringValue:@""];
+    [[self newContactName] setStringValue:@""];
     [[self newContactGroup] removeAllItems];
-   
-    //for (i = 0; i < [groups count]; i++)
+    
+    var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""]
+    [[self newContactGroup] addItem:generalItem];
+    
     @each (var group in groups)
     {
-       var item = [[CPMenuItem alloc] initWithTitle:[group name] action:@selector(selectGroup:) keyEquivalent:@""]
-       [item setTarget:self];
+       var item = [[CPMenuItem alloc] initWithTitle:[group name] action:nil keyEquivalent:@""]
        [[self newContactGroup] addItem:item];
     }
-    [[self newContactGroup] selectItemWithTitle:group];
-
+    
+    [[self newContactGroup] selectItemWithTitle:@"General"];
     [super orderFront:sender];
 }
 
 - (IBAction)addContact:(id)sender
 {
-    [[self roster] addContact:[newContactJid stringValue] withName:[newContactName stringValue] inGroup:[self group]];
+    var group = [[self newContactGroup] title];
+
+    [[self roster] addContact:[newContactJid stringValue] withName:[newContactName stringValue] inGroup:group];
     [[self roster] askAuthorizationTo:[newContactJid stringValue]];
     
     [self orderOut:nil];

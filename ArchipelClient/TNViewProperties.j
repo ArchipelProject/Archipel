@@ -19,11 +19,12 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <AppKit/CPViewAnimation.j>
 
 @implementation TNViewProperties: CPView 
 {
-    @outlet CPImageView     entryStatusIcon @accessors;
     @outlet CPPopUpButton   groupSelector   @accessors;
+    @outlet CPImageView     entryStatusIcon @accessors;
     @outlet CPTextField     entryDomain     @accessors;
     @outlet CPTextField     entryName       @accessors;
     @outlet CPTextField     entryRessource  @accessors;
@@ -32,13 +33,15 @@
     
     TNStropheRoster         roster          @accessors;
     TNStropheContact        entry           @accessors;
-    CPSplitView             parentSplitView @accessors;
 
+    CPNumber                _height;
 }
 
 - (id)initWithFrame:(CPRect)aRect 
 {
-    aRect.size.height = 200;
+    _height = 180;
+    
+    aRect.size.height = _height;
     self = [super initWithFrame:aRect];
     
     return self;
@@ -47,45 +50,28 @@
 - (void)awakeFromCib
 {
     [self setAutoresizingMask: CPViewNotSizable];
-    [self format];
-    [self hide];
-    //[self setBoundsOrigin:CGPointMake(0, [self frame].size.height)];
+    
+    [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [[self entryName]  setFont:[CPFont boldSystemFontOfSize:13]];
+    [[self entryName]  setTextColor:[CPColor colorWithHexString:@"8D929D"]];
+    
+    [self setHidden:YES];
 }
 
 - (void)hide 
 {
+    var splitView = [self superview];
+
     [self setHidden:YES];
-    // [self removeFromSuperview];
-    //     [[self parentSplitView] setNeedsDisplay:YES];
-    //     [[self parentSplitView] setNeedsLayout:YES];
-    //     [[[[self parentSplitView] subviews] objectAtIndex:0] setNeedsDisplay:YES];
-    //     [[[[self parentSplitView] subviews] objectAtIndex:0] setNeedsLayout:YES];
+    [splitView setPosition:[splitView bounds].size.height ofDividerAtIndex:0];
 }
 
 - (void)show 
 {
-    // var frame = [self frame];
-    //     frame.size.height = 300;
-    //     resize = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey,frame, CPViewAnimationEndFrameKey];
-    //     animation = [[CPViewAnimation alloc] initWithViewAnimations:[resize]];
-    //     [animation startAnimation];
-    // 
-    //     [[self superview] setNeedsDisplay:YES];
-    // var bounds = [[self parentSplitView] bounds];
-    //     [[[[self parentSplitView] subviews] objectAtIndex:0] setBounds:bounds];
+    var splitView = [self superview];
     
     [self setHidden:NO];
-    //[[self parentSplitView] addSubview:self];
-    //[[self parentSplitView] setNeedsDisplay:YES];
-}
-
-- (void)format
-{
-    [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [[self entryName]  setFont:[CPFont boldSystemFontOfSize:13]];
-    [[self entryName]  setTextColor:[CPColor colorWithHexString:@"8D929D"]];
-    //[[self entryDomain] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
-    //[[self entryStatus] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
+    [splitView setPosition:([splitView bounds].size.height - _height) ofDividerAtIndex:0];
 }
 
 - (void)reload
@@ -114,11 +100,11 @@
     }
     
     [[self groupSelector] selectItemWithTitle:[entry group]];
-    // anim = [CPViewAnimation initWithViewAnimations:[self]];
-    // [anim startAnimation];
 }
 
 
+
+// Actions
 - (IBAction)changeGroup:(id)sender
 {
     var theGroup = [sender title]
