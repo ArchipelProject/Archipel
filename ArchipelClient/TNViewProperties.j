@@ -122,6 +122,8 @@
     var theJid = [entry jid];
     [[self roster] changeGroup:theGroup forJID:theJid];
     [[self groupSelector] selectItemWithTitle:theGroup];
+    
+    [[TNViewLog sharedLogger] log:@"new group for contact " + theJid + " : " + theGroup];
 }
 
 - (IBAction)changeNickName:(id)sender
@@ -131,5 +133,7 @@
     [sender setStringValue:@""];
     [[self roster] changeNickname:theName forJID:theJid];
     [[self entryName] setStringValue:theName];
+    
+    [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
 }
 @end

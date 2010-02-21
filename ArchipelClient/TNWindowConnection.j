@@ -91,7 +91,7 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self strophe]];
     [[self spinning] setHidden:YES];
     
-    [[TNViewLog sharedLogger] log:@"Strophe is now connected"];
+    [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
 }
 
 - (void)onStropheConnectFail:(TNStrophe)strophe

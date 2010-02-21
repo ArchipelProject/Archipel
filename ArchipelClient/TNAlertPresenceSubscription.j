@@ -51,9 +51,16 @@
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
 {
     if (returnCode == 0)
+    {
         [[self roster] answerAuthorizationRequest:[self stanza] answer:YES];
+        [[TNViewLog sharedLogger] log:@"Authorization request accepted from " + [self stanza].getAttribute("from")];
+    }
     else
+    {
         [[self roster] answerAuthorizationRequest:[self stanza] answer:NO];
+        [[TNViewLog sharedLogger] log:@"Authorization request rejected from " + [self stanza].getAttribute("from")];
+    }
+        
 }
 
 @end

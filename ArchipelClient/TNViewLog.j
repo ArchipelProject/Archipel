@@ -23,8 +23,9 @@ var theSharedLogger;
 
 @implementation TNViewLog: CPScrollView 
 {
-    CPArray       logs      @accessors;
-    CPTableView   logTable  @accessors;
+    CPArray         logs        @accessors;
+    CPTableView     logTable    @accessors;
+    // CPView          controlView @accessors;
 }
 
 + (id)sharedLogger
@@ -37,47 +38,70 @@ var theSharedLogger;
 
 - (id)initWithFrame:(CGRect)aFrame
 {
-    self = [super initWithFrame:aFrame];
-    
-    [self setLogs:[[CPArray alloc] init]];
-    
-    [self setLogTable:[[CPTableView alloc] initWithFrame:[[self contentView] frame]]];
+    if (self = [super initWithFrame:aFrame])
+    {
+        [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+        
+        var storedLogs = JSON.parse(localStorage.getItem("storedLogs"));
 
-    [[self logTable] setUsesAlternatingRowBackgroundColors:YES];
-    [[self logTable] setAllowsColumnResizing:YES];
+        if (storedLogs)
+            [self setLogs:storedLogs];
+        else
+            [self setLogs:[[CPArray alloc] init]];
+        
+        [self setLogTable:[[CPTableView alloc] initWithFrame:[[self contentView] frame]]];
 
-    var columnText = [[CPTableColumn alloc] initWithIdentifier:@"content"];
-    [columnText setWidth:768];
-    [columnText setResizingMask:CPTableColumnAutoresizingMask ] ;
-    [[columnText headerView] setStringValue:@"Content"];
-    
-    var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
-    [columnDate setWidth:260];
-    [[columnDate headerView] setStringValue:@"Date"];
-    
-    [[self logTable] addTableColumn:columnDate];
-    [[self logTable] addTableColumn:columnText];
-    
-    [[self logTable] setDataSource:self];
-    
-    [self setDocumentView:[self logTable]];
-    
-    theSharedLogger = self;
+        [[self logTable] setUsesAlternatingRowBackgroundColors:YES];
+        [[self logTable] setAllowsColumnResizing:YES];
+        [[self logTable] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+        
+        var columnText = [[CPTableColumn alloc] initWithIdentifier:@"content"];
+        [columnText setWidth:768];
+        [columnText setResizingMask:CPTableColumnAutoresizingMask ] ;
+        [[columnText headerView] setStringValue:@"Content"];
+
+        var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
+        [columnDate setWidth:260];
+        [[columnDate headerView] setStringValue:@"Date"];
+
+        [[self logTable] addTableColumn:columnDate];
+        [[self logTable] addTableColumn:columnText];
+
+        [[self logTable] setDataSource:self];
+
+        [self setDocumentView:[self logTable]];
+
+        theSharedLogger = self;   
+        
+        // var frame = [self frame];
+        // //frame.size.height = 40;
+        // //frame.size.width = 1000;
+        // [self setControlView:[[CPView alloc] initWithFrame:frame]];
+        // [[self controlView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+        // [[self controlView] setBackgroundColor:[CPColor blueColor]];
+        // [self addSubview:[self controlView]];        
+    }
     
     return self;
-}
-
-- (void)awakeFromCib 
-{
-
 }
 
 - (void)log:(CPString)aString 
 {
     [[self logs] insertObject:{ "date" : [CPDate date], "content" : aString} atIndex:0];
     [[self logTable] reloadData];
+    
+    var storedLogs = [self logs];
+    localStorage.setItem("storedLogs", JSON.stringify(storedLogs));
 }
 
+- (void)clearLog 
+{
+    [[self logs] removeAllObjects];
+    [[self logTable] reloadData];
+    
+    var storedLogs = [self logs];
+    localStorage.setItem("storedLogs", JSON.stringify(storedLogs));
+}
 
 
 // tableView delegate

@@ -71,6 +71,8 @@
     [alert setWindowStyle:CPHUDBackgroundWindowMask];
     [alert addButtonWithTitle:@"Ok"];
     [alert runModal];
+    
+    [[TNViewLog sharedLogger] log:@"added contact " + [newContactJid stringValue]];
 }
 
 @end

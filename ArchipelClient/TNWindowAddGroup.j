@@ -51,6 +51,8 @@
         [alert setAlertStyle:CPInformationalAlertStyle];
         [alert addButtonWithTitle:@"OK"];
         [self orderOut:nil];
+        
+        [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
     }
     
     [alert runModal];

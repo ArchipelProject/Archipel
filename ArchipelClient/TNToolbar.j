@@ -27,6 +27,7 @@ TNToolBarItemDeleteJid = @"TNToolBarItemDeleteJid";
 TNToolBarItemAddGroup = @"TNToolBarItemAddGroup";
 TNToolBarItemDeleteGroup = @"TNToolBarItemDeleteGroup";
 TNToolBarItemViewLog = @"TNToolBarItemViewLog";
+TNToolBarItemClearLog = @"TNToolBarItemClearLog";
 
 TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotification";
 
@@ -38,7 +39,8 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     CPToolbarItem itemAddGroup      @accessors;
     CPToolbarItem itemDeleteGroup   @accessors;
     CPToolbarItem itemLogout        @accessors;
-    CPToolbarItem itemViewLog        @accessors;
+    CPToolbarItem itemViewLog       @accessors;
+    CPToolbarItem itemClearLog      @accessors;
 }
 
 -(id)initWithTarget:(id)aTarget
@@ -82,6 +84,12 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
         [[self itemViewLog] setTarget:aTarget];
         [[self itemViewLog] setAction:@selector(toolbarItemViewLogClick:)];
         
+        [self setItemClearLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemClearLog]];
+        [[self itemClearLog] setLabel:@"Clear log"];
+        [[self itemClearLog] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/clearlog.png" size:CPSizeMake(32,32)]];
+        [[self itemClearLog] setTarget:aTarget];
+        [[self itemClearLog] setAction:@selector(toolbarItemClearLogClick:)];
+        
         [self setDelegate:self];
     }
     
@@ -92,14 +100,14 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid, CPToolbarSeparatorItemIdentifier, 
                 TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
-                TNToolBarItemViewLog, TNToolBarItemLogout];
+                TNToolBarItemViewLog, TNToolBarItemClearLog, TNToolBarItemLogout];
 }
 
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar 
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid,CPToolbarSeparatorItemIdentifier, 
                 TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
-                TNToolBarItemViewLog, TNToolBarItemLogout];
+                TNToolBarItemViewLog, TNToolBarItemClearLog, TNToolBarItemLogout];
 }
 
 - (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
@@ -118,7 +126,8 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
         toolbarItem = [self itemAddGroup];
     else if (anItemIdentifier == TNToolBarItemViewLog)
         toolbarItem = [self itemViewLog];
-        
+    else if (anItemIdentifier == TNToolBarItemClearLog)
+        toolbarItem = [self itemClearLog];
     
     return toolbarItem;
 }

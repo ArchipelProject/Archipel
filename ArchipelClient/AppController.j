@@ -200,6 +200,11 @@
         [[TNViewLog sharedLogger] removeFromSuperview];
 }
 
+- (IBAction)toolbarItemClearLogClick:(id)sender
+{
+    [[TNViewLog sharedLogger] clearLog];
+}
+
 
 // strophe 
 - (void)loginStrophe:(CPNotification)aNotification 

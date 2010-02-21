@@ -20,6 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "TNViewLog.j"
 
 @implementation TNAlertRemoveContact: CPAlert 
 {
@@ -38,7 +39,7 @@
         [self setRoster:aRoster];
         [self setDelegate:self];
 
-        var msg = "Are you sure you want to remove " + aJid + " ?";
+        var msg = @"Are you sure you want to remove " + aJid + " ?";
         [self setTitle:@"Remove entity"];
         [self setMessageText:msg];
         [self setWindowStyle:CPHUDBackgroundWindowMask];
@@ -55,6 +56,7 @@
     if (returnCode == 0)
     {
         [[self roster] removeContact:[self jid]];
+        [[TNViewLog sharedLogger] log:@"contact " + [self jid] + "removed"];
     }
 }
 
