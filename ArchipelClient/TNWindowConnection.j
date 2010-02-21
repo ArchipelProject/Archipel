@@ -21,11 +21,11 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "StropheCappuccino/TNStropheConnection.j"
+@import "StropheCappuccino/TNStrophe.j";
 
-TNStropheConnectionSuccessNotification = @"TNStropheConnectionSuccessNotification";
-TNStropheDisconnectionNotification = @"TNStropheDisconnectionNotification";
-TNStropheConnectionFailNotification = @"TNStropheConnectionFailNotification";
+TNStropheConnectionSuccessNotification  = @"TNStropheConnectionSuccessNotification";
+TNStropheDisconnectionNotification      = @"TNStropheDisconnectionNotification";
+TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification";
 
 @implementation TNWindowConnection: CPWindow 
 {

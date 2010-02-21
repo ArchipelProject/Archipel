@@ -50,9 +50,10 @@
     [self setGroup:@"General"];
     [[self newContactGroup] removeAllItems];
    
-    for (i = 0; i < [groups count]; i++)
+    //for (i = 0; i < [groups count]; i++)
+    @each (var group in groups)
     {
-       var item = [[CPMenuItem alloc] initWithTitle:[[groups objectAtIndex:i] name] action:@selector(selectGroup:) keyEquivalent:@""]
+       var item = [[CPMenuItem alloc] initWithTitle:[group name] action:@selector(selectGroup:) keyEquivalent:@""]
        [item setTarget:self];
        [[self newContactGroup] addItem:item];
     }

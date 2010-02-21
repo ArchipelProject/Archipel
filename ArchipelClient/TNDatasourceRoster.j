@@ -20,8 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "StropheCappuccino/TNStropheConnection.j"
-@import "StropheCappuccino/TNStropheRoster.j"
+@import "StropheCappuccino/TNStrophe.j"
 
 
 @implementation TNDatasourceRoster  : TNStropheRoster 
@@ -39,15 +38,15 @@
         
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrieved object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContact object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContact object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
         
-        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdated object:nil];
-        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactNicknameUpdated object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdated object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
         
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroup object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
     }
      
     return self;
@@ -91,12 +90,10 @@
 {
     if (!item) 
     {
-	    //return [[self groups] count];
 	    return [[self getGroupContainingEntriesMatching:[self filter]] count];
 	}
 	else 
 	{
-	    //return [[self getEntriesInGroup:item] count];
 	    return [[self getEntriesMatching:[self filter] inGroup:item] count];
 	}
 }
@@ -110,12 +107,10 @@
 {
     if (!item) 
     {
-        //return [[self groups].sort() objectAtIndex:index]; // yes I know, this is piggy...
         return [[self getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];
     }
     else 
     {
-        //return [[self getEntriesInGroup:item].sort() objectAtIndex:index]; // yes I know, this is piggy again...
         return [[self getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
     }
 }
@@ -147,30 +142,27 @@
     
     if (!aFilter)
         return theEntries;
-        
-    for (i = 0; i < [theEntries count]; i++)
+    
+    @each (var entry in theEntries)
     {
-        var entry = [theEntries objectAtIndex:i];
-        if ([entry nickname].indexOf(aFilter) != -1)
+        if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry]
     }
-    
     return filteredEntries;
 }
 
 - (CPArray)getEntriesMatching:(CPString)aFilter inGroup:(CPString)aGroup
 {
-    var theEntries      = [self getEntriesInGroup:aGroup];
+    var theEntries      = [self getContactsInGroup:aGroup];
     var filteredEntries = [[CPArray alloc] init];
     var i;
     
     if (!aFilter)
         return theEntries;
-        
-    for (i = 0; i < [theEntries count]; i++)
+    
+    @each (var entry in theEntries)
     {
-        var entry = [theEntries objectAtIndex:i];
-        if ([entry nickname].indexOf(aFilter) != -1)
+        if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry];
     }
     
@@ -186,9 +178,8 @@
     if (!aFilter)
         return [self groups];
         
-    for (i = 0; i < [theGroups count]; i++)
+    @each (var group in theGroups)
     {
-        var group = [theGroups objectAtIndex:i];
         if ([[self getEntriesMatching:aFilter inGroup:[group name]] count] > 0)
             [filteredGroup addObject:group];
     }

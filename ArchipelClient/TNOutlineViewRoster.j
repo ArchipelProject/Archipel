@@ -59,7 +59,7 @@
         [self setAllowsColumnSelection:YES];
         
     	var center = [CPNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrieved object:nil];   
+        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
     }
     
 	return self;

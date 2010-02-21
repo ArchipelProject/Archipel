@@ -20,9 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "StropheCappuccino/TNStropheConnection.j";
-@import "StropheCappuccino/TNStropheStanza.j"
-@import "StropheCappuccino/TNStropheRoster.j";
+@import "StropheCappuccino/TNStrophe.j";
 
 
 trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
@@ -48,10 +46,10 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     TNStropheRoster         roster              @accessors;
     
-    TNStropheRosterEntry    _hypervisor;
+    TNStropheContact        _hypervisor;
 }
 
-- (void)setHypervisor:(TNStropheRosterEntry)aHypervisor andRoster:(TNStropheRoster)theRoster
+- (void)setHypervisor:(TNStropheContact)aHypervisor andRoster:(TNStropheRoster)theRoster
 {
     [[self popupDeleteMachine] removeAllItems];
     _hypervisor = aHypervisor;
@@ -84,10 +82,9 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     [[self popupDeleteMachine] removeAllItems];
     
-    for (i = 0; i < queryItems.length; i++)
+    @each (var anItem in queryItems)
     {
-        var jid = $(queryItems[i]).text();
-
+        var jid = $(anItem).text();
         var entry = [[self roster] getContactFromJID:jid];
         if (entry) 
         {
@@ -101,6 +98,23 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
             }
         }
     }
+    // for (i = 0; i < queryItems.length; i++)
+    // {
+    //     var jid = $(queryItems[i]).text();
+    // 
+    //     var entry = [[self roster] getContactFromJID:jid];
+    //     if (entry) 
+    //     {
+    //         if ($([entry vCard].firstChild).text() == "virtualmachine")
+    //         {
+    //             var name = [entry nickname] + " (" + jid +")";
+    //             var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:@""]
+    //             [item setImage:[entry statusIcon]];
+    //             [item setStringValue:jid];
+    //             [[self popupDeleteMachine] addItem:item];
+    //         }
+    //     }
+    // }
 }
 
 //actions

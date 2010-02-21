@@ -31,7 +31,7 @@
     @outlet CPTextField     newNickName     @accessors;
     
     TNStropheRoster         roster          @accessors;
-    TNStropheRosterEntry    entry           @accessors;
+    TNStropheContact        entry           @accessors;
     CPSplitView             parentSplitView @accessors;
 
 }
@@ -106,9 +106,9 @@
     [[self groupSelector] removeAllItems];
     
     var groups = [roster groups];
-    for (i = 0; i < [groups count]; i++)
+    @each (group in groups)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:[[groups objectAtIndex:i] name] action:@selector(changeGroup:) keyEquivalent:@""]
+        var item = [[CPMenuItem alloc] initWithTitle:[group name] action:@selector(changeGroup:) keyEquivalent:@""]
         [item setTarget:self];
         [[self groupSelector] addItem:item];
     }
