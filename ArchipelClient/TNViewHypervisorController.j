@@ -21,7 +21,7 @@
 @import <AppKit/AppKit.j>
 
 @import "StropheCappuccino/TNStrophe.j";
-
+@import "TNViewEntityController.j";
 
 trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc       = @"alloc";
@@ -36,43 +36,36 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 @end
 
 
-@implementation TNViewHypervisorControl: CPView 
+@implementation TNViewHypervisorController: TNViewEntityController 
 {
     @outlet CPTextField     jid                 @accessors;
     @outlet CPTextField     mainTitle           @accessors;
     @outlet CPButton        buttonCreateVM      @accessors;
     @outlet CPPopUpButton   popupDeleteMachine  @accessors;
     @outlet CPButton        buttonDeleteVM      @accessors;
-    
-    TNStropheRoster         roster              @accessors;
-    
-    TNStropheContact        _hypervisor;
 }
 
-- (void)setHypervisor:(TNStropheContact)aHypervisor andRoster:(TNStropheRoster)theRoster
-{
+- (void)initialize
+{   
     [[self popupDeleteMachine] removeAllItems];
-    _hypervisor = aHypervisor;
-    [self setRoster:theRoster];
-    
-    [[self mainTitle] setStringValue:[_hypervisor nickname]];
-    [[self jid] setStringValue:[_hypervisor jid]];
+    [[self mainTitle] setStringValue:[[self contact] nickname]];
+    [[self jid] setStringValue:[[self contact] jid]];
     
     [self getHypervisorRoster];
 }
 
 - (void)getHypervisorRoster
 {
-    var uid = [[_hypervisor connection] getUniqueId];
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [_hypervisor fullJID], "id": uid}];
+    var uid = [[[self contact] connection] getUniqueId];
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [[self contact] fullJID], "id": uid}];
     var params;
     
     [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     
     params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-    [[_hypervisor connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
+    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
     
-    [[_hypervisor connection] send:[rosterStanza stanza]];
+    [[[self contact] connection] send:[rosterStanza stanza]];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -120,13 +113,13 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 //actions
 - (IBAction) addVirtualMachine:(id)sender
 {
-    var creationStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [_hypervisor fullJID]}];
+    var creationStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [[self contact] fullJID]}];
     var uuid = [CPString UUID];
     
     [creationStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
-    [[_hypervisor connection] send:[creationStanza tree]];
+    [[[self contact] connection] send:[creationStanza tree]];
 }
 
 - (IBAction) deleteVirtualMachine:(id)sender
@@ -149,11 +142,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
         var item  = [[self popupDeleteMachine] selectedItem];
         var index = [[self popupDeleteMachine] indexOfSelectedItem];
 
-        var freeStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlFree, "to": [_hypervisor fullJID]}];
+        var freeStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlFree, "to": [[self contact] fullJID]}];
 
         [freeStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
         [freeStanza addTextNode:[item stringValue]];
-        [[_hypervisor connection] send:[freeStanza tree]];
+        [[[self contact] connection] send:[freeStanza tree]];
         [[self roster] removeContact:[item stringValue]];
 
         [[self popupDeleteMachine] removeItemAtIndex:index];

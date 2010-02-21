@@ -20,14 +20,15 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "StropheCappuccino/TNStrophe.j"
+
 @import "TNAlertPresenceSubscription.j"
 @import "TNAlertRemoveContact.j"
 @import "TNDatasourceRoster.j"
 @import "TNOutlineViewRoster.j"
-@import "StropheCappuccino/TNStrophe.j"
 @import "TNToolbar.j"
-@import "TNViewHypervisorControl.j"
-@import "TNViewHypervisorControl.j"
+@import "TNViewHypervisorController.j"
+@import "TNViewVirtualMachineController.j"
 @import "TNViewLog.j"
 @import "TNViewProperties.j"
 @import "TNWindowAddContact.j"
@@ -120,19 +121,28 @@ logger = nil;
 
 
 // utilities
-- (void)loadHypervisorControlPanelForItem:(TNHypervisor)item 
+- (void)loadHypervisorControlPanelForItem:(TNStropheContact)item 
 {
     var controller = [[CPViewController alloc] initWithCibName: @"HypervisorControlView" bundle:[CPBundle mainBundle]];
     _currentRightViewContent = [controller view];
     
     [_currentRightViewContent setFrame:[[rightView contentView] frame]];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
-    [_currentRightViewContent setHypervisor:item andRoster:_mainRoster];
-    
-    //[_currentRightViewContent setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
+    [_currentRightViewContent setContact:item andRoster:_mainRoster];
+    [_currentRightViewContent initialize];
     [rightView setDocumentView:_currentRightViewContent]
 }
 
+- (void)loadVirtualMachineControlPanelForItem:(TNStropheContact)item
+{
+    var controller = [[CPViewController alloc] initWithCibName: @"VirtualMachineControlView" bundle:[CPBundle mainBundle]];
+    _currentRightViewContent = [controller view];
+    
+    [_currentRightViewContent setFrame:[[rightView contentView] frame]];
+    [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
+    [_currentRightViewContent setContact:item andRoster:_mainRoster];
+    [rightView setDocumentView:_currentRightViewContent]
+}
 
 // Toolbar actions
 - (IBAction)toolbarItemLogoutClick:(id)sender 
@@ -207,7 +217,6 @@ logger = nil;
 
 
 // outline view delegate
-// this have to move into the TNOutlineViewRoster
 - (void)outlineViewSelectionDidChange:(CPNotification)notification 
 {
    var index    = [_rosterOutlineView selectedRowIndexes];
@@ -215,18 +224,20 @@ logger = nil;
    
    if ([item type] == "group")
    {
-       [rightView setDocumentView:nil];
+       //[rightView setDocumentView:nil];
+       [self loadVirtualMachineControlPanelForItem:item];
        return
    }
 
    var vCard    = [item vCard];
  
-   
+
+   // TODO firstChild is stupid. change me.
    if (vCard && ($(vCard.firstChild).text() == "hypervisor"))
    {
        [self loadHypervisorControlPanelForItem:item];
    }
-   else
+   else //if (vCard && ($(vCard.firstChild).text() == "virtualmachine"))
    {
        [rightView setDocumentView:nil];
    }
