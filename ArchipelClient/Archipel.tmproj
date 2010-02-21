@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>StropheCappuccino/TNStropheRoster.j</string>
+	<string>Jakefile</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,6 +13,8 @@
 			<string>Archipel</string>
 			<key>regexFolderFilter</key>
 			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+			<key>selected</key>
+			<true/>
 			<key>sourceDirectory</key>
 			<string></string>
 		</dict>
@@ -26,14 +28,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>42</integer>
 				<key>line</key>
-				<integer>224</integer>
+				<integer>131</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>198</integer>
+			<integer>114</integer>
 		</dict>
 		<key>Archipel.doxygen</key>
 		<dict>
@@ -48,66 +50,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
-		</dict>
-		<key>Frameworks/CommonJS/cappuccino/Frameworks/Debug/Foundation/ObjJ.environment/Foundation.sj</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>4744</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>4703</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>17</integer>
-				<key>line</key>
-				<integer>4744</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>28</integer>
-				<key>line</key>
-				<integer>4744</integer>
-			</dict>
-		</dict>
-		<key>Frameworks/CommonJS/cappuccino/Frameworks/Foundation/ObjJ.environment/Foundation.sj</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>4174</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>4152</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>3</integer>
-				<key>line</key>
-				<integer>4174</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>14</integer>
-				<key>line</key>
-				<integer>4174</integer>
-			</dict>
 		</dict>
 		<key>Info.plist</key>
 		<dict>
@@ -138,6 +80,20 @@
 				<key>line</key>
 				<integer>7</integer>
 			</dict>
+		</dict>
+		<key>Jakefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>11</integer>
+				<key>line</key>
+				<integer>2</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>14</integer>
 		</dict>
 		<key>Project.atlasproj</key>
 		<dict>
@@ -251,14 +207,100 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>StropheCappuccino/AUTHORS</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>4</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>StropheCappuccino/LICENCE</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>550</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>429</integer>
+		</dict>
+		<key>StropheCappuccino/TNStrophe.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>17</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>StropheCappuccino/TNStropheConnection.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>142</integer>
+				<integer>20</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>70</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>27</integer>
+				<key>line</key>
+				<integer>20</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>20</integer>
+			</dict>
+		</dict>
+		<key>StropheCappuccino/TNStropheContact.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>76</integer>
+				<key>line</key>
+				<integer>180</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>StropheCappuccino/TNStropheGroup.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>20</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -272,12 +314,12 @@
 				<key>column</key>
 				<integer>1</integer>
 				<key>line</key>
-				<integer>71</integer>
+				<integer>207</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>30</integer>
+			<integer>0</integer>
 		</dict>
 		<key>StropheCappuccino/TNStropheStanza.j</key>
 		<dict>
@@ -286,7 +328,7 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>31</integer>
+				<integer>20</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -298,30 +340,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>56</integer>
+				<integer>31</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>16</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>6</integer>
-				<key>line</key>
-				<integer>39</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>1</integer>
-				<key>line</key>
-				<integer>56</integer>
-			</dict>
 		</dict>
 		<key>TNAlertRemoveContact.j</key>
 		<dict>
@@ -342,9 +368,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>86</integer>
+				<integer>101</integer>
 				<key>line</key>
-				<integer>49</integer>
+				<integer>40</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
@@ -357,14 +383,14 @@
 				<key>column</key>
 				<integer>77</integer>
 				<key>line</key>
-				<integer>49</integer>
+				<integer>40</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>102</integer>
+				<integer>101</integer>
 				<key>line</key>
-				<integer>49</integer>
+				<integer>40</integer>
 			</dict>
 		</dict>
 		<key>TNOutlineTableColumn.j</key>
@@ -386,14 +412,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>113</integer>
+				<integer>125</integer>
 				<key>line</key>
 				<integer>61</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>64</integer>
+			<integer>58</integer>
 		</dict>
 		<key>TNToolbar.j</key>
 		<dict>
@@ -409,19 +435,33 @@
 			<key>firstVisibleLine</key>
 			<integer>68</integer>
 		</dict>
-		<key>TNViewHypervisorControl.j</key>
+		<key>TNViewEntityController.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>59</integer>
+				<integer>40</integer>
 				<key>line</key>
-				<integer>42</integer>
+				<integer>21</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>21</integer>
+			<integer>0</integer>
+		</dict>
+		<key>TNViewHypervisorController.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>42</integer>
+				<key>line</key>
+				<integer>35</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>17</integer>
 		</dict>
 		<key>TNViewLog.j</key>
 		<dict>
@@ -442,28 +482,58 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>1</integer>
+				<integer>29</integer>
 				<key>line</key>
-				<integer>130</integer>
+				<integer>33</integer>
+			</dict>
+			<key>columnSelection</key>
+			<false/>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>12</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>28</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>33</integer>
+				<key>line</key>
+				<integer>33</integer>
+			</dict>
+		</dict>
+		<key>TNViewVirtualMachineController.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>24</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>95</integer>
+			<integer>0</integer>
 		</dict>
 		<key>TNWindowAddContact.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>59</integer>
+				<integer>53</integer>
 				<key>line</key>
-				<integer>27</integer>
+				<integer>55</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>19</integer>
+			<integer>30</integer>
 		</dict>
 		<key>TNWindowAddGroup.j</key>
 		<dict>
@@ -484,14 +554,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>55</integer>
+				<integer>40</integer>
 				<key>line</key>
-				<integer>36</integer>
+				<integer>27</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>10</integer>
+			<integer>5</integer>
 		</dict>
 		<key>TNWindowRosterEdition.j</key>
 		<dict>
@@ -568,6 +638,7 @@
 	<array>
 		<string>AppController.j</string>
 		<string>Archipel.doxygen</string>
+		<string>Jakefile</string>
 		<string>TNOutlineViewRoster.j</string>
 		<string>TNToolbar.j</string>
 		<string>TNOutlineTableColumn.j</string>
@@ -581,7 +652,9 @@
 		<string>TNDatasourceRoster.j</string>
 		<string>TNViewLog.j</string>
 		<string>TNAlertRemoveContact.j</string>
-		<string>TNViewHypervisorControl.j</string>
+		<string>TNViewHypervisorController.j</string>
+		<string>TNViewVirtualMachineController.j</string>
+		<string>TNViewEntityController.j</string>
 		<string>TNWindowRosterEdition.j</string>
 		<string>TNWindowConnection.j</string>
 		<string>TNWindowAddContact.j</string>
@@ -591,18 +664,21 @@
 		<string>Resources/Strophe/plugins/strophe.pubsub.js</string>
 		<string>TNAlertPresenceSubscription.j</string>
 		<string>TNViewProperties.j</string>
+		<string>StropheCappuccino/TNStropheGroup.j</string>
+		<string>StropheCappuccino/TNStropheContact.j</string>
 		<string>README.txt</string>
 		<string>StropheCappuccino/TNStropheRoster.j</string>
+		<string>StropheCappuccino/TNStrophe.j</string>
+		<string>StropheCappuccino/AUTHORS</string>
+		<string>StropheCappuccino/LICENCE</string>
 		<string>Resources/Strophe/strophe.min.js</string>
 		<string>Resources/Strophe/plugins/strophe.flxhr.min.js</string>
 		<string>Resources/Strophe/plugins/strophe.flxhr.js</string>
 		<string>Resources/Strophe/strophe.js</string>
-		<string>Frameworks/CommonJS/cappuccino/Frameworks/Debug/Foundation/ObjJ.environment/Foundation.sj</string>
-		<string>Frameworks/CommonJS/cappuccino/Frameworks/Foundation/ObjJ.environment/Foundation.sj</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{300, 55}, {1048, 823}}</string>
+	<string>{{316, 55}, {1048, 823}}</string>
 </dict>
 </plist>

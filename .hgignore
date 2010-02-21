@@ -3,3 +3,4 @@ syntax: glob
 *~
 ArchipelClient/Frameworks
 ArchipelClient/Build
+ArchipelClient/Documentation
