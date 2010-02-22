@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <AppKit/CPOutlineView.j>
 
 
 @implementation TNOutlineTableColumnLabel  : CPTableColumn 
@@ -43,13 +42,9 @@
     	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
     	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
-    	//[_dataViewForRoot setTextShadowColor:[CPColor whiteColor]];
-    	//[_dataViewForRoot setTextShadowOffset:CGSizeMake(0.4, 0.4)];
-        //[_dataViewForRoot setBackgroundColor:[CPColor whiteColor]];
-        
+    
     	_dataViewForOther = [[CPTextField alloc] init];
-    	//[_dataViewForOther setAutoresizingMask: CPViewWidthSizable];
-    	//[_dataViewForOther setBackgroundColor:[CPColor whiteColor]];
+    	[_dataViewForOther setAutoresizingMask: CPViewWidthSizable];
     }
 	
     return self;
@@ -98,14 +93,13 @@
 
     if (itemLevel == 0)
     {
-        return [[CPTextField alloc] initWithFrame:CGRectMake(0,0, 16, 16)];
+        return [[CPTextField alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
     }
     else
     {
-        var imageView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0, 16, 16)];
-        //[imageView setAutoresizingMask: CPViewWidthSizable | CPViewMaxXMargin ];
+        var imageView = [[CPImageView alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
+        [imageView setAutoresizingMask: CPViewWidthSizable];
         [imageView setImageScaling:CPScaleProportionally];
-        //[imageView setBackgroundColor:[CPColor blueColor]];
         return imageView;
     }
 }
