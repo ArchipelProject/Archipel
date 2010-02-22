@@ -40,7 +40,8 @@
     	[self setHeaderView:null];
     	[self setCornerView:null];
     	[self setIndentationPerLevel:10];
-
+        [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+        
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
         //[columnLabel setMinWidth:170];
         [columnLabel setResizingMask:CPTableColumnAutoresizingMask];

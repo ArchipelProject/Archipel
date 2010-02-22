@@ -22,7 +22,7 @@ trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc       = @"alloc";
 trinityTypeHypervisorControlFree        = @"free";
 trinityTypeHypervisorControlRosterVM    = @"rostervm";
-
+trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 @implementation TNMenuItem: CPMenuItem
 {
@@ -38,15 +38,39 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     @outlet CPButton        buttonCreateVM      @accessors;
     @outlet CPPopUpButton   popupDeleteMachine  @accessors;
     @outlet CPButton        buttonDeleteVM      @accessors;
+    @outlet CPTextField     healthCPUUsage      @accessors;
+    @outlet CPTextField     healthDiskUsage     @accessors;
+    @outlet CPTextField     healthMemUsage      @accessors;
+    @outlet CPTextField     healthLoad          @accessors;
+    @outlet CPTextField     healthUptime        @accessors;
+    @outlet CPTextField     healthInfo          @accessors;
+    
+    CPTimer _timer;
 }
 
 - (void)initialize
 {   
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+    
+    if (_timer)
+        [_timer invalidate];
+    
     [[self popupDeleteMachine] removeAllItems];
     [[self mainTitle] setStringValue:[[self contact] nickname]];
     [[self jid] setStringValue:[[self contact] jid]];
     
     [self getHypervisorRoster];
+    [self getHypervisorHealth:nil];
+    _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
+}
+
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self contact])
+    {
+       [[self mainTitle] setStringValue:[[self contact] nickname]] 
+    }
 }
 
 - (void)getHypervisorRoster
@@ -69,10 +93,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     var i;
     
     [[self popupDeleteMachine] removeAllItems];
-    
-    @each (var anItem in queryItems)
+
+    for (i = 0; i < queryItems.length; i++)
     {
-        var jid = $(anItem).text();
+        var jid = $(queryItems[i]).text();
+    
         var entry = [[self roster] getContactFromJID:jid];
         if (entry) 
         {
@@ -86,24 +111,51 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
             }
         }
     }
-    // for (i = 0; i < queryItems.length; i++)
-    // {
-    //     var jid = $(queryItems[i]).text();
-    // 
-    //     var entry = [[self roster] getContactFromJID:jid];
-    //     if (entry) 
-    //     {
-    //         if ($([entry vCard].firstChild).text() == "virtualmachine")
-    //         {
-    //             var name = [entry nickname] + " (" + jid +")";
-    //             var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:@""]
-    //             [item setImage:[entry statusIcon]];
-    //             [item setStringValue:jid];
-    //             [[self popupDeleteMachine] addItem:item];
-    //         }
-    //     }
-    // }
 }
+
+- (void)getHypervisorHealth:(CPTimer)aTimer
+{
+    if (![self superview])
+    {
+        console.log("timer invalidated");
+        [_timer invalidate];
+        return;
+    }
+    var uid = [[[self contact] connection] getUniqueId];
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlHealth, "to": [[self contact] fullJID], "id": uid}];
+    var params;
+    
+    [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
+    
+    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
+    
+    [[[self contact] connection] send:[rosterStanza stanza]];
+}
+
+- (void)didReceiveHypervisorHealth:(id)aStanza 
+{
+    console.log(aStanza);
+    var memNode = aStanza.getElementsByTagName("memory")[0];
+    [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
+    
+    var diskNode = aStanza.getElementsByTagName("disk")[0];
+    [[self healthDiskUsage] setStringValue:diskNode.getAttribute("used-percentage")];
+    
+    var loadNode = aStanza.getElementsByTagName("load")[0];
+    [[self healthLoad] setStringValue:loadNode.getAttribute("five")];
+    
+    var uptimeNode = aStanza.getElementsByTagName("uptime")[0];
+    [[self healthUptime] setStringValue:uptimeNode.getAttribute("up")];
+    
+    var cpuNode = aStanza.getElementsByTagName("cpu")[0];
+    var cpuFree = 100 - parseInt(cpuNode.getAttribute("id"));
+    [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
+    
+    var infoNode = aStanza.getElementsByTagName("uname")[0];
+    [[self healthInfo] setStringValue:infoNode.getAttribute("os") + " " + infoNode.getAttribute("kname")];
+}
+
 
 //actions
 - (IBAction) addVirtualMachine:(id)sender

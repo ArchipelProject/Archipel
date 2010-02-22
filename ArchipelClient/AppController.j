@@ -136,9 +136,9 @@
     [_currentRightViewContent setFrame:frame];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
     [_currentRightViewContent setContact:item andRoster:_mainRoster];
-    [_currentRightViewContent initialize];
-    
     [_rightScrollView setDocumentView:_currentRightViewContent];
+    
+    [_currentRightViewContent initialize];
 }
 
 - (void)loadVirtualMachineControlPanelForItem:(TNStropheContact)item
@@ -192,12 +192,19 @@
 {
     if (![[TNViewLog sharedLogger] superview])
     {
+        [sender setLabel:@"Go back"];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/logo_archipel.png" size:CPSizeMake(32,32)]];
         var bounds = [[theWindow contentView] bounds];
         [[TNViewLog sharedLogger] setFrame:bounds];
         [[theWindow contentView] addSubview:[TNViewLog sharedLogger]];
     }       
     else
+    {
+        [sender setLabel:@"View log"];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/log.png" size:CPSizeMake(32,32)]];
         [[TNViewLog sharedLogger] removeFromSuperview];
+    }
+        
 }
 
 - (IBAction)toolbarItemClearLogClick:(id)sender
@@ -252,8 +259,7 @@
    
    if ([item type] == "group")
    {
-       //[rightView setDocumentView:nil];
-       [self loadVirtualMachineControlPanelForItem:item];
+       [_rightScrollView setDocumentView:nil];
        return
    }
 
@@ -265,7 +271,11 @@
    {
        [self loadHypervisorControlPanelForItem:item];
    }
-   else //if (vCard && ($(vCard.firstChild).text() == "virtualmachine"))
+   else if (vCard && ($(vCard.firstChild).text() == "virtualmachine"))
+   {
+       [self loadVirtualMachineControlPanelForItem:item];
+   }
+   else
    {
        [_rightScrollView setDocumentView:nil];
    }

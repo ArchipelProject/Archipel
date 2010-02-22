@@ -9,6 +9,7 @@ import sys
 import socket
 import sqlite3
 import datetime
+import commands
 from threading import Thread
 from utils import *
 from trinitybasic import *
@@ -258,7 +259,40 @@ class TrinityHypervisor(TrinityBase):
             nodes.append(n)
         reply.setQueryPayload(nodes)
         return reply
+
+     
+    def __healthinfo(self, iq):
+        # TODO : add some ACL here later
+        nodes = []
         
+        vmstat = commands.getoutput("vmstat 1 2").split("\n")[3].split();
+        
+        mem_free_node = xmpp.Node("memory", attrs={"free" : str(int(vmstat[3]) / 1024), "swapped": str(int(vmstat[2]) / 1024)} );
+        nodes.append(mem_free_node)
+        
+        cpu_node = xmpp.Node("cpu", attrs={"us" : vmstat[12], "sy": vmstat[13], "id": vmstat[14], "wa": vmstat[15], "st": vmstat[16]});
+        nodes.append(cpu_node)
+        
+        
+        disk_free = commands.getoutput("df -h --total | grep total").split();
+        disk_free_node = xmpp.Node("disk", attrs={"total" : disk_free[1], "used": disk_free[2], "free": disk_free[3], "used-percentage": disk_free[4]});
+        nodes.append(disk_free_node)
+        
+        load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
+        load_average_node = xmpp.Node("load", attrs={"one" : load_average[0], "five": load_average[1], "fifteen": load_average[2]});
+        nodes.append(load_average_node)
+        
+        uptime = commands.getoutput("uptime").split("up")[1].split(",")[0]
+        uptime_node = xmpp.Node("uptime", attrs={"up" : uptime});
+        nodes.append(uptime_node)
+        
+        uname = commands.getoutput("uname -rsmo").split();
+        uname_node = xmpp.Node("uname", attrs={"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]});
+        nodes.append(uname_node)
+                
+        reply = iq.buildReply('success')    
+        reply.setQueryPayload(nodes)
+        return reply  
     
     ######################################################################################################
     ### XMPP Processing
@@ -289,6 +323,11 @@ class TrinityHypervisor(TrinityBase):
         
         if iq.getType() == "rostervm":
             reply = self.__send_roster_virtualmachine(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if iq.getType() == "healthinfo":
+            reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
