@@ -43,7 +43,7 @@
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
         
         [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
         
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
@@ -72,6 +72,10 @@
 - (void)updateOutlineView:(CPNotification)aNotification 
 {
     [[self outlineView] reloadData];
+    
+    var index = [[self outlineView] rowForItem:[aNotification object]];
+    var set = [CPIndexSet indexSetWithIndex:index];
+    [[self outlineView] selectRowIndexes:set byExtendingSelection:NO];
 }
 
 - (void)updateOutlineViewItem:(CPNotification)aNotification

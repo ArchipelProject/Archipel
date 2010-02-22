@@ -134,24 +134,27 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
 {
-    var memNode = aStanza.getElementsByTagName("memory")[0];
-    [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
-    
-    var diskNode = aStanza.getElementsByTagName("disk")[0];
-    [[self healthDiskUsage] setStringValue:diskNode.getAttribute("used-percentage")];
-    
-    var loadNode = aStanza.getElementsByTagName("load")[0];
-    [[self healthLoad] setStringValue:loadNode.getAttribute("five")];
-    
-    var uptimeNode = aStanza.getElementsByTagName("uptime")[0];
-    [[self healthUptime] setStringValue:uptimeNode.getAttribute("up")];
-    
-    var cpuNode = aStanza.getElementsByTagName("cpu")[0];
-    var cpuFree = 100 - parseInt(cpuNode.getAttribute("id"));
-    [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
-    
-    var infoNode = aStanza.getElementsByTagName("uname")[0];
-    [[self healthInfo] setStringValue:infoNode.getAttribute("os") + " " + infoNode.getAttribute("kname")];
+    if (aStanza.getElementsByTagName("query")[0].getAttribute("result") == @"success")
+    {
+        var memNode = aStanza.getElementsByTagName("memory")[0];
+        [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
+
+        var diskNode = aStanza.getElementsByTagName("disk")[0];
+        [[self healthDiskUsage] setStringValue:diskNode.getAttribute("used-percentage")];
+
+        var loadNode = aStanza.getElementsByTagName("load")[0];
+        [[self healthLoad] setStringValue:loadNode.getAttribute("five")];
+
+        var uptimeNode = aStanza.getElementsByTagName("uptime")[0];
+        [[self healthUptime] setStringValue:uptimeNode.getAttribute("up")];
+
+        var cpuNode = aStanza.getElementsByTagName("cpu")[0];
+        var cpuFree = 100 - parseInt(cpuNode.getAttribute("id"));
+        [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
+
+        var infoNode = aStanza.getElementsByTagName("uname")[0];
+        [[self healthInfo] setStringValue:infoNode.getAttribute("os") + " " + infoNode.getAttribute("kname")];
+    }
 }
 
 
