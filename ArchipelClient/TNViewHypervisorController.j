@@ -31,6 +31,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 @end
 
 
+
 @implementation TNViewHypervisorController: TNViewEntityController 
 {
     @outlet CPTextField     jid                 @accessors;
@@ -63,9 +64,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 - (void)initialize
 {   
     var frame = [[[self superview] documentView] bounds];
-    //frame.size.height = 1024;
-    
-    CPTabViewBezelBorderBackgroundColor = [CPColor whiteColor];
     
     tabView = [[CPTabView alloc] initWithFrame:frame];
     [tabView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -87,7 +85,9 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
     [tabView addTabViewItem:mainViewItem];
     [tabView addTabViewItem:statViewItem];
-    
+    [tabView addTabViewItem:statViewItem];
+    [tabView addTabViewItem:statViewItem];
+    [tabView addTabViewItem:statViewItem];
     [self addSubview:tabView];
     
     
@@ -242,8 +242,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         [[self popupDeleteMachine] removeItemAtIndex:index];
     }
 }
-
-
 @end
+
+
 
 
