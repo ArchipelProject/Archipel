@@ -35,29 +35,26 @@
     if (self = [super initWithFrame:aFrame])
     {
      	[self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    	[self setFrameOrigin:CGPointMake(5,5)];
+    	[self setFrameOrigin:CGPointMake(5, 5)];
+    	
     	[self setRowHeight:20];
-    	[self setHeaderView:null];
-    	[self setCornerView:null];
+    	[self setHeaderView:nil];
+    	[self setCornerView:nil];
     	[self setIndentationPerLevel:10];
+    	[self setAllowsColumnReordering:YES];
+        [self setAllowsColumnResizing:YES];
+        [self setAllowsColumnSelection:YES];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
-        //[columnLabel setMinWidth:170];
         [columnLabel setResizingMask:CPTableColumnAutoresizingMask];
         [self addTableColumn:columnLabel];  
 
         var columnStatus = [[TNOutlineTableColumnStatus alloc] initWithIdentifier:"statusIcon" outlineView:self];
-        //[columnStatus setMaxWidth:16];
-        //[columnStatus setMinWidth:16];
         [columnStatus setResizingMask: CPTableColumnAutoresizingMask];
         [self addTableColumn:columnStatus];
 
     	[self setOutlineTableColumn:columnLabel];
-        
-        [self setAllowsColumnReordering:YES];
-        [self setAllowsColumnResizing:YES];
-        [self setAllowsColumnSelection:YES];
         
     	var center = [CPNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   

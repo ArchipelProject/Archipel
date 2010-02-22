@@ -45,11 +45,53 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     @outlet CPTextField     healthUptime        @accessors;
     @outlet CPTextField     healthInfo          @accessors;
     
+    @outlet CPView          mainView            @accessors;
+    @outlet CPView          statView            @accessors;
+    
+    CPTabView       tabView             @accessors;
+    CPTabViewItem   mainViewItem        @accessors;
+    CPTabViewItem   statViewItem        @accessors;
+    
     CPTimer _timer;
+}
+
+- (void)awakeFromCib
+{
+    
 }
 
 - (void)initialize
 {   
+    var frame = [[[self superview] documentView] bounds];
+    //frame.size.height = 1024;
+    
+    CPTabViewBezelBorderBackgroundColor = [CPColor whiteColor];
+    
+    tabView = [[CPTabView alloc] initWithFrame:frame];
+    [tabView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    //[tabView setTabViewType: | CPNoTabsBezelBorder];
+    
+    [[self mainView] setFrame:frame];
+    [[self mainView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    
+    
+    mainViewItem = [[CPTabViewItem alloc] initWithIdentifier:@"main"];
+    [mainViewItem setLabel:@"Main"];
+    [mainViewItem setView:[self mainView]];
+    
+    statViewItem = [[CPTabViewItem alloc] initWithIdentifier:@"stats"];
+    [statViewItem setLabel:@"Statistics"];
+    [statViewItem setView:[self statView]];
+    
+
+
+    [tabView addTabViewItem:mainViewItem];
+    [tabView addTabViewItem:statViewItem];
+    
+    [self addSubview:tabView];
+    
+    
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
     
