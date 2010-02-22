@@ -117,7 +117,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 {
     if (![self superview])
     {
-        console.log("timer invalidated");
         [_timer invalidate];
         return;
     }
@@ -135,7 +134,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
 {
-    console.log(aStanza);
     var memNode = aStanza.getElementsByTagName("memory")[0];
     [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
     
