@@ -45,48 +45,50 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 
 -(id)initWithTarget:(id)aTarget
 {
+    var bundle = [CPBundle bundleForClass:self];
+    
     if (self = [super init])
     {
         [self setItemLogout:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemLogout]];
         [[self itemLogout] setLabel:@"Log out"];
-        [[self itemLogout] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/logout.png" size:CPSizeMake(32,32)]];
+        [[self itemLogout] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logout.png"] size:CPSizeMake(32,32)]];
         [[self itemLogout] setTarget:aTarget];
         [[self itemLogout] setAction:@selector(toolbarItemLogoutClick:)];
 
         [self setItemAddJid:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemAddJid]];
         [[self itemAddJid] setLabel:@"Add JID"];
-        [[self itemAddJid] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/add.png" size:CPSizeMake(32,32)]];
+        [[self itemAddJid] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"add.png"] size:CPSizeMake(32,32)]];
         [[self itemAddJid] setTarget:aTarget];
         [[self itemAddJid] setAction:@selector(toolbarItemAddContactClick:)];
 
         [self setItemDeleteJid:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemDeleteJid]];
         [[self itemDeleteJid] setLabel:@"Delete JID"];
-        [[self itemDeleteJid] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/delete.png" size:CPSizeMake(32,32)]];
+        [[self itemDeleteJid] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"delete.png"] size:CPSizeMake(32,32)]];
         [[self itemDeleteJid] setTarget:aTarget];
         [[self itemDeleteJid] setAction:@selector(toolbarItemDeleteContactClick:)];
 
         [self setItemAddGroup:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemAddGroup]];
         [[self itemAddGroup] setLabel:@"Add Group"];
-        [[self itemAddGroup] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/groupAdd.png" size:CPSizeMake(32,32)]];
+        [[self itemAddGroup] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groupAdd.png"] size:CPSizeMake(32,32)]];
         [[self itemAddGroup] setTarget:aTarget];
         [[self itemAddGroup] setAction:@selector(toolbarItemAddGroupClick:)];
 
         [self setItemDeleteGroup:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemDeleteGroup]];
         [[self itemDeleteGroup] setLabel:@"Delete Group"];
-        [[self itemDeleteGroup] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/groupDelete.png" size:CPSizeMake(32,32)]];
+        [[self itemDeleteGroup] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groupDelete.png"] size:CPSizeMake(32,32)]];
         //[[self itemDeleteGroup] setTarget:aTarget];
         //[[self itemDeleteGroup] setAction:@selector(toolbarItemDeleteClick:)];
         
         
         [self setItemViewLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemViewLog]];
         [[self itemViewLog] setLabel:@"View log"];
-        [[self itemViewLog] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/log.png" size:CPSizeMake(32,32)]];
+        [[self itemViewLog] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
         [[self itemViewLog] setTarget:aTarget];
         [[self itemViewLog] setAction:@selector(toolbarItemViewLogClick:)];
         
         [self setItemClearLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemClearLog]];
         [[self itemClearLog] setLabel:@"Clear log"];
-        [[self itemClearLog] setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/clearlog.png" size:CPSizeMake(32,32)]];
+        [[self itemClearLog] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"clearlog.png"] size:CPSizeMake(32,32)]];
         [[self itemClearLog] setTarget:aTarget];
         [[self itemClearLog] setAction:@selector(toolbarItemClearLogClick:)];
         

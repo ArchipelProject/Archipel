@@ -98,7 +98,7 @@
     // right view
     [[self rightView] setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [[self rightView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [[self rightView] addSubview:_rightScrollView];
+    //[[self rightView] addSubview:_rightScrollView];
     
     
     //connection window
@@ -113,11 +113,14 @@
     [[self leftSplitView] setPosition:[[self leftSplitView] bounds].size.height ofDividerAtIndex:0];
     
     // filter view. it is unused for now.
-    [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/gradientGray.png"]]];
+    var bundle = [CPBundle bundleForClass:self];
+    [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
     
     
     // module view :
-    _moduleView = [[TNViewEntityController alloc] initWithFrame:CGRectMake(0, 0, 100, 1000)];
+    _moduleView = [[TNViewEntityController alloc] initWithFrame:[[self rightView] bounds]];
+    [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_moduleView setBackgroundColor:[CPColor whiteColor]];
     
     // notifications
     var center = [CPNotificationCenter defaultCenter];
@@ -129,19 +132,12 @@
 // utilities
 - (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
 {
-    _currentRightViewContent = _moduleView;
-    
     [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
     
-    var frame = [_rightScrollView frame];
-
-    frame.size.height = [_currentRightViewContent frame].size.height;
+    [_moduleView setContact:anItem ofType:aType andRoster:_mainRoster];
     
-    [_currentRightViewContent setFrame:frame];
-    [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
-    [_currentRightViewContent setContact:anItem ofType:aType andRoster:_mainRoster];
-    
-    [_rightScrollView setDocumentView:_moduleView];
+    if ([_moduleView superview] != [self rightView])
+        [[self rightView] addSubview:_moduleView];
 }
 
 
@@ -175,10 +171,12 @@
 
 - (IBAction)toolbarItemViewLogClick:(id)sender
 {
+    var bundle = [CPBundle bundleForClass:self]
+    
     if (![[TNViewLog sharedLogger] superview])
     {
         [sender setLabel:@"Go back"];
-        [sender setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/logo_archipel.png" size:CPSizeMake(32,32)]];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
         var bounds = [[theWindow contentView] bounds];
         [[TNViewLog sharedLogger] setFrame:bounds];
         [[theWindow contentView] addSubview:[TNViewLog sharedLogger]];
@@ -186,7 +184,7 @@
     else
     {
         [sender setLabel:@"View log"];
-        [sender setImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/log.png" size:CPSizeMake(32,32)]];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
         [[TNViewLog sharedLogger] removeFromSuperview];
     }
         

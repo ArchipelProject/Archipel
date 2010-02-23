@@ -110,9 +110,23 @@
     
     var theViewController = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
     
-    [[self loadedModulesView] setObject:[theViewController view] forKey:bundleName];
     
-    [self addItemWithLabel:bundleName moduleView:[theViewController view]];
+    var scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
+	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+	[scrollView setAutohidesScrollers:YES];
+	
+	[scrollView setBackgroundColor:[CPColor whiteColor]];
+	
+	var frame = [scrollView bounds];
+	frame.size.height = [[theViewController view] frame].size.height;
+	
+	[[theViewController view] setFrame:frame];
+	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
+	[scrollView setDocumentView:[theViewController view]];
+	
+    [self addItemWithLabel:bundleName moduleView:scrollView];
+    
+    [[self loadedModulesView] setObject:scrollView forKey:bundleName];
     
 }
 
@@ -121,12 +135,13 @@
     console.log("initialized with " + aLabel + " and view " + aModuleView);
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
     [newViewItem setLabel:aLabel];
+	
     [newViewItem setView:aModuleView];
     
     [self addTabViewItem:newViewItem];
     console.log("item added " + [newViewItem identifier] + ". now tabview has " + [self numberOfTabViewItems]);
     
-    [aModuleView initializeWithContact:[self contact] andRoster:[self roster]];
+    [[aModuleView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 
 - (void)removeAllTabs
@@ -177,7 +192,7 @@
     if (_tabViewType == CPTopTabsBezelBorder)
     {
         var labelsViewHeight = [_CPTabLabelsView height],
-            auxiliaryViewHeight = _auxiliaryView ? CGRectGetHeight([_auxiliaryView frame]) : 5.0,
+            auxiliaryViewHeight = _auxiliaryView ? CGRectGetHeight([_auxiliaryView frame]) : 0.0,
             separatorViewHeight = 0.0;
 
         contentRect.origin.y += labelsViewHeight + auxiliaryViewHeight + separatorViewHeight;
@@ -186,12 +201,14 @@
 
     return contentRect;
 }
+
 @end
 
 @implementation _CPTabLabelsView (MyLabelView)
 {
     
 }
+
 - (id)initWithFrame:(CGRect)aFrame
 {
     self = [super initWithFrame:aFrame];
@@ -199,31 +216,57 @@
     if (self)
     {
         _tabLabels = [];
+        var bundle = [CPBundle mainBundle];
         
-        [self setBackgroundColor:[CPColor colorWithHexString:@"3e4a5e"]];
+        [self setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"/CPiTunesTabView/tabViewLabelBackground.png"]]]]
 
         [self setFrameSize:CGSizeMake(CGRectGetWidth(aFrame), 26.0)];
     }
     
     return self;
 }
-// - (void)layoutSubviews
-// {
-//     var index = 0,
-//         count = _tabLabels.length,
-//         width = 150.0,
-//         x = 15;
-//     
-//     for (; index < count; ++index)
-//     {
-//         var label = _tabLabels[index],
-//             frame = _CGRectMake(x, 8.0, width, 18.0);
-//         
-//         [label setFrame:frame];
-//         
-//         x = _CGRectGetMaxX(frame);
-//     }
-// }
+- (void)layoutSubviews
+{
+    var index = 0,
+        count = _tabLabels.length,
+        width = 150.0,
+        x = 15;
+    
+    for (; index < count; ++index)
+    {
+        var label = _tabLabels[index],
+            frame = CGRectMake(x, 8.0, width, 58.0);
+        
+        [label setFrame:frame];
+        x = CGRectGetMaxX(frame);
+    }
+}
+@end
+
+@implementation _CPTabLabel (myTabLabel)
+{
+}
+
+- (void)setTabState:(CPTabState)aTabState
+{
+    var bundle = [CPBundle mainBundle];
+    
+    _CPTabLabelBackgroundColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
+        [
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundLeft.png"] size:CGSizeMake(6.0, 18.0)],
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundCenter.png"] size:CGSizeMake(1.0, 18.0)],
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundRight.png"] size:CGSizeMake(6.0, 18.0)]
+        ] isVertical:NO]];
+    
+    _CPTabLabelSelectedBackgroundColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
+        [
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedLeft.png"] size:CGSizeMake(3.0, 18.0)],
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedCenter.png"] size:CGSizeMake(1.0, 18.0)],
+            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedRight.png"] size:CGSizeMake(3.0, 18.0)]
+        ] isVertical:NO]];
+        
+    [self setBackgroundColor:aTabState == CPSelectedTab ? _CPTabLabelSelectedBackgroundColor :_CPTabLabelBackgroundColor];
+}
 @end
 
 
