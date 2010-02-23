@@ -43,10 +43,13 @@
     var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""]
     [[self newContactGroup] addItem:generalItem];
     
-    @each (var group in groups)
+    //@each (var group in groups)
+    for(var i = 0; i < [groups count]; i++)
     {
-       var item = [[CPMenuItem alloc] initWithTitle:[group name] action:nil keyEquivalent:@""]
-       [[self newContactGroup] addItem:item];
+        var group = [groups objectAtIndex:i];
+        
+        var item = [[CPMenuItem alloc] initWithTitle:[group name] action:nil keyEquivalent:@""]
+        [[self newContactGroup] addItem:item];
     }
     
     [[self newContactGroup] selectItemWithTitle:@"General"];

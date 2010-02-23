@@ -4,28 +4,35 @@
 <dict>
 	<key>Modules</key>
 	<array>
-        <dict>
-            <key>cibname</key>
-            <string>HypervisorSummary</string>
-            <key>label</key>
-            <string>Summary</string>
-            <key>folder</key>
-            <string>HypervisorSummary</string>
+		<dict>
+			<key>cibname</key>
+			<string>HypervisorSummary</string>
+			<key>label</key>
+			<string>Summary</string>
+			<key>folder</key>
+			<string>HypervisorSummary</string>
+			<key>type</key>
+			<array>
+				<string>hypervisor</string>
+			</array>
+			<key>BundleName</key>
+			<string>HypervisorSummary</string>
+		</dict>
+		<dict>
+			<key>cibname</key>
+			<string>SampleModule</string>
+			<key>label</key>
+			<string>Sample</string>
+			<key>folder</key>
+			<string>SampleModule</string>
             <key>type</key>
-            <string>hypervisor</string>
-        </dict>
-        
-        <dict>
-            <key>cibname</key>
-            <string>SampleModule</string>
-            <key>label</key>
-            <string>Sample</string>
-            <key>folder</key>
-            <string>SampleModule</string>
-            <key>type</key>
-            <string>hypervisor</string>
-        </dict>
-        
+			<array>
+			    <string>hypervisor</string>
+				<string>virtualmachine</string>
+			</array>
+			<key>BundleName</key>
+			<string>SampleModule</string>
+		</dict>
 	</array>
 </dict>
 </plist>

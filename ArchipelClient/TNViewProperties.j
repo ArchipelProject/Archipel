@@ -103,8 +103,12 @@
     [[self groupSelector] removeAllItems];
     
     var groups = [roster groups];
-    @each (group in groups)
+    
+    //@each (group in groups)
+    for(var i = 0; i < [groups count]; i++)
     {
+        var group = [groups objectAtIndex:i];
+
         var item = [[CPMenuItem alloc] initWithTitle:[group name] action:@selector(changeGroup:) keyEquivalent:@""]
         [item setTarget:self];
         [[self groupSelector] addItem:item];

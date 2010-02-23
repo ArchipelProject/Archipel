@@ -24,12 +24,11 @@
 
 @implementation TNViewEntityController: CPTabView 
 {
-    CPArray                 tabViews            @accessors;
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
     CPString                moduleType          @accessors;
     CPString                modulesPath         @accessors;
-    CPArray                 loadedBundles       @accessors;
+    CPDictionary            loadedModulesView       @accessors;
     
     id  _plistObject;
     
@@ -39,12 +38,11 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        console.log("inited");
-        [self setTabViews:[[CPArray alloc] init]];
+        //[self setTabViews:[[CPArray alloc] init]];
         [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-        [self setLoadedBundles:[[CPArray alloc] init]];
+        [self setLoadedModulesView:[[CPDictionary alloc] init]];
         
-        [self setModulesPath:@"/Modules/"];
+        [self setModulesPath:@"Modules/"];
     }
     
     return self;
@@ -52,6 +50,8 @@
 
 - (void)setContact:(TNStropheContact)aContact ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
+    [self removeAllTabs];
+        
     [self setContact:aContact];
     [self setRoster:aRoster];
     [self setModuleType:aType];
@@ -77,48 +77,74 @@
 }
 
 - (void)populateTabsFromPlist
-{
-    @each(var module in [_plistObject objectForKey:@"Modules"])
+{   
+    //@each(var module in [_plistObject objectForKey:@"Modules"])
+    for(var i = 0; i < [[_plistObject objectForKey:@"Modules"] count]; i++)
     {
-        var currentModuleType   = [module objectForKey:@"type"];
+        var module = [[_plistObject objectForKey:@"Modules"] objectAtIndex:i];
         
-        if ([self moduleType] == currentModuleType)
+        var currentModuleTypes   = [module objectForKey:@"type"];
+        
+        if ([currentModuleTypes containsObject:[self moduleType]])
         {   
-            var path    = [self modulesPath] + [module objectForKey:@"folder"];
-            var bundle  = [CPBundle bundleWithPath:path]
+            var path        = [self modulesPath] + [module objectForKey:@"folder"];
+            var moduleName  = [module objectForKey:@"BundleName"];
             
-            CPLogConsole(bundle);
-            
-            if (![[self loadedBundles] containsObject:bundle])
+            if (![[[self loadedModulesView] allKeys] containsObject:moduleName])
             {
-                [[self loadedBundles] addObject:[bundle bundlePath]];
+                var bundle  = [CPBundle bundleWithPath:path]
                 [bundle loadWithDelegate:self];
-                console.log("bundle path " + [bundle bundlePath]);
             }
             else
             {
-                console.log("TOTO");
-                [self bundleDidFinishLoading:[[self loadedBundles] objectForKey:path]];
+                var moduleView = [[self loadedModulesView] objectForKey:moduleName];
+                [self addItemWithLabel:moduleName moduleView:moduleView];
             }
-            
-            
         }
     }
 }
 
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {   
-    var theViewController = [[CPViewController alloc] initWithCibName:[aBundle objectForInfoDictionaryKey:@"CPBundleName"] bundle:aBundle];
+    var bundleName = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     
-    CPLogConsole([theViewController view]);
+    var theViewController = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
     
-    var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
-    [newViewItem setLabel:[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
-    [newViewItem setView:[theViewController view]];
+    [[self loadedModulesView] setObject:[theViewController view] forKey:bundleName];
+    
+    [self addItemWithLabel:bundleName moduleView:[theViewController view]];
+    
+}
+
+- (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleView
+{
+    console.log("initialized with " + aLabel + " and view " + aModuleView);
+    var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
+    [newViewItem setLabel:aLabel];
+    [newViewItem setView:aModuleView];
     
     [self addTabViewItem:newViewItem];
+    console.log("item added " + [newViewItem identifier] + ". now tabview has " + [self numberOfTabViewItems]);
     
-    [[theViewController view] initializeWithContact:[self contact] andRoster:[self roster]];
+    [aModuleView initializeWithContact:[self contact] andRoster:[self roster]];
+}
+
+- (void)removeAllTabs
+{
+    console.log([[self tabViewItems] count]);
+    
+    var selectedItem = [self selectedTabViewItem];
+    [[selectedItem view] removeFromSuperview];
+    [self removeTabViewItem:selectedItem];
+    
+    //@each(var aTabViewItem in [self tabViewItems])
+    for(var i = 0; i < [[self tabViewItems] count]; i++)
+    {
+        var aTabViewItem = [[self tabViewItems] objectAtIndex:i];
+        
+        [[aTabViewItem view] removeFromSuperview];
+        [self removeTabViewItem:aTabViewItem];
+    }
 }
 @end
 

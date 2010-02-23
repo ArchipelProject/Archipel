@@ -49,6 +49,7 @@
 	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
     @outlet TNWindowConnection  connectionWindow    @accessors;
     
+    TNViewEntityController      _moduleView;
 	TNDatasourceRoster          _mainRoster;
 	TNOutlineViewRoster		    _rosterOutlineView;
 	TNToolbar		            _hypervisorToolbar;
@@ -114,6 +115,10 @@
     // filter view. it is unused for now.
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:@"Resources/gradientGray.png"]]];
     
+    
+    // module view :
+    _moduleView = [[TNViewEntityController alloc] initWithFrame:CGRectMake(0, 0, 100, 1000)];
+    
     // notifications
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
@@ -124,9 +129,7 @@
 // utilities
 - (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
 {
-    var controller = [[CPViewController alloc] initWithCibName: @"EntityControlView" bundle:[CPBundle mainBundle]];
-    
-    _currentRightViewContent = [controller view];
+    _currentRightViewContent = _moduleView;
     
     [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
     
@@ -137,7 +140,8 @@
     [_currentRightViewContent setFrame:frame];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
     [_currentRightViewContent setContact:anItem ofType:aType andRoster:_mainRoster];
-    [_rightScrollView setDocumentView:_currentRightViewContent];
+    
+    [_rightScrollView setDocumentView:_moduleView];
 }
 
 

@@ -147,8 +147,11 @@
     if (!aFilter)
         return theEntries;
     
-    @each (var entry in theEntries)
+    //@each (var entry in theEntries)
+    for(var i = 0; i < [theEntries count]; i++)
     {
+        var entry = [theEntries objectAtIndex:i];
+        
         if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry]
     }
@@ -164,8 +167,11 @@
     if (!aFilter)
         return theEntries;
     
-    @each (var entry in theEntries)
+    //@each (var entry in theEntries)
+    for(var i = 0; i < [theEntries count]; i++)
     {
+        var entry = [theEntries objectAtIndex:i];
+        
         if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry];
     }
@@ -182,8 +188,11 @@
     if (!aFilter)
         return [self groups];
         
-    @each (var group in theGroups)
+    //@each (var group in theGroups)
+    for(var i = 0; i < [theGroups count]; i++)
     {
+        var group = [theGroups objectAtIndex:i];
+        
         if ([[self getEntriesMatching:aFilter inGroup:[group name]] count] > 0)
             [filteredGroup addObject:group];
     }
