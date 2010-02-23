@@ -21,16 +21,104 @@
 
 @import "StropheCappuccino/TNStrophe.j";
 
-@implementation TNViewEntityController: CPView 
+
+@implementation TNViewEntityController: CPTabView 
 {
+    CPArray                 tabViews            @accessors;
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
+    CPString                moduleType          @accessors;
+    CPString                modulesPath         @accessors;
+    CPArray                 loadedBundles       @accessors;
+    
+    id  _plistObject;
+    
 }
 
-- (void)setContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
+- (void)initWithFrame:(CGRect)aFrame
+{
+    if (self = [super initWithFrame:aFrame])
+    {
+        console.log("inited");
+        [self setTabViews:[[CPArray alloc] init]];
+        [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+        [self setLoadedBundles:[[CPArray alloc] init]];
+        
+        [self setModulesPath:@"/Modules/"];
+    }
+    
+    return self;
+}
+
+- (void)setContact:(TNStropheContact)aContact ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
     [self setContact:aContact];
     [self setRoster:aRoster];
+    [self setModuleType:aType];
+    
+    [self getAssociatedModules];
+}
+
+- (void)getAssociatedModules
+{
+    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
+    var connection = [CPURLConnection connectionWithRequest:request delegate:self];
+    
+    [connection cancel];
+    [connection start];
+}
+
+- (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
+{
+    var cpdata = [CPData dataWithRawString:data]; 
+    _plistObject = [cpdata plistObject];
+    
+    [self populateTabsFromPlist];
+}
+
+- (void)populateTabsFromPlist
+{
+    @each(var module in [_plistObject objectForKey:@"Modules"])
+    {
+        var currentModuleType   = [module objectForKey:@"type"];
+        
+        if ([self moduleType] == currentModuleType)
+        {   
+            var path    = [self modulesPath] + [module objectForKey:@"folder"];
+            var bundle  = [CPBundle bundleWithPath:path]
+            
+            CPLogConsole(bundle);
+            
+            if (![[self loadedBundles] containsObject:bundle])
+            {
+                [[self loadedBundles] addObject:[bundle bundlePath]];
+                [bundle loadWithDelegate:self];
+                console.log("bundle path " + [bundle bundlePath]);
+            }
+            else
+            {
+                console.log("TOTO");
+                [self bundleDidFinishLoading:[[self loadedBundles] objectForKey:path]];
+            }
+            
+            
+        }
+    }
+}
+
+- (void)bundleDidFinishLoading:(CPBundle)aBundle
+{   
+    var theViewController = [[CPViewController alloc] initWithCibName:[aBundle objectForInfoDictionaryKey:@"CPBundleName"] bundle:aBundle];
+    
+    CPLogConsole([theViewController view]);
+    
+    var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [newViewItem setLabel:[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [newViewItem setView:[theViewController view]];
+    
+    [self addTabViewItem:newViewItem];
+    
+    [[theViewController view] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 @end
 
@@ -38,8 +126,7 @@
 
 // thoses categories make CPTabView beatiful.
 @implementation CPTabView (myTabView)
-{
-    
+{   
 }
 
 - (void)_createBezelBorder
@@ -112,3 +199,23 @@
 //     }
 // }
 @end
+
+
+
+
+
+
+
+
+// objj_importFile(path + controllerFile, NO, function()
+// {
+//     var theViewController = [[CPViewController alloc] initWithCibName:path + cibname bundle:nil];
+//     
+//     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:label];
+//     [newViewItem setLabel:label];
+//     [newViewItem setView:[theViewController view]];
+//     
+//     [self addTabViewItem:newViewItem];
+//      
+//     [[theViewController view] initializeWithContact:[self contact] andRoster:[self roster]];
+// });

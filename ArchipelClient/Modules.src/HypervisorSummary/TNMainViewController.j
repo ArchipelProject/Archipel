@@ -16,7 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "TNViewEntityController.j";
+@import <Foundation/Foundation.j>
+@import <AppKit/AppKit.j>
+ 
+@import "../../TNModule.j";
 
 trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc       = @"alloc";
@@ -24,15 +27,8 @@ trinityTypeHypervisorControlFree        = @"free";
 trinityTypeHypervisorControlRosterVM    = @"rostervm";
 trinityTypeHypervisorControlHealth      = @"healthinfo";
 
-@implementation TNMenuItem: CPMenuItem
-{
-    CPString stringValue @accessors;
-}
-@end
 
-
-
-@implementation TNViewHypervisorController: TNViewEntityController 
+@implementation TNMainViewController : TNModule 
 {
     @outlet CPTextField     jid                 @accessors;
     @outlet CPTextField     mainTitle           @accessors;
@@ -45,51 +41,14 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     @outlet CPTextField     healthLoad          @accessors;
     @outlet CPTextField     healthUptime        @accessors;
     @outlet CPTextField     healthInfo          @accessors;
-    
-    @outlet CPView          mainView            @accessors;
-    @outlet CPView          statView            @accessors;
-    
-    CPTabView       tabView             @accessors;
-    CPTabViewItem   mainViewItem        @accessors;
-    CPTabViewItem   statViewItem        @accessors;
-    
+           
     CPTimer _timer;
+    
 }
 
-- (void)awakeFromCib
+- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
 {
-    
-}
-
-- (void)initialize
-{   
-    var frame = [[[self superview] documentView] bounds];
-    
-    tabView = [[CPTabView alloc] initWithFrame:frame];
-    [tabView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    //[tabView setTabViewType: | CPNoTabsBezelBorder];
-    
-    [[self mainView] setFrame:frame];
-    [[self mainView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    
-    
-    mainViewItem = [[CPTabViewItem alloc] initWithIdentifier:@"main"];
-    [mainViewItem setLabel:@"Main"];
-    [mainViewItem setView:[self mainView]];
-    
-    statViewItem = [[CPTabViewItem alloc] initWithIdentifier:@"stats"];
-    [statViewItem setLabel:@"Statistics"];
-    [statViewItem setView:[self statView]];
-    
-
-
-    [tabView addTabViewItem:mainViewItem];
-    [tabView addTabViewItem:statViewItem];
-    [tabView addTabViewItem:statViewItem];
-    [tabView addTabViewItem:statViewItem];
-    [tabView addTabViewItem:statViewItem];
-    [self addSubview:tabView];
-    
+    [super initializeWithContact:aContact andRoster:aRoster]
     
     
     var center = [CPNotificationCenter defaultCenter];
@@ -101,7 +60,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [[self popupDeleteMachine] removeAllItems];
     [[self mainTitle] setStringValue:[[self contact] nickname]];
     [[self jid] setStringValue:[[self contact] jid]];
-    
+
+
     [self getHypervisorRoster];
     [self getHypervisorHealth:nil];
     _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
@@ -176,8 +136,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
 {
-    if (aStanza.getElementsByTagName("query")[0].getAttribute("result") == @"success")
-    {
+    if (aStanza.getAttribute("type") == @"success")
+    {       
         var memNode = aStanza.getElementsByTagName("memory")[0];
         [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
 
@@ -244,6 +204,12 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 }
 @end
 
+
+@implementation TNMenuItem: CPMenuItem
+{
+    CPString stringValue @accessors;
+}
+@end
 
 
 

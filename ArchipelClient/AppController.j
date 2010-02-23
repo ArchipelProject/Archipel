@@ -27,13 +27,13 @@
 @import "TNDatasourceRoster.j"
 @import "TNOutlineViewRoster.j"
 @import "TNToolbar.j"
-@import "TNViewHypervisorController.j"
-@import "TNViewVirtualMachineController.j"
+@import "TNViewEntityController.j"
 @import "TNViewLog.j"
 @import "TNViewProperties.j"
 @import "TNWindowAddContact.j"
 @import "TNWindowAddGroup.j"
 @import "TNWindowConnection.j"
+@import "TNModule.j"
 
 @implementation AppController : CPObject
 {
@@ -122,43 +122,24 @@
 
 
 // utilities
-- (void)loadHypervisorControlPanelForItem:(TNStropheContact)item 
+- (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
 {
-    var controller = [[CPViewController alloc] initWithCibName: @"HypervisorControlView" bundle:[CPBundle mainBundle]];
+    var controller = [[CPViewController alloc] initWithCibName: @"EntityControlView" bundle:[CPBundle mainBundle]];
     
     _currentRightViewContent = [controller view];
     
     [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
+    
     var frame = [_rightScrollView frame];
-    //if (frame.size.height < [_currentRightViewContent frame].size.height)
+
     frame.size.height = [_currentRightViewContent frame].size.height;
     
     [_currentRightViewContent setFrame:frame];
     [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
-    [_currentRightViewContent setContact:item andRoster:_mainRoster];
+    [_currentRightViewContent setContact:anItem ofType:aType andRoster:_mainRoster];
     [_rightScrollView setDocumentView:_currentRightViewContent];
-    
-    [_currentRightViewContent initialize];
 }
 
-- (void)loadVirtualMachineControlPanelForItem:(TNStropheContact)item
-{
-    var controller = [[CPViewController alloc] initWithCibName: @"VirtualMachineControlView" bundle:[CPBundle mainBundle]];
-   
-    _currentRightViewContent = [controller view]; 
-    
-    [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
-    
-    var frame = [_rightScrollView frame];
-    //if (frame.size.height < [_currentRightViewContent frame].size.height)
-    frame.size.height = [_currentRightViewContent frame].size.height;
-        
-    [_currentRightViewContent setFrame:frame];
-    [_currentRightViewContent setAutoresizingMask: CPViewWidthSizable];
-    [_currentRightViewContent setContact:item andRoster:_mainRoster];
-    
-    [_rightScrollView setDocumentView:_currentRightViewContent]
-}
 
 // Toolbar actions
 - (IBAction)toolbarItemLogoutClick:(id)sender 
@@ -264,22 +245,17 @@
    }
 
    var vCard    = [item vCard];
- 
-
-   // TODO firstChild is stupid. change me.
-   if (vCard && ($(vCard.firstChild).text() == "hypervisor"))
+   
+   if (vCard)
    {
-       [self loadHypervisorControlPanelForItem:item];
-   }
-   else if (vCard && ($(vCard.firstChild).text() == "virtualmachine"))
-   {
-       [self loadVirtualMachineControlPanelForItem:item];
+       var itemType = $(vCard.getElementsByTagName("TYPE")[0]).text();
+       [self loadControlPanelForItem:item withType:$(vCard.firstChild).text()];
    }
    else
    {
        [_rightScrollView setDocumentView:nil];
    }
-   
+    
    [[self propertiesView] setEntry:item];
    [[self propertiesView] reload];
 }
