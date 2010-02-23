@@ -32,12 +32,12 @@ app ("Archipel", function(task)
     task.setBuildPath(FILE.join("Build", configuration));
 
     task.setProductName("Archipel");
-    task.setIdentifier("fr.antoinemercadal.Archipel");
+    task.setIdentifier("org.archipelprpoject.ArchipelClient");
     task.setVersion("1.0");
     task.setAuthor("Antoine Mercadal");
     task.setEmail("antoine.mercadal @nospam@ inframonde.eu");
     task.setSummary("Archipel");
-    task.setSources(new FileList("*.j"));
+    task.setSources(new FileList("*.j", "StropheCappuccino/*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setIndexFilePath("index.html");
     task.setInfoPlistPath("Info.plist");
@@ -47,6 +47,7 @@ app ("Archipel", function(task)
     else
         task.setCompilerFlags("-O");
 });
+
 
 task ("documentation", function(task)
 {
