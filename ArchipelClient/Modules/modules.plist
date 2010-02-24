@@ -11,6 +11,8 @@
 			<string>Summary</string>
 			<key>folder</key>
 			<string>HypervisorSummary</string>
+			<key>index</key>
+			<integer>0</integer>
 			<key>type</key>
 			<array>
 				<string>hypervisor</string>
@@ -25,9 +27,10 @@
 			<string>Sample</string>
 			<key>folder</key>
 			<string>SampleModule</string>
-            <key>type</key>
+			<key>index</key>
+			<integer>1</integer>
+			<key>type</key>
 			<array>
-			    <string>hypervisor</string>
 				<string>virtualmachine</string>
 			</array>
 			<key>BundleName</key>

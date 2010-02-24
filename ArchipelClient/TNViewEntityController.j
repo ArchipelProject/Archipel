@@ -20,7 +20,7 @@
 @import <AppKit/AppKit.j>
 
 @import "StropheCappuccino/TNStrophe.j";
-
+@import "TNSplitView.j";
 
 @implementation TNViewEntityController: CPTabView 
 {
@@ -28,9 +28,9 @@
     TNStropheContact        contact             @accessors;
     CPString                moduleType          @accessors;
     CPString                modulesPath         @accessors;
-    CPDictionary            loadedModulesView       @accessors;
+    CPDictionary            loadedModulesScrollViews   @accessors;
     
-    id  _plistObject;
+    id  _modulesPList;
     
 }
 
@@ -38,9 +38,8 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        //[self setTabViews:[[CPArray alloc] init]];
         [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-        [self setLoadedModulesView:[[CPDictionary alloc] init]];
+        [self setLoadedModulesScrollViews:[[CPDictionary alloc] init]];
         
         [self setModulesPath:@"Modules/"];
     }
@@ -61,43 +60,52 @@
 
 - (void)getAssociatedModules
 {
-    var request = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
-    var connection = [CPURLConnection connectionWithRequest:request delegate:self];
+    if (_modulesPList)
+    {
+         [self populateTabsFromPlist];
+         return;
+    }
     
-    [connection cancel];
+    var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
+    var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
+    
+    [connection cancel]; // recomended by Cappuccino, but generates an Aborted Request error in Firefox.
     [connection start];
 }
 
 - (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
 {
     var cpdata = [CPData dataWithRawString:data]; 
-    _plistObject = [cpdata plistObject];
+    
+    _modulesPList = [cpdata plistObject];
     
     [self populateTabsFromPlist];
 }
 
 - (void)populateTabsFromPlist
 {   
-    //@each(var module in [_plistObject objectForKey:@"Modules"])
-    for(var i = 0; i < [[_plistObject objectForKey:@"Modules"] count]; i++)
+    //@each(var module in [_modulesPList objectForKey:@"Modules"])
+    for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
-        var module = [[_plistObject objectForKey:@"Modules"] objectAtIndex:i];
-        
-        var currentModuleTypes   = [module objectForKey:@"type"];
+        var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
+        var currentModuleTypes  = [module objectForKey:@"type"];
         
         if ([currentModuleTypes containsObject:[self moduleType]])
         {   
             var path        = [self modulesPath] + [module objectForKey:@"folder"];
             var moduleName  = [module objectForKey:@"BundleName"];
             
-            if (![[[self loadedModulesView] allKeys] containsObject:moduleName])
+            if (![[[self loadedModulesScrollViews] allKeys] containsObject:moduleName])
             {
-                var bundle  = [CPBundle bundleWithPath:path]
+                var bundle  = [CPBundle bundleWithPath:path];
+                
+                [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:[module objectForKey:@"index"], @"index"]];
                 [bundle loadWithDelegate:self];
             }
             else
             {
-                var moduleView = [[self loadedModulesView] objectForKey:moduleName];
+                var moduleView = [[self loadedModulesScrollViews] objectForKey:moduleName];
+                
                 [self addItemWithLabel:moduleName moduleView:moduleView];
             }
         }
@@ -106,16 +114,15 @@
 
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {   
-    var bundleName = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    
-    var theViewController = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
-    
-    
-    var scrollView = [[CPScrollView alloc] initWithFrame:[self bounds]];
+    var bundleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
+    var theViewController   = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
+    var index               = [[aBundle userInfo] objectForKey:@"index"];
+    var scrollView          = [[CPScrollView alloc] initWithFrame:[self bounds]];
+	
 	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 	[scrollView setAutohidesScrollers:YES];
-	
 	[scrollView setBackgroundColor:[CPColor whiteColor]];
+	
 	
 	var frame = [scrollView bounds];
 	frame.size.height = [[theViewController view] frame].size.height;
@@ -124,32 +131,31 @@
 	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
 	[scrollView setDocumentView:[theViewController view]];
 	
+	
     [self addItemWithLabel:bundleName moduleView:scrollView];
-    
-    [[self loadedModulesView] setObject:scrollView forKey:bundleName];
-    
+    [[self loadedModulesScrollViews] setObject:scrollView forKey:bundleName];
 }
 
-- (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleView
+- (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView
 {
-    console.log("initialized with " + aLabel + " and view " + aModuleView);
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
+
     [newViewItem setLabel:aLabel];
-	
-    [newViewItem setView:aModuleView];
+    [newViewItem setView:aModuleScrollView];
     
+    [[aModuleScrollView documentView] willBeDisplayed];
     [self addTabViewItem:newViewItem];
-    console.log("item added " + [newViewItem identifier] + ". now tabview has " + [self numberOfTabViewItems]);
     
-    [[aModuleView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
+    [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 
 - (void)removeAllTabs
-{
-    console.log([[self tabViewItems] count]);
-    
+{   
     var selectedItem = [self selectedTabViewItem];
+
+    [[[selectedItem view] documentView] willBeUnDisplayed];
     [[selectedItem view] removeFromSuperview];
+    
     [self removeTabViewItem:selectedItem];
     
     //@each(var aTabViewItem in [self tabViewItems])
@@ -157,6 +163,7 @@
     {
         var aTabViewItem = [[self tabViewItems] objectAtIndex:i];
         
+        [[[aTabViewItem view] documentView] willBeUnDisplayed];
         [[aTabViewItem view] removeFromSuperview];
         [self removeTabViewItem:aTabViewItem];
     }
@@ -165,126 +172,18 @@
 
 
 
-// thoses categories make CPTabView beatiful.
-@implementation CPTabView (myTabView)
+// Category to add a userInfo Dict in CPBundle
+@implementation CPBundle (CPBundleWithUserInfo)
 {   
 }
 
-- (void)_createBezelBorder
+- (void)setUserInfo:(CPDictionary)aDict
 {
-    var bounds = [self bounds];
-     bounds.size.width += 7.0;
-     bounds.origin.x -= 7.0;
-     
-    _labelsView = [[_CPTabLabelsView alloc] initWithFrame:CGRectMake(0.0, 0.0, CGRectGetWidth(bounds), 0.0)];
-    
-     [_labelsView setTabView:self];
-     [_labelsView setAutoresizingMask:CPViewWidthSizable];
-    
-     [self addSubview:_labelsView];
-
+    _userInfo = [aDict copy];
 }
 
-- (CGRect)contentRect
+- (CPDictionary)userInfo
 {
-    var contentRect = CGRectMakeCopy([self bounds]);
-    
-    if (_tabViewType == CPTopTabsBezelBorder)
-    {
-        var labelsViewHeight = [_CPTabLabelsView height],
-            auxiliaryViewHeight = _auxiliaryView ? CGRectGetHeight([_auxiliaryView frame]) : 0.0,
-            separatorViewHeight = 0.0;
-
-        contentRect.origin.y += labelsViewHeight + auxiliaryViewHeight + separatorViewHeight;
-        contentRect.size.height -= labelsViewHeight + auxiliaryViewHeight + separatorViewHeight * 2.0;
-    }
-
-    return contentRect;
-}
-
-@end
-
-@implementation _CPTabLabelsView (MyLabelView)
-{
-    
-}
-
-- (id)initWithFrame:(CGRect)aFrame
-{
-    self = [super initWithFrame:aFrame];
-    
-    if (self)
-    {
-        _tabLabels = [];
-        var bundle = [CPBundle mainBundle];
-        
-        [self setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"/CPiTunesTabView/tabViewLabelBackground.png"]]]]
-
-        [self setFrameSize:CGSizeMake(CGRectGetWidth(aFrame), 26.0)];
-    }
-    
-    return self;
-}
-- (void)layoutSubviews
-{
-    var index = 0,
-        count = _tabLabels.length,
-        width = 150.0,
-        x = 15;
-    
-    for (; index < count; ++index)
-    {
-        var label = _tabLabels[index],
-            frame = CGRectMake(x, 8.0, width, 58.0);
-        
-        [label setFrame:frame];
-        x = CGRectGetMaxX(frame);
-    }
+    return _userInfo;
 }
 @end
-
-@implementation _CPTabLabel (myTabLabel)
-{
-}
-
-- (void)setTabState:(CPTabState)aTabState
-{
-    var bundle = [CPBundle mainBundle];
-    
-    _CPTabLabelBackgroundColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-        [
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundLeft.png"] size:CGSizeMake(6.0, 18.0)],
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundCenter.png"] size:CGSizeMake(1.0, 18.0)],
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelBackgroundRight.png"] size:CGSizeMake(6.0, 18.0)]
-        ] isVertical:NO]];
-    
-    _CPTabLabelSelectedBackgroundColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-        [
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedLeft.png"] size:CGSizeMake(3.0, 18.0)],
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedCenter.png"] size:CGSizeMake(1.0, 18.0)],
-            [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/CPiTunesTabLabelSelectedRight.png"] size:CGSizeMake(3.0, 18.0)]
-        ] isVertical:NO]];
-        
-    [self setBackgroundColor:aTabState == CPSelectedTab ? _CPTabLabelSelectedBackgroundColor :_CPTabLabelBackgroundColor];
-}
-@end
-
-
-
-
-
-
-
-
-// objj_importFile(path + controllerFile, NO, function()
-// {
-//     var theViewController = [[CPViewController alloc] initWithCibName:path + cibname bundle:nil];
-//     
-//     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:label];
-//     [newViewItem setLabel:label];
-//     [newViewItem setView:[theViewController view]];
-//     
-//     [self addTabViewItem:newViewItem];
-//      
-//     [[theViewController view] initializeWithContact:[self contact] andRoster:[self roster]];
-// });

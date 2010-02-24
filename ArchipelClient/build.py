@@ -2,7 +2,12 @@
 import os, sys, commands, shutil;
 
 config = "Debug"
-build_paths = [".", "./Modules.src/SampleModule", "./Modules.src/HypervisorSummary"];
+
+if "modules" in sys.argv:
+    build_paths = ["./Modules.src/SampleModule", "./Modules.src/HypervisorSummary"]
+else:
+    build_paths = [".", "./Modules.src/SampleModule", "./Modules.src/HypervisorSummary"];
+
 copy_paths = ["./Modules/SampleModule", "./Modules/HypervisorSummary"];
 
 base_path = commands.getoutput("pwd");
@@ -17,5 +22,6 @@ for path in build_paths:
     os.chdir(base_path);
     
 
-os.chdir("./Build/"+config+"/Archipel/")
-os.system("ln -s ../../../Modules Modules");
+if os.path.isdir("./Build/"+config+"/Archipel/"):
+    os.chdir("./Build/"+config+"/Archipel/")
+    os.system("ln -s ../../../Modules Modules");

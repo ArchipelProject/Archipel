@@ -30,8 +30,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 @implementation TNMainViewController : TNModule 
 {
-    @outlet CPTextField     jid                 @accessors;
-    @outlet CPTextField     mainTitle           @accessors;
+    @outlet CPTextField     fieldJID            @accessors;
+    @outlet CPTextField     fieldName           @accessors;
     @outlet CPButton        buttonCreateVM      @accessors;
     @outlet CPPopUpButton   popupDeleteMachine  @accessors;
     @outlet CPButton        buttonDeleteVM      @accessors;
@@ -46,10 +46,21 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     
 }
 
-- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
+- (void)willBeDisplayed
 {
+    //not interessting.
+}
+
+- (void)willBeUnDisplayed
+{
+    console.log("WILL BE UNDISPLAYED");
+    if (_timer)
+        [_timer invalidate];
+}
+
+- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
+{    
     [super initializeWithContact:aContact andRoster:aRoster]
-    
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
@@ -58,12 +69,13 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         [_timer invalidate];
     
     [[self popupDeleteMachine] removeAllItems];
-    [[self mainTitle] setStringValue:[[self contact] nickname]];
-    [[self jid] setStringValue:[[self contact] jid]];
-
+    [[self fieldName] setStringValue:[[self contact] nickname]];
+    
+    [[self fieldJID] setStringValue:[[self contact] jid]];
 
     [self getHypervisorRoster];
     [self getHypervisorHealth:nil];
+    
     _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
 
@@ -80,12 +92,11 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     var uid = [[[self contact] connection] getUniqueId];
     var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [[self contact] fullJID], "id": uid}];
     var params;
-    
+        
     [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     
     params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
-    
     [[[self contact] connection] send:[rosterStanza stanza]];
 }
 
@@ -95,18 +106,17 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     var i;
     
     [[self popupDeleteMachine] removeAllItems];
-
     for (i = 0; i < queryItems.length; i++)
     {
         var jid = $(queryItems[i]).text();
-    
+        
         var entry = [[self roster] getContactFromJID:jid];
         if (entry) 
         {
             if ($([entry vCard].firstChild).text() == "virtualmachine")
             {
                 var name = [entry nickname] + " (" + jid +")";
-                var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:@""]
+                var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil]
                 [item setImage:[entry statusIcon]];
                 [item setStringValue:jid];
                 [[self popupDeleteMachine] addItem:item];
@@ -136,6 +146,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
 {
+    console.log("hypervisor health stat received");
     if (aStanza.getAttribute("type") == @"success")
     {       
         var memNode = aStanza.getElementsByTagName("memory")[0];

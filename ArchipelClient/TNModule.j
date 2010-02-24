@@ -21,16 +21,28 @@
  
 @import "StropheCappuccino/TNStrophe.j";
 
+TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
+
 @implementation TNModule : CPView
 {
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
 }
 
+- (void)willBeDisplayed
+{
+    [CPException raise:TNExceptionModuleMethodNRequired reason:@"Method willBeDisplayed must be implemented"];
+}
+
 - (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
 {
     [self setContact:aContact];
     [self setRoster:aRoster];
+}
+
+- (void)willBeUndisplayed
+{
+    [CPException raise:TNExceptionModuleMethodNRequired reason:@"Method willBeUndisplayed must be implemented"];
 }
 
 
