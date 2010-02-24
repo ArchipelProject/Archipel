@@ -121,6 +121,7 @@
     _moduleView = [[TNViewEntityController alloc] initWithFrame:[[self rightView] bounds]];
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleView setBackgroundColor:[CPColor whiteColor]];
+    [_moduleView load];
     
     // notifications
     var center = [CPNotificationCenter defaultCenter];

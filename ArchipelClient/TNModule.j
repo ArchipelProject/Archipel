@@ -28,6 +28,10 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
     CPBundle                moduleBundle        @accessors;
+    CPNumber                moduleTabIndex      @accessors;
+    CPString                moduleName          @accessors;
+    CPString                moduleLabel         @accessors;
+    CPArray                 moduleTypes         @accessors;
 }
 
 - (void)willBeDisplayed

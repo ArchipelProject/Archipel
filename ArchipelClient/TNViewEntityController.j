@@ -55,21 +55,15 @@
     [self setRoster:aRoster];
     [self setModuleType:aType];
     
-    [self getAssociatedModules];
+    [self populateTabs];
 }
 
-- (void)getAssociatedModules
-{
-    if (_modulesPList)
-    {
-         [self populateTabsFromPlist];
-         return;
-    }
-    
+- (void)load
+{    
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
     
-    [connection cancel]; // recomended by Cappuccino, but generates an Aborted Request error in Firefox.
+    [connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
     [connection start];
 }
 
@@ -79,37 +73,25 @@
     
     _modulesPList = [cpdata plistObject];
     
-    [self populateTabsFromPlist];
+    [self loadAllBundles];
 }
 
-- (void)populateTabsFromPlist
-{   
-    //@each(var module in [_modulesPList objectForKey:@"Modules"])
+- (void)loadAllBundles
+{
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
         var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
         var currentModuleTypes  = [module objectForKey:@"type"];
         var moduleIndex         = [module objectForKey:@"index"];
+        var moduleLabel         = [module objectForKey:@"label"];
+        var path                = [self modulesPath] + [module objectForKey:@"folder"];
+        var moduleName          = [module objectForKey:@"BundleName"];
         
-        if ([currentModuleTypes containsObject:[self moduleType]])
-        {   
-            var path        = [self modulesPath] + [module objectForKey:@"folder"];
-            var moduleName  = [module objectForKey:@"BundleName"];
+        var bundle  = [TNBundle bundleWithPath:path];
             
-            if (![[[self loadedModulesScrollViews] allKeys] containsObject:moduleName])
-            {
-                var bundle  = [TNBundle bundleWithPath:path];
-                
-                [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index"]];
-                [bundle loadWithDelegate:self];
-            }
-            else
-            {
-                var moduleView = [[self loadedModulesScrollViews] objectForKey:moduleName];
-                
-                [self addItemWithLabel:moduleName moduleView:moduleView atIndex:moduleIndex];
-            }
-        }
+        [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index", 
+                currentModuleTypes, @"type", moduleLabel, @"label", moduleName, @"name"]];
+        [bundle loadWithDelegate:self];
     }
 }
 
@@ -118,6 +100,9 @@
     var bundleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var theViewController   = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
     var moduleTabIndex      = [[aBundle userInfo] objectForKey:@"index"];
+    var moduleTabType       = [[aBundle userInfo] objectForKey:@"type"];
+    var moduleName          = [[aBundle userInfo] objectForKey:@"name"];
+    var moduleLabel         = [[aBundle userInfo] objectForKey:@"label"];
     var scrollView          = [[CPScrollView alloc] initWithFrame:[self bounds]];
 	
 	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -132,10 +117,47 @@
 	[scrollView setDocumentView:[theViewController view]];
 
 	[[theViewController view] setModuleBundle:aBundle];
+	[[theViewController view] setModuleTypes:moduleTabType];
+	[[theViewController view] setModuleTabIndex:moduleTabIndex];
+	[[theViewController view] setModuleName:moduleName];
+	[[theViewController view] setModuleLabel:moduleLabel];
 	
-    [self addItemWithLabel:bundleName moduleView:scrollView atIndex:moduleTabIndex];
-    [[self loadedModulesScrollViews] setObject:scrollView forKey:bundleName];
+    [[self loadedModulesScrollViews] setObject:scrollView forKey:moduleName];
 }
+
+
+- (void)populateTabs
+{   
+    var allValues = [[self loadedModulesScrollViews] allValues];
+    
+    var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
+        var indexA = [[a documentView] moduleTabIndex];
+        var indexB = [[b documentView] moduleTabIndex];
+        if (indexA < indexB)
+                return CPOrderedAscending;
+            else if (indexA > indexB)
+                return CPOrderedDescending;
+            else
+                return CPOrderedSame;
+    }]
+
+    //@each(var module in [_modulesPList objectForKey:@"Modules"])
+    for(var i = 0; i < [sortedValue count]; i++)
+    {
+        var module      = [[sortedValue objectAtIndex:i] documentView];
+        var moduleTypes = [module moduleTypes];
+        var moduleIndex = [module moduleTabIndex];
+        var moduleLabel = [module moduleLabel];
+        var moduleName  = [module moduleName];
+        
+        if ([moduleTypes containsObject:[self moduleType]])
+        {   
+            [self addItemWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
+        }
+    }
+}
+
+
 
 - (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
 {   
@@ -146,11 +168,24 @@
     
     [[aModuleScrollView documentView] willBeDisplayed];
     
-    if (anIndex >= [self numberOfTabViewItems])
-        [self addTabViewItem:newViewItem];
-    else
-        [self insertTabViewItem:newViewItem atIndex:anIndex];   
+    var n = ([self numberOfTabViewItems] );
+    if (n < 0)
+        n = 0;
     
+    // console.log(anIndex + " > " + n + " => " + (anIndex >= n));
+    // if (anIndex > n)
+    // {
+    //     console.log("push");
+    //     [self addTabViewItem:newViewItem];
+    // }
+    // else
+    // {
+    //     console.log("insert at " + anIndex);
+    //    [self insertTabViewItem:newViewItem atIndex:anIndex];
+    //}
+    
+    [self addTabViewItem:newViewItem];
+    //[self selectFirstTabViewItem:nil];
     [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 
