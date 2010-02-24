@@ -89,6 +89,7 @@
     {
         var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
         var currentModuleTypes  = [module objectForKey:@"type"];
+        var moduleIndex         = [module objectForKey:@"index"];
         
         if ([currentModuleTypes containsObject:[self moduleType]])
         {   
@@ -97,32 +98,31 @@
             
             if (![[[self loadedModulesScrollViews] allKeys] containsObject:moduleName])
             {
-                var bundle  = [CPBundle bundleWithPath:path];
+                var bundle  = [TNBundle bundleWithPath:path];
                 
-                [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:[module objectForKey:@"index"], @"index"]];
+                [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index"]];
                 [bundle loadWithDelegate:self];
             }
             else
             {
                 var moduleView = [[self loadedModulesScrollViews] objectForKey:moduleName];
                 
-                [self addItemWithLabel:moduleName moduleView:moduleView];
+                [self addItemWithLabel:moduleName moduleView:moduleView atIndex:moduleIndex];
             }
         }
     }
 }
 
-- (void)bundleDidFinishLoading:(CPBundle)aBundle
+- (void)bundleDidFinishLoading:(TNBundle)aBundle
 {   
     var bundleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var theViewController   = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
-    var index               = [[aBundle userInfo] objectForKey:@"index"];
+    var moduleTabIndex      = [[aBundle userInfo] objectForKey:@"index"];
     var scrollView          = [[CPScrollView alloc] initWithFrame:[self bounds]];
 	
 	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 	[scrollView setAutohidesScrollers:YES];
 	[scrollView setBackgroundColor:[CPColor whiteColor]];
-	
 	
 	var frame = [scrollView bounds];
 	frame.size.height = [[theViewController view] frame].size.height;
@@ -131,20 +131,23 @@
 	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
 	[scrollView setDocumentView:[theViewController view]];
 	
-	
-    [self addItemWithLabel:bundleName moduleView:scrollView];
+    [self addItemWithLabel:bundleName moduleView:scrollView atIndex:moduleTabIndex];
     [[self loadedModulesScrollViews] setObject:scrollView forKey:bundleName];
 }
 
-- (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView
-{
+- (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
+{   
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
 
     [newViewItem setLabel:aLabel];
     [newViewItem setView:aModuleScrollView];
     
     [[aModuleScrollView documentView] willBeDisplayed];
-    [self addTabViewItem:newViewItem];
+    
+    if ([self numberOfTabViewItems] >= anIndex)
+        [self insertTabViewItem:newViewItem atIndex:anIndex];
+    else   
+        [self addTabViewItem:newViewItem];
     
     [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
@@ -173,17 +176,8 @@
 
 
 // Category to add a userInfo Dict in CPBundle
-@implementation CPBundle (CPBundleWithUserInfo)
+@implementation TNBundle : CPBundle
 {   
-}
-
-- (void)setUserInfo:(CPDictionary)aDict
-{
-    _userInfo = [aDict copy];
-}
-
-- (CPDictionary)userInfo
-{
-    return _userInfo;
+    CPDictionary userInfo @accessors;
 }
 @end
