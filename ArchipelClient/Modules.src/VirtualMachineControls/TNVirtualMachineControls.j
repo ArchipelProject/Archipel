@@ -151,17 +151,17 @@ VIR_DOMAIN_CRASHED	                        =	6;
 {
     if (aStanza.getAttribute("type") == @"success")
     {       
-        //<info nrVirtCpu=​"1" state=​"5" maxMem=​"262144" cpuTime=​"0" memory=​"262144">​</info>​
-        
         var infoNode = aStanza.getElementsByTagName("info")[0];
         var cpuTime = parseInt(infoNode.getAttribute("cpuTime"));
+        var mem = parseInt(infoNode.getAttribute("memory"));
         
         cpuTime /= 6000000000;
         cpuTime = Math.round(cpuTime);
+        mem = mem / 1024;
         
-        [[self fieldInfoMem] setStringValue:infoNode.getAttribute("memory")];
+        [[self fieldInfoMem] setStringValue:mem + @" Mo"];
         [[self fieldInfoCPUs] setStringValue:infoNode.getAttribute("nrVirtCpu")];
-        [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @"min."];
+        [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
 
         var libvirtSate = infoNode.getAttribute("state");
         var humanState;

@@ -86,8 +86,7 @@
         var moduleLabel         = [module objectForKey:@"label"];
         var path                = [self modulesPath] + [module objectForKey:@"folder"];
         var moduleName          = [module objectForKey:@"BundleName"];
-        
-        var bundle  = [TNBundle bundleWithPath:path];
+        var bundle              = [TNBundle bundleWithPath:path];
             
         [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index", 
                 currentModuleTypes, @"type", moduleLabel, @"label", moduleName, @"name"]];
@@ -168,24 +167,8 @@
     
     [[aModuleScrollView documentView] willBeDisplayed];
     
-    var n = ([self numberOfTabViewItems] );
-    if (n < 0)
-        n = 0;
-    
-    // console.log(anIndex + " > " + n + " => " + (anIndex >= n));
-    // if (anIndex > n)
-    // {
-    //     console.log("push");
-    //     [self addTabViewItem:newViewItem];
-    // }
-    // else
-    // {
-    //     console.log("insert at " + anIndex);
-    //    [self insertTabViewItem:newViewItem atIndex:anIndex];
-    //}
-    
     [self addTabViewItem:newViewItem];
-    //[self selectFirstTabViewItem:nil];
+
     [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 
