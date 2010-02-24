@@ -130,6 +130,8 @@
 	[[theViewController view] setFrame:frame];
 	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
 	[scrollView setDocumentView:[theViewController view]];
+
+	[[theViewController view] setModuleBundle:aBundle];
 	
     [self addItemWithLabel:bundleName moduleView:scrollView atIndex:moduleTabIndex];
     [[self loadedModulesScrollViews] setObject:scrollView forKey:bundleName];
@@ -144,10 +146,10 @@
     
     [[aModuleScrollView documentView] willBeDisplayed];
     
-    if ([self numberOfTabViewItems] >= anIndex)
-        [self insertTabViewItem:newViewItem atIndex:anIndex];
-    else   
+    if (anIndex >= [self numberOfTabViewItems])
         [self addTabViewItem:newViewItem];
+    else
+        [self insertTabViewItem:newViewItem atIndex:anIndex];   
     
     [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }

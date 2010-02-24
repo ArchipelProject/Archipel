@@ -18,6 +18,13 @@ import socket
 from utils import *
 from trinitybasic import *
 
+VIR_DOMAIN_NOSTATE	                        =	0;
+VIR_DOMAIN_RUNNING	                        =	1;
+VIR_DOMAIN_BLOCKED	                        =	2;
+VIR_DOMAIN_PAUSED	                        =	3;
+VIR_DOMAIN_SHUTDOWN	                        =	4;
+VIR_DOMAIN_SHUTOFF	                        =	5;
+VIR_DOMAIN_CRASHED	                        =	6;
 
 class TrinityVM(TrinityBase):
     """
@@ -31,7 +38,13 @@ class TrinityVM(TrinityBase):
     
     def __init__(self, jid, password):
         TrinityBase.__init__(self, jid, password)
+        self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
+        self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('google.com', 0));
+        ipaddr, other = s.getsockname();
+        self.ipaddr = ipaddr;
     
     
     def register_handler(self):
@@ -46,14 +59,14 @@ class TrinityVM(TrinityBase):
         TrinityBase.register_handler(self)
     
     
-    def connect(self):
-        """
-        Connects to XMPP server and libvirt. it overrides the super class
-        method in order to connect also from libvirt
-        """
-        self.__connect_libvirt()
-        self._connect_xmpp()
-        self._auth_xmpp()
+    # def connect(self):
+    #     """
+    #     Connects to XMPP server and libvirt. it overrides the super class
+    #     method in order to connect also from libvirt
+    #     """
+    #     self.__connect_libvirt()
+    #     self._connect_xmpp()
+    #     self._auth_xmpp()
     
    
     def disconnect(self):
@@ -71,7 +84,7 @@ class TrinityVM(TrinityBase):
     ### Libvirt bindings
     ###################################################################################################### 
     
-    def __connect_libvirt(self):
+    def connect_libvirt(self):
         """
         Initialize the connection to the libvirt first, and
         then to the domain by looking the uuid used as JID Node
@@ -91,8 +104,18 @@ class TrinityVM(TrinityBase):
         try:
             self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
             log(self, LOG_LEVEL_INFO, "sucessfully connect to domain uuid {0}".format(self.uuid))
+            
+            dominfo = self.domain.info()
+            if dominfo[0] == VIR_DOMAIN_RUNNING:
+                self.change_presence("", "shutdown");
+            elif dominfo[0] == VIR_DOMAIN_PAUSED:
+                self.change_presence("away", "shutdown");
+            elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
+                self.change_presence("xa", "shutdown");
+            
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+            self.change_presence("dnd", "shutdown");
             return
         except:
             log(self, LOG_LEVEL_ERROR, "unexpected exception")
@@ -117,6 +140,7 @@ class TrinityVM(TrinityBase):
             payload = xmpp.Node("domain", attrs={"id": str(self.domain.ID())})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
+            self.change_presence("", "Running");
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -141,6 +165,7 @@ class TrinityVM(TrinityBase):
             self.domain.shutdown()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
+            self.change_presence("xa", "shutdown");
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -189,6 +214,7 @@ class TrinityVM(TrinityBase):
             self.domain.suspend()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
+            self.change_presence("away", "paused");
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -213,6 +239,7 @@ class TrinityVM(TrinityBase):
             self.domain.resume()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
+            self.change_presence("", "running");
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -251,6 +278,7 @@ class TrinityVM(TrinityBase):
             payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
+                
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -272,6 +300,7 @@ class TrinityVM(TrinityBase):
         reply = None
         
         try :
+            print "self.jid.getNode() : " + str(self.jid.getNode());
             domain_node = xmpp.simplexml.XML2Node(str(iq.getQueryPayload()[0]));
             domain_uuid = domain_node.getTag("uuid").getData()
             if domain_uuid != self.jid.getNode():
@@ -323,6 +352,56 @@ class TrinityVM(TrinityBase):
             reply.setQueryPayload([payload])
         return reply
     
+    def __vncdisplay(self, iq):
+        """
+        get the VNC display used in the virtual machine.
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        reply = None
+        try:
+            reply = iq.buildReply('success')
+            xmldesc = self.domain.XMLDesc(0);
+            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
+            graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics");
+            payload = xmpp.Node("vncdisplay", attrs={"port": str(graphicnode.getAttr("port")), "host": self.ipaddr})
+            reply.setQueryPayload([payload])
+        except libvirt.libvirtError as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
+    
+    
+    def __xml_description(self, iq):
+        """
+        get the XML Desc of the virtual machine.
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        reply = None
+        try:
+            reply = iq.buildReply('success')
+            xmldesc = self.domain.XMLDesc(0);
+            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
+            reply.setQueryPayload([xmldescnode])
+        except libvirt.libvirtError as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
       
       
     ######################################################################################################
@@ -396,8 +475,18 @@ class TrinityVM(TrinityBase):
             reply = self.__resume(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
 
+        if iq.getType() == "vncdisplay":
+            reply = self.__vncdisplay(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if iq.getType() == "xmldesc":
+            reply = self.__xml_description(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+            
     def __process_iq_trinity_definition(self, conn, iq):
         """
         Invoked when new trinity:define IQ is received.
@@ -412,7 +501,7 @@ class TrinityVM(TrinityBase):
         @param iq: the received IQ
         """
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-
+        
         if iq.getType() == "define":
             reply = self.__define(iq)
             conn.send(reply)

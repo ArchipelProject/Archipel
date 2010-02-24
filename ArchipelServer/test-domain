@@ -1,6 +1,6 @@
 <domain type='kvm'>
-  <name>SOGoServer</name>
-  <uuid>f07c652e-0a6c-11df-bf22-0016d4e7e91f</uuid>
+  <name>VitualMachineA</name>
+  <uuid>20c2548c-5264-ddd5-d897-c28a9728750a</uuid>
   <memory>262144</memory>
   <currentMemory>262144</currentMemory>
   <vcpu>1</vcpu>

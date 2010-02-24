@@ -5,6 +5,8 @@
 	<key>Modules</key>
 	<array>
 		<dict>
+			<key>BundleName</key>
+			<string>HypervisorSummary</string>
 			<key>cibname</key>
 			<string>HypervisorSummary</string>
 			<key>label</key>
@@ -17,26 +19,60 @@
 			<array>
 				<string>hypervisor</string>
 			</array>
-			<key>BundleName</key>
-			<string>HypervisorSummary</string>
 		</dict>
-		<dict>
-			<key>cibname</key>
-			<string>SampleModule</string>
-			<key>label</key>
-			<string>Sample</string>
-			<key>folder</key>
-			<string>SampleModule</string>
-			<key>index</key>
-			<integer>1</integer>
-			<key>type</key>
-			<array>
-				<string>virtualmachine</string>
-				<string>hypervisor</string>
-			</array>
-			<key>BundleName</key>
-			<string>SampleModule</string>
-		</dict>
+		
+        <dict>
+            <key>BundleName</key>
+            <string>VirtualMachineControls</string>
+            <key>cibname</key>
+            <string>VirtualMachineControls</string>
+            <key>label</key>
+            <string>Controls</string>
+            <key>folder</key>
+            <string>VirtualMachineControls</string>
+            <key>index</key>
+            <integer>0</integer>
+            <key>type</key>
+            <array>
+                <string>virtualmachine</string>
+            </array>
+        </dict>
+        
+        <dict>
+            <key>BundleName</key>
+            <string>VirtualMachineVNC</string>
+            <key>cibname</key>
+            <string>VirtualMachineVNC</string>
+            <key>label</key>
+            <string>VNC</string>
+            <key>folder</key>
+            <string>VirtualMachineVNC</string>
+            <key>index</key>
+            <integer>1</integer>
+            <key>type</key>
+            <array>
+                <string>virtualmachine</string>
+            </array>
+        </dict>
+		
+        <!-- <dict>
+            <key>BundleName</key>
+            <string>SampleModule</string>
+            <key>cibname</key>
+            <string>SampleModule</string>
+            <key>label</key>
+            <string>Sample</string>
+            <key>folder</key>
+            <string>SampleModule</string>
+            <key>index</key>
+            <integer>1</integer>
+            <key>type</key>
+            <array>
+                <string>virtualmachine</string>
+                <string>hypervisor</string>
+            </array>
+        </dict> -->
+        
 	</array>
 </dict>
 </plist>

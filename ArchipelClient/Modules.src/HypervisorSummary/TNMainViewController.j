@@ -53,7 +53,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)willBeUnDisplayed
 {
-    console.log("WILL BE UNDISPLAYED");
     if (_timer)
         [_timer invalidate];
 }
@@ -176,7 +175,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 {
     var creationStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [[self contact] fullJID]}];
     var uuid = [CPString UUID];
-    
+
     [creationStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
@@ -222,5 +221,22 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 }
 @end
 
+@implementation CPString (CPStringWithUUIDSeparated)
+{
+}
++ (CPString)UUID
+{
+    var g = @"";
+    
+    for(var i = 0; i < 32; i++)
+    {
+        if ((i == 8) || (i == 12) || (i == 16) || (i == 20))
+            g += '-';
+        g += FLOOR(RAND() * 0xF).toString(0xF);
+    }
+    
+    return g;
+}
+@end
 
 

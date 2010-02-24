@@ -182,10 +182,19 @@ class TrinityBase(object):
         for action in self.registered_actions_to_perform_on_connection:
             if hasattr(self, action["name"]):
                 m = getattr(self, action["name"])
-                m(action["args"]);
+                if action["args"] != None:
+                    m(action["args"]);
+                else:
+                    m();
         self.registered_actions_to_perform_on_connection = [];
     
+    
+    def change_presence(self, presence_show, presence_status):
+        pres = xmpp.Presence(status=presence_status, show=presence_show)
+        self.xmppclient.send(pres)
         
+    
+    
     def connect(self):
         """
         Connect and auth to XMPP Server

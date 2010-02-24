@@ -26,9 +26,9 @@ class XMPPVirtualMachineController(TrinityBase):
         print str(iq)
         
 
-vm = XMPPVirtualMachineController("controllera@10.68.142.23", "password")
+vm = XMPPVirtualMachineController("localcontroller@pulsar.local", "password")
 #vm = XMPPVirtualMachineController("f07c652e-0a6c-11df-bf22-0016d4e7e91g", "10.68.142.23", "/virt-hyperviseur", "password")
 vm.connect()
-vm.add_jid("f07c652e-0a6c-11df-bf22-0016d4e7e91f@10.68.142.23")
+#vm.add_jid("f07c652e-0a6c-11df-bf22-0016d4e7e91f@10.68.142.23")
 vm.send_iq(xmpp.Iq(typ=sys.argv[3],queryNS=sys.argv[2], to=sys.argv[1]))
 vm.loop()
