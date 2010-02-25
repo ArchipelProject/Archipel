@@ -185,14 +185,21 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
 
 - (void)willBeDisplayed
 {
-    // message sent when view will be added from superview;
-    // MUST be declared
+
 }
 
 - (void)willBeUnDisplayed
 {
-   // message sent when view will be removed from superview;
-   // MUST be declared
+    [[[self nicsDatasource] networkInterfaces] removeAllObjects];
+    [[[self drivesDatasource] drives] removeAllObjects];
+    
+    [[self tableNetworkCards] reloadData];
+    [[self tableDrives] reloadData];
+    
+    [[self fieldMemory] setStringValue:@""];
+    [[self buttonNumberCPUs] selectItemWithTitle:@"1"];
+    
+    [[self buttonBoot] selectItemWithTitle:@"Hard Drive"];
 }
 
 - (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
