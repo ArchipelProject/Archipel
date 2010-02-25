@@ -44,9 +44,4 @@ if os.path.isdir("./Build/"+config+"/Archipel/"):
     os.chdir("./Build/"+config+"/Archipel/")
     os.system("ln -s ../../../Modules Modules");
 
-if os.path.isdir("./Modules"):
-    print "# linking main module directory to the main Build"
-    os.chdir("./Modules")
-    os.system("rm -f ./Modules")
-    os.system("ln -s ../../../Modules Modules");
     

@@ -66,14 +66,8 @@
     [self orderOut:nil];
     
     var msg     = @"Presence subsciption has been sent to " + [newContactJid stringValue] + ".";
-    var alert   = [[CPAlert alloc] init];
     
-    [alert setDelegate:self];
-    [alert setTitle:@"Subscription request sent"];
-    [alert setMessageText:msg];
-    [alert setWindowStyle:CPHUDBackgroundWindowMask];
-    [alert addButtonWithTitle:@"Ok"];
-    [alert runModal];
+    [CPAlert alertWithTitle:@"Subscription request sent" message:@"Subscription request sent"];
     
     [[TNViewLog sharedLogger] log:@"added contact " + [newContactJid stringValue]];
 }

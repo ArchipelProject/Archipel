@@ -30,26 +30,17 @@
 }
 
 - (IBAction)addGroup:(id)sender
-{
-    var alert = [[CPAlert alloc] init];
-    
+{   
     if ([[self newGroupName] stringValue] == "") 
     {
-        [alert setTitle:@"Group addition error"];
-        [alert setMessageText:"You have to enter a valid group name."];
-        [alert setWindowStyle:CPHUDBackgroundWindowMask];
-        [alert setAlertStyle:CPCriticalAlertStyle];
-        [alert addButtonWithTitle:@"OK"];   
+        [CPAlert alertWithTitle:@"Group addition error" message:@"You have to enter a valid group name." style:CPCriticalAlertStyle]; 
     }
     else 
     {
         [[self roster] addGroup:[[self newGroupName] stringValue]];
         
-        [alert setTitle:@"Group addition"];
-        [alert setMessageText:"Your group has been added. please add a contact into it or it will be removed during disconnection."];
-        [alert setWindowStyle:CPHUDBackgroundWindowMask];
-        [alert setAlertStyle:CPInformationalAlertStyle];
-        [alert addButtonWithTitle:@"OK"];
+        [CPAlert alertWithTitle:@"Group addition" message:@"Your group has been added. please add a contact into it or it will be removed during disconnection."]; 
+        
         [self orderOut:nil];
         
         [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]

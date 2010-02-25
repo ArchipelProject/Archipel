@@ -156,8 +156,6 @@
     }
 }
 
-
-
 - (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
 {   
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];

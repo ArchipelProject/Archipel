@@ -51,24 +51,24 @@ VIR_DOMAIN_CRASHED	                        =	6;
     @outlet CPTextField     fieldInfoConsumedCPU        @accessors;
     @outlet CPImageView     imageState                  @accessors;
     
-    @outlet CPButton        buttonPlay  @accessors;
-    @outlet CPButton        buttonPause @accessors;
-    @outlet CPButton        buttonStop  @accessors;
+    @outlet CPButton        buttonPlay      @accessors;
+    @outlet CPButton        buttonPause     @accessors;
+    @outlet CPButton        buttonStop      @accessors;
+    @outlet CPButton        buttonReboot    @accessors;
+    
 
     CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
 }
 
-- (void)awakeFromCib
-{   
+
+// TNModule implementation
+- (void)willBeDisplayed
+{
     [[self buttonPlay] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_play.png"]]];
     [[self buttonStop] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_stop.png"]]];
     [[self buttonPause] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_pause.png"]]];
-}
-
-- (void)willBeDisplayed
-{
-    //not interessting.
+    [[self buttonReboot] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_pause.png"]]];
 }
 
 - (void)willBeUnDisplayed
@@ -85,25 +85,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self buttonPlay] setEnabled:NO];
     [[self buttonStop] setEnabled:NO];
     [[self buttonPause] setEnabled:NO];
-}
-
-
-- (void)didNickNameUpdated:(CPNotification)aNotification
-{
-    if ([aNotification object] == [self contact])
-    {
-       [[self fieldVMName] setStringValue:[[self contact] nickname]] 
-    }
-}
-
-- (void)didNickPresenceUpdated:(CPNotification)aNotification
-{
-    
-    if ([aNotification object] == [self contact])
-    {
-        [[self imageState] setImage:[[aNotification object] statusIcon]];
-        [[self imageState] setNeedsDisplay:YES];
-    }
+    [[self buttonReboot] setEnabled:NO];
 }
 
 - (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
@@ -127,6 +109,27 @@ VIR_DOMAIN_CRASHED	                        =	6;
 }
 
 
+// Notifications listener
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self contact])
+    {
+       [[self fieldVMName] setStringValue:[[self contact] nickname]] 
+    }
+}
+
+- (void)didNickPresenceUpdated:(CPNotification)aNotification
+{
+    
+    if ([aNotification object] == [self contact])
+    {
+        [[self imageState] setImage:[[aNotification object] statusIcon]];
+        [[self imageState] setNeedsDisplay:YES];
+    }
+}
+
+
+// population messages
 - (void)getVirtualMachineInfo:(CPTimer)aTimer
 {
     if (![self superview])
@@ -137,11 +140,10 @@ VIR_DOMAIN_CRASHED	                        =	6;
     
     var uid = [[[self contact] connection] getUniqueId];
     var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
-    var params;
+    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
-    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     
     [[[self contact] connection] send:[infoStanza stanza]];
@@ -178,6 +180,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
                 [[self buttonPlay] setEnabled:NO];
                 [[self buttonStop] setEnabled:YES];
                 [[self buttonPause] setEnabled:YES];
+                [[self buttonReboot] setEnabled:YES];
                 humanState = @"Running";
                 break;
             case VIR_DOMAIN_BLOCKED:
@@ -188,6 +191,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
                 [[self buttonPlay] setEnabled:NO];
                 [[self buttonStop] setEnabled:YES];
                 [[self buttonPause] setEnabled:YES];
+                [[self buttonReboot] setEnabled:YES];
                 humanState = @"Paused";
                 break;
             case VIR_DOMAIN_SHUTDOWN:
@@ -195,6 +199,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
                 [[self buttonPlay] setEnabled:YES];
                 [[self buttonStop] setEnabled:NO];
                 [[self buttonPause] setEnabled:NO];
+                [[self buttonReboot] setEnabled:NO];
                 humanState = @"Shutdown";
                 break;
             case VIR_DOMAIN_SHUTOFF:
@@ -202,6 +207,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
                 [[self buttonPlay] setEnabled:YES];
                 [[self buttonStop] setEnabled:NO];
                 [[self buttonPause] setEnabled:NO];
+                [[self buttonReboot] setEnabled:NO];
                 humanState = @"Shutdown";
                 break;
             case VIR_DOMAIN_CRASHED:
@@ -213,56 +219,170 @@ VIR_DOMAIN_CRASHED	                        =	6;
 }
 
 
+// Actions
 - (IBAction)play:(id)sender
 {
     [sender setEnabled:NO];
-    
-    var createStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlCreate, "to": [[self contact] fullJID]}];
-    var uuid = [CPString UUID];
-
-    [createStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
-    [createStanza addChildName:@"jid" withAttributes:{}];
-    [createStanza addTextNode:uuid];
-    
-    [[[self contact] connection] send:[createStanza tree]];
+    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlCreate withSelector:@selector(didPlay:)];
 }
 
 - (IBAction)pause:(id)sender
 {
-    var pauseStanza;
-    
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
-        pauseStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlResume, "to": [[self contact] fullJID]}];
-        [sender setTitle:@"Resume"];
+        [self sendVirtualMachineControl:trinityTypeVirtualMachineControlResume withSelector:@selector(didResume:)];
+        [sender setTitle:@"Pause"];
     }
     else
     {
-        pauseStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlSuspend, "to": [[self contact] fullJID]}];
-        [sender setTitle:@"Pause"];
+        [self sendVirtualMachineControl:trinityTypeVirtualMachineControlSuspend withSelector:@selector(didPause:)];
+        [sender setTitle:@"Resume"];
     }
-        
-    var uuid = [CPString UUID];
-
-    [pauseStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
-    [pauseStanza addChildName:@"jid" withAttributes:{}];
-    [pauseStanza addTextNode:uuid];
-    
-    [[[self contact] connection] send:[pauseStanza tree]];
-    [self getVirtualMachineInfo:nil];
 }
 
 - (IBAction)stop:(id)sender
 {
     [sender setEnabled:NO];
-    var stopStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlShutdown, "to": [[self contact] fullJID]}];
-    var uuid = [CPString UUID];
+    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlShutdown withSelector:@selector(didStop:)];
+}
 
-    [stopStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
-    [stopStanza addChildName:@"jid" withAttributes:{}];
-    [stopStanza addTextNode:uuid];
+- (IBAction)reboot:(id)sender
+{
+    [sender setEnabled:NO];
+    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlReboot withSelector:@selector(didReboot:)];
+}
+
+
+// did Actions done selectors
+- (void)didPlay:(id)aStanza
+{
+    [self getVirtualMachineInfo:nil];
     
-    [[[self contact] connection] send:[stopStanza tree]];
+    var responseType = aStanza.getAttribute("type");
+    var responseFrom = aStanza.getAttribute("from");
+    
+    if (responseType == @"success")
+    {
+        var libvirtID = aStanza.getElementsByTagName("domain")[0].getAttribute("id");
+        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
+    }
+    else
+    {
+        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
+        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
+        var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
+        
+        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+        
+        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    }
+}
+
+- (void)didPause:(id)aStanza
+{
+    [self getVirtualMachineInfo:nil];
+
+    var responseType = aStanza.getAttribute("type");
+    var responseFrom = aStanza.getAttribute("from");
+    
+    if (responseType == @"success")
+    {
+        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
+    }
+    else
+    {
+        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
+        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
+        var title                   = @"Error: " + libvirtErrorCode;
+        
+        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+        
+        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    }
+}
+
+- (void)didResume:(id)aStanza
+{
+    [self getVirtualMachineInfo:nil];
+
+    var responseType = aStanza.getAttribute("type");
+    var responseFrom = aStanza.getAttribute("from");
+    
+    if (responseType == @"success")
+    {
+        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
+    }
+    else
+    {
+        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
+        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
+        var title                   = @"Error: " + libvirtErrorCode;
+        
+        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+        
+        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    }
+}
+
+- (void)didStop:(id)aStanza
+{
+    [self getVirtualMachineInfo:nil];
+
+    var responseType = aStanza.getAttribute("type");
+    var responseFrom = aStanza.getAttribute("from");
+    
+    if (responseType == @"success")
+    {
+        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
+    }
+    else
+    {
+        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
+        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
+        var title                   = @"Error: " + libvirtErrorCode;
+        
+        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+        
+        [[TNViewLog sharedLogger] log:@"unable to start virtualmachine " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    }
+}
+
+- (void)didReboot:(id)aStanza
+{
+    [self getVirtualMachineInfo:nil];
+
+    var responseType = aStanza.getAttribute("type");
+    var responseFrom = aStanza.getAttribute("from");
+    
+    if (responseType == @"success")
+    {
+        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been rebooted"];
+    }
+    else
+    {
+        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
+        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
+        var title                   = @"Error: " + libvirtErrorCode;
+        
+        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+        
+        [[TNViewLog sharedLogger] log:@"unable to start virtualmachine " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    }
+}
+
+
+// Send control command
+- (void)sendVirtualMachineControl:(CPString)aControl withSelector:(SEL)aSelector
+{
+    var uid             = [[[self contact] connection] getUniqueId];
+    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : aControl, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [[[self contact] connection] registerSelector:aSelector ofObject:self withDict:params];
+    [rebootStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [rebootStanza addChildName:@"jid" withAttributes:{}];
+
+    [[[self contact] connection] send:[rebootStanza tree]];
     [self getVirtualMachineInfo:nil];
 }
 @end

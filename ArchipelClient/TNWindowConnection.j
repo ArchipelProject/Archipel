@@ -40,38 +40,38 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     TNStropheConnection     strophe         @accessors;
     CPCookie                cookieLogin     @accessors;
     CPCookie                cookiePassword  @accessors;
-    CPCookie                cookieService   @accessors;
 }
 
 // initialization
 - (void) awakeFromCib 
 {
    [[self password] setSecure:YES];
-       
-       cookieLogin     = [[CPCookie alloc] initWithName:@"login"];
-       cookiePassword  = [[CPCookie alloc] initWithName:@"password"];
-       cookieService   = [[CPCookie alloc] initWithName:@"service"];
-       
-       if (([[self cookieLogin] value]) && ([[self cookiePassword] value]) && ([[self cookieLogin] value] != "")  && ([[self cookiePassword] value] != "")) 
-       {
-           [[self jid] setStringValue:[cookieLogin value]]; 
-           [[self password] setStringValue:[cookiePassword value]];
-           [[self boshService] setStringValue:[cookieService value]];
-           [self connect:nil];
-       }
-       else
-           [[self credentialRemember] setState:CPOffState];
+      
+   var lastBoshService = JSON.parse(localStorage.getItem("lastboshservice"));
+   var lastJID = JSON.parse(localStorage.getItem("lastjid"));
+   var lastPassword = JSON.parse(localStorage.getItem("lastpassword"));
+   
+   if (lastBoshService)
+       [[self boshService] setStringValue:lastBoshService];
+   
+   [[self jid] setStringValue:lastJID]; 
+   [[self password] setStringValue:lastPassword];
+   
+   if (lastJID && lastPassword) 
+       [self connect:nil];
+   else
+       [[self credentialRemember] setState:CPOffState];
 }
 
 
 // actions
 - (IBAction)connect:(id)sender
 {
+    localStorage.setItem("lastboshservice", JSON.stringify([[self boshService] stringValue]));
     if ([[self credentialRemember] state] == CPOnState) 
     {
-        [cookieLogin setValue:[jid stringValue]  expires:[CPDate distantFuture] domain:""];
-        [cookiePassword setValue:[password stringValue]  expires:[CPDate distantFuture] domain:""];
-        [cookieService setValue:[boshService stringValue]  expires:[CPDate distantFuture] domain:""];
+        localStorage.setItem("lastjid", JSON.stringify([jid stringValue]));
+        localStorage.setItem("lastpassword", JSON.stringify([password stringValue]));
     }
 
     [self setStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
@@ -112,9 +112,8 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [[self jid] setStringValue:""]; 
     [[self password] setStringValue:""];
        
-    [cookieLogin setValue:"" expires:[CPDate distantFuture] domain:""];
-    [cookiePassword setValue:""  expires:[CPDate distantFuture] domain:""];
-    [cookieService setValue:""  expires:[CPDate distantFuture] domain:""];
+    localStorage.setItem("lastjid", JSON.stringify(""));
+    localStorage.setItem("lastpassword", JSON.stringify(""));
     
     [[TNViewLog sharedLogger] log:@"Strophe is disconnected"];
 }

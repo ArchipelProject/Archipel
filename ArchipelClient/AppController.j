@@ -34,6 +34,7 @@
 @import "TNWindowAddGroup.j"
 @import "TNWindowConnection.j"
 @import "TNModule.j"
+@import "TNAlert.j"
 
 @implementation AppController : CPObject
 {
@@ -178,9 +179,9 @@
     {
         [sender setLabel:@"Go back"];
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
-        var bounds = [[theWindow contentView] bounds];
+        var bounds = [[self rightView]  bounds];
         [[TNViewLog sharedLogger] setFrame:bounds];
-        [[theWindow contentView] addSubview:[TNViewLog sharedLogger]];
+        [[self rightView] addSubview:[TNViewLog sharedLogger]];
     }       
     else
     {
@@ -241,18 +242,25 @@
    var index    = [_rosterOutlineView selectedRowIndexes];
    var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
    
+    
    if ([item type] == "group")
    {
-       [_rightScrollView setDocumentView:nil];
        return
    }
-
-   var vCard    = [item vCard];
    
+   var vCard    = [item vCard];
    if (vCard)
    {
        var itemType = $(vCard.getElementsByTagName("TYPE")[0]).text();
-       [self loadControlPanelForItem:item withType:$(vCard.firstChild).text()];
+       
+       if (itemType)
+       {
+           [self loadControlPanelForItem:item withType:$(vCard.firstChild).text()];   
+       }
+       else // this means it's not a Archipel Entity, so it must be a user. 
+       {
+           
+       }
    }
    else
    {
