@@ -61,6 +61,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
     [[self scrollViewForDrives] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewForDrives] setAutohidesScrollers:YES];
     [[self scrollViewForDrives] setDocumentView:[self tableDrives]];
+    [[self scrollViewForDrives] setBorderedWithHexColor:@"#9e9e9e"];
     
     [[self tableDrives] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableDrives] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -113,6 +114,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
     [[self scrollViewForNics] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewForNics] setDocumentView:[self tableNetworkCards]];
     [[self scrollViewForNics] setAutohidesScrollers:YES];
+    [[self scrollViewForNics] setBorderedWithHexColor:@"#9e9e9e"];
     
     [[self tableNetworkCards] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableNetworkCards] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -182,7 +184,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
     }
 }
 
-
+// TNModule impl.
 - (void)willBeDisplayed
 {
 
@@ -211,6 +213,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
 }
 
 
+// Get XML Desc
 - (void)getXMLDesc
 {
     var uid = [[[self contact] connection] getUniqueId];
@@ -225,7 +228,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
-{   
+{
     var xmlDesc     = aStanza.getElementsByTagName("domain")[0];
     var memory      = $(xmlDesc.getElementsByTagName("currentMemory")[0]).text();
     var vcpu        = $(xmlDesc.getElementsByTagName("vcpu")[0]).text();
@@ -278,7 +281,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
 }
 
 
-
+// Actions Nics
 - (IBAction)editNetworkCard:(id)sender
 {
     var selectedIndex   = [[[self tableNetworkCards] selectedRowIndexes] firstIndex];
@@ -307,6 +310,7 @@ trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
 }
 
 
+// Actions Drives
 - (IBAction)editDrive:(id)sender
 {
     var selectedIndex   = [[[self tableDrives] selectedRowIndexes] firstIndex];

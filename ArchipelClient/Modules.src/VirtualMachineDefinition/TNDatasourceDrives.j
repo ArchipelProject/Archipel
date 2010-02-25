@@ -39,6 +39,7 @@
     
     return drive;
 }
+
 @end
 
 @implementation TNDatasourceDrives : CPObject
@@ -60,6 +61,7 @@
     [[self drives] addObject:aDrive];
 }
 
+// Datasource impl.
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 
 {
     return [[self drives] count];
@@ -71,4 +73,5 @@
 
     return [[[self drives] objectAtIndex:aRow] valueForKey:identifier];
 }
+
 @end

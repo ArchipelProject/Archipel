@@ -23,6 +23,7 @@
     
     return card;
 }
+
 @end
 
 @implementation TNDatasourceNetworkInterfaces : CPObject
@@ -44,6 +45,8 @@
     [[self networkInterfaces] addObject:aNic];
 }
 
+
+// Datasource impl.
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 
 {
     return [[self networkInterfaces] count];
@@ -55,4 +58,5 @@
     
     return [[[self networkInterfaces] objectAtIndex:aRow] valueForKey:identifier];
 }
+
 @end
