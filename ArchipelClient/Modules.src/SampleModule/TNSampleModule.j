@@ -42,7 +42,6 @@
 {
     [super initializeWithContact:aContact andRoster:aRoster]
     
-    console.log("Module SAMPLE : " + self + " class " + [self className]);
     // do killers stuff
 }
 @end

@@ -40,6 +40,23 @@
         
         <dict>
             <key>BundleName</key>
+            <string>VirtualMachineDefinition</string>
+            <key>cibname</key>
+            <string>VirtualMachineDefinition</string>
+            <key>label</key>
+            <string>Definition</string>
+            <key>folder</key>
+            <string>VirtualMachineDefinition</string>
+            <key>index</key>
+            <integer>1</integer>
+            <key>type</key>
+            <array>
+                <string>virtualmachine</string>
+            </array>
+        </dict>
+        
+        <dict>
+            <key>BundleName</key>
             <string>VirtualMachineVNC</string>
             <key>cibname</key>
             <string>VirtualMachineVNC</string>
@@ -48,31 +65,12 @@
             <key>folder</key>
             <string>VirtualMachineVNC</string>
             <key>index</key>
-            <integer>1</integer>
+            <integer>2</integer>
             <key>type</key>
             <array>
                 <string>virtualmachine</string>
             </array>
         </dict>
-		
-        <!-- <dict>
-            <key>BundleName</key>
-            <string>SampleModule</string>
-            <key>cibname</key>
-            <string>SampleModule</string>
-            <key>label</key>
-            <string>Sample</string>
-            <key>folder</key>
-            <string>SampleModule</string>
-            <key>index</key>
-            <integer>1</integer>
-            <key>type</key>
-            <array>
-                <string>virtualmachine</string>
-                <string>hypervisor</string>
-            </array>
-        </dict> -->
-        
 	</array>
 </dict>
 </plist>

@@ -5,8 +5,14 @@ config = "Release"
 
 modules_paths = [   "Modules.src/HypervisorSummary", 
                     "Modules.src/VirtualMachineControls", 
-                    "Modules.src/VirtualMachineVNC"
+                    "Modules.src/VirtualMachineVNC",
+                    "Modules.src/VirtualMachineDefinition"
                 ];
+# modules_paths = [ 
+#                   
+#                   
+#                     "Modules.src/VirtualMachineDefinition"
+#                 ];
 
 if "modules" in sys.argv:
     build_paths = modules_paths
