@@ -127,6 +127,8 @@
 
 - (void)populateTabs
 {   
+    [self removeAllTabs];
+    
     var allValues = [[self loadedModulesScrollViews] allValues];
     
     var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
@@ -150,7 +152,7 @@
         var moduleName  = [module moduleName];
         
         if ([moduleTypes containsObject:[self moduleType]])
-        {   
+        {
             [self addItemWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
         }
     }
