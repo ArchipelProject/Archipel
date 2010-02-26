@@ -27,16 +27,10 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 {
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
-    CPBundle                moduleBundle        @accessors;
     CPNumber                moduleTabIndex      @accessors;
     CPString                moduleName          @accessors;
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
-}
-
-- (void)willBeDisplayed
-{
-    [CPException raise:TNExceptionModuleMethodNRequired reason:@"Method willBeDisplayed must be implemented"];
 }
 
 - (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
@@ -45,10 +39,23 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     [self setRoster:aRoster];
 }
 
-- (void)willBeUndisplayed
+- (void)willLoad
 {
-    [CPException raise:TNExceptionModuleMethodNRequired reason:@"Method willBeUndisplayed must be implemented"];
+    
 }
 
+- (void)willUnload
+{
 
+}
+
+- (void)willShow
+{
+    
+}
+
+- (void)willHide
+{
+    
+}
 @end

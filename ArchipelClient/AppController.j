@@ -270,4 +270,10 @@
    [[self propertiesView] setEntry:item];
    [[self propertiesView] reload];
 }
+
+- (int)outlineView:(CPOutlineView)outView validateDrop:(id)info proposedItem:(id)item proposedChildIndex:(int)index
+ {
+     console.log("TOTO");
+    return CPDragOperationMove;
+ }
 @end

@@ -24,11 +24,11 @@
 
 @implementation TNViewEntityController: CPTabView 
 {
-    TNStropheRoster         roster              @accessors;
-    TNStropheContact        contact             @accessors;
-    CPString                moduleType          @accessors;
-    CPString                modulesPath         @accessors;
-    CPDictionary            loadedModulesScrollViews   @accessors;
+    TNStropheRoster         roster                      @accessors;
+    TNStropheContact        contact                     @accessors;
+    CPString                moduleType                  @accessors;
+    CPString                modulesPath                 @accessors;
+    CPDictionary            loadedModulesScrollViews    @accessors;
     
     id  _modulesPList;
     
@@ -42,6 +42,7 @@
         [self setLoadedModulesScrollViews:[[CPDictionary alloc] init]];
         
         [self setModulesPath:@"Modules/"];
+        [self setDelegate:self];
     }
     
     return self;
@@ -115,7 +116,6 @@
 	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
 	[scrollView setDocumentView:[theViewController view]];
 
-	[[theViewController view] setModuleBundle:aBundle];
 	[[theViewController view] setModuleTypes:moduleTabType];
 	[[theViewController view] setModuleTabIndex:moduleTabIndex];
 	[[theViewController view] setModuleName:moduleName];
@@ -161,22 +161,21 @@
 - (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
 {   
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
-
+    
+    [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
+    [[aModuleScrollView documentView] willLoad];
+    
     [newViewItem setLabel:aLabel];
     [newViewItem setView:aModuleScrollView];
     
-    [[aModuleScrollView documentView] willBeDisplayed];
-    
     [self addTabViewItem:newViewItem];
-
-    [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
 }
 
 - (void)removeAllTabs
 {   
     var selectedItem = [self selectedTabViewItem];
 
-    [[[selectedItem view] documentView] willBeUnDisplayed];
+    [[[selectedItem view] documentView] willUnload];
     [[selectedItem view] removeFromSuperview];
     
     [self removeTabViewItem:selectedItem];
@@ -186,10 +185,17 @@
     {
         var aTabViewItem = [[self tabViewItems] objectAtIndex:i];
         
-        [[[aTabViewItem view] documentView] willBeUnDisplayed];
+        [[[aTabViewItem view] documentView] willUnload];
         [[aTabViewItem view] removeFromSuperview];
         [self removeTabViewItem:aTabViewItem];
     }
+}
+
+// tabview delegate
+- (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
+{
+    [[[[self selectedTabViewItem] view] documentView] willHide];
+    [[[anItem view] documentView] willShow];
 }
 @end
 

@@ -46,23 +46,20 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     
 }
 
-- (void)willBeDisplayed
+- (void)willLoad
 {
-    //not interessting.
-}
-
-- (void)willBeUnDisplayed
-{
-    if (_timer)
-        [_timer invalidate];
-}
-
-- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
-{    
-    [super initializeWithContact:aContact andRoster:aRoster]
-    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+}
+
+- (void)willUnload
+{
+    var center = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
+}
+
+- (void)willShow
+{
     
     if (_timer)
         [_timer invalidate];
@@ -71,18 +68,27 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [[self fieldName] setStringValue:[[self contact] nickname]];
     
     [[self fieldJID] setStringValue:[[self contact] jid]];
-
+    
     [self getHypervisorRoster];
     [self getHypervisorHealth:nil];
     
     _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
 
+- (void)willHide
+{
+    console.log("hiding");
+    if (_timer)
+        [_timer invalidate];
+}
+
+
+
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     if ([aNotification object] == [self contact])
     {
-       [[self mainTitle] setStringValue:[[self contact] nickname]] 
+       [[self fieldName] setStringValue:[[self contact] nickname]] 
     }
 }
 
@@ -102,10 +108,9 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
     var queryItems = aStanza.getElementsByTagName("item");
-    var i;
     
     [[self popupDeleteMachine] removeAllItems];
-    for (i = 0; i < queryItems.length; i++)
+    for (var i = 0; i < queryItems.length; i++)
     {
         var jid = $(queryItems[i]).text();
         

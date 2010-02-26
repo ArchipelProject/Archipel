@@ -16,6 +16,7 @@ class XMPPVirtualMachineController(TrinityBase):
             iq.setQueryPayload([sys.argv[4]])
         
         print "sending iq : " + str(iq)    
+        #print iq;
         self.xmppclient.send(iq)
 
 

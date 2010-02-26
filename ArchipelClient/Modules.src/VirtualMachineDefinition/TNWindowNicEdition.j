@@ -18,27 +18,15 @@
 
 @import "TNDatasourceNetworkInterfaces.j"
 
-@implementation TNPanelNicEdition : CPPanel
+@implementation TNWindowNicEdition : CPWindow
 {
-    @outlet CPTextField     fieldName       @accessors;
     @outlet CPTextField     fieldMac        @accessors;
     @outlet CPPopUpButton   buttonType      @accessors;
     @outlet CPPopUpButton   buttonModel     @accessors;
     @outlet CPPopUpButton   buttonSource    @accessors;
 
-
     TNNetworkInterface              nic         @accessors;
     CPTableView                     table       @accessors;
-}
-
-- (id)initWithContentRect:(CGRect)aRect styleMask:(CPNumber)aStyle
-{
-    if (self = [super initWithContentRect:aRect styleMask:aStyle])
-    {
-        [self setFloatingPanel:NO];
-    }
-    
-    return self;
 }
 
 - (void)awakeFromCib
@@ -70,9 +58,11 @@
 }
 
 - (void)orderFront:(id)sender
-{
-    [[self fieldName] setStringValue:[nic name]];
-    [[self fieldMac] setStringValue:[nic mac]];
+{   
+    if ([nic mac] == "00:00:00:00:00:00")
+        [[self fieldMac] setStringValue:generateMacAddr()];
+    else
+        [[self fieldMac] setStringValue:[nic mac]];
 
     [[self buttonSource] selectItemWithTitle:[nic source]];
     [[self buttonType] selectItemWithTitle:[nic type]];
@@ -84,7 +74,6 @@
 
 - (IBAction)save:(id)sender
 {
-    [nic setName:[[self fieldName] stringValue]];
     [nic setMac:[[self fieldMac] stringValue]];
     [nic setType:[[self buttonType] title]];
     [nic setModel:[[self buttonModel] title]];

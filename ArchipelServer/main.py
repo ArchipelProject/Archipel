@@ -1,6 +1,11 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
 
 import trinity
+from trinitySimpleWebServer import *
+
+httpd = TThreadedWebServer(8088);
+httpd.daemon = True
+httpd.start()
 
 
 hyp = trinity.TrinityHypervisor("localhypervisor@pulsar.local", "password")

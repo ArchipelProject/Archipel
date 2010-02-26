@@ -51,6 +51,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     @outlet CPTextField     fieldInfoConsumedCPU        @accessors;
     @outlet CPImageView     imageState                  @accessors;
     
+    @outlet CPView          maskingView     @accessors;
     @outlet CPButton        buttonPlay      @accessors;
     @outlet CPButton        buttonPause     @accessors;
     @outlet CPButton        buttonStop      @accessors;
@@ -61,17 +62,53 @@ VIR_DOMAIN_CRASHED	                        =	6;
     CPNumber    _VMLibvirtStatus;
 }
 
-
-// TNModule implementation
-- (void)willBeDisplayed
+- (void)awakeFromCib
 {
-    [[self buttonPlay] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_play.png"]]];
-    [[self buttonStop] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_stop.png"]]];
-    [[self buttonPause] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_pause.png"]]];
-    [[self buttonReboot] setImage:[[CPImage alloc] initWithContentsOfFile:[[self moduleBundle] pathForResource:@"vm_pause.png"]]];
+    [[self fieldVMJid] setSelectable:YES];
+    
+    var bundle = [CPBundle bundleForClass:[self class]];
+    
+    [[self buttonPlay] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"]]];
+    [[self buttonStop] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_stop.png"]]];
+    [[self buttonPause] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"]]];
+    [[self buttonReboot] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_reboot.png"]]];
+
+    [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
+    [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self maskingView] setAlphaValue:0.9];
 }
 
-- (void)willBeUnDisplayed
+// TNModule implementation
+- (void)willLoad
+{
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(didNickPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+}
+
+- (void)willUnload
+{
+    var center = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
+}
+
+- (void)willShow
+{    
+    [[self maskingView] setFrame:[self bounds]];
+    
+    [[self buttonPlay] setEnabled:NO];
+    [[self buttonStop] setEnabled:NO];
+    [[self buttonPause] setEnabled:NO];
+    
+    [[self fieldVMName] setStringValue:[[self contact] nickname]];
+    [[self fieldVMJid] setStringValue:[[self contact] jid]];
+    
+    [self getVirtualMachineInfo:nil];
+    
+    _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getVirtualMachineInfo:) userInfo:nil repeats:YES];
+}
+
+- (void)willHide
 {
     if (_timer)
         [_timer invalidate];
@@ -87,27 +124,6 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self buttonPause] setEnabled:NO];
     [[self buttonReboot] setEnabled:NO];
 }
-
-- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
-{
-    [super initializeWithContact:aContact andRoster:aRoster]
-    
-    [[self buttonPlay] setEnabled:NO];
-    [[self buttonStop] setEnabled:NO];
-    [[self buttonPause] setEnabled:NO];
-    
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(didNickPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-    
-    [[self fieldVMName] setStringValue:[[self contact] nickname]];
-    [[self fieldVMJid] setStringValue:[[self contact] jid]];
-    
-    [self getVirtualMachineInfo:nil];
-    
-    _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getVirtualMachineInfo:) userInfo:nil repeats:YES];
-}
-
 
 // Notifications listener
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -152,7 +168,9 @@ VIR_DOMAIN_CRASHED	                        =	6;
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
     if (aStanza.getAttribute("type") == @"success")
-    {       
+    {   
+        [[self maskingView] removeFromSuperview];
+        
         var infoNode = aStanza.getElementsByTagName("info")[0];
         var cpuTime = parseInt(infoNode.getAttribute("cpuTime"));
         var mem = parseInt(infoNode.getAttribute("memory"));
@@ -215,6 +233,10 @@ VIR_DOMAIN_CRASHED	                        =	6;
                 break;
         }
         [[self fieldInfoState] setStringValue:humanState];
+    }
+    else
+    {
+        [self addSubview:[self maskingView]];
     }
 }
 

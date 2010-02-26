@@ -25,61 +25,90 @@
 trinityTypeVirtualMachineControl            = @"trinity:vm:control";
 
 trinityTypeVirtualMachineControlVNCDisplay  = @"vncdisplay";
+trinityTypeVirtualMachineControlInfo            = @"info";
+
+VIR_DOMAIN_NOSTATE	                        =	0;
+VIR_DOMAIN_RUNNING	                        =	1;
+VIR_DOMAIN_BLOCKED	                        =	2;
+VIR_DOMAIN_PAUSED	                        =	3;
+VIR_DOMAIN_SHUTDOWN	                        =	4;
+VIR_DOMAIN_SHUTOFF	                        =	5;
+VIR_DOMAIN_CRASHED	                        =	6;
 
 @implementation TNVirtualMachineVNC : TNModule 
 {
-    @outlet     CPWebView   vncWebView @accessors;
+    @outlet     CPWebView   vncWebView      @accessors;
+    @outlet     CPView      maskingView     @accessors;
     
     CPString    _VMHost;
     CPString    _vncDisplay;
 }
 
-- (void)willBeDisplayed
-{
-    // message sent when view will be added from superview;
-    // MUST be declared
-    
-}
 
-- (void)willBeUnDisplayed
+- (void)awakeFromCib
 {
-   // message sent when view will be removed from superview;
-   // MUST be declared
-   //console.log([[self moduleBundle] description]);
-   
-   //var vncViewerURL = [[self moduleBundle] pathForResource:@"tightvnc/index.html"]
-   //[[self vncWebView] setMainFrameURL:vncViewerURL];
-}
-
-- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
-{
-    [super initializeWithContact:aContact andRoster:aRoster]
-    
-    [self getVirtualMachineVNCDisplay:nil];
+    [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
+    [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self maskingView] setAlphaValue:0.9];
 }
 
 
-- (void)getVirtualMachineVNCDisplay:(CPTimer)aTimer
+- (void)willShow
 {
-    if (![self superview])
-    {
-        [_timer invalidate];
-        return;
-    }
+    [[self maskingView] setFrame:[self bounds]];
+
+    [self getVirtualMachineInfo];
+}
+
+- (void)willHide
+{
+    var bundle = [CPBundle bundleForClass:[self class]];
     
+    [[self vncWebView] setMainFrameURL:[bundle pathForResource:@"empty.html"]];
+}
+
+- (void)getVirtualMachineInfo
+{    
     var uid = [[[self contact] connection] getUniqueId];
-    var vncStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay, "to": [[self contact] fullJID], "id": uid}];
-    var params;
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
+    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
-    [vncStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
-    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    
-    [[[self contact] connection] send:[vncStanza stanza]];
+    [[[self contact] connection] send:[infoStanza stanza]];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
+{
+    if (aStanza.getAttribute("type") == @"success")
+    {
+        var infoNode = aStanza.getElementsByTagName("info")[0];
+        var libvirtSate = infoNode.getAttribute("state");
+        if (libvirtSate != VIR_DOMAIN_RUNNING)
+            [self addSubview:[self maskingView]];
+        else
+        {
+            [[self maskingView] removeFromSuperview];
+            [self getVirtualMachineVNCDisplay:nil];
+        }
+            
+    }   
+}
+
+- (void)getVirtualMachineVNCDisplay:(CPTimer)aTimer
+{
+    var uid         = [[[self contact] connection] getUniqueId];
+    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay, "to": [[self contact] fullJID], "id": uid}];
+    var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    
+    [vncStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    
+    [[[self contact] connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
+    [[[self contact] connection] send:[vncStanza stanza]];
+}
+
+- (void)didReceiveVNCDisplay:(id)aStanza 
 {
     if (aStanza.getAttribute("type") == @"success")
     {       
@@ -87,7 +116,7 @@ trinityTypeVirtualMachineControlVNCDisplay  = @"vncdisplay";
         _VMHost = aStanza.getElementsByTagName("vncdisplay")[0].getAttribute("host");
         
         [[self vncWebView] setBackgroundColor:[CPColor blackColor]];
-        [[self vncWebView] setMainFrameURL:"http://"+_VMHost+"/index.html?port="+_vncDisplay];
+        [[self vncWebView] setMainFrameURL:"http://"+_VMHost+":8088/index.html?port="+_vncDisplay];
     }
 }
     

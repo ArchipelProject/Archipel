@@ -39,8 +39,8 @@
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterRemovedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterAddedContactNotification object:nil];
         
         [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
@@ -69,14 +69,20 @@
     [self updateOutlineView:nil];
 }
                        
+- (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
+{       
+    [[self outlineView] reloadData];
+}
+
 - (void)updateOutlineView:(CPNotification)aNotification 
-{
+{       
     [[self outlineView] reloadData];
     
     var index = [[self outlineView] rowForItem:[aNotification object]];
     var set = [CPIndexSet indexSetWithIndex:index];
     [[self outlineView] selectRowIndexes:set byExtendingSelection:NO];
 }
+
 
 - (void)updateOutlineViewItem:(CPNotification)aNotification
 {

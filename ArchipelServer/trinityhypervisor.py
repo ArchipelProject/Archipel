@@ -215,6 +215,7 @@ class TrinityHypervisor(TrinityBase):
         """
         this method destroy a threaded L{TrinityVM} with UUID given 
         as paylood in IQ and remove it from the hypervisor roster
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -250,6 +251,14 @@ class TrinityHypervisor(TrinityBase):
     
     
     def __send_roster_virtualmachine(self, iq):
+        """
+        send the hypervisor roster content
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
         # TODO : add some ACL here later
         reply = iq.buildReply('success')
         nodes = []
@@ -262,6 +271,14 @@ class TrinityHypervisor(TrinityBase):
 
      
     def __healthinfo(self, iq):
+        """
+        send information about the hypervisor health info
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results        
+        """
         # TODO : add some ACL here later
         nodes = []
         
@@ -272,7 +289,6 @@ class TrinityHypervisor(TrinityBase):
         
         cpu_node = xmpp.Node("cpu", attrs={"us" : vmstat[12], "sy": vmstat[13], "id": vmstat[14], "wa": vmstat[15], "st": vmstat[16]});
         nodes.append(cpu_node)
-        
         
         disk_free = commands.getoutput("df -h --total | grep total").split();
         disk_free_node = xmpp.Node("disk", attrs={"total" : disk_free[1], "used": disk_free[2], "free": disk_free[3], "used-percentage": disk_free[4]});
@@ -292,7 +308,28 @@ class TrinityHypervisor(TrinityBase):
                 
         reply = iq.buildReply('success')    
         reply.setQueryPayload(nodes)
-        return reply  
+        return reply
+    
+    def __getbridges(self, iq):
+        """
+        get the current bridges of hypervisor
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        nodes = [];
+        
+        bridges = commands.getoutput("brctl show").split("\n")[1:]
+        
+        ## TODO
+        
+        reply = iq.buildReply('success')    
+        reply.setQueryPayload(nodes)
+        return reply
+        
+        
     
     ######################################################################################################
     ### XMPP Processing
@@ -310,7 +347,7 @@ class TrinityHypervisor(TrinityBase):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log(self, LOG_LEVEL_INFO, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         if iq.getType() == "alloc":
             reply = self.__alloc_xmppvirtualmachine(iq)
             conn.send(reply)
@@ -328,6 +365,11 @@ class TrinityHypervisor(TrinityBase):
         
         if iq.getType() == "healthinfo":
             reply = self.__healthinfo(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        if iq.getType() == "getbridges":
+            reply = self.__getbridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

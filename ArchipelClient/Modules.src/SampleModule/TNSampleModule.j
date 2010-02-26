@@ -26,23 +26,32 @@
     
 }
 
-- (void)willBeDisplayed
+- (void)willLoad
 {
     // message sent when view will be added from superview;
     // MUST be declared
 }
 
-- (void)willBeUnDisplayed
+- (void)willUnload
 {
    // message sent when view will be removed from superview;
    // MUST be declared
 }
 
+- (void)willShow 
+{
+    // message sent when the tab is clicked
+}
+
+- (void)willHide 
+{
+    // message sent when the tab is changed
+}
+
+
 - (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
 {
     [super initializeWithContact:aContact andRoster:aRoster]
-    
-    // do killers stuff
 }
 @end
 

@@ -247,7 +247,7 @@ class TrinityBase(object):
           """ 
           try:
               self.roster.getSubscription(str(jid))
-              log(self, LOG_LEVEL_INFO, "stanza sent form authorized JID {0}".format(jid))
+              log(self, LOG_LEVEL_DEBUG, "stanza sent form authorized JID {0}".format(jid))
               return True
           except KeyError:
               log(self, LOG_LEVEL_ERROR, "stanza sent form unauthorized JID {0}".format(jid))

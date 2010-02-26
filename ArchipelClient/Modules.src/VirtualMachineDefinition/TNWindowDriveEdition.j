@@ -1,5 +1,5 @@
 /*  
- * TNPanelDriveEdition.j
+ * TNWindowDriveEdition.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 
 @import "TNDatasourceDrives.j"
 
-@implementation TNPanelDriveEdition : CPPanel
+@implementation TNWindowDriveEdition : CPWindow
 {
     @outlet CPTextField     fieldSource     @accessors;
     @outlet CPPopUpButton   buttonType      @accessors;
@@ -30,15 +30,6 @@
     CPTableView             table           @accessors;
 }
 
-- (id)initWithContentRect:(CGRect)aRect styleMask:(CPNumber)aStyle
-{
-    if (self = [super initWithContentRect:aRect styleMask:aStyle])
-    {
-        [self setFloatingPanel:NO];
-    }
-    
-    return self;
-}
 
 - (void)awakeFromCib
 {

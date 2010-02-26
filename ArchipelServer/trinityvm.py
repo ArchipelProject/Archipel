@@ -271,7 +271,7 @@ class TrinityVM(TrinityBase):
                 "cpuTime": dominfo[4]
             })
             reply.setQueryPayload([response])
-            log(self, LOG_LEVEL_INFO, "virtual machine info sent")
+            log(self, LOG_LEVEL_DEBUG, "virtual machine info sent")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -318,7 +318,7 @@ class TrinityVM(TrinityBase):
             self.libvirt_connection.defineXML(str(iq.getQueryPayload()[0]))
             log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
             if not self.domain:
-                self.__connect_libvirt()
+                self.connect_libvirt()
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -364,7 +364,7 @@ class TrinityVM(TrinityBase):
         """
         reply = None
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply('success')                
             xmldesc = self.domain.XMLDesc(0);
             xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
             graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics");
@@ -376,6 +376,10 @@ class TrinityVM(TrinityBase):
             payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            reply.setQueryPayload([str(ex)])
         return reply
     
     
@@ -401,6 +405,10 @@ class TrinityVM(TrinityBase):
             payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            reply.setQueryPayload([str(ex)])
         return reply
       
       
