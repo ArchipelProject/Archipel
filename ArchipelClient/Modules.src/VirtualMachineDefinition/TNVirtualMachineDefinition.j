@@ -246,6 +246,13 @@ function generateMacAddr()
     [[self buttonArchitecture] selectItemWithTitle:@"x86_64"];
     
     [[self buttonBoot] selectItemWithTitle:TNXMLDescBootHardDrive];
+    
+    [[self maskingView] removeFromSuperview];
+}
+
+- (void)willUnload
+{
+    [[self maskingView] removeFromSuperview];
 }
 
 //  XML Desc

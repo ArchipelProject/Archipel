@@ -123,6 +123,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self buttonStop] setEnabled:NO];
     [[self buttonPause] setEnabled:NO];
     [[self buttonReboot] setEnabled:NO];
+    
+    [[self maskingView] removeFromSuperview];
 }
 
 // Notifications listener

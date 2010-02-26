@@ -65,6 +65,12 @@ VIR_DOMAIN_CRASHED	                        =	6;
     var bundle = [CPBundle bundleForClass:[self class]];
     
     [[self vncWebView] setMainFrameURL:[bundle pathForResource:@"empty.html"]];
+    [[self maskingView] removeFromSuperview];
+}
+
+- (void)willUnload
+{
+    [[self maskingView] removeFromSuperview];
 }
 
 - (void)getVirtualMachineInfo
