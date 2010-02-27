@@ -82,16 +82,9 @@
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
         var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
-        //var moduleTypes         = [module objectForKey:@"type"];
-        //var moduleIndex         = [module objectForKey:@"index"];
-        //var moduleLabel         = [module objectForKey:@"label"];
         var path                = [self modulesPath] + [module objectForKey:@"folder"];
-        //var cibName             = [module objectForKey:@"cibname"];
-        //var moduleName          = [module objectForKey:@"BundleName"];
         var bundle              = [CPBundle bundleWithPath:path];
-            
-        // [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index", 
-        //         moduleTypes, @"types", moduleLabel, @"label", moduleName, @"name"]];
+        
         [bundle loadWithDelegate:self];
     }
 }
@@ -129,8 +122,6 @@
 
 - (void)populateTabs
 {   
-    [self removeAllTabs];
-    
     var allValues = [[self loadedModulesScrollViews] allValues];
     
     var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
@@ -177,6 +168,7 @@
 {   
     var selectedItem = [self selectedTabViewItem];
 
+    //[[[selectedItem view] documentView] willHide];
     [[[selectedItem view] documentView] willUnload];
     [[selectedItem view] removeFromSuperview];
     
@@ -187,6 +179,7 @@
     {
         var aTabViewItem = [[self tabViewItems] objectAtIndex:i];
         
+        //[[[aTabViewItem view] documentView] willHide];
         [[[aTabViewItem view] documentView] willUnload];
         [[aTabViewItem view] removeFromSuperview];
         [self removeTabViewItem:aTabViewItem];

@@ -28,32 +28,52 @@
     @outlet CPTextField     fieldMessage        @accessors;
 }
 
-- (void)awakeFromCib
-{
-    var center = [CPNotificationCenter defaultCenter];
-    
-    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
-}
-
 - (void)willLoad
 {
-    // message sent when view will be added from superview;
-
+    console.log("registering for object " + [[self contact] jid])
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self contact]];
+    
+    // restaure conversation from local storage
+    console.log("restauring token " + "communicationWith" + [[self contact] jid]);
+    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self contact] jid]));
+    [[self fieldMessagesBoard] setStringValue:lastConversation];
 }
 
 - (void)willUnload
 {
-   // message sent when view will be removed from superview;
+    var center = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
+    
+    // save conversation into local storage
+    [[self contact] freeMessagesQueue];
+    
+    localStorage.setItem("communicationWith" + [[self contact] jid], JSON.stringify([[self fieldMessagesBoard] stringValue]));
+    console.log("saving token " + "communicationWith" + [[self contact] jid]);
+    [[self fieldMessagesBoard] setStringValue:@""];
 }
 
 - (void)willShow 
-{
-    // message sent when the tab is clicked
+{    
+    var messageQueue = [[self contact] messagesQueue];
+    
+    // for (var i = 0; i < [messageQueue count]; i++)
+    // {
+    //     var stanza = [messageQueue objectAtIndex:i];
+    // 
+    //     [self appendMessageToBoard:$([stanza getFirstChildrenWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
+    //     [[self contact] freeMessagesQueue];   
+    // }
+    var stanza;
+    while (stanza = [[self contact] popMessagesQueue])
+    {    
+        [self appendMessageToBoard:$([stanza getFirstChildrenWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
+    }
 }
 
 - (void)willHide 
 {
-    // message sent when the tab is changed
+    // save the conversation with local storage
 }
 
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender
@@ -66,12 +86,12 @@
 
 - (void)didReceivedMessage:(CPNotification)aNotification
 {
-    var stanza = [aNotification object];
-    console.log([stanza getValueForAttribute:@"from"].split("/")[0] +  "==" +[[self contact] jid])
-    if ([stanza getValueForAttribute:@"from"].split("/")[0] == [[self contact] jid])
-    {
+    var stanza =  [[self contact] popMessagesQueue];
+   
+    //if ([stanza getValueForAttribute:@"from"].split("/")[0] == [[self contact] jid])
+    //{
         [self appendMessageToBoard:$([stanza getFirstChildrenWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
-    }
+    //}
 }
 
 

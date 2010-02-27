@@ -17,10 +17,10 @@
         <key>PluginDisplayName</key>
         <string>Chat</string>
         <key>TabIndex</key>
-		<integer>3</integer>
+		<integer>0</integer>
 		<key>SupportedEntityTypes</key>
 		<array>
-			<string>hypervisor</string>
+			<string>user</string>
 		</array>		
         <key>CibName</key>
         <string>UserChat</string>

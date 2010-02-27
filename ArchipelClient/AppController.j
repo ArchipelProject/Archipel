@@ -36,6 +36,10 @@
 @import "TNModule.j"
 @import "TNAlert.j"
 
+TNArchipelEntityTypeHypervisor      = @"hypervisor";
+TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
+TNArchipelEntityTypeUser            = @"user";
+
 @implementation AppController : CPObject
 {
 	@outlet CPView				leftView            @accessors;	
@@ -248,23 +252,23 @@
        return
    }
    
-   var vCard    = [item vCard];
+   var vCard = [item vCard];
    if (vCard)
    {
        var itemType = $(vCard.getElementsByTagName("TYPE")[0]).text();
-       
-       if (itemType)
+
+       if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor))
        {
            [self loadControlPanelForItem:item withType:$(vCard.firstChild).text()];   
        }
-       else // this means it's not a Archipel Entity, so it must be a user. 
+       else 
        {
-           
+           [self loadControlPanelForItem:item withType:TNArchipelEntityTypeUser];
        }
    }
    else
    {
-       [_rightScrollView setDocumentView:nil];
+        [self loadControlPanelForItem:item withType:TNArchipelEntityTypeUser];
    }
     
    [[self propertiesView] setEntry:item];

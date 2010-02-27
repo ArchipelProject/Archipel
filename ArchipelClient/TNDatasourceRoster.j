@@ -47,6 +47,9 @@
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
         
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
+        
+        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageReceivedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageTreatedNotification object:nil];
     }
      
     return self;
