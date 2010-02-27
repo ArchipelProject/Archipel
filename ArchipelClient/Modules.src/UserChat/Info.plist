@@ -3,26 +3,26 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.virtualmachinedefinition</string>
+        <string>org.archipelproject.userchat</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
-        <string>VirtualMachineDefinition</string>
+        <string>UserChat</string>
         <key>CPBundlePackageType</key>
         <string>280N</string>
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNVirtualMachineDefinition</string>
+        <string>TNUserChat</string>
         <key>PluginDisplayName</key>
-        <string>Definition</string>
-		<key>TabIndex</key>
-		<integer>1</integer>		
-        <key>CibName</key>
-        <string>VirtualMachineDefinition</string>
-    	<key>SupportedEntityTypes</key>
+        <string>Chat</string>
+        <key>TabIndex</key>
+		<integer>3</integer>
+		<key>SupportedEntityTypes</key>
 		<array>
-			<string>virtualmachine</string>
-		</array>
+			<string>hypervisor</string>
+		</array>		
+        <key>CibName</key>
+        <string>UserChat</string>
     </dict>
 </plist>

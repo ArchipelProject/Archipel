@@ -4,73 +4,33 @@
 <dict>
 	<key>Modules</key>
 	<array>
+
 		<dict>
-			<key>BundleName</key>
-			<string>HypervisorSummary</string>
-			<key>cibname</key>
-			<string>HypervisorSummary</string>
-			<key>label</key>
-			<string>Summary</string>
 			<key>folder</key>
 			<string>HypervisorSummary</string>
-			<key>index</key>
-			<integer>0</integer>
-			<key>type</key>
-			<array>
-				<string>hypervisor</string>
-			</array>
 		</dict>
 		
         <dict>
-            <key>BundleName</key>
-            <string>VirtualMachineControls</string>
-            <key>cibname</key>
-            <string>VirtualMachineControls</string>
-            <key>label</key>
-            <string>Controls</string>
             <key>folder</key>
-            <string>VirtualMachineControls</string>
-            <key>index</key>
-            <integer>0</integer>
-            <key>type</key>
-            <array>
-                <string>virtualmachine</string>
-            </array>
+            <string>VirtualMachineControls</string>        
         </dict>
         
         <dict>
-            <key>BundleName</key>
-            <string>VirtualMachineDefinition</string>
-            <key>cibname</key>
-            <string>VirtualMachineDefinition</string>
-            <key>label</key>
-            <string>Definition</string>
             <key>folder</key>
             <string>VirtualMachineDefinition</string>
-            <key>index</key>
-            <integer>1</integer>
-            <key>type</key>
-            <array>
-                <string>virtualmachine</string>
-            </array>
         </dict>
         
         <dict>
-           <key>BundleName</key>
-           <string>VirtualMachineVNC</string>
-           <key>cibname</key>
-           <string>VirtualMachineVNC</string>
-           <key>label</key>
-           <string>VNC</string>
            <key>folder</key>
            <string>VirtualMachineVNC</string>
-           <key>index</key>
-           <integer>2</integer>
-           <key>type</key>
-           <array>
-               <string>virtualmachine</string>
-           </array>
        </dict>
+       
+       <dict>
+          <key>folder</key>
+          <string>UserChat</string>
+      </dict>
+
+      
 	</array>
 </dict>
 </plist>

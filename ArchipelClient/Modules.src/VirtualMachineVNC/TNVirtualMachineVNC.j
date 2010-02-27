@@ -25,15 +25,9 @@
 trinityTypeVirtualMachineControl            = @"trinity:vm:control";
 
 trinityTypeVirtualMachineControlVNCDisplay  = @"vncdisplay";
-trinityTypeVirtualMachineControlInfo            = @"info";
+trinityTypeVirtualMachineControlInfo        = @"info";
 
-VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
-VIR_DOMAIN_BLOCKED	                        =	2;
-VIR_DOMAIN_PAUSED	                        =	3;
-VIR_DOMAIN_SHUTDOWN	                        =	4;
-VIR_DOMAIN_SHUTOFF	                        =	5;
-VIR_DOMAIN_CRASHED	                        =	6;
 
 @implementation TNVirtualMachineVNC : TNModule 
 {
@@ -42,6 +36,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     
     CPString    _VMHost;
     CPString    _vncDisplay;
+    CPString    _webServerPort;
 }
 
 
@@ -50,6 +45,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
     [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self maskingView] setAlphaValue:0.9];
+    
+    var _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"]
 }
 
 
@@ -116,13 +113,14 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 - (void)didReceiveVNCDisplay:(id)aStanza 
 {
-    if (aStanza.getAttribute("type") == @"success")
+    if (aStanza.getAttribute(@"type") == @"success")
     {       
-        _vncDisplay = aStanza.getElementsByTagName("vncdisplay")[0].getAttribute("port");
-        _VMHost = aStanza.getElementsByTagName("vncdisplay")[0].getAttribute("host");
+        _vncDisplay = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"port");
+        _VMHost     = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"host");
         
-        [[self vncWebView] setBackgroundColor:[CPColor blackColor]];
-        [[self vncWebView] setMainFrameURL:"http://"+_VMHost+":8088/index.html?port="+_vncDisplay];
+        var url     = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?port=" + _vncDisplay;
+
+        [[self vncWebView] setMainFrameURL:url];
     }
 }
     

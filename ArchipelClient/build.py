@@ -3,16 +3,14 @@ import os, sys, commands, shutil;
 
 config = "Release"
 
-modules_paths = [   "Modules.src/HypervisorSummary", 
-                    "Modules.src/VirtualMachineControls", 
-                    "Modules.src/VirtualMachineVNC",
-                    "Modules.src/VirtualMachineDefinition"
-                ];
-# modules_paths = [ 
-#                   
-#                   
-#                     "Modules.src/VirtualMachineDefinition"
-#                 ];
+
+
+modules_base_paths = "./Modules.src/"
+modules_paths = [modules_base_paths + "UserChat"];
+
+# for folder in os.listdir(modules_base_paths):
+#     if os.path.isdir(modules_base_paths + folder):
+#         modules_paths.append(modules_base_paths + folder)
 
 if "modules" in sys.argv:
     build_paths = modules_paths

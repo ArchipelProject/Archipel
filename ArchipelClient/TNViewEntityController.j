@@ -82,27 +82,29 @@
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
         var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
-        var currentModuleTypes  = [module objectForKey:@"type"];
-        var moduleIndex         = [module objectForKey:@"index"];
-        var moduleLabel         = [module objectForKey:@"label"];
+        //var moduleTypes         = [module objectForKey:@"type"];
+        //var moduleIndex         = [module objectForKey:@"index"];
+        //var moduleLabel         = [module objectForKey:@"label"];
         var path                = [self modulesPath] + [module objectForKey:@"folder"];
-        var moduleName          = [module objectForKey:@"BundleName"];
-        var bundle              = [TNBundle bundleWithPath:path];
+        //var cibName             = [module objectForKey:@"cibname"];
+        //var moduleName          = [module objectForKey:@"BundleName"];
+        var bundle              = [CPBundle bundleWithPath:path];
             
-        [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index", 
-                currentModuleTypes, @"type", moduleLabel, @"label", moduleName, @"name"]];
+        // [bundle setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:moduleIndex, @"index", 
+        //         moduleTypes, @"types", moduleLabel, @"label", moduleName, @"name"]];
         [bundle loadWithDelegate:self];
     }
 }
 
 - (void)bundleDidFinishLoading:(TNBundle)aBundle
 {   
-    var bundleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var theViewController   = [[CPViewController alloc] initWithCibName:bundleName bundle:aBundle];
-    var moduleTabIndex      = [[aBundle userInfo] objectForKey:@"index"];
-    var moduleTabType       = [[aBundle userInfo] objectForKey:@"type"];
-    var moduleName          = [[aBundle userInfo] objectForKey:@"name"];
-    var moduleLabel         = [[aBundle userInfo] objectForKey:@"label"];
+    var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
+    var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
+    var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
+    var moduleTabTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+    var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
+    
+    var theViewController   = [[CPViewController alloc] initWithCibName:moduleCibName bundle:aBundle];
     var scrollView          = [[CPScrollView alloc] initWithFrame:[self bounds]];
 	
 	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -116,7 +118,7 @@
 	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
 	[scrollView setDocumentView:[theViewController view]];
 
-	[[theViewController view] setModuleTypes:moduleTabType];
+	[[theViewController view] setModuleTypes:moduleTabTypes];
 	[[theViewController view] setModuleTabIndex:moduleTabIndex];
 	[[theViewController view] setModuleName:moduleName];
 	[[theViewController view] setModuleLabel:moduleLabel];

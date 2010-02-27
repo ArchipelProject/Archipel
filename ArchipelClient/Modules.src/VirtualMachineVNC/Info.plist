@@ -15,8 +15,18 @@
         <key>CPPrincipalClass</key>
         <string>TNVirtualMachineVNC</string>
         <key>PluginDisplayName</key>
+        <string>VNC Console</string>
+		<key>TabIndex</key>
+		<integer>2</integer>
+        <key>CibName</key>
         <string>VirtualMachineVNC</string>
-        <key>PluginType</key>
-        <string>Widget</string>
+        <key>SupportedEntityTypes</key>
+		<array>
+			<string>virtualmachine</string>
+		</array>
+		
+		<key>ArchipelServerSideWebServerPort</key>
+        <string>8088</string>
+        
     </dict>
 </plist>
