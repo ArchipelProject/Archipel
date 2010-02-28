@@ -79,14 +79,16 @@ VIR_DOMAIN_RUNNING	                        =	1;
     [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[infoStanza stanza]];
+    [[[self contact] connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
-    if (aStanza.getAttribute("type") == @"success")
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    
+    if ([stanza getType] == @"success")
     {
-        var infoNode = aStanza.getElementsByTagName("info")[0];
+        var infoNode = [stanza getFirstChildWithName:@"info"];//aStanza.getElementsByTagName("info")[0];
         var libvirtSate = infoNode.getAttribute("state");
         if (libvirtSate != VIR_DOMAIN_RUNNING)
             [self addSubview:[self maskingView]];
@@ -108,12 +110,14 @@ VIR_DOMAIN_RUNNING	                        =	1;
     [vncStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[vncStanza stanza]];
+    [[[self contact] connection] send:vncStanza];
 }
 
 - (void)didReceiveVNCDisplay:(id)aStanza 
 {
-    if (aStanza.getAttribute(@"type") == @"success")
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    
+    if ([stanza getType] == @"success")
     {       
         _vncDisplay = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"port");
         _VMHost     = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"host");

@@ -6,11 +6,12 @@ config = "Release"
 
 
 modules_base_paths = "./Modules.src/"
-modules_paths = [modules_base_paths + "UserChat"];
+#modules_paths = [modules_base_paths + "UserChat"];
+modules_paths = [];
 
-# for folder in os.listdir(modules_base_paths):
-#     if os.path.isdir(modules_base_paths + folder):
-#         modules_paths.append(modules_base_paths + folder)
+for folder in os.listdir(modules_base_paths):
+    if os.path.isdir(modules_base_paths + folder):
+        modules_paths.append(modules_base_paths + folder)
 
 if "modules" in sys.argv:
     build_paths = modules_paths
@@ -29,14 +30,15 @@ for path in build_paths:
         print "# removing " + path + "/Build/"
         shutil.rmtree("./Build/", ignore_errors=True);
     
-    print "# jaking...";
-    os.system("export CONFIG="+config+";jake");
+    if not "clean" in sys.argv:
+        print "# jaking...";
+        os.system("export CONFIG="+config+";jake");
     
-    if path != ".":
-        print "# linking module";
-        os.chdir(base_path + "/Modules")
-        os.system("rm -f " +  path.split("/")[-1]);
-        os.system("ln -s ../" + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
+        if path != ".":
+            print "# linking module";
+            os.chdir(base_path + "/Modules")
+            os.system("rm -f " +  path.split("/")[-1]);
+            os.system("ln -s ../" + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
     
     print "# get back to " + base_path;
     os.chdir(base_path);

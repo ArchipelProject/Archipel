@@ -102,12 +102,13 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     
     params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[rosterStanza stanza]];
+    [[[self contact] connection] send:rosterStanza];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
-    var queryItems = aStanza.getElementsByTagName("item");
+    var stanza      = [TNStropheStanza stanzaWithStanza:aStanza]
+    var queryItems  = [stanza getChildrenWithName:@"item"]; //aStanza.getElementsByTagName("item");
     
     [[self popupDeleteMachine] removeAllItems];
     for (var i = 0; i < queryItems.length; i++)
@@ -145,31 +146,32 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
     
-    [[[self contact] connection] send:[rosterStanza stanza]];
+    [[[self contact] connection] send:rosterStanza];
 }
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
 {
-    console.log("hypervisor health stat received");
-    if (aStanza.getAttribute("type") == @"success")
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    
+    if ([stanza getType] == @"success")
     {       
-        var memNode = aStanza.getElementsByTagName("memory")[0];
+        var memNode = [stanza getFistChilWithName:@"memory"]; //aStanza.getElementsByTagName("memory")[0];
         [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
 
-        var diskNode = aStanza.getElementsByTagName("disk")[0];
+        var diskNode = [stanza getFistChilWithName:@"disk"];//aStanza.getElementsByTagName("disk")[0];
         [[self healthDiskUsage] setStringValue:diskNode.getAttribute("used-percentage")];
 
-        var loadNode = aStanza.getElementsByTagName("load")[0];
+        var loadNode = [stanza getFistChilWithName:@"load"]; //aStanza.getElementsByTagName("load")[0];
         [[self healthLoad] setStringValue:loadNode.getAttribute("five")];
 
-        var uptimeNode = aStanza.getElementsByTagName("uptime")[0];
+        var uptimeNode = [stanza getFistChilWithName:@"uptime"]; //aStanza.getElementsByTagName("uptime")[0];
         [[self healthUptime] setStringValue:uptimeNode.getAttribute("up")];
 
-        var cpuNode = aStanza.getElementsByTagName("cpu")[0];
+        var cpuNode = [stanza getFistChilWithName:@"cpu"]; //aStanza.getElementsByTagName("cpu")[0];
         var cpuFree = 100 - parseInt(cpuNode.getAttribute("id"));
         [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
 
-        var infoNode = aStanza.getElementsByTagName("uname")[0];
+        var infoNode = [stanza getFistChilWithName:@"uname"]; //aStanza.getElementsByTagName("uname")[0];
         [[self healthInfo] setStringValue:infoNode.getAttribute("os") + " " + infoNode.getAttribute("kname")];
     }
 }
@@ -184,7 +186,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [creationStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
-    [[[self contact] connection] send:[creationStanza tree]];
+    [[[self contact] connection] send:creationStanza];
 }
 
 - (IBAction) deleteVirtualMachine:(id)sender
@@ -211,7 +213,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
         [freeStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
         [freeStanza addTextNode:[item stringValue]];
-        [[[self contact] connection] send:[freeStanza tree]];
+        [[[self contact] connection] send:freeStanza];
         [[self roster] removeContact:[item stringValue]];
 
         [[self popupDeleteMachine] removeItemAtIndex:index];

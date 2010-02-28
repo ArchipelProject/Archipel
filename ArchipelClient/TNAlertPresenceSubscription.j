@@ -31,7 +31,8 @@
 {
     if (self = [super init])
     {
-        var contactName = aStanza.getAttribute("from");
+        var stanza      = [TNStropheStanza stanzaWithStanza:aStanza];
+        var contactName = [stanza getFrom];//aStanza.getAttribute("from");
         var msg         = contactName + " want ask you subscription. Do you want to add it ?";
 
         [self setStanza:aStanza];

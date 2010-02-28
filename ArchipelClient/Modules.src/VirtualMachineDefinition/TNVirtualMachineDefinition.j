@@ -265,17 +265,19 @@ function generateMacAddr()
     [xmldescStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveXMLDesc:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[xmldescStanza stanza]];
+    [[[self contact] connection] send:xmldescStanza];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
 {
-    if (aStanza.getAttribute("type") == "error")
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    
+    if ([stanza getType] == @"error")
     {
         CPLogConsole("XML not defined");
         return;
     }
-    var domain      = aStanza.getElementsByTagName("domain")[0];
+    var domain      = [stanza getFirstChildWithName:@"domain"]; //aStanza.getElementsByTagName("domain")[0];
     var hypervisor  = domain.getAttribute("type");
     var memory      = $(domain.getElementsByTagName("currentMemory")[0]).text();
     var arch        = domain.getElementsByTagName("os")[0].getElementsByTagName("type")[0].getAttribute("arch");
@@ -439,7 +441,7 @@ function generateMacAddr()
     [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[infoStanza stanza]];
+    [[[self contact] connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -527,7 +529,7 @@ function generateMacAddr()
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
     [[[self contact] connection] registerSelector:@selector(didDefineXML:) ofObject:self withDict:params];
-    [[[self contact] connection] send:[defineStanza tree]];
+    [[[self contact] connection] send:defineStanza];
 }
 
 - (void)didDefineXML:(id)aStanza

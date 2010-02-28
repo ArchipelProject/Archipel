@@ -164,82 +164,84 @@ VIR_DOMAIN_CRASHED	                        =	6;
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     
-    [[[self contact] connection] send:[infoStanza stanza]];
+    [[[self contact] connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
-    if (aStanza.getAttribute("type") == @"success")
-    {   
-        [[self maskingView] removeFromSuperview];
-        
-        var infoNode = aStanza.getElementsByTagName("info")[0];
-        var cpuTime = parseInt(infoNode.getAttribute("cpuTime"));
-        var mem = parseInt(infoNode.getAttribute("memory"));
-        
-        cpuTime /= 6000000000;
-        cpuTime = Math.round(cpuTime);
-        mem = mem / 1024;
-        
-        [[self fieldInfoMem] setStringValue:mem + @" Mo"];
-        [[self fieldInfoCPUs] setStringValue:infoNode.getAttribute("nrVirtCpu")];
-        [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
-
-        var libvirtSate = infoNode.getAttribute("state");
-        var humanState;
-        
-        _VMLibvirtStatus = libvirtSate;
-        
-        switch ([libvirtSate intValue])
-        {
-            case VIR_DOMAIN_NOSTATE:
-                humanState = @"No status";
-                break;
-            case VIR_DOMAIN_RUNNING:
-                [[self buttonPause] setTitle:@"Pause"];
-                [[self buttonPlay] setEnabled:NO];
-                [[self buttonStop] setEnabled:YES];
-                [[self buttonPause] setEnabled:YES];
-                [[self buttonReboot] setEnabled:YES];
-                humanState = @"Running";
-                break;
-            case VIR_DOMAIN_BLOCKED:
-                humanState = @"Blocked";
-                break;
-            case VIR_DOMAIN_PAUSED:
-                [[self buttonPause] setTitle:@"Resume"];
-                [[self buttonPlay] setEnabled:NO];
-                [[self buttonStop] setEnabled:YES];
-                [[self buttonPause] setEnabled:YES];
-                [[self buttonReboot] setEnabled:YES];
-                humanState = @"Paused";
-                break;
-            case VIR_DOMAIN_SHUTDOWN:
-                [[self buttonPause] setTitle:@"Pause"];
-                [[self buttonPlay] setEnabled:YES];
-                [[self buttonStop] setEnabled:NO];
-                [[self buttonPause] setEnabled:NO];
-                [[self buttonReboot] setEnabled:NO];
-                humanState = @"Shutdown";
-                break;
-            case VIR_DOMAIN_SHUTOFF:
-                [[self buttonPause] setTitle:@"Pause"];
-                [[self buttonPlay] setEnabled:YES];
-                [[self buttonStop] setEnabled:NO];
-                [[self buttonPause] setEnabled:NO];
-                [[self buttonReboot] setEnabled:NO];
-                humanState = @"Shutdown";
-                break;
-            case VIR_DOMAIN_CRASHED:
-                humanState = @"Crashed";
-                break;
-        }
-        [[self fieldInfoState] setStringValue:humanState];
-    }
-    else
-    {
-        [self addSubview:[self maskingView]];
-    }
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+      
+      if ([stanza getType] == @"success")
+      {   
+          [[self maskingView] removeFromSuperview];
+          
+          var infoNode    = [stanza getFirstChildWithName:@"info"]; //aStanza.getElementsByTagName("info")[0];
+          var cpuTime     = parseInt(infoNode.getAttribute("cpuTime"));
+          var mem         = parseInt(infoNode.getAttribute("memory"));
+          
+          cpuTime /= 6000000000;
+          cpuTime = Math.round(cpuTime);
+          mem = mem / 1024;
+          
+          [[self fieldInfoMem] setStringValue:mem + @" Mo"];
+          [[self fieldInfoCPUs] setStringValue:infoNode.getAttribute("nrVirtCpu")];
+          [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
+     
+          var libvirtSate = infoNode.getAttribute("state");
+          var humanState;
+          
+          _VMLibvirtStatus = libvirtSate;
+          
+          switch ([libvirtSate intValue])
+          {
+              case VIR_DOMAIN_NOSTATE:
+                  humanState = @"No status";
+                  break;
+              case VIR_DOMAIN_RUNNING:
+                  [[self buttonPause] setTitle:@"Pause"];
+                  [[self buttonPlay] setEnabled:NO];
+                  [[self buttonStop] setEnabled:YES];
+                  [[self buttonPause] setEnabled:YES];
+                  [[self buttonReboot] setEnabled:YES];
+                  humanState = @"Running";
+                  break;
+              case VIR_DOMAIN_BLOCKED:
+                  humanState = @"Blocked";
+                  break;
+              case VIR_DOMAIN_PAUSED:
+                  [[self buttonPause] setTitle:@"Resume"];
+                  [[self buttonPlay] setEnabled:NO];
+                  [[self buttonStop] setEnabled:YES];
+                  [[self buttonPause] setEnabled:YES];
+                  [[self buttonReboot] setEnabled:YES];
+                  humanState = @"Paused";
+                  break;
+              case VIR_DOMAIN_SHUTDOWN:
+                  [[self buttonPause] setTitle:@"Pause"];
+                  [[self buttonPlay] setEnabled:YES];
+                  [[self buttonStop] setEnabled:NO];
+                  [[self buttonPause] setEnabled:NO];
+                  [[self buttonReboot] setEnabled:NO];
+                  humanState = @"Shutdown";
+                  break;
+              case VIR_DOMAIN_SHUTOFF:
+                  [[self buttonPause] setTitle:@"Pause"];
+                  [[self buttonPlay] setEnabled:YES];
+                  [[self buttonStop] setEnabled:NO];
+                  [[self buttonPause] setEnabled:NO];
+                  [[self buttonReboot] setEnabled:NO];
+                  humanState = @"Shutdown";
+                  break;
+              case VIR_DOMAIN_CRASHED:
+                  humanState = @"Crashed";
+                  break;
+          }
+          [[self fieldInfoState] setStringValue:humanState];
+      }
+      else
+      {
+          [self addSubview:[self maskingView]];
+      }
 }
 
 
@@ -280,10 +282,11 @@ VIR_DOMAIN_CRASHED	                        =	6;
 // did Actions done selectors
 - (void)didPlay:(id)aStanza
 {
-    [self getVirtualMachineInfo:nil];
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
     
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    [self getVirtualMachineInfo:nil];
     
     if (responseType == @"success")
     {
@@ -304,11 +307,12 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 - (void)didPause:(id)aStanza
 {
-    [self getVirtualMachineInfo:nil];
-
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
     
+    [self getVirtualMachineInfo:nil];
+        
     if (responseType == @"success")
     {
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
@@ -329,8 +333,9 @@ VIR_DOMAIN_CRASHED	                        =	6;
 {
     [self getVirtualMachineInfo:nil];
 
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza]
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
     
     if (responseType == @"success")
     {
@@ -375,8 +380,9 @@ VIR_DOMAIN_CRASHED	                        =	6;
 {
     [self getVirtualMachineInfo:nil];
 
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza]
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
     
     if (responseType == @"success")
     {
@@ -406,7 +412,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [rebootStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     [rebootStanza addChildName:@"jid" withAttributes:{}];
 
-    [[[self contact] connection] send:[rebootStanza tree]];
+    [[[self contact] connection] send:rebootStanza];
     [self getVirtualMachineInfo:nil];
 }
 @end
