@@ -20,7 +20,7 @@
 		<integer>0</integer>
 		<key>SupportedEntityTypes</key>
 		<array>
-			<string>hypervisor</string>
+		    <string>virtualmachine</string>
 		</array>		
         <key>CibName</key>
         <string>SampleModule</string>

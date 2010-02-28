@@ -107,18 +107,19 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
-    var stanza      = [TNStropheStanza stanzaWithStanza:aStanza]
-    var queryItems  = [stanza getChildrenWithName:@"item"]; //aStanza.getElementsByTagName("item");
+    var stanza      = [TNStropheStanza stanzaWithStanza:aStanza];
+    var queryItems  = [stanza getChildrenWithName:@"item"];
     
     [[self popupDeleteMachine] removeAllItems];
-    for (var i = 0; i < queryItems.length; i++)
+    
+    for (var i = 0; i < [queryItems count]; i++)
     {
-        var jid = $(queryItems[i]).text();
+        var jid     = [[queryItems objectAtIndex:i] text];
+        var entry   = [[self roster] getContactFromJID:jid];
         
-        var entry = [[self roster] getContactFromJID:jid];
         if (entry) 
         {
-            if ($([entry vCard].firstChild).text() == "virtualmachine")
+            if ([[[entry vCard] getFirstChildWithName:@"TYPE"] text] == "virtualmachine")
             {
                 var name = [entry nickname] + " (" + jid +")";
                 var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil]
@@ -155,24 +156,24 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     
     if ([stanza getType] == @"success")
     {       
-        var memNode = [stanza getFistChilWithName:@"memory"]; //aStanza.getElementsByTagName("memory")[0];
-        [[self healthMemUsage] setStringValue:memNode.getAttribute("free") + "Mo / " + memNode.getAttribute("swapped") + "Mo"];
+        var memNode = [stanza getFirstChildWithName:@"memory"];
+        [[self healthMemUsage] setStringValue:[memNode getValueForAttribute:@"free"] + "Mo / " + [memNode getValueForAttribute:@"swapped"] + "Mo"];
 
-        var diskNode = [stanza getFistChilWithName:@"disk"];//aStanza.getElementsByTagName("disk")[0];
-        [[self healthDiskUsage] setStringValue:diskNode.getAttribute("used-percentage")];
+        var diskNode = [stanza getFirstChildWithName:@"disk"];
+        [[self healthDiskUsage] setStringValue:[diskNode getValueForAttribute:@"used-percentage"]];
 
-        var loadNode = [stanza getFistChilWithName:@"load"]; //aStanza.getElementsByTagName("load")[0];
-        [[self healthLoad] setStringValue:loadNode.getAttribute("five")];
+        var loadNode = [stanza getFirstChildWithName:@"load"];
+        [[self healthLoad] setStringValue:[loadNode getValueForAttribute:@"five"]];
 
-        var uptimeNode = [stanza getFistChilWithName:@"uptime"]; //aStanza.getElementsByTagName("uptime")[0];
-        [[self healthUptime] setStringValue:uptimeNode.getAttribute("up")];
+        var uptimeNode = [stanza getFirstChildWithName:@"uptime"];
+        [[self healthUptime] setStringValue:[uptimeNode getValueForAttribute:@"up"]];
 
-        var cpuNode = [stanza getFistChilWithName:@"cpu"]; //aStanza.getElementsByTagName("cpu")[0];
-        var cpuFree = 100 - parseInt(cpuNode.getAttribute("id"));
+        var cpuNode = [stanza getFirstChildWithName:@"cpu"];
+        var cpuFree = 100 - parseInt([cpuNode getValueForAttribute:@"id"]);
         [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
 
-        var infoNode = [stanza getFistChilWithName:@"uname"]; //aStanza.getElementsByTagName("uname")[0];
-        [[self healthInfo] setStringValue:infoNode.getAttribute("os") + " " + infoNode.getAttribute("kname")];
+        var infoNode = [stanza getFirstChildWithName:@"uname"];
+        [[self healthInfo] setStringValue:[infoNode getValueForAttribute:@"os"] + " " + [infoNode getValueForAttribute:@"kname"]];
     }
 }
 

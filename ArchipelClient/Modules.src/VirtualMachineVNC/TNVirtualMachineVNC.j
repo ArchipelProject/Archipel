@@ -88,8 +88,8 @@ VIR_DOMAIN_RUNNING	                        =	1;
     
     if ([stanza getType] == @"success")
     {
-        var infoNode = [stanza getFirstChildWithName:@"info"];//aStanza.getElementsByTagName("info")[0];
-        var libvirtSate = infoNode.getAttribute("state");
+        var infoNode = [stanza getFirstChildWithName:@"info"];
+        var libvirtSate = [infoNode getValueForAttribute:@"state"];
         if (libvirtSate != VIR_DOMAIN_RUNNING)
             [self addSubview:[self maskingView]];
         else
@@ -119,8 +119,9 @@ VIR_DOMAIN_RUNNING	                        =	1;
     
     if ([stanza getType] == @"success")
     {       
-        _vncDisplay = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"port");
-        _VMHost     = aStanza.getElementsByTagName(@"vncdisplay")[0].getAttribute(@"host");
+        var displayNode = [stanza getFirstChildWithName:@"vncdisplay"];
+        _vncDisplay = [displayNode getValueForAttribute:@"port"];
+        _VMHost     = [displayNode getValueForAttribute:@"host"];
         
         var url     = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?port=" + _vncDisplay;
 

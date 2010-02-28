@@ -67,7 +67,7 @@
     var stanza;
     while (stanza = [[self contact] popMessagesQueue])
     {    
-        [self appendMessageToBoard:$([stanza getFirstChildWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
+        [self appendMessageToBoard:[[stanza getFirstChildWithName:@"body"] text] from:[stanza getValueForAttribute:@"from"]];
     }
 }
 
@@ -90,7 +90,7 @@
    
     //if ([stanza getValueForAttribute:@"from"].split("/")[0] == [[self contact] jid])
     //{
-        [self appendMessageToBoard:$([stanza getFirstChildWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
+        [self appendMessageToBoard:[[stanza getFirstChildWithName:@"body"] text] from:[stanza getValueForAttribute:@"from"]];
     //}
 }
 

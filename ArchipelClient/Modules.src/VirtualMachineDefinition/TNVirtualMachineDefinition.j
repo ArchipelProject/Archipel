@@ -277,14 +277,14 @@ function generateMacAddr()
         CPLogConsole("XML not defined");
         return;
     }
-    var domain      = [stanza getFirstChildWithName:@"domain"]; //aStanza.getElementsByTagName("domain")[0];
-    var hypervisor  = domain.getAttribute("type");
-    var memory      = $(domain.getElementsByTagName("currentMemory")[0]).text();
-    var arch        = domain.getElementsByTagName("os")[0].getElementsByTagName("type")[0].getAttribute("arch");
-    var vcpu        = $(domain.getElementsByTagName("vcpu")[0]).text();
-    var boot        = domain.getElementsByTagName("boot")[0].getAttribute("dev");
-    var interfaces  = domain.getElementsByTagName("interface");
-    var disks       = domain.getElementsByTagName("disk");
+    var domain      = [stanza getFirstChildWithName:@"domain"];
+    var hypervisor  = [domain getValueForAttribute:@"type"];
+    var memory      = [[domain getFirstChildWithName:@"currentMemory"] text];
+    var arch        = [[[domain getFirstChildWithName:@"os"] getFirstChildWithName:@"type"] getValueForAttribute:@"arch"];
+    var vcpu        = [[domain getFirstChildWithName:@"vcpu"] text];
+    var boot        = [[domain getFirstChildWithName:@"boot"] getValueForAttribute:@"dev"];
+    var interfaces  = [domain getChildrenWithName:@"interface"];
+    var disks       = [domain getChildrenWithName:@"disk"];
     
     [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
     [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
@@ -295,14 +295,15 @@ function generateMacAddr()
         [[self buttonBoot] selectItemWithTitle:TNXMLDescBootHardDrive];
     
     // NICs
-    for (var i = 0; i < interfaces.length; i++)
+    for (var i = 0; i < [interfaces count]; i++)
     {
-        var iType   = interfaces[i].getAttribute("type");
-        var iModel  = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
-        var iMac    = interfaces[i].getElementsByTagName("mac")[0].getAttribute("address");
+        var currentInterface    = [interfaces objectAtIndex:i];
+        var iType               = [currentInterface getValueForAttribute:@"type"];
+        var iModel              = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
+        var iMac                = [[currentInterface getFirstChildWithName:@"mac"] getValueForAttribute:@"address"];
         
         if (iType == "bridge")
-            var iSource = interfaces[i].getElementsByTagName("source")[0].getAttribute("bridge");
+            var iSource = [[currentInterface getFirstChildWithName:@"source"] getValueForAttribute:@"bridge"];
         else
             var iSource = "NOT IMPLEMENTED";
         
@@ -315,13 +316,14 @@ function generateMacAddr()
     [[self tableNetworkCards] reloadData];
     
     //Drives
-    for (var i = 0; i < disks.length; i++)
+    for (var i = 0; i < [disks count]; i++)
     {
-        var iType       = disks[i].getAttribute("type");
-        var iDevice     = disks[i].getAttribute("device");
-        var iTarget     = disks[i].getElementsByTagName("target")[0].getAttribute("dev");
-        var iBus        = disks[i].getElementsByTagName("target")[0].getAttribute("bus");
-        var iSource     = disks[i].getElementsByTagName("source")[0].getAttribute("file");
+        var currentDisk = [disks objectAtIndex:i];
+        var iType       = [currentDisk getValueForAttribute:@"type"];
+        var iDevice     = [currentDisk getValueForAttribute:@"device"];
+        var iTarget     = [[currentDisk getFirstChildWithName:@"target"] getValueForAttribute:@"dev"];
+        var iBus        = [[currentDisk getFirstChildWithName:@"target"] getValueForAttribute:@"bus"];
+        var iSource     = [[currentDisk getFirstChildWithName:@"source"] getValueForAttribute:@"file"];
         
         var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
         
@@ -446,10 +448,14 @@ function generateMacAddr()
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
-    if (aStanza.getAttribute("type") == @"success")
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
+    
+    if (responseType == @"success")
     {
-        var infoNode = aStanza.getElementsByTagName("info")[0];
-        var libvirtSate = infoNode.getAttribute("state");
+        var infoNode = [stanza getFirstChildWithName:@"info"];
+        var libvirtSate = [infoNode getValueForAttribute:@"state"];
         if (libvirtSate == VIR_DOMAIN_RUNNING || libvirtSate == VIR_DOMAIN_PAUSED)
             [self addSubview:[self maskingView]];
         else
@@ -532,10 +538,24 @@ function generateMacAddr()
     [[[self contact] connection] send:defineStanza];
 }
 
+
+- (void)onLibvirtError:(TNStropheStanza)errorStanza
+{
+    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
+    var libvirtErrorMessage     = [errorNode text];   
+    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
+    
+    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+    
+    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+}
+
 - (void)didDefineXML:(id)aStanza
 {
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
 
     if (responseType == @"success")
     {
@@ -543,13 +563,7 @@ function generateMacAddr()
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Error: " + libvirtErrorCode;
-
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-
-        [[TNViewLog sharedLogger] log:@"unable to define virtualmachine " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+        [self onLibvirtError:stanza];
     }
 }
 

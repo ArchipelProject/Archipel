@@ -175,19 +175,19 @@ VIR_DOMAIN_CRASHED	                        =	6;
       {   
           [[self maskingView] removeFromSuperview];
           
-          var infoNode    = [stanza getFirstChildWithName:@"info"]; //aStanza.getElementsByTagName("info")[0];
-          var cpuTime     = parseInt(infoNode.getAttribute("cpuTime"));
-          var mem         = parseInt(infoNode.getAttribute("memory"));
+          var infoNode    = [stanza getFirstChildWithName:@"info"];
+          var cpuTime     = parseInt([infoNode getValueForAttribute:@"cpuTime"]);
+          var mem         = parseInt([infoNode getValueForAttribute:@"memory"]);
           
           cpuTime /= 6000000000;
           cpuTime = Math.round(cpuTime);
           mem = mem / 1024;
           
           [[self fieldInfoMem] setStringValue:mem + @" Mo"];
-          [[self fieldInfoCPUs] setStringValue:infoNode.getAttribute("nrVirtCpu")];
+          [[self fieldInfoCPUs] setStringValue:[infoNode getValueForAttribute:@"nrVirtCpu"]];
           [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
      
-          var libvirtSate = infoNode.getAttribute("state");
+          var libvirtSate = [infoNode getValueForAttribute:@"state"];
           var humanState;
           
           _VMLibvirtStatus = libvirtSate;
@@ -279,6 +279,18 @@ VIR_DOMAIN_CRASHED	                        =	6;
 }
 
 
+- (void)onLibvirtError:(TNStropheStanza)errorStanza
+{
+    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
+    var libvirtErrorMessage     = [errorNode text];   
+    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
+    
+    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+    
+    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+}
+
 // did Actions done selectors
 - (void)didPlay:(id)aStanza
 {
@@ -290,18 +302,12 @@ VIR_DOMAIN_CRASHED	                        =	6;
     
     if (responseType == @"success")
     {
-        var libvirtID = aStanza.getElementsByTagName("domain")[0].getAttribute("id");
+        var libvirtID = [[stanza getFirstChildWithName:@"domain"] getValueForAttribute:@"id"];
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
-        
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-        
-        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+       [self onLibvirtError:stanza];
     }
 }
 
@@ -319,13 +325,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Error: " + libvirtErrorCode;
-        
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-        
-        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+        [self onLibvirtError:stanza];
     }
 }
 
@@ -343,13 +343,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Error: " + libvirtErrorCode;
-        
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-        
-        [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+        [self onLibvirtError:stanza];
     }
 }
 
@@ -357,8 +351,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
 {
     [self getVirtualMachineInfo:nil];
 
-    var responseType = aStanza.getAttribute("type");
-    var responseFrom = aStanza.getAttribute("from");
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
     
     if (responseType == @"success")
     {
@@ -366,13 +360,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Error: " + libvirtErrorCode;
-        
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-        
-        [[TNViewLog sharedLogger] log:@"unable to start virtualmachine " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+        [self onLibvirtError:stanza];
     }
 }
 
@@ -390,13 +378,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        var libvirtErrorCode        = aStanza.getElementsByTagName("error")[0].getAttribute("code");
-        var libvirtErrorMessage     = $(aStanza.getElementsByTagName("error")[0]).text();   
-        var title                   = @"Error: " + libvirtErrorCode;
-        
-        [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-        
-        [[TNViewLog sharedLogger] log:@"unable to start virtualmachine " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+        [self onLibvirtError:stanza];
     }
 }
 

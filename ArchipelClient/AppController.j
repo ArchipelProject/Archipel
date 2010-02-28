@@ -246,7 +246,6 @@ TNArchipelEntityTypeUser            = @"user";
    var index    = [_rosterOutlineView selectedRowIndexes];
    var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
    
-    
    if ([item type] == "group")
    {
        return
@@ -255,11 +254,11 @@ TNArchipelEntityTypeUser            = @"user";
    var vCard = [item vCard];
    if (vCard)
    {
-       var itemType = $(vCard.getElementsByTagName("TYPE")[0]).text();
+       var itemType = [[vCard getFirstChildWithName:@"TYPE"] text];
 
        if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor))
        {
-           [self loadControlPanelForItem:item withType:$(vCard.firstChild).text()];   
+           [self loadControlPanelForItem:item withType:itemType];   
        }
        else 
        {
@@ -277,7 +276,6 @@ TNArchipelEntityTypeUser            = @"user";
 
 - (int)outlineView:(CPOutlineView)outView validateDrop:(id)info proposedItem:(id)item proposedChildIndex:(int)index
  {
-     console.log("TOTO");
     return CPDragOperationMove;
  }
 @end
