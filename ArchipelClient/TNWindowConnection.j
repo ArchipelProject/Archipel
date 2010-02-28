@@ -45,22 +45,24 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 // initialization
 - (void) awakeFromCib 
 {
-   [[self password] setSecure:YES];
+    [[self password] setSecure:YES];
       
-   var lastBoshService = JSON.parse(localStorage.getItem("lastboshservice"));
-   var lastJID = JSON.parse(localStorage.getItem("lastjid"));
-   var lastPassword = JSON.parse(localStorage.getItem("lastpassword"));
+    var lastBoshService  = JSON.parse(localStorage.getItem("lastboshservice"));
+    var lastJID          = JSON.parse(localStorage.getItem("lastjid"));
+    var lastPassword     = JSON.parse(localStorage.getItem("lastpassword"));
    
-   if (lastBoshService)
-       [[self boshService] setStringValue:lastBoshService];
+    if (lastBoshService)
+        [[self boshService] setStringValue:lastBoshService];
    
-   [[self jid] setStringValue:lastJID]; 
-   [[self password] setStringValue:lastPassword];
+    [[self jid] setStringValue:lastJID]; 
+    [[self password] setStringValue:lastPassword];
    
-   if (lastJID && lastPassword) 
-       [self connect:nil];
-   else
-       [[self credentialRemember] setState:CPOffState];
+    if (lastJID && lastPassword) 
+        [self connect:nil];
+    else
+        [[self credentialRemember] setState:CPOffState];
+       
+    [self setShowsResizeIndicator:NO];
 }
 
 

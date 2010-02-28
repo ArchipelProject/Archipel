@@ -28,14 +28,20 @@
     @outlet CPTextField     fieldMessage        @accessors;
 }
 
+- (void)awakeFromCib
+{
+    [fieldMessagesBoard setLineBreakMode:CPLineBreakByWordWrapping];
+    [fieldMessagesBoard setEditable:NO];
+    [fieldMessagesBoard setBordered:NO];
+}
+
 - (void)willLoad
 {
-    console.log("registering for object " + [[self contact] jid])
+    
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self contact]];
     
-    // restaure conversation from local storage
-    console.log("restauring token " + "communicationWith" + [[self contact] jid]);
     var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self contact] jid]));
     [[self fieldMessagesBoard] setStringValue:lastConversation];
 }
@@ -49,22 +55,14 @@
     [[self contact] freeMessagesQueue];
     
     localStorage.setItem("communicationWith" + [[self contact] jid], JSON.stringify([[self fieldMessagesBoard] stringValue]));
-    console.log("saving token " + "communicationWith" + [[self contact] jid]);
     [[self fieldMessagesBoard] setStringValue:@""];
 }
 
 - (void)willShow 
 {    
     var messageQueue = [[self contact] messagesQueue];
-    
-    // for (var i = 0; i < [messageQueue count]; i++)
-    // {
-    //     var stanza = [messageQueue objectAtIndex:i];
-    // 
-    //     [self appendMessageToBoard:$([stanza getFirstChildWithName:@"body"]).text() from:[stanza getValueForAttribute:@"from"]];
-    //     [[self contact] freeMessagesQueue];   
-    // }
     var stanza;
+    
     while (stanza = [[self contact] popMessagesQueue])
     {    
         [self appendMessageToBoard:[[stanza getFirstChildWithName:@"body"] text] from:[stanza getValueForAttribute:@"from"]];

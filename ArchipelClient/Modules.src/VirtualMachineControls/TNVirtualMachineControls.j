@@ -50,13 +50,11 @@ VIR_DOMAIN_CRASHED	                        =	6;
     @outlet CPTextField     fieldInfoCPUs               @accessors;
     @outlet CPTextField     fieldInfoConsumedCPU        @accessors;
     @outlet CPImageView     imageState                  @accessors;
-    
-    @outlet CPView          maskingView     @accessors;
-    @outlet CPButton        buttonPlay      @accessors;
-    @outlet CPButton        buttonPause     @accessors;
-    @outlet CPButton        buttonStop      @accessors;
-    @outlet CPButton        buttonReboot    @accessors;
-    
+    @outlet CPView          maskingView                 @accessors;
+    @outlet CPButton        buttonPlay                  @accessors;
+    @outlet CPButton        buttonPause                 @accessors;
+    @outlet CPButton        buttonStop                  @accessors;
+    @outlet CPButton        buttonReboot                @accessors;
 
     CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
@@ -64,8 +62,6 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 - (void)awakeFromCib
 {
-    [[self fieldVMJid] setSelectable:YES];
-    
     var bundle = [CPBundle bundleForClass:[self class]];
     
     [[self buttonPlay] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"]]];
@@ -76,12 +72,15 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
     [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self maskingView] setAlphaValue:0.9];
+    
+    [[self fieldVMJid] setSelectable:YES];
 }
 
 // TNModule implementation
 - (void)willLoad
-{
+{    
     var center = [CPNotificationCenter defaultCenter];
+    
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(didNickPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 }
@@ -89,6 +88,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
 - (void)willUnload
 {
     var center = [CPNotificationCenter defaultCenter];
+    
     [center removeObserver:self];
 }
 
@@ -156,9 +156,9 @@ VIR_DOMAIN_CRASHED	                        =	6;
         return;
     }
     
-    var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var uid         = [[[self contact] connection] getUniqueId];
+    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
+    var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
     
@@ -175,66 +175,45 @@ VIR_DOMAIN_CRASHED	                        =	6;
       {   
           [[self maskingView] removeFromSuperview];
           
-          var infoNode    = [stanza getFirstChildWithName:@"info"];
-          var cpuTime     = parseInt([infoNode getValueForAttribute:@"cpuTime"]);
-          var mem         = parseInt([infoNode getValueForAttribute:@"memory"]);
-          
-          cpuTime /= 6000000000;
-          cpuTime = Math.round(cpuTime);
-          mem = mem / 1024;
+          var infoNode      = [stanza getFirstChildWithName:@"info"];
+          var libvirtState  = [infoNode getValueForAttribute:@"state"];
+          var cpuTime       = Math.round(parseInt([infoNode getValueForAttribute:@"cpuTime"]) / 6000000000);
+          var mem           = parseInt([infoNode getValueForAttribute:@"memory"]) / 1024;
+          var humanState;
           
           [[self fieldInfoMem] setStringValue:mem + @" Mo"];
           [[self fieldInfoCPUs] setStringValue:[infoNode getValueForAttribute:@"nrVirtCpu"]];
           [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
-     
-          var libvirtSate = [infoNode getValueForAttribute:@"state"];
-          var humanState;
           
-          _VMLibvirtStatus = libvirtSate;
+          _VMLibvirtStatus = libvirtState;
           
-          switch ([libvirtSate intValue])
+          switch ([libvirtState intValue])
           {
               case VIR_DOMAIN_NOSTATE:
-                  humanState = @"No status";
-                  break;
+                    humanState = @"No status";
+                    break;
               case VIR_DOMAIN_RUNNING:
-                  [[self buttonPause] setTitle:@"Pause"];
-                  [[self buttonPlay] setEnabled:NO];
-                  [[self buttonStop] setEnabled:YES];
-                  [[self buttonPause] setEnabled:YES];
-                  [[self buttonReboot] setEnabled:YES];
-                  humanState = @"Running";
-                  break;
+                    [self enableButtonsForRunning];
+                    humanState = @"Running";
+                    break;
               case VIR_DOMAIN_BLOCKED:
-                  humanState = @"Blocked";
-                  break;
+                    humanState = @"Blocked";
+                    break;
               case VIR_DOMAIN_PAUSED:
-                  [[self buttonPause] setTitle:@"Resume"];
-                  [[self buttonPlay] setEnabled:NO];
-                  [[self buttonStop] setEnabled:YES];
-                  [[self buttonPause] setEnabled:YES];
-                  [[self buttonReboot] setEnabled:YES];
-                  humanState = @"Paused";
-                  break;
+                    [self enableButtonsForPaused]
+                    humanState = @"Paused";
+                    break;
               case VIR_DOMAIN_SHUTDOWN:
-                  [[self buttonPause] setTitle:@"Pause"];
-                  [[self buttonPlay] setEnabled:YES];
-                  [[self buttonStop] setEnabled:NO];
-                  [[self buttonPause] setEnabled:NO];
-                  [[self buttonReboot] setEnabled:NO];
-                  humanState = @"Shutdown";
-                  break;
+                    [self enableButtonsForShutdowned]
+                    humanState = @"Shutdown";
+                    break;
               case VIR_DOMAIN_SHUTOFF:
-                  [[self buttonPause] setTitle:@"Pause"];
-                  [[self buttonPlay] setEnabled:YES];
-                  [[self buttonStop] setEnabled:NO];
-                  [[self buttonPause] setEnabled:NO];
-                  [[self buttonReboot] setEnabled:NO];
-                  humanState = @"Shutdown";
-                  break;
+                    [self enableButtonsForShutdowned]
+                    humanState = @"Shutdown";
+                    break;
               case VIR_DOMAIN_CRASHED:
-                  humanState = @"Crashed";
-                  break;
+                    humanState = @"Crashed";
+                    break;
           }
           [[self fieldInfoState] setStringValue:humanState];
       }
@@ -278,19 +257,6 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [self sendVirtualMachineControl:trinityTypeVirtualMachineControlReboot withSelector:@selector(didReboot:)];
 }
 
-
-- (void)onLibvirtError:(TNStropheStanza)errorStanza
-{
-    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
-    var libvirtErrorMessage     = [errorNode text];   
-    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
-    
-    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-    
-    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
-}
-
 // did Actions done selectors
 - (void)didPlay:(id)aStanza
 {
@@ -307,7 +273,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-       [self onLibvirtError:stanza];
+       [self onLibvirtError:stanza from:responseFrom];
     }
 }
 
@@ -325,17 +291,17 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza];
+        [self onLibvirtError:stanza from:responseFrom];
     }
 }
 
 - (void)didResume:(id)aStanza
 {
-    [self getVirtualMachineInfo:nil];
-
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza]
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
     var responseType    = [stanza getType];
     var responseFrom    = [stanza getFrom];
+    
+    [self getVirtualMachineInfo:nil];
     
     if (responseType == @"success")
     {
@@ -343,16 +309,17 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza];
+        [self onLibvirtError:stanza from:responseFrom];
     }
 }
 
 - (void)didStop:(id)aStanza
 {
-    [self getVirtualMachineInfo:nil];
-
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
     var responseType    = [stanza getType];
     var responseFrom    = [stanza getFrom];
+    
+    [self getVirtualMachineInfo:nil];
     
     if (responseType == @"success")
     {
@@ -360,17 +327,17 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza];
+        [self onLibvirtError:stanza from:responseFrom];
     }
 }
 
 - (void)didReboot:(id)aStanza
 {
-    [self getVirtualMachineInfo:nil];
-
     var stanza          = [TNStropheStanza stanzaWithStanza:aStanza]
     var responseType    = [stanza getType];
     var responseFrom    = [stanza getFrom];
+    
+    [self getVirtualMachineInfo:nil];
     
     if (responseType == @"success")
     {
@@ -378,7 +345,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza];
+        [self onLibvirtError:stanza from:responseFrom];
     }
 }
 
@@ -397,6 +364,47 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[[self contact] connection] send:rebootStanza];
     [self getVirtualMachineInfo:nil];
 }
+
+- (void)onLibvirtError:(TNStropheStanza)errorStanza from:(CPString)responseFrom
+{
+    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
+    var libvirtErrorMessage     = [errorNode text];   
+    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
+    
+    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+    
+    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+}
+
+// button management
+- (void)enableButtonsForRunning
+{
+    [[self buttonPause] setTitle:@"Pause"];
+    [[self buttonPlay] setEnabled:NO];
+    [[self buttonStop] setEnabled:YES];
+    [[self buttonPause] setEnabled:YES];
+    [[self buttonReboot] setEnabled:YES];
+}
+
+- (void)enableButtonsForPaused
+{
+    [[self buttonPause] setTitle:@"Resume"];
+    [[self buttonPlay] setEnabled:NO];
+    [[self buttonStop] setEnabled:YES];
+    [[self buttonPause] setEnabled:YES];
+    [[self buttonReboot] setEnabled:YES];
+}
+
+- (void)enableButtonsForShutdowned
+{
+    [[self buttonPause] setTitle:@"Pause"];
+    [[self buttonPlay] setEnabled:YES];
+    [[self buttonStop] setEnabled:NO];
+    [[self buttonPause] setEnabled:NO];
+    [[self buttonReboot] setEnabled:NO];
+}
+
 @end
 
 
