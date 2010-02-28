@@ -165,21 +165,20 @@
 }
 
 - (void)removeAllTabs
-{   
+{    
     var selectedItem = [self selectedTabViewItem];
-
-    //[[[selectedItem view] documentView] willHide];
+    
     [[[selectedItem view] documentView] willUnload];
     [[selectedItem view] removeFromSuperview];
     
     [self removeTabViewItem:selectedItem];
     
+    var arrayCpy = [[self tabViewItems] copy]
     //@each(var aTabViewItem in [self tabViewItems])
-    for(var i = 0; i < [[self tabViewItems] count]; i++)
+    for(var i = 0; i < [arrayCpy count]; i++)
     {
-        var aTabViewItem = [[self tabViewItems] objectAtIndex:i];
+        var aTabViewItem = [arrayCpy objectAtIndex:i];
         
-        //[[[aTabViewItem view] documentView] willHide];
         [[[aTabViewItem view] documentView] willUnload];
         [[aTabViewItem view] removeFromSuperview];
         [self removeTabViewItem:aTabViewItem];
@@ -191,14 +190,5 @@
 {
     [[[[self selectedTabViewItem] view] documentView] willHide];
     [[[anItem view] documentView] willShow];
-}
-@end
-
-
-
-// Category to add a userInfo Dict in CPBundle
-@implementation TNBundle : CPBundle
-{   
-    CPDictionary userInfo @accessors;
 }
 @end
