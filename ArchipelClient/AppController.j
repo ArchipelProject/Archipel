@@ -27,7 +27,7 @@
 @import "TNDatasourceRoster.j"
 @import "TNOutlineViewRoster.j"
 @import "TNToolbar.j"
-@import "TNViewEntityController.j"
+@import "TNTabViewModuleLoader.j"
 @import "TNViewLog.j"
 @import "TNViewProperties.j"
 @import "TNWindowAddContact.j"
@@ -54,7 +54,7 @@ TNArchipelEntityTypeUser            = @"user";
 	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
     @outlet TNWindowConnection  connectionWindow    @accessors;
     
-    TNViewEntityController      _moduleView;
+    TNTabViewModuleLoader      _moduleView;
 	TNDatasourceRoster          _mainRoster;
 	TNOutlineViewRoster		    _rosterOutlineView;
 	TNToolbar		            _hypervisorToolbar;
@@ -123,7 +123,7 @@ TNArchipelEntityTypeUser            = @"user";
     
     
     // module view :
-    _moduleView = [[TNViewEntityController alloc] initWithFrame:[[self rightView] bounds]];
+    _moduleView = [[TNTabViewModuleLoader alloc] initWithFrame:[[self rightView] bounds]];
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleView setBackgroundColor:[CPColor whiteColor]];
     [_moduleView load];

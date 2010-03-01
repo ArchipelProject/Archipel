@@ -1,5 +1,5 @@
 /*  
- * TNViewEntityController.j
+ * TNTabViewModuleLoader.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,9 @@
 @import <AppKit/AppKit.j>
 
 @import "StropheCappuccino/TNStrophe.j";
-@import "TNSplitView.j";
+@import "TNCategoriesAndGlobalSubclasses.j";
 
-@implementation TNViewEntityController: CPTabView 
+@implementation TNTabViewModuleLoader: CPTabView 
 {
     TNStropheRoster         roster                      @accessors;
     TNStropheContact        contact                     @accessors;
