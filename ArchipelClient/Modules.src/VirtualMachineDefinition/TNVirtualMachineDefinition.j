@@ -270,22 +270,20 @@ function generateMacAddr()
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
-{
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-    
-    if ([stanza getType] == @"error")
+{    
+    if ([aStanza getType] == @"error")
     {
         CPLogConsole("XML not defined");
         return;
     }
-    var domain      = [stanza getFirstChildWithName:@"domain"];
-    var hypervisor  = [domain getValueForAttribute:@"type"];
-    var memory      = [[domain getFirstChildWithName:@"currentMemory"] text];
-    var arch        = [[[domain getFirstChildWithName:@"os"] getFirstChildWithName:@"type"] getValueForAttribute:@"arch"];
-    var vcpu        = [[domain getFirstChildWithName:@"vcpu"] text];
-    var boot        = [[domain getFirstChildWithName:@"boot"] getValueForAttribute:@"dev"];
-    var interfaces  = [domain getChildrenWithName:@"interface"];
-    var disks       = [domain getChildrenWithName:@"disk"];
+    var domain      = [aStanza firstChildWithName:@"domain"];
+    var hypervisor  = [domain valueForAttribute:@"type"];
+    var memory      = [[domain firstChildWithName:@"currentMemory"] text];
+    var arch        = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
+    var vcpu        = [[domain firstChildWithName:@"vcpu"] text];
+    var boot        = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
+    var interfaces  = [domain childrenWithName:@"interface"];
+    var disks       = [domain childrenWithName:@"disk"];
     
     [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
     [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
@@ -299,12 +297,12 @@ function generateMacAddr()
     for (var i = 0; i < [interfaces count]; i++)
     {
         var currentInterface    = [interfaces objectAtIndex:i];
-        var iType               = [currentInterface getValueForAttribute:@"type"];
+        var iType               = [currentInterface valueForAttribute:@"type"];
         var iModel              = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
-        var iMac                = [[currentInterface getFirstChildWithName:@"mac"] getValueForAttribute:@"address"];
+        var iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"];
         
         if (iType == "bridge")
-            var iSource = [[currentInterface getFirstChildWithName:@"source"] getValueForAttribute:@"bridge"];
+            var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
         else
             var iSource = "NOT IMPLEMENTED";
         
@@ -320,11 +318,11 @@ function generateMacAddr()
     for (var i = 0; i < [disks count]; i++)
     {
         var currentDisk = [disks objectAtIndex:i];
-        var iType       = [currentDisk getValueForAttribute:@"type"];
-        var iDevice     = [currentDisk getValueForAttribute:@"device"];
-        var iTarget     = [[currentDisk getFirstChildWithName:@"target"] getValueForAttribute:@"dev"];
-        var iBus        = [[currentDisk getFirstChildWithName:@"target"] getValueForAttribute:@"bus"];
-        var iSource     = [[currentDisk getFirstChildWithName:@"source"] getValueForAttribute:@"file"];
+        var iType       = [currentDisk valueForAttribute:@"type"];
+        var iDevice     = [currentDisk valueForAttribute:@"device"];
+        var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
+        var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
+        var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
         
         var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
         
@@ -449,14 +447,13 @@ function generateMacAddr()
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     if (responseType == @"success")
     {
-        var infoNode = [stanza getFirstChildWithName:@"info"];
-        var libvirtSate = [infoNode getValueForAttribute:@"state"];
+        var infoNode = [aStanza firstChildWithName:@"info"];
+        var libvirtSate = [infoNode valueForAttribute:@"state"];
         if (libvirtSate == VIR_DOMAIN_RUNNING || libvirtSate == VIR_DOMAIN_PAUSED)
             [self addSubview:[self maskingView]];
         else
@@ -543,8 +540,8 @@ function generateMacAddr()
 
 - (void)onLibvirtError:(TNStropheStanza)errorStanza
 {
-    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
+    var errorNode               = [errorStanza firstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
     var libvirtErrorMessage     = [errorNode text];   
     var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
     
@@ -555,9 +552,8 @@ function generateMacAddr()
 
 - (void)didDefineXML:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
 
     if (responseType == @"success")
     {
@@ -565,7 +561,7 @@ function generateMacAddr()
     }
     else
     {
-        [self onLibvirtError:stanza];
+        [self onLibvirtError:aStanza];
     }
 }
 

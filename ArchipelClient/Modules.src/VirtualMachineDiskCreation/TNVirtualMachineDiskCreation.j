@@ -83,22 +83,21 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 
 - (void)didReceiveDisksInfo:(id)aStanza 
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
 
     if (responseType == @"success")
     {
-        var disks = [stanza getChildrenWithName:@"disk"];
+        var disks = [aStanza childrenWithName:@"disk"];
         [[self buttonDelDiskName] removeAllItems];
         for (var i = 0; i < [disks count]; i++)
         {
             var disk    = [disks objectAtIndex:i];
-            var vSize   = [[[disk getValueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0];
-            var label   = [[[disk getValueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk getValueForAttribute:@"diskSize"] + ")";
+            var vSize   = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0];
+            var label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk valueForAttribute:@"diskSize"] + ")";
             var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
             
-            [item setStringValue:[disk getValueForAttribute:@"path"]];
+            [item setStringValue:[disk valueForAttribute:@"path"]];
             [[self buttonDelDiskName] addItem:item];
         }
     }   

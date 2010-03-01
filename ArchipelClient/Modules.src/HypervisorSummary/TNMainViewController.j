@@ -105,8 +105,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
-    var stanza      = [TNStropheStanza stanzaWithStanza:aStanza];
-    var queryItems  = [stanza getChildrenWithName:@"item"];
+    var queryItems  = [aStanza childrenWithName:@"item"];
     
     [[self popupDeleteMachine] removeAllItems];
     
@@ -117,7 +116,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         
         if (entry) 
         {
-            if ([[[entry vCard] getFirstChildWithName:@"TYPE"] text] == "virtualmachine")
+            if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
             {
                 var name = [entry nickname] + " (" + jid +")";
                 var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil];
@@ -150,29 +149,27 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 }
 
 - (void)didReceiveHypervisorHealth:(id)aStanza 
-{
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-    
-    if ([stanza getType] == @"success")
+{   
+    if ([aStanza getType] == @"success")
     {       
-        var memNode = [stanza getFirstChildWithName:@"memory"];
-        [[self healthMemUsage] setStringValue:[memNode getValueForAttribute:@"free"] + "Mo / " + [memNode getValueForAttribute:@"swapped"] + "Mo"];
+        var memNode = [aStanza firstChildWithName:@"memory"];
+        [[self healthMemUsage] setStringValue:[memNode valueForAttribute:@"free"] + "Mo / " + [memNode valueForAttribute:@"swapped"] + "Mo"];
 
-        var diskNode = [stanza getFirstChildWithName:@"disk"];
-        [[self healthDiskUsage] setStringValue:[diskNode getValueForAttribute:@"used-percentage"]];
+        var diskNode = [aStanza firstChildWithName:@"disk"];
+        [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
 
-        var loadNode = [stanza getFirstChildWithName:@"load"];
-        [[self healthLoad] setStringValue:[loadNode getValueForAttribute:@"five"]];
+        var loadNode = [aStanza firstChildWithName:@"load"];
+        [[self healthLoad] setStringValue:[loadNode valueForAttribute:@"five"]];
 
-        var uptimeNode = [stanza getFirstChildWithName:@"uptime"];
-        [[self healthUptime] setStringValue:[uptimeNode getValueForAttribute:@"up"]];
+        var uptimeNode = [aStanza firstChildWithName:@"uptime"];
+        [[self healthUptime] setStringValue:[uptimeNode valueForAttribute:@"up"]];
 
-        var cpuNode = [stanza getFirstChildWithName:@"cpu"];
-        var cpuFree = 100 - parseInt([cpuNode getValueForAttribute:@"id"]);
+        var cpuNode = [aStanza firstChildWithName:@"cpu"];
+        var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
         [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
 
-        var infoNode = [stanza getFirstChildWithName:@"uname"];
-        [[self healthInfo] setStringValue:[infoNode getValueForAttribute:@"os"] + " " + [infoNode getValueForAttribute:@"kname"]];
+        var infoNode = [aStanza firstChildWithName:@"uname"];
+        [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"]];
     }
 }
 
@@ -196,13 +193,12 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)didAllocVirtualMachine:(id)aStanza
 {
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
     [buttonCreateVM setEnabled:YES];
     
-    if ([stanza getType] == @"success")
+    if ([aStanza getType] == @"success")
     {
         var item    = [[self popupDeleteMachine] selectedItem];
-        var vmJid   = [[[stanza getFirstChildWithName:@"query"] getFirstChildWithName:@"virtualmachine"] getValueForAttribute:@"jid"];
+        var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
 
         [[self roster] authorizeJID:vmJid];
         [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
@@ -259,8 +255,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 {
     [buttonDeleteVM setEnabled:YES];
     
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-    if ([stanza getType] == @"success")
+    if ([aStanza getType] == @"success")
     {
         var item = [[self popupDeleteMachine] selectedItem];
         

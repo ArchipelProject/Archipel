@@ -168,21 +168,19 @@ VIR_DOMAIN_CRASHED	                        =	6;
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
-{
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-      
-      if ([stanza getType] == @"success")
+{     
+      if ([aStanza getType] == @"success")
       {   
           [[self maskingView] removeFromSuperview];
           
-          var infoNode      = [stanza getFirstChildWithName:@"info"];
-          var libvirtState  = [infoNode getValueForAttribute:@"state"];
-          var cpuTime       = Math.round(parseInt([infoNode getValueForAttribute:@"cpuTime"]) / 6000000000);
-          var mem           = parseInt([infoNode getValueForAttribute:@"memory"]) / 1024;
+          var infoNode      = [aStanza firstChildWithName:@"info"];
+          var libvirtState  = [infoNode valueForAttribute:@"state"];
+          var cpuTime       = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 6000000000);
+          var mem           = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
           var humanState;
           
           [[self fieldInfoMem] setStringValue:mem + @" Mo"];
-          [[self fieldInfoCPUs] setStringValue:[infoNode getValueForAttribute:@"nrVirtCpu"]];
+          [[self fieldInfoCPUs] setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
           [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
           
           _VMLibvirtStatus = libvirtState;
@@ -260,28 +258,26 @@ VIR_DOMAIN_CRASHED	                        =	6;
 // did Actions done selectors
 - (void)didPlay:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     [self getVirtualMachineInfo:nil];
     
     if (responseType == @"success")
     {
-        var libvirtID = [[stanza getFirstChildWithName:@"domain"] getValueForAttribute:@"id"];
+        var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
     }
     else
     {
-       [self onLibvirtError:stanza from:responseFrom];
+       [self onLibvirtError:aStanza from:responseFrom];
     }
 }
 
 - (void)didPause:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     [self getVirtualMachineInfo:nil];
         
@@ -291,15 +287,14 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza from:responseFrom];
+        [self onLibvirtError:aStanza from:responseFrom];
     }
 }
 
 - (void)didResume:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     [self getVirtualMachineInfo:nil];
     
@@ -309,15 +304,14 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza from:responseFrom];
+        [self onLibvirtError:aStanza from:responseFrom];
     }
 }
 
 - (void)didStop:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     [self getVirtualMachineInfo:nil];
     
@@ -327,15 +321,14 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza from:responseFrom];
+        [self onLibvirtError:aStanza from:responseFrom];
     }
 }
 
 - (void)didReboot:(id)aStanza
 {
-    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza]
-    var responseType    = [stanza getType];
-    var responseFrom    = [stanza getFrom];
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
     
     [self getVirtualMachineInfo:nil];
     
@@ -345,7 +338,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     else
     {
-        [self onLibvirtError:stanza from:responseFrom];
+        [self onLibvirtError:aStanza from:responseFrom];
     }
 }
 
@@ -367,8 +360,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 - (void)onLibvirtError:(TNStropheStanza)errorStanza from:(CPString)responseFrom
 {
-    var errorNode               = [errorStanza getFirstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode getValueForAttribute:@"code"];
+    var errorNode               = [errorStanza firstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
     var libvirtErrorMessage     = [errorNode text];   
     var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
     

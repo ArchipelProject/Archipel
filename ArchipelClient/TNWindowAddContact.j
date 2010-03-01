@@ -58,18 +58,19 @@
 
 - (IBAction)addContact:(id)sender
 {
-    var group = [[self newContactGroup] title];
-
-    [[self roster] addContact:[newContactJid stringValue] withName:[newContactName stringValue] inGroup:group];
-    [[self roster] askAuthorizationTo:[newContactJid stringValue]];
+    var group   = [[self newContactGroup] title];
+    var jid     = [[newContactJid stringValue] lowercaseString];
+    var name    = [newContactName stringValue];
+    
+    [[self roster] addContact:jid withName:name inGroup:group];
+    [[self roster] askAuthorizationTo:jid];
+    [[self roster] authorizeJID:jid];
     
     [self orderOut:nil];
     
-    var msg     = @"Presence subsciption has been sent to " + [newContactJid stringValue] + ".";
+    var msg     = @"Presence subsciption has been sent to " + jid + ".";
     
-    [CPAlert alertWithTitle:@"Subscription request sent" message:@"Subscription request sent"];
-    
-    [[TNViewLog sharedLogger] log:@"added contact " + [newContactJid stringValue]];
+    [[TNViewLog sharedLogger] log:@"added contact " + jid];
 }
 
 @end

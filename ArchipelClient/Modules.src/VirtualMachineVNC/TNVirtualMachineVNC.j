@@ -85,12 +85,10 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
 {
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-    
-    if ([stanza getType] == @"success")
+    if ([aStanza getType] == @"success")
     {
-        var infoNode = [stanza getFirstChildWithName:@"info"];
-        var libvirtSate = [infoNode getValueForAttribute:@"state"];
+        var infoNode = [aStanza firstChildWithName:@"info"];
+        var libvirtSate = [infoNode valueForAttribute:@"state"];
         if (libvirtSate != VIR_DOMAIN_RUNNING)
             [self addSubview:[self maskingView]];
         else
@@ -116,13 +114,11 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)didReceiveVNCDisplay:(id)aStanza 
 {
-    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
-    
-    if ([stanza getType] == @"success")
+    if ([aStanza getType] == @"success")
     {   
-        var displayNode = [stanza getFirstChildWithName:@"vncdisplay"];
-        _vncDisplay     = [displayNode getValueForAttribute:@"port"];
-        _VMHost         = [displayNode getValueForAttribute:@"host"];
+        var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
+        _vncDisplay     = [displayNode valueForAttribute:@"port"];
+        _VMHost         = [displayNode valueForAttribute:@"host"];
         
         var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
         

@@ -254,7 +254,7 @@ TNArchipelEntityTypeUser            = @"user";
    var vCard = [item vCard];
    if (vCard)
    {
-       var itemType = [[vCard getFirstChildWithName:@"TYPE"] text];
+       var itemType = [[vCard firstChildWithName:@"TYPE"] text];
 
        if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor))
        {

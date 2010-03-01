@@ -124,7 +124,6 @@
     }
     else 
     {
-
         return [[self getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
     }
 }

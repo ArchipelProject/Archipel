@@ -51,12 +51,15 @@
 - (void)setContact:(TNStropheContact)aContact ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
     [self removeAllTabs];
-        
+     
     [self setContact:aContact];
     [self setRoster:aRoster];
     [self setModuleType:aType];
     
-    [self populateTabs];
+    if ([[self contact] status] != TNStropheContactStatusOffline)
+    {
+        [self populateTabs];
+    }
 }
 
 - (void)load
@@ -134,7 +137,7 @@
             else
                 return CPOrderedSame;
     }]
-
+    
     //@each(var module in [_modulesPList objectForKey:@"Modules"])
     for(var i = 0; i < [sortedValue count]; i++)
     {
@@ -154,7 +157,7 @@
 - (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
 {   
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
-    
+
     [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
     [[aModuleScrollView documentView] willLoad];
     
@@ -173,7 +176,8 @@
     
     [self removeTabViewItem:selectedItem];
     
-    var arrayCpy = [[self tabViewItems] copy]
+    var arrayCpy = [[self tabViewItems] copy];
+    
     //@each(var aTabViewItem in [self tabViewItems])
     for(var i = 0; i < [arrayCpy count]; i++)
     {
