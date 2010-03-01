@@ -46,7 +46,8 @@ VIR_DOMAIN_RUNNING	                        =	1;
     [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self maskingView] setAlphaValue:0.9];
     
-    var _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"]
+    _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
+    console.log(_webServerPort);
 }
 
 
@@ -118,13 +119,15 @@ VIR_DOMAIN_RUNNING	                        =	1;
     var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
     
     if ([stanza getType] == @"success")
-    {       
+    {   
         var displayNode = [stanza getFirstChildWithName:@"vncdisplay"];
-        _vncDisplay = [displayNode getValueForAttribute:@"port"];
-        _VMHost     = [displayNode getValueForAttribute:@"host"];
+        _vncDisplay     = [displayNode getValueForAttribute:@"port"];
+        _VMHost         = [displayNode getValueForAttribute:@"host"];
         
-        var url     = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?port=" + _vncDisplay;
-
+        var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        
+        console.log("VNC " + url);
+        
         [[self vncWebView] setMainFrameURL:url];
     }
 }

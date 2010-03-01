@@ -46,8 +46,15 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     server_root     = "./www/"
     
     def do_GET(self):
+        parameters  = [];
+        options     = {};
         if self.path.find("?") != -1:
             (self.path, request) = self.path.split("?");
+            parameters = request.split("&");
+        
+        for parameter in parameters:
+            p, v = parameter.split("=");
+            options[p] = v;
         
         if self.path == "/":
             self.path = "index.html";
@@ -55,6 +62,8 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         try:
             f = open(self.server_root + self.path);
             data = f.read();
+            if self.path == "index.html":
+                data = data.replace("::PORT::", options["port"])
             self.wfile.write(data);
             f.close()
         except:
