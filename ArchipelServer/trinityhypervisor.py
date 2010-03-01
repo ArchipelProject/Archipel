@@ -35,7 +35,6 @@ class TThreadedVM(Thread):
         self.jid = jid
         self.password = password
         self.xmppvm = TrinityVM(self.jid, self.password)
-        self.xmppvm.connect()
         Thread.__init__(self)
     
     
@@ -52,7 +51,10 @@ class TThreadedVM(Thread):
         """
         overiddes sur super class method. do the L{TrinityVM} main loop
         """
-        self.xmppvm.loop()
+        try:
+            self.xmppvm.connect()
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "vm has been stopped")
       
     
     
@@ -234,8 +236,9 @@ class TrinityHypervisor(TrinityBase):
             reply.setQueryPayload(["Key {0} not found".format(ex)])
             return reply
         
-        log(self, LOG_LEVEL_INFO, "disconnecting vm from jabber server ".format(vm_jid))
-        vm.get_instance().disconnect()
+        log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
+        vm.get_instance()._inband_unregistration()
+        #vm.get_instance().disconnect()
         
         log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
         self.remove_jid(vm_jid)
@@ -243,7 +246,11 @@ class TrinityHypervisor(TrinityBase):
         log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))
         self.database.commit()
+        
         del self.virtualmachines[domain_uuid]
+        
+        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
+        #TODO
         
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")

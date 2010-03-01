@@ -15,7 +15,7 @@ LOG_LEVEL_INFO = 1
 LOG_LEVEL_ERROR = 2
 """This level prints only errors. should be use for production"""
 
-LOG_LEVEL = LOG_LEVEL_INFO
+LOG_LEVEL = LOG_LEVEL_DEBUG
 """this allows to set the log level"""
 
 LOG_WRITE_IN_FILE = None#"./log.log"

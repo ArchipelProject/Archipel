@@ -73,7 +73,7 @@
 }
                        
 - (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
-{       
+{   
     [[self outlineView] reloadData];
 }
 
@@ -124,6 +124,7 @@
     }
     else 
     {
+
         return [[self getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
     }
 }

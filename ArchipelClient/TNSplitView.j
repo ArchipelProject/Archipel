@@ -140,4 +140,10 @@
 }
 @end
 
+@implementation TNMenuItem : CPMenuItem
+{
+    CPString stringValue @accessors;
+}
+@end
+
 

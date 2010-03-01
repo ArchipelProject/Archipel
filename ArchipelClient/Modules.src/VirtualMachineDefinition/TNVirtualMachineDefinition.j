@@ -64,6 +64,7 @@ function generateMacAddr()
     @outlet CPTextField             fieldMemory             @accessors;
     @outlet CPPopUpButton           buttonNumberCPUs        @accessors;
     @outlet CPPopUpButton           buttonBoot              @accessors;
+    @outlet CPPopUpButton           buttonVNCKeymap         @accessors;
     @outlet CPButton                buttonAddNic            @accessors;
     @outlet CPButton                buttonDelNic            @accessors;
     @outlet CPButton                buttonArchitecture      @accessors;
@@ -504,6 +505,7 @@ function generateMacAddr()
 
         [[self windowDriveEdition] setDrive:driveObject];
         [[self windowDriveEdition] setTable:[self tableDrives]];
+        [[self windowDriveEdition] setContact:[self contact]];
         [[self windowDriveEdition] center];
         [[self windowDriveEdition] orderFront:nil];
     }
@@ -548,7 +550,7 @@ function generateMacAddr()
     
     [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
     
-    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
 }
 
 - (void)didDefineXML:(id)aStanza

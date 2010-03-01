@@ -29,6 +29,11 @@
           <key>folder</key>
           <string>UserChat</string>
       </dict>
+      
+      <dict>
+            <key>folder</key>
+            <string>VirtualMachineDiskCreation</string>
+        </dict>
 
       
 	</array>

@@ -77,7 +77,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)willHide
 {
-    console.log("hiding");
     if (_timer)
         [_timer invalidate];
 }
@@ -94,13 +93,12 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)getHypervisorRoster
 {
-    var uid = [[[self contact] connection] getUniqueId];
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [[self contact] fullJID], "id": uid}];
-    var params;
+    var uid             = [[[self contact] connection] getUniqueId];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
     [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     
-    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];
 }
@@ -122,7 +120,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
             if ([[[entry vCard] getFirstChildWithName:@"TYPE"] text] == "virtualmachine")
             {
                 var name = [entry nickname] + " (" + jid +")";
-                var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil]
+                var item = [[TNMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil];
+                
                 [item setImage:[entry statusIcon]];
                 [item setStringValue:jid];
                 [[self popupDeleteMachine] addItem:item];
@@ -181,18 +180,50 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 //actions
 - (IBAction) addVirtualMachine:(id)sender
 {
-    var creationStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [[self contact] fullJID]}];
-    var uuid = [CPString UUID];
-
+    var uid             = [[[self contact] connection] getUniqueId];
+    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [[self contact] fullJID], "id": uid}];
+    var uuid            = [CPString UUID];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    
     [creationStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
+    
+    [[[self contact] connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
     [[[self contact] connection] send:creationStanza];
+    [buttonCreateVM setEnabled:NO];
+}
+
+- (void)didAllocVirtualMachine:(id)aStanza
+{
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    [buttonCreateVM setEnabled:YES];
+    
+    if ([stanza getType] == @"success")
+    {
+        var item    = [[self popupDeleteMachine] selectedItem];
+        var vmJid   = [[[stanza getFirstChildWithName:@"query"] getFirstChildWithName:@"virtualmachine"] getValueForAttribute:@"jid"];
+
+        [[self roster] authorizeJID:vmJid];
+        [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
+        [[self roster] addContact:vmJid withName:@"New Virtual Machine" inGroup:@"Virtual Machines"];        
+        
+        [self getHypervisorRoster];
+    }
+    else
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"Unable to create virtual machine" style:CPCriticalAlertStyle];
+        [[TNViewLog sharedLogger] log:@"error during creation a virtual machine"];
+    }
 }
 
 - (IBAction) deleteVirtualMachine:(id)sender
 {
     var alert = [[CPAlert alloc] init];
+    
+    [buttonDeleteVM setEnabled:NO];
+    
+    // TODO avoid people to delete running machine.
     
     [alert setDelegate:self];
     [alert setTitle:@"Destroying a Virtual Machine"];
@@ -207,26 +238,43 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 {
     if (returnCode == 0)
     {
-        var item  = [[self popupDeleteMachine] selectedItem];
-        var index = [[self popupDeleteMachine] indexOfSelectedItem];
-
-        var freeStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlFree, "to": [[self contact] fullJID]}];
-
+        var item        = [[self popupDeleteMachine] selectedItem];
+        var uid         = [[[self contact] connection] getUniqueId];
+        var freeStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlFree, "to": [[self contact] fullJID], "id": uid}];
+        var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+        
         [freeStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
         [freeStanza addTextNode:[item stringValue]];
+        
+        [[[self contact] connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];
         [[[self contact] connection] send:freeStanza];
-        [[self roster] removeContact:[item stringValue]];
-
-        [[self popupDeleteMachine] removeItemAtIndex:index];
+    }
+    else
+    {
+        [buttonDeleteVM setEnabled:YES];
     }
 }
-@end
 
-
-@implementation TNMenuItem: CPMenuItem
+- (void)didFreeVirtualMachine:(id)aStanza
 {
-    CPString stringValue @accessors;
+    [buttonDeleteVM setEnabled:YES];
+    
+    var stanza = [TNStropheStanza stanzaWithStanza:aStanza];
+    if ([stanza getType] == @"success")
+    {
+        var item = [[self popupDeleteMachine] selectedItem];
+        
+        [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
+        [[self roster] removeContact:[item stringValue]];
+        [self getHypervisorRoster];
+    }
+    else
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"Unable to free virtual machine" style:CPCriticalAlertStyle];
+        [[TNViewLog sharedLogger] log:@"error during free a virtual machine"];
+    }
 }
+
 @end
 
 @implementation CPString (CPStringWithUUIDSeparated)

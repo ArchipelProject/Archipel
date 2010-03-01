@@ -6,12 +6,14 @@ config = "Release"
 
 
 modules_base_paths = "./Modules.src/"
-#modules_paths = [modules_base_paths + "UserChat"];
 modules_paths = [];
 
 for folder in os.listdir(modules_base_paths):
     if os.path.isdir(modules_base_paths + folder):
         modules_paths.append(modules_base_paths + folder)
+
+### overide to define only a set of modules;        
+modules_paths = [modules_base_paths + "HypervisorSummary"];
 
 if "modules" in sys.argv:
     build_paths = modules_paths

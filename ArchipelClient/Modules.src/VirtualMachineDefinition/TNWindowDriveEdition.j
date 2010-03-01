@@ -18,9 +18,13 @@
 
 @import "TNDatasourceDrives.j"
 
+trinityTypeVirtualMachineDisk       = @"trinity:vm:disk";
+
+trinityTypeVirtualMachineDiskGet    = @"get";
+
 @implementation TNWindowDriveEdition : CPWindow
 {
-    @outlet CPTextField     fieldSource     @accessors;
+    @outlet CPPopUpButton   buttonSource    @accessors;
     @outlet CPPopUpButton   buttonType      @accessors;
     @outlet CPPopUpButton   buttonDevice    @accessors;
     @outlet CPPopUpButton   buttonTarget    @accessors;
@@ -28,6 +32,7 @@
 
     TNNetworkDrive          drive           @accessors;
     CPTableView             table           @accessors;
+    TNStropheContact        contact         @accessors;
 }
 
 
@@ -37,6 +42,7 @@
     [[self buttonDevice] removeAllItems];
     [[self buttonTarget] removeAllItems];
     [[self buttonBus] removeAllItems];
+    [[self buttonSource] removeAllItems];
     
     var types = ["file"];
     for (var i = 0; i < types.length; i++)
@@ -68,25 +74,60 @@
 }
 
 - (void)orderFront:(id)sender
-{
-    [[self fieldSource] setStringValue:[drive source]];
-    
+{    
     [[self buttonType] selectItemWithTitle:[drive type]];
     [[self buttonDevice] selectItemWithTitle:[drive device]];
     [[self buttonTarget] selectItemWithTitle:[drive target]];
     [[self buttonBus] selectItemWithTitle:[drive bus]];
+    [self getDisksInfo];
     
     [super orderFront:sender];
 }
 
 - (IBAction)save:(id)sender
 {
-    [drive setSource:[[self fieldSource] stringValue]];
+    [drive setSource:[[[self buttonSource] selectedItem] stringValue]];
     [drive setType:[[self buttonType] title]];
     [drive setDevice:[[self buttonDevice] title]];
     [drive setTarget:[[self buttonTarget] title]];
     [drive setBus:[[self buttonBus] title]];
     
     [[self table] reloadData];
+}
+
+-(void)getDisksInfo
+{
+    var uid = [[[self contact] connection] getUniqueId];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDiskGet, "to": [[self contact] fullJID], "id": uid}];
+    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+
+    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineDisk}];
+
+    [[[self contact] connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
+    [[[self contact] connection] send:infoStanza];
+}
+
+- (void)didReceiveDisksInfo:(id)aStanza 
+{
+    var stanza          = [TNStropheStanza stanzaWithStanza:aStanza];
+    var responseType    = [stanza getType];
+    var responseFrom    = [stanza getFrom];
+
+    if (responseType == @"success")
+    {
+        var disks = [stanza getChildrenWithName:@"disk"];
+        [[self buttonSource] removeAllItems];
+
+        for (var i = 0; i < [disks count]; i++)
+        {
+            var disk    = [disks objectAtIndex:i];
+            var vSize   = [[[disk getValueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0];
+            var label   = [[[disk getValueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk getValueForAttribute:@"diskSize"] + ")";
+            var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+            
+            [item setStringValue:[disk getValueForAttribute:@"path"]];
+            [[self buttonSource] addItem:item];
+        }
+    }   
 }
 @end

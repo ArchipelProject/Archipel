@@ -7,6 +7,7 @@ import xmpp
 import sys
 import socket
 from utils import *
+import uuid;
 
 LOOP_OFF = 0
 """indicates loop off status"""
@@ -79,46 +80,55 @@ class TrinityBase(object):
         log(self, LOG_LEVEL_INFO, "roster retreived")
         
         self.perform_all_registered_actions();
+        self.loop();
     
     
     def _inband_registration(self):
         """
         Do a in-band registration if auth fail
-        """
-        log(self, LOG_LEVEL_DEBUG, "trying to rgister with {0}:{1} to {2}".format(self.jid.getNode(), self.password, self.jid.getDomain()))
-        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
+        """        
+        log(self, LOG_LEVEL_DEBUG, "trying to register with {0}:{1} to {2}".format(self.jid.getNode(), self.password, self.jid.getDomain()))
+        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
         payload_username = xmpp.Node(tag="username")
         payload_username.addData(self.jid.getNode())
         payload_password = xmpp.Node(tag="password")
         payload_password.addData(self.password)
         iq.setQueryNS("jabber:iq:register")
         iq.setQueryPayload([payload_username, payload_password])
-        self.xmppclient.send(iq)
-        log(self, LOG_LEVEL_DEBUG, "registration information sent")
-    
         
-    def _process_iq_registration(self, conn, iq):
-        """
-        Invoked when new jabber:id:register IQ is received. this allows to control 
-        if the registering request has been sucessfully treated
-
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type iq: xmpp.Protocol.Message
-        @param iq: the received message 
-        """
-        log(self, LOG_LEVEL_DEBUG, "Registration process response received")
-
-        if iq.getType() == "error":
+        log(self, LOG_LEVEL_INFO, "registration information sent. wait for response")
+        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        
+        log(self, LOG_LEVEL_INFO, "Registration process response received")
+        if resp_iq.getType() == "error":
             log(self, LOG_LEVEL_ERROR, "unable to register : {0}".format(iq))
             sys.exit(0)
-
-        elif iq.getType() == "result":
-            log(self, LOG_LEVEL_INFO, "registration complete")
-            self.loop_status = LOOP_RESTART
             
+        elif resp_iq.getType() == "result":
+            log(self, LOG_LEVEL_INFO, "the registration complete")
+            self.disconnect();
+            self.connect();
     
 
+    def _inband_unregistration(self):
+        """
+        Do a in-band unregistration
+        """
+        log(self, LOG_LEVEL_DEBUG, "trying to unregister")
+        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
+        iq.setQueryNS("jabber:iq:register")
+        
+        remove_node = xmpp.Node(tag="remove")
+        
+        iq.setQueryPayload([remove_node])
+        
+        print str(iq);
+        log(self, LOG_LEVEL_DEBUG, "unregistration information sent. waiting for response")
+        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        self.set_loop_status = LOOP_OFF
+            
+    
+    
     def register_handler(self):
         """
         this method have to be overloaded in order to register handler for 
@@ -126,8 +136,8 @@ class TrinityBase(object):
         """
         self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
-        if (self.auto_register):
-            self.xmppclient.RegisterHandler('iq', self._process_iq_registration, ns="jabber:iq:register")
+        #if (self.auto_register):
+        #    self.xmppclient.RegisterHandler('iq', self._process_iq_registration, ns="jabber:iq:register")
     
 
     def __process_presence_subscribe(self, conn, presence):

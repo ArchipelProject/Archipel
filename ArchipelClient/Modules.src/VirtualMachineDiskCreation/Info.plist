@@ -3,30 +3,26 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.virtualmachinevnc</string>
+        <string>org.archipelproject.virtualmachinediskcreation</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
-        <string>VirtualMachineVNC</string>
+        <string>VirtualMachineDiskCreation</string>
         <key>CPBundlePackageType</key>
         <string>280N</string>
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNVirtualMachineVNC</string>
+        <string>TNVirtualMachineDiskCreation</string>
         <key>PluginDisplayName</key>
-        <string>VNC Console</string>
+        <string>Disks</string>
 		<key>TabIndex</key>
-		<integer>3</integer>
-        <key>CibName</key>
-        <string>VirtualMachineVNC</string>
-        <key>SupportedEntityTypes</key>
+		<integer>2</integer>
+		<key>SupportedEntityTypes</key>
 		<array>
-			<string>virtualmachine</string>
-		</array>
-		
-		<key>ArchipelServerSideWebServerPort</key>
-        <string>8088</string>
-        
+		    <string>virtualmachine</string>
+		</array>		
+        <key>CibName</key>
+        <string>VirtualMachineDiskCreation</string>
     </dict>
 </plist>
