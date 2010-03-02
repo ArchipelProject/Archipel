@@ -94,10 +94,10 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 - (void)getHypervisorRoster
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlRosterVM, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
-    [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlRosterVM}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];
@@ -137,10 +137,10 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         return;
     }
     var uid = [[[self contact] connection] getUniqueId];
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlHealth, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
     var params;
     
-    [rosterStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealth}];
     
     params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
@@ -178,11 +178,11 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 - (IBAction) addVirtualMachine:(id)sender
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlAlloc, "to": [[self contact] fullJID], "id": uid}];
+    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
     var uuid            = [CPString UUID];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [creationStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
+    [creationStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlAlloc}];
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
     
@@ -235,10 +235,10 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     {
         var item        = [[self popupDeleteMachine] selectedItem];
         var uid         = [[[self contact] connection] getUniqueId];
-        var freeStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControlFree, "to": [[self contact] fullJID], "id": uid}];
+        var freeStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
         var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
-        [freeStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeHypervisorControl}];
+        [freeStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlFree}];
         [freeStanza addTextNode:[item stringValue]];
         
         [[[self contact] connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];

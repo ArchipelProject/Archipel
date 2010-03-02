@@ -18,6 +18,9 @@ from trinityvm import *
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
 
+NS_ARCHIPEL_HYPERVISOR_CONTROL = "trinity:hypervisor:control"
+
+
 #### the VM should thread herself. or maybe not... 
 class TThreadedVM(Thread):
     """
@@ -96,7 +99,7 @@ class TrinityHypervisor(TrinityBase):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, ns='trinity:hypervisor:control')
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
         TrinityBase.register_handler(self)
 
      
@@ -168,7 +171,6 @@ class TrinityHypervisor(TrinityBase):
         
         
         query = iq.getQueryChildren();
-        print query;
         
         domain_uuid = None;
         nickname = None;
@@ -236,9 +238,12 @@ class TrinityHypervisor(TrinityBase):
             reply.setQueryPayload(["Key {0} not found".format(ex)])
             return reply
         
+        if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
+            vm.get_instance().domain.destroy()
+            vm.get_instance().domain.undefine()
+        
         log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
         vm.get_instance()._inband_unregistration()
-        #vm.get_instance().disconnect()
         
         log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
         self.remove_jid(vm_jid)
@@ -315,6 +320,7 @@ class TrinityHypervisor(TrinityBase):
                 
         reply = iq.buildReply('success')    
         reply.setQueryPayload(nodes)
+        
         return reply
     
     def __getbridges(self, iq):
@@ -343,7 +349,7 @@ class TrinityHypervisor(TrinityBase):
     ######################################################################################################
     def __process_iq_trinity_control(self, conn, iq):
         """
-        this method is invoked when a trinity:hypervisor:control IQ is received.
+        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
         
         it understands IQ of type:
             - alloc
@@ -355,27 +361,30 @@ class TrinityHypervisor(TrinityBase):
         @param iq: the received IQ
         """
         log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-        if iq.getType() == "alloc":
+        
+        iqType = iq.getTag("query").getAttr("type");
+        
+        if iqType == "alloc":
             reply = self.__alloc_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "free":
+        if iqType == "free":
             reply = self.__free_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "rostervm":
+        if iqType == "rostervm":
             reply = self.__send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "healthinfo":
+        if iqType == "healthinfo":
             reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iq.getType() == "getbridges":
+        if iqType == "getbridges":
             reply = self.__getbridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

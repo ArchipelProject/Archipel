@@ -63,9 +63,9 @@ class TrinityVM(TrinityBase):
         this method registers the events handlers.
         it is invoked by super class __xmpp_connect() method
         """
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, ns=NS_ARCHIPEL_VM_CONTROL)
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_definition, ns=NS_ARCHIPEL_VM_DEFINITION)
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, ns=NS_ARCHIPEL_VM_DISK)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_VM_CONTROL)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_definition, typ=NS_ARCHIPEL_VM_DEFINITION)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
         #self.xmppclient.RegisterHandler('message', self.__process_message)
 
         TrinityBase.register_handler(self)
@@ -539,42 +539,45 @@ class TrinityVM(TrinityBase):
             #reply.setQueryPayload([response])
             #raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "info":
+        
+        iqType = iq.getTag("query").getAttr("type");
+        
+        if iqType == "info":
             reply = self.__info(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "create":
+        if iqType == "create":
             reply = self.__create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "shutdown":
+        if iqType == "shutdown":
             reply = self.__shutdown(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "reboot":
+        if iqType == "reboot":
             reply = self.__reboot(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "suspend":
+        if iqType == "suspend":
             reply = self.__suspend(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iq.getType() == "resume":
+        if iqType == "resume":
             reply = self.__resume(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if iq.getType() == "vncdisplay":
+        if iqType == "vncdisplay":
             reply = self.__vncdisplay(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if iq.getType() == "xmldesc":
+        if iqType == "xmldesc":
             reply = self.__xml_description(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -595,12 +598,14 @@ class TrinityVM(TrinityBase):
         """
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
-        if iq.getType() == "define":
+        iqType = iq.getTag("query").getAttr("type");
+        
+        if iqType == "define":
             reply = self.__define(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iq.getType() == "undefine":
+        if iqType == "undefine":
             reply = self.__undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed        
@@ -622,17 +627,19 @@ class TrinityVM(TrinityBase):
         """
         log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
 
-        if iq.getType() == "create":
+        iqType = iq.getTag("query").getAttr("type");
+        
+        if iqType == "create":
             reply = self.__disk_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if iq.getType() == "delete":
+        if iqType == "delete":
             reply = self.__disk_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if iq.getType() == "get":
+        if iqType == "get":
             reply = self.__disk_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

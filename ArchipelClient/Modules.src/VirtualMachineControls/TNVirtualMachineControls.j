@@ -23,7 +23,6 @@
 
 
 trinityTypeVirtualMachineControl            = @"trinity:vm:control";
-trinityTypeVirtualMachineDefinition         = @"trinity:vm:definition";
 
 trinityTypeVirtualMachineControlInfo        = @"info";
 trinityTypeVirtualMachineControlCreate      = @"create";
@@ -157,10 +156,10 @@ VIR_DOMAIN_CRASHED	                        =	6;
     }
     
     var uid         = [[[self contact] connection] getUniqueId];
-    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
+    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
-    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     
@@ -347,11 +346,11 @@ VIR_DOMAIN_CRASHED	                        =	6;
 - (void)sendVirtualMachineControl:(CPString)aControl withSelector:(SEL)aSelector
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : aControl, "to": [[self contact] fullJID], "id": uid}];
+    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
     [[[self contact] connection] registerSelector:aSelector ofObject:self withDict:params];
-    [rebootStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [rebootStanza addChildName:@"query" withAttributes:{"type" : aControl}];
     [rebootStanza addChildName:@"jid" withAttributes:{}];
 
     [[[self contact] connection] send:rebootStanza];

@@ -74,10 +74,10 @@ VIR_DOMAIN_RUNNING	                        =	1;
 - (void)getVirtualMachineInfo
 {    
     var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
-    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     [[[self contact] connection] send:infoStanza];
@@ -103,10 +103,10 @@ VIR_DOMAIN_RUNNING	                        =	1;
 - (void)getVirtualMachineVNCDisplay:(CPTimer)aTimer
 {
     var uid         = [[[self contact] connection] getUniqueId];
-    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay, "to": [[self contact] fullJID], "id": uid}];
+    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [vncStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [vncStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
     [[[self contact] connection] send:vncStanza];

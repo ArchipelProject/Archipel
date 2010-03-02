@@ -260,10 +260,10 @@ function generateMacAddr()
 - (void)getXMLDesc
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc, "to": [[self contact] fullJID], "id": uid}];
+    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
-    [xmldescStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [xmldescStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveXMLDesc:) ofObject:self withDict:params];
     [[[self contact] connection] send:xmldescStanza];
@@ -343,9 +343,9 @@ function generateMacAddr()
     var drives      = [[self drivesDatasource] drives];
     
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDefinitionDefine, "to": [[self contact] fullJID], "id": anUid}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDefinition, "to": [[self contact] fullJID], "id": anUid}];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": trinityTypeVirtualMachineDefinition}];
+    [stanza addChildName:@"query" withAttributes:{"type": trinityTypeVirtualMachineDefinitionDefine}];
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
     [stanza addChildName:@"name"];
@@ -436,10 +436,10 @@ function generateMacAddr()
 - (void)getVirtualMachineInfo
 {    
     var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControlInfo, "to": [[self contact] fullJID], "id": uid}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
-    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineControl}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     [[[self contact] connection] send:infoStanza];

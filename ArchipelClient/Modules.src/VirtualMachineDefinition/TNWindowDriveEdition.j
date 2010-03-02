@@ -98,10 +98,10 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 -(void)getDisksInfo
 {
     var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDiskGet, "to": [[self contact] fullJID], "id": uid}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
 
-    [infoStanza addChildName:@"query" withAttributes:{"xmlns" : trinityTypeVirtualMachineDisk}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
 
     [[[self contact] connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
     [[[self contact] connection] send:infoStanza];
