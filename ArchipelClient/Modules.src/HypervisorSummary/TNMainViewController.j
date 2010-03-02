@@ -200,7 +200,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         var item    = [[self popupDeleteMachine] selectedItem];
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
 
-        [[self roster] authorizeJID:vmJid];
         [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
         [[self roster] addContact:vmJid withName:@"New Virtual Machine" inGroup:@"Virtual Machines"];        
         

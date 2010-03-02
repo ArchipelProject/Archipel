@@ -124,7 +124,7 @@ class TrinityBase(object):
         
         print str(iq);
         log(self, LOG_LEVEL_DEBUG, "unregistration information sent. waiting for response")
-        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        resp_iq = self.xmppclient.send(iq)
         self.set_loop_status = LOOP_OFF
             
     

@@ -270,7 +270,7 @@ TNArchipelEntityTypeUser            = @"user";
         [self loadControlPanelForItem:item withType:TNArchipelEntityTypeUser];
    }
     
-   [[self propertiesView] setEntry:item];
+   [[self propertiesView] setContact:item];
    [[self propertiesView] reload];
 }
 

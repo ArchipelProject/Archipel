@@ -23,18 +23,38 @@
 
 @import "StropheCappuccino/TNStrophe.j";
 
+
+@implementation TNEditableLabel: CPTextField
+{
+    CPColor _oldColor;
+}
+- (void)mouseDown:(CPEvent)anEvent
+{
+    [self setEditable:YES];
+    [self selectAll:nil];
+
+    [super mouseDown:anEvent];
+}
+
+- (void)textDidBlur:(CPNotification)aNotification
+{
+    [self setEditable:NO];
+    
+    [super textDidBlur:aNotification];
+}
+@end
+
 @implementation TNViewProperties: CPView 
 {
+    @outlet TNEditableLabel entryName       @accessors;
     @outlet CPPopUpButton   groupSelector   @accessors;
     @outlet CPImageView     entryStatusIcon @accessors;
     @outlet CPTextField     entryDomain     @accessors;
-    @outlet CPTextField     entryName       @accessors;
-    @outlet CPTextField     entryRessource  @accessors;
-    @outlet CPTextField     entryStatus     @accessors;
+    @outlet CPTextField     entryResource   @accessors;
     @outlet CPTextField     newNickName     @accessors;
     
     TNStropheRoster         roster          @accessors;
-    TNStropheContact        entry           @accessors;
+    TNStropheContact        contact         @accessors;
 
     CPNumber                _height;
 }
@@ -54,13 +74,18 @@
     [self setAutoresizingMask: CPViewNotSizable];
     
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [[self entryName]  setFont:[CPFont boldSystemFontOfSize:13]];
-    [[self entryName]  setTextColor:[CPColor colorWithHexString:@"8D929D"]];
+    [[self entryName] setFont:[CPFont boldSystemFontOfSize:13]];
+    [[self entryName] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didGroupAdded:) name:TNStropheRosterAddedGroupNotification object:nil];
     
     [self setHidden:YES];
+    
+    [[self entryName] setTarget:self];
+    [[self entryName] setAction:@selector(changeNickName:)];
+    
+    [center addObserver:self selector:@selector(didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
 }
 
 - (void)didGroupAdded:(CPNotification)aNotification
@@ -87,18 +112,17 @@
 
 - (void)reload
 {
-    if ((![self entry]) || ([[self entry] type] == "group"))
+    if ((![self contact]) || ([[self contact] type] == "group"))
     {
         [self hide];
         return;
     }
     [self show];
     
-    [[self entryName] setStringValue:[entry nickname]];
-    [[self entryDomain] setStringValue:[entry domain]];
-    [[self entryRessource] setStringValue:[entry resource]];
-    [[self entryStatusIcon] setImage:[entry statusIcon]];
-    [[self entryStatus] setStringValue:[entry status]];
+    [[self entryName] setStringValue:[contact nickname]];
+    [[self entryDomain] setStringValue:[contact domain]];
+    [[self entryResource] setStringValue:[contact resource]];
+    [[self entryStatusIcon] setImage:[contact statusIcon]];
     
     [[self groupSelector] removeAllItems];
     
@@ -114,30 +138,40 @@
         [[self groupSelector] addItem:item];
     }
     
-    [[self groupSelector] selectItemWithTitle:[entry group]];
+    [[self groupSelector] selectItemWithTitle:[contact group]];
 }
-
-
 
 // Actions
 - (IBAction)changeGroup:(id)sender
 {
     var theGroup = [sender title]
-    var theJid = [entry jid];
+    var theJid = [contact jid];
     [[self roster] changeGroup:theGroup forJID:theJid];
     [[self groupSelector] selectItemWithTitle:theGroup];
     
     [[TNViewLog sharedLogger] log:@"new group for contact " + theJid + " : " + theGroup];
 }
 
+
+- (void)didLabelEntryNameBlur:(CPNotification)aNotification
+{
+    [self doChangeNickName];
+}
+
 - (IBAction)changeNickName:(id)sender
 {
-    var theJid = [entry jid];
-    var theName = [sender stringValue];
-    [sender setStringValue:@""];
+    [sender _inputElement].blur();
+}
+
+- (void)doChangeNickName
+{
+    var theJid = [contact jid];
+    var theName = [[self entryName] stringValue];
+    
     [[self roster] changeNickname:theName forJID:theJid];
     [[self entryName] setStringValue:theName];
     
     [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
 }
+
 @end

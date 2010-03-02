@@ -102,14 +102,16 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid, CPToolbarSeparatorItemIdentifier, 
                 TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
-                TNToolBarItemViewLog, TNToolBarItemClearLog, TNToolBarItemLogout];
+                TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
+                TNToolBarItemLogout];
 }
 
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar 
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid,CPToolbarSeparatorItemIdentifier, 
                 TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
-                TNToolBarItemViewLog, TNToolBarItemClearLog, TNToolBarItemLogout];
+                TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
+                TNToolBarItemLogout];
 }
 
 - (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
