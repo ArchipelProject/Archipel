@@ -86,6 +86,7 @@
     [[self entryName] setAction:@selector(changeNickName:)];
     
     [center addObserver:self selector:@selector(didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
+    [center addObserver:self selector:@selector(didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 }
 
 - (void)didGroupAdded:(CPNotification)aNotification
@@ -139,6 +140,12 @@
     }
     
     [[self groupSelector] selectItemWithTitle:[contact group]];
+}
+
+- (void)didContactUpdatePresence:(CPNotification)aNotification
+{
+    [[self entryStatusIcon] setImage:[contact statusIcon]];
+    [[self entryResource] setStringValue:[contact resource]];
 }
 
 // Actions

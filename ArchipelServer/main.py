@@ -8,7 +8,7 @@ httpd.daemon = True
 httpd.start()
 
 
-hyp = trinity.TrinityHypervisor("hypervisorA@pulsar.local", "password")
+hyp = trinity.TrinityHypervisor("hypervisor@pulsar.local", "password")
 hyp.connect()
 
 

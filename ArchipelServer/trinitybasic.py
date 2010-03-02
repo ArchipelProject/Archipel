@@ -34,8 +34,8 @@ class TrinityBase(object):
         """
         self.auto_register = auto_register
         self.password = password
-        self.jid = xmpp.protocol.JID(jid)
-        log(self, LOG_LEVEL_INFO, "jid defined as {0}".format(jid))
+        self.jid = xmpp.protocol.JID(jid.lower())
+        log(self, LOG_LEVEL_INFO, "jid defined as {0}".format(jid.lower()))
         self.ressource = socket.gethostname()
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
         self.roster = None
@@ -75,7 +75,8 @@ class TrinityBase(object):
         log(self, LOG_LEVEL_INFO, "sucessfully authenticated")
         
         self.xmppclient.sendInitPresence()
-        log(self, LOG_LEVEL_INFO, "initial presence sent")    
+        log(self, LOG_LEVEL_INFO, "initial presence sent")   
+        
         self.roster = self.xmppclient.getRoster()
         log(self, LOG_LEVEL_INFO, "roster retreived")
         
@@ -316,7 +317,11 @@ class TrinityBase(object):
                     self.disconnect()
                     break;
             except KeyboardInterrupt:
-                #log(self, LOG_LEVEL_INFO, "user as ended client by using ctrl-c")
+                 log(self, LOG_LEVEL_INFO, "End of loop forced user action (now disconecting) : ")
+                 self.disconnect();
+                 sys.exit(0);
+            except Exception as ex:
+                log(self, LOG_LEVEL_INFO, "End of loop forced by exception (now disconecting) : " + ex)
                 self.disconnect()
                 break;
              
