@@ -364,7 +364,6 @@ class TrinityHypervisor(TrinityBase):
         
         iqType = iq.getTag("query").getAttr("type");
         
-        print iqType;
         if iqType == "alloc":
             reply = self.__alloc_xmppvirtualmachine(iq)
             conn.send(reply)

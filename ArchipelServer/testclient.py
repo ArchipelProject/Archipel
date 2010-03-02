@@ -6,6 +6,7 @@ from trinitybasic import *
 class XMPPVirtualMachineController(TrinityBase):
                 
     def send_iq(self, iq):
+        print "LA";
         if sys.argv[2] == "trinity:vm:definition":
             f = open(sys.argv[4])
             data = f.read()
@@ -15,8 +16,7 @@ class XMPPVirtualMachineController(TrinityBase):
         if  (sys.argv[2] == "trinity:hypervisor:control" and (sys.argv[3] == "alloc" or sys.argv[3] == "free")):
             iq.setQueryPayload([sys.argv[4]])
         
-        print "sending iq : " + str(iq)    
-        #print iq;
+        print "sending iq : " + str(iq)
         self.xmppclient.send(iq)
 
 
@@ -27,9 +27,11 @@ class XMPPVirtualMachineController(TrinityBase):
         print str(iq)
         
 
-vm = XMPPVirtualMachineController("localcontroller@pulsar.local", "password")
-#vm = XMPPVirtualMachineController("f07c652e-0a6c-11df-bf22-0016d4e7e91g", "10.68.142.23", "/virt-hyperviseur", "password")
+iq = xmpp.Iq(typ=sys.argv[2], to=sys.argv[1])
+iq.addChild(name="query", attrs={"type": sys.argv[3]})
+iq.getTag("query").addChild(name="target", payload="vnet1");
+# iq.getTag("query").addChild(name="target", payload="vnet0");
+
+vm = XMPPVirtualMachineController("controller@pulsar.local", "password")
+vm.register_actions_to_perform_on_auth("send_iq", iq)
 vm.connect()
-#vm.add_jid("f07c652e-0a6c-11df-bf22-0016d4e7e91f@10.68.142.23")
-vm.send_iq(xmpp.Iq(typ=sys.argv[3],queryNS=sys.argv[2], to=sys.argv[1]))
-vm.loop()
