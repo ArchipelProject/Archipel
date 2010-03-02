@@ -18,8 +18,11 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <LPKit/LPKit.j>
  
 @import "../../TNModule.j";
+@import "TNDatasourceGraphCPU.j"
+@import "TNDatasourceGraphMemory.j"
 
 trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc       = @"alloc";
@@ -41,16 +44,59 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     @outlet CPTextField     healthLoad          @accessors;
     @outlet CPTextField     healthUptime        @accessors;
     @outlet CPTextField     healthInfo          @accessors;
-           
-    CPTimer _timer;
+    
+    @outlet CPView          viewGraphCPU        @accessors;
+    @outlet CPView          viewGraphMemory     @accessors;   
+    
+    LPChartView                 _chartViewCPU;
+    LPChartView                 _chartViewMemory;
+    TNDatasourceGraphCPU        _cpuDatasource;
+    TNDatasourceGraphMemory     _memoryDatasource;
+    CPTimer                     _timer;
+    CPNumber                    _timerInterval;
     
 }
 
+- (void)awakeFromCib
+{
+    //_cpuDatasource = [[TNDatasourceGraphCPU alloc] init];
+    
+    _chartViewCPU   = [[LPChartView alloc] initWithFrame:[viewGraphCPU bounds]];
+    // [_chartViewCPU setDataSource:_cpuDatasource];
+    [_chartViewCPU setDrawView:[[LPChartDrawView alloc] init]];
+    
+    [_chartViewCPU setDisplayGrid:YES];
+    [_chartViewCPU setDisplayLabels:YES];   
+    [viewGraphCPU addSubview:_chartViewCPU];
+    
+    
+    
+    //_memoryDatasource = [[TNDatasourceGraphMemory alloc] init];
+    
+    _chartViewMemory   = [[LPChartView alloc] initWithFrame:[viewGraphMemory bounds]];
+    // [_chartViewMemory setDataSource:_memoryDatasource];
+    [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
+    
+    [_chartViewMemory setDisplayGrid:YES];
+    [_chartViewMemory setDisplayLabels:YES];   
+    [viewGraphMemory addSubview:_chartViewMemory];
+}
+}
+
+
 - (void)willLoad
 {
+    _timerInterval = 5;
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+    
+    _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
+    _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
+    
+    [_chartViewMemory setDataSource:_memoryDatasource];
+    [_chartViewCPU setDataSource:_cpuDatasource];
 }
+    
 
 - (void)willUnload
 {
@@ -72,7 +118,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [self getHypervisorRoster];
     [self getHypervisorHealth:nil];
     
-    _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
+    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
 
 - (void)willHide
@@ -170,6 +216,33 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
         var infoNode = [aStanza firstChildWithName:@"uname"];
         [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"]];
+        
+        [_cpuDatasource pushData:parseInt(cpuFree)];
+        [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"free"])];
+        
+        
+        [_chartViewMemory reloadData];
+        [_chartViewCPU reloadData];
+
+        // var frame = [viewGraphCPU bounds];
+        // 
+        // [_chartViewCPU removeFromSuperview];
+        // _chartViewCPU   = [[LPChartView alloc] initWithFrame:frame];
+        // [_chartViewCPU setDataSource:_cpuDatasource];
+        // [_chartViewCPU setDrawView:[[LPChartDrawView alloc] init]];
+        // [_chartViewCPU setDisplayGrid:YES];
+        // [_chartViewCPU setDisplayLabels:YES];
+        // [viewGraphCPU addSubview:_chartViewCPU];
+        // 
+        //     
+        // [_chartViewMemory removeFromSuperview];
+        // _chartViewMemory   = [[LPChartView alloc] initWithFrame:frame];
+        // [_chartViewMemory setDataSource:_memoryDatasource];
+        // [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
+        // [_chartViewMemory setDisplayGrid:YES];
+        // [_chartViewMemory setDisplayLabels:YES];
+        // [viewGraphMemory addSubview:_chartViewMemory];
+
     }
 }
 

@@ -19,6 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <LPKit/LPKit.j>
 
 @import "StropheCappuccino/TNStrophe.j"
 
@@ -54,12 +55,11 @@ TNArchipelEntityTypeUser            = @"user";
 	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
     @outlet TNWindowConnection  connectionWindow    @accessors;
     
-    TNTabViewModuleLoader      _moduleView;
+    TNTabViewModuleLoader       _moduleView;
 	TNDatasourceRoster          _mainRoster;
 	TNOutlineViewRoster		    _rosterOutlineView;
 	TNToolbar		            _hypervisorToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
-    CPScrollView                _rightScrollView;
     CPScrollView                _outlineScrollView;
     
     BOOL    connected   @accessors(getter=isConnected, setter=setConnected:);
@@ -95,15 +95,9 @@ TNArchipelEntityTypeUser            = @"user";
     [[self leftView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [[self leftView] addSubview:_outlineScrollView];
     
-    // right scrollview
-    _rightScrollView = [[CPScrollView alloc] initWithFrame:[[self rightView] bounds]];
-	[_rightScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-	[_rightScrollView setAutohidesScrollers:YES];
-    
     // right view
     [[self rightView] setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [[self rightView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    //[[self rightView] addSubview:_rightScrollView];
     
     
     //connection window
@@ -122,7 +116,7 @@ TNArchipelEntityTypeUser            = @"user";
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
     
     
-    // module view :
+    //module view :
     _moduleView = [[TNTabViewModuleLoader alloc] initWithFrame:[[self rightView] bounds]];
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleView setBackgroundColor:[CPColor whiteColor]];
@@ -131,15 +125,13 @@ TNArchipelEntityTypeUser            = @"user";
     // notifications
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];    
 }
 
 
 // utilities
 - (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
-{
-    [_rightScrollView setBackgroundColor:[CPColor whiteColor]];
-    
+{    
     [_moduleView setContact:anItem ofType:aType andRoster:_mainRoster];
     
     if ([_moduleView superview] != [self rightView])
@@ -213,7 +205,7 @@ TNArchipelEntityTypeUser            = @"user";
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:[self filterField]];
     [[self propertiesView] setRoster:_mainRoster];
-    [_mainRoster getRoster];
+    [_mainRoster getRoster];  
 }
 
 - (void)logoutStrophe:(CPNotification)aNotification 
@@ -273,9 +265,4 @@ TNArchipelEntityTypeUser            = @"user";
    [[self propertiesView] setContact:item];
    [[self propertiesView] reload];
 }
-
-- (int)outlineView:(CPOutlineView)outView validateDrop:(id)info proposedItem:(id)item proposedChildIndex:(int)index
- {
-    return CPDragOperationMove;
- }
 @end
