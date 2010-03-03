@@ -10,10 +10,12 @@ import socket
 import sqlite3
 import datetime
 import commands
+import time
 from threading import Thread
 from utils import *
 from trinitybasic import *
 from trinityvm import *
+from trinitystatcollector import *
 
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
@@ -21,7 +23,11 @@ GROUP_HYPERVISOR = "hypervisors"
 NS_ARCHIPEL_HYPERVISOR_CONTROL = "trinity:hypervisor:control"
 
 
-#### the VM should thread herself. or maybe not... 
+
+
+
+
+
 class TThreadedVM(Thread):
     """
     this class is used to run L{TrinityVM} main loop
@@ -62,7 +68,6 @@ class TThreadedVM(Thread):
     
     
     
-    
 class TrinityHypervisor(TrinityBase):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
@@ -93,6 +98,9 @@ class TrinityHypervisor(TrinityBase):
         TrinityBase.__init__(self, jid, password)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
         
+        self.collector = TThreadedHealthCollector();
+        self.collector.daemon = True;
+        self.collector.start();
     
     
     def register_handler(self):
@@ -101,8 +109,8 @@ class TrinityHypervisor(TrinityBase):
         """
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
         TrinityBase.register_handler(self)
-
-     
+    
+ 
     def __manage_persistance(self):
         """
         if the database_file parameter contain a valid populated sqlite3 database,
@@ -139,8 +147,7 @@ class TrinityHypervisor(TrinityBase):
         vm = TThreadedVM(jid, password); #envoyer un bon mot de passe.
         vm.daemon = True
         vm.start()
-        return vm
-    
+        return vm    
     
     
     def disconnect(self):
@@ -152,11 +159,11 @@ class TrinityHypervisor(TrinityBase):
             self.virtualmachines[uuid].get_instance().set_loop_status(LOOP_OFF)
         TrinityBase.disconnect(self)
     
-    
+
     ######################################################################################################
     ###  Hypervisor controls
     ######################################################################################################
-    
+
     def __alloc_xmppvirtualmachine(self, iq):
         """
         this method creates a threaded L{TrinityVM} with UUID given 
@@ -262,7 +269,7 @@ class TrinityHypervisor(TrinityBase):
         log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
         return reply
     
-    
+   
     def __send_roster_virtualmachine(self, iq):
         """
         send the hypervisor roster content
@@ -281,8 +288,45 @@ class TrinityHypervisor(TrinityBase):
             nodes.append(n)
         reply.setQueryPayload(nodes)
         return reply
+    
+    
+    def __healthinfo_history(self, iq):
+        """
+        get a range of old stat history according to the limit parameters in iq node
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results        
+        """
+        try:
+            limit = int(iq.getTag("query").getAttr("limit"))
+            nodes = [];
+            stats = self.collector.get_collected_stats(limit);
 
-     
+            rows = [];
+            i = 0;
+            for i in range(limit):
+                statNode = xmpp.Node("stat");
+                statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} );
+                statNode.addChild("cpu", attrs={"us" : stats["cpu"][i]["us"], "sy": stats["cpu"][i]["sy"], "id": stats["cpu"][i]["id"], "wa": stats["cpu"][i]["wa"], "st": stats["cpu"][i]["st"]});
+                statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]});
+                nodes.append(statNode);
+        
+            reply = iq.buildReply('success')    
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+            
+            
+        return reply
+        
+        
+        
     def __healthinfo(self, iq):
         """
         send information about the hypervisor health info
@@ -292,38 +336,35 @@ class TrinityHypervisor(TrinityBase):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results        
         """
+        
         # TODO : add some ACL here later
         nodes = []
-        
-        vmstat = commands.getoutput("vmstat 1 2").split("\n")[3].split();
-        
-        mem_free_node = xmpp.Node("memory", attrs={"free" : str(int(vmstat[3]) / 1024), "swapped": str(int(vmstat[2]) / 1024)} );
+        stats = self.collector.get_collected_stats(1);
+    
+        mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} );
         nodes.append(mem_free_node)
         
-        cpu_node = xmpp.Node("cpu", attrs={"us" : vmstat[12], "sy": vmstat[13], "id": vmstat[14], "wa": vmstat[15], "st": vmstat[16]});
+        cpu_node = xmpp.Node("cpu", attrs={"us" : stats["cpu"][0]["us"], "sy": stats["cpu"][0]["sy"], "id": stats["cpu"][0]["id"], "wa": stats["cpu"][0]["wa"], "st": stats["cpu"][0]["st"]});
         nodes.append(cpu_node)
         
-        disk_free = commands.getoutput("df -h --total | grep total").split();
-        disk_free_node = xmpp.Node("disk", attrs={"total" : disk_free[1], "used": disk_free[2], "free": disk_free[3], "used-percentage": disk_free[4]});
-        nodes.append(disk_free_node)
+        disk_free_node = xmpp.Node("disk", attrs={"total" : stats["disk"][0]["total"], "used":  stats["disk"][0]["used"], "free":  stats["disk"][0]["free"], "used-percentage":  stats["disk"][0]["free_percentage"]});
+        nodes.append(disk_free_node);
         
-        load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
-        load_average_node = xmpp.Node("load", attrs={"one" : load_average[0], "five": load_average[1], "fifteen": load_average[2]});
-        nodes.append(load_average_node)
+        load_node = xmpp.Node("load", attrs={"one" : stats["load"][0]["one"], "five" : stats["load"][0]["five"], "fifteen" : stats["load"][0]["fifteen"]});
+        nodes.append(load_node)
         
-        uptime = commands.getoutput("uptime").split("up")[1].split(",")[0]
-        uptime_node = xmpp.Node("uptime", attrs={"up" : uptime});
+        uptime_node = xmpp.Node("uptime", attrs={"up" : stats["uptime"]["up"]});
         nodes.append(uptime_node)
+            
+        uname_node = xmpp.Node("uname", attrs={"krelease": stats["uname"]["krelease"] , "kname": stats["uname"]["kname"] , "machine":stats["uname"]["machine"], "os": stats["uname"]["os"]});
+        nodes.append(uname_node)   
         
-        uname = commands.getoutput("uname -rsmo").split();
-        uname_node = xmpp.Node("uname", attrs={"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]});
-        nodes.append(uname_node)
-                
         reply = iq.buildReply('success')    
         reply.setQueryPayload(nodes)
         
         return reply
     
+
     def __getbridges(self, iq):
         """
         get the current bridges of hypervisor
@@ -384,6 +425,11 @@ class TrinityHypervisor(TrinityBase):
             reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
+        if iqType == "healthinfohistory":
+            reply = self.__healthinfo_history(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
             
         if iqType == "getbridges":
             reply = self.__getbridges(iq)
@@ -391,4 +437,6 @@ class TrinityHypervisor(TrinityBase):
             raise xmpp.protocol.NodeProcessed
     
     
+    
+
             
