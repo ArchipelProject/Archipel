@@ -238,9 +238,10 @@ class TrinityHypervisor(TrinityBase):
             reply.setQueryPayload(["Key {0} not found".format(ex)])
             return reply
         
-        if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
-            vm.get_instance().domain.destroy()
-            vm.get_instance().domain.undefine()
+        if (vm.get_instance().domain):
+            if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
+                vm.get_instance().domain.destroy()
+                vm.get_instance().domain.undefine()
         
         log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
         vm.get_instance()._inband_unregistration()

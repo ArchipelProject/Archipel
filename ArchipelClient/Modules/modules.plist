@@ -7,7 +7,12 @@
 
 		<dict>
 			<key>folder</key>
-			<string>HypervisorSummary</string>
+			<string>HypervisorHealth</string>
+		</dict>
+		
+		<dict>
+			<key>folder</key>
+			<string>HypervisorVMCreation</string>
 		</dict>
 		
         <dict>

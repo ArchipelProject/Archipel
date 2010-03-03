@@ -317,12 +317,10 @@ class TrinityBase(object):
                     self.disconnect()
                     break;
             except KeyboardInterrupt:
-                 log(self, LOG_LEVEL_INFO, "End of loop forced user action (now disconecting) : ")
-                 self.disconnect();
+                 log(self, LOG_LEVEL_INFO, "End of loop forced user action (now disconecting)")
                  sys.exit(0);
             except Exception as ex:
-                log(self, LOG_LEVEL_INFO, "End of loop forced by exception (now disconecting) : " + ex)
-                self.disconnect()
+                log(self, LOG_LEVEL_INFO, "End of loop forced by exception (now disconecting) : " + str(ex))
                 break;
              
     

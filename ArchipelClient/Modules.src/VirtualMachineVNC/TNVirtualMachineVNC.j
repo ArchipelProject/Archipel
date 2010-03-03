@@ -47,7 +47,6 @@ VIR_DOMAIN_RUNNING	                        =	1;
     [[self maskingView] setAlphaValue:0.9];
     
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
-    console.log(_webServerPort);
 }
 
 
@@ -121,8 +120,6 @@ VIR_DOMAIN_RUNNING	                        =	1;
         _VMHost         = [displayNode valueForAttribute:@"host"];
         
         var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
-        
-        console.log("VNC " + url);
         
         [[self vncWebView] setMainFrameURL:url];
     }

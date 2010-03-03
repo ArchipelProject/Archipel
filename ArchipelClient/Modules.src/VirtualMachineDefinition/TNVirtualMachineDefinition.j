@@ -476,6 +476,12 @@ function generateMacAddr()
 
 - (IBAction)deleteNetworkCard:(id)sender
 {
+    if ([[self tableNetworkCards] numberOfSelectedRows] <= 0)
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select a network interface"];
+         return;
+    }
+    
      var selectedIndex   = [[[self tableNetworkCards] selectedRowIndexes] firstIndex];
      
      [[[self nicsDatasource] nics] removeObjectAtIndex:selectedIndex];
@@ -510,6 +516,12 @@ function generateMacAddr()
 
 - (IBAction)deleteDrive:(id)sender
 {
+    if ([[self tableDrives] numberOfSelectedRows] <= 0)
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
+        return;
+    }
+       
      var selectedIndex   = [[[self tableDrives] selectedRowIndexes] firstIndex];
      
      [[[self drivesDatasource] drives] removeObjectAtIndex:selectedIndex];

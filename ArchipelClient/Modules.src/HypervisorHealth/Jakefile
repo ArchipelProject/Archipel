@@ -24,17 +24,17 @@ var ENV = require("system").env,
     app = require("cappuccino/jake").app,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug";
 
-app ("HypervisorSummary", function(task)
+app ("HypervisorHealth", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "HypervisorSummary.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", "HypervisorHealth.build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("HypervisorSummary");
+    task.setProductName("HypervisorHealth");
     task.setIdentifier("org.archipelproject");
     task.setVersion("1.0");
     task.setAuthor("Antoine Mercadal");
     task.setEmail("feedback @nospam@ yourcompany.com");
-    task.setSummary("HypervisorSummary");
+    task.setSummary("HypervisorHealth");
     task.setSources(new FileList("**/*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
@@ -45,4 +45,4 @@ app ("HypervisorSummary", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["HypervisorSummary"]);
+task ("default", ["HypervisorHealth"]);
