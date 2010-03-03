@@ -19,9 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <AppKit/CPViewAnimation.j>
-
-@import "StropheCappuccino/TNStrophe.j";
+@import <StropheCappuccino/StropheCappuccino.j>
 
 
 @implementation TNEditableLabel: CPTextField

@@ -20,9 +20,9 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <StropheCappuccino/StropheCappuccino.j>
 
 @import "TNViewLog.j"
-@import "StropheCappuccino/TNStrophe.j";
 
 TNStropheConnectionSuccessNotification  = @"TNStropheConnectionSuccessNotification";
 TNStropheDisconnectionNotification      = @"TNStropheDisconnectionNotification";

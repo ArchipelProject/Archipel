@@ -18,8 +18,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
- 
-@import "StropheCappuccino/TNStrophe.j";
+@import <StropheCappuccino/StropheCappuccino.j>
 
 TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 

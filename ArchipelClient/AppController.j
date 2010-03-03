@@ -20,8 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <LPKit/LPKit.j>
-
-@import "StropheCappuccino/TNStrophe.j"
+@import <StropheCappuccino/StropheCappuccino.j>
 
 @import "TNAlertPresenceSubscription.j"
 @import "TNAlertRemoveContact.j"
