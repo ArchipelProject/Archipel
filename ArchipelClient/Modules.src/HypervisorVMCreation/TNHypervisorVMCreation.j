@@ -100,7 +100,6 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 - (void)willShow
 {    
     [[self fieldName] setStringValue:[[self contact] nickname]];
-    
     [[self fieldJID] setStringValue:[[self contact] jid]];
     
     [self getHypervisorRoster];
@@ -139,12 +138,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
-{
-    console.log("getting roster");
-    
+{    
     var queryItems  = [aStanza childrenWithName:@"item"];
     
     [[[self virtualMachinesDatasource] VMs] removeAllObjects];
+    
     
     for (var i = 0; i < [queryItems count]; i++)
     {
@@ -161,10 +159,10 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
                 var newVM       = [TNVirtualMachine virtualMachineWithNickname:name jid:jid status:status statusIcon:statusIcon];
                 
                 [[self virtualMachinesDatasource] addVM:newVM];
-                [[self tableVirtualMachines] reloadData];
             }
         }
     }
+    [[self tableVirtualMachines] reloadData];
 }
 
 
@@ -181,8 +179,10 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     [creationStanza addChildName:@"jid" withAttributes:{}];
     [creationStanza addTextNode:uuid];
     
+    
     [[[self contact] connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
     [[[self contact] connection] send:creationStanza];
+    [[[self contact] connection] flush];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -191,13 +191,14 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 {
     [buttonCreateVM setEnabled:YES];
     
+    
     if ([aStanza getType] == @"success")
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
 
         [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
         [[self roster] addContact:vmJid withName:@"New Virtual Machine" inGroup:@"Virtual Machines"];        
-        
+
         _timer = [CPTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(getHypervisorRosterForTimer:) userInfo:nil repeats:NO]
     }
     else
@@ -256,11 +257,12 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     if ([aStanza getType] == @"success")
     {
+
         var selectedIndex   = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
         var vm              = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
-        
+
         [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
-        [[self roster] removeContact:[vm JID]];
+        [[self roster] removeContact:[[vm JID] copy]]; // avoid fast deallocation
         [self getHypervisorRoster];
     }
     else

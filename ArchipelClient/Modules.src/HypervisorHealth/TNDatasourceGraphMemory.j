@@ -49,7 +49,7 @@
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
 {
-    return @"" + _datas[anIndex] + "Mo";
+    return @"" + Math.round(parseInt(_datas[anIndex]) / 1024 /1024 * 100) / 100 + "G";
 }
 
 - (void)pushData:(CPNumber)data

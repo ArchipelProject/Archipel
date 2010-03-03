@@ -193,6 +193,7 @@
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
 {
     [[[[self selectedTabViewItem] view] documentView] willHide];
+    
     [[[anItem view] documentView] willShow];
 }
 @end

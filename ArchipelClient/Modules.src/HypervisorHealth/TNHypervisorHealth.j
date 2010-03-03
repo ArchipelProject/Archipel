@@ -24,11 +24,12 @@
 @import "TNDatasourceGraphCPU.j"
 @import "TNDatasourceGraphMemory.j"
 
-trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
-trinityTypeHypervisorControlAlloc       = @"alloc";
-trinityTypeHypervisorControlFree        = @"free";
-trinityTypeHypervisorControlRosterVM    = @"rostervm";
-trinityTypeHypervisorControlHealth      = @"healthinfo";
+trinityTypeHypervisorControl                = @"trinity:hypervisor:control";
+trinityTypeHypervisorControlAlloc           = @"alloc";
+trinityTypeHypervisorControlFree            = @"free";
+trinityTypeHypervisorControlRosterVM        = @"rostervm";
+trinityTypeHypervisorControlHealth          = @"healthinfo";
+trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 
 
 @implementation TNHypervisorHealth : TNModule 
@@ -38,10 +39,13 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     @outlet CPTextField     healthCPUUsage      @accessors;
     @outlet CPTextField     healthDiskUsage     @accessors;
     @outlet CPTextField     healthMemUsage      @accessors;
+    @outlet CPTextField     healthMemSwapped    @accessors;
     @outlet CPTextField     healthLoad          @accessors;
     @outlet CPTextField     healthUptime        @accessors;
     @outlet CPTextField     healthInfo          @accessors;
-    
+    @outlet CPTextField     fieldTotalMemory    @accessors;
+    @outlet CPTextField     fieldHalfMemory    @accessors;
+
     @outlet CPView          viewGraphCPU        @accessors;
     @outlet CPView          viewGraphMemory     @accessors;   
     
@@ -61,7 +65,7 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
     [_chartViewCPU setDrawView:[[LPChartDrawView alloc] init]];
     [_chartViewCPU setUserDefinedMaxValue:100];
-    
+    [_chartViewCPU setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphCPU addSubview:_chartViewCPU];
     
     
@@ -69,13 +73,14 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
     _chartViewMemory   = [[LPChartView alloc] initWithFrame:memoryViewFrame];
     [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
+    [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
 }
 
 
 - (void)willLoad
 {
-    _timerInterval = 1;
+    _timerInterval = 5;
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
     
@@ -98,6 +103,8 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [[self fieldName] setStringValue:[[self contact] nickname]];
    
     [[self fieldJID] setStringValue:[[self contact] jid]];
+    
+    [self getHypervisorHealthHistory];
     
     [self getHypervisorHealth:nil];
     
@@ -123,11 +130,6 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    if (![self superview])
-    {
-        [_timer invalidate];
-        return;
-    }
     var uid = [[[self contact] connection] getUniqueId];
     var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
     var params;
@@ -140,13 +142,15 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
     [[[self contact] connection] send:rosterStanza];
 }
 
-- (void)didReceiveHypervisorHealth:(id)aStanza 
+- (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza 
 {   
     if ([aStanza getType] == @"success")
     {       
         var memNode = [aStanza firstChildWithName:@"memory"];
-        [[self healthMemUsage] setStringValue:[memNode valueForAttribute:@"free"] + "Mo / " + [memNode valueForAttribute:@"swapped"] + "Mo"];
-
+        var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024)
+        [[self healthMemUsage] setStringValue: freeMem + " Mo"];
+        [[self healthMemSwapped] setStringValue:[memNode valueForAttribute:@"swapped"] + " Mo"];
+        
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
 
@@ -161,10 +165,61 @@ trinityTypeHypervisorControlHealth      = @"healthinfo";
         [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
 
         var infoNode = [aStanza firstChildWithName:@"uname"];
-        [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"]];
+        [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
+        
         
         [_cpuDatasource pushData:parseInt(cpuFree)];
-        [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"free"])];
+        [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"])];
+        
+        // reload the charts view
+        [_chartViewMemory reloadData];
+        [_chartViewCPU reloadData];
+    }
+}
+
+
+- (void)getHypervisorHealthHistory
+{
+    var uid = [[[self contact] connection] getUniqueId];
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var params;
+    
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealthHistory, "limit": 50}];
+    
+    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
+    
+    [[[self contact] connection] send:rosterStanza];
+}
+
+
+
+- (void)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
+{       
+    if ([aStanza getType] == @"success")
+    {   
+        var stats = [aStanza childrenWithName:@"stat"];
+        stats.reverse();
+        for (var i = 0; i < [stats count]; i++)
+        {
+            var currentNode = [stats objectAtIndex:i];
+            
+            var memNode = [currentNode firstChildWithName:@"memory"];
+            [[self healthMemUsage] setStringValue:[memNode valueForAttribute:@"free"] + "Mo / " + [memNode valueForAttribute:@"swapped"] + "Mo"];
+
+            var cpuNode = [currentNode firstChildWithName:@"cpu"];
+            var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
+            [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
+
+            [_cpuDatasource pushData:parseInt(cpuFree)];
+            [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"])];
+        }
+        
+        var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )
+        
+        [[self fieldTotalMemory] setStringValue: maxMem + "G"];
+        [[self fieldHalfMemory] setStringValue: Math.round(maxMem / 2) + "G"];
+        [_chartViewMemory setUserDefinedMaxValue: parseInt([memNode valueForAttribute:@"total"])];
         
         // reload the charts view
         [_chartViewMemory reloadData];
