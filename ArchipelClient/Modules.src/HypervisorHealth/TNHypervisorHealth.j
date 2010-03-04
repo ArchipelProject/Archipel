@@ -44,7 +44,10 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     @outlet CPTextField     healthUptime        @accessors;
     @outlet CPTextField     healthInfo          @accessors;
     @outlet CPTextField     fieldTotalMemory    @accessors;
-    @outlet CPTextField     fieldHalfMemory    @accessors;
+    @outlet CPTextField     fieldHalfMemory     @accessors;
+
+    @outlet CPImageView     imageMemoryLoading  @accessors;
+    @outlet CPImageView     imageCPULoading     @accessors;
 
     @outlet CPView          viewGraphCPU        @accessors;
     @outlet CPView          viewGraphMemory     @accessors;   
@@ -60,6 +63,14 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 
 - (void)awakeFromCib
 {    
+
+    var mainBundle  = [CPBundle mainBundle];
+    var spinner     = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]];
+    
+    [[self imageCPULoading] setImage:spinner];
+    [[self imageMemoryLoading] setImage:spinner];
+    
+    
     var cpuViewFrame = [viewGraphCPU bounds];
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
@@ -67,7 +78,6 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     [_chartViewCPU setUserDefinedMaxValue:100];
     [_chartViewCPU setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphCPU addSubview:_chartViewCPU];
-    
     
     var memoryViewFrame = [viewGraphMemory bounds];
 
