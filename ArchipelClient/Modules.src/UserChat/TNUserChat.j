@@ -118,6 +118,9 @@
             var aMessage    = dict._buckets.message;    // I've passed 2 hours, and I'm tired of this shitty bug.
             var aColor      = dict._buckets.color;
             
+            if (! aColor)
+                aColor = "ffffff";
+                
             [_messages addObject:[CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", aColor, @"color"]];
         }
     }
@@ -148,8 +151,10 @@
     //for (var i = 0; i < messageQueue.length; i++ )
     while (stanza = [[self contact] popMessagesQueue])
     {   
-        //stanza = messageQueue[i];
-        [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+        if ([stanza containsChildrenWithName:@"body"])
+        {
+            [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+        }
     }
     
     [[self contact] freeMessagesQueue];
@@ -180,7 +185,11 @@
     if ([[aNotification object] jid] == [[self contact] jid])
     {
         var stanza =  [[self contact] popMessagesQueue];
-        [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+        
+        if ([stanza containsChildrenWithName:@"body"])
+        {
+            [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+        }
     }
     else
     {
