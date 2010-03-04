@@ -18,8 +18,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
- 
-@import "../../TNModule.j";
 
 @implementation TNSampleModule : TNModule 
 {

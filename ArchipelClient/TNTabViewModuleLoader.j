@@ -172,6 +172,8 @@
     var selectedItem = [self selectedTabViewItem];
     
     [[[selectedItem view] documentView] willUnload];
+    [[[selectedItem view] documentView] setContact:nil];
+    [[[selectedItem view] documentView] setRoster:nil];
     [[selectedItem view] removeFromSuperview];
     
     [self removeTabViewItem:selectedItem];
@@ -185,6 +187,8 @@
         
         [[[aTabViewItem view] documentView] willUnload];
         [[aTabViewItem view] removeFromSuperview];
+        [[[aTabViewItem view] documentView] setContact:nil];
+        [[[aTabViewItem view] documentView] setRoster:nil];
         [self removeTabViewItem:aTabViewItem];
     }
 }

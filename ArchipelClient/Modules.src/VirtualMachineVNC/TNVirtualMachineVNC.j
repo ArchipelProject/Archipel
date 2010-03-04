@@ -19,8 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <AppKit/CPWebView.j>
- 
-@import "../../TNModule.j";
+
 
 trinityTypeVirtualMachineControl            = @"trinity:vm:control";
 

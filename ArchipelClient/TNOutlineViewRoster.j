@@ -86,20 +86,5 @@
     [roster setOutlineView:self];
     [self expandAll];
 }
-@end
 
-// @implementation CPColor (tableview)
-// 
-// + (CPColor)selectionColor
-// {
-//     console.log("HELLO");
-//     return [CPColor redColor];
-// }
-// 
-// + (CPColor)selectionColorSourceView
-// {
-//     console.log("HELLO");
-//     return [CPColor colorWithPatternImage:[CPImage redImage]];
-// }
-// 
-// @end
+@end

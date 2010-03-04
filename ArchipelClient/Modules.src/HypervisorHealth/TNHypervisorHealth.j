@@ -20,9 +20,9 @@
 @import <AppKit/AppKit.j>
 @import <LPKit/LPKit.j>
  
-@import "../../TNModule.j";
 @import "TNDatasourceGraphCPU.j"
 @import "TNDatasourceGraphMemory.j"
+@import "TNDatasourceGraphDisks.j"
 
 trinityTypeHypervisorControl                = @"trinity:hypervisor:control";
 trinityTypeHypervisorControlAlloc           = @"alloc";
@@ -50,12 +50,18 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     @outlet CPImageView     imageCPULoading     @accessors;
 
     @outlet CPView          viewGraphCPU        @accessors;
-    @outlet CPView          viewGraphMemory     @accessors;   
+    @outlet CPView          viewGraphMemory     @accessors;
+    @outlet CPView          viewGraphDisks      @accessors;   
+    
     
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewMemory;
+    LPPieChartView              _chartViewDisk;
+    
     TNDatasourceGraphCPU        _cpuDatasource;
     TNDatasourceGraphMemory     _memoryDatasource;
+    TNDatasourceGraphDisks      _disksDatasource;
+    
     CPTimer                     _timer;
     CPNumber                    _timerInterval;
     
@@ -69,6 +75,8 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     [[self imageCPULoading] setImage:spinner];
     [[self imageMemoryLoading] setImage:spinner];
+    [[self imageCPULoading] setHidden:YES];
+    [[self imageMemoryLoading] setHidden:YES];
     
     
     var cpuViewFrame = [viewGraphCPU bounds];
@@ -85,6 +93,12 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
+    
+    
+    var diskViewFrame = [viewGraphDisks bounds];
+
+    _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
+    [viewGraphDisks addSubview:_chartViewDisk];
 }
 
 
@@ -96,14 +110,13 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
     _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
+    _diskDatasource      = [[TNDatasourceGraphDisks alloc] init];
     
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
+    [_chartViewDisk setDataSource:_diskDatasource];
     
     [self getHypervisorHealthHistory];
-    [self getHypervisorHealth:nil];
-    
-    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
     
 
@@ -200,6 +213,9 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];
+
+    [[self imageCPULoading] setHidden:NO];
+    [[self imageMemoryLoading] setHidden:NO];
 }
 
 - (void)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
@@ -236,10 +252,22 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
         [[self fieldHalfMemory] setStringValue: Math.round(maxMem / 2) + "G"];
         [_chartViewMemory setUserDefinedMaxValue: parseInt([memNode valueForAttribute:@"total"])];
         
+        
+        var diskNode = [aStanza firstChildWithName:@"disk"];
+        [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+        
         // reload the charts view
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
+    
+    [[self imageCPULoading] setHidden:YES];
+    [[self imageMemoryLoading] setHidden:YES];
+    
+    // now get health every 5 seconds
+    [self getHypervisorHealth:nil];
+
+    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
 
 

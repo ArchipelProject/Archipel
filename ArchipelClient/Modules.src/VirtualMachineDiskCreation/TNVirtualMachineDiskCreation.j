@@ -18,8 +18,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
- 
-@import "../../TNModule.j";
+
 
 trinityTypeVirtualMachineDisk       = @"trinity:vm:disk";
 

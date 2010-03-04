@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
  
-@import "../../TNModule.j";
 @import "TNDatasourceVMs.j"
 
 trinityTypeHypervisorControl            = @"trinity:hypervisor:control";

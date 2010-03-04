@@ -1,5 +1,5 @@
 /*  
- * temp_graphDatasource.j
+ * TNDatasourceDisks.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,8 @@
  */
 
 
-@implementation TNDatasourceGraphCPU : CPObject
+
+@implementation TNDatasourceGraphDisks : CPObject
 {
     CPArray   _datas;
 }
@@ -26,46 +27,19 @@
 {
     if (self = [super init])
     {
-        _datas = [0];
-        _maxNumberOfPoints = 100;
+        _datas = [19, 23, 56];
     }
     return self;
 }
 
-- (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
+- (int)numberOfItemsInPieChartView:(LPPieChartView)aPieChartView
 {
-    return 1;
+    console.log("TOTOTO")
+    return _datas.length;
 }
 
-- (CPNumber)chart:(LPChartView)aChartView numberOfValuesInSet:(CPNumber)setIndex
+- (int)pieChartView:(LPPieChartView)aPieChartView floatValueForIndex:(int)anIndex
 {
-    return [_datas count];
+    return _datas[anIndex];
 }
-
-- (id)chart:(LPChartView)aChartView valueForIndex:(CPNumber)itemIndex set:(CPNumber)setIndex
-{
-    if (itemIndex > ([_datas count] - 1))
-        return 0;
-    
-    return [_datas objectAtIndex:itemIndex];
-}
-
-- (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
-{
-    return @"";//@"" + _datas[anIndex] + "%";
-}
-
-- (void)pushData:(id)data
-{
-    if ([_datas count] >= _maxNumberOfPoints)
-        [_datas removeObjectAtIndex:0];
-    
-    _datas.push(parseInt(data));
-} 
-
-- (void)removeAllObjects
-{
-    _datas = [];
-}
-
 @end
