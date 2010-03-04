@@ -33,7 +33,8 @@ class TThreadedHealthCollector(Thread):
         the contructor of the class
         """
         self.database_file = database_file;
-                    
+        self.query_database_connection = None;
+        
         Thread.__init__(self)
     
     
@@ -43,7 +44,10 @@ class TThreadedHealthCollector(Thread):
         @rtype: TrinityVM
         @return: the L{TrinityVM} instance
         """
-        tempdatabase = sqlite3.connect(self.database_file)
+        if not self.query_database_connection:
+            self.query_database_connection = sqlite3.connect(self.database_file);
+        
+        tempdatabase = self.query_database_connection;
         
         cpustat_cursor = tempdatabase.cursor();
         cpustat_cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))

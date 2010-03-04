@@ -89,6 +89,11 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
+    
+    [self getHypervisorHealthHistory];
+    [self getHypervisorHealth:nil];
+    
+    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
     
 
@@ -96,25 +101,24 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 {
     var center = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
+    
+    if (_timer)
+           [_timer invalidate];
+    
+    [_cpuDatasource removeAllObjects];
+    [_memoryDatasource removeAllObjects];
 }
 
 - (void)willShow
 {
     [[self fieldName] setStringValue:[[self contact] nickname]];
-   
     [[self fieldJID] setStringValue:[[self contact] jid]];
-    
-    [self getHypervisorHealthHistory];
-    
-    [self getHypervisorHealth:nil];
-    
-    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 }
 
 - (void)willHide
 {
-    if (_timer)
-        [_timer invalidate];
+    // if (_timer)
+    //     [_timer invalidate];
 }
 
 
@@ -130,15 +134,13 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    var uid = [[[self contact] connection] getUniqueId];
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
-    var params;
+    var uid             = [[[self contact] connection] getUniqueId];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealth}];
     
-    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
-    
     [[[self contact] connection] send:rosterStanza];
 }
 
@@ -167,9 +169,9 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
         var infoNode = [aStanza firstChildWithName:@"uname"];
         [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
         
-        
         [_cpuDatasource pushData:parseInt(cpuFree)];
-        [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"])];
+        [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
+        // [_memoryDatasource pushDataMemSwapped:parseInt([memNode valueForAttribute:@"swapped"]) * 1024];
         
         // reload the charts view
         [_chartViewMemory reloadData];
@@ -180,19 +182,15 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 
 - (void)getHypervisorHealthHistory
 {
-    var uid = [[[self contact] connection] getUniqueId];
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
-    var params;
+    var uid             = [[[self contact] connection] getUniqueId];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealthHistory, "limit": 50}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealthHistory, "limit": 100}];
     
-    params= [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
-    
     [[[self contact] connection] send:rosterStanza];
 }
-
-
 
 - (void)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
 {       
@@ -200,19 +198,26 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     {   
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();
+        
         for (var i = 0; i < [stats count]; i++)
         {
             var currentNode = [stats objectAtIndex:i];
             
             var memNode = [currentNode firstChildWithName:@"memory"];
-            [[self healthMemUsage] setStringValue:[memNode valueForAttribute:@"free"] + "Mo / " + [memNode valueForAttribute:@"swapped"] + "Mo"];
-
+            var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024);
+            
+            [[self healthMemUsage] setStringValue: freeMem + " Mo"];
+            [[self healthMemSwapped] setStringValue:[memNode valueForAttribute:@"swapped"] + " Mo"];
+            
+            
             var cpuNode = [currentNode firstChildWithName:@"cpu"];
             var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
+            
             [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
 
             [_cpuDatasource pushData:parseInt(cpuFree)];
-            [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"])];
+            [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
+            // [_memoryDatasource pushDataMemSwapped:parseInt([memNode valueForAttribute:@"swapped"]) * 1024];
         }
         
         var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )

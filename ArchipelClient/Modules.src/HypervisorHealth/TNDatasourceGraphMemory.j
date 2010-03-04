@@ -19,14 +19,16 @@
 
 @implementation TNDatasourceGraphMemory : CPObject
 {
-    CPArray   _datas;
+    CPArray   _datasMemUsed;
+    CPArray   _datasMemSwapped;
 }
 
 - (void)init
 {
     if (self = [super init])
     {
-        _datas = [0];
+        _datasMemUsed = [];
+        _datasMemSwapped = [];
         _maxNumberOfPoints = 100;
     }
     return self;
@@ -35,29 +37,56 @@
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
 {
     return 1;
+    // return 2;
 }
 
 - (CPNumber)chart:(LPChartView)aChartView numberOfValuesInSet:(CPNumber)setIndex
-{        
-    return [_datas count];
+{   
+    if (setIndex == 0)
+        return [_datasMemUsed count];
+    else
+        return [_datasMemSwapped count];
 }
 
 - (id)chart:(LPChartView)aChartView valueForIndex:(CPNumber)itemIndex set:(CPNumber)setIndex
-{   
-    return (_datas.length > 0) ? _datas[itemIndex] : 0;
+{
+    if (setIndex == 0)
+    {
+        return (_datasMemUsed.length > 0) ? _datasMemUsed[itemIndex] : 0;
+    }
+        
+    else
+    {
+        return (_datasMemSwapped.length > 0) ? _datasMemSwapped[itemIndex] : 0;
+    }
+        
 }
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
 {
-    return @"" + Math.round(parseInt(_datas[anIndex]) / 1024 /1024 * 100) / 100 + "G";
+    return @""; // + Math.round(parseInt(_datasMemUsed[anIndex]) / 1024 /1024 * 100) / 100 + "G";
 }
 
-- (void)pushData:(CPNumber)data
+- (void)pushDataMemUsed:(CPNumber)data
 {
-    if ([_datas count] >= _maxNumberOfPoints)
-        [_datas removeObjectAtIndex:0];
+    if ([_datasMemUsed count] >= _maxNumberOfPoints)
+        [_datasMemUsed removeObjectAtIndex:0];
         
-    [_datas addObject:data];
+    [_datasMemUsed addObject:data];
+}
+
+- (void)pushDataMemSwapped:(CPNumber)data
+{
+    if ([_datasMemSwapped count] >= _maxNumberOfPoints)
+        [_datasMemSwapped removeObjectAtIndex:0];
+        
+    [_datasMemSwapped addObject:data];
+}
+
+- (void)removeAllObjects
+{
+    _datasMemUsed = [];
+    _datasMemSwapped = [];
 }
 
 @end

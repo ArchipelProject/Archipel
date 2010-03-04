@@ -80,7 +80,7 @@
 {
     if (self = [super init])
     {
-        _datas = [0];
+        _datas = [];
         _maxNumberOfPoints = 100;
     }
     return self;
@@ -126,6 +126,12 @@
         [_datas removeObjectAtIndex:0];
     
     _datas.push(parseInt(data));
-} 
+}
+
+- (void)removeAllObjects
+{
+    _datas = [];
+}
+
 
 @end
