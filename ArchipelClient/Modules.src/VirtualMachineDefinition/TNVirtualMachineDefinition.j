@@ -109,28 +109,28 @@ function generateMacAddr()
     [[self tableDrives] setDoubleAction:@selector(editDrive:)];
     
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    [driveColumnType setResizingMask:CPTableColumnAutoresizingMask ];
+    //[driveColumnType setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnType setEditable:YES];
     [[driveColumnType headerView] setStringValue:@"Type"];
     
     var driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"];
-    [driveColumnDevice setResizingMask:CPTableColumnAutoresizingMask ];
+    //[driveColumnDevice setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnDevice setEditable:YES];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
     
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
-    [driveColumnTarget setResizingMask:CPTableColumnAutoresizingMask ];
+    //[driveColumnTarget setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnTarget setEditable:YES];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
     
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    [driveColumnSource setResizingMask:CPTableColumnAutoresizingMask ];
-    [driveColumnSource setWidth:400];
+    //[driveColumnSource setResizingMask:CPTableColumnAutoresizingMask ];
+    [driveColumnSource setWidth:500];
     [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
-    [driveColumnBus setResizingMask:CPTableColumnAutoresizingMask ];
+    //[driveColumnBus setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnBus setEditable:YES];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     
@@ -161,23 +161,23 @@ function generateMacAddr()
     [[self tableNetworkCards] setDoubleAction:@selector(editNetworkCard:)];
 
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    [columnType setResizingMask:CPTableColumnAutoresizingMask ];
+    //[columnType setResizingMask:CPTableColumnAutoresizingMask ];
     [columnType setEditable:YES];
     [[columnType headerView] setStringValue:@"Type"];
 
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
-    [columnModel setResizingMask:CPTableColumnAutoresizingMask ];
+    //[columnModel setResizingMask:CPTableColumnAutoresizingMask ];
     [columnModel setEditable:YES];
     [[columnModel headerView] setStringValue:@"Model"];
     
     var columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
-    [columnMac setResizingMask:CPTableColumnAutoresizingMask];
+    //[columnMac setResizingMask:CPTableColumnAutoresizingMask];
     [columnMac setEditable:YES];
     [columnMac setWidth:150];
     [[columnMac headerView] setStringValue:@"MAC"];
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    [columnSource setResizingMask:CPTableColumnAutoresizingMask ];
+    //[columnSource setResizingMask:CPTableColumnAutoresizingMask ];
     [columnSource setEditable:YES];
     [[columnSource headerView] setStringValue:@"Source"];
 

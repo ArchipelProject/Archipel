@@ -21,14 +21,15 @@
 trinityTypeVirtualMachineDisk       = @"trinity:vm:disk";
 
 trinityTypeVirtualMachineDiskGet    = @"get";
+trinityTypeVirtualMachineISOGet     = @"getiso";
 
 @implementation TNWindowDriveEdition : CPWindow
 {
     @outlet CPPopUpButton   buttonSource    @accessors;
     @outlet CPPopUpButton   buttonType      @accessors;
-    @outlet CPPopUpButton   buttonDevice    @accessors;
     @outlet CPPopUpButton   buttonTarget    @accessors;
     @outlet CPPopUpButton   buttonBus       @accessors;
+    @outlet CPRadioGroup    radioDriveType  @accessors;
 
     TNNetworkDrive          drive           @accessors;
     CPTableView             table           @accessors;
@@ -39,7 +40,6 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 - (void)awakeFromCib
 {
     [[self buttonType] removeAllItems];
-    [[self buttonDevice] removeAllItems];
     [[self buttonTarget] removeAllItems];
     [[self buttonBus] removeAllItems];
     [[self buttonSource] removeAllItems];
@@ -49,13 +49,6 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     {
         var item = [[CPMenuItem alloc] initWithTitle:types[i] action:nil keyEquivalent:nil];
         [[self buttonType] addItem:item];
-    }
-    
-    var devices = ["disk", "cdrom"];
-    for (var i = 0; i < devices.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:devices[i] action:nil keyEquivalent:nil];
-        [[self buttonDevice] addItem:item];
     }
     
     var targets = ["hda", "hdb", "hdc", "hdd", "sda", "sdb", "sdc", "sdd"];
@@ -76,7 +69,6 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 - (void)orderFront:(id)sender
 {    
     [[self buttonType] selectItemWithTitle:[drive type]];
-    [[self buttonDevice] selectItemWithTitle:[drive device]];
     [[self buttonTarget] selectItemWithTitle:[drive target]];
     [[self buttonBus] selectItemWithTitle:[drive bus]];
     [self getDisksInfo];
@@ -88,11 +80,41 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 {
     [drive setSource:[[[self buttonSource] selectedItem] stringValue]];
     [drive setType:[[self buttonType] title]];
-    [drive setDevice:[[self buttonDevice] title]];
+    
+    var driveType = [[[self radioDriveType] selectedRadio] title];
+    
+    if (driveType == @"Hard drive")
+        [drive setDevice:@"disk"];
+    else
+        [drive setDevice:@"cdrom"];
+        
+    
     [drive setTarget:[[self buttonTarget] title]];
     [drive setBus:[[self buttonBus] title]];
     
     [[self table] reloadData];
+}
+
+- (IBAction)performRadioDriveTypeChanged:(id)sender
+{
+    var driveType = [[sender selectedRadio] title];
+    
+    if (driveType == @"Hard drive")
+    {
+        [self getDisksInfo];
+        if ([[self buttonBus] title] == @"ide")
+            [[self buttonTarget] selectItemWithTitle:@"hda"];
+        else
+            [[self buttonTarget] selectItemWithTitle:@"sda"];
+    }
+    else
+    {
+        [self getISOsInfo];
+        if ([[self buttonBus] title] == @"ide")
+            [[self buttonTarget] selectItemWithTitle:@"hdc"];
+        else
+            [[self buttonTarget] selectItemWithTitle:@"sdc"];
+    }
 }
 
 -(void)getDisksInfo
@@ -127,6 +149,42 @@ trinityTypeVirtualMachineDiskGet    = @"get";
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [[self buttonSource] addItem:item];
         }
-    }   
+    }
+    [self save:nil];
+}
+
+-(void)getISOsInfo
+{
+    var uid = [[[self contact] connection] getUniqueId];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
+    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+
+    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineISOGet}];
+
+    [[[self contact] connection] registerSelector:@selector(didReceiveISOsInfo:) ofObject:self withDict:params];
+    [[[self contact] connection] send:infoStanza];
+}
+
+- (void)didReceiveISOsInfo:(id)aStanza 
+{
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
+
+    if (responseType == @"success")
+    {
+        var isos = [aStanza childrenWithName:@"iso"];
+        [[self buttonSource] removeAllItems];
+
+        for (var i = 0; i < [isos count]; i++)
+        {
+            var iso     = [isos objectAtIndex:i];
+            var label   = [iso valueForAttribute:@"name"];
+            var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
+            
+            [item setStringValue:[iso valueForAttribute:@"path"]];
+            [[self buttonSource] addItem:item];
+        }
+    }
+    [self save:nil];
 }
 @end

@@ -51,6 +51,7 @@ class TrinityVM(TrinityBase):
         s.connect(('google.com', 0));
         ipaddr, other = s.getsockname();
         self.vm_disk_base_path = "/vm/drives/" #### TODO: add config
+        self.shared_isos_folder = "/vm/iso/" ### TODO: add config
         
         if not os.path.isdir(self.vm_disk_base_path + jid):
             os.mkdir(self.vm_disk_base_path + jid);
@@ -91,6 +92,9 @@ class TrinityVM(TrinityBase):
             self.libvirt_connection.close() 
     
     
+    def remove_own_folder(self):
+        path = self.vm_disk_base_path + str(self.jid);
+        os.system("rm -rf " + path);
        
     ######################################################################################################
     ### Libvirt bindings
@@ -496,7 +500,7 @@ class TrinityVM(TrinityBase):
         """
         try:
             path = self.vm_disk_base_path + str(self.jid);
-            disks = commands.getoutput("ls " + path).split()
+            disks = commands.getoutput("ls " + path + " | grep qcow2").split()
             nodes = []
             
             for disk in disks:
@@ -507,13 +511,51 @@ class TrinityVM(TrinityBase):
                     "format": diskinfo[1].split(": ")[1],
                     "virtualSize": diskinfo[2].split(": ")[1],
                     "diskSize": diskinfo[3].split(": ")[1],
-                })
+                    })
                 nodes.append(node);
         
             reply = iq.buildReply('success')
             reply.setQueryPayload(nodes);
             log(self, LOG_LEVEL_INFO, "info about disks sent")
             
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
+        
+    def __isos_get(self, iq):
+        """
+        Get the virtual cdrom ISO of the virtual machine
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            path = self.vm_disk_base_path + str(self.jid);
+            nodes = []
+            
+            isos = commands.getoutput("ls " + path + " | grep iso").split()
+            for iso in isos:
+                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": path + "/" + iso })
+                nodes.append(node);
+            
+            print "ls " + self.shared_isos_folder + " | grep iso";
+            sharedisos = commands.getoutput("ls " + self.shared_isos_folder + " | grep iso").split() 
+            for iso in sharedisos:
+                print "ISOOSOOS;"
+                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
+                nodes.append(node);
+            
+            reply = iq.buildReply('success')
+            reply.setQueryPayload(nodes);
+            log(self, LOG_LEVEL_INFO, "info about iso sent")
+
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -712,6 +754,11 @@ class TrinityVM(TrinityBase):
 
         if iqType == "get":
             reply = self.__disk_get(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if iqType == "getiso":
+            reply = self.__isos_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

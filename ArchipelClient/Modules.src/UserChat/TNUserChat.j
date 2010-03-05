@@ -21,44 +21,7 @@
 @import <AppKit/AppKit.j>
 @import <AppKit/CPCollectionView.j>
 
-@implementation TNMessageView : CPView
-{
-    CPTextField _fieldSenderName;
-    CPTextField _fieldMessage;
-}
-
-- (void)setRepresentedObject:(id)anObject
-{
-    
-    if (! _fieldSenderName)
-    {
-        [self setBorderedWithHexColor:@"AAAAAA"];
-        var frame = [self bounds];
-
-        _fieldSenderName = [[CPTextField alloc] initWithFrame:CGRectMake(10,0, 300, 50)];
-        [_fieldSenderName setFont:[CPFont boldSystemFontOfSize:12]];
-        [_fieldSenderName setTextColor:[CPColor grayColor]];
-        [self addSubview:_fieldSenderName];
-
-        _fieldMessage = [[CPTextField alloc] initWithFrame:CGRectMake(10,20, CGRectGetWidth(frame) - 10, 50)];
-        [_fieldMessage setAutoresizingMask:CPViewWidthSizable];
-        [_fieldMessage setLineBreakMode:CPLineBreakByWordWrapping];
-        [self addSubview:_fieldMessage];
-    }
-    var name    = [anObject valueForKey:@"name"];
-    var message = [anObject valueForKey:@"message"];
-    var color   = [anObject valueForKey:@"color"];
-    
-    [_fieldSenderName setStringValue:name + " : "];
-    [_fieldMessage setStringValue:message];
-    [self setBackgroundColor:[CPColor colorWithHexString:color]]
-}
-
-- (void)setSelected:(BOOL)isSelected
-{
-    [self setBackgroundColor:isSelected ? [CPColor colorWithHexString:@"f6f9fc"] : nil];
-}
-@end
+@import "TNMessageView.j"
 
 
 @implementation TNUserChat : TNModule 
@@ -71,6 +34,7 @@
     CPCollectionView        messageCollectionView   @accessors;
     
     CPArray                 _messages;
+    CPTimer                 _composingMessageTimer;
 }
 
 - (void)awakeFromCib
@@ -108,15 +72,22 @@
 {
     if ([object stringValue] == @"")
     {
-        console.log("ICI");
         [[self contact] sendComposePaused];
     }
     else
-    {        
-        console.log("LA");
+    {   
+        if (_composingMessageTimer)
+            [_composingMessageTimer invalidate];
+            
+        _composingMessageTimer = [CPTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(sendComposingPaused:) userInfo:nil repeats:NO];
         [[self contact] sendComposing];
     }
         
+}
+
+- (void)sendComposingPaused:(CPTimer)aTimer
+{
+    [[self contact] sendComposePaused];
 }
 
 - (void)willLoad
@@ -234,6 +205,9 @@
 
 - (IBAction)sendMessage:(id)sender
 {
+     if (_composingMessageTimer)
+            [_composingMessageTimer invalidate];
+    
     [[self contact] sendMessage:[[self fieldMessage] stringValue]];
     [self appendMessageToBoard:[[self fieldMessage] stringValue] from:@"me"];
     [[self fieldMessage] setStringValue:@""];

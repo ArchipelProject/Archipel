@@ -72,7 +72,6 @@
                        
 - (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
 {   
-    console.log("RELOADING OUTLINEVIEW");
     [[self outlineView] reloadData];
 }
 

@@ -250,6 +250,9 @@ class TrinityHypervisor(TrinityBase):
                 vm.get_instance().domain.destroy()
                 vm.get_instance().domain.undefine()
         
+        log(self, LOG_LEVEL_INFO, "removing the VM own folder")
+        vm.get_instance().remove_own_folder();
+        
         log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
         vm.get_instance()._inband_unregistration()
         
