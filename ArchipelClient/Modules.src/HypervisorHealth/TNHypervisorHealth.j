@@ -24,12 +24,9 @@
 @import "TNDatasourceGraphMemory.j"
 @import "TNDatasourceGraphDisks.j"
 
-trinityTypeHypervisorControl                = @"trinity:hypervisor:control";
-trinityTypeHypervisorControlAlloc           = @"alloc";
-trinityTypeHypervisorControlFree            = @"free";
-trinityTypeHypervisorControlRosterVM        = @"rostervm";
-trinityTypeHypervisorControlHealth          = @"healthinfo";
-trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
+trinityTypeHypervisorHealth                = @"trinity:hypervisor:health";
+trinityTypeHypervisorHealthInfo                  = @"info";
+trinityTypeHypervisorHealthHistory          = @"history";
 
 
 @implementation TNHypervisorHealth : TNModule 
@@ -148,10 +145,10 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealth}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthInfo}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];
@@ -196,10 +193,10 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 - (void)getHypervisorHealthHistory
 {
     var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlHealthHistory, "limit": 100}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": 100}];
     
     [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];

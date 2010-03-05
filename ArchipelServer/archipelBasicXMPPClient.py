@@ -1,3 +1,20 @@
+# 
+# archipelBasicXMPPClient.py
+# 
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 """
 Contains ArchipelBasicXMPPClient, the root class of any Archipel XMPP capable entities
 
@@ -40,6 +57,7 @@ class TNArchipelBasicXMPPClient(object):
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
         self.roster = None
         self.registered_actions_to_perform_on_connection = [];
+    
     
     
     def _connect_xmpp(self):
@@ -141,6 +159,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message)
+        
 
     def __process_presence_subscribe(self, conn, presence):
         """
