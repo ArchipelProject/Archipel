@@ -63,12 +63,12 @@
 
 @implementation TNUserChat : TNModule 
 {
-    @outlet CPTextField     fieldUserJid        @accessors;
-    @outlet CPTextField     fieldMessage        @accessors;
-    @outlet CPScrollView    messageScrollView   @accessors;
-    @outlet TNMessageView   baseMessageView     @accessors;
+    @outlet CPTextField     fieldUserJid            @accessors;
+    @outlet CPTextField     fieldMessage            @accessors;
+    @outlet CPScrollView    messageScrollView       @accessors;
+    @outlet CPImageView     imageSpinnerWriting     @accessors;
     
-    CPCollectionView    messageCollectionView   @accessors;
+    CPCollectionView        messageCollectionView   @accessors;
     
     CPArray                 _messages;
 }
@@ -96,12 +96,35 @@
     [[self messageCollectionView] setContent:_messages];
     
     [[self messageScrollView] setDocumentView:messageCollectionView];
+    
+    var mainBundle = [CPBundle mainBundle];
+    [[self imageSpinnerWriting] setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
+    [[self imageSpinnerWriting] setHidden:YES];
+    
+    [[self fieldMessage] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil]
+}
+
+- (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(id)context 
+{
+    if ([object stringValue] == @"")
+    {
+        console.log("ICI");
+        [[self contact] sendComposePaused];
+    }
+    else
+    {        
+        console.log("LA");
+        [[self contact] sendComposing];
+    }
+        
 }
 
 - (void)willLoad
 {   
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self contact]];
+    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self contact]];
+    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self contact]];
     
     
     var frame = [[[self messageScrollView] documentView] bounds];
@@ -188,6 +211,7 @@
         
         if ([stanza containsChildrenWithName:@"body"])
         {
+            [[self imageSpinnerWriting] setHidden:YES];
             [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
         }
     }
@@ -195,6 +219,16 @@
     {
         _audioTagReceive.play();
     }
+}
+
+- (void)didReceivedMessageComposing:(CPNotification)aNotification
+{
+    [[self imageSpinnerWriting] setHidden:NO];
+}
+
+- (void)didReceivedMessagePause:(CPNotification)aNotification
+{
+    [[self imageSpinnerWriting] setHidden:YES];
 }
 
 

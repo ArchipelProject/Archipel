@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Frameworks/StropheCappuccino/TNStropheContact.j</string>
+	<string>Frameworks/StropheCappuccino/TNStropheConnection.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -274,28 +274,28 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>36</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>331</integer>
+				<integer>341</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>367</integer>
+			<integer>321</integer>
 		</dict>
 		<key>Frameworks/StropheCappuccino/TNStropheContact.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>30</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>221</integer>
+				<integer>242</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>206</integer>
+			<integer>215</integer>
 		</dict>
 		<key>Frameworks/StropheCappuccino/TNStropheGroup.j</key>
 		<dict>
@@ -690,14 +690,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>9</integer>
 				<key>line</key>
-				<integer>122</integer>
+				<integer>156</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>53</integer>
+			<integer>121</integer>
 		</dict>
 		<key>Modules.src/VirtualMachineControls/Info.plist</key>
 		<dict>
@@ -1547,6 +1547,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{339, 74}, {1014, 798}}</string>
+	<string>{{339, 80}, {1014, 798}}</string>
 </dict>
 </plist>
