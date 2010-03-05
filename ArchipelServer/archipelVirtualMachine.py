@@ -69,18 +69,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('google.com', 0));
         ipaddr, other = s.getsockname();
-        self.vm_disk_base_path = "/vm/drives/" #### TODO: add config
-        self.shared_isos_folder = "/vm/iso/" ### TODO: add config
         
         if not os.path.isdir(self.vm_disk_base_path + jid):
             os.mkdir(self.vm_disk_base_path + jid);
                 
         self.ipaddr = ipaddr;
-        
-        for method in self.__class__.__dict__:
-            if not method.find("__module_init__") == -1:
-                m = getattr(self, method)
-                m()
     
     
     def register_handler(self):
@@ -93,11 +86,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         #self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
         
         TNArchipelBasicXMPPClient.register_handler(self)
-        
-        for method in self.__class__.__dict__:
-            if not method.find("__module_register_stanza__") == -1:
-                m = getattr(self, method)
-                m()
+    
     
     
     def disconnect(self):

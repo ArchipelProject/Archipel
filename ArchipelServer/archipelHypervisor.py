@@ -109,11 +109,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.__manage_persistance()
         TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
-        
-        for method in self.__class__.__dict__:
-            if not method.find("__module_init__") == -1:
-                m = getattr(self, method)
-                m()
     
     
     def register_handler(self):
@@ -122,11 +117,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
         TNArchipelBasicXMPPClient.register_handler(self)
-        
-        for method in self.__class__.__dict__:
-            if not method.find("__module_register_stanza__") == -1:
-                m = getattr(self, method)
-                m()
     
  
     def __manage_persistance(self):

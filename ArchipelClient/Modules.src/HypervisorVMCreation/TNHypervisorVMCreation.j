@@ -57,7 +57,6 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     [[self tableVirtualMachines] setAllowsColumnReordering:YES];
     [[self tableVirtualMachines] setAllowsColumnResizing:YES];
     [[self tableVirtualMachines] setAllowsEmptySelection:YES];
-    [[self tableVirtualMachines] setTarget:self];
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
@@ -209,7 +208,7 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (IBAction) deleteVirtualMachine:(id)sender
 {
-    if ([[self tableVirtualMachines] numberOfSelectedRows] <= 0)
+    if (([[self tableVirtualMachines] numberOfRows]) && ([[self tableVirtualMachines] numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
          return;

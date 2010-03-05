@@ -57,6 +57,11 @@ class TNArchipelBasicXMPPClient(object):
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
         self.roster = None
         self.registered_actions_to_perform_on_connection = [];
+        
+        for method in self.__class__.__dict__:
+            if not method.find("__module_init__") == -1:
+                m = getattr(self, method)
+                m()
     
     
     
@@ -159,6 +164,11 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message)
+        
+        for method in self.__class__.__dict__:
+            if not method.find("__module_register_stanza__") == -1:
+                m = getattr(self, method)
+                m()
         
 
     def __process_presence_subscribe(self, conn, presence):

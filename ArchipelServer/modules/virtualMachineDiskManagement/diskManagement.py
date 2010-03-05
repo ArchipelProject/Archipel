@@ -30,6 +30,10 @@ NS_ARCHIPEL_VM_DISK = "trinity:vm:disk"
 ### Registring of the stanza
 ######################################################################################################
 
+def __module_init__disk_management(self):
+    self.vm_disk_base_path = "/vm/drives/" #### TODO: add config
+    self.shared_isos_folder = "/vm/iso/" ### TODO: add config
+    
 def __module_register_stanza__disk_management(self):
     self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
 
@@ -150,18 +154,19 @@ def __disk_get(self, iq):
     """
     try:
         path = self.vm_disk_base_path + str(self.jid);
-        disks = commands.getoutput("ls " + path + " | grep qcow2").split()
+        disks = commands.getoutput("ls " + path).split()
         nodes = []
         
         for disk in disks:
-            diskinfo = commands.getoutput("qemu-img info " + path + "/" + disk).split("\n");
-            node = xmpp.Node(tag="disk", attrs={ "name": disk,
-                "path": path + "/" + disk,
-                "format": diskinfo[1].split(": ")[1],
-                "virtualSize": diskinfo[2].split(": ")[1],
-                "diskSize": diskinfo[3].split(": ")[1],
+            if commands.getoutput("file " + path + "/" + disk).lower().find("format: qcow") > -1:
+                diskinfo = commands.getoutput("qemu-img info " + path + "/" + disk).split("\n");
+                node = xmpp.Node(tag="disk", attrs={ "name": disk,
+                    "path": path + "/" + disk,
+                    "format": diskinfo[1].split(": ")[1],
+                    "virtualSize": diskinfo[2].split(": ")[1],
+                    "diskSize": diskinfo[3].split(": ")[1],
                 })
-            nodes.append(node);
+                nodes.append(node);
         
         reply = iq.buildReply('success')
         reply.setQueryPayload(nodes);
@@ -190,17 +195,17 @@ def __isos_get(self, iq):
         path = self.vm_disk_base_path + str(self.jid);
         nodes = []
         
-        isos = commands.getoutput("ls " + path + " | grep iso").split()
+        isos = commands.getoutput("ls " + path).split()
         for iso in isos:
-            node = xmpp.Node(tag="iso", attrs={"name": iso, "path": path + "/" + iso })
-            nodes.append(node);
+            if commands.getoutput("file " + path + "/" + iso).lower().find("iso 9660") > -1:
+                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": path + "/" + iso })
+                nodes.append(node);
         
-        print "ls " + self.shared_isos_folder + " | grep iso";
-        sharedisos = commands.getoutput("ls " + self.shared_isos_folder + " | grep iso").split() 
+        sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 
         for iso in sharedisos:
-            print "ISOOSOOS;"
-            node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
-            nodes.append(node);
+            if commands.getoutput("file " + self.shared_isos_folder + "/" + iso).lower().find("iso 9660") > -1:
+                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
+                nodes.append(node);
         
         reply = iq.buildReply('success')
         reply.setQueryPayload(nodes);
@@ -256,6 +261,8 @@ def __networkstats(self, iq):
     return reply
 
 
+
+setattr(archipel.TNArchipelVirtualMachine, "__module_init__disk_management", __module_init__disk_management)
 setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__disk_management", __module_register_stanza__disk_management)
 setattr(archipel.TNArchipelVirtualMachine, "__process_iq_trinity_disk", __process_iq_trinity_disk)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_create", __disk_create)
