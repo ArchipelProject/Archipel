@@ -51,7 +51,6 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
 
     @outlet CPView          viewGraphCPU        @accessors;
     @outlet CPView          viewGraphMemory     @accessors;
-    @outlet CPView          viewGraphDisks      @accessors;   
     
     
     LPChartView                 _chartViewCPU;
@@ -60,7 +59,6 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     TNDatasourceGraphCPU        _cpuDatasource;
     TNDatasourceGraphMemory     _memoryDatasource;
-    TNDatasourceGraphDisks      _disksDatasource;
     
     CPTimer                     _timer;
     CPNumber                    _timerInterval;
@@ -93,12 +91,6 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
-    
-    
-    var diskViewFrame = [viewGraphDisks bounds];
-
-    _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
-    [viewGraphDisks addSubview:_chartViewDisk];
 }
 
 
@@ -110,11 +102,9 @@ trinityTypeHypervisorControlHealthHistory   = @"healthinfohistory";
     
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
     _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
-    _diskDatasource      = [[TNDatasourceGraphDisks alloc] init];
     
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
-    [_chartViewDisk setDataSource:_diskDatasource];
     
     [self getHypervisorHealthHistory];
 }

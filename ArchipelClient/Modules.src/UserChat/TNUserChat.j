@@ -54,7 +54,8 @@
     [[self messageCollectionView] setMinItemSize:CGSizeMake(100, 60)];
     [[self messageCollectionView] setMaxItemSize:CGSizeMake(1700, 2024)];
     [[self messageCollectionView] setMaxNumberOfColumns:1];
-    [[self messageCollectionView] setVerticalMargin:0.0];
+    [[self messageCollectionView] setVerticalMargin:0.5];
+    [[self messageCollectionView] setSelectable:NO]
     [[self messageCollectionView] setItemPrototype:[[CPCollectionViewItem alloc] init]];
     [[[self messageCollectionView] itemPrototype] setView:messageView];
     [[self messageCollectionView] setContent:_messages];

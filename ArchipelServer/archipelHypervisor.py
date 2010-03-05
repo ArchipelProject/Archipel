@@ -1,7 +1,7 @@
 """
-Contains TrinityHypervisor, the entities uses for hypervisor
+Contains TNArchipelVirtualMachines, the entities uses for hypervisor
 
-This provides the possibility to instanciate TrinityVMs
+This provides the possibility to instanciate TNArchipelVirtualMachines
 """
 import xmpp
 import libvirt
@@ -13,9 +13,9 @@ import commands
 import time
 from threading import Thread
 from utils import *
-from trinitybasic import *
-from trinityvm import *
-from trinitystatcollector import *
+from archipelBasicXMPPClient import *
+from archipelVirtualMachine import *
+from archipelStatsCollector import *
 
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
@@ -23,52 +23,48 @@ GROUP_HYPERVISOR = "hypervisors"
 NS_ARCHIPEL_HYPERVISOR_CONTROL = "trinity:hypervisor:control"
 
 
-
-
-
-
-
-class TThreadedVM(Thread):
+class TNThreadedVirtualMachine(Thread):
     """
-    this class is used to run L{TrinityVM} main loop
+    this class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
     """
     def __init__(self, jid, password):
         """
         the contructor of the class
         @type jid: string
-        @param jid: the jid of the L{TrinityVM} 
+        @param jid: the jid of the L{ArchipelVirtualMachine} 
         @type password: string
         @param password: the password associated to the JID
         """
         self.jid = jid
         self.password = password
-        self.xmppvm = TrinityVM(self.jid, self.password)
+        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password)
         Thread.__init__(self)
     
     
     def get_instance(self):
         """
-        this method return the current L{TrinityVM} instance
-        @rtype: TrinityVM
-        @return: the L{TrinityVM} instance
+        this method return the current L{ArchipelVirtualMachine} instance
+        @rtype: ArchipelVirtualMachine
+        @return: the L{ArchipelVirtualMachine} instance
         """
         return self.xmppvm
     
     
     def run(self):
         """
-        overiddes sur super class method. do the L{TrinityVM} main loop
+        overiddes sur super class method. do the L{ArchipelVirtualMachine} main loop
         """
         try:
             self.xmppvm.connect()
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "vm has been stopped")
-      
     
-    
-    
-class TrinityHypervisor(TrinityBase):
+  
+
+
+   
+class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
@@ -95,10 +91,10 @@ class TrinityHypervisor(TrinityBase):
         log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
         self.database_file = database_file;
         self.__manage_persistance()
-        TrinityBase.__init__(self, jid, password)
+        TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
         
-        self.collector = TThreadedHealthCollector();
+        self.collector = TNThreadedHealthCollector();
         self.collector.daemon = True;
         self.collector.start();
     
@@ -108,13 +104,13 @@ class TrinityHypervisor(TrinityBase):
         this method overrides the defaut register_handler of the super class.
         """
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
-        TrinityBase.register_handler(self)
+        TNArchipelBasicXMPPClient.register_handler(self)
     
  
     def __manage_persistance(self):
         """
         if the database_file parameter contain a valid populated sqlite3 database,
-        this method will recreate all the old L{TrinityVM}. if not, it will create a 
+        this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a 
         blank database file.
         """
         log(self, LOG_LEVEL_INFO, "opening database file {0}".format(self.database_file))
@@ -136,15 +132,15 @@ class TrinityHypervisor(TrinityBase):
         
     def __create_threaded_vm(self, jid, password):
         """
-        this method creates a threaded L{TrinityVM}, start it and return the Thread instance
+        this method creates a threaded L{TNArchipelVirtualMachine}, start it and return the Thread instance
         @type jid: string
-        @param jid: the JID of the L{TrinityVM}
+        @param jid: the JID of the L{TNArchipelVirtualMachine}
         @type password: string
         @param password: the password associated to the JID
-        @rtype: L{TThreadedVM}
-        @return: a L{TThreadedVM} instance of the virtual machine
+        @rtype: L{TNThreadedVirtualMachine}
+        @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TThreadedVM(jid, password); #envoyer un bon mot de passe.
+        vm = TNThreadedVirtualMachine(jid, password); #envoyer un bon mot de passe.
         vm.daemon = True
         vm.start()
         return vm    
@@ -157,16 +153,16 @@ class TrinityHypervisor(TrinityBase):
         """
         for uuid in self.virtualmachines:
             self.virtualmachines[uuid].get_instance().set_loop_status(LOOP_OFF)
-        TrinityBase.disconnect(self)
+        TNArchipelBasicXMPPClient.disconnect(self)
     
-
+    
     ######################################################################################################
     ###  Hypervisor controls
     ######################################################################################################
-
+    
     def __alloc_xmppvirtualmachine(self, iq):
         """
-        this method creates a threaded L{TrinityVM} with UUID given 
+        this method creates a threaded L{TNArchipelVirtualMachine} with UUID given 
         as paylood in IQ and register the hypervisor and the iq sender in 
         the VM's roster
         @type iq: xmpp.Protocol.Iq
@@ -224,7 +220,7 @@ class TrinityHypervisor(TrinityBase):
              
     def __free_xmppvirtualmachine(self, iq):
         """
-        this method destroy a threaded L{TrinityVM} with UUID given 
+        this method destroy a threaded L{TNArchipelVirtualMachine} with UUID given 
         as paylood in IQ and remove it from the hypervisor roster
         
         @type iq: xmpp.Protocol.Iq
@@ -327,9 +323,8 @@ class TrinityHypervisor(TrinityBase):
             
             
         return reply
-        
-        
-        
+    
+            
     def __healthinfo(self, iq):
         """
         send information about the hypervisor health info
@@ -343,7 +338,7 @@ class TrinityHypervisor(TrinityBase):
         # TODO : add some ACL here later
         nodes = []
         stats = self.collector.get_collected_stats(1);
-    
+        
         mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} );
         nodes.append(mem_free_node)
         
@@ -385,10 +380,9 @@ class TrinityHypervisor(TrinityBase):
         
         reply = iq.buildReply('success')    
         reply.setQueryPayload(nodes)
-        return reply
-        
-        
+        return reply    
     
+
     ######################################################################################################
     ### XMPP Processing
     ######################################################################################################
@@ -440,6 +434,9 @@ class TrinityHypervisor(TrinityBase):
             raise xmpp.protocol.NodeProcessed
     
     
-    
+
+  
+
+
 
             

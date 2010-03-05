@@ -23,10 +23,9 @@ import time
 from threading import Thread
 from utils import *
 
-class TThreadedHealthCollector(Thread):
+class TNThreadedHealthCollector(Thread):
     """
-    this class is used to run L{TrinityVM} main loop
-    in a thread.
+    this class collects hypervisor stats regularly
     """
     def __init__(self, database_file="statscollection.sqlite3"):
         """

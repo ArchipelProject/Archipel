@@ -1,10 +1,10 @@
 """
-Contains TrinityVM, the XMPP capable controller
+Contains ArchipelVirtualMachine, the XMPP capable controller
 
-This module contain the class TrinityVM that represents a virtual machine
+This module contain the class ArchipelVirtualMachine that represents a virtual machine
 linked to a libvirt domain and allowing other XMPP entities to control it using IQ.
 
-The TrinityVM is able to register to any kind of XMPP compliant Server. These 
+The ArchipelVirtualMachine is able to register to any kind of XMPP compliant Server. These 
 Server SHOULD allow in-band registration, or you have to manually register VM before 
 launching them.
 
@@ -18,7 +18,7 @@ import socket
 import os
 import commands
 from utils import *
-from trinitybasic import *
+from archipelBasicXMPPClient import *
 
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
@@ -32,18 +32,18 @@ NS_ARCHIPEL_VM_CONTROL      = "trinity:vm:control"
 NS_ARCHIPEL_VM_DEFINITION   = "trinity:vm:definition"
 NS_ARCHIPEL_VM_DISK         = "trinity:vm:disk"
 
-class TrinityVM(TrinityBase):
+class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have 
     """
-
+    
     ######################################################################################################
     ###  Super methods overrided
     ######################################################################################################
     
     def __init__(self, jid, password):
-        TrinityBase.__init__(self, jid, password)
+        TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
         self.register_actions_to_perform_on_auth("connect_libvirt", None)
@@ -67,21 +67,10 @@ class TrinityVM(TrinityBase):
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_VM_CONTROL)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_definition, typ=NS_ARCHIPEL_VM_DEFINITION)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
-        #self.xmppclient.RegisterHandler('message', self.__process_message)
-
-        TrinityBase.register_handler(self)
+        
+        TNArchipelBasicXMPPClient.register_handler(self)
     
     
-    # def connect(self):
-    #     """
-    #     Connects to XMPP server and libvirt. it overrides the super class
-    #     method in order to connect also from libvirt
-    #     """
-    #     self.__connect_libvirt()
-    #     self._connect_xmpp()
-    #     self._auth_xmpp()
-    
-   
     def disconnect(self):
         """
         Close the connections to libvirt and XMPP server. it overrides the super class 
@@ -93,9 +82,14 @@ class TrinityVM(TrinityBase):
     
     
     def remove_own_folder(self):
+        """
+        remove the folder of the virtual with all its contents
+        """
         path = self.vm_disk_base_path + str(self.jid);
         os.system("rm -rf " + path);
-       
+    
+    
+    
     ######################################################################################################
     ### Libvirt bindings
     ###################################################################################################### 
@@ -238,14 +232,14 @@ class TrinityVM(TrinityBase):
             reply.setQueryPayload([payload])
         return reply
     
-   
+    
     def __resume(self, iq):
         """
         Resume (unpause) a domain using libvirt connection
         
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -270,7 +264,7 @@ class TrinityVM(TrinityBase):
         
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -278,13 +272,7 @@ class TrinityVM(TrinityBase):
         try:
             reply = iq.buildReply('success')
             dominfo = self.domain.info()
-            response = xmpp.Node(tag="info", attrs={
-                "state": dominfo[0],
-                "maxMem": dominfo[1],
-                "memory": dominfo[2],
-                "nrVirtCpu": dominfo[3],
-                "cpuTime": dominfo[4]
-            })
+            response = xmpp.Node(tag="info", attrs={"state": dominfo[0], "maxMem": dominfo[1], "memory": dominfo[2], "nrVirtCpu": dominfo[3], "cpuTime": dominfo[4]})
             reply.setQueryPayload([response])
             log(self, LOG_LEVEL_DEBUG, "virtual machine info sent")
         except libvirt.libvirtError as ex:
@@ -371,10 +359,10 @@ class TrinityVM(TrinityBase):
     def __vncdisplay(self, iq):
         """
         get the VNC display used in the virtual machine.
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -402,10 +390,10 @@ class TrinityVM(TrinityBase):
     def __xml_description(self, iq):
         """
         get the XML Desc of the virtual machine.
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -428,13 +416,18 @@ class TrinityVM(TrinityBase):
         return reply
     
     
+    
+    ######################################################################################################
+    ### Disk definition
+    ######################################################################################################
+    
     def __disk_create(self, iq):
         """
         Create a disk in QCOW2 format
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -447,9 +440,9 @@ class TrinityVM(TrinityBase):
             disk_name = query_node.getTag("name").getData()
             disk_size = query_node.getTag("size").getData()
             disk_unit = query_node.getTag("unit").getData()
-        
+            
             os.system("qemu-img create -f qcow2 " + path + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
-        
+            
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk created")
         except Exception as ex:
@@ -460,13 +453,14 @@ class TrinityVM(TrinityBase):
             reply.setQueryPayload([payload])
         return reply
     
+    
     def __disk_delete(self, iq):
         """
         delete a virtual hard drive
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -475,9 +469,9 @@ class TrinityVM(TrinityBase):
         
             query_node = iq.getTag("query");
             disk_name = query_node.getTag("name").getData();
-        
+            
             os.system("rm -rf " + disk_name);
-    
+            
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")
         except Exception as ex:
@@ -488,13 +482,14 @@ class TrinityVM(TrinityBase):
             reply.setQueryPayload([payload])
         return reply
     
+    
     def __disk_get(self, iq):
         """
         Get the virtual hatd drives of the virtual machine
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -505,15 +500,14 @@ class TrinityVM(TrinityBase):
             
             for disk in disks:
                 diskinfo = commands.getoutput("qemu-img info " + path + "/" + disk).split("\n");
-                node = xmpp.Node(tag="disk", attrs={
-                    "name": disk,
+                node = xmpp.Node(tag="disk", attrs={ "name": disk,
                     "path": path + "/" + disk,
                     "format": diskinfo[1].split(": ")[1],
                     "virtualSize": diskinfo[2].split(": ")[1],
                     "diskSize": diskinfo[3].split(": ")[1],
                     })
                 nodes.append(node);
-        
+            
             reply = iq.buildReply('success')
             reply.setQueryPayload(nodes);
             log(self, LOG_LEVEL_INFO, "info about disks sent")
@@ -525,14 +519,15 @@ class TrinityVM(TrinityBase):
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
         return reply
-        
+    
+    
     def __isos_get(self, iq):
         """
         Get the virtual cdrom ISO of the virtual machine
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -555,22 +550,23 @@ class TrinityVM(TrinityBase):
             reply = iq.buildReply('success')
             reply.setQueryPayload(nodes);
             log(self, LOG_LEVEL_INFO, "info about iso sent")
-
+            
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
             payload = xmpp.Node("error", attrs={})
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
-        return reply
-        
+        return reply    
+    
+    
     def __networkstats(self, iq):
         """
         get statistics about network uses of the VM.
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -580,8 +576,7 @@ class TrinityVM(TrinityBase):
             
             for target in target_nodes:
                 stats = self.domain.interfaceStats(target.getData());
-                node = xmpp.Node(tag="stats", attrs={
-                    "interface":    target.getData(),
+                node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
                     "rx_bytes":     stats[0],
                     "rx_packets":   stats[1],
                     "rx_errs":      stats[2],
@@ -604,23 +599,13 @@ class TrinityVM(TrinityBase):
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
         return reply
-      
+    
+    
+    
     ######################################################################################################
     ### XMPP Processing
     ######################################################################################################
-       
-    def __process_message(self, conn, msg):
-        """
-        Handler for incoming message. this method is not implemented.
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type msg: xmpp.Protocol.Message
-        @param msg: the received message 
-        """
-        log(self, LOG_LEVEL_DEBUG, "message received : {0}".format(msg))        
     
-
     def __process_iq_trinity_control(self, conn, iq):
         """
         Invoked when new trinity:vm:control IQ is received. 
@@ -654,22 +639,22 @@ class TrinityVM(TrinityBase):
             reply = self.__info(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
+            
         if iqType == "create":
             reply = self.__create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
+            
         if iqType == "shutdown":
             reply = self.__shutdown(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
+            
         if iqType == "reboot":
             reply = self.__reboot(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
+            
         if iqType == "suspend":
             reply = self.__suspend(iq)
             conn.send(reply)
@@ -679,12 +664,12 @@ class TrinityVM(TrinityBase):
             reply = self.__resume(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "vncdisplay":
             reply = self.__vncdisplay(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "xmldesc":
             reply = self.__xml_description(iq)
             conn.send(reply)
@@ -695,7 +680,7 @@ class TrinityVM(TrinityBase):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-            
+    
     def __process_iq_trinity_definition(self, conn, iq):
         """
         Invoked when new trinity:define IQ is received.
@@ -723,43 +708,44 @@ class TrinityVM(TrinityBase):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed        
     
-
+    
     def __process_iq_trinity_disk(self, conn, iq):
         """
         Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
-
+        
         it understands IQ of type:
         - create
         - delete
         - get
-
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
         log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-
+        
         iqType = iq.getTag("query").getAttr("type");
         
         if iqType == "create":
             reply = self.__disk_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "delete":
             reply = self.__disk_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "get":
             reply = self.__disk_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
+            
         if iqType == "getiso":
             reply = self.__isos_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
+

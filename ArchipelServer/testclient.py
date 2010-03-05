@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import xmpp
 import sys
-from trinitybasic import *
+from archipelBasicXMPPClient import *
 
-class XMPPVirtualMachineController(TrinityBase):
+class XMPPVirtualMachineController(ArchipelBasicXMPPClient):
                 
     def send_iq(self, iq):
         print "LA";

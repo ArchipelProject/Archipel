@@ -1,5 +1,5 @@
 """
-Contains TrinityBase, the root class of any Trinity entities
+Contains ArchipelBasicXMPPClient, the root class of any Archipel XMPP capable entities
 
 This provides basic XMPP features, like connecting, auth...
 """
@@ -19,7 +19,7 @@ LOOP_RESTART = 2
 """indicates loop restart status"""
 
 
-class TrinityBase(object):
+class TNArchipelBasicXMPPClient(object):
     """
     this class represent a basic XMPP Client
     """
@@ -87,7 +87,10 @@ class TrinityBase(object):
     def _inband_registration(self):
         """
         Do a in-band registration if auth fail
-        """        
+        """    
+        if (not self.auto_register):    
+            return;
+        
         log(self, LOG_LEVEL_DEBUG, "trying to register with {0}:{1} to {2}".format(self.jid.getNode(), self.password, self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
         payload_username = xmpp.Node(tag="username")
@@ -137,9 +140,7 @@ class TrinityBase(object):
         """
         self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
-        #if (self.auto_register):
-        #    self.xmppclient.RegisterHandler('iq', self._process_iq_registration, ns="jabber:iq:register")
-    
+        self.xmppclient.RegisterHandler('message', self.__process_message)
 
     def __process_presence_subscribe(self, conn, presence):
         """
@@ -167,6 +168,21 @@ class TrinityBase(object):
         log(self, LOG_LEVEL_DEBUG, "Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
         conn.send(xmpp.Presence(to=presence.getFrom(), typ="unsubscribed"))
         self.remove_jid(presence.getFrom())
+        
+        
+    def __process_message(self, conn, msg):
+        """
+        Handler for incoming message. this method is had to be overidden to treat message.
+
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message 
+        """
+        if msg.getBody():
+            reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!");
+            conn.send(reply);
+        
     
 
     ######################################################################################################

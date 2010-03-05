@@ -19,7 +19,7 @@
 import  BaseHTTPServer
 from threading import Thread
 
-class TThreadedWebServer(Thread):
+class TNThreadedWebServer(Thread):
     """
     this class is used to run the webserver in a thread.
     """

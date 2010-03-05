@@ -34,7 +34,6 @@
 
 - (int)numberOfItemsInPieChartView:(LPPieChartView)aPieChartView
 {
-    console.log("TOTOTO")
     return _datas.length;
 }
 
