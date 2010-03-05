@@ -41,19 +41,12 @@
     	[self setHeaderView:nil];
     	[self setCornerView:nil];
     	[self setIndentationPerLevel:10];
-    	[self setAllowsColumnReordering:YES];
-        [self setAllowsColumnResizing:YES];
-        [self setAllowsColumnSelection:YES];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
-        [columnLabel setResizingMask:CPTableColumnAutoresizingMask];
+        //[columnLabel setResizingMask:CPTableColumnAutoresizingMask];
         [self addTableColumn:columnLabel];  
-
-        var columnStatus = [[TNOutlineTableColumnStatus alloc] initWithIdentifier:"statusIcon" outlineView:self];
-        [columnStatus setResizingMask: CPTableColumnAutoresizingMask];
-        [self addTableColumn:columnStatus];
-
+        
     	[self setOutlineTableColumn:columnLabel];
         
     	var center = [CPNotificationCenter defaultCenter];

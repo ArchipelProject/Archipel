@@ -20,6 +20,58 @@
 @import <AppKit/AppKit.j>
 
 
+@implementation TNViewOutlineViewContact : CPView
+{
+    CPImageView statusIcon  @accessors;
+    CPTextField name        @accessors;
+}
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
+        name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 0, 170, 100)];
+        
+        [name setAutoresizingMask:CPViewWidthSizable];
+        [self addSubview:statusIcon];
+        [self addSubview:name];
+        [self setAutoresizingMask: CPViewWidthSizable];
+        
+    }
+    return self;
+}
+
+- (void)setObjectValue:(id)aContact
+{
+    [[self name] setStringValue:[aContact nickname]];
+    [[self statusIcon] setImage:[aContact statusIcon]];
+    [self setNeedsDisplay:YES];
+}
+
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    self = [super initWithCoder:aCoder];
+    
+    if (self)
+    {
+        [self setName:[aCoder decodeObjectForKey:@"name"]];
+        [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
+    }
+    
+    return self;
+}
+
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];
+    
+    [aCoder encodeObject:name forKey:@"name"];
+    [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
+}
+
+@end
+
 @implementation TNOutlineTableColumnLabel  : CPTableColumn 
 {
     CPOutlineView       _outlineView;
@@ -33,18 +85,13 @@
     {
         _outlineView = anOutlineView;
 
-        [self setEditable:YES];
-
-        var width = 170;
-    	[self setWidth:width];
-
+    	[self setWidth:200];
         _dataViewForRoot = [[CPTextField alloc] init];
     	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
     	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
     
-    	_dataViewForOther = [[CPTextField alloc] init];
-    	[_dataViewForOther setAutoresizingMask: CPViewWidthSizable];
+    	_dataViewForOther = [[TNViewOutlineViewContact alloc] init];
     }
 	
     return self;
@@ -64,43 +111,5 @@
         return _dataViewForOther;
     }
         
-}
-@end
-
-
-
-
-@implementation TNOutlineTableColumnStatus  : CPTableColumn 
-{
-    CPOutlineView   _outlineView;
-}
-
-- (id)initWithIdentifier:(CPString)anIdentifier outlineView:(CPOutlineView)anOutlineView 
-{
-    if (self = [super initWithIdentifier:anIdentifier])
-    {
-        _outlineView = anOutlineView;
-        [self setWidth:16];   
-    }
-    
-    return self;
-}
-
-- (id)dataViewForRow:(int)aRowIndex 
-{
-    var outlineViewItem = [_outlineView itemAtRow:aRowIndex];
-    var itemLevel       = [_outlineView levelForItem:outlineViewItem];
-
-    if (itemLevel == 0)
-    {
-        return [[CPTextField alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
-    }
-    else
-    {
-        var imageView = [[CPImageView alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
-        [imageView setAutoresizingMask: CPViewWidthSizable];
-        [imageView setImageScaling:CPScaleProportionally];
-        return imageView;
-    }
 }
 @end

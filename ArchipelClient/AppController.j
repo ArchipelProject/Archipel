@@ -48,6 +48,7 @@ TNArchipelEntityTypeUser            = @"user";
 	@outlet CPView		        rightView           @accessors;
     @outlet CPSplitView         leftSplitView       @accessors;
     @outlet CPWindow            theWindow           @accessors;
+    @outlet CPSplitView         mainHorizontalSplitView @accessors;
 	
 	@outlet TNViewProperties    propertiesView      @accessors;
 	@outlet TNWindowAddContact  addContactWindow    @accessors;
@@ -72,6 +73,8 @@ TNArchipelEntityTypeUser            = @"user";
 
 - (void)awakeFromCib
 {    
+    [mainHorizontalSplitView setIsPaneSplitter:YES];
+    
     //hide main window
     [theWindow orderOut:nil];
     
@@ -80,7 +83,7 @@ TNArchipelEntityTypeUser            = @"user";
     [theWindow setToolbar:_hypervisorToolbar];
     
     //outlineview
-    _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(5,5,0,0)];    
+    _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(0,0,0,0)];    
     [_rosterOutlineView setDelegate:self];
     
     // init scroll view of the outline view

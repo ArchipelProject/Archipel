@@ -134,13 +134,13 @@
     {
         return item;
     }
-    else if (cid == @"statusIcon") 
-    {
-        if ([item type] == @"contact")
-            return [item statusIcon];
-        else
-            return nil;
-    }
+    // else if (cid == @"statusIcon") 
+    // {
+    //     if ([item type] == @"contact")
+    //         return [item statusIcon];
+    //     else
+    //         return nil;
+    // }
 }
 
 
