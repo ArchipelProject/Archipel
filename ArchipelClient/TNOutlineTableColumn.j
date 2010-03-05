@@ -23,6 +23,7 @@
 @implementation TNViewOutlineViewContact : CPView
 {
     CPImageView statusIcon  @accessors;
+    CPTextField events      @accessors;
     CPTextField name        @accessors;
 }
 
@@ -32,21 +33,43 @@
     {
         statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(0, 0, 16, 16)];
         name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 0, 170, 100)];
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(148, 0, 23, 14)];
         
-        [name setAutoresizingMask:CPViewWidthSizable];
+        [self setAutoresizingMask: CPViewWidthSizable];
         [self addSubview:statusIcon];
         [self addSubview:name];
-        [self setAutoresizingMask: CPViewWidthSizable];
+        [self addSubview:events];
         
+        var bundle = [CPBundle mainBundle];
+        [events setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]]]
+        [events setAlignment:CPCenterTextAlignment];
+        [events setVerticalAlignment:CPCenterVerticalTextAlignment];
+        [events setFont:[CPFont boldSystemFontOfSize:11]];
+        [events setTextColor:[CPColor whiteColor]];
+        
+        [[self events] setHidden:NO];
     }
     return self;
 }
 
 - (void)setObjectValue:(id)aContact
 {
+    [name setAutoresizingMask:CPViewWidthSizable];
+    [events setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+    
     [[self name] setStringValue:[aContact nickname]];
     [[self statusIcon] setImage:[aContact statusIcon]];
-    [self setNeedsDisplay:YES];
+
+    if ([aContact numberOfEvents] > 0)
+    {
+        [[self events] setHidden:NO];
+        [[self events] setStringValue:[aContact numberOfEvents]];
+    }
+    else
+    {
+        [[self events] setHidden:YES];
+    }
+        
 }
 
 - (id)initWithCoder:(CPCoder)aCoder
@@ -57,6 +80,7 @@
     {
         [self setName:[aCoder decodeObjectForKey:@"name"]];
         [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
+        [self setEvents:[aCoder decodeObjectForKey:@"events"]];
     }
     
     return self;
@@ -68,6 +92,7 @@
     
     [aCoder encodeObject:name forKey:@"name"];
     [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
+    [aCoder encodeObject:events forKey:@"events"];
 }
 
 @end
