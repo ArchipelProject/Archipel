@@ -35,44 +35,40 @@
 @import "TNWindowConnection.j"
 @import "TNModule.j"
 @import "TNAlert.j"
+@import "TNViewLineable.j"
 
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
 TNArchipelEntityTypeUser            = @"user";
 
+
 @implementation AppController : CPObject
 {
-	@outlet CPView				leftView            @accessors;	
-	@outlet CPView              filterView          @accessors;
-	@outlet CPTextField         filterField         @accessors;
-	@outlet CPView		        rightView           @accessors;
-    @outlet CPSplitView         leftSplitView       @accessors;
-    @outlet CPWindow            theWindow           @accessors;
+    @outlet CPView              leftView                @accessors;	
+    @outlet CPView              filterView              @accessors;
+    @outlet CPTextField         filterField             @accessors;
+    @outlet CPView              rightView               @accessors;
+    @outlet CPSplitView         leftSplitView           @accessors;
+    @outlet CPWindow            theWindow               @accessors;
     @outlet CPSplitView         mainHorizontalSplitView @accessors;
-	
-	@outlet TNViewProperties    propertiesView      @accessors;
-	@outlet TNWindowAddContact  addContactWindow    @accessors;
-	@outlet TNWindowAddGroup    addGroupWindow      @accessors;
+    
+    @outlet TNViewProperties    propertiesView      @accessors;
+    @outlet TNWindowAddContact  addContactWindow    @accessors;
+    @outlet TNWindowAddGroup    addGroupWindow      @accessors;
     @outlet TNWindowConnection  connectionWindow    @accessors;
     
     TNTabViewModuleLoader       _moduleView;
-	TNDatasourceRoster          _mainRoster;
-	TNOutlineViewRoster		    _rosterOutlineView;
-	TNToolbar		            _hypervisorToolbar;
+    TNDatasourceRoster          _mainRoster;
+    TNOutlineViewRoster         _rosterOutlineView;
+    TNToolbar                   _hypervisorToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
     CPScrollView                _outlineScrollView;
-    
-    BOOL    connected   @accessors(getter=isConnected, setter=setConnected:);
 }
 
- // initialization
-- (void)applicationDidFinishLaunching:(CPNotification)aNotification 
-{
-     [self setConnected:NO];
-}
 
+// initialization
 - (void)awakeFromCib
-{    
+{
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
     //hide main window
@@ -133,11 +129,14 @@ TNArchipelEntityTypeUser            = @"user";
 
 // utilities
 - (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
-{    
+{
     [_moduleView setContact:anItem ofType:aType andRoster:_mainRoster];
     
     if ([_moduleView superview] != [self rightView])
         [[self rightView] addSubview:_moduleView];
+        
+    // var line = [[TNViewLineable alloc] initWithFrame:[[self rightView] bounds]];
+    // [[self rightView] addSubview:line];
 }
 
 
@@ -201,7 +200,6 @@ TNArchipelEntityTypeUser            = @"user";
 {
     [[self connectionWindow] orderOut:nil];
     [[self theWindow] orderFront:nil];
-    [self setConnected:YES];
     
     _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification userInfo]];
     [_mainRoster setDelegate:self];
@@ -214,12 +212,6 @@ TNArchipelEntityTypeUser            = @"user";
 {
     [[self theWindow] orderOut:nil];
     [[self connectionWindow] orderFront:nil];
-    [self setConnected:NO];
-}
-
-- (void)onMessage:(id)message 
-{
-    var theMessage = [[TNStropheMessage alloc] initWithStropheMessage:message];
 }
 
 
@@ -230,8 +222,6 @@ TNArchipelEntityTypeUser            = @"user";
     
     [alert runModal];
 }
-
-
 
 
 // outline view delegate

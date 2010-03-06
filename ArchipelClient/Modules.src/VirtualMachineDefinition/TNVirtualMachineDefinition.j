@@ -194,6 +194,7 @@ function generateMacAddr()
     [[self buttonNumberCPUs] removeAllItems];
     [[self buttonArchitecture] removeAllItems];
     [[self buttonHypervisor] removeAllItems];
+    [[self buttonVNCKeymap] removeAllItems];
     
     var bootTypes = [TNXMLDescBootHardDrive, TNXMLDescBootCDROM];
     for (var i = 0; i < bootTypes.length; i++)
@@ -221,6 +222,13 @@ function generateMacAddr()
     {
         var item = [[CPMenuItem alloc] initWithTitle:hypervisorsTypes[i] action:nil keyEquivalent:nil];
         [[self buttonHypervisor] addItem:item];
+    }
+    
+    var vncKeymaps = ["us", "fr", "de"];
+    for (var i = 0; i < vncKeymaps.length; i++)
+    {
+        var item = [[CPMenuItem alloc] initWithTitle:vncKeymaps[i] action:nil keyEquivalent:nil];
+        [[self buttonVNCKeymap] addItem:item];
     }
 }
 
@@ -284,9 +292,24 @@ function generateMacAddr()
     var boot        = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
     var interfaces  = [domain childrenWithName:@"interface"];
     var disks       = [domain childrenWithName:@"disk"];
+    var graphics    = [domain childrenWithName:@"graphics"];
     
     [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
     [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
+    
+    for (var i = 0; i < [graphics count]; i++)
+    {
+        var graphic = [graphics objectAtIndex:i];
+        if ([graphic valueForAttribute:@"type"] == "vnc")
+        {
+            var keymap = [graphic valueForAttribute:@"keymap"];
+            if (keymap)
+            {
+                [[self buttonVNCKeymap] selectItemWithTitle:keymap];
+                break;
+            }
+        }
+    }
     
     if (boot == "cdrom")
         [[self buttonBoot] selectItemWithTitle:TNXMLDescBootCDROM];
@@ -423,7 +446,7 @@ function generateMacAddr()
     [stanza addChildName:@"input" withAttributes:{"bus": "ps2", "type": "mouse"}];
     [stanza up];
     
-    [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1"}];
+    [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1", "keymap": [[self buttonVNCKeymap] title]}];
     [stanza up];
     
     //devices up
