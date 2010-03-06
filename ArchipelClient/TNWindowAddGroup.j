@@ -45,14 +45,10 @@
     else 
     {
         [[self roster] addGroup:[[self newGroupName] stringValue]];
-        
-        [CPAlert alertWithTitle:@"Group addition" message:@"Your group has been added. please add a contact into it or it will be removed during disconnection."]; 
-        
         [[self newGroupName] setStringValue:@""];
         [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
         
         [self performClose:nil];
-        [alert runModal];
     }
 }
 @end
