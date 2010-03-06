@@ -29,6 +29,13 @@
     TNStropheRoster     roster @accessors;
 }
 
+- (void)orderFront:(id)sender
+{
+    [[self newGroupName] setStringValue:@""];
+    [self center];
+    [super orderFront:sender];
+}
+
 - (IBAction)addGroup:(id)sender
 {   
     if ([[self newGroupName] stringValue] == "") 
@@ -41,11 +48,11 @@
         
         [CPAlert alertWithTitle:@"Group addition" message:@"Your group has been added. please add a contact into it or it will be removed during disconnection."]; 
         
-        [self orderOut:nil];
-        
+        [[self newGroupName] setStringValue:@""];
         [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
+        
+        [self performClose:nil];
+        [alert runModal];
     }
-    
-    [alert runModal];
 }
 @end

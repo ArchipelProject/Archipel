@@ -53,6 +53,9 @@
     }
     
     [[self newContactGroup] selectItemWithTitle:@"General"];
+
+    [self center];
+
     [super orderFront:sender];
 }
 
@@ -66,7 +69,7 @@
     [[self roster] askAuthorizationTo:jid];
     [[self roster] authorizeJID:jid];
     
-    [self orderOut:nil];
+    [self performClose:nil];
     
     var msg     = @"Presence subsciption has been sent to " + jid + ".";
     
