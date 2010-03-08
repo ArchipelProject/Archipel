@@ -60,11 +60,12 @@ trinityTypeHypervisorHealthHistory          = @"history";
     CPTimer                     _timer;
     CPNumber                    _timerInterval;
     
+    id  _healthRegisteredActionID;
+    
 }
 
 - (void)awakeFromCib
-{    
-
+{
     var mainBundle  = [CPBundle mainBundle];
     var spinner     = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]];
     
@@ -94,6 +95,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 - (void)willLoad
 {
     _timerInterval = 5;
+    _healthRegisteredActionID = nil;
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
     
@@ -127,8 +130,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)willHide
 {
-    // if (_timer)
-    //     [_timer invalidate];
+    if (_healthRegisteredActionID)
+        [[[self contact] connection] deleteRegistredSelector:_healthRegisteredActionID];
 }
 
 
@@ -198,7 +201,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": 100}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
+    _healthRegisteredActionID = [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
     [[[self contact] connection] send:rosterStanza];
 
     [[self imageCPULoading] setHidden:NO];
@@ -206,7 +209,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 }
 
 - (void)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
-{       
+{   
+    _healthRegisteredActionID = nil;
     if ([aStanza getType] == @"success")
     {   
         var stats = [aStanza childrenWithName:@"stat"];

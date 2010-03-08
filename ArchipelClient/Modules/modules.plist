@@ -22,6 +22,11 @@
         
         <dict>
             <key>folder</key>
+            <string>HypervisorNetworks</string>        
+        </dict>
+        
+        <dict>
+            <key>folder</key>
             <string>VirtualMachineDefinition</string>
         </dict>
         
