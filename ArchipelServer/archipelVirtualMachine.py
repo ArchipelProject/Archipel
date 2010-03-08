@@ -88,7 +88,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.register_handler(self)
     
     
-    
     def disconnect(self):
         """
         Close the connections to libvirt and XMPP server. it overrides the super class 
@@ -321,7 +320,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         
         try :
-            print "self.jid.getNode() : " + str(self.jid.getNode());
             domain_node = xmpp.simplexml.XML2Node(str(iq.getQueryPayload()[0]));
             domain_uuid = domain_node.getTag("uuid").getData()
             if domain_uuid != self.jid.getNode():

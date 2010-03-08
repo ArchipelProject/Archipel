@@ -79,6 +79,11 @@ class TNArchipelBasicXMPPClient(object):
             sys.exit(0)
         log(self, LOG_LEVEL_INFO, "sucessfully connected")
         
+        for method in self.__class__.__dict__:
+            if not method.find("__module_connection__") == -1:
+                m = getattr(self, method)
+                m()
+                
         self.register_handler();
     
             

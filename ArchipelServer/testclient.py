@@ -3,7 +3,7 @@ import xmpp
 import sys
 from archipelBasicXMPPClient import *
 
-class XMPPVirtualMachineController(ArchipelBasicXMPPClient):
+class XMPPVirtualMachineController(TNArchipelBasicXMPPClient):
                 
     def send_iq(self, iq):
         print "LA";
@@ -14,6 +14,15 @@ class XMPPVirtualMachineController(ArchipelBasicXMPPClient):
             iq.setQueryPayload(data)
         
         if  (sys.argv[2] == "trinity:hypervisor:control" and (sys.argv[3] == "alloc" or sys.argv[3] == "free")):
+            iq.setQueryPayload([sys.argv[4]])
+        
+        if  (sys.argv[2] == "trinity:hypervisor:network" and (sys.argv[3] == "define")):
+            f = open(sys.argv[4])
+            data = f.read()
+            f.close()
+            iq.setQueryPayload(data)
+        
+        if  (sys.argv[2] == "trinity:hypervisor:network" and (sys.argv[3] == "undefine" or sys.argv[3] == "create" or sys.argv[3] == "destroy")):
             iq.setQueryPayload([sys.argv[4]])
         
         print "sending iq : " + str(iq)

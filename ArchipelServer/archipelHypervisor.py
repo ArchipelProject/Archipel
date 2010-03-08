@@ -107,8 +107,16 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
         self.database_file = database_file;
         self.__manage_persistance()
+        
+        self.libvirt_connection = libvirt.open(None)
+        if self.libvirt_connection == None:
+            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+            sys.exit(0) 
+        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        
         TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
+        
     
     
     def register_handler(self):
