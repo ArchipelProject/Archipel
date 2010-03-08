@@ -70,7 +70,7 @@
         _tabLabels = [];
         var bundle = [CPBundle mainBundle];
         
-        [self setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"/CPiTunesTabView/tabViewLabelBackground.png"]]]]
+        [self setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/tabViewLabelBackground.png"]]]]
 
         [self setFrameSize:CGSizeMake(CGRectGetWidth(aFrame), 26.0)];
     }
