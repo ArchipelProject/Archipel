@@ -20,12 +20,15 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
+TNDragTypeContact   = @"TNDragTypeContact";
 
 @implementation TNDatasourceRoster  : TNStropheRoster 
 {
     CPOutlineView   outlineView     @accessors;
     CPString        filter          @accessors;
     CPTextField     filterField     @accessors;
+
+    id              _draggedItem;
 }
 
 - (id)initWithConnection:(TNStropheConnection)aConnection
@@ -205,6 +208,40 @@
     }
     
     return filteredGroup;
+}
+
+
+// drag and drop
+- (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
+{
+    var draggedItem = [theItems objectAtIndex:0];
+    if ([draggedItem type] == @"group")
+        return NO;
+    
+    _draggedItem = [theItems objectAtIndex:0];
+    
+    [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];    
+    [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
+    
+    return YES;
+}
+
+- (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
+{
+    if ([theItem type] != @"group")
+         return CPDragOperationNone;
+           
+    [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
+   
+    return CPDragOperationEvery;
+}
+
+- (BOOL)outlineView:(CPOutlineView)outlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
+{
+    [_draggedItem changeGroup:[theItem name]];
+    [[self outlineView] reloadData];
+    
+    return YES;
 }
 
 @end

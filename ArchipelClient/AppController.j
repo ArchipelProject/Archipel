@@ -41,7 +41,6 @@ TNArchipelEntityTypeHypervisor      = @"hypervisor";
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
 TNArchipelEntityTypeUser            = @"user";
 
-
 @implementation AppController : CPObject
 {
     @outlet CPView              leftView                @accessors;	
@@ -81,7 +80,7 @@ TNArchipelEntityTypeUser            = @"user";
     //outlineview
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(0,0,0,0)];    
     [_rosterOutlineView setDelegate:self];
-    
+    [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     // init scroll view of the outline view
 	_outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
 	[_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
