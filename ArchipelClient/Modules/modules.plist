@@ -5,10 +5,10 @@
 	<key>Modules</key>
 	<array>
 
-		<dict>
-			<key>folder</key>
-			<string>HypervisorHealth</string>
-		</dict>
+        <!-- <dict>
+            <key>folder</key>
+            <string>HypervisorHealth</string>
+        </dict> -->
 		
 		<dict>
 			<key>folder</key>

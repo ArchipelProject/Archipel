@@ -20,16 +20,10 @@
 @import <AppKit/AppKit.j>
 @import <AppKit/CPCollectionView.j>
 
-@import "TNNetwork.j"
-@import "TNCollectionViewItemVirtualMachines.j"
-@import "TNCollectionViewItemNetworks.j"
-@import "TNDraggableVirtualMachine.j"
-@import "TNCollectionViews.j"
+@import "TNDatasourceNetworks.j"
+@import "TNDatasourceDHCPEntries.j"
+@import "TNWindowNetworkProperties.j"
 
-dragTypeVirtualMachine                  = @"dragTypeVirtualMachine";
-
-trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
-trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 trinityTypeHypervisorNetwork            = @"trinity:hypervisor:network";
 trinityTypeHypervisorNetworkList        = @"list";
@@ -43,50 +37,74 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
 @implementation TNHypervisorNetworks : TNModule 
 {
-    @outlet CPScrollView    scrollViewVirtualMachines           @accessors;
-    @outlet CPScrollView    scrollViewNetworks                  @accessors;
-    @outlet CPScrollView    scrollViewVirtualMachinesInNetwork  @accessors;
-
-    TNCollectionViewVirtualMachines                 collectionViewVirtualMachines           @accessors;
-    TNCollectionViewNetworks                        collectionViewNetworks                 @accessors;
-    TNCollectionViewVirtualMachinesInNetwork        collectionViewVirtualMachinesInNetwork  @accessors;    
+    @outlet CPScrollView                scrollViewNetworks      @accessors;
+    @outlet TNWindowNetworkProperties   windowProperties        @accessors;
+    
+    CPTableView             _tableViewNetworks; 
+    TNDatasourceNetworks    _datasourceNetworks;
 }
 
 - (void)awakeFromCib
-{    
-    // virtual machines
-    var frame                       = [[self scrollViewVirtualMachines] bounds];
-    collectionViewVirtualMachines   = [[TNCollectionViewVirtualMachines alloc] initWithFrame:frame];
+{
+    // VM table view
+    _datasourceNetworks     = [[TNDatasourceNetworks alloc] init];
+    _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[[self scrollViewNetworks] bounds]];
     
-    [[self collectionViewVirtualMachines] setDelegate:self];
-    
-    [[self scrollViewVirtualMachines] setBorderedWithHexColor:@"#9e9e9e"];
-    [[self scrollViewVirtualMachines] setAutoresizingMask:CPViewWidthSizable];
-    [[self scrollViewVirtualMachines] setAutohidesScrollers:YES];
-    [[self scrollViewVirtualMachines] setDocumentView:collectionViewVirtualMachines];
-    [[self scrollViewVirtualMachines] setBackgroundColor:[CPColor whiteColor]];
-    
-    
-    //networks TODO replace with a TableView.
-    var frame                       = [[self scrollViewNetworks] bounds];
-    collectionViewNetworks          = [[TNCollectionViewNetworks alloc] initWithFrame:frame];
-    
-    [[self scrollViewNetworks] setBorderedWithHexColor:@"#9e9e9e"];
+    [[self scrollViewNetworks] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewNetworks] setAutohidesScrollers:YES];
-    [[self scrollViewNetworks] setDocumentView:collectionViewNetworks];
-    [[self scrollViewNetworks] setBackgroundColor:[CPColor whiteColor]];
+    [[self scrollViewNetworks] setDocumentView:_tableViewNetworks];
+    [[self scrollViewNetworks] setBorderedWithHexColor:@"#9e9e9e"];
+    
+    [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
+    [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableViewNetworks setAllowsColumnReordering:YES];
+    [_tableViewNetworks setAllowsColumnResizing:YES];
+    [_tableViewNetworks setAllowsEmptySelection:YES];
+    [_tableViewNetworks setTarget:self];
+    [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
+    
+    var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"isNetworkEnabled"];
+    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    [imgView setImageScaling:CPScaleNone];
+    [columNetworkEnabled setDataView:imgView];
+    [columNetworkEnabled setWidth:16];
+    [[columNetworkEnabled headerView] setStringValue:@""];
     
     
-    //virtual machines in networks
-    var frame                               = [[self scrollViewVirtualMachinesInNetwork] bounds];    
-    collectionViewVirtualMachinesInNetwork  = [[TNCollectionViewVirtualMachinesInNetwork alloc] initWithFrame:frame];
+    var columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"];
+    [columNetworkName setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columNetworkName headerView] setStringValue:@"Network Name"];
     
-    [[self collectionViewVirtualMachinesInNetwork] setDelegate:self];
+    var columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"];
+    [columBridgeName setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columBridgeName headerView] setStringValue:@"Bridge Name"];
     
-    [[self scrollViewVirtualMachinesInNetwork] setBorderedWithHexColor:@"#9e9e9e"];
-    [[self scrollViewVirtualMachinesInNetwork] setAutohidesScrollers:YES];
-    [[self scrollViewVirtualMachinesInNetwork] setDocumentView:collectionViewVirtualMachinesInNetwork];
-    [[self scrollViewVirtualMachinesInNetwork] setBackgroundColor:[CPColor whiteColor]];
+    var columForwardMode = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardMode"];
+    [columForwardMode setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columForwardMode headerView] setStringValue:@"Forward Mode"];
+    
+    var columForwardDevice = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardDevice"];
+    [columForwardDevice setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columForwardDevice headerView] setStringValue:@"Forward Device"];
+    
+    var columBridgeIP = [[CPTableColumn alloc] initWithIdentifier:@"bridgeIP"];
+    [columBridgeIP setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columBridgeIP headerView] setStringValue:@"Bridge IP"];
+    
+    var columBridgeNetmask = [[CPTableColumn alloc] initWithIdentifier:@"bridgeNetmask"];
+    [columBridgeNetmask setResizingMask:CPTableColumnAutoresizingMask ];
+    [[columBridgeNetmask headerView] setStringValue:@"Bridge Netmask"];
+    
+    [_tableViewNetworks addTableColumn:columNetworkName];
+    [_tableViewNetworks addTableColumn:columBridgeName];
+    [_tableViewNetworks addTableColumn:columForwardMode];
+    [_tableViewNetworks addTableColumn:columForwardDevice];
+    [_tableViewNetworks addTableColumn:columBridgeIP];
+    [_tableViewNetworks addTableColumn:columBridgeNetmask];
+    
+    [_tableViewNetworks setDataSource:_datasourceNetworks];
+    
+    [[self windowProperties] setDelegate:self];
 }
 
 - (void)willLoad
@@ -103,48 +121,12 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)willShow 
 {
-    [self getHypervisorRoster];
     [self getHypervisorNetworks];
 }
 
 - (void)willHide 
 {
     // message sent when the tab is changed
-}
-
-- (void)getHypervisorRoster
-{   
-    var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-        
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlRosterVM}];
-    
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
-    [[[self contact] connection] send:rosterStanza];
-}
-
-- (void)didReceiveHypervisorRoster:(id)aStanza 
-{
-    var queryItems  = [aStanza childrenWithName:@"item"];
-    
-    [[[self collectionViewVirtualMachines] virtualMachines] removeAllObjects];
-    
-    for (var i = 0; i < [queryItems count]; i++)
-    {
-        var jid     = [[queryItems objectAtIndex:i] text];
-        var entry   = [[self roster] getContactFromJID:jid];
-        
-        if (entry) 
-        {
-            if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-            {
-                var draggableVM = [TNDraggableVirtualMachine draggableVirtualMachineWithJid:[entry jid] nickname:[entry nickname] statusIcon:[entry statusIcon]];
-                [[[self collectionViewVirtualMachines] virtualMachines] addObject:draggableVM];
-            }
-        }
-    }
-    [[self collectionViewVirtualMachines] reloadContent];
 }
 
 - (void)getHypervisorNetworks
@@ -161,53 +143,176 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 
 {
-    var activeNetworks  = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
-    var unactiveNetworks  = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
+    var activeNetworks      = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
+    var unactiveNetworks    = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
+    var allNetworks         = [CPArray array];
     
-    [[[self collectionViewNetworks] networks] removeAllObjects];
+    [allNetworks addObjectsFromArray:activeNetworks];
+    [allNetworks addObjectsFromArray:unactiveNetworks];
     
-    for (var i = 0; i < [activeNetworks count]; i++)
+    [[_datasourceNetworks networks] removeAllObjects];
+    
+    for (var i = 0; i < [allNetworks count]; i++)
     {
-        var network     = [activeNetworks objectAtIndex:i];
-        var name        = [[network firstChildWithName:@"name"] text];
-        var newNetwork  = [TNNetwork networkWithName:name];
+        var network             = [allNetworks objectAtIndex:i];
+        var name                = [[network firstChildWithName:@"name"] text];
+        var bridge              = [network firstChildWithName:@"bridge"];
+        var bridgeName          = [bridge valueForAttribute:@"name"];
+        var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
+        var bridgeDelay         = [bridge valueForAttribute:@"delay"];
+        var forward             = [network firstChildWithName:@"forward"];
+        var forwardMode         = [forward valueForAttribute:@"mode"];
+        var forwardDev          = [forward valueForAttribute:@"dev"];
+        var ip                  = [network firstChildWithName:@"ip"];
+        var bridgeIP            = [ip valueForAttribute:@"address"];
+        var bridgeNetmask       = [ip valueForAttribute:@"netmask"];
+        var dhcp                = [ip firstChildWithName:@"dhcp"];
+        var DHCPEnabled         = (dhcp) ? YES : NO;
+        var DHCPRangeEntries    = [dhcp childrenWithName:@"range"]; 
+        var DHCPHostEntries     = [dhcp childrenWithName:@"host"];
+        var networkActive       = [activeNetworks containsObject:network];
         
-        [[[self collectionViewNetworks] networks] addObject:newNetwork];   
-    }
-    
-    for (var i = 0; i < [unactiveNetworks count]; i++)
-    {
-        var network     = [unactiveNetworks objectAtIndex:i];
-        var name        = [[network firstChildWithName:@"name"] text];
-        var newNetwork  = [TNNetwork networkWithName:name];
+        var DHCPRangeEntriesArray = [CPArray array];
+        for (var i = 0; DHCPEnabled && i < [DHCPRangeEntries count]; i++)
+        {
+            var DHCPEntry           = [DHCPRangeEntries objectAtIndex:i];
+            var randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"];
+            var rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"];
+            
+            var DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
+            
+            [DHCPRangeEntriesArray addObject:DHCPEntryObject]; 
+        }
         
-        [[[self collectionViewNetworks] networks] addObject:newNetwork];
+        var DHCPHostEntriesArray = [CPArray array];
+        for (var i = 0; DHCPEnabled && i < [DHCPHostEntries count]; i++)
+        {
+            var DHCPEntry   = [DHCPHostEntries objectAtIndex:i];
+            var hostsMac    = [DHCPEntry valueForAttribute:@"mac"];
+            var hostName    = [DHCPEntry valueForAttribute:@"name"];
+            var hostIP      = [DHCPEntry valueForAttribute:@"ip"];
+            
+            var DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
+            
+            [DHCPHostEntriesArray addObject:DHCPEntryObject];
+        }
+        
+        console.log("bridgeSTP " + [bridge valueForAttribute:@"stp"]);
+        
+        var newNetwork  = [TNNetwork networkWithName:name 
+                                          bridgeName:bridgeName 
+                                         bridgeDelay:parseInt(bridgeDelay)
+                                   bridgeForwardMode:forwardMode
+                                 bridgeForwardDevice:forwardDev
+                                            bridgeIP:bridgeIP
+                                       bridgeNetmask:bridgeNetmask
+                                   DHCPEntriesRanges:DHCPRangeEntriesArray
+                                    DHCPEntriesHosts:DHCPHostEntriesArray
+                                      networkEnabled:networkActive
+                                          STPEnabled:bridgeSTP
+                                         DHCPEnabled:DHCPEnabled]
+        
+        [[_datasourceNetworks networks] addObject:newNetwork];   
     }
+
+    [_tableViewNetworks reloadData];
+}
+
+- (IBAction)editNetwork:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
     
-    [[self collectionViewNetworks] reloadContent];
-}
-
-
-// DnD delegates methods
-- (CPArray)collectionView:(CPCollectionView)aCollectionView dragTypesForItemsAtIndexes:(CPIndexSet)indices
-{
-    if (aCollectionView === [self collectionViewVirtualMachines])
-        return [dragTypeVirtualMachine];
-}
-
-- (CPData)collectionView:(CPCollectionView)aCollectionView dataForItemsAtIndexes:(CPIndexSet)indices forType:(CPString)aType
-{
-    if (aCollectionView === [self collectionViewVirtualMachines])
+    if (selectedIndex != -1)
     {
-        var firstIndex = [indices firstIndex];
-        return [CPKeyedArchiver archivedDataWithRootObject:[[[self collectionViewVirtualMachines] virtualMachines] objectAtIndex:firstIndex]];
+        var networkObject = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+
+        [[self windowProperties] setNetwork:networkObject];
+        [[self windowProperties] setTable:_tableViewNetworks];
+        [[self windowProperties] setHypervisor:[self contact]];
+        [[self windowProperties] center];
+        [[self windowProperties] orderFront:nil];
     }
 }
 
+- (IBAction)defineNetworkXML:(id)sender
+{
+    var uid             = [[[self contact] connection] getUniqueId];
+    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    
+    [[[self contact] connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
+    [[[self contact] connection] send:defineStanza];
+}
 
+- (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(CPNumber)anUid
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    
+    if (selectedIndex == -1)
+        return
+    
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": anUid}];
+    
+    
+    [stanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkDefine}];
+    [stanza addChildName:@"network"];
+    
+    [stanza addChildName:@"name"];
+    [stanza addTextNode:[networkObject networkName]];
+    [stanza up];
+    
+    [stanza addChildName:@"forward" withAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
+    [stanza up];
+    
+    [stanza addChildName:@"bridge" withAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
+    [stanza up];
+    
+    [stanza addChildName:@"ip" withAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
+    var dhcp = [networkObject isDHCPEnabled];
+    if (dhcp)
+    {
+        console.log("HEEEREEE");
+        [stanza addChildName:@"dhcp"];
+        
+        var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
+        for (var i = 0; i < [DHCPRangeEntries count]; i++)
+        {
+            var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
+            
+            [stanza addChildName:@"range" withAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
+            [stanza up];
+        }
+        
+        var DHCPHostsEntries = [networkObject DHCPEntriesHosts];
+        for (var i = 0; i < [DHCPHostsEntries count]; i++)
+        {
+            var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
+            
+            [stanza addChildName:@"host" withAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
+            [stanza up];
+        }
+        
+        [stanza up];
+    }
+    // ip up
+    [stanza up];
+    
+    console.log([stanza stringValue]);
+    return stanza;
+}
 
+- (void)didDefineNetwork:(TNStropheStanza)aStanza
+{
+    console.log([aStanza stringValue]);
+}
 
-
+-(BOOL)windowShouldClose:(id)window
+{
+    [self defineNetworkXML:nil];
+    
+    return YES;
+}
 @end
 
 

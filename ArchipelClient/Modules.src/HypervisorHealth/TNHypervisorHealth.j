@@ -130,8 +130,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)willHide
 {
-    if (_healthRegisteredActionID)
-        [[[self contact] connection] deleteRegistredSelector:_healthRegisteredActionID];
+    // if (_healthRegisteredActionID)
+    //     [[[self contact] connection] deleteRegistredSelector:_healthRegisteredActionID];
 }
 
 
