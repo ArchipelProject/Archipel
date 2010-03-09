@@ -79,12 +79,12 @@
     //[_tableViewRanges setDoubleAction:@selector(editNetwork:)];
 
     var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"];
-    [columRangeStart setResizingMask:CPTableColumnAutoresizingMask ];
     [[columRangeStart headerView] setStringValue:@"Start"];
-
+    [columRangeStart setEditable:YES];
+    
     var columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
-    [columRangeEnd setResizingMask:CPTableColumnAutoresizingMask ];
     [[columRangeEnd headerView] setStringValue:@"End"];
+    [columRangeEnd setEditable:YES];
     
     [_tableViewRanges addTableColumn:columRangeStart];
     [_tableViewRanges addTableColumn:columRangeEnd];
@@ -109,27 +109,33 @@
     //[_tableViewRanges setDoubleAction:@selector(editNetwork:)];
 
     var columHostMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
-    [columHostMac setResizingMask:CPTableColumnAutoresizingMask ];
-    [[columHostMac headerView] setStringValue:@"MAC"];
-
+    [[columHostMac headerView] setStringValue:@"MAC Address"];
+    [columHostMac setEditable:YES];
+    
     var columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
-    [columHostName setResizingMask:CPTableColumnAutoresizingMask ];
-    [[columHostName headerView] setStringValue:@"End"];
-
+    [[columHostName headerView] setStringValue:@"Name"];
+    [columHostName setEditable:YES];
+    
     var columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
-    [columHostIP setResizingMask:CPTableColumnAutoresizingMask ];
     [[columHostIP headerView] setStringValue:@"IP"];
+    [columHostIP setEditable:YES];
     
     [_tableViewHosts addTableColumn:columHostMac];
     [_tableViewHosts addTableColumn:columHostName];
     [_tableViewHosts addTableColumn:columHostIP];
     
     [_tableViewHosts setDataSource:_datasourceDHCPHosts];
+    
+    [_tableViewHosts setDelegate:self];
+    [_tableViewRanges setDelegate:self];
 }
 
 
 - (void)orderFront:(id)sender
 {
+    [_tableViewRanges setNeedsDisplay:YES];
+    [_tableViewHosts setNeedsDisplay:YES];
+    
     [fieldNetworkName setStringValue:[network networkName]];
     [fieldBridgeName setStringValue:[network bridgeName]];
     [fieldBridgeDelay setStringValue:[network bridgeDelay]];
@@ -141,8 +147,6 @@
     
     [checkBoxSTPEnabled setState:([network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([network isDHCPEnabled]) ? CPOnState : CPOffState];
-    
-    console.log([network DHCPEntriesHosts]);
     
     [_datasourceDHCPRanges setEntries:[network DHCPEntriesRanges]];
     [_datasourceDHCPHosts setEntries:[network DHCPEntriesHosts]];
@@ -172,16 +176,44 @@
 
 - (IBAction)addDHCPRange:(id)sender
 {
+    [checkBoxDHCPEnabled setState:CPOnState];
     var newRange = [TNDHCPEntry DHCPRangeWithStartAddress:@"0.0.0.0"  endAddress:@"0.0.0.0"];
     [[_datasourceDHCPRanges entries] addObject:newRange];
     [_tableViewRanges reloadData];
+    [self save:nil];
+}
+
+- (IBAction)removeDHCPRange:(id)sender
+{     
+    var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex];
+    var rangeObject   = [[_datasourceDHCPRanges entries] removeObjectAtIndex:selectedIndex];
+    [_tableViewRanges reloadData];
+    
+    if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
+      [checkBoxDHCPEnabled setState:CPOffState];
+      
+    [self save:nil];
 }
 
 - (IBAction)addDHCPHost:(id)sender
 {
+    [checkBoxDHCPEnabled setState:CPOnState];
     var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:"domain.com" ip:@"0.0.0.0"];
     [[_datasourceDHCPHosts entries] addObject:newHost];
     [_tableViewHosts reloadData];
+    [self save:nil];
+}
+
+- (IBAction)removeDHCPHost:(id)sender
+{      
+    var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex];
+    var hostsObject   = [[_datasourceDHCPHosts entries] removeObjectAtIndex:selectedIndex];
+    [_tableViewHosts reloadData];
+    
+    if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
+      [checkBoxDHCPEnabled setState:CPOffState];
+      
+    [self save:nil];
 }
 
 

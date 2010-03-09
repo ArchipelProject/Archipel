@@ -119,8 +119,8 @@ def __module_network_undefine_network(self, iq):
     """
     reply = None
     try:
-        network_name = iq.getTag("query").getData();
-        libvirt_network = self.libvirt_connection.networkLookupByName(network_name)
+        network_uuid = iq.getTag("query").getData();
+        libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
         libvirt_network.undefine();
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network XML is undefined")
@@ -145,8 +145,8 @@ def __module_network_create(self, iq):
     """
     reply = None
     try:
-        network_name = iq.getTag("query").getData();
-        libvirt_network = self.libvirt_connection.networkLookupByName(network_name)
+        network_uuid = iq.getTag("query").getData();
+        libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
         libvirt_network.create()
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network created")
@@ -171,8 +171,8 @@ def __module_network_destroy(self, iq):
     """
     reply = None
     try:
-        network_name = iq.getTag("query").getData();
-        libvirt_network = self.libvirt_connection.networkLookupByName(network_name)
+        network_uuid = iq.getTag("query").getData();
+        libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
         libvirt_network.destroy()
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network destroyed")

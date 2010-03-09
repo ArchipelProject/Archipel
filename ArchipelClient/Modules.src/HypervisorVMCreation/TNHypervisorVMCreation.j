@@ -272,22 +272,4 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 @end
 
-@implementation CPString (CPStringWithUUIDSeparated)
-{
-}
-+ (CPString)UUID
-{
-    var g = @"";
-    
-    for(var i = 0; i < 32; i++)
-    {
-        if ((i == 8) || (i == 12) || (i == 16) || (i == 20))
-            g += '-';
-        g += FLOOR(RAND() * 0xF).toString(0xF);
-    }
-    
-    return g;
-}
-@end
-
 

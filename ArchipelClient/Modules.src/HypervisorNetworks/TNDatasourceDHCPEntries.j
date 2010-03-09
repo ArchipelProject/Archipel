@@ -33,7 +33,6 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 }
 
 + (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress 
-
 {
     var entry = [[TNDHCPEntry alloc] init];
     
@@ -45,7 +44,6 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 }
 
 + (TNDHCPEntry)DHCPHostWithMac:(CPString)aMac  name:(CPString)aName ip:(CPString)anIP 
-
 {
     var entry = [[TNDHCPEntry alloc] init];
     
@@ -91,3 +89,9 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     return [[[self entries] objectAtIndex:aRow] valueForKey:identifier];
 }
 
+- (void)tableView:(CPTableView)aTableCiew setObjectValue:(id)aValue forTableColumn:(CPTableColumn)aCol row:(int)aRow
+{
+    var identifier = [aCol identifier];
+    
+    [[entries objectAtIndex:aRow] setValue:aValue forKey:identifier];
+}

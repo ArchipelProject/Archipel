@@ -22,6 +22,7 @@
 @implementation TNNetwork : CPObject
 {
     CPString    networkName             @accessors;
+    CPString    UUID                    @accessors;
     CPString    bridgeName              @accessors;
     CPNumber    bridgeDelay             @accessors;
     CPString    bridgeForwardMode       @accessors;
@@ -35,7 +36,8 @@
     BOOL        isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
 }
 
-+ (TNNetwork)networkWithName:(CPString)aName 
++ (TNNetwork)networkWithName:(CPString)aName
+                        UUID:(CPString)anUUID
                   bridgeName:(CPString)aBridgeName 
                  bridgeDelay:(CPNumber)aBridgeDelay 
            bridgeForwardMode:(CPString)aForwardMode
@@ -51,6 +53,7 @@
     var net = [[TNNetwork alloc] init];
     
     [net setNetworkName:aName];
+    [net setUUID:anUUID];
     [net setBridgeName:aBridgeName];
     [net setBridgeDelay:aBridgeDelay];
     [net setBridgeForwardMode:aForwardMode];
@@ -71,13 +74,22 @@
 @implementation TNDatasourceNetworks : CPObject
 {
     CPArray networks @accessors;
+    
+    CPImage _imageNetworkActive;
+    CPImage _imageNetworkUnactive;
 }
 
 - (id)init
 {
     if (self = [super init])
     {
+        var bundle  = [CPBundle bundleForClass:[self class]];
+        
+        _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
+        _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]]; 
+        
         networks = [[CPArray alloc] init];
+        
     }
     return self;
 }
@@ -96,7 +108,15 @@
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
     var identifier = [aCol identifier];
-
-    return [[[self networks] objectAtIndex:aRow] valueForKey:identifier];
+    
+    if (identifier == "isNetworkEnabled")
+    {
+        if ([[[self networks] objectAtIndex:aRow] isNetworkEnabled])
+            return _imageNetworkActive;
+        else
+            return _imageNetworkUnactive;
+    }
+    else
+        return [[[self networks] objectAtIndex:aRow] valueForKey:identifier];
 }
 

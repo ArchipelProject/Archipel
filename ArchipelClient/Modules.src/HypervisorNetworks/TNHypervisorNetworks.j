@@ -28,7 +28,7 @@
 trinityTypeHypervisorNetwork            = @"trinity:hypervisor:network";
 trinityTypeHypervisorNetworkList        = @"list";
 trinityTypeHypervisorNetworkDefine      = @"define";
-trinityTypeHypervisorNetworkUndefine    = @"indefine";
+trinityTypeHypervisorNetworkUndefine    = @"undefine";
 trinityTypeHypervisorNetworkCreate      = @"create";
 trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
@@ -95,6 +95,7 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     [columBridgeNetmask setResizingMask:CPTableColumnAutoresizingMask ];
     [[columBridgeNetmask headerView] setStringValue:@"Bridge Netmask"];
     
+    [_tableViewNetworks addTableColumn:columNetworkEnabled];
     [_tableViewNetworks addTableColumn:columNetworkName];
     [_tableViewNetworks addTableColumn:columBridgeName];
     [_tableViewNetworks addTableColumn:columForwardMode];
@@ -105,6 +106,7 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     [_tableViewNetworks setDataSource:_datasourceNetworks];
     
     [[self windowProperties] setDelegate:self];
+    
 }
 
 - (void)willLoad
@@ -153,9 +155,10 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     [[_datasourceNetworks networks] removeAllObjects];
     
     for (var i = 0; i < [allNetworks count]; i++)
-    {
+    {   
         var network             = [allNetworks objectAtIndex:i];
         var name                = [[network firstChildWithName:@"name"] text];
+        var uuid                = [[network firstChildWithName:@"uuid"] text];
         var bridge              = [network firstChildWithName:@"bridge"];
         var bridgeName          = [bridge valueForAttribute:@"name"];
         var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
@@ -173,9 +176,9 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         var networkActive       = [activeNetworks containsObject:network];
         
         var DHCPRangeEntriesArray = [CPArray array];
-        for (var i = 0; DHCPEnabled && i < [DHCPRangeEntries count]; i++)
+        for (var j = 0; DHCPEnabled && j < [DHCPRangeEntries count]; j++)
         {
-            var DHCPEntry           = [DHCPRangeEntries objectAtIndex:i];
+            var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j];
             var randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"];
             var rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"];
             
@@ -185,9 +188,9 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         }
         
         var DHCPHostEntriesArray = [CPArray array];
-        for (var i = 0; DHCPEnabled && i < [DHCPHostEntries count]; i++)
+        for (var j = 0; DHCPEnabled && j < [DHCPHostEntries count]; j++)
         {
-            var DHCPEntry   = [DHCPHostEntries objectAtIndex:i];
+            var DHCPEntry   = [DHCPHostEntries objectAtIndex:j];
             var hostsMac    = [DHCPEntry valueForAttribute:@"mac"];
             var hostName    = [DHCPEntry valueForAttribute:@"name"];
             var hostIP      = [DHCPEntry valueForAttribute:@"ip"];
@@ -197,10 +200,9 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
             [DHCPHostEntriesArray addObject:DHCPEntryObject];
         }
         
-        console.log("bridgeSTP " + [bridge valueForAttribute:@"stp"]);
-        
         var newNetwork  = [TNNetwork networkWithName:name 
-                                          bridgeName:bridgeName 
+                                                UUID:uuid
+                                          bridgeName:bridgeName
                                          bridgeDelay:parseInt(bridgeDelay)
                                    bridgeForwardMode:forwardMode
                                  bridgeForwardDevice:forwardDev
@@ -216,32 +218,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     }
 
     [_tableViewNetworks reloadData];
-}
-
-- (IBAction)editNetwork:(id)sender
-{
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-    
-    if (selectedIndex != -1)
-    {
-        var networkObject = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-
-        [[self windowProperties] setNetwork:networkObject];
-        [[self windowProperties] setTable:_tableViewNetworks];
-        [[self windowProperties] setHypervisor:[self contact]];
-        [[self windowProperties] center];
-        [[self windowProperties] orderFront:nil];
-    }
-}
-
-- (IBAction)defineNetworkXML:(id)sender
-{
-    var uid             = [[[self contact] connection] getUniqueId];
-    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-    
-    [[[self contact] connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
-    [[[self contact] connection] send:defineStanza];
 }
 
 - (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(CPNumber)anUid
@@ -260,6 +236,10 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     
     [stanza addChildName:@"name"];
     [stanza addTextNode:[networkObject networkName]];
+    [stanza up];
+    
+    [stanza addChildName:@"uuid"];
+    [stanza addTextNode:[networkObject UUID]];
     [stanza up];
     
     [stanza addChildName:@"forward" withAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
@@ -302,9 +282,171 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     return stanza;
 }
 
+- (IBAction)editNetwork:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    
+    if (selectedIndex != -1)
+    {
+        var networkObject = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+        
+        if ([networkObject isNetworkEnabled])
+        {
+            [CPAlert alertWithTitle:@"Error" message:@"You can't edit a running network" style:CPCriticalAlertStyle];
+            return
+        }
+        
+
+        [[self windowProperties] setNetwork:networkObject];
+        [[self windowProperties] setTable:_tableViewNetworks];
+        [[self windowProperties] setHypervisor:[self contact]];
+        [[self windowProperties] center];
+        [[self windowProperties] orderFront:nil];
+    }
+}
+
+
+- (IBAction)defineNetworkXML:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex == -1)
+        return
+
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    
+    if ([networkObject isNetworkEnabled])
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+        return
+    }
+    var uid             = [[[self contact] connection] getUniqueId];
+    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
+    [deleteStanza addTextNode:[networkObject UUID]];
+    
+    [[[self contact] connection] registerSelector:@selector(didNetworkUndefinedBeforeDefining:) ofObject:self withDict:params];
+    [[[self contact] connection] send:deleteStanza];
+    
+}
+
+- (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
+{
+    var uid             = [[[self contact] connection] getUniqueId];
+    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    
+    [[[self contact] connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
+    [[[self contact] connection] send:defineStanza];
+}
+
 - (void)didDefineNetwork:(TNStropheStanza)aStanza
 {
-    console.log([aStanza stringValue]);
+    if ([aStanza getType] != @"success")
+    {
+        [self onLibvirtError:aStanza];
+    }
+}
+
+
+- (IBAction)activateNetworkSwitch:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    
+    if (selectedIndex == -1)
+        return
+    
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    var uid             = [[[self contact] connection] getUniqueId];
+    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    if ([networkObject isNetworkEnabled])
+    {
+        [activeStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkDestroy}];
+    }
+    else
+    {
+        [activeStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkCreate}];
+    }
+        
+    [activeStanza addTextNode:[networkObject UUID]];
+    
+    [[[self contact] connection] registerSelector:@selector(didNetworkStatusChange:) ofObject:self withDict:params];
+    [[[self contact] connection] send:activeStanza];
+}
+
+- (void)didNetworkStatusChange:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        [self getHypervisorNetworks];
+    }
+    else
+    {
+        [self onLibvirtError:aStanza];
+    }
+}
+
+- (IBAction)addNetwork:(id)sender
+{
+   var newNetwork = [TNNetwork networkWithName:@"New Network"
+                                            UUID:[CPString UUID]
+                                      bridgeName:@"virbr0"
+                                     bridgeDelay:0
+                               bridgeForwardMode:@"route"
+                             bridgeForwardDevice:@"eth0"
+                                        bridgeIP:@"10.0.0.1"
+                                   bridgeNetmask:@"255.255.0.0"
+                               DHCPEntriesRanges:[CPArray array]
+                                DHCPEntriesHosts:[CPArray array]
+                                  networkEnabled:NO
+                                      STPEnabled:NO
+                                     DHCPEnabled:NO];
+
+    [[_datasourceNetworks networks] addObject:newNetwork];
+    [_tableViewNetworks reloadData];
+}
+
+- (IBAction)delNetwork:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex == -1)
+        return
+
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    
+    if ([networkObject isNetworkEnabled])
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+        return
+    }
+    
+    var uid             = [[[self contact] connection] getUniqueId];
+    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
+    [deleteStanza addTextNode:[networkObject UUID]];
+    
+    [[[self contact] connection] registerSelector:@selector(didDelNetwork:) ofObject:self withDict:params];
+    [[[self contact] connection] send:deleteStanza];
+
+}
+
+- (void)didDelNetwork:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        [self getHypervisorNetworks];
+    }
+    else
+    {
+        [self onLibvirtError:aStanza];
+    }
 }
 
 -(BOOL)windowShouldClose:(id)window
@@ -313,6 +455,19 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     
     return YES;
 }
+
+- (void)onLibvirtError:(TNStropheStanza)errorStanza
+{
+    var errorNode               = [errorStanza firstChildWithName:@"error"];
+    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
+    var libvirtErrorMessage     = [errorNode text];   
+    var title                   = @"Error " + libvirtErrorCode;
+    
+    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
+    
+    [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+}
+
 @end
 
 
