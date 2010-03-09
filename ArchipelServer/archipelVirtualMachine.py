@@ -61,7 +61,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     ###  Super methods overrided
     ######################################################################################################
     
-    def __init__(self, jid, password):
+    def __init__(self, jid, password, hypervisor):
         TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
@@ -69,6 +69,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('google.com', 0));
         ipaddr, other = s.getsockname();
+        self.hypervisor = hypervisor;
         
         if not os.path.isdir(self.vm_disk_base_path + jid):
             os.mkdir(self.vm_disk_base_path + jid);
@@ -433,7 +434,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     
-        
     
     ######################################################################################################
     ### XMPP Processing

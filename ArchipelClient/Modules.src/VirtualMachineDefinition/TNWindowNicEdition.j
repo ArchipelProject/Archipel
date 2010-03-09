@@ -18,13 +18,18 @@
 
 @import "TNDatasourceNetworkInterfaces.j"
 
+trinityTypeHypervisorNetwork            = @"trinity:hypervisor:network";
+trinityTypeHypervisorNetworkList        = @"list";
+
 @implementation TNWindowNicEdition : CPWindow
 {
-    @outlet CPTextField     fieldMac        @accessors;
-    @outlet CPPopUpButton   buttonType      @accessors;
-    @outlet CPPopUpButton   buttonModel     @accessors;
-    @outlet CPPopUpButton   buttonSource    @accessors;
-
+    @outlet CPTextField     fieldMac            @accessors;
+    @outlet CPPopUpButton   buttonType          @accessors;
+    @outlet CPPopUpButton   buttonModel         @accessors;
+    @outlet CPPopUpButton   buttonSource        @accessors;
+    @outlet CPRadioGroup    radioNetworkType    @accessors;
+    
+    TNStropheStanza                 contact     @accessors;
     TNNetworkInterface              nic         @accessors;
     CPTableView                     table       @accessors;
 }
@@ -42,19 +47,19 @@
         [[self buttonModel] addItem:item];
     }
     
-    var types = ["bridge", "user"];
+    var types = ["network", "bridge", "user"];
     for (var i = 0; i < types.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:types[i] action:nil keyEquivalent:nil];
         [[self buttonType] addItem:item];
     }
     
-    var source = ["virbr0", "virbr1", "virbr2"];
-    for (var i = 0; i < source.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:source[i] action:nil keyEquivalent:nil];
-        [[self buttonSource] addItem:item];
-    }
+    // var source = ["virbr0", "virbr1", "virbr2"];
+    // for (var i = 0; i < source.length; i++)
+    // {
+    //     var item = [[CPMenuItem alloc] initWithTitle:source[i] action:nil keyEquivalent:nil];
+    //     [[self buttonSource] addItem:item];
+    // }
 }
 
 - (void)orderFront:(id)sender
@@ -63,11 +68,25 @@
         [[self fieldMac] setStringValue:generateMacAddr()];
     else
         [[self fieldMac] setStringValue:[nic mac]];
+    
+    [[self buttonSource] removeAllItems];
+    
+    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
+    {
+        var radio = [[radioNetworkType radios] objectAtIndex:i];
+        console.log([radio title] + "==" + [[nic type] lowercaseString]);
 
+        if ([[radio title] lowercaseString] == [nic type])
+        {
+            [radio setState:CPOnState];
+            [self performRadioNicTypeChanged:radioNetworkType];
+            break;
+        }
+    }
+    
     [[self buttonSource] selectItemWithTitle:[nic source]];
     [[self buttonType] selectItemWithTitle:[nic type]];
     [[self buttonModel] selectItemWithTitle:[nic model]];
-    
     
     [super orderFront:sender];
 }
@@ -75,10 +94,71 @@
 - (IBAction)save:(id)sender
 {
     [nic setMac:[[self fieldMac] stringValue]];
-    [nic setType:[[self buttonType] title]];
+    // [nic setType:[[self buttonType] title]];
     [nic setModel:[[self buttonModel] title]];
     [nic setSource:[[self buttonSource] title]];
     
     [[self table] reloadData];
 }
+
+- (void)getHypervisorNetworks
+{
+    var uid             = [[[self contact] connection] getUniqueId];
+    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+        
+    [networksStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorNetworkList}];
+    
+    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self withDict:params];
+    [[[self contact] connection] send:networksStanza];
+}
+
+- (void)didReceiveHypervisorNetworks:(id)aStanza 
+{
+    if ([aStanza getType] == @"success")
+    {
+        var names = [aStanza childrenWithName:@"network"]
+        for (var i = 0; i < [names count]; i++)
+        {
+            var name = [[names objectAtIndex:i] valueForAttribute:@"name"];
+            var item = [[CPMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil];
+            [[self buttonSource] addItem:item];
+        }
+    }
+    else
+    {
+        console.log("ERROR");
+    }
+}
+
+- (IBAction)performRadioNicTypeChanged:(id)sender
+{
+    console.log("LA");
+    var nicType = [[sender selectedRadio] title];
+    
+    if (nicType == @"Network")
+    {
+        [[self buttonSource] removeAllItems];
+        [self getHypervisorNetworks];
+        [[self nic] setType:@"network"];
+    }
+    else if(nicType == @"Bridge")
+    {
+        [[self buttonSource] removeAllItems];
+        [[self nic] setType:@"bridge"];
+        var source = ["virbr0", "virbr1", "virbr2"];
+        
+        for (var i = 0; i < source.length; i++)
+        {
+            var item = [[CPMenuItem alloc] initWithTitle:source[i] action:nil keyEquivalent:nil];
+            [[self buttonSource] addItem:item];
+        }
+    }
+    else if(nicType == @"User")
+    {
+        [[self buttonSource] removeAllItems];
+        [[self nic] setType:@"user"];
+    }
+}
+
 @end

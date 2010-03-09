@@ -41,14 +41,14 @@ def __module_register_stanza__network_management(self):
 
 
 
-def __module_network_connect_network(self):
-    networks_names = self.libvirt_connection.listNetworks();
-    for network_name in networks_names:
-        self.libvirt_networks.append(self.libvirt_connection.networkLookupByName(network_name));
+# def __module_network_connect_network(self):
+#     networks_names = self.libvirt_connection.listNetworks();
+#     for network_name in networks_names:
+#         self.libvirt_networks.append(self.libvirt_connection.networkLookupByName(network_name));
 
 
 
-def __process_iq_trinity_network(self, conn, iq):
+def __process_iq_trinity_network_for_hypervisor(self, conn, iq):
     log(self, LOG_LEVEL_INFO, "received network iq");
     
     iqType = iq.getTag("query").getAttr("type");
@@ -77,6 +77,18 @@ def __process_iq_trinity_network(self, conn, iq):
         reply = self.__module_network_list(iq)
         conn.send(reply)
         raise xmpp.protocol.NodeProcessed
+
+
+def __process_iq_trinity_network_for_virtualmachine(self, conn, iq):
+    log(self, LOG_LEVEL_INFO, "received network iq");
+    
+    iqType = iq.getTag("query").getAttr("type");
+    
+    if iqType == "list":
+        reply = self.__module_network_list(iq)
+        conn.send(reply)
+        raise xmpp.protocol.NodeProcessed
+
 
 
 def __module_network_define_network(self, iq):
@@ -223,12 +235,44 @@ def __module_network_list(self, iq):
         
     
 
+
+def __module_network_name_list(self, iq):
+    """
+    list all virtual networks name
+
+    @type iq: xmpp.Protocol.Iq
+    @param iq: the received IQ
+
+    @rtype: xmpp.Protocol.Iq
+    @return: a ready to send IQ containing the result of the action
+    """
+    reply = iq.buildReply('success')
+    active_networks_nodes = []; 
+
+    actives_networks_names = self.libvirt_connection.listNetworks();
+
+    for network_name in actives_networks_names:
+        network = xmpp.Node(tag="network", attrs={"name": network_name})
+        active_networks_nodes.append(network)
+
+    reply.setQueryPayload(active_networks_nodes)
+    return reply;
+
+
+
+
+
 setattr(archipel.TNArchipelHypervisor, "__module_init__network_management", __module_init__network_management)
 setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__network_management", __module_register_stanza__network_management)
-setattr(archipel.TNArchipelHypervisor, "__module_network_connect_network", __module_network_connect_network)
-setattr(archipel.TNArchipelHypervisor, "__process_iq_trinity_network", __process_iq_trinity_network)
+# setattr(archipel.TNArchipelHypervisor, "__module_network_connect_network", __module_network_connect_network)
+setattr(archipel.TNArchipelHypervisor, "__process_iq_trinity_network", __process_iq_trinity_network_for_hypervisor)
 setattr(archipel.TNArchipelHypervisor, "__module_network_define_network", __module_network_define_network)
 setattr(archipel.TNArchipelHypervisor, "__module_network_undefine_network", __module_network_undefine_network)
 setattr(archipel.TNArchipelHypervisor, "__module_network_create", __module_network_create)
 setattr(archipel.TNArchipelHypervisor, "__module_network_destroy", __module_network_destroy)
 setattr(archipel.TNArchipelHypervisor, "__module_network_list", __module_network_list)
+
+
+setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__network_management", __module_register_stanza__network_management);
+setattr(archipel.TNArchipelVirtualMachine, "__process_iq_trinity_network", __process_iq_trinity_network_for_virtualmachine)
+setattr(archipel.TNArchipelVirtualMachine, "__module_network_list", __module_network_name_list)

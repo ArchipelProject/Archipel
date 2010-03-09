@@ -224,7 +224,7 @@ function generateMacAddr()
         [[self buttonHypervisor] addItem:item];
     }
     
-    var vncKeymaps = ["us", "fr", "de"];
+    var vncKeymaps = ["en-us", "fr"];
     for (var i = 0; i < vncKeymaps.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:vncKeymaps[i] action:nil keyEquivalent:nil];
@@ -326,8 +326,9 @@ function generateMacAddr()
         
         if (iType == "bridge")
             var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
-        else
-            var iSource = "NOT IMPLEMENTED";
+        else if (iType == "network")
+            var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"];
+        
         
         var iTarget = "";//interfaces[i].getElementsByTagName("target")[0].getAttribute("dev");
         
@@ -433,12 +434,17 @@ function generateMacAddr()
     
     for (var i = 0; i < [nics count]; i++)
     {
-        var nic = [nics objectAtIndex:i];
+        var nic     = [nics objectAtIndex:i];
+        var nicType = [nic type];
         
-        [stanza addChildName:@"interface" withAttributes:{"type": [nic type]}];
+        [stanza addChildName:@"interface" withAttributes:{"type": nicType}];
         [stanza addChildName:@"mac" withAttributes:{"address": [nic mac]}];
         [stanza up];
-        [stanza addChildName:@"source" withAttributes:{"bridge": [nic source]}];
+        if (nicType == @"bridge")
+            [stanza addChildName:@"source" withAttributes:{"bridge": [nic source]}];
+        else
+            [stanza addChildName:@"source" withAttributes:{"network": [nic source]}];
+            
         [stanza up];
         [stanza up];
     }
@@ -493,6 +499,7 @@ function generateMacAddr()
     
     [[self windowNicEdition] setNic:nicObject];
     [[self windowNicEdition] setTable:[self tableNetworkCards]];
+    [[self windowNicEdition] setContact:[self contact]];
     [[self windowNicEdition] center];
     [[self windowNicEdition] orderFront:nil];
 }

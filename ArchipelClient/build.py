@@ -19,7 +19,7 @@ if "html" in sys.argv:
     
         
 ### overide to define only a set of modules;        
-modules_paths = [modules_base_paths + "HypervisorNetworks"];
+modules_paths = [modules_base_paths + "VirtualMachineDefinition"];
 
 if "modules" in sys.argv:
     build_paths = modules_paths

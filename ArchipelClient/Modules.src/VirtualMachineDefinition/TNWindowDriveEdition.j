@@ -67,7 +67,19 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 }
 
 - (void)orderFront:(id)sender
-{    
+{   
+    for (var i = 0; i < [[radioDriveType radios] count]; i++)
+    {
+        var radio = [[radioDriveType radios] objectAtIndex:i];
+
+        if ([radio title] == [drive type])
+        {
+            [radio setState:CPOnState];
+            [self performRadioDriveTypeChanged:radioDriveType];
+            break;
+        }
+    }
+       
     [[self buttonType] selectItemWithTitle:[drive type]];
     [[self buttonTarget] selectItemWithTitle:[drive target]];
     [[self buttonBus] selectItemWithTitle:[drive bus]];

@@ -44,7 +44,7 @@ class TNThreadedVirtualMachine(Thread):
     this class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
     """
-    def __init__(self, jid, password):
+    def __init__(self, jid, password, hypervisor):
         """
         the contructor of the class
         @type jid: string
@@ -54,7 +54,7 @@ class TNThreadedVirtualMachine(Thread):
         """
         self.jid = jid
         self.password = password
-        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password)
+        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor)
         Thread.__init__(self)
     
     
@@ -160,7 +160,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TNThreadedVirtualMachine(jid, password); #envoyer un bon mot de passe.
+        vm = TNThreadedVirtualMachine(jid, password, self); #envoyer un bon mot de passe.
         vm.daemon = True
         vm.start()
         return vm    
@@ -309,26 +309,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return reply
     
     
-    def __getbridges(self, iq):
-        """
-        get the current bridges of hypervisor
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        nodes = [];
-        
-        bridges = commands.getoutput("brctl show").split("\n")[1:]
-        
-        ## TODO
-        
-        reply = iq.buildReply('success')    
-        reply.setQueryPayload(nodes)
-        return reply    
-    
-    
     ######################################################################################################
     ### XMPP Processing
     ######################################################################################################
@@ -364,23 +344,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = self.__send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
-        # if iqType == "healthinfo":
-        #     reply = self.__healthinfo(iq)
-        #     conn.send(reply)
-        #     raise xmpp.protocol.NodeProcessed
-        # 
-        # if iqType == "healthinfohistory":
-        #     reply = self.__healthinfo_history(iq)
-        #     conn.send(reply)
-        #     raise xmpp.protocol.NodeProcessed
-        #     
-        # if iqType == "getbridges":
-        #     reply = self.__getbridges(iq)
-        #     conn.send(reply)
-        #     raise xmpp.protocol.NodeProcessed
-    
-    
 
   
 
