@@ -264,10 +264,11 @@ trinityTypeHypervisorHealthHistory          = @"history";
     [[self imageCPULoading] setHidden:YES];
     [[self imageMemoryLoading] setHidden:YES];
     
+    
+    [self getHypervisorHealth:nil];
+    
     // now get health every 5 seconds
-    //[self getHypervisorHealth:nil];
-
-    //_timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
+    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
     
     return NO;
 }

@@ -68,22 +68,24 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
 - (void)orderFront:(id)sender
 {   
-    for (var i = 0; i < [[radioDriveType radios] count]; i++)
+    if (![self isVisible])
     {
-        var radio = [[radioDriveType radios] objectAtIndex:i];
-
-        if ([radio title] == [drive type])
+        for (var i = 0; i < [[radioDriveType radios] count]; i++)
         {
-            [radio setState:CPOnState];
-            [self performRadioDriveTypeChanged:radioDriveType];
-            break;
+            var radio = [[radioDriveType radios] objectAtIndex:i];
+
+            if ([radio title] == [drive type])
+            {
+                [radio setState:CPOnState];
+                [self performRadioDriveTypeChanged:radioDriveType];
+                break;
+            }
         }
-    }
        
-    [[self buttonType] selectItemWithTitle:[drive type]];
-    [[self buttonTarget] selectItemWithTitle:[drive target]];
-    [[self buttonBus] selectItemWithTitle:[drive bus]];
-    [self getDisksInfo];
+        [[self buttonType] selectItemWithTitle:[drive type]];
+        [[self buttonTarget] selectItemWithTitle:[drive target]];
+        [[self buttonBus] selectItemWithTitle:[drive bus]];
+    }
     
     [super orderFront:sender];
 }

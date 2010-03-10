@@ -53,40 +53,33 @@ trinityTypeHypervisorNetworkList        = @"list";
         var item = [[CPMenuItem alloc] initWithTitle:types[i] action:nil keyEquivalent:nil];
         [[self buttonType] addItem:item];
     }
-    
-    // var source = ["virbr0", "virbr1", "virbr2"];
-    // for (var i = 0; i < source.length; i++)
-    // {
-    //     var item = [[CPMenuItem alloc] initWithTitle:source[i] action:nil keyEquivalent:nil];
-    //     [[self buttonSource] addItem:item];
-    // }
 }
 
 - (void)orderFront:(id)sender
 {   
-    if ([nic mac] == "00:00:00:00:00:00")
-        [[self fieldMac] setStringValue:generateMacAddr()];
-    else
-        [[self fieldMac] setStringValue:[nic mac]];
-    
-    [[self buttonSource] removeAllItems];
-    
-    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
+    if (![self isVisible])
     {
-        var radio = [[radioNetworkType radios] objectAtIndex:i];
-        
-        if ([[radio title] lowercaseString] == [nic type])
+        if ([nic mac] == "00:00:00:00:00:00")
+            [[self fieldMac] setStringValue:generateMacAddr()];
+        else
+            [[self fieldMac] setStringValue:[nic mac]];
+
+        [[self buttonSource] removeAllItems];
+
+        for (var i = 0; i < [[radioNetworkType radios] count]; i++)
         {
-            [radio setState:CPOnState];
-            [self performRadioNicTypeChanged:radioNetworkType];
-            break;
+            var radio = [[radioNetworkType radios] objectAtIndex:i];
+
+            if ([[radio title] lowercaseString] == [nic type])
+            {
+                [radio setState:CPOnState];
+                [self performRadioNicTypeChanged:radioNetworkType];
+                break;
+            }
         }
+        [[self buttonType] selectItemWithTitle:[nic type]];
+        [[self buttonModel] selectItemWithTitle:[nic model]];
     }
-    
-    [[self buttonSource] selectItemWithTitle:[nic source]];
-    [[self buttonType] selectItemWithTitle:[nic type]];
-    [[self buttonModel] selectItemWithTitle:[nic model]];
-    
     [super orderFront:sender];
 }
 
@@ -123,6 +116,7 @@ trinityTypeHypervisorNetworkList        = @"list";
             var item = [[CPMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil];
             [[self buttonSource] addItem:item];
         }
+        [[self buttonSource] selectItemWithTitle:[nic source]];
     }
     else
     {
