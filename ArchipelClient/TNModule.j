@@ -26,16 +26,18 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 {
     TNStropheRoster         roster              @accessors;
     TNStropheContact        contact             @accessors;
+    TNStropheConnection     connection          @accessors;
     CPNumber                moduleTabIndex      @accessors;
     CPString                moduleName          @accessors;
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
 }
 
-- (void)initializeWithContact:(TNStropheContact)aContact andRoster:(TNStropheRoster)aRoster
+- (void)initializeWithContact:(TNStropheContact)aContact connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
 {
     [self setContact:aContact];
     [self setRoster:aRoster];
+    [self setConnection:aConnection];
 }
 
 - (void)willLoad

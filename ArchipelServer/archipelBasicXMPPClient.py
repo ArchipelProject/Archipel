@@ -36,6 +36,8 @@ LOOP_RESTART = 2
 """indicates loop restart status"""
 
 
+TRINITY_NS_IQ_PUSH = "trinity:push"
+
 class TNArchipelBasicXMPPClient(object):
     """
     this class represent a basic XMPP Client
@@ -56,6 +58,7 @@ class TNArchipelBasicXMPPClient(object):
         self.ressource = socket.gethostname()
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
         self.roster = None
+        self.roster_retreived = False;
         self.registered_actions_to_perform_on_connection = [];
         
         for method in self.__class__.__dict__:
@@ -105,10 +108,9 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.sendInitPresence()
         log(self, LOG_LEVEL_INFO, "initial presence sent")   
         
+        log(self, LOG_LEVEL_INFO, "roster asked")
         self.roster = self.xmppclient.getRoster()
-        log(self, LOG_LEVEL_INFO, "roster retreived")
-        
-        self.perform_all_registered_actions();
+        self.perform_all_registered_auth_actions();
         self.loop();
     
     
@@ -141,7 +143,7 @@ class TNArchipelBasicXMPPClient(object):
             self.disconnect();
             self.connect();
     
-
+    
     def _inband_unregistration(self):
         """
         Do a in-band unregistration
@@ -153,8 +155,6 @@ class TNArchipelBasicXMPPClient(object):
         remove_node = xmpp.Node(tag="remove")
         
         iq.setQueryPayload([remove_node])
-        
-        print str(iq);
         log(self, LOG_LEVEL_DEBUG, "unregistration information sent. waiting for response")
         resp_iq = self.xmppclient.send(iq)
         self.set_loop_status = LOOP_OFF
@@ -174,50 +174,53 @@ class TNArchipelBasicXMPPClient(object):
             if not method.find("__module_register_stanza__") == -1:
                 m = getattr(self, method)
                 m()
-        
-
+    
+    
     def __process_presence_subscribe(self, conn, presence):
         """
         Invoked when new jabber presence subscription is received.
-
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
-        """
+        """        
         log(self, LOG_LEVEL_DEBUG, "Subscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
-        conn.send(xmpp.Presence(to=presence.getFrom(), typ="subscribed"))
+        #conn.send(xmpp.Presence(to=presence.getFrom(), typ="subscribed"))
         self.add_jid(presence.getFrom())
+        
+        raise xmpp.NodeProcessed
     
-
+    
     def __process_presence_unsubscribe(self, conn, presence):
         """
         Invoked when new jabber presence unsubscribtion is received.
-
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
         log(self, LOG_LEVEL_DEBUG, "Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
-        conn.send(xmpp.Presence(to=presence.getFrom(), typ="unsubscribed"))
+        #conn.send(xmpp.Presence(to=presence.getFrom(), typ="unsubscribed"))
         self.remove_jid(presence.getFrom())
+        
+        raise xmpp.NodeProcessed
         
         
     def __process_message(self, conn, msg):
         """
         Handler for incoming message. this method is had to be overidden to treat message.
-
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type msg: xmpp.Protocol.Message
         @param msg: the received message 
         """
+        
         if msg.getBody():
             reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!");
             conn.send(reply);
-        
-    
 
     ######################################################################################################
     ### Public method
@@ -226,7 +229,7 @@ class TNArchipelBasicXMPPClient(object):
     def register_actions_to_perform_on_auth(self, method_name, args=[]):
         """
         Allows object to register actions (method of this class) to perform
-        when the XMPP Client will be online. It is usefull to add_jid directly at launch.
+        when the XMPP Client will be online.
         
         @type method_name: string
         @param method_name: the name of the method to launch
@@ -235,10 +238,10 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args})    
     
-    
-    def perform_all_registered_actions(self):
+
+    def perform_all_registered_auth_actions(self):
         """
-        Parse the all the registered actions, and execute them
+        Parse the all the registered actions for connection, and execute them
         """
         for action in self.registered_actions_to_perform_on_connection:
             if hasattr(self, action["name"]):
@@ -248,6 +251,21 @@ class TNArchipelBasicXMPPClient(object):
                 else:
                     m();
         self.registered_actions_to_perform_on_connection = [];
+    
+    
+    def perform_all_registered_roster_actions(self):
+        """
+        Parse the all the registered actions for roster, and execute them
+        """
+        for action in self.registered_actions_to_perform_on_roster_retrieved:
+            if hasattr(self, action["name"]):
+                m = getattr(self, action["name"])
+                if action["args"] != None:
+                    m(action["args"]);
+                else:
+                    m();
+        self.registered_actions_to_perform_on_roster_retrieved = [];
+    
     
     
     def change_presence(self, presence_show, presence_status):
@@ -271,6 +289,12 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.disconnect()
     
     
+    def push_change(self, change):
+        for item in self.roster.getItems():
+            push = xmpp.Iq(typ="push", xmlns=TRINITY_NS_IQ_PUSH, attrs={"change": change}, to=item);
+            self.xmppclient.send(push)
+    
+    
     def add_jid(self, jid, groups=[]):
         """
         Add a jid to the VM Roster and authorizes it
@@ -278,10 +302,16 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to add
         """
-        #log(self, LOG_LEVEL_INFO, "adding JID {0} to roster".format(jid))
+        log(self, LOG_LEVEL_INFO, "adding JID {0} to roster instance {1}".format(jid, str(id(self))))
+        
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
+        
         self.roster.Subscribe(jid)
         self.roster.Authorize(jid)
         self.roster.setItem(jid, groups=groups)
+        
+        self.push_change("subscription-added");
     
      
     def remove_jid(self, jid):

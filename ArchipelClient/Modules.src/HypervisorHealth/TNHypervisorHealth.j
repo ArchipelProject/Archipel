@@ -60,8 +60,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
     CPTimer                     _timer;
     CPNumber                    _timerInterval;
     
-    id  _healthRegisteredActionID;
-    
+    id  _healthHistoryRegisteredActionID;
+    id  _healthInfoRegisteredActionID;
 }
 
 - (void)awakeFromCib
@@ -95,7 +95,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 - (void)willLoad
 {
     _timerInterval = 5;
-    _healthRegisteredActionID = nil;
+    _healthHistoryRegisteredActionID    = nil;
+    _healthInfoRegisteredActionID       = nil;
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
@@ -106,6 +107,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
     
+    console.log("Loading hypervisor health...");
     [self getHypervisorHealthHistory];
 }
     
@@ -120,6 +122,12 @@ trinityTypeHypervisorHealthHistory          = @"history";
     
     [_cpuDatasource removeAllObjects];
     [_memoryDatasource removeAllObjects];
+    
+    console.log("Unloading hypervisor health...");
+    if (_healthHistoryRegisteredActionID)
+        [[self connection] deleteRegistredSelector:_healthHistoryRegisteredActionID];
+    if(_healthInfoRegisteredActionID)
+        [[self connection] deleteRegistredSelector:_healthInfoRegisteredActionID];
 }
 
 - (void)willShow
@@ -130,8 +138,6 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)willHide
 {
-    // if (_healthRegisteredActionID)
-    //     [[[self contact] connection] deleteRegistredSelector:_healthRegisteredActionID];
 }
 
 
@@ -147,18 +153,19 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    var uid             = [[[self contact] connection] getUniqueId];
+    var uid             = [[self connection] getUniqueId];
     var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthInfo}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
-    [[[self contact] connection] send:rosterStanza];
+    _healthInfoRegisteredActionID = [[self connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
+    [[self connection] send:rosterStanza];
 }
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza 
 {   
+    _healthInfoRegisteredActionID = nil
     if ([aStanza getType] == @"success")
     {       
         var memNode = [aStanza firstChildWithName:@"memory"];
@@ -195,22 +202,24 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)getHypervisorHealthHistory
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type": trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": 100}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": 50}];
     
-    _healthRegisteredActionID = [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
-    [[[self contact] connection] send:rosterStanza];
-
+    _healthHistoryRegisteredActionID = [[self connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
+    [[self connection] send:rosterStanza];
+    
+    console.log("stating history");
+    
     [[self imageCPULoading] setHidden:NO];
     [[self imageMemoryLoading] setHidden:NO];
 }
 
-- (void)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
-{   
-    _healthRegisteredActionID = nil;
+- (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
+{
+    _healthHistoryRegisteredActionID = nil;
     if ([aStanza getType] == @"success")
     {   
         var stats = [aStanza childrenWithName:@"stat"];
@@ -256,9 +265,11 @@ trinityTypeHypervisorHealthHistory          = @"history";
     [[self imageMemoryLoading] setHidden:YES];
     
     // now get health every 5 seconds
-    [self getHypervisorHealth:nil];
+    //[self getHypervisorHealth:nil];
 
-    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
+    //_timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
+    
+    return NO;
 }
 
 

@@ -64,6 +64,7 @@ def __process_iq_trinity_health(self, conn, iq):
     if iqType == "history":
         reply = self.__healthinfo_history(iq)
         conn.send(reply)
+        log(self, LOG_LEVEL_DEBUG, "stats IQ sent. Node processed")
         raise xmpp.protocol.NodeProcessed
         
     if iqType == "info":
@@ -87,6 +88,7 @@ def __healthinfo_history(self, iq):
         nodes = [];
         stats = self.collector.get_collected_stats(limit);
         
+        log(self, LOG_LEVEL_DEBUG, "converting stats into XML node")
         rows = [];
         i = 0;
         for i in range(limit):
@@ -95,7 +97,8 @@ def __healthinfo_history(self, iq):
             statNode.addChild("cpu", attrs={"us" : stats["cpu"][i]["us"], "sy": stats["cpu"][i]["sy"], "id": stats["cpu"][i]["id"], "wa": stats["cpu"][i]["wa"], "st": stats["cpu"][i]["st"]});
             statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]});
             nodes.append(statNode);
-            
+        
+        log(self, LOG_LEVEL_DEBUG, "conversion done. returning IQ for sending")
         reply = iq.buildReply('success')    
         reply.setQueryPayload(nodes)
     except Exception as ex:

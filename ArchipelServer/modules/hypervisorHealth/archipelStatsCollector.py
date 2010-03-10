@@ -48,6 +48,7 @@ class TNThreadedHealthCollector(Thread):
         if not self.query_database_connection:
             self.query_database_connection = sqlite3.connect(self.database_file);
         
+        log(self, LOG_LEVEL_DEBUG, "Retrieving last "+ str(limit) + " recorded stats data for sending")
         tempdatabase = self.query_database_connection;
         
         cpustat_cursor = tempdatabase.cursor();
@@ -85,6 +86,7 @@ class TNThreadedHealthCollector(Thread):
         uname = commands.getoutput("uname -rsmo").split();
         uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
         
+        log(self, LOG_LEVEL_DEBUG, "Stat collection terminated");
         return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": uname_stats};
     
     

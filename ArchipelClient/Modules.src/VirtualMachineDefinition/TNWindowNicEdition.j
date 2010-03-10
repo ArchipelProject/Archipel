@@ -74,8 +74,7 @@ trinityTypeHypervisorNetworkList        = @"list";
     for (var i = 0; i < [[radioNetworkType radios] count]; i++)
     {
         var radio = [[radioNetworkType radios] objectAtIndex:i];
-        console.log([radio title] + "==" + [[nic type] lowercaseString]);
-
+        
         if ([[radio title] lowercaseString] == [nic type])
         {
             [radio setState:CPOnState];
@@ -133,7 +132,6 @@ trinityTypeHypervisorNetworkList        = @"list";
 
 - (IBAction)performRadioNicTypeChanged:(id)sender
 {
-    console.log("LA");
     var nicType = [[sender selectedRadio] title];
     
     if (nicType == @"Network")

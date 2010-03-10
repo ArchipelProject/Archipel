@@ -74,7 +74,7 @@ class TNThreadedVirtualMachine(Thread):
         try:
             self.xmppvm.connect()
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "vm has been stopped")
+            log(self, LOG_LEVEL_ERROR, "vm has been stopped execption :" + str(ex))
     
   
 
@@ -192,7 +192,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         reply = None
         
-        
         query = iq.getQueryChildren();
         
         domain_uuid = None;
@@ -211,17 +210,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             return reply
             
         vm_password = "password" #temp method
-                
         vm_jid = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
-        vm = self.__create_threaded_vm(vm_jid, vm_password)
-        
-        log(self, LOG_LEVEL_INFO, "XMPP VM thread started in daemon mode")
         
         log(self, LOG_LEVEL_INFO, "adding the xmpp vm ({0}) to my roster".format(vm_jid))
         self.add_jid(vm_jid, [GROUP_VM])
         
-        log(self, LOG_LEVEL_INFO, "adding myself ({0}) to the VM's roster".format(self.jid))
-        vm.get_instance().register_actions_to_perform_on_auth("add_jid", self.jid);
+        vm = self.__create_threaded_vm(vm_jid, vm_password)
+        log(self, LOG_LEVEL_INFO, "XMPP VM thread started")
         
         log(self, LOG_LEVEL_INFO, "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
         vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
@@ -264,13 +259,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         if (vm.get_instance().domain):
             if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
                 vm.get_instance().domain.destroy()
-                vm.get_instance().domain.undefine()
+            vm.get_instance().domain.undefine()
         
-        log(self, LOG_LEVEL_INFO, "removing the VM own folder")
+        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
         vm.get_instance().remove_own_folder();
-        
-        log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
-        vm.get_instance()._inband_unregistration()
         
         log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
         self.remove_jid(vm_jid)
@@ -281,10 +273,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         del self.virtualmachines[domain_uuid]
         
-        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
-        #TODO
+        log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
+        vm.get_instance()._inband_unregistration()
         
         reply = iq.buildReply('success')
+        reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
+        
         log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
         return reply
     

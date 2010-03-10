@@ -82,21 +82,26 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {       
     [[self outlineView] reloadData];
     
-    var index = [[self outlineView] rowForItem:[aNotification object]];
-    var set = [CPIndexSet indexSetWithIndex:index];
-    [[self outlineView] selectRowIndexes:set byExtendingSelection:NO];
+    var index   = [[self outlineView] rowForItem:[aNotification object]];
+    
+    if (index != -1)
+    {
+        var set     = [CPIndexSet indexSetWithIndex:index];
+        [[self outlineView] selectRowIndexes:set byExtendingSelection:NO];
+    }
 }
 
 
 - (void)updateOutlineViewItem:(CPNotification)aNotification
 {
-    [[self outlineView] reloadItem:[aNotification object]];
+    [[self outlineView] reloadData];
+    //[[self outlineView] reloadItem:[aNotification object]];
 }
 
 - (void)updateOutlineViewGroupItem:(CPNotification)aNotification
 {
-
-    [[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
+    [[self outlineView] reloadData];
+    //[[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
 }
 
 
@@ -118,7 +123,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 - (id)outlineView:(CPOutlineView)outlineView child:(int)index ofItem:(id)item  
-{
+{   
     if (!item) 
     {
         return [[self getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];

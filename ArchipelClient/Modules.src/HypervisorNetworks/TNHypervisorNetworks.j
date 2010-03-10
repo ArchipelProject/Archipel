@@ -252,7 +252,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     var dhcp = [networkObject isDHCPEnabled];
     if (dhcp)
     {
-        console.log("HEEEREEE");
         [stanza addChildName:@"dhcp"];
         
         var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
@@ -278,7 +277,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     // ip up
     [stanza up];
     
-    console.log([stanza stringValue]);
     return stanza;
 }
 

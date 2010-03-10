@@ -32,6 +32,13 @@ this list gives the name of log level
 """
 
 
+COLOR_WHITE = u'\033[0m'
+COLOR_ERROR = u'\033[31m'
+COLOR_INFO  = u'\033[33m'
+COLOR_DEBUG = u'\033[36m'
+COLOR_CLASS_HYPERVISOR      = u'\033[32m'
+COLOR_CLASS_VIRTUALMACHINE  = u'\033[34m'
+
 def log(logger, level, message) :
     """
     this method is used to handle logging event.
@@ -50,12 +57,29 @@ def log(logger, level, message) :
         class_name = logger.__class__.__name__
         class_id = str(id(logger))
         function_name = sys._getframe(1).f_code.co_name
-        entry = "[{0}]\t{1} [{4}] {2}.{3}: {5}".format(LOG_DICT[level], 
+        
+        if level == LOG_LEVEL_INFO:
+            color_head = COLOR_INFO
+        elif level == LOG_LEVEL_DEBUG:
+            color_head = COLOR_DEBUG
+        elif level == LOG_LEVEL_ERROR:
+            color_head = COLOR_ERROR
+        
+        color_class = COLOR_WHITE
+        if class_name == "TNArchipelVirtualMachine":
+            color_class = COLOR_CLASS_VIRTUALMACHINE
+        elif class_name == "TNArchipelHypervisor":
+            color_class = COLOR_CLASS_HYPERVISOR
+            
+        entry = "{6}[{0}]{7}\t{1} [{4}] {8}{2}.{3}{7}: {5}\033[0m".format(LOG_DICT[level], 
                                                         datetime.datetime.now(), 
                                                         class_name,
                                                         function_name,
                                                         class_id, 
-                                                        message.lower())
+                                                        message.lower(),
+                                                        color_head,
+                                                        COLOR_WHITE,
+                                                        color_class)
         if LOG_WRITE_IN_STDOUT:
             print entry
         if LOG_WRITE_IN_FILE:

@@ -60,6 +60,10 @@
     {
         [self populateTabs];
     }
+    else
+    {
+        // TODO : add something to say that the entity is not connected.
+    }
 }
 
 - (void)load
@@ -158,7 +162,7 @@
 {   
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
 
-    [[aModuleScrollView documentView] initializeWithContact:[self contact] andRoster:[self roster]];
+    [[aModuleScrollView documentView] initializeWithContact:[self contact] connection:[[self contact] connection] andRoster:[self roster]];
     [[aModuleScrollView documentView] willLoad];
     
     [newViewItem setLabel:aLabel];

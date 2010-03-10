@@ -39,10 +39,15 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     CPTableView         tableVirtualMachines        @accessors;
     TNDatasourceVMs     virtualMachinesDatasource   @accessors;
+    
+    TNStropheContact    _virtualMachineRegistredForDeletion;
+    id                  pushNotificationRegistrationID;
 }
 
 - (void)awakeFromCib
-{    
+{
+    pushNotificationRegistrationID = nil;
+    
     // VM table view
     virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
     tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[[self scrollViewListVM] bounds]];
@@ -60,18 +65,17 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
-    [vmColumNickname setResizingMask:CPTableColumnAutoresizingMask ];
     [[vmColumNickname headerView] setStringValue:@"Name"];
     
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
     [vmColumJID setWidth:450];
-    [vmColumJID setResizingMask:CPTableColumnAutoresizingMask ];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
     
     var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
     var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
+    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
     
@@ -85,37 +89,53 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 - (void)willLoad
 {
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-}
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self contact]];
     
+    var params = [[CPDictionary alloc] init];
+
+    [params setValue:@"iq" forKey:@"name"];
+    [params setValue:[[self contact] jid] forKey:@"from"];
+    [params setValue:@"push" forKey:@"type"];
+    [params setValue:{"matchBare": YES} forKey:@"options"];
+   
+    pushNotificationRegistrationID = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+}
+
 
 - (void)willUnload
-{
-    var center = [CPNotificationCenter defaultCenter];
-    [center removeObserver:self];
+{   
+    [[self connection] deleteRegistredSelector:pushNotificationRegistrationID];
 }
 
 - (void)willShow
-{    
+{
     [[self fieldName] setStringValue:[[self contact] nickname]];
     [[self fieldJID] setStringValue:[[self contact] jid]];
-    
+        
     [self getHypervisorRoster];
 }
 
 - (void)willHide
 {
+    var center  = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
     
 }
 
+- (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
+{
+    if ([aStanza valueForAttribute:@"change"] == @"subscription-added")
+    {
+        [self getHypervisorRoster];
+    }
+    
+    return YES;
+}
 
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self contact])
-    {
-       [[self fieldName] setStringValue:[[self contact] nickname]] 
-    }
+    [[self fieldName] setStringValue:[[self contact] nickname]] 
 }
 
 - (void)getHypervisorRosterForTimer:(CPTimer)aTimer
@@ -124,7 +144,7 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 - (void)getHypervisorRoster
-{   
+{
     var uid             = [[[self contact] connection] getUniqueId];
     var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
@@ -136,8 +156,9 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
-{    
+{
     var queryItems  = [aStanza childrenWithName:@"item"];
+    var center      = [CPNotificationCenter defaultCenter];
     
     [[[self virtualMachinesDatasource] VMs] removeAllObjects];
     
@@ -151,22 +172,23 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
         {
             if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
             {
-                var name        = [entry nickname]
-                var statusIcon  = [entry statusIcon];
-                var status      = [entry status];
-                var newVM       = [TNVirtualMachine virtualMachineWithNickname:name jid:jid status:status statusIcon:statusIcon];
+                [[self virtualMachinesDatasource] addVM:entry];
                 
-                [[self virtualMachinesDatasource] addVM:newVM];
+                [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
             }
         }
     }
     [[self tableVirtualMachines] reloadData];
 }
 
+- (void)didVirtualMachineChangesStatus:(CPNotification)aNotif
+{
+    [[self tableVirtualMachines] reloadData];
+}
 
 
 //actions
-- (IBAction) addVirtualMachine:(id)sender
+- (IBAction)addVirtualMachine:(id)sender
 {
     var uid             = [[[self contact] connection] getUniqueId];
     var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
@@ -180,7 +202,6 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     
     [[[self contact] connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
     [[[self contact] connection] send:creationStanza];
-    [[[self contact] connection] flush];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -193,11 +214,8 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     if ([aStanza getType] == @"success")
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-
+        
         [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
-        [[self roster] addContact:vmJid withName:@"New Virtual Machine" inGroup:@"Virtual Machines"];        
-
-        _timer = [CPTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(getHypervisorRosterForTimer:) userInfo:nil repeats:NO]
     }
     else
     {
@@ -213,6 +231,9 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
          [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
          return;
     }
+    
+    var selectedIndex                       = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
+    _virtualMachineRegistredForDeletion     = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
     
     var alert = [[CPAlert alloc] init];
     
@@ -231,20 +252,22 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 {
     if (returnCode == 0)
     {
-        var selectedIndex   = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
-        var vm              = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
+        var vm              = _virtualMachineRegistredForDeletion;
         var uid             = [[[self contact] connection] getUniqueId];
         var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
         var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
         [freeStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlFree}];
-        [freeStanza addTextNode:[vm JID]];
+        [freeStanza addTextNode:[vm jid]];
+        
+        [[self roster] removeContact:[vm jid]];
         
         [[[self contact] connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];
         [[[self contact] connection] send:freeStanza];
     }
     else
     {
+        _virtualMachineRegistredForDeletion = Nil;
         [buttonDeleteVM setEnabled:YES];
     }
 }
@@ -252,15 +275,10 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 - (void)didFreeVirtualMachine:(id)aStanza
 {
     [buttonDeleteVM setEnabled:YES];
-    
+    _virtualMachineRegistredForDeletion = Nil;
     if ([aStanza getType] == @"success")
     {
-
-        var selectedIndex   = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
-        var vm              = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
-
         [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
-        [[self roster] removeContact:[[vm JID] copy]]; // avoid fast deallocation
         [self getHypervisorRoster];
     }
     else

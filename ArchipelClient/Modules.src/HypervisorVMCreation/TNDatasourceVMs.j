@@ -19,27 +19,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@implementation TNVirtualMachine : CPObject
-{
-    CPString    nickname        @accessors;
-    CPString    JID             @accessors;
-    CPString    status          @accessors;
-    CPImage     statusIcon      @accessors;
-}
-
-+ (TNDrive)virtualMachineWithNickname:(CPString)aNickname jid:(CPString)aJid status:(CPString)aStatus statusIcon:(CPImage)anImage
-{
-    var vm = [[TNVirtualMachine alloc] init];
-    [vm setNickname:aNickname];
-    [vm setJID:aJid];
-    [vm setStatus:aStatus];
-    [vm setStatusIcon:anImage];
-    
-    return vm;
-}
-
-@end
-
 @implementation TNDatasourceVMs : CPObject
 {
     CPArray VMs @accessors;
@@ -54,7 +33,7 @@
     return self;
 }
 
-- (void)addVM:(TNVirtualMachine)aVM
+- (void)addVM:(TNStropheContact)aVM
 {
     [[self VMs] addObject:aVM];
 }
