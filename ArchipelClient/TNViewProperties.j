@@ -45,7 +45,6 @@
 @implementation TNViewProperties: CPView 
 {
     @outlet TNEditableLabel entryName       @accessors;
-    @outlet CPPopUpButton   groupSelector   @accessors;
     @outlet CPImageView     entryStatusIcon @accessors;
     @outlet CPTextField     entryDomain     @accessors;
     @outlet CPTextField     entryResource   @accessors;
@@ -122,22 +121,6 @@
     [[self entryDomain] setStringValue:[contact domain]];
     [[self entryResource] setStringValue:[contact resource]];
     [[self entryStatusIcon] setImage:[contact statusIcon]];
-    
-    [[self groupSelector] removeAllItems];
-    
-    var groups = [roster groups];
-    
-    //@each (group in groups)
-    for(var i = 0; i < [groups count]; i++)
-    {
-        var group = [groups objectAtIndex:i];
-
-        var item = [[CPMenuItem alloc] initWithTitle:[group name] action:@selector(changeGroup:) keyEquivalent:@""]
-        [item setTarget:self];
-        [[self groupSelector] addItem:item];
-    }
-    
-    [[self groupSelector] selectItemWithTitle:[contact group]];
 }
 
 - (void)didContactUpdatePresence:(CPNotification)aNotification
@@ -145,18 +128,6 @@
     [[self entryStatusIcon] setImage:[contact statusIcon]];
     [[self entryResource] setStringValue:[contact resource]];
 }
-
-// Actions
-- (IBAction)changeGroup:(id)sender
-{
-    var theGroup = [sender title]
-    var theJid = [contact jid];
-    [[self roster] changeGroup:theGroup forJID:theJid];
-    [[self groupSelector] selectItemWithTitle:theGroup];
-    
-    [[TNViewLog sharedLogger] log:@"new group for contact " + theJid + " : " + theGroup];
-}
-
 
 - (void)didLabelEntryNameBlur:(CPNotification)aNotification
 {

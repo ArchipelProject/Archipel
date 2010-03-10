@@ -109,7 +109,7 @@ def __module_network_define_network(self, iq):
         reply = iq.buildReply('success')
         self.libvirt_connection.networkDefineXML(str(network_node))
         log(self, LOG_LEVEL_INFO, "virtual network XML is defined")
-        
+        self.push_change("network-defined")
     except libvirt.libvirtError as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')
@@ -136,6 +136,7 @@ def __module_network_undefine_network(self, iq):
         libvirt_network.undefine();
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network XML is undefined")
+        self.push_change("network-undefined")
     except libvirt.libvirtError as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')
@@ -162,6 +163,7 @@ def __module_network_create(self, iq):
         libvirt_network.create()
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network created")
+        self.push_change("network-created")
     except libvirt.libvirtError as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')
@@ -188,6 +190,7 @@ def __module_network_destroy(self, iq):
         libvirt_network.destroy()
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, "virtual network destroyed")
+        self.push_change("network-destroyed")
     except libvirt.libvirtError as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')

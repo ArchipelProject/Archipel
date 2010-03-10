@@ -104,6 +104,7 @@ def __disk_create(self, iq):
         
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, " disk created")
+        self.push_change("disk-created")
     except Exception as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')
@@ -133,6 +134,7 @@ def __disk_delete(self, iq):
         
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, " disk deleted")
+        self.push_change("disk-deleted")
     except Exception as ex:
         log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
         reply = iq.buildReply('error')
