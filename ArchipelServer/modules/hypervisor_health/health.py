@@ -94,7 +94,7 @@ def __healthinfo_history(self, iq):
         for i in range(limit):
             statNode = xmpp.Node("stat");
             statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} );
-            statNode.addChild("cpu", attrs={"us" : stats["cpu"][i]["us"], "sy": stats["cpu"][i]["sy"], "id": stats["cpu"][i]["id"], "wa": stats["cpu"][i]["wa"], "st": stats["cpu"][i]["st"]});
+            statNode.addChild("cpu", attrs={"id": stats["cpu"][i]["id"]});
             statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]});
             nodes.append(statNode);
         
@@ -129,7 +129,7 @@ def __healthinfo(self, iq):
     mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} );
     nodes.append(mem_free_node)
     
-    cpu_node = xmpp.Node("cpu", attrs={"us" : stats["cpu"][0]["us"], "sy": stats["cpu"][0]["sy"], "id": stats["cpu"][0]["id"], "wa": stats["cpu"][0]["wa"], "st": stats["cpu"][0]["st"]});
+    cpu_node = xmpp.Node("cpu", attrs={"id": stats["cpu"][0]["id"]});
     nodes.append(cpu_node)
     
     disk_free_node = xmpp.Node("disk", attrs={"total" : stats["disk"][0]["total"], "used":  stats["disk"][0]["used"], "free":  stats["disk"][0]["free"], "used-percentage":  stats["disk"][0]["free_percentage"]});

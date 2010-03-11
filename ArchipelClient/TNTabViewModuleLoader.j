@@ -71,7 +71,7 @@
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
     
-    [connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
+    //[connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
     [connection start];
 }
 

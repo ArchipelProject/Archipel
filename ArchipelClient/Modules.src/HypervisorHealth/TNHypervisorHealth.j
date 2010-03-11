@@ -170,8 +170,9 @@ trinityTypeHypervisorHealthHistory          = @"history";
     {       
         var memNode = [aStanza firstChildWithName:@"memory"];
         var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024)
-        [[self healthMemUsage] setStringValue: freeMem + " Mo"];
-        [[self healthMemSwapped] setStringValue:[memNode valueForAttribute:@"swapped"] + " Mo"];
+        var swapped = Math.round(parseInt([memNode valueForAttribute:@"swapped"]) / 1024);
+        [[self healthMemUsage] setStringValue:freeMem + " Mo"];
+        [[self healthMemSwapped] setStringValue:swapped + " Mo"];
         
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
@@ -211,8 +212,6 @@ trinityTypeHypervisorHealthHistory          = @"history";
     _healthHistoryRegisteredActionID = [[self connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
     [[self connection] send:rosterStanza];
     
-    console.log("stating history");
-    
     [[self imageCPULoading] setHidden:NO];
     [[self imageMemoryLoading] setHidden:NO];
 }
@@ -220,8 +219,10 @@ trinityTypeHypervisorHealthHistory          = @"history";
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
 {
     _healthHistoryRegisteredActionID = nil;
+
     if ([aStanza getType] == @"success")
     {   
+        console.log("HERE");
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();
         
@@ -231,9 +232,10 @@ trinityTypeHypervisorHealthHistory          = @"history";
             
             var memNode = [currentNode firstChildWithName:@"memory"];
             var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024);
+            var swapped = Math.round(parseInt([memNode valueForAttribute:@"swapped"]) / 1024);
             
-            [[self healthMemUsage] setStringValue: freeMem + " Mo"];
-            [[self healthMemSwapped] setStringValue:[memNode valueForAttribute:@"swapped"] + " Mo"];
+            [[self healthMemUsage] setStringValue:freeMem + " Mo"];
+            [[self healthMemSwapped] setStringValue:swapped + " Mo"];
             
             
             var cpuNode = [currentNode firstChildWithName:@"cpu"];

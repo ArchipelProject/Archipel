@@ -31,8 +31,8 @@ NS_ARCHIPEL_VM_DISK = "trinity:vm:disk"
 ######################################################################################################
 
 def __module_init__disk_management(self):
-    self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path")
-    self.shared_isos_folder = self.configuration.get("Module Disks", "iso_base_path")
+    self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path") + "/"
+    self.shared_isos_folder = self.configuration.get("Module Disks", "iso_base_path") + "/"
     
 def __module_register_stanza__disk_management(self):
     self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
@@ -100,8 +100,10 @@ def __disk_create(self, iq):
         disk_size = query_node.getTag("size").getData()
         disk_unit = query_node.getTag("unit").getData()
         
-        os.system("qemu-img create -f qcow2 " + path + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
-        
+        ret = os.system("qemu-img create -f qcow2 " + path + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
+        if not ret == 0:
+            raise Exception("Unable to create drive. Error code is " + ret);
+         
         reply = iq.buildReply('success')
         log(self, LOG_LEVEL_INFO, " disk created")
         self.push_change("disk-created")

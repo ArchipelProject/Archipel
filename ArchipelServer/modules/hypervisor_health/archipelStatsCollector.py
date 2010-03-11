@@ -55,8 +55,8 @@ class TNThreadedHealthCollector(Thread):
         cpustat_cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
         cpu_stats = [];
         for values in cpustat_cursor:
-            date, used, system, idle, wa, st = values
-            cpu_stats.append({"date": date, "us": used, "sy": system, "id": idle, "wa": wa, "st": st})
+            date, idle = values
+            cpu_stats.append({"date": date, "id": idle})
         
         memstat_cursor = tempdatabase.cursor();
         memstat_cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
@@ -89,7 +89,22 @@ class TNThreadedHealthCollector(Thread):
         log(self, LOG_LEVEL_DEBUG, "Stat collection terminated");
         return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": uname_stats};
     
-    
+    def getTimeList(self):
+        statFile = file("/proc/stat", "r")
+        timeList = statFile.readline().split(" ")[2:6]
+        statFile.close()
+        for i in range(len(timeList)):
+            timeList[i] = int(timeList[i])
+        return timeList
+
+    def deltaTime(self, interval)  :
+        x = self.getTimeList()
+        time.sleep(interval)
+        y = self.getTimeList()
+        for i in range(len(x))  :
+            y[i] -= x[i]
+        return y
+            
     def run(self):
         """
         overiddes sur super class method. do the L{TrinityVM} main loop
@@ -98,7 +113,7 @@ class TNThreadedHealthCollector(Thread):
         self.database = sqlite3.connect(self.database_file)
         
         try:
-            self.database.execute("create table cpu (collection_date date, us integer, sy integer, id integer, wa integer, st integer)")
+            self.database.execute("create table cpu (collection_date date, idle float)")
             self.database.execute("create table memory (collection_date date, free integer, used integer, total integer, swapped integer)")
             self.database.execute("create table disk (collection_date date, total text, used text, free text, free_percentage text)")
             self.database.execute("create table load (collection_date date, one float, five float, fifteen float)")
@@ -107,17 +122,29 @@ class TNThreadedHealthCollector(Thread):
             log(self, LOG_LEVEL_INFO, "tables seems to be already here. recovering.")
             
         while(1):
-            vmstat = commands.getoutput("vmstat 1 2").split("\n")[3].split();
-            free = commands.getoutput("free").split("\n")[1].split();
+            log(self, LOG_LEVEL_DEBUG, "starting to collect stats")
+            file_meminfo    = open('/proc/meminfo');
+            meminfo         = file_meminfo.read();
+            file_meminfo.close()
             
-            self.database.execute("insert into memory values(?,?,?,?,?)", (datetime.datetime.now(), int(vmstat[3]), int(free[2]), int(free[1]), int(vmstat[2])))
-            self.database.execute("insert into cpu values(?,?,?,?,?,?)", (datetime.datetime.now(), int(vmstat[12]), int(vmstat[13]), int(vmstat[14]), int(vmstat[15]), int(vmstat[16])))
-
+            meminfolines    = meminfo.split("\n");
+            memTotal        = int(meminfolines[0].split()[1]);
+            memFree         = int(meminfolines[1].split()[1]);
+            swapCached      = int(meminfolines[4].split()[1]);
+            memUsed         = memTotal - memFree;
+            
+            dt      = self.deltaTime(1)
+            cpuPct  = (dt[len(dt) - 1] * 100.00 / sum(dt))
+            
+            self.database.execute("insert into memory values(?,?,?,?,?)", (datetime.datetime.now(), memFree, memUsed, memTotal, swapCached))
+            self.database.execute("insert into cpu values(?,?)", (datetime.datetime.now(), cpuPct))
+            
             disk_free = commands.getoutput("df -h --total | grep total").split();
             self.database.execute("insert into disk values(?,?,?,?,?)", (datetime.datetime.now(), disk_free[1], disk_free[2],disk_free[3], disk_free[4]))
-
+            
             load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
             self.database.execute("insert into load values(?,?,?,?)", (datetime.datetime.now(), float(load_average[0]), float(load_average[1]), float(load_average[2])))
             
             self.database.commit()
+            log(self, LOG_LEVEL_DEBUG, "Stats collected")
             time.sleep(3);

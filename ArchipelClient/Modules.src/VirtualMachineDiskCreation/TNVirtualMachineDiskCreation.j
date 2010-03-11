@@ -36,6 +36,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     
     CPTableView             tableMedias              @accessors;
     TNDatasourceMedias      mediasDatasource        @accessors;
+    id  _registredDiskListeningId;
 }
 
 - (void)awakeFromCib
@@ -94,12 +95,21 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 
 - (void)willLoad
 {
-    // message sent when view will be added from superview;
-    // MUST be declared
+    _registredDiskListeningId = nil;
+    
+    var params = [[CPDictionary alloc] init];
+    
+    [params setValue:@"iq" forKey:@"name"];
+    [params setValue:[[self contact] jid] forKey:@"from"];
+    [params setValue:@"push" forKey:@"type"];
+    [params setValue:{"matchBare": YES} forKey:@"options"];
+    [[self connection] registerSelector:@selector(didReceivedDiskPushNotification:) ofObject:self withDict:params]
 }
 
 - (void)willUnload
-{
+{ 
+    if (_registredDiskListeningId)
+        [[self connection] deleteRegistredSelector:_registredDiskListeningId];
    // message sent when view will be removed from superview;
    // MUST be declared
 }
@@ -114,16 +124,26 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     // message sent when the tab is changed
 }
 
--(void)getDisksInfo
+- (BOOL)didReceivedDiskPushNotification:(TNStropheStanza)aStanza
 {
-    var uid = [[[self contact] connection] getUniqueId];
+    if ([aStanza valueForAttribute:@"change"] == @"disk-created")
+    {
+        [self getDisksInfo]
+    }
+    
+    return YES;
+}
+
+- (void)getDisksInfo
+{
+    var uid = [[self connection] getUniqueId];
     var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-
+    
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
 
-    [[[self contact] connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:infoStanza];
+    [[self connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
+    [[self connection] send:infoStanza];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza 
@@ -185,7 +205,9 @@ trinityTypeVirtualMachineDiskGet    = @"get";
             break;
     }
     
-    var uid         = [[[self contact] connection] getUniqueId];
+    // TODO : control disk size.
+    
+    var uid         = [[self connection] getUniqueId];
     var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
@@ -200,8 +222,8 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     [diskStanza addTextNode:dUnit];
     [diskStanza up];
      
-    [[[self contact] connection] registerSelector:@selector(didCreateDisk:) ofObject:self withDict:params];
-    [[[self contact] connection] send:diskStanza];
+    [[self connection] registerSelector:@selector(didCreateDisk:) ofObject:self withDict:params];
+    [[self connection] send:diskStanza];
   
     [[self fieldNewDiskName] setStringValue:@""];
     [[self fieldNewDiskSize] setStringValue:@""];
@@ -222,7 +244,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     
     var selectedIndex   = [[[self tableMedias] selectedRowIndexes] firstIndex];
     var dName           = [[[self mediasDatasource] medias] objectAtIndex:selectedIndex];
-    var uid             = [[[self contact] connection] getUniqueId];
+    var uid             = [[self connection] getUniqueId];
     var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
@@ -230,8 +252,8 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:[dName path]];
      
-    [[[self contact] connection] registerSelector:@selector(didRemoveDisk:) ofObject:self withDict:params];
-    [[[self contact] connection] send:diskStanza];
+    [[self connection] registerSelector:@selector(didRemoveDisk:) ofObject:self withDict:params];
+    [[self connection] send:diskStanza];
 }
 
 - (void)didRemoveDisk:(id)aStanza
