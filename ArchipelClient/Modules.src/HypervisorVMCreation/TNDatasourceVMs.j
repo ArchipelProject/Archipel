@@ -19,6 +19,18 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@implementation TNHypervisorVMItem : CPObject
+{
+    CPString jid @accessors;
+}
++ (TNHypervisorVMItem)hypervisorVMitemWithJid:(CPString)aJid
+{
+    var item = [[TNHypervisorVMItem alloc] init];
+    [item setJid:aJid];
+    return item;
+}
+@end
+
 @implementation TNDatasourceVMs : CPObject
 {
     CPArray VMs @accessors;

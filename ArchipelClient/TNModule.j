@@ -31,6 +31,7 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPString                moduleName          @accessors;
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
+    CPArray                 _pushSelectors;
 }
 
 - (void)initializeWithContact:(TNStropheContact)aContact connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
@@ -40,14 +41,37 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     [self setConnection:aConnection];
 }
 
+- (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
+{
+    if (! _pushSelectors)
+        _pushSelectors = [CPArray array]
+    
+    var params = [[CPDictionary alloc] init];
+    
+    [params setValue:@"iq" forKey:@"name"];
+    [params setValue:[[self contact] jid] forKey:@"from"];
+    [params setValue:@"trinity:push" forKey:@"type"];
+    [params setValue:aPushType forKey:@"namespace"];
+    [params setValue:{"matchBare": YES} forKey:@"options"];
+   
+    var pushSelectorId = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+}
+
 - (void)willLoad
 {
-    
+    var center  = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
 }
 
 - (void)willUnload
 {
-
+    //@each(pushSelector in _pushSelectors)
+    for(var i = 0; i < [_pushSelectors count]; i++)
+    {
+        pushSelector = [_pushSelectors objectAtIndex:i];
+        
+        [[self connection] deleteRegistredSelector:pushSelector];
+    }
 }
 
 - (void)willShow

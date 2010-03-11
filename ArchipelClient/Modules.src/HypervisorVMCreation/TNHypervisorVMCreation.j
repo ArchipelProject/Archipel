@@ -41,13 +41,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     TNDatasourceVMs     virtualMachinesDatasource   @accessors;
     
     TNStropheContact    _virtualMachineRegistredForDeletion;
-    id                  pushNotificationRegistrationID;
+    id                  _pushNotificationRegistrationID;
 }
 
 - (void)awakeFromCib
 {
-    pushNotificationRegistrationID = nil;
-    
     // VM table view
     virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
     tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[[self scrollViewListVM] bounds]];
@@ -87,28 +85,24 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 - (void)willLoad
-{
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self contact]];
+{    
+    [super willLoad];
     
-    var params = [[CPDictionary alloc] init];
-
-    [params setValue:@"iq" forKey:@"name"];
-    [params setValue:[[self contact] jid] forKey:@"from"];
-    [params setValue:@"push" forKey:@"type"];
-    [params setValue:{"matchBare": YES} forKey:@"options"];
-   
-    pushNotificationRegistrationID = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:@"trinity:push:subscription"];
 }
 
 
 - (void)willUnload
 {   
-    [[self connection] deleteRegistredSelector:pushNotificationRegistrationID];
+    [super willUnload];
 }
 
 - (void)willShow
 {
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self contact]];
+    [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
+    
     [[self fieldName] setStringValue:[[self contact] nickname]];
     [[self fieldJID] setStringValue:[[self contact] jid]];
         
@@ -124,23 +118,23 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
 {
-    if ([aStanza valueForAttribute:@"change"] == @"subscription-added")
+    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == @"added")
     {
+        CPLog.debug("push notification received");
         [self getHypervisorRoster];
     }
     
     return YES;
 }
 
+- (void)didContactAdded:(CPNotification)aNotification
+{
+    [self getHypervisorRoster];
+}
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     [[self fieldName] setStringValue:[[self contact] nickname]] 
-}
-
-- (void)getHypervisorRosterForTimer:(CPTimer)aTimer
-{
-    [self getHypervisorRoster];
 }
 
 - (void)getHypervisorRoster
@@ -170,12 +164,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
         
         if (entry) 
         {
-            if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-            {
+           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] != "hypervisor")
+           {
                 [[self virtualMachinesDatasource] addVM:entry];
-                
                 [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
-            }
+           }
         }
     }
     [[self tableVirtualMachines] reloadData];
@@ -210,11 +203,9 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 {
     [buttonCreateVM setEnabled:YES];
     
-    
     if ([aStanza getType] == @"success")
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-        
         [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
     }
     else
@@ -226,7 +217,7 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (IBAction) deleteVirtualMachine:(id)sender
 {
-    if (([[self tableVirtualMachines] numberOfRows]) && ([[self tableVirtualMachines] numberOfSelectedRows] <= 0))
+    if (([[self tableVirtualMachines] numberOfRows] == 0) || ([[self tableVirtualMachines] numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
          return;

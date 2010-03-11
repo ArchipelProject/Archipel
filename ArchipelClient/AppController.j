@@ -220,6 +220,7 @@ TNArchipelEntityTypeUser            = @"user";
     var alert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
     
     [alert runModal];
+    //[_mainRoster answerAuthorizationRequest:requestStanza answer:YES];
 }
 
 

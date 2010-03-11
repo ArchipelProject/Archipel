@@ -168,7 +168,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
             self.change_presence("", "Running");
-            self.push_change("virtualmachine-created")
+            self.push_change("virtualmachine", "created")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -194,7 +194,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
             self.change_presence("xa", "shutdown");
-            self.push_change("virtualmachine-shutdowned")
+            self.push_change("virtualmachine", "shutdowned")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -219,7 +219,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.reboot(0) # flags not used in libvirt but required.
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine rebooted")
-            self.push_change("virtualmachine-rebooted")
+            self.push_change("virtualmachine", "rebooted")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -245,7 +245,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
             self.change_presence("away", "paused");
-            self.push_change("virtualmachine-suspended")
+            self.push_change("virtualmachine", "suspended")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -271,7 +271,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
             self.change_presence("", "running");
-            self.push_change("virtualmachine-resumed")
+            self.push_change("virtualmachine", "resumed")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -347,7 +347,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
             if not self.domain:
                 self.connect_libvirt()
-            self.push_change("virtualmachine-defined")
+            self.push_change("virtualmachine", "defined")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -373,7 +373,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             self.domain.undefine()
             log(self, LOG_LEVEL_INFO, "virtual machine is undefined")
-            self.push_change("virtualmachine-undefined")
+            self.push_change("virtualmachine", "undefined")
         except libvirt.libvirtError as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')

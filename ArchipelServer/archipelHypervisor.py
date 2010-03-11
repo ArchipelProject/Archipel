@@ -260,11 +260,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 vm.get_instance().domain.destroy()
             vm.get_instance().domain.undefine()
         
-        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
-        vm.get_instance().remove_own_folder();
-        
         log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
         self.remove_jid(vm_jid)
+        
+        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
+        vm.get_instance().remove_own_folder();
         
         log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))

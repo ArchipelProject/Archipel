@@ -290,9 +290,12 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.disconnect()
     
     
-    def push_change(self, change):
+    def push_change(self, namespace, change):
         for item in self.roster.getItems():
-            push = xmpp.Iq(typ="push", xmlns=TRINITY_NS_IQ_PUSH, attrs={"change": change}, to=item);
+            push = xmpp.Iq(typ="trinity:push", to=item + "/controller");
+            push.setQueryNS("trinity:push:" + namespace);
+            push.getTag("query").setAttr("change", change);
+            log(self, LOG_LEVEL_DEBUG, "pushing change " + change + " to item " + str(item))
             self.xmppclient.send(push)
     
     
@@ -312,7 +315,7 @@ class TNArchipelBasicXMPPClient(object):
         self.roster.Authorize(jid)
         self.roster.setItem(jid, groups=groups)
         
-        self.push_change("subscription-added");
+        self.push_change("subscription", "added");
     
      
     def remove_jid(self, jid):
