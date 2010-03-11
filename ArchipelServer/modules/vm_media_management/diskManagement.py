@@ -31,8 +31,8 @@ NS_ARCHIPEL_VM_DISK = "trinity:vm:disk"
 ######################################################################################################
 
 def __module_init__disk_management(self):
-    self.vm_disk_base_path = "/vm/drives/" #### TODO: add config
-    self.shared_isos_folder = "/vm/iso/" ### TODO: add config
+    self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path")
+    self.shared_isos_folder = self.configuration.get("Module Disks", "iso_base_path")
     
 def __module_register_stanza__disk_management(self):
     self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)

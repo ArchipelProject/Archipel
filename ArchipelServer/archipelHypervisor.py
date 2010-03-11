@@ -44,7 +44,7 @@ class TNThreadedVirtualMachine(Thread):
     this class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
     """
-    def __init__(self, jid, password, hypervisor):
+    def __init__(self, jid, password, hypervisor, configuration):
         """
         the contructor of the class
         @type jid: string
@@ -54,7 +54,7 @@ class TNThreadedVirtualMachine(Thread):
         """
         self.jid = jid
         self.password = password
-        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor)
+        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration)
         Thread.__init__(self)
     
     
@@ -91,7 +91,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Super methods overrided
     ######################################################################################################
     
-    def __init__(self, jid, password, database_file="./database.db"):
+    def __init__(self, jid, password, configuration, database_file="./database.db"):
         """
         this is the constructor of the class.
         
@@ -102,6 +102,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type database_file: string
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
+        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         self.virtualmachines = {};
         self.xmppserveraddr = jid.split("/")[0].split("@")[1];
         log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
@@ -113,8 +114,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
             sys.exit(0) 
         log(self, LOG_LEVEL_INFO, "connected to  libvirt")
-        
-        TNArchipelBasicXMPPClient.__init__(self, jid, password)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
         
     
@@ -160,7 +159,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TNThreadedVirtualMachine(jid, password, self); #envoyer un bon mot de passe.
+        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration); #envoyer un bon mot de passe.
         vm.daemon = True
         vm.start()
         return vm    

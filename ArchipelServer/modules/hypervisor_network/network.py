@@ -267,7 +267,6 @@ def __module_network_name_list(self, iq):
 
 setattr(archipel.TNArchipelHypervisor, "__module_init__network_management", __module_init__network_management)
 setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__network_management", __module_register_stanza__network_management)
-# setattr(archipel.TNArchipelHypervisor, "__module_network_connect_network", __module_network_connect_network)
 setattr(archipel.TNArchipelHypervisor, "__process_iq_trinity_network", __process_iq_trinity_network_for_hypervisor)
 setattr(archipel.TNArchipelHypervisor, "__module_network_define_network", __module_network_define_network)
 setattr(archipel.TNArchipelHypervisor, "__module_network_undefine_network", __module_network_undefine_network)

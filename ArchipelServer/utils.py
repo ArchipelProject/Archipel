@@ -5,6 +5,7 @@ functionalities or others common stuffs
 import sys
 import datetime
 import ctypes
+import ConfigParser
 
 LOG_LEVEL_DEBUG = 0
 """This level of log is the most verbose"""
@@ -15,13 +16,13 @@ LOG_LEVEL_INFO = 1
 LOG_LEVEL_ERROR = 2
 """This level prints only errors. should be use for production"""
 
-LOG_LEVEL = LOG_LEVEL_DEBUG
+LOG_LEVEL = LOG_LEVEL_INFO
 """this allows to set the log level"""
 
-LOG_WRITE_IN_FILE = None#"./log.log"
+LOG_WRITE_IN_FILE = None
 """If not None, all the logs are writting in this file path."""
 
-LOG_WRITE_IN_STDOUT = True
+LOG_WRITE_IN_STDOUT = False
 """If True, all the logs are writting in stdout."""
 
 LOG_DICT = ["DEBUG", "INFO", "ERROR"]
@@ -31,6 +32,8 @@ this list gives the name of log level
     INFO
 """
 
+ARCHIPEL_MODULES_AUTO_LOAD =  True;
+
 
 COLOR_WHITE = u'\033[0m'
 COLOR_ERROR = u'\033[31m'
@@ -38,6 +41,24 @@ COLOR_INFO  = u'\033[33m'
 COLOR_DEBUG = u'\033[36m'
 COLOR_CLASS_HYPERVISOR      = u'\033[32m'
 COLOR_CLASS_VIRTUALMACHINE  = u'\033[34m'
+
+
+
+def init_conf(path):
+    conf = ConfigParser.ConfigParser()
+    conf.readfp(open(path))
+    logging_level = conf.get("Logging", "logging_level")
+    if logging_level == "debug":
+        globals()["LOG_LEVEL"] = LOG_LEVEL_DEBUG
+    elif logging_level == "info":
+        globals()["LOG_LEVEL"] = LOG_LEVEL_INFO
+    elif logging_level == "error":
+        globals()["LOG_LEVEL"] = LOG_LEVEL_ERROR
+    log_file = conf.get("Logging", "logging_file_path")
+    globals()["LOG_WRITE_IN_FILE"] = log_file
+    
+    return conf;
+
 
 def log(logger, level, message) :
     """

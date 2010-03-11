@@ -61,8 +61,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     ###  Super methods overrided
     ######################################################################################################
     
-    def __init__(self, jid, password, hypervisor):
-        TNArchipelBasicXMPPClient.__init__(self, jid, password)
+    def __init__(self, jid, password, hypervisor, configuration):
+        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
         self.register_actions_to_perform_on_auth("connect_libvirt", None)

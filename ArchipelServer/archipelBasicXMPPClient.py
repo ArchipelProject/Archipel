@@ -42,7 +42,7 @@ class TNArchipelBasicXMPPClient(object):
     """
     this class represent a basic XMPP Client
     """
-    def __init__(self, jid, password, auto_register=True):
+    def __init__(self, jid, password, configuration, auto_register=True):
         """
         The constructor of the class.
         
@@ -51,6 +51,7 @@ class TNArchipelBasicXMPPClient(object):
         @type password: string
         @param password: the password of the JID account.
         """
+        self.configuration = configuration;
         self.auto_register = auto_register
         self.password = password
         self.jid = xmpp.protocol.JID(jid.lower())
