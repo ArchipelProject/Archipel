@@ -32,7 +32,7 @@ NS_ARCHIPEL_HYPERVISOR_HEALTH = "trinity:hypervisor:health"
 ######################################################################################################
 
 def __module_init__health_module(self):
-    self.collector = TNThreadedHealthCollector();
+    self.collector = TNThreadedHealthCollector(self.configuration.get("Module Health", "health_database_path"));
     self.collector.daemon = True;
     self.collector.start();
 

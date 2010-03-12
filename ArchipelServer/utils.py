@@ -93,7 +93,7 @@ def log(logger, level, message) :
             color_class = COLOR_CLASS_HYPERVISOR
             
         entry = "{6}[{0}]{7}\t{1} [{4}] {8}{2}.{3}{7}: {5}\033[0m".format(LOG_DICT[level], 
-                                                        datetime.datetime.now(), 
+                                                        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
                                                         class_name,
                                                         function_name,
                                                         class_id, 
