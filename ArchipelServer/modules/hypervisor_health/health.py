@@ -32,7 +32,14 @@ NS_ARCHIPEL_HYPERVISOR_HEALTH = "trinity:hypervisor:health"
 ######################################################################################################
 
 def __module_init__health_module(self):
-    self.collector = TNThreadedHealthCollector(self.configuration.get("Module Health", "health_database_path"));
+    db_file             = self.configuration.get("Module Health", "health_database_path")
+    snmp_agent          = self.configuration.get("Module Health", "health_snmp_agent")
+    snmp_community      = self.configuration.get("Module Health", "health_snmp_community")
+    snmp_version        = self.configuration.getint("Module Health", "health_snmp_version")
+    snmp_port           = self.configuration.getint("Module Health", "health_snmp_port")
+    collection_interval = self.configuration.getint("Module Health", "health_collection_interval")
+    
+    self.collector = TNThreadedHealthCollector(db_file,collection_interval, snmp_agent, snmp_community, snmp_version, snmp_port);
     self.collector.daemon = True;
     self.collector.start();
 
@@ -108,7 +115,6 @@ def __healthinfo_history(self, iq):
         payload.addData(str(ex))
         reply.setQueryPayload([payload])
         
-        
     return reply
 
 
@@ -121,8 +127,9 @@ def __healthinfo(self, iq):
     @rtype: xmpp.Protocol.Iq
     @return: a ready-to-send IQ containing the results        
     """
-    
     # TODO : add some ACL here later
+    reply = iq.buildReply('success') 
+    
     nodes = []
     stats = self.collector.get_collected_stats(1);
     
@@ -144,12 +151,9 @@ def __healthinfo(self, iq):
     uname_node = xmpp.Node("uname", attrs={"krelease": stats["uname"]["krelease"] , "kname": stats["uname"]["kname"] , "machine":stats["uname"]["machine"], "os": stats["uname"]["os"]});
     nodes.append(uname_node)   
     
-    reply = iq.buildReply('success')    
     reply.setQueryPayload(nodes)
     
     return reply
-
-
 
 setattr(archipel.TNArchipelHypervisor, "__module_init__health_module", __module_init__health_module)
 setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__heatlh_module", __module_register_stanza__heatlh_module)

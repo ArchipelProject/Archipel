@@ -31,13 +31,36 @@ class TNThreadedHealthCollector(Thread):
     """
     this class collects hypervisor stats regularly
     """
-    def __init__(self, database_file):
+    def __init__(self, database_file, collection_interval, snmp_agent, snmp_community, snmp_version, snmp_port):
         """
         the contructor of the class
         """
         self.database_file = database_file;
-        self.query_database_connection = None;
+        self.collection_interval = collection_interval;
         
+        self.snmp_community     = cmdgen.CommunityData(snmp_agent, snmp_community, snmp_version)
+        self.snmp_udptransport  = cmdgen.UdpTransportTarget(('localhost', snmp_port))
+        
+        # ## uname
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,1,0))
+        # uname = str(varBinds[0][1])
+        # uname = uname.split()
+        # self.uname_stats = {"krelease": uname[2] , "kname": uname[0] , "machine": uname[1], "os": uname[11]}
+        uname = commands.getoutput("uname -rsmo").split();
+        self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
+        
+        log(self, LOG_LEVEL_INFO, "opening stats database file {0}".format(self.database_file))
+        
+        self.query_database_connection = sqlite3.connect(self.database_file)
+        try:
+            self.query_database_connection.execute("create table cpu (collection_date date, idle int)")
+            self.query_database_connection.execute("create table memory (collection_date date, free integer, used integer, total integer, swapped integer)")
+            self.query_database_connection.execute("create table disk (collection_date date, total int, used int, free int, free_percentage int)")
+            self.query_database_connection.execute("create table load (collection_date date, one float, five float, fifteen float)")
+            log(self, LOG_LEVEL_INFO, "database schema created.")   
+        except Exception as ex:
+            log(self, LOG_LEVEL_INFO, "tables seems to be already here. recovering.")
+            
         Thread.__init__(self)
     
     
@@ -46,12 +69,11 @@ class TNThreadedHealthCollector(Thread):
         this method return the current L{TrinityVM} instance
         @rtype: TrinityVM
         @return: the L{TrinityVM} instance
-        """
-        if not self.query_database_connection:
-            self.query_database_connection = sqlite3.connect(self.database_file);
-        
+        """        
         log(self, LOG_LEVEL_DEBUG, "Retrieving last "+ str(limit) + " recorded stats data for sending")
         tempdatabase = self.query_database_connection;
+        
+        query = "select * from cpu, memory, disk, load order by collection_date desc limit " + str(limit);
         
         cpustat_cursor = tempdatabase.cursor();
         cpustat_cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
@@ -81,74 +103,121 @@ class TNThreadedHealthCollector(Thread):
             date, one, five, fifteen = values
             load_stats.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
         
-        
+        # uptime
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,3,0))
+        # uptime = str(varBinds[0][1])
+        # uptime_stats = {"up" : uptime};
         uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
         uptime_stats = {"up" : uptime};
-        
-        uname = commands.getoutput("uname -rsmo").split();
-        uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
-        
+                 
         log(self, LOG_LEVEL_DEBUG, "Stat collection terminated");
-        return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": uname_stats};
+        return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats};
     
+    
+    def get_memory_stats(self):
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().bulkCmd(self.snmp_community, self.snmp_udptransport, 0, 25, (1,3,6,1,4,1,2021,4))
+        # 
+        # for result in varBinds:
+        #     oid, value = result[0]
+        #     if oid == (1,3,6,1,4,1,2021,4,5,0):
+        #         memTotal = int(value);
+        #     elif oid == (1,3,6,1,4,1,2021,4,11,0):
+        #         memFree = int(value);
+        #     elif oid == (1,3,6,1,4,1,2021,4,6,0):
+        #         memUsed = int(value);
+        #     elif oid == (1,3,6,1,4,1,2021,4,3,0):
+        #         swapped = int(value);
+        
+        file_meminfo    = open('/proc/meminfo');
+        meminfo         = file_meminfo.read();
+        file_meminfo.close()
+
+        meminfolines    = meminfo.split("\n");
+        memTotal        = int(meminfolines[0].split()[1]);
+        memFree         = int(meminfolines[1].split()[1]);
+        swapped         = int(meminfolines[4].split()[1]);
+        memUsed         = memTotal - memFree;
+        
+        return (datetime.datetime.now(), memFree, memUsed, memTotal, swapped)
+    
+    
+    def get_cpu_stats(self):
+        # # CPU idle %
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,4,1,2021,11,11,0))    
+        # cpuPct = int(varBinds[0][1]);
+        
+        dt      = self.deltaTime(1)
+        cpuPct  = (dt[len(dt) - 1] * 100.00 / sum(dt))
+        
+        return (datetime.datetime.now(), cpuPct)
+    
+    
+    def get_load_stats(self):
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().bulkCmd(self.snmp_community, self.snmp_udptransport, 0, 25, (1,3,6,1,4,1,2021,10,1,3))
+        # for result in varBinds:
+        #     oid, value = result[0]
+        #     if oid == (1,3,6,1,4,1,2021,10,1,3,1):
+        #         load1min = float(str(value));
+        #     elif oid == (1,3,6,1,4,1,2021,10,1,3,2):
+        #         load5min = float(str(value));
+        #     elif oid == (1,3,6,1,4,1,2021,10,1,3,3):
+        #         load15min = float(str(value));
+        
+        load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
+        load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
+        
+        return (datetime.datetime.now(), load1min, load5min, load15min)
+    
+    
+    def get_disk_stats(self):
+        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().bulkCmd(self.snmp_community, self.snmp_udptransport, 0, 25, (1,3,6,1,4,1,2021,9,1))
+        # for result in varBinds:
+        #     oid, value = result[0]
+        #     if oid == (1,3,6,1,4,1,2021,9,1,6,1):
+        #         total = float(str(value));
+        #     elif oid == (1,3,6,1,4,1,2021,9,1,8,1):
+        #         used = float(str(value));
+        #     elif oid == (1,3,6,1,4,1,2021,9,1,7,1):
+        #         free = float(str(value));
+        #     elif oid == (1,3,6,1,4,1,2021,9,1,9,1):
+        #         freePrct = float(str(value));
+        
+        disk_free = commands.getoutput("df -h --total | grep total").split();
+        total, used, free, freePrct = (disk_free[1], disk_free[2],disk_free[3], disk_free[4])
+        
+        return (datetime.datetime.now(), total, used, free, freePrct);
+        
     
     def run(self):
         """
         overiddes sur super class method. do the L{TrinityVM} main loop
-        """    
-        log(self, LOG_LEVEL_INFO, "opening stats database file {0}".format(self.database_file))
-        self.database = sqlite3.connect(self.database_file)
-        
-        try:
-            self.database.execute("create table cpu (collection_date date, idle float)")
-            self.database.execute("create table memory (collection_date date, free integer, used integer, total integer, swapped integer)")
-            self.database.execute("create table disk (collection_date date, total text, used text, free text, free_percentage text)")
-            self.database.execute("create table load (collection_date date, one float, five float, fifteen float)")
-            log(self, LOG_LEVEL_INFO, "database schema created.")   
-        except Exception as ex:
-            log(self, LOG_LEVEL_INFO, "tables seems to be already here. recovering.")
-            
-            snmp_community      = cmdgen.CommunityData('my-agent', 'public', 0)
-            snmp_udptransport   = cmdgen.UdpTransportTarget(('localhost', 161))
-        
+        """
+        self.database_thread_connection = sqlite3.connect(self.database_file)
         while(1):
             log(self, LOG_LEVEL_DEBUG, "starting to collect stats")
             
-            ## total memory
-            errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
-                    snmp_community, snmp_udptransport, (1,3,6,1,4,1,2021,4,5,0))
-            memTotal = int(varBinds[0][1]);
+            self.database_thread_connection.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
+            self.database_thread_connection.execute("insert into cpu values(?,?)", self.get_cpu_stats())
+            self.database_thread_connection.execute("insert into load values(?,?,?,?)", self.get_load_stats());
+            self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
             
-            ## free memory
-            errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
-                    snmp_community, snmp_udptransport, (1,3,6,1,4,1,2021,4,11,0))
-            memFree = int(varBinds[0][1]);
+            self.database_thread_connection.commit()
             
-            ## swapped memory
-            errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
-                    snmp_community, snmp_udptransport, (1,3,6,1,4,1,2021,4,3,0))
-            swapped = int(varBinds[0][1]);
-            
-            ## used memory
-            errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
-                    snmp_community, snmp_udptransport, (1,3,6,1,4,1,2021,4,6,0))
-            memUsed = int(varBinds[0][1]);
-            
-            # CPU idle %
-            errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(
-                    snmp_community, snmp_udptransport, (1,3,6,1,4,1,2021,11,11,0))    
-            cpuPct = float(varBinds[0][1]);
-            
-            return
-            self.database.execute("insert into memory values(?,?,?,?,?)", (datetime.datetime.now(), memFree, memUsed, memTotal, swapped))
-            self.database.execute("insert into cpu values(?,?)", (datetime.datetime.now(), cpuPct))
-            
-            disk_free = commands.getoutput("df -h --total | grep total").split();
-            self.database.execute("insert into disk values(?,?,?,?,?)", (datetime.datetime.now(), disk_free[1], disk_free[2],disk_free[3], disk_free[4]))
-            
-            load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
-            self.database.execute("insert into load values(?,?,?,?)", (datetime.datetime.now(), float(load_average[0]), float(load_average[1]), float(load_average[2])))
-            
-            self.database.commit()
             log(self, LOG_LEVEL_DEBUG, "Stats collected")
-            time.sleep(3);
+            time.sleep(self.collection_interval);
+    
+    def getTimeList(self):
+        statFile = file("/proc/stat", "r")
+        timeList = statFile.readline().split(" ")[2:6]
+        statFile.close()
+        for i in range(len(timeList)):
+            timeList[i] = int(timeList[i])
+        return timeList
+
+    def deltaTime(self, interval)  :
+        x = self.getTimeList()
+        time.sleep(interval)
+        y = self.getTimeList()
+        for i in range(len(x))  :
+            y[i] -= x[i]
+        return y

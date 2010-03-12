@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>TNModule.j</string>
+	<string>TNTabViewModuleLoader.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -1256,14 +1256,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>48</integer>
 				<key>line</key>
-				<integer>97</integer>
+				<integer>98</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>75</integer>
+			<integer>88</integer>
 		</dict>
 		<key>TNToolbar.j</key>
 		<dict>
@@ -1569,6 +1569,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{29, 75}, {1078, 803}}</string>
+	<string>{{26, 76}, {973, 802}}</string>
 </dict>
 </plist>
