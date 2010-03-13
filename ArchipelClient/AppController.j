@@ -232,6 +232,7 @@ TNArchipelEntityTypeUser            = @"user";
    
    if ([item type] == "group")
    {
+       // TODO : manage group
        return
    }
    
