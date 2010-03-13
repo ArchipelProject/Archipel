@@ -239,7 +239,7 @@ TNArchipelEntityTypeUser            = @"user";
    if (vCard)
    {
        var itemType = [[vCard firstChildWithName:@"TYPE"] text];
-
+       
        if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor))
        {
            [self loadControlPanelForItem:item withType:itemType];   

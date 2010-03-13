@@ -56,18 +56,12 @@
     [self setRoster:aRoster];
     [self setModuleType:aType];
     
-    if ([[self contact] status] != TNStropheContactStatusOffline)
-    {
+    if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self populateTabs];
-    }
-    else
-    {
-        // TODO : add something to say that the entity is not connected.
-    }
 }
 
 - (void)load
-{    
+{
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
     
@@ -163,7 +157,7 @@
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
     
     
-    [[aModuleScrollView documentView] initializeWithEntity:[self entity] connection:[[self contact] connection] andRoster:[self roster]];
+    [[aModuleScrollView documentView] initializeWithEntity:[self entity] connection:[[self entity] connection] andRoster:[self roster]];
     [[aModuleScrollView documentView] willLoad];
     
     [newViewItem setLabel:aLabel];
@@ -177,7 +171,7 @@
     var selectedItem = [self selectedTabViewItem];
     
     [[[selectedItem view] documentView] willUnload];
-    [[[selectedItem view] documentView] setContact:nil];
+    [[[selectedItem view] documentView] setEntity:nil];
     [[[selectedItem view] documentView] setRoster:nil];
     [[selectedItem view] removeFromSuperview];
     
@@ -192,7 +186,7 @@
         
         [[[aTabViewItem view] documentView] willUnload];
         [[aTabViewItem view] removeFromSuperview];
-        [[[aTabViewItem view] documentView] setContact:nil];
+        [[[aTabViewItem view] documentView] setEntity:nil];
         [[[aTabViewItem view] documentView] setRoster:nil];
         [self removeTabViewItem:aTabViewItem];
     }

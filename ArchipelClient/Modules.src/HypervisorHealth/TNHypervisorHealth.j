@@ -157,14 +157,12 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    var uid             = [[self connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-    
+    //var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
+   var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth}];
+   
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthInfo}];
     
-    _healthInfoRegisteredActionID = [[self connection] registerSelector:@selector(didReceiveHypervisorHealth:) ofObject:self withDict:params];
-    [[self connection] send:rosterStanza];
+    _healthInfoRegisteredActionID = [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
 }
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza 

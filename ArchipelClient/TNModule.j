@@ -35,16 +35,11 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPArray                 _pushSelectors;
 }
 
-- (void)initializeWithConnection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
-{
-    [self setRoster:aRoster];
-    [self setConnection:aConnection];
-}
-
 - (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
 {
     [self setEntity:anEntity];
-    [self initializeWithConnection:aConnection andRoster:aRoster];
+    [self setRoster:aRoster];
+    [self setConnection:aConnection];
 }
 
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
