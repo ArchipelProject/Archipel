@@ -157,6 +157,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
+    // will be refactored
     var uid             = [[self connection] getUniqueId];
     var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
