@@ -29,7 +29,7 @@ trinityTypeHypervisorNetworkList        = @"list";
     @outlet CPPopUpButton   buttonSource        @accessors;
     @outlet CPRadioGroup    radioNetworkType    @accessors;
     
-    TNStropheStanza                 contact     @accessors;
+    TNStropheContact                contact     @accessors;
     TNNetworkInterface              nic         @accessors;
     CPTableView                     table       @accessors;
 }

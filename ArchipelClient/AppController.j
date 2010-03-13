@@ -45,7 +45,7 @@ TNArchipelEntityTypeUser            = @"user";
 {
     @outlet CPView              leftView                @accessors;	
     @outlet CPView              filterView              @accessors;
-    @outlet CPTextField         filterField             @accessors;
+    @outlet CPSearchField       filterField             @accessors;
     @outlet CPView              rightView               @accessors;
     @outlet CPSplitView         leftSplitView           @accessors;
     @outlet CPWindow            theWindow               @accessors;
@@ -129,7 +129,7 @@ TNArchipelEntityTypeUser            = @"user";
 // utilities
 - (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
 {
-    [_moduleView setContact:anItem ofType:aType andRoster:_mainRoster];
+    [_moduleView setEntity:anItem ofType:aType andRoster:_mainRoster];
     
     if ([_moduleView superview] != [self rightView])
         [[self rightView] addSubview:_moduleView];

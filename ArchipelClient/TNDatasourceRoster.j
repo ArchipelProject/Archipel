@@ -26,7 +26,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     CPOutlineView   outlineView     @accessors;
     CPString        filter          @accessors;
-    CPTextField     filterField     @accessors;
+    CPSearchField   filterField     @accessors;
 
     id              _draggedItem;
 }
@@ -56,20 +56,35 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return self;
 }
 
-- (void)setFilterField:(CPTextField)aField
+- (void)setFilterField:(CPSearchField)aField
 {
     filterField = aField;
-    [[self filterField] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
     
+    [[self filterField] setSendsSearchStringImmediately:YES]
+    [[self filterField] setTarget:self];
+    [[self filterField] setAction:@selector(filterFieldDidChange:)];
+    
+    // var menu            = [[CPMenu alloc] initWithTitle:@"Recent Searches"];
+    // var itemAll         = [[CPMenuItem alloc] initWithTitle:@"Search all" action:nil keyEquivalent:nil];
+    // var itemGroups      = [[CPMenuItem alloc] initWithTitle:@"Search virtual machines" action:nil keyEquivalent:nil];    
+    // var itemHypervisors = [[CPMenuItem alloc] initWithTitle:@"Search hypervisors" action:nil keyEquivalent:nil];
+    // var itemUsers       = [[CPMenuItem alloc] initWithTitle:@"Search users" action:nil keyEquivalent:nil];
+    // var itemGroups      = [[CPMenuItem alloc] initWithTitle:@"Search groups" action:nil keyEquivalent:nil];
+    // 
+    // [itemAll setTag:1];
+    // [itemGroups setTag:2];
+    // 
+    // [menu addItem:itemAll];
+    // [menu addItem:itemGroups];
+    // [menu addItem:itemHypervisors];
+    // [menu addItem:itemUsers];
+    // [menu addItem:itemGroups];
+    // [[self filterField] setSearchMenuTemplate:menu];
 }
 
-- (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(id)context 
+- (IBAction)filterFieldDidChange:(id)sender
 {
-    if ([object stringValue] == "")
-        [self setFilter:nil]
-    else
-        [self setFilter:[object stringValue]];
-
+    [self setFilter:[sender stringValue]];
     [self updateOutlineView:nil];
 }
                        

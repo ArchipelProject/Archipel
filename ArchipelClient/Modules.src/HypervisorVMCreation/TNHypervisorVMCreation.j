@@ -100,11 +100,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 - (void)willShow
 {
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self contact]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
     
-    [[self fieldName] setStringValue:[[self contact] nickname]];
-    [[self fieldJID] setStringValue:[[self contact] jid]];
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
         
     [self getHypervisorRoster];
 }
@@ -134,19 +134,19 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    [[self fieldName] setStringValue:[[self contact] nickname]] 
+    [[self fieldName] setStringValue:[[self entity] nickname]] 
 }
 
 - (void)getHypervisorRoster
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlRosterVM}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
-    [[[self contact] connection] send:rosterStanza];
+    [[self connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
+    [[self connection] send:rosterStanza];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -183,8 +183,8 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 //actions
 - (IBAction)addVirtualMachine:(id)sender
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
     var uuid            = [CPString UUID];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
@@ -193,8 +193,8 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     [creationStanza addTextNode:uuid];
     
     
-    [[[self contact] connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
-    [[[self contact] connection] send:creationStanza];
+    [[self connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
+    [[self connection] send:creationStanza];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -244,8 +244,8 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     if (returnCode == 0)
     {
         var vm              = _virtualMachineRegistredForDeletion;
-        var uid             = [[[self contact] connection] getUniqueId];
-        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self contact] fullJID], "id": uid}];
+        var uid             = [[self connection] getUniqueId];
+        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
         var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
         [freeStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlFree}];
@@ -253,8 +253,8 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
         
         [[self roster] removeContact:[vm jid]];
         
-        [[[self contact] connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];
-        [[[self contact] connection] send:freeStanza];
+        [[self connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];
+        [[self connection] send:freeStanza];
     }
     else
     {

@@ -25,7 +25,7 @@
 @implementation TNTabViewModuleLoader: CPTabView 
 {
     TNStropheRoster         roster                      @accessors;
-    TNStropheContact        contact                     @accessors;
+    id                      entity                      @accessors;
     CPString                moduleType                  @accessors;
     CPString                modulesPath                 @accessors;
     CPDictionary            loadedModulesScrollViews    @accessors;
@@ -48,11 +48,11 @@
     return self;
 }
 
-- (void)setContact:(TNStropheContact)aContact ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
+- (void)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
     [self removeAllTabs];
      
-    [self setContact:aContact];
+    [self setEntity:anEntity];
     [self setRoster:aRoster];
     [self setModuleType:aType];
     
@@ -97,7 +97,7 @@
 }
 
 - (void)bundleDidFinishLoading:(TNBundle)aBundle
-{   
+{
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
@@ -128,7 +128,7 @@
 
 
 - (void)populateTabs
-{   
+{
     var allValues = [[self loadedModulesScrollViews] allValues];
     
     var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
@@ -159,10 +159,11 @@
 }
 
 - (void)addItemWithLabel:(CPString)aLabel moduleView:(TNModule)aModuleScrollView atIndex:(CPNumber)anIndex
-{   
+{
     var newViewItem = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
-
-    [[aModuleScrollView documentView] initializeWithContact:[self contact] connection:[[self contact] connection] andRoster:[self roster]];
+    
+    
+    [[aModuleScrollView documentView] initializeWithEntity:[self entity] connection:[[self contact] connection] andRoster:[self roster]];
     [[aModuleScrollView documentView] willLoad];
     
     [newViewItem setLabel:aLabel];
@@ -172,7 +173,7 @@
 }
 
 - (void)removeAllTabs
-{    
+{
     var selectedItem = [self selectedTabViewItem];
     
     [[[selectedItem view] documentView] willUnload];

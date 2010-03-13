@@ -267,14 +267,14 @@ function generateMacAddr()
 //  XML Desc
 - (void)getXMLDesc
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
     [xmldescStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveXMLDesc:) ofObject:self withDict:params];
-    [[[self contact] connection] send:xmldescStanza];
+    [[self connection] registerSelector:@selector(didReceiveXMLDesc:) ofObject:self withDict:params];
+    [[self connection] send:xmldescStanza];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
@@ -367,17 +367,17 @@ function generateMacAddr()
     var drives      = [[self drivesDatasource] drives];
     
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDefinition, "to": [[self contact] fullJID], "id": anUid}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDefinition, "to": [[self entity] fullJID], "id": anUid}];
     
     [stanza addChildName:@"query" withAttributes:{"type": trinityTypeVirtualMachineDefinitionDefine}];
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
     [stanza addChildName:@"name"];
-    [stanza addTextNode:[[self contact] nodeName]];
+    [stanza addTextNode:[[self entity] nodeName]];
     [stanza up];
 
     [stanza addChildName:@"uuid"];
-    [stanza addTextNode:[[self contact] nodeName]];
+    [stanza addTextNode:[[self entity] nodeName]];
     [stanza up];
 
     [stanza addChildName:@"memory"];
@@ -464,14 +464,14 @@ function generateMacAddr()
 
 - (void)getVirtualMachineInfo
 {    
-    var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid = [[self connection] getUniqueId];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:infoStanza];
+    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
+    [[self connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -499,7 +499,7 @@ function generateMacAddr()
     
     [[self windowNicEdition] setNic:nicObject];
     [[self windowNicEdition] setTable:[self tableNetworkCards]];
-    [[self windowNicEdition] setContact:[self contact]];
+    [[self windowNicEdition] setContact:[self entity]];
     [[self windowNicEdition] center];
     [[self windowNicEdition] orderFront:nil];
 }
@@ -538,7 +538,7 @@ function generateMacAddr()
 
         [[self windowDriveEdition] setDrive:driveObject];
         [[self windowDriveEdition] setTable:[self tableDrives]];
-        [[self windowDriveEdition] setContact:[self contact]];
+        [[self windowDriveEdition] setContact:[self entity]];
         [[self windowDriveEdition] center];
         [[self windowDriveEdition] orderFront:nil];
     }
@@ -571,12 +571,12 @@ function generateMacAddr()
 // action XML desc
 - (IBAction)defineXML:(id)sender
 {
-    var uid             = [[[self contact] connection] getUniqueId];
+    var uid             = [[self connection] getUniqueId];
     var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [[[self contact] connection] registerSelector:@selector(didDefineXML:) ofObject:self withDict:params];
-    [[[self contact] connection] send:defineStanza];
+    [[self connection] registerSelector:@selector(didDefineXML:) ofObject:self withDict:params];
+    [[self connection] send:defineStanza];
 }
 
 

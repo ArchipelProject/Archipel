@@ -136,8 +136,8 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)willShow
 {
-    [[self fieldName] setStringValue:[[self contact] nickname]];
-    [[self fieldJID] setStringValue:[[self contact] jid]];
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
 }
 
 - (void)willHide
@@ -148,9 +148,9 @@ trinityTypeHypervisorHealthHistory          = @"history";
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self contact])
+    if ([aNotification object] == [self entity])
     {
-       [[self fieldName] setStringValue:[[self contact] nickname]] 
+       [[self fieldName] setStringValue:[[self entity] nickname]] 
     }
 }
 
@@ -158,7 +158,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
     var uid             = [[self connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthInfo}];
@@ -208,7 +208,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
 - (void)getHypervisorHealthHistory
 {
     var uid             = [[self connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type": trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type": trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": _statsHistoryCollectionSize}];

@@ -100,7 +100,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     var params = [[CPDictionary alloc] init];
     
     [params setValue:@"iq" forKey:@"name"];
-    [params setValue:[[self contact] jid] forKey:@"from"];
+    [params setValue:[[self entity] jid] forKey:@"from"];
     [params setValue:@"push" forKey:@"type"];
     [params setValue:{"matchBare": YES} forKey:@"options"];
     [[self connection] registerSelector:@selector(didReceivedDiskPushNotification:) ofObject:self withDict:params]
@@ -137,7 +137,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 - (void)getDisksInfo
 {
     var uid = [[self connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
@@ -208,7 +208,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     // TODO : control disk size.
     
     var uid         = [[self connection] getUniqueId];
-    var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
+    var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
     [diskStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskCreate}];
@@ -245,7 +245,7 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     var selectedIndex   = [[[self tableMedias] selectedRowIndexes] firstIndex];
     var dName           = [[[self mediasDatasource] medias] objectAtIndex:selectedIndex];
     var uid             = [[self connection] getUniqueId];
-    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
+    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
     [diskStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskDelete}];

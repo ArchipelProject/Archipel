@@ -73,7 +73,7 @@
 {
     if ([object stringValue] == @"")
     {
-        [[self contact] sendComposePaused];
+        [[self entity] sendComposePaused];
     }
     else
     {   
@@ -81,28 +81,28 @@
             [_composingMessageTimer invalidate];
             
         _composingMessageTimer = [CPTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(sendComposingPaused:) userInfo:nil repeats:NO];
-        [[self contact] sendComposing];
+        [[self entity] sendComposing];
     }
         
 }
 
 - (void)sendComposingPaused:(CPTimer)aTimer
 {
-    [[self contact] sendComposePaused];
+    [[self entity] sendComposePaused];
 }
 
 - (void)willLoad
 {   
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self contact]];
-    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self contact]];
-    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self contact]];
+    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self entity]];
+    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self entity]];
     
     
     var frame = [[[self messageScrollView] documentView] bounds];
     [[self messageCollectionView] setFrame:frame];
     
-    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self contact] jid]));
+    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self entity] jid]));
     
     if (lastConversation)
     {
@@ -131,7 +131,7 @@
     var center = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
       
-    localStorage.setItem("communicationWith" + [[self contact] jid], JSON.stringify(_messages));
+    localStorage.setItem("communicationWith" + [[self entity] jid], JSON.stringify(_messages));
 
     [_messages removeAllObjects];
     [[self messageCollectionView] reloadContent];
@@ -139,12 +139,12 @@
 
 - (void)willShow 
 {    
-    var messageQueue = [[self contact] messagesQueue];
+    var messageQueue = [[self entity] messagesQueue];
     var stanza;
     
     
     //for (var i = 0; i < messageQueue.length; i++ )
-    while (stanza = [[self contact] popMessagesQueue])
+    while (stanza = [[self entity] popMessagesQueue])
     {   
         if ([stanza containsChildrenWithName:@"body"])
         {
@@ -152,7 +152,7 @@
         }
     }
     
-    [[self contact] freeMessagesQueue];
+    [[self entity] freeMessagesQueue];
 }
 
 - (void)willHide 
@@ -177,9 +177,9 @@
 
 - (void)didReceivedMessage:(CPNotification)aNotification
 {   
-    if ([[aNotification object] jid] == [[self contact] jid])
+    if ([[aNotification object] jid] == [[self entity] jid])
     {
-        var stanza =  [[self contact] popMessagesQueue];
+        var stanza =  [[self entity] popMessagesQueue];
         
         if ([stanza containsChildrenWithName:@"body"])
         {
@@ -209,14 +209,14 @@
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
     
-    [[self contact] sendMessage:[[self fieldMessage] stringValue]];
+    [[self entity] sendMessage:[[self fieldMessage] stringValue]];
     [self appendMessageToBoard:[[self fieldMessage] stringValue] from:@"me"];
     [[self fieldMessage] setStringValue:@""];
 }
 
 - (IBAction)clearHistory:(id)sender
 {
-    localStorage.removeItem("communicationWith" + [[self contact] jid]);
+    localStorage.removeItem("communicationWith" + [[self entity] jid]);
     [_messages removeAllObjects];
     [[self messageCollectionView] reloadContent];
 }

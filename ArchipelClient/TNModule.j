@@ -25,7 +25,8 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 @implementation TNModule : CPView
 {
     TNStropheRoster         roster              @accessors;
-    TNStropheContact        contact             @accessors;
+    TNStropheGroup          group               @accessors;
+    id                      entity              @accessors;
     TNStropheConnection     connection          @accessors;
     CPNumber                moduleTabIndex      @accessors;
     CPString                moduleName          @accessors;
@@ -34,11 +35,16 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPArray                 _pushSelectors;
 }
 
-- (void)initializeWithContact:(TNStropheContact)aContact connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
+- (void)initializeWithConnection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
 {
-    [self setContact:aContact];
     [self setRoster:aRoster];
     [self setConnection:aConnection];
+}
+
+- (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
+{
+    [self setEntity:anEntity];
+    [self initializeWithConnection:aConnection andRoster:aRoster];
 }
 
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
@@ -46,15 +52,18 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     if (! _pushSelectors)
         _pushSelectors = [CPArray array]
     
-    var params = [[CPDictionary alloc] init];
-    
-    [params setValue:@"iq" forKey:@"name"];
-    [params setValue:[[self contact] jid] forKey:@"from"];
-    [params setValue:@"trinity:push" forKey:@"type"];
-    [params setValue:aPushType forKey:@"namespace"];
-    [params setValue:{"matchBare": YES} forKey:@"options"];
-   
-    var pushSelectorId = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+    if ([[self entity] class] === TNStropheContact)
+    {
+        var params = [[CPDictionary alloc] init];
+
+        [params setValue:@"iq" forKey:@"name"];
+        [params setValue:[[self entity] jid] forKey:@"from"];
+        [params setValue:@"trinity:push" forKey:@"type"];
+        [params setValue:aPushType forKey:@"namespace"];
+        [params setValue:{"matchBare": YES} forKey:@"options"];
+
+        var pushSelectorId = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+    }
 }
 
 - (void)willLoad
@@ -82,5 +91,19 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 - (void)willHide
 {
     
+}
+
+- (id)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
+{
+    var uid     = [[self connection] getUniqueId];
+    var params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var ret     = nil;
+    
+    if (aSelector)
+        ret = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
+    
+    [[self connection] send:aStanza];
+
+    return ret;
 }
 @end

@@ -97,8 +97,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [[self buttonStop] setEnabled:NO];
     [[self buttonPause] setEnabled:NO];
     
-    [[self fieldVMName] setStringValue:[[self contact] nickname]];
-    [[self fieldVMJid] setStringValue:[[self contact] jid]];
+    [[self fieldVMName] setStringValue:[[self entity] nickname]];
+    [[self fieldVMJid] setStringValue:[[self entity] jid]];
     
     [self getVirtualMachineInfo:nil];
     
@@ -127,16 +127,16 @@ VIR_DOMAIN_CRASHED	                        =	6;
 // Notifications listener
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self contact])
+    if ([aNotification object] == [self entity])
     {
-       [[self fieldVMName] setStringValue:[[self contact] nickname]] 
+       [[self fieldVMName] setStringValue:[[self entity] nickname]] 
     }
 }
 
 - (void)didNickPresenceUpdated:(CPNotification)aNotification
 {
     
-    if ([aNotification object] == [self contact])
+    if ([aNotification object] == [self entity])
     {
         [[self imageState] setImage:[[aNotification object] statusIcon]];
         [[self imageState] setNeedsDisplay:YES];
@@ -153,15 +153,15 @@ VIR_DOMAIN_CRASHED	                        =	6;
         return;
     }
     
-    var uid         = [[[self contact] connection] getUniqueId];
-    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid         = [[self connection] getUniqueId];
+    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
+    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
     
-    [[[self contact] connection] send:infoStanza];
+    [[self connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -343,15 +343,15 @@ VIR_DOMAIN_CRASHED	                        =	6;
 // Send control command
 - (void)sendVirtualMachineControl:(CPString)aControl withSelector:(SEL)aSelector
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
-    [[[self contact] connection] registerSelector:aSelector ofObject:self withDict:params];
+    [[self connection] registerSelector:aSelector ofObject:self withDict:params];
     [rebootStanza addChildName:@"query" withAttributes:{"type" : aControl}];
     [rebootStanza addChildName:@"jid" withAttributes:{}];
 
-    [[[self contact] connection] send:rebootStanza];
+    [[self connection] send:rebootStanza];
     [self getVirtualMachineInfo:nil];
 }
 

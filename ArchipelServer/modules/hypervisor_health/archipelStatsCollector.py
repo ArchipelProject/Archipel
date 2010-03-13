@@ -190,7 +190,6 @@ class TNThreadedHealthCollector(Thread):
         total, used, free, freePrct = (disk_free[1], disk_free[2],disk_free[3], disk_free[4])
         
         return (datetime.datetime.now(), total, used, free, freePrct);
-        
     
     def run(self):
         """

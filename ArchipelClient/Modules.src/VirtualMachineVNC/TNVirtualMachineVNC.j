@@ -71,14 +71,14 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)getVirtualMachineInfo
 {    
-    var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid = [[self connection] getUniqueId];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:infoStanza];
+    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
+    [[self connection] send:infoStanza];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -100,14 +100,14 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)getVirtualMachineVNCDisplay:(CPTimer)aTimer
 {
-    var uid         = [[[self contact] connection] getUniqueId];
-    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self contact] fullJID], "id": uid}];
+    var uid         = [[self connection] getUniqueId];
+    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
     var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
     [vncStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
-    [[[self contact] connection] send:vncStanza];
+    [[self connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
+    [[self connection] send:vncStanza];
 }
 
 - (void)didReceiveVNCDisplay:(id)aStanza 

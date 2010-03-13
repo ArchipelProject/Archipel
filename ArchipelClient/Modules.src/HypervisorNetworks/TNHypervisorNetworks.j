@@ -133,14 +133,14 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)getHypervisorNetworks
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
         
     [networksStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorNetworkList}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self withDict:params];
-    [[[self contact] connection] send:networksStanza];
+    [[self connection] registerSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self withDict:params];
+    [[self connection] send:networksStanza];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 
@@ -228,7 +228,7 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": anUid}];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": anUid}];
     
     
     [stanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkDefine}];
@@ -297,7 +297,7 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
 
         [[self windowProperties] setNetwork:networkObject];
         [[self windowProperties] setTable:_tableViewNetworks];
-        [[self windowProperties] setHypervisor:[self contact]];
+        [[self windowProperties] setHypervisor:[self entity]];
         [[self windowProperties] center];
         [[self windowProperties] orderFront:nil];
     }
@@ -318,26 +318,26 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
         return
     }
-    var uid             = [[[self contact] connection] getUniqueId];
-    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
     [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[[self contact] connection] registerSelector:@selector(didNetworkUndefinedBeforeDefining:) ofObject:self withDict:params];
-    [[[self contact] connection] send:deleteStanza];
+    [[self connection] registerSelector:@selector(didNetworkUndefinedBeforeDefining:) ofObject:self withDict:params];
+    [[self connection] send:deleteStanza];
     
 }
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [[[self contact] connection] getUniqueId];
+    var uid             = [[self connection] getUniqueId];
     var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [[[self contact] connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
-    [[[self contact] connection] send:defineStanza];
+    [[self connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
+    [[self connection] send:defineStanza];
 }
 
 - (void)didDefineNetwork:(TNStropheStanza)aStanza
@@ -357,8 +357,8 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-    var uid             = [[[self contact] connection] getUniqueId];
-    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
     if ([networkObject isNetworkEnabled])
@@ -372,8 +372,8 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         
     [activeStanza addTextNode:[networkObject UUID]];
     
-    [[[self contact] connection] registerSelector:@selector(didNetworkStatusChange:) ofObject:self withDict:params];
-    [[[self contact] connection] send:activeStanza];
+    [[self connection] registerSelector:@selector(didNetworkStatusChange:) ofObject:self withDict:params];
+    [[self connection] send:activeStanza];
 }
 
 - (void)didNetworkStatusChange:(TNStropheStanza)aStanza
@@ -423,15 +423,15 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     }
     
-    var uid             = [[[self contact] connection] getUniqueId];
-    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
+    var uid             = [[self connection] getUniqueId];
+    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
     [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[[self contact] connection] registerSelector:@selector(didDelNetwork:) ofObject:self withDict:params];
-    [[[self contact] connection] send:deleteStanza];
+    [[self connection] registerSelector:@selector(didDelNetwork:) ofObject:self withDict:params];
+    [[self connection] send:deleteStanza];
 
 }
 
