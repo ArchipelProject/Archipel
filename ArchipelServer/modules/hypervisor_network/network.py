@@ -24,7 +24,7 @@ import xmpp
 import os
 import libvirt
 
-NS_ARCHIPEL_HYPERVISOR_NETWORK = "trinity:hypervisor:network"
+NS_ARCHIPEL_HYPERVISOR_NETWORK = "archipel:hypervisor:network"
 
 
 ######################################################################################################
@@ -37,7 +37,7 @@ def __module_init__network_management(self):
 
 
 def __module_register_stanza__network_management(self):
-    self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_network, typ=NS_ARCHIPEL_HYPERVISOR_NETWORK)
+    self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_network, typ=NS_ARCHIPEL_HYPERVISOR_NETWORK)
 
 
 
@@ -48,7 +48,7 @@ def __module_register_stanza__network_management(self):
 
 
 
-def __process_iq_trinity_network_for_hypervisor(self, conn, iq):
+def __process_iq_archipel_network_for_hypervisor(self, conn, iq):
     log(self, LOG_LEVEL_INFO, "received network iq");
     
     iqType = iq.getTag("query").getAttr("type");
@@ -79,7 +79,7 @@ def __process_iq_trinity_network_for_hypervisor(self, conn, iq):
         raise xmpp.protocol.NodeProcessed
 
 
-def __process_iq_trinity_network_for_virtualmachine(self, conn, iq):
+def __process_iq_archipel_network_for_virtualmachine(self, conn, iq):
     log(self, LOG_LEVEL_INFO, "received network iq");
     
     iqType = iq.getTag("query").getAttr("type");
@@ -267,7 +267,7 @@ def __module_network_name_list(self, iq):
 
 setattr(archipel.TNArchipelHypervisor, "__module_init__network_management", __module_init__network_management)
 setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__network_management", __module_register_stanza__network_management)
-setattr(archipel.TNArchipelHypervisor, "__process_iq_trinity_network", __process_iq_trinity_network_for_hypervisor)
+setattr(archipel.TNArchipelHypervisor, "__process_iq_archipel_network", __process_iq_archipel_network_for_hypervisor)
 setattr(archipel.TNArchipelHypervisor, "__module_network_define_network", __module_network_define_network)
 setattr(archipel.TNArchipelHypervisor, "__module_network_undefine_network", __module_network_undefine_network)
 setattr(archipel.TNArchipelHypervisor, "__module_network_create", __module_network_create)
@@ -276,5 +276,5 @@ setattr(archipel.TNArchipelHypervisor, "__module_network_list", __module_network
 
 
 setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__network_management", __module_register_stanza__network_management);
-setattr(archipel.TNArchipelVirtualMachine, "__process_iq_trinity_network", __process_iq_trinity_network_for_virtualmachine)
+setattr(archipel.TNArchipelVirtualMachine, "__process_iq_archipel_network", __process_iq_archipel_network_for_virtualmachine)
 setattr(archipel.TNArchipelVirtualMachine, "__module_network_list", __module_network_name_list)

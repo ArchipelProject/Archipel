@@ -24,7 +24,7 @@ import xmpp
 import os
 from archipelStatsCollector import *
 
-NS_ARCHIPEL_HYPERVISOR_HEALTH = "trinity:hypervisor:health"
+NS_ARCHIPEL_HYPERVISOR_HEALTH = "archipel:hypervisor:health"
 
 
 ######################################################################################################
@@ -45,13 +45,13 @@ def __module_init__health_module(self):
 
 
 def __module_register_stanza__heatlh_module(self):
-    self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_health, typ=NS_ARCHIPEL_HYPERVISOR_HEALTH)
+    self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_health, typ=NS_ARCHIPEL_HYPERVISOR_HEALTH)
 
 
 ######################################################################################################
 ### Health definition
 ######################################################################################################
-def __process_iq_trinity_health(self, conn, iq):
+def __process_iq_archipel_health(self, conn, iq):
     """
     this method is invoked when a NS_ARCHIPEL_HYPERVISOR_HEALTH IQ is received.
     
@@ -157,7 +157,7 @@ def __healthinfo(self, iq):
 
 setattr(archipel.TNArchipelHypervisor, "__module_init__health_module", __module_init__health_module)
 setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__heatlh_module", __module_register_stanza__heatlh_module)
-setattr(archipel.TNArchipelHypervisor, "__process_iq_trinity_health", __process_iq_trinity_health)
+setattr(archipel.TNArchipelHypervisor, "__process_iq_archipel_health", __process_iq_archipel_health)
 setattr(archipel.TNArchipelHypervisor, "__healthinfo_history", __healthinfo_history)
 setattr(archipel.TNArchipelHypervisor, "__healthinfo", __healthinfo)
 

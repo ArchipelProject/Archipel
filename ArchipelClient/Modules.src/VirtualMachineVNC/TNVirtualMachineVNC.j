@@ -21,10 +21,10 @@
 @import <AppKit/CPWebView.j>
 
 
-trinityTypeVirtualMachineControl            = @"trinity:vm:control";
+TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
 
-trinityTypeVirtualMachineControlVNCDisplay  = @"vncdisplay";
-trinityTypeVirtualMachineControlInfo        = @"info";
+TNArchipelTypeVirtualMachineControlVNCDisplay  = @"vncdisplay";
+TNArchipelTypeVirtualMachineControlInfo        = @"info";
 
 VIR_DOMAIN_RUNNING	                        =	1;
 
@@ -51,6 +51,8 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)willShow
 {
+    [super willShow];
+    
     [[self maskingView] setFrame:[self bounds]];
 
     [self getVirtualMachineInfo];
@@ -58,6 +60,8 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)willHide
 {
+    [super willHide];
+    
     var bundle = [CPBundle bundleForClass:[self class]];
     
     [[self vncWebView] setMainFrameURL:[bundle pathForResource:@"empty.html"]];
@@ -66,19 +70,18 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)willUnload
 {
+    [super willUnload];
+    
     [[self maskingView] removeFromSuperview];
 }
 
 - (void)getVirtualMachineInfo
 {    
-    var uid = [[self connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
     
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
     
-    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[self connection] send:infoStanza];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -100,14 +103,11 @@ VIR_DOMAIN_RUNNING	                        =	1;
 
 - (void)getVirtualMachineVNCDisplay:(CPTimer)aTimer
 {
-    var uid         = [[self connection] getUniqueId];
-    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
     
-    [vncStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlVNCDisplay}];
+    [vncStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
     
-    [[self connection] registerSelector:@selector(didReceiveVNCDisplay:) ofObject:self withDict:params];
-    [[self connection] send:vncStanza];
+    [[self entity] sendStanza:vncStanza andRegisterSelector:@selector(didReceiveVNCDisplay:)];
 }
 
 - (void)didReceiveVNCDisplay:(id)aStanza 

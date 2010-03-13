@@ -20,14 +20,14 @@
 @import <AppKit/AppKit.j>
 
 
-trinityTypeVirtualMachineControl            = @"trinity:vm:control";
+TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
 
-trinityTypeVirtualMachineControlInfo        = @"info";
-trinityTypeVirtualMachineControlCreate      = @"create";
-trinityTypeVirtualMachineControlShutdown    = @"shutdown";
-trinityTypeVirtualMachineControlReboot      = @"reboot";
-trinityTypeVirtualMachineControlSuspend     = @"suspend";
-trinityTypeVirtualMachineControlResume      = @"resume";
+TNArchipelTypeVirtualMachineControlInfo        = @"info";
+TNArchipelTypeVirtualMachineControlCreate      = @"create";
+TNArchipelTypeVirtualMachineControlShutdown    = @"shutdown";
+TNArchipelTypeVirtualMachineControlReboot      = @"reboot";
+TNArchipelTypeVirtualMachineControlSuspend     = @"suspend";
+TNArchipelTypeVirtualMachineControlResume      = @"resume";
 
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
@@ -75,22 +75,19 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 // TNModule implementation
 - (void)willLoad
-{    
+{
+    [super willLoad];
+    
     var center = [CPNotificationCenter defaultCenter];
     
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(didNickPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 }
 
-- (void)willUnload
-{
-    var center = [CPNotificationCenter defaultCenter];
-    
-    [center removeObserver:self];
-}
-
 - (void)willShow
-{    
+{
+    [super willShow];
+    
     [[self maskingView] setFrame:[self bounds]];
     
     [[self buttonPlay] setEnabled:NO];
@@ -107,6 +104,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
 
 - (void)willHide
 {
+    [super willHide];
+    
     if (_timer)
         [_timer invalidate];
         
@@ -153,19 +152,15 @@ VIR_DOMAIN_CRASHED	                        =	6;
         return;
     }
     
-    var uid         = [[self connection] getUniqueId];
-    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
     
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
     
-    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    
-    [[self connection] send:infoStanza];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
-{     
+{
       if ([aStanza getType] == @"success")
       {   
           [[self maskingView] removeFromSuperview];
@@ -222,34 +217,55 @@ VIR_DOMAIN_CRASHED	                        =	6;
 // Actions
 - (IBAction)play:(id)sender
 {
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+    
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlCreate}];
     [sender setEnabled:NO];
-    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlCreate withSelector:@selector(didPlay:)];
+    
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didPlay:)];
 }
 
 - (IBAction)pause:(id)sender
 {
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+    var selector;
+    
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
-        [self sendVirtualMachineControl:trinityTypeVirtualMachineControlResume withSelector:@selector(didResume:)];
+        selector = @selector(didResume:)
+        
+        [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlResume}];
         [sender setTitle:@"Pause"];
     }
     else
     {
-        [self sendVirtualMachineControl:trinityTypeVirtualMachineControlSuspend withSelector:@selector(didPause:)];
+        selector = @selector(didPause:)
+
+        [self sendVirtualMachineControl:TNArchipelTypeVirtualMachineControlResume withSelector:@selector(didPause:)];
         [sender setTitle:@"Resume"];
     }
+    
+    [[self entity] sendStanza:controlStanza andRegisterSelector:selector];
 }
 
 - (IBAction)stop:(id)sender
 {
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+    
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
     [sender setEnabled:NO];
-    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlShutdown withSelector:@selector(didStop:)];
+    
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didStop:)];
 }
 
 - (IBAction)reboot:(id)sender
 {
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+    
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
     [sender setEnabled:NO];
-    [self sendVirtualMachineControl:trinityTypeVirtualMachineControlReboot withSelector:@selector(didReboot:)];
+    
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didReboot:)];
 }
 
 // did Actions done selectors
@@ -264,6 +280,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     {
         var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
+        
+        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -281,6 +299,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     if (responseType == @"success")
     {
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
+        
+        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -298,6 +318,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     if (responseType == @"success")
     {
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
+        
+        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -315,6 +337,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     if (responseType == @"success")
     {
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
+        
+        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -332,6 +356,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     if (responseType == @"success")
     {
         [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been rebooted"];
+        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -340,21 +365,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
 }
 
 
-// Send control command
-- (void)sendVirtualMachineControl:(CPString)aControl withSelector:(SEL)aSelector
-{
-    var uid             = [[self connection] getUniqueId];
-    var rebootStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-
-    [[self connection] registerSelector:aSelector ofObject:self withDict:params];
-    [rebootStanza addChildName:@"query" withAttributes:{"type" : aControl}];
-    [rebootStanza addChildName:@"jid" withAttributes:{}];
-
-    [[self connection] send:rebootStanza];
-    [self getVirtualMachineInfo:nil];
-}
-
+// error displaying
 - (void)onLibvirtError:(TNStropheStanza)errorStanza from:(CPString)responseFrom
 {
     var errorNode               = [errorStanza firstChildWithName:@"error"];

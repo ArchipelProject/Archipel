@@ -1,17 +1,17 @@
-/*  
+/*
  * TNWindowNetworkProperties.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,11 +31,11 @@
     @outlet CPCheckBox      checkBoxDHCPEnabled         @accessors;
     @outlet CPScrollView    scrollViewDHCPRanges        @accessors;
     @outlet CPScrollView    scrollViewDHCPHosts         @accessors;
-    
+
     TNNetwork           network     @accessors;
     TNStropheContact    hypervisor  @accessors;
     CPTableView         table       @accessors;
-    
+
     TNDatasourceDHCPEntries     _datasourceDHCPRanges;
     TNDatasourceDHCPEntries     _datasourceDHCPHosts;
     CPTableView                 _tableViewRanges;
@@ -46,21 +46,21 @@
 {
     [buttonForwardMode removeAllItems];
     [buttonForwardDevice removeAllItems];
-    
+
     var forwardMode = ["route", "nat"];
     for (var i = 0; i < forwardMode.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:forwardMode[i] action:nil keyEquivalent:nil];
         [buttonForwardMode addItem:item];
-    } 
-    
+    }
+
     var forwardDev = ["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]; //TODO obvious..
     for (var i = 0; i < forwardDev.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:forwardDev[i] action:nil keyEquivalent:nil];
         [buttonForwardDevice addItem:item];
     }
-    
+
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNDatasourceDHCPEntries alloc] init];
     _tableViewRanges        = [[CPTableView alloc] initWithFrame:[[self scrollViewDHCPRanges] bounds]];
@@ -75,22 +75,20 @@
     [_tableViewRanges setAllowsColumnReordering:YES];
     [_tableViewRanges setAllowsColumnResizing:YES];
     [_tableViewRanges setAllowsEmptySelection:YES];
-    //[_tableViewRanges setTarget:self];
-    //[_tableViewRanges setDoubleAction:@selector(editNetwork:)];
 
     var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"];
     [[columRangeStart headerView] setStringValue:@"Start"];
     [columRangeStart setEditable:YES];
-    
+
     var columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
     [[columRangeEnd headerView] setStringValue:@"End"];
     [columRangeEnd setEditable:YES];
-    
+
     [_tableViewRanges addTableColumn:columRangeStart];
     [_tableViewRanges addTableColumn:columRangeEnd];
-    
+
     [_tableViewRanges setDataSource:_datasourceDHCPRanges];
-    
+
     // TABLE FOR HOSTS
     _datasourceDHCPHosts     = [[TNDatasourceDHCPEntries alloc] init];
     _tableViewHosts          = [[CPTableView alloc] initWithFrame:[[self scrollViewDHCPHosts] bounds]];
@@ -99,7 +97,7 @@
     [[self scrollViewDHCPHosts] setAutohidesScrollers:YES];
     [[self scrollViewDHCPHosts] setDocumentView:_tableViewHosts];
     [[self scrollViewDHCPHosts] setBorderedWithHexColor:@"#9e9e9e"];
-   
+
     [_tableViewHosts setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableViewHosts setAllowsColumnReordering:YES];
@@ -111,49 +109,48 @@
     var columHostMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
     [[columHostMac headerView] setStringValue:@"MAC Address"];
     [columHostMac setEditable:YES];
-    
+
     var columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columHostName headerView] setStringValue:@"Name"];
     [columHostName setEditable:YES];
-    
+
     var columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
     [[columHostIP headerView] setStringValue:@"IP"];
     [columHostIP setEditable:YES];
-    
+
     [_tableViewHosts addTableColumn:columHostMac];
     [_tableViewHosts addTableColumn:columHostName];
     [_tableViewHosts addTableColumn:columHostIP];
-    
+
     [_tableViewHosts setDataSource:_datasourceDHCPHosts];
-    
+
     [_tableViewHosts setDelegate:self];
     [_tableViewRanges setDelegate:self];
 }
-
 
 - (void)orderFront:(id)sender
 {
     [_tableViewRanges setNeedsDisplay:YES];
     [_tableViewHosts setNeedsDisplay:YES];
-    
+
     [fieldNetworkName setStringValue:[network networkName]];
     [fieldBridgeName setStringValue:[network bridgeName]];
     [fieldBridgeDelay setStringValue:[network bridgeDelay]];
     [fieldBridgeIP setStringValue:[network bridgeIP]];
     [fieldBridgeNetmask setStringValue:[network bridgeNetmask]];
-    
+
     [buttonForwardMode selectItemWithTitle:[network bridgeForwardMode]];
     [buttonForwardDevice selectItemWithTitle:[network bridgeForwardDevice]];
-    
+
     [checkBoxSTPEnabled setState:([network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([network isDHCPEnabled]) ? CPOnState : CPOffState];
-    
+
     [_datasourceDHCPRanges setEntries:[network DHCPEntriesRanges]];
     [_datasourceDHCPHosts setEntries:[network DHCPEntriesHosts]];
-    
+
     [_tableViewRanges reloadData];
     [_tableViewHosts reloadData];
-    
+
     [super orderFront:sender];
 }
 
@@ -184,14 +181,14 @@
 }
 
 - (IBAction)removeDHCPRange:(id)sender
-{     
+{
     var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex];
-    var rangeObject   = [[_datasourceDHCPRanges entries] removeObjectAtIndex:selectedIndex];
+    var rangeObject     = [[_datasourceDHCPRanges entries] removeObjectAtIndex:selectedIndex];
     [_tableViewRanges reloadData];
-    
+
     if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
-      
+
     [self save:nil];
 }
 
@@ -205,14 +202,14 @@
 }
 
 - (IBAction)removeDHCPHost:(id)sender
-{      
+{
     var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex];
-    var hostsObject   = [[_datasourceDHCPHosts entries] removeObjectAtIndex:selectedIndex];
+    var hostsObject     = [[_datasourceDHCPHosts entries] removeObjectAtIndex:selectedIndex];
     [_tableViewHosts reloadData];
-    
+
     if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
-      
+
     [self save:nil];
 }
 

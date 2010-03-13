@@ -93,6 +93,8 @@
 
 - (void)willLoad
 {   
+    [super willLoad];
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self entity]];
@@ -127,10 +129,9 @@
 }
 
 - (void)willUnload
-{      
-    var center = [CPNotificationCenter defaultCenter];
-    [center removeObserver:self];
-      
+{
+    [super willUnload];
+    
     localStorage.setItem("communicationWith" + [[self entity] jid], JSON.stringify(_messages));
 
     [_messages removeAllObjects];
@@ -138,12 +139,12 @@
 }
 
 - (void)willShow 
-{    
+{
+    [super willShow];
+    
     var messageQueue = [[self entity] messagesQueue];
     var stanza;
     
-    
-    //for (var i = 0; i < messageQueue.length; i++ )
     while (stanza = [[self entity] popMessagesQueue])
     {   
         if ([stanza containsChildrenWithName:@"body"])
@@ -153,11 +154,6 @@
     }
     
     [[self entity] freeMessagesQueue];
-}
-
-- (void)willHide 
-{
-    // save the conversation with local storage
 }
 
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender

@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This is the main package to import in order to use Trinity.
+This is the main package to import in order to use Archipel.
 """
 from archipelVirtualMachine import * 
 from archipelHypervisor import *

@@ -21,11 +21,14 @@
 
 @import "TNDatasourceMedias.j";
 
-trinityTypeVirtualMachineDisk       = @"trinity:vm:disk";
+TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
 
-trinityTypeVirtualMachineDiskCreate = @"create";
-trinityTypeVirtualMachineDiskDelete = @"delete";
-trinityTypeVirtualMachineDiskGet    = @"get";
+TNArchipelTypeVirtualMachineDiskCreate = @"create";
+TNArchipelTypeVirtualMachineDiskDelete = @"delete";
+TNArchipelTypeVirtualMachineDiskGet    = @"get";
+
+TNArchipelPushNotificationDisk           = @"archipel:push:disk";
+TNArchipelPushNotificationDiskCreated    = @"created";
 
 @implementation TNVirtualMachineDiskCreation : TNModule 
 {
@@ -34,8 +37,9 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     @outlet CPPopUpButton   buttonNewDiskSizeUnit   @accessors;
     @outlet CPScrollView    scrollViewDisks         @accessors;
     
-    CPTableView             tableMedias              @accessors;
+    CPTableView             tableMedias             @accessors;
     TNDatasourceMedias      mediasDatasource        @accessors;
+    
     id  _registredDiskListeningId;
 }
 
@@ -67,22 +71,18 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     
     var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [mediaColumName setWidth:150];
-    [mediaColumName setResizingMask:CPTableColumnAutoresizingMask ];
     [[mediaColumName headerView] setStringValue:@"Name"];
         
     var mediaColumVirtualSize = [[CPTableColumn alloc] initWithIdentifier:@"virtualSize"];
     [mediaColumVirtualSize setWidth:80];
-    [mediaColumVirtualSize setResizingMask:CPTableColumnAutoresizingMask ];
     [[mediaColumVirtualSize headerView] setStringValue:@"VirtualSize"];
     
     var mediaColumDiskSize = [[CPTableColumn alloc] initWithIdentifier:@"diskSize"];
     [mediaColumDiskSize setWidth:80];
-    [mediaColumDiskSize setResizingMask:CPTableColumnAutoresizingMask ];
     [[mediaColumDiskSize headerView] setStringValue:@"RealSize"];
     
     var mediaColumPath = [[CPTableColumn alloc] initWithIdentifier:@"path"];
     [mediaColumPath setWidth:500];
-    [mediaColumPath setResizingMask:CPTableColumnAutoresizingMask ];
     [[mediaColumPath headerView] setStringValue:@"HypervisorPath"];
     
     [[self tableMedias] addTableColumn:mediaColumName];
@@ -95,38 +95,26 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 
 - (void)willLoad
 {
+    [super willLoad];
+    
     _registredDiskListeningId = nil;
     
     var params = [[CPDictionary alloc] init];
     
-    [params setValue:@"iq" forKey:@"name"];
-    [params setValue:[[self entity] jid] forKey:@"from"];
-    [params setValue:@"push" forKey:@"type"];
-    [params setValue:{"matchBare": YES} forKey:@"options"];
-    [[self connection] registerSelector:@selector(didReceivedDiskPushNotification:) ofObject:self withDict:params]
-}
-
-- (void)willUnload
-{ 
-    if (_registredDiskListeningId)
-        [[self connection] deleteRegistredSelector:_registredDiskListeningId];
-   // message sent when view will be removed from superview;
-   // MUST be declared
+    [self registerSelector:@selector(didReceivedDiskPushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
 }
 
 - (void)willShow 
 {
+    [super willShow];
+    
     [self getDisksInfo];
 }
 
-- (void)willHide 
-{
-    // message sent when the tab is changed
-}
 
 - (BOOL)didReceivedDiskPushNotification:(TNStropheStanza)aStanza
 {
-    if ([aStanza valueForAttribute:@"change"] == @"disk-created")
+    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == TNArchipelPushNotificationDiskCreated)
     {
         [self getDisksInfo]
     }
@@ -136,14 +124,11 @@ trinityTypeVirtualMachineDiskGet    = @"get";
 
 - (void)getDisksInfo
 {
-    var uid = [[self connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
     
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
 
-    [[self connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
-    [[self connection] send:infoStanza];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:)];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza 
@@ -207,11 +192,9 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     
     // TODO : control disk size.
     
-    var uid         = [[self connection] getUniqueId];
-    var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
-    var params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
     
-    [diskStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskCreate}];
+    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskCreate}];
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:dName];
     [diskStanza up];
@@ -221,10 +204,9 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     [diskStanza addChildName:@"unit"];
     [diskStanza addTextNode:dUnit];
     [diskStanza up];
-     
-    [[self connection] registerSelector:@selector(didCreateDisk:) ofObject:self withDict:params];
-    [[self connection] send:diskStanza];
-  
+    
+    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:)];
+    
     [[self fieldNewDiskName] setStringValue:@""];
     [[self fieldNewDiskSize] setStringValue:@""];
 }
@@ -244,16 +226,13 @@ trinityTypeVirtualMachineDiskGet    = @"get";
     
     var selectedIndex   = [[[self tableMedias] selectedRowIndexes] firstIndex];
     var dName           = [[[self mediasDatasource] medias] objectAtIndex:selectedIndex];
-    var uid             = [[self connection] getUniqueId];
-    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
     
-    [diskStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskDelete}];
+    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:[dName path]];
-     
-    [[self connection] registerSelector:@selector(didRemoveDisk:) ofObject:self withDict:params];
-    [[self connection] send:diskStanza];
+    
+    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:)];
 }
 
 - (void)didRemoveDisk:(id)aStanza

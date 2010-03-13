@@ -36,7 +36,7 @@ LOOP_RESTART = 2
 """indicates loop restart status"""
 
 
-TRINITY_NS_IQ_PUSH = "trinity:push"
+ARCHIPEL_NS_IQ_PUSH = "archipel:push"
 
 class TNArchipelBasicXMPPClient(object):
     """
@@ -292,8 +292,8 @@ class TNArchipelBasicXMPPClient(object):
     
     def push_change(self, namespace, change):
         for item in self.roster.getItems():
-            push = xmpp.Iq(typ="trinity:push", to=item + "/controller");
-            push.setQueryNS("trinity:push:" + namespace);
+            push = xmpp.Iq(typ="archipel:push", to=item + "/controller");
+            push.setQueryNS("archipel:push:" + namespace);
             push.getTag("query").setAttr("change", change);
             log(self, LOG_LEVEL_DEBUG, "pushing change " + change + " to item " + str(item))
             self.xmppclient.send(push)

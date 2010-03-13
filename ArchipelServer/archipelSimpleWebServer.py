@@ -27,7 +27,7 @@ class TNThreadedWebServer(Thread):
         """
         the contructor of the class
         @type jid: string
-        @param jid: the jid of the L{TrinityVM} 
+        @param jid: the jid of the L{TNArchipelVirtualMachine} 
         @type password: string
         @param password: the password associated to the JID
         """

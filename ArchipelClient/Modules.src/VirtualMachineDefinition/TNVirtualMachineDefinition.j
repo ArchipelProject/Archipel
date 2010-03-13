@@ -24,8 +24,8 @@
 @import "TNWindowNicEdition.j";
 @import "TNWindowDriveEdition.j";
 
-trinityTypeVirtualMachineControl            = @"trinity:vm:control";
-trinityTypeVirtualMachineDefinition         = @"trinity:vm:definition";
+trinityTypeVirtualMachineControl            = @"archipel:vm:control";
+trinityTypeVirtualMachineDefinition         = @"archipel:vm:definition";
 
 trinityTypeVirtualMachineControlXMLDesc         = @"xmldesc";
 trinityTypeVirtualMachineControlInfo            = @"info";
@@ -78,8 +78,6 @@ function generateMacAddr()
     CPTableView                     tableDrives         @accessors;
     TNDatasourceDrives              drivesDatasource    @accessors;
     id                              virtualMachineXML   @accessors;
-    
-    
 }
 
 - (void)awakeFromCib
@@ -109,28 +107,23 @@ function generateMacAddr()
     [[self tableDrives] setDoubleAction:@selector(editDrive:)];
     
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    //[driveColumnType setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnType setEditable:YES];
     [[driveColumnType headerView] setStringValue:@"Type"];
     
     var driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"];
-    //[driveColumnDevice setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnDevice setEditable:YES];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
     
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
-    //[driveColumnTarget setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnTarget setEditable:YES];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
     
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    //[driveColumnSource setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnSource setWidth:500];
     [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
-    //[driveColumnBus setResizingMask:CPTableColumnAutoresizingMask ];
     [driveColumnBus setEditable:YES];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     
@@ -161,23 +154,19 @@ function generateMacAddr()
     [[self tableNetworkCards] setDoubleAction:@selector(editNetworkCard:)];
 
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    //[columnType setResizingMask:CPTableColumnAutoresizingMask ];
     [columnType setEditable:YES];
     [[columnType headerView] setStringValue:@"Type"];
 
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
-    //[columnModel setResizingMask:CPTableColumnAutoresizingMask ];
     [columnModel setEditable:YES];
     [[columnModel headerView] setStringValue:@"Model"];
     
     var columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
-    //[columnMac setResizingMask:CPTableColumnAutoresizingMask];
     [columnMac setEditable:YES];
     [columnMac setWidth:150];
     [[columnMac headerView] setStringValue:@"MAC"];
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    //[columnSource setResizingMask:CPTableColumnAutoresizingMask ];
     [columnSource setEditable:YES];
     [[columnSource headerView] setStringValue:@"Source"];
 
@@ -235,6 +224,8 @@ function generateMacAddr()
 // TNModule impl.
 - (void)willShow
 {
+    [super willShow];
+    
     [[self maskingView] setFrame:[self bounds]];
 
     [self getVirtualMachineInfo];
@@ -243,6 +234,8 @@ function generateMacAddr()
 
 - (void)willHide
 {
+    [super willHide];
+    
     [[[self nicsDatasource] nics] removeAllObjects];
     [[[self drivesDatasource] drives] removeAllObjects];
     
@@ -261,24 +254,23 @@ function generateMacAddr()
 
 - (void)willUnload
 {
+    [super willUnload];
+    
     [[self maskingView] removeFromSuperview];
 }
 
 //  XML Desc
 - (void)getXMLDesc
 {
-    var uid             = [[self connection] getUniqueId];
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl}];
         
     [xmldescStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc}];
     
-    [[self connection] registerSelector:@selector(didReceiveXMLDesc:) ofObject:self withDict:params];
-    [[self connection] send:xmldescStanza];
+    [[self entity] sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:)];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
-{    
+{
     if ([aStanza getType] == @"error")
     {
         CPLogConsole("XML not defined");
@@ -463,15 +455,12 @@ function generateMacAddr()
 
 
 - (void)getVirtualMachineInfo
-{    
-    var uid = [[self connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl, "to": [[self entity] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+{
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl}];    
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
-    [[self connection] registerSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self withDict:params];
-    [[self connection] send:infoStanza];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -499,7 +488,7 @@ function generateMacAddr()
     
     [[self windowNicEdition] setNic:nicObject];
     [[self windowNicEdition] setTable:[self tableNetworkCards]];
-    [[self windowNicEdition] setContact:[self entity]];
+    [[self windowNicEdition] setEntity:[self entity]];
     [[self windowNicEdition] center];
     [[self windowNicEdition] orderFront:nil];
 }
@@ -538,7 +527,7 @@ function generateMacAddr()
 
         [[self windowDriveEdition] setDrive:driveObject];
         [[self windowDriveEdition] setTable:[self tableDrives]];
-        [[self windowDriveEdition] setContact:[self entity]];
+        [[self windowDriveEdition] setEntity:[self entity]];
         [[self windowDriveEdition] center];
         [[self windowDriveEdition] orderFront:nil];
     }
@@ -571,12 +560,9 @@ function generateMacAddr()
 // action XML desc
 - (IBAction)defineXML:(id)sender
 {
-    var uid             = [[self connection] getUniqueId];
-    var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var defineStanza = [self generateXMLDescStanzaWithUniqueID:uid];
     
-    [[self connection] registerSelector:@selector(didDefineXML:) ofObject:self withDict:params];
-    [[self connection] send:defineStanza];
+    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:)];
 }
 
 

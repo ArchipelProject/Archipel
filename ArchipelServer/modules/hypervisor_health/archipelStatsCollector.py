@@ -1,4 +1,4 @@
-# trinitystatcollector
+# archipelstatcollector
 # 
 # archipelStatsCollector.py
 # 
@@ -66,9 +66,9 @@ class TNThreadedHealthCollector(Thread):
     
     def get_collected_stats(self, limit=1):
         """
-        this method return the current L{TrinityVM} instance
-        @rtype: TrinityVM
-        @return: the L{TrinityVM} instance
+        this method return the current L{TNArchipelVirtualMachine} instance
+        @rtype: TNArchipelVirtualMachine
+        @return: the L{TNArchipelVirtualMachine} instance
         """        
         log(self, LOG_LEVEL_DEBUG, "Retrieving last "+ str(limit) + " recorded stats data for sending")
         tempdatabase = self.query_database_connection;
@@ -193,7 +193,7 @@ class TNThreadedHealthCollector(Thread):
     
     def run(self):
         """
-        overiddes sur super class method. do the L{TrinityVM} main loop
+        overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
         self.database_thread_connection = sqlite3.connect(self.database_file)
         while(1):

@@ -47,9 +47,9 @@ VIR_DOMAIN_SHUTDOWN	                        =	4;
 VIR_DOMAIN_SHUTOFF	                        =	5;
 VIR_DOMAIN_CRASHED	                        =	6;
 
-NS_ARCHIPEL_VM_CONTROL      = "trinity:vm:control"
-NS_ARCHIPEL_VM_DEFINITION   = "trinity:vm:definition"
-#NS_ARCHIPEL_VM_DISK         = "trinity:vm:disk"
+NS_ARCHIPEL_VM_CONTROL      = "archipel:vm:control"
+NS_ARCHIPEL_VM_DEFINITION   = "archipel:vm:definition"
+#NS_ARCHIPEL_VM_DISK         = "archipel:vm:disk"
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     """
@@ -82,9 +82,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         this method registers the events handlers.
         it is invoked by super class __xmpp_connect() method
         """
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_VM_CONTROL)
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_definition, typ=NS_ARCHIPEL_VM_DEFINITION)
-        #self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, typ=NS_ARCHIPEL_VM_CONTROL)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_definition, typ=NS_ARCHIPEL_VM_DEFINITION)
+        #self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_disk, typ=NS_ARCHIPEL_VM_DISK)
         
         TNArchipelBasicXMPPClient.register_handler(self)
     
@@ -449,9 +449,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     ### XMPP Processing
     ######################################################################################################
     
-    def __process_iq_trinity_control(self, conn, iq):
+    def __process_iq_archipel_control(self, conn, iq):
         """
-        Invoked when new trinity:vm:control IQ is received. 
+        Invoked when new archipel:vm:control IQ is received. 
         
         it understands IQ of type:
             - info
@@ -524,9 +524,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             raise xmpp.protocol.NodeProcessed
     
     
-    def __process_iq_trinity_definition(self, conn, iq):
+    def __process_iq_archipel_definition(self, conn, iq):
         """
-        Invoked when new trinity:define IQ is received.
+        Invoked when new archipel:define IQ is received.
         
         it understands IQ of type:
             - define (the domain xml must be sent as payload of IQ, and the uuid *MUST*, be the same as the JID of the client)

@@ -25,12 +25,12 @@
 @import "TNWindowNetworkProperties.j"
 
 
-trinityTypeHypervisorNetwork            = @"trinity:hypervisor:network";
-trinityTypeHypervisorNetworkList        = @"list";
-trinityTypeHypervisorNetworkDefine      = @"define";
-trinityTypeHypervisorNetworkUndefine    = @"undefine";
-trinityTypeHypervisorNetworkCreate      = @"create";
-trinityTypeHypervisorNetworkDestroy     = @"destroy";
+TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
+TNArchipelTypeHypervisorNetworkList        = @"list";
+TNArchipelTypeHypervisorNetworkDefine      = @"define";
+TNArchipelTypeHypervisorNetworkUndefine    = @"undefine";
+TNArchipelTypeHypervisorNetworkCreate      = @"create";
+TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 
 
@@ -109,38 +109,20 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     
 }
 
-- (void)willLoad
-{
-    // message sent when view will be added from superview;
-    // MUST be declared
-}
-
-- (void)willUnload
-{
-   // message sent when view will be removed from superview;
-   // MUST be declared
-}
-
 - (void)willShow 
 {
+    [super willShow];
+    
     [self getHypervisorNetworks];
-}
-
-- (void)willHide 
-{
-    // message sent when the tab is changed
 }
 
 - (void)getHypervisorNetworks
 {
-    var uid             = [[self connection] getUniqueId];
-    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-        
-    [networksStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorNetworkList}];
+    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorNetwork}];
     
-    [[self connection] registerSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self withDict:params];
-    [[self connection] send:networksStanza];
+    [networksStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkList}];
+    
+    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 
@@ -228,10 +210,10 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": anUid}];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": anUid}];
     
     
-    [stanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkDefine}];
+    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDefine}];
     [stanza addChildName:@"network"];
     
     [stanza addChildName:@"name"];
@@ -294,7 +276,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
             return
         }
         
-
         [[self windowProperties] setNetwork:networkObject];
         [[self windowProperties] setTable:_tableViewNetworks];
         [[self windowProperties] setHypervisor:[self entity]];
@@ -302,7 +283,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         [[self windowProperties] orderFront:nil];
     }
 }
-
 
 - (IBAction)defineNetworkXML:(id)sender
 {
@@ -318,26 +298,20 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
         return
     }
-    var uid             = [[self connection] getUniqueId];
-    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
-    [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
+    var deleteStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}];
+
+    [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[self connection] registerSelector:@selector(didNetworkUndefinedBeforeDefining:) ofObject:self withDict:params];
-    [[self connection] send:deleteStanza];
-    
+    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
 }
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [[self connection] getUniqueId];
-    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var defineStanza = [self generateXMLNetworkStanzaWithUniqueID:uid];
     
-    [[self connection] registerSelector:@selector(didDefineNetwork:) ofObject:self withDict:params];
-    [[self connection] send:defineStanza];
+    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:)];
 }
 
 - (void)didDefineNetwork:(TNStropheStanza)aStanza
@@ -348,7 +322,6 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
     }
 }
 
-
 - (IBAction)activateNetworkSwitch:(id)sender
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
@@ -357,23 +330,20 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-    var uid             = [[self connection] getUniqueId];
-    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
 
     if ([networkObject isNetworkEnabled])
     {
-        [activeStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkDestroy}];
+        [activeStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDestroy}];
     }
     else
     {
-        [activeStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkCreate}];
+        [activeStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkCreate}];
     }
         
     [activeStanza addTextNode:[networkObject UUID]];
     
-    [[self connection] registerSelector:@selector(didNetworkStatusChange:) ofObject:self withDict:params];
-    [[self connection] send:activeStanza];
+    [[self entity] sendStanza:activeStanza andRegisterSelector:@selector(didNetworkStatusChange:)];
 }
 
 - (void)didNetworkStatusChange:(TNStropheStanza)aStanza
@@ -423,16 +393,12 @@ trinityTypeHypervisorNetworkDestroy     = @"destroy";
         return
     }
     
-    var uid             = [[self connection] getUniqueId];
-    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorNetwork}];
 
-    [deleteStanza addChildName:@"query" withAttributes:{"type": trinityTypeHypervisorNetworkUndefine}]; 
+    [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[self connection] registerSelector:@selector(didDelNetwork:) ofObject:self withDict:params];
-    [[self connection] send:deleteStanza];
-
+    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
 }
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza

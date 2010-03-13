@@ -32,7 +32,8 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPString                moduleName          @accessors;
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
-    CPArray                 _pushSelectors;
+
+    CPArray                 _registredSelectors;
 }
 
 - (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
@@ -44,38 +45,40 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
 {
-    if (! _pushSelectors)
-        _pushSelectors = [CPArray array]
-    
     if ([[self entity] class] === TNStropheContact)
     {
         var params = [[CPDictionary alloc] init];
 
         [params setValue:@"iq" forKey:@"name"];
         [params setValue:[[self entity] jid] forKey:@"from"];
-        [params setValue:@"trinity:push" forKey:@"type"];
+        [params setValue:@"archipel:push" forKey:@"type"];
         [params setValue:aPushType forKey:@"namespace"];
         [params setValue:{"matchBare": YES} forKey:@"options"];
 
         var pushSelectorId = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+
+        [_registredSelectors addObject:pushSelectorId];
     }
 }
 
 - (void)willLoad
 {
-    var center  = [CPNotificationCenter defaultCenter];
-    [center removeObserver:self];
+    _pushSelectors = [CPArray array];
 }
 
 - (void)willUnload
 {
-    //@each(pushSelector in _pushSelectors)
-    for(var i = 0; i < [_pushSelectors count]; i++)
+    // unregister all selectors
+    for(var i = 0; i < [_registredSelectors count]; i++)
     {
-        pushSelector = [_pushSelectors objectAtIndex:i];
+        var selector = [_registredSelectors objectAtIndex:i];
         
-        [[self connection] deleteRegistredSelector:pushSelector];
+        [[self connection] deleteRegistredSelector:selector];
     }
+    
+    // remove all notification observers
+    var center  = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
 }
 
 - (void)willShow
@@ -95,7 +98,10 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     var ret     = nil;
     
     if (aSelector)
+    {
         ret = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
+        [_registredSelectors addObject:ret];
+    }
     
     [[self connection] send:aStanza];
 

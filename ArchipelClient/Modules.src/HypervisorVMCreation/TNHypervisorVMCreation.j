@@ -21,12 +21,14 @@
  
 @import "TNDatasourceVMs.j"
 
-trinityTypeHypervisorControl            = @"trinity:hypervisor:control";
+TNArchipelTypeHypervisorControl            = @"archipel:hypervisor:control";
 
-trinityTypeHypervisorControlAlloc       = @"alloc";
-trinityTypeHypervisorControlFree        = @"free";
-trinityTypeHypervisorControlRosterVM    = @"rostervm";
+TNArchipelTypeHypervisorControlAlloc       = @"alloc";
+TNArchipelTypeHypervisorControlFree        = @"free";
+TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
 
+TNArchipelPushNotificationSubscription      = @"archipel:push:subscription";
+TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 @implementation TNHypervisorVMCreation : TNModule 
 {
@@ -41,7 +43,6 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     TNDatasourceVMs     virtualMachinesDatasource   @accessors;
     
     TNStropheContact    _virtualMachineRegistredForDeletion;
-    id                  _pushNotificationRegistrationID;
 }
 
 - (void)awakeFromCib
@@ -85,20 +86,16 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 - (void)willLoad
-{    
+{
     [super willLoad];
     
-    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:@"trinity:push:subscription"];
-}
-
-
-- (void)willUnload
-{   
-    [super willUnload];
+    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:TNArchipelPushNotificationSubscription];
 }
 
 - (void)willShow
 {
+    [super willShow];
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
@@ -109,20 +106,10 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     [self getHypervisorRoster];
 }
 
-- (void)willHide
-{
-    var center  = [CPNotificationCenter defaultCenter];
-    [center removeObserver:self];
-    
-}
-
 - (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
 {
-    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == @"added")
-    {
-        CPLog.debug("push notification received");
+    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == TNArchipelPushNotificationSubscriptionAdded)
         [self getHypervisorRoster];
-    }
     
     return YES;
 }
@@ -139,14 +126,11 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 
 - (void)getHypervisorRoster
 {
-    var uid             = [[self connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
         
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlRosterVM}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
     
-    [[self connection] registerSelector:@selector(didReceiveHypervisorRoster:) ofObject:self withDict:params];
-    [[self connection] send:rosterStanza];
+    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:)];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -155,7 +139,6 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     var center      = [CPNotificationCenter defaultCenter];
     
     [[[self virtualMachinesDatasource] VMs] removeAllObjects];
-    
     
     for (var i = 0; i < [queryItems count]; i++)
     {
@@ -183,18 +166,14 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
 //actions
 - (IBAction)addVirtualMachine:(id)sender
 {
-    var uid             = [[self connection] getUniqueId];
-    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
+    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorControl}];
     var uuid            = [CPString UUID];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [creationStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlAlloc}];
-    [creationStanza addChildName:@"jid" withAttributes:{}];
+    [creationStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorControlAlloc}];
+    [creationStanza addChildName:@"jid"];
     [creationStanza addTextNode:uuid];
     
-    
-    [[self connection] registerSelector:@selector(didAllocVirtualMachine:) ofObject:self withDict:params];
-    [[self connection] send:creationStanza];
+    [[self entity] sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -244,17 +223,14 @@ trinityTypeHypervisorControlRosterVM    = @"rostervm";
     if (returnCode == 0)
     {
         var vm              = _virtualMachineRegistredForDeletion;
-        var uid             = [[self connection] getUniqueId];
-        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorControl, "to": [[self entity] fullJID], "id": uid}];
-        var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
         
-        [freeStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorControlFree}];
+        [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
         [freeStanza addTextNode:[vm jid]];
         
         [[self roster] removeContact:[vm jid]];
         
-        [[self connection] registerSelector:@selector(didFreeVirtualMachine:) ofObject:self withDict:params];
-        [[self connection] send:freeStanza];
+        [[self entity] sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:)];
     }
     else
     {

@@ -97,7 +97,7 @@ def log(logger, level, message) :
     
     example :
         >>> log(self, LOG_LEVEL_INFO, "ressource defined as virt-hyperviseur")
-        [INFO ] 2010-02-01 21:29:12.258505 TrinityHypervisor.__init__[12447696] : ressource defined as virt-hyperviseur
+        [INFO ] 2010-02-01 21:29:12.258505 TNArchipelHypervisor.__init__[12447696] : ressource defined as virt-hyperviseur
     
     @type level: string
     @param level: the log level according to the value of L{LOG_DICT}

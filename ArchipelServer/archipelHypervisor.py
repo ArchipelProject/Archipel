@@ -36,7 +36,7 @@ from archipelVirtualMachine import *
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
 
-NS_ARCHIPEL_HYPERVISOR_CONTROL = "trinity:hypervisor:control"
+NS_ARCHIPEL_HYPERVISOR_CONTROL = "archipel:hypervisor:control"
 
 
 class TNThreadedVirtualMachine(Thread):
@@ -122,7 +122,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
+        self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
         TNArchipelBasicXMPPClient.register_handler(self)
     
  
@@ -306,7 +306,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ### XMPP Processing
     ######################################################################################################
     
-    def __process_iq_trinity_control(self, conn, iq):
+    def __process_iq_archipel_control(self, conn, iq):
         """
         this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
         

@@ -18,8 +18,8 @@
 
 @import "TNDatasourceNetworkInterfaces.j"
 
-trinityTypeHypervisorNetwork            = @"trinity:hypervisor:network";
-trinityTypeHypervisorNetworkList        = @"list";
+TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
+TNArchipelTypeHypervisorNetworkList        = @"list";
 
 @implementation TNWindowNicEdition : CPWindow
 {
@@ -29,9 +29,9 @@ trinityTypeHypervisorNetworkList        = @"list";
     @outlet CPPopUpButton   buttonSource        @accessors;
     @outlet CPRadioGroup    radioNetworkType    @accessors;
     
-    TNStropheContact                contact     @accessors;
-    TNNetworkInterface              nic         @accessors;
-    CPTableView                     table       @accessors;
+    TNStropheContact        entity      @accessors;
+    TNNetworkInterface      nic         @accessors;
+    CPTableView             table       @accessors;
 }
 
 - (void)awakeFromCib
@@ -86,7 +86,6 @@ trinityTypeHypervisorNetworkList        = @"list";
 - (IBAction)save:(id)sender
 {
     [nic setMac:[[self fieldMac] stringValue]];
-    // [nic setType:[[self buttonType] title]];
     [nic setModel:[[self buttonModel] title]];
     [nic setSource:[[self buttonSource] title]];
     
@@ -95,14 +94,11 @@ trinityTypeHypervisorNetworkList        = @"list";
 
 - (void)getHypervisorNetworks
 {
-    var uid             = [[[self contact] connection] getUniqueId];
-    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorNetwork, "to": [[self contact] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}];
         
-    [networksStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorNetworkList}];
+    [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkList}];
     
-    [[[self contact] connection] registerSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self withDict:params];
-    [[[self contact] connection] send:networksStanza];
+    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 

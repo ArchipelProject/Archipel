@@ -23,7 +23,7 @@ import commands
 import xmpp
 import os
 
-NS_ARCHIPEL_VM_DISK = "trinity:vm:disk"
+NS_ARCHIPEL_VM_DISK = "archipel:vm:disk"
 
 
 ######################################################################################################
@@ -35,13 +35,13 @@ def __module_init__disk_management(self):
     self.shared_isos_folder = self.configuration.get("Module Disks", "iso_base_path") + "/"
     
 def __module_register_stanza__disk_management(self):
-    self.xmppclient.RegisterHandler('iq', self.__process_iq_trinity_disk, typ=NS_ARCHIPEL_VM_DISK)
+    self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_disk, typ=NS_ARCHIPEL_VM_DISK)
 
 ######################################################################################################
 ### Disk definition
 ######################################################################################################
 
-def __process_iq_trinity_disk(self, conn, iq):
+def __process_iq_archipel_disk(self, conn, iq):
     """
     Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
     
@@ -268,7 +268,7 @@ def __networkstats(self, iq):
 
 setattr(archipel.TNArchipelVirtualMachine, "__module_init__disk_management", __module_init__disk_management)
 setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__disk_management", __module_register_stanza__disk_management)
-setattr(archipel.TNArchipelVirtualMachine, "__process_iq_trinity_disk", __process_iq_trinity_disk)
+setattr(archipel.TNArchipelVirtualMachine, "__process_iq_archipel_disk", __process_iq_archipel_disk)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_create", __disk_create)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_delete", __disk_delete)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_get", __disk_get)

@@ -18,7 +18,7 @@
 
 @import "TNDatasourceDrives.j"
 
-trinityTypeVirtualMachineDisk       = @"trinity:vm:disk";
+trinityTypeVirtualMachineDisk       = @"archipel:vm:disk";
 
 trinityTypeVirtualMachineDiskGet    = @"get";
 trinityTypeVirtualMachineISOGet     = @"getiso";
@@ -33,7 +33,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
     TNNetworkDrive          drive           @accessors;
     CPTableView             table           @accessors;
-    TNStropheContact        contact         @accessors;
+    TNStropheContact        entity          @accessors;
 }
 
 
@@ -67,7 +67,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 }
 
 - (void)orderFront:(id)sender
-{   
+{
     if (![self isVisible])
     {
         for (var i = 0; i < [[radioDriveType radios] count]; i++)
@@ -133,14 +133,11 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
 -(void)getDisksInfo
 {
-    var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk}];
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
 
-    [[[self contact] connection] registerSelector:@selector(didReceiveDisksInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:infoStanza];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:)];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza 
@@ -169,14 +166,11 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
 -(void)getISOsInfo
 {
-    var uid = [[[self contact] connection] getUniqueId];
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk, "to": [[self contact] fullJID], "id": uid}];
-    var params = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk}];
+    
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineISOGet}];
-
-    [[[self contact] connection] registerSelector:@selector(didReceiveISOsInfo:) ofObject:self withDict:params];
-    [[[self contact] connection] send:infoStanza];
+    
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:)];
 }
 
 - (void)didReceiveISOsInfo:(id)aStanza 
