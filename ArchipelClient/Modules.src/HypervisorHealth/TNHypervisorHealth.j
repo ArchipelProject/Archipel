@@ -59,6 +59,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
     
     CPTimer                     _timer;
     CPNumber                    _timerInterval;
+    CPNumber                    _statsHistoryCollectionSize;
     
     id  _healthHistoryRegisteredActionID;
     id  _healthInfoRegisteredActionID;
@@ -89,12 +90,15 @@ trinityTypeHypervisorHealthHistory          = @"history";
     [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
+    
+    var moduleBundle = [CPBundle bundleForClass:[self class]]
+    _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"RefreshStatsInterval"];
+    _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"StatsHistoryCollectionSize"];
 }
 
 
 - (void)willLoad
 {
-    _timerInterval = 5;
     _healthHistoryRegisteredActionID    = nil;
     _healthInfoRegisteredActionID       = nil;
     
@@ -207,7 +211,7 @@ trinityTypeHypervisorHealthHistory          = @"history";
     var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type": trinityTypeHypervisorHealth, "to": [[self contact] fullJID], "id": uid}];
     var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": 50}];
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : trinityTypeHypervisorHealthHistory, "limit": _statsHistoryCollectionSize}];
     
     _healthHistoryRegisteredActionID = [[self connection] registerSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self withDict:params];
     [[self connection] send:rosterStanza];

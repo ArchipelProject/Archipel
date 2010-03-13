@@ -4,7 +4,6 @@ functionalities or others common stuffs
 """
 import sys
 import datetime
-import ctypes
 import ConfigParser
 
 LOG_LEVEL_DEBUG = 0
@@ -32,19 +31,51 @@ this list gives the name of log level
     INFO
 """
 
-ARCHIPEL_MODULES_AUTO_LOAD =  True;
-
 
 COLOR_WHITE = u'\033[0m'
+"""
+terminal white color
+"""
 COLOR_ERROR = u'\033[31m'
+"""
+terminal color for error logs
+"""
 COLOR_INFO  = u'\033[33m'
+"""
+terminal color for info logs
+"""
 COLOR_DEBUG = u'\033[36m'
+"""
+terminal color for debug logs
+"""
+
+
 COLOR_CLASS_HYPERVISOR      = u'\033[32m'
+"""
+color for logs written by TNArchipelHypervisor
+"""
 COLOR_CLASS_VIRTUALMACHINE  = u'\033[34m'
+"""
+color for logs written by TNArchipelVirtualMachine
+"""
+
+COLORING_MAPPING_CLASS      = { "TNArchipelVirtualMachine": COLOR_CLASS_VIRTUALMACHINE, 
+                                "TNArchipelHypervisor": COLOR_CLASS_HYPERVISOR , 
+                                "TNArchipelHypervisor": COLOR_CLASS_HYPERVISOR}
 
 
+COLORING_MAPPING_LOG_LEVEL  = { LOG_LEVEL_INFO: COLOR_INFO, 
+                                LOG_LEVEL_DEBUG: COLOR_DEBUG, 
+                                LOG_LEVEL_ERROR: COLOR_ERROR}
 
 def init_conf(path):
+    """
+    this method intialize the configuration object (that will be passed to all 
+    entities) from a given path
+    @type path: string
+    @param path: teh path of the config file to read
+    @return : the ConfigParser object containing the configuration
+    """
     conf = ConfigParser.ConfigParser()
     conf.readfp(open(path))
     logging_level = conf.get("Logging", "logging_level")
@@ -63,49 +94,53 @@ def init_conf(path):
 def log(logger, level, message) :
     """
     this method is used to handle logging event.
-
+    
     example :
         >>> log(self, LOG_LEVEL_INFO, "ressource defined as virt-hyperviseur")
         [INFO ] 2010-02-01 21:29:12.258505 TrinityHypervisor.__init__[12447696] : ressource defined as virt-hyperviseur
-        
     
     @type level: string
     @param level: the log level according to the value of L{LOG_DICT}
     @type message: string
     @param message: the message body to enter
     """
-    if level >= LOG_LEVEL:
-        class_name = logger.__class__.__name__
-        class_id = str(id(logger))
-        function_name = sys._getframe(1).f_code.co_name
-        
-        if level == LOG_LEVEL_INFO:
-            color_head = COLOR_INFO
-        elif level == LOG_LEVEL_DEBUG:
-            color_head = COLOR_DEBUG
-        elif level == LOG_LEVEL_ERROR:
-            color_head = COLOR_ERROR
-        
-        color_class = COLOR_WHITE
-        if class_name == "TNArchipelVirtualMachine":
-            color_class = COLOR_CLASS_VIRTUALMACHINE
-        elif class_name == "TNArchipelHypervisor":
-            color_class = COLOR_CLASS_HYPERVISOR
+    if level < LOG_LEVEL:
+        return;
+    
+    class_name      = logger.__class__.__name__
+    class_id        = str(id(logger))
+    function_name   = sys._getframe(1).f_code.co_name
+    current_date    = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    color_class     = COLOR_WHITE
+    
+    for match, color in COLORING_MAPPING_LOG_LEVEL.items():
+        if match == level:
+            color_head = color
+            break
+    
+    for match, color in COLORING_MAPPING_CLASS.items():
+        if class_name == match:
+            color_class = color
+            break
             
-        entry = "{6}[{0}]{7}\t{1} [{4}] {8}{2}.{3}{7}: {5}\033[0m".format(LOG_DICT[level], 
-                                                        datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), 
-                                                        class_name,
-                                                        function_name,
-                                                        class_id, 
-                                                        message.lower(),
-                                                        color_head,
-                                                        COLOR_WHITE,
-                                                        color_class)
-        if LOG_WRITE_IN_STDOUT:
-            print entry
-        if LOG_WRITE_IN_FILE:
-            f = open(LOG_WRITE_IN_FILE, "a+")
-            f.write(entry + "\n")
+    # TODO : add a some system to handle colouring management by modules.
+    
+    
+    entry = "{6}[{0}]{7}\t{1} [{4}] {8}{2}.{3}{7}: {5}".format( LOG_DICT[level], 
+                                                                current_date, 
+                                                                class_name,
+                                                                function_name,
+                                                                class_id, 
+                                                                message.lower(),
+                                                                color_head,
+                                                                COLOR_WHITE,
+                                                                color_class)
+    if LOG_WRITE_IN_STDOUT:
+        print entry
+        
+    if LOG_WRITE_IN_FILE:
+        f = open(LOG_WRITE_IN_FILE, "a+")
+        f.write(entry + "\n")
 
 
             

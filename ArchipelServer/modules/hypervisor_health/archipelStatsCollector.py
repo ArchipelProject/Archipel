@@ -81,6 +81,7 @@ class TNThreadedHealthCollector(Thread):
         for values in cpustat_cursor:
             date, idle = values
             cpu_stats.append({"date": date, "id": idle})
+        cpustat_cursor.close();
         
         memstat_cursor = tempdatabase.cursor();
         memstat_cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
@@ -88,6 +89,7 @@ class TNThreadedHealthCollector(Thread):
         for values in memstat_cursor:
             date, free, used, total, swapped = values
             memory_stats.append({"date": date, "free": free, "used" : used, "total": total, "swapped": swapped})
+        memstat_cursor.close();
         
         diskstat_cursor = tempdatabase.cursor();
         diskstat_cursor.execute("select * from disk order by collection_date desc limit " + str(limit))
@@ -95,6 +97,7 @@ class TNThreadedHealthCollector(Thread):
         for values in diskstat_cursor:
             date, total, used, free, free_percentage = values
             disk_stats.append({"date": date, "total": total, "used": used, "free": free, "free_percentage": free_percentage})
+        diskstat_cursor.close();
         
         loadstat_cursor = tempdatabase.cursor();
         loadstat_cursor.execute("select * from load order by collection_date desc limit " + str(limit))
@@ -102,6 +105,7 @@ class TNThreadedHealthCollector(Thread):
         for values in loadstat_cursor:
             date, one, five, fifteen = values
             load_stats.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
+        loadstat_cursor.close();
         
         # uptime
         # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,3,0))
