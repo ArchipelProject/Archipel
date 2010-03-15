@@ -141,17 +141,9 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-<<<<<<< local
-    // will be refactored
-    var uid             = [[self connection] getUniqueId];
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
-    var params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-=======
-    //var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorHealth, "to": [[self entity] fullJID], "id": uid}];
-   var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorHealth}];
-   
+    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorHealth}];
+    
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthInfo}];
->>>>>>> other
     
     [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:) ofObject:self];
 }
