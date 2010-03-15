@@ -5,4 +5,4 @@ ArchipelClient/Frameworks
 ArchipelClient/Build
 ArchipelClient/Documentation
 *Build
-Modules/
+Modules/*
