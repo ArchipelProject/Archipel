@@ -126,7 +126,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (void)getHypervisorRoster
 {
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
         
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
     
@@ -147,7 +147,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         
         if (entry) 
         {
-           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] != "hypervisor")
+           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
            {
                 [[self virtualMachinesDatasource] addVM:entry];
                 [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
