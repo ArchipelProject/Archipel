@@ -18,7 +18,7 @@
 
 ARCHIPEL_CLIENT_BUILD_DIR="ArchipelClient/Build/release/Archipel"
 ARCHIPEL_CLIENT_BUILD_COMMAND="ArchipelClient/build.py release"
-PUBLICATION_DIR="/Users/Tonio/Desktop/"
+PUBLICATION_DIR="/var/www/html/"
 PUBLICATION_OWNER="apache:apache"
 PUBLICATION_RIGHTS="755"
 
@@ -36,4 +36,4 @@ else
     echo build failed.
 fi
 
-exit RESULT
+exit $RESULT
