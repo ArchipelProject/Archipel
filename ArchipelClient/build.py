@@ -3,7 +3,9 @@ import os, sys, commands, shutil;
 
 config = "Release"
 
+really_base_path = commands.getoutput("pwd");
 
+base_path = os.system("cd " + sys.path[0])
 
 modules_base_paths = "./Modules.src/"
 modules_paths = [];
@@ -27,7 +29,7 @@ else:
     modules_paths.append(".")
     build_paths = modules_paths;
 
-base_path = commands.getoutput("pwd");
+
 print "# base path is " + base_path + postfix;
 
 os.system("rm -rf ./Modules/*")
@@ -60,4 +62,4 @@ if os.path.isdir("./Build/"+config+"/Archipel/"):
     os.chdir("./Build/"+config+"/Archipel/")
     os.system("cp -a ../../../Modules Modules");
 
-    
+os.system("cd " + really_base_path);   
