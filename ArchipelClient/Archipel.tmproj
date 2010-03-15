@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/VirtualMachineDefinition/TNVirtualMachineDefinition.j</string>
+	<string>build.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -428,14 +428,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>200</integer>
+				<integer>144</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>62</integer>
+			<integer>122</integer>
 		</dict>
 		<key>Modules.src/HypervisorNetworks/Jakefile</key>
 		<dict>
@@ -854,30 +854,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>11</integer>
+				<integer>58</integer>
 				<key>line</key>
 				<integer>562</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>541</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>8</integer>
-				<key>line</key>
-				<integer>562</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>11</integer>
-				<key>line</key>
-				<integer>562</integer>
-			</dict>
 		</dict>
 		<key>Modules.src/VirtualMachineDefinition/TNWindowDriveEdition.j</key>
 		<dict>
@@ -1444,14 +1428,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>32</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>27</integer>
+				<integer>44</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>19</integer>
+			<integer>24</integer>
 		</dict>
 		<key>index-debug.html</key>
 		<dict>
@@ -1618,6 +1602,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{26, 70}, {1005, 808}}</string>
+	<string>{{111, 60}, {1005, 808}}</string>
 </dict>
 </plist>

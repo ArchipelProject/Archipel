@@ -1,7 +1,9 @@
 #!/usr/bin/python
 import os, sys, commands, shutil;
 
-config = "Release"
+config = "release"
+if "debug" in sys.argv:
+    config = "debug"
 
 really_base_path = commands.getoutput("pwd");
 os.system("export PATH=/usr/local/narwhal/bin:$PATH");
@@ -37,29 +39,33 @@ for path in build_paths:
     if not "keep" in sys.argv:
         print "# removing " + path + "/Build/"
         shutil.rmtree("./Build/", ignore_errors=True);
-    
+
+    code = 0;
     if not "clean" in sys.argv:
         print "# jaking..."
         code = os.system("export CONFIG="+config+";jake");
+        print "# Build result " + str(code)
         
-        if not code == 0:
-            sys.exit(code)
+        if not str(code) == "0":
+            print "# Error in build : " + str(code)
+            sys.exit("error during build")
 
         if path != ".":
             print "# linking module"
             os.chdir(base_path + "/Modules")
             os.system("rm -f " +  path.split("/")[-1]);
-            os.system("cp -a ../" + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
+            os.system("cp -a " + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
     
     print "# get back to " + base_path
     os.chdir(base_path);
 
 os.system("cp ./Modules.src/modules.plist ./Modules")
 
-if os.path.isdir("./Build/"+config+"/Archipel/"):
-    print "# linking main module directory to the main Build"
-    os.chdir("./Build/"+config+"/Archipel/")
-    os.system("cp -a ../../../Modules Modules");
+build_dir= base_path + "/Build/"+config+"/Archipel/"
+if os.path.isdir(build_dir):
+    print "# Copying modules to the build " + base_path + " -> " + build_dir
+    os.chdir(base_path +"/Build/"+config+"/Archipel/")
+    os.system("cp -a "+base_path+"/Modules "+build_dir+"/");
 
 os.system("cd " + really_base_path); 
 

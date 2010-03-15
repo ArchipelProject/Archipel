@@ -135,7 +135,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 {
     if ([aNotification object] == [self entity])
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]] 
+       [[self fieldName] setStringValue:[[self entity] nickname]]
     }
 }
 
