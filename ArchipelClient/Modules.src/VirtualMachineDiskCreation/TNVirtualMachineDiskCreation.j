@@ -128,7 +128,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza 
@@ -205,7 +205,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addTextNode:dUnit];
     [diskStanza up];
     
-    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:)];
+    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
     
     [[self fieldNewDiskName] setStringValue:@""];
     [[self fieldNewDiskSize] setStringValue:@""];
@@ -232,7 +232,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:[dName path]];
     
-    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:)];
+    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
 }
 
 - (void)didRemoveDisk:(id)aStanza

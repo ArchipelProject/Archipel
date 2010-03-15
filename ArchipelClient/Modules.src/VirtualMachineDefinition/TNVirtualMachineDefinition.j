@@ -266,7 +266,7 @@ function generateMacAddr()
         
     [xmldescStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc}];
     
-    [[self entity] sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:)];
+    [[self entity] sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza 
@@ -460,7 +460,7 @@ function generateMacAddr()
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
     
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -560,9 +560,10 @@ function generateMacAddr()
 // action XML desc
 - (IBAction)defineXML:(id)sender
 {
-    var defineStanza = [self generateXMLDescStanzaWithUniqueID:uid];
+    var uid             = [[self connection] getUniqueId];
+    var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
     
-    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:)];
+    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
 

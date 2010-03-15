@@ -98,7 +98,7 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
         
     [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkList}];
     
-    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
+    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 
@@ -116,7 +116,7 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
     }
     else
     {
-        console.log("ERROR");
+        CPLog.debug("ERROR");
     }
 }
 

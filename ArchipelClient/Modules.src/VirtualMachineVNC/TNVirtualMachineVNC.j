@@ -81,7 +81,7 @@ VIR_DOMAIN_RUNNING	                        =	1;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
     
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -107,7 +107,7 @@ VIR_DOMAIN_RUNNING	                        =	1;
     
     [vncStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
     
-    [[self entity] sendStanza:vncStanza andRegisterSelector:@selector(didReceiveVNCDisplay:)];
+    [[self entity] sendStanza:vncStanza andRegisterSelector:@selector(didReceiveVNCDisplay:) ofObject:self];
 }
 
 - (void)didReceiveVNCDisplay:(id)aStanza 

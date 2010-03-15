@@ -55,7 +55,7 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
         [params setValue:aPushType forKey:@"namespace"];
         [params setValue:{"matchBare": YES} forKey:@"options"];
 
-        var pushSelectorId = [[self connection] registerSelector:@selector(didSubscriptionPushReceived:) ofObject:self withDict:params];
+        var pushSelectorId = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
 
         [_registredSelectors addObject:pushSelectorId];
     }
@@ -91,20 +91,17 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     
 }
 
-- (id)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
-{
-    var uid     = [[self connection] getUniqueId];
-    var params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-    var ret     = nil;
-    
-    if (aSelector)
-    {
-        ret = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
-        [_registredSelectors addObject:ret];
-    }
-    
-    [[self connection] send:aStanza];
-
-    return ret;
-}
+// - (id)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
+// {
+//     var uid     = [[self connection] getUniqueId];
+//     var params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
+//     var ret     = nil;
+//     
+//     ret = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
+//     [_registredSelectors addObject:ret];
+//     
+//     [[self connection] send:aStanza];
+// 
+//     return ret;
+// }
 @end

@@ -137,7 +137,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza 
@@ -170,7 +170,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineISOGet}];
     
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
 - (void)didReceiveISOsInfo:(id)aStanza 

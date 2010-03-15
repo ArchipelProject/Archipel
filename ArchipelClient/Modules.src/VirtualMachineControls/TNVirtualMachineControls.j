@@ -156,7 +156,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
     
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
+    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza 
@@ -222,7 +222,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlCreate}];
     [sender setEnabled:NO];
     
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didPlay:)];
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
 - (IBAction)pause:(id)sender
@@ -245,7 +245,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
         [sender setTitle:@"Resume"];
     }
     
-    [[self entity] sendStanza:controlStanza andRegisterSelector:selector];
+    [[self entity] sendStanza:controlStanza andRegisterSelector:selector ofObject:self];
 }
 
 - (IBAction)stop:(id)sender
@@ -255,7 +255,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
     [sender setEnabled:NO];
     
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didStop:)];
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
 }
 
 - (IBAction)reboot:(id)sender
@@ -265,7 +265,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
     [sender setEnabled:NO];
     
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didReboot:)];
+    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }
 
 // did Actions done selectors

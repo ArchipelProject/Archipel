@@ -130,7 +130,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
     
-    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:)];
+    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -173,7 +173,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [creationStanza addChildName:@"jid"];
     [creationStanza addTextNode:uuid];
     
-    [[self entity] sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
+    [[self entity] sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:) ofObject:self];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -230,7 +230,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         
         [[self roster] removeContact:[vm jid]];
         
-        [[self entity] sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:)];
+        [[self entity] sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
     }
     else
     {

@@ -30,6 +30,8 @@ else:
 base_path = commands.getoutput("pwd");
 print "# base path is " + base_path + postfix;
 
+os.system("rm -rf ./Modules/*")
+
 for path in build_paths:
     print "# moving to " + path + postfix;
     os.chdir(path);
@@ -46,16 +48,16 @@ for path in build_paths:
             print "# linking module" + postfix;
             os.chdir(base_path + "/Modules")
             os.system("rm -f " +  path.split("/")[-1]);
-            os.system("ln -s ../" + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
+            os.system("cp -a ../" + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);
     
     print "# get back to " + base_path + postfix;
     os.chdir(base_path);
 
-
+os.system("cp ./Modules.src/modules.plist ./Modules")
 
 if os.path.isdir("./Build/"+config+"/Archipel/"):
     print "# linking main module directory to the main Build" + postfix
     os.chdir("./Build/"+config+"/Archipel/")
-    os.system("ln -s ../../../Modules Modules");
+    os.system("cp -a ../../../Modules Modules");
 
     

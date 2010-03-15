@@ -122,7 +122,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     
     [networksStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkList}];
     
-    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
+    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza 
@@ -304,14 +304,15 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
+    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:) ofObject:self];
 }
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
 {
-    var defineStanza = [self generateXMLNetworkStanzaWithUniqueID:uid];
+    var uid             = [[self connection] getUniqueId];
+    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
     
-    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:)];
+    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:) ofObject:self withSpecificID:uid];
 }
 
 - (void)didDefineNetwork:(TNStropheStanza)aStanza
@@ -343,7 +344,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         
     [activeStanza addTextNode:[networkObject UUID]];
     
-    [[self entity] sendStanza:activeStanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+    [[self entity] sendStanza:activeStanza andRegisterSelector:@selector(didNetworkStatusChange:) ofObject:self];
 }
 
 - (void)didNetworkStatusChange:(TNStropheStanza)aStanza
@@ -398,7 +399,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}]; 
     [deleteStanza addTextNode:[networkObject UUID]];
     
-    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
+    [[self entity] sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:) ofObject:self];
 }
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza
