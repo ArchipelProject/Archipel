@@ -4,7 +4,7 @@ import os, sys, commands, shutil;
 config = "Release"
 
 really_base_path = commands.getoutput("pwd");
-
+os.system("export PATH=/usr/local/narwhal/bin:$PATH");
 base_path =  sys.path[0]
 commands.getoutput("cd " + sys.path[0])
 
