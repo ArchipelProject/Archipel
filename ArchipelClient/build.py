@@ -44,8 +44,11 @@ for path in build_paths:
     
     if not "clean" in sys.argv:
         print "# jaking..." + postfix;
-        os.system("export CONFIG="+config+";jake");
-    
+        code = os.system("export CONFIG="+config+";jake");
+        
+        if not code == 0:
+            sys.exit(code)
+
         if path != ".":
             print "# linking module" + postfix;
             os.chdir(base_path + "/Modules")
@@ -62,4 +65,6 @@ if os.path.isdir("./Build/"+config+"/Archipel/"):
     os.chdir("./Build/"+config+"/Archipel/")
     os.system("cp -a ../../../Modules Modules");
 
-os.system("cd " + really_base_path);   
+os.system("cd " + really_base_path); 
+
+sys.exit(0)
