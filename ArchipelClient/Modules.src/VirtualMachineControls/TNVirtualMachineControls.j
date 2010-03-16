@@ -240,8 +240,8 @@ VIR_DOMAIN_CRASHED	                        =	6;
     else
     {
         selector = @selector(didPause:)
-
-        [self sendVirtualMachineControl:TNArchipelTypeVirtualMachineControlResume withSelector:@selector(didPause:) ofObject:self];
+        
+        [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlResume}];
         [sender setTitle:@"Resume"];
     }
     
