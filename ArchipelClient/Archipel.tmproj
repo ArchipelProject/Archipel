@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>build.py</string>
+	<string>AppController.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -26,14 +26,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>28</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>73</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>218</integer>
+			<integer>67</integer>
 		</dict>
 		<key>Archipel.doxygen</key>
 		<dict>
@@ -554,14 +554,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>83</integer>
 				<key>line</key>
-				<integer>163</integer>
+				<integer>149</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>107</integer>
+			<integer>128</integer>
 		</dict>
 		<key>Modules.src/SampleModule/Info.plist</key>
 		<dict>
@@ -1602,6 +1602,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{111, 60}, {1005, 808}}</string>
+	<string>{{84, -265}, {1005, 808}}</string>
 </dict>
 </plist>

@@ -241,7 +241,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     {
         selector = @selector(didPause:)
 
-        [self sendVirtualMachineControl:TNArchipelTypeVirtualMachineControlResume withSelector:@selector(didPause:)];
+        [self sendVirtualMachineControl:TNArchipelTypeVirtualMachineControlResume withSelector:@selector(didPause:) ofObject:self];
         [sender setTitle:@"Resume"];
     }
     
