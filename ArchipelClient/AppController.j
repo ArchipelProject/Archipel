@@ -71,7 +71,7 @@ TNArchipelEntityTypeUser            = @"user";
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
     //hide main window
-    [theWindow orderOut:nil;
+    [theWindow orderOut:nil];
     
     // toolbar
     _hypervisorToolbar = [[TNToolbar alloc] initWithTarget:self];
