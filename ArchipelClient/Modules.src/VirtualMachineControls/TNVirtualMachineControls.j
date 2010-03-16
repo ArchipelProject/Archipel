@@ -241,7 +241,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
     {
         selector = @selector(didPause:)
         
-        [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlResume}];
+        [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlSuspend}];
         [sender setTitle:@"Resume"];
     }
     
