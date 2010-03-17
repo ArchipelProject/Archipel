@@ -24,13 +24,13 @@
 @import "TNWindowNicEdition.j";
 @import "TNWindowDriveEdition.j";
 
-trinityTypeVirtualMachineControl            = @"archipel:vm:control";
-trinityTypeVirtualMachineDefinition         = @"archipel:vm:definition";
+TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineDefinition         = @"archipel:vm:definition";
 
-trinityTypeVirtualMachineControlXMLDesc         = @"xmldesc";
-trinityTypeVirtualMachineControlInfo            = @"info";
-trinityTypeVirtualMachineDefinitionDefine       = @"define";
-trinityTypeVirtualMachineDefinitionUndefine     = @"undefine";
+TNArchipelTypeVirtualMachineControlXMLDesc         = @"xmldesc";
+TNArchipelTypeVirtualMachineControlInfo            = @"info";
+TNArchipelTypeVirtualMachineDefinitionDefine       = @"define";
+TNArchipelTypeVirtualMachineDefinitionUndefine     = @"undefine";
 
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
@@ -40,8 +40,39 @@ VIR_DOMAIN_SHUTDOWN	                        =	4;
 VIR_DOMAIN_SHUTOFF	                        =	5;
 VIR_DOMAIN_CRASHED	                        =	6;
 
-TNXMLDescBootHardDrive  = @"Hard Drive";
-TNXMLDescBootCDROM      = @"CD-Rom";
+TNXMLDescBootHardDrive      = @"hd";
+TNXMLDescBootCDROM          = @"cdrom";
+TNXMLDescBootNetwork        = @"network";
+TNXMLDescBootFileDescriptor = @"fd";
+TNXMLDescBoots              = [ TNXMLDescBootHardDrive, TNXMLDescBootCDROM, 
+                                TNXMLDescBootNetwork, TNXMLDescBootFileDescriptor];
+
+
+TNXMLDescArchx64            = @"x86_64";
+TNXMLDescArchi686           = @"i686";
+TNXMLDescArchs              = [TNXMLDescArchx64, TNXMLDescArchi686];
+
+
+TNXMLDescHypervisorKVM          = @"kvm";
+TNXMLDescHypervisorXen          = @"xen";
+TNXMLDescHypervisorOpenVZ       = @"openvz";
+TNXMLDescHypervisorQemu         = @"qemu";
+TNXMLDescHypervisorKQemu        = @"kqemu";
+TNXMLDescHypervisorLXC          = @"lxc";
+TNXMLDescHypervisorUML          = @"uml";
+TNXMLDescHypervisorVBox         = @"vbox";
+TNXMLDescHypervisorVMWare       = @"vmware";
+TNXMLDescHypervisorOpenNebula   = @"one";
+TNXMLDescHypervisors            = [ TNXMLDescHypervisorKVM, TNXMLDescHypervisorXen, 
+                                    TNXMLDescHypervisorOpenVZ, TNXMLDescHypervisorQemu, 
+                                    TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC,
+                                    TNXMLDescHypervisorUML, TNXMLDescHypervisorVBox, 
+                                    TNXMLDescHypervisorVMWare, TNXMLDescHypervisorOpenNebula];
+
+TNXMLDescVNCKeymapFR            = @"fr";
+TNXMLDescVNCKeymapEN_US         = @"en-us";
+TNXMLDescVNCKeymaps             = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR];
+
 
 function generateMacAddr()
 {
@@ -185,10 +216,9 @@ function generateMacAddr()
     [[self buttonHypervisor] removeAllItems];
     [[self buttonVNCKeymap] removeAllItems];
     
-    var bootTypes = [TNXMLDescBootHardDrive, TNXMLDescBootCDROM];
-    for (var i = 0; i < bootTypes.length; i++)
+    for (var i = 0; i < TNXMLDescBoots.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:bootTypes[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescBoots[i] action:nil keyEquivalent:nil];
         [[self buttonBoot] addItem:item];
     }
     
@@ -199,24 +229,21 @@ function generateMacAddr()
         [[self buttonNumberCPUs] addItem:item];
     }
     
-    var archTypes = ["x86_64", "i686"];
-    for (var i = 0; i < archTypes.length; i++)
+    for (var i = 0; i < TNXMLDescArchs.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:archTypes[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescArchs[i] action:nil keyEquivalent:nil];
         [[self buttonArchitecture] addItem:item];
     }
     
-    var hypervisorsTypes = ["kvm", "xen", "openvz", "qemu", "kqemu", "lxc", "uml", "vbox", "vmware", "one"];
-    for (var i = 0; i < hypervisorsTypes.length; i++)
+    for (var i = 0; i < TNXMLDescHypervisors.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:hypervisorsTypes[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescHypervisors[i] action:nil keyEquivalent:nil];
         [[self buttonHypervisor] addItem:item];
     }
     
-    var vncKeymaps = ["en-us", "fr"];
-    for (var i = 0; i < vncKeymaps.length; i++)
+    for (var i = 0; i < TNXMLDescVNCKeymaps.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:vncKeymaps[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescVNCKeymaps[i] action:nil keyEquivalent:nil];
         [[self buttonVNCKeymap] addItem:item];
     }
 }
@@ -244,8 +271,8 @@ function generateMacAddr()
     
     [[self fieldMemory] setStringValue:@""];
     [[self buttonNumberCPUs] selectItemWithTitle:@"1"];
-    [[self buttonArchitecture] selectItemWithTitle:@"kvm"];
-    [[self buttonArchitecture] selectItemWithTitle:@"x86_64"];
+    [[self buttonArchitecture] selectItemWithTitle:TNXMLDescHypervisorKVM];
+    [[self buttonArchitecture] selectItemWithTitle:TNXMLDescArchx64];
     
     [[self buttonBoot] selectItemWithTitle:TNXMLDescBootHardDrive];
     
@@ -262,9 +289,9 @@ function generateMacAddr()
 //  XML Desc
 - (void)getXMLDesc
 {
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl}];
+    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
         
-    [xmldescStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlXMLDesc}];
+    [xmldescStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlXMLDesc}];
     
     [[self entity] sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
@@ -354,14 +381,14 @@ function generateMacAddr()
     var arch        = [[self buttonArchitecture] title];
     var hypervisor  = [[self buttonHypervisor] title];
     var nCPUs       = [[self buttonNumberCPUs] title];
-    var boot        = ([[self buttonBoot] title] == TNXMLDescBootHardDrive) ? @"hd" : @"cdrom";
+    var boot        = [[self buttonBoot] title];
     var nics        = [[self nicsDatasource] nics];
     var drives      = [[self drivesDatasource] drives];
     
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDefinition, "to": [[self entity] fullJID], "id": anUid}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [[self entity] fullJID], "id": anUid}];
     
-    [stanza addChildName:@"query" withAttributes:{"type": trinityTypeVirtualMachineDefinitionDefine}];
+    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
     [stanza addChildName:@"name"];
@@ -409,13 +436,13 @@ function generateMacAddr()
     
     [stanza addChildName:@"devices"];
     
-    if (hypervisor == @"kvm")
+    if (hypervisor == TNXMLDescHypervisorKVM)
     {
         [stanza addChildName:@"emulator"];
         [stanza addTextNode:@"/usr/bin/kvm"];
         [stanza up];
     }
-    if (hypervisor == @"qemu")
+    if (hypervisor == TNXMLDescHypervisorQemu)
     {
         [stanza addChildName:@"emulator"];
         [stanza addTextNode:@"/usr/bin/qemu"];
@@ -454,7 +481,8 @@ function generateMacAddr()
     [stanza addChildName:@"input" withAttributes:{"bus": "ps2", "type": "mouse"}];
     [stanza up];
     
-    if (hypervisor == "kvm" || hypervisor == "qemu" || hypervisor == "kqemu" || hypervisor == "xen")
+    if (hypervisor == TNXMLDescHypervisorKVM || hypervisor == TNXMLDescHypervisorQemu  
+        || hypervisor == TNXMLDescHypervisorKQemu || hypervisor == TNXMLDescHypervisorXen)
     {
         [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1", "keymap": [[self buttonVNCKeymap] title]}];
         [stanza up];
@@ -469,9 +497,9 @@ function generateMacAddr()
 
 - (void)getVirtualMachineInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineControl}];    
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];    
     
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineControlInfo}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
     
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }

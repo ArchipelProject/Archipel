@@ -18,10 +18,35 @@
 
 @import "TNDatasourceDrives.j"
 
-trinityTypeVirtualMachineDisk       = @"archipel:vm:disk";
+TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
 
-trinityTypeVirtualMachineDiskGet    = @"get";
-trinityTypeVirtualMachineISOGet     = @"getiso";
+TNArchipelTypeVirtualMachineDiskGet    = @"get";
+TNArchipelTypeVirtualMachineISOGet     = @"getiso";
+
+TNXMLDescDiskType   = @"file";
+TNXMLDescDiskTypes  = [TNXMLDescDiskType];
+
+TNXMLDescDiskTargetHda  = @"hda";
+TNXMLDescDiskTargetHdb  = @"hdb";
+TNXMLDescDiskTargetHdc  = @"hdc";
+TNXMLDescDiskTargetHdd  = @"hdd";
+TNXMLDescDiskTargetSda  = @"sda";
+TNXMLDescDiskTargetSdb  = @"sdb";
+TNXMLDescDiskTargetSdc  = @"sdc";
+TNXMLDescDiskTargetSdd  = @"sdd";
+TNXMLDescDiskTargets        = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
+                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd,
+                                TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
+                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd];
+TNXMLDescDiskTargetsIDE     = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
+                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd];
+TNXMLDescDiskTargetsSCSI    = [ TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
+                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd]
+
+TNXMLDescDiskBusIDE     = @"ide";
+TNXMLDescDiskBusSCSI    = @"scsi";
+TNXMLDescDiskBusVIRTIO  = @"virtio";
+TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescDiskBusVIRTIO];
 
 @implementation TNWindowDriveEdition : CPWindow
 {
@@ -44,24 +69,21 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
     [[self buttonBus] removeAllItems];
     [[self buttonSource] removeAllItems];
     
-    var types = ["file"];
-    for (var i = 0; i < types.length; i++)
+    for (var i = 0; i < TNXMLDescDiskTypes.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:types[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTypes[i] action:nil keyEquivalent:nil];
         [[self buttonType] addItem:item];
     }
     
-    var targets = ["hda", "hdb", "hdc", "hdd", "sda", "sdb", "sdc", "sdd"];
-    for (var i = 0; i < targets.length; i++)
+    for (var i = 0; i < TNXMLDescDiskTargetsIDE.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:targets[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTargetsIDE[i] action:nil keyEquivalent:nil];
         [[self buttonTarget] addItem:item];
     }
     
-    var buses = ["ide", "sata"];
-    for (var i = 0; i < buses.length; i++)
+    for (var i = 0; i < TNXMLDescDiskBuses.length; i++)
     {
-        var item = [[CPMenuItem alloc] initWithTitle:buses[i] action:nil keyEquivalent:nil];
+        var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskBuses[i] action:nil keyEquivalent:nil];
         [[self buttonBus] addItem:item];
     }
 }
@@ -85,13 +107,49 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
         [[self buttonType] selectItemWithTitle:[drive type]];
         [[self buttonTarget] selectItemWithTitle:[drive target]];
         [[self buttonBus] selectItemWithTitle:[drive bus]];
+        
+        if ([drive device] == @"disk")
+            [[[[self radioDriveType] radios] objectAtIndex:0] setState:CPOnState];
+        else if ([drive device] == @"cdrom")
+            [[[[self radioDriveType] radios] objectAtIndex:1] setState:CPOnState];
+
+        [self performRadioDriveTypeChanged:[self radioDriveType]];
+        
+        [self populateTargetButton];
     }
     
     [super orderFront:sender];
 }
 
+
+- (void)populateTargetButton
+{
+    [[self buttonTarget] removeAllItems];
+    if ([[self buttonBus] title] == TNXMLDescDiskBusIDE)
+    {
+        for (var i = 0; i < TNXMLDescDiskTargetsIDE.length; i++)
+        {
+            var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTargetsIDE[i] action:nil keyEquivalent:nil];
+            [[self buttonTarget] addItem:item];
+        }
+    }
+    else if ([[self buttonBus] title] == TNXMLDescDiskBusSCSI)
+    {
+        for (var i = 0; i < TNXMLDescDiskTargetsSCSI.length; i++)
+        {
+            var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTargetsSCSI[i] action:nil keyEquivalent:nil];
+            [[self buttonTarget] addItem:item];
+        }
+    }
+    [[self buttonTarget] selectItemWithTitle:[drive target]];
+}
+
 - (IBAction)save:(id)sender
 {
+    if (sender == [self buttonBus])
+    {
+       [self populateTargetButton];
+    }
     [drive setSource:[[[self buttonSource] selectedItem] stringValue]];
     [drive setType:[[self buttonType] title]];
     
@@ -116,7 +174,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
     if (driveType == @"Hard drive")
     {
         [self getDisksInfo];
-        if ([[self buttonBus] title] == @"ide")
+        if ([[self buttonBus] title] == TNXMLDescDiskBusIDE)
             [[self buttonTarget] selectItemWithTitle:@"hda"];
         else
             [[self buttonTarget] selectItemWithTitle:@"sda"];
@@ -124,7 +182,7 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
     else
     {
         [self getISOsInfo];
-        if ([[self buttonBus] title] == @"ide")
+        if ([[self buttonBus] title] == TNXMLDescDiskBusIDE)
             [[self buttonTarget] selectItemWithTitle:@"hdc"];
         else
             [[self buttonTarget] selectItemWithTitle:@"sdc"];
@@ -133,9 +191,9 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
 
 -(void)getDisksInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
 
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineDiskGet}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
 
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
@@ -160,15 +218,23 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [[self buttonSource] addItem:item];
         }
+        
+        for (var i = 0; i < [[[self buttonSource] itemArray] count]; i++)
+        {
+            var item  = [[[self buttonSource] itemArray] objectAtIndex:i];
+            console.log([item stringValue] + " == " + [drive source]);
+            if ([item stringValue] == [drive source])
+                [[self buttonSource] selectItem:item];
+        }
     }
     [self save:nil];
 }
 
 -(void)getISOsInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : trinityTypeVirtualMachineDisk}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
     
-    [infoStanza addChildName:@"query" withAttributes:{"type" : trinityTypeVirtualMachineISOGet}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineISOGet}];
     
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
@@ -191,6 +257,14 @@ trinityTypeVirtualMachineISOGet     = @"getiso";
             
             [item setStringValue:[iso valueForAttribute:@"path"]];
             [[self buttonSource] addItem:item];
+        }
+        
+        for (var i = 0; i < [[[self buttonSource] itemArray] count]; i++)
+        {
+            var item  = [[[self buttonSource] itemArray] objectAtIndex:i];
+            console.log([item stringValue] + " == " + [drive source]);
+            if ([item stringValue] == [drive source])
+                [[self buttonSource] selectItem:item];
         }
     }
     [self save:nil];
