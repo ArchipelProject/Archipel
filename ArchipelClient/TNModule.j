@@ -33,7 +33,7 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
 
-    CPArray                 _registredSelectors;
+    CPArray                 _registredSelectors  @accessors;
 }
 
 - (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
@@ -63,7 +63,7 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 
 - (void)willLoad
 {
-    _pushSelectors = [CPArray array];
+    _registredSelectors = [CPArray array];
 }
 
 - (void)willUnload
@@ -89,5 +89,11 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 - (void)willHide
 {
     
+}
+
+- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
+{
+    var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
+    [_registredSelectors addObject:selectorID];
 }
 @end

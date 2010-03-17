@@ -125,19 +125,23 @@
     if (self = [super initWithIdentifier:anIdentifier])
     {
         _outlineView = anOutlineView;
-
-    	[self setWidth:200];
+        
+        [self setWidth:200];
         _dataViewForRoot = [[CPTextField alloc] init];
-    	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
-    	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
-    	[_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
+        [_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+        [_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
+        [_dataViewForRoot setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
+        
         [_dataViewForRoot setVerticalAlignment:CPCenterVerticalTextAlignment];
         
-    	_dataViewForOther = [[TNViewOutlineViewContact alloc] init];
+        _dataViewForOther = [[TNViewOutlineViewContact alloc] init];
     }
-	
+    
     return self;
 }
 

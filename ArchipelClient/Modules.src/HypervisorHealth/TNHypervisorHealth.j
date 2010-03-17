@@ -145,7 +145,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthInfo}];
     
-    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:) ofObject:self];
+    [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
 }
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza 
@@ -191,7 +191,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthHistory, "limit": _statsHistoryCollectionSize}];
     
-    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:) ofObject:self];
+    [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
 }
 
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
