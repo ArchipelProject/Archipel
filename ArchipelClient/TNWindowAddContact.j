@@ -39,9 +39,13 @@
     [[self newContactJid] setStringValue:@""];
     [[self newContactName] setStringValue:@""];
     [[self newContactGroup] removeAllItems];
+    [self makeFirstResponder:[self newContactJid]];
     
-    var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""]
-    [[self newContactGroup] addItem:generalItem];
+    if (![[self roster] doesRosterContainsGroup:@"General"])
+    {
+        var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""];
+        [[self newContactGroup] addItem:generalItem];
+    }
     
     //@each (var group in groups)
     for(var i = 0; i < [groups count]; i++)
