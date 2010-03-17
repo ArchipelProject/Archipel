@@ -157,7 +157,6 @@
         var moduleLabel = [module moduleLabel];
         var moduleName  = [module moduleName];
         
-        console.log([self moduleType]);
         if ([moduleTypes containsObject:[self moduleType]])
         {
             [self addItemWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];

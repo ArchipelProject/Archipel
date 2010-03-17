@@ -64,7 +64,6 @@ TNArchipelEntityTypeUser            = @"user";
     CPScrollView                _outlineScrollView;
 }
 
-
 // initialization
 - (void)awakeFromCib
 {
@@ -112,7 +111,6 @@ TNArchipelEntityTypeUser            = @"user";
     var bundle = [CPBundle bundleForClass:self];
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
     
-    
     //module view :
     _moduleView = [[TNTabViewModuleLoader alloc] initWithFrame:[[self rightView] bounds]];
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -122,22 +120,9 @@ TNArchipelEntityTypeUser            = @"user";
     // notifications
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];    
-}
-
-
-// utilities
-- (void)loadControlPanelForItem:(TNStropheContact)anItem  withType:(CPString)aType
-{
-    [_moduleView setEntity:anItem ofType:aType andRoster:_mainRoster];
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
     
-    if ([_moduleView superview] != [self rightView])
-        [[self rightView] addSubview:_moduleView];
-        
-    // var line = [[TNViewLineable alloc] initWithFrame:[[self rightView] bounds]];
-    // [[self rightView] addSubview:line];
 }
-
 
 // Toolbar actions
 - (IBAction)toolbarItemLogoutClick:(id)sender 
@@ -220,7 +205,6 @@ TNArchipelEntityTypeUser            = @"user";
     var alert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
     
     [alert runModal];
-    //[_mainRoster answerAuthorizationRequest:requestStanza answer:YES];
 }
 
 
@@ -231,15 +215,15 @@ TNArchipelEntityTypeUser            = @"user";
     var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
     
     if ([item type] == "group")
-    {
-       // TODO : manage group
-        return
-    }
-   
-    var vCard = [item vCard];
-    var entityType = [_moduleView analyseVCard:vCard];
+        return // TODO : manage group
     
-    [self loadControlPanelForItem:item withType:entityType];
+    var vCard       = [item vCard];
+    var entityType  = [_moduleView analyseVCard:vCard];
+    
+    [_moduleView setEntity:item ofType:entityType andRoster:_mainRoster];
+    
+    if ([_moduleView superview] != [self rightView])
+        [[self rightView] addSubview:_moduleView];
     
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];
