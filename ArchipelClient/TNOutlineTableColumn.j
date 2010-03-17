@@ -30,9 +30,9 @@
 {
     if (self = [super init])
     {
-        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(0, 1, 16, 16)];
-        name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 1, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(148, 1, 23, 14)];
+        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
+        name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 170, 100)];
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(148, 2, 23, 14)];
         
         [self setAutoresizingMask: CPViewWidthSizable];
         [self addSubview:statusIcon];
@@ -133,7 +133,8 @@
     	[_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
-    
+        [_dataViewForRoot setVerticalAlignment:CPCenterVerticalTextAlignment];
+        
     	_dataViewForOther = [[TNViewOutlineViewContact alloc] init];
     }
 	

@@ -34,22 +34,22 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-     	[self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    	[self setFrameOrigin:CGPointMake(5, 5)];
-    	
-    	[self setRowHeight:20];
-    	[self setHeaderView:nil];
-    	[self setCornerView:nil];
-    	[self setIndentationPerLevel:10];
+        [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+        //[self setFrameOrigin:CGPointMake(5, 5)];
+        
+        //[self setRowHeight:20];
+        [self setHeaderView:nil];
+        [self setCornerView:nil];
+        //[self setIndentationPerLevel:10];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
         //[columnLabel setResizingMask:CPTableColumnAutoresizingMask];
         [self addTableColumn:columnLabel];  
         
-    	[self setOutlineTableColumn:columnLabel];
+        [self setOutlineTableColumn:columnLabel];
         
-    	var center = [CPNotificationCenter defaultCenter];
+        var center = [CPNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
     }
     
