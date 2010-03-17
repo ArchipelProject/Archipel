@@ -227,35 +227,21 @@ TNArchipelEntityTypeUser            = @"user";
 // outline view delegate
 - (void)outlineViewSelectionDidChange:(CPNotification)notification 
 {
-   var index    = [_rosterOutlineView selectedRowIndexes];
-   var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
-   
-   if ([item type] == "group")
-   {
-       // TODO : manage group
-       return
-   }
-   
-   var vCard = [item vCard];
-   if (vCard)
-   {
-       var itemType = [[vCard firstChildWithName:@"TYPE"] text];
-       
-       if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor))
-       {
-           [self loadControlPanelForItem:item withType:itemType];   
-       }
-       else 
-       {
-           [self loadControlPanelForItem:item withType:TNArchipelEntityTypeUser];
-       }
-   }
-   else
-   {
-        [self loadControlPanelForItem:item withType:TNArchipelEntityTypeUser];
-   }
+    var index    = [_rosterOutlineView selectedRowIndexes];
+    var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
     
-   [[self propertiesView] setContact:item];
-   [[self propertiesView] reload];
+    if ([item type] == "group")
+    {
+       // TODO : manage group
+        return
+    }
+   
+    var vCard = [item vCard];
+    var entityType = [_moduleView analyseVCard:vCard];
+    
+    [self loadControlPanelForItem:item withType:entityType];
+    
+    [[self propertiesView] setContact:item];
+    [[self propertiesView] reload];
 }
 @end

@@ -30,7 +30,7 @@
     CPString                modulesPath                 @accessors;
     CPDictionary            loadedModulesScrollViews    @accessors;
     
-    id          _modulesPList;
+    id                      _modulesPList;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -40,7 +40,7 @@
         [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
         [self setLoadedModulesScrollViews:[[CPDictionary alloc] init]];
         
-        [self setModulesPath:@"Modules/"];
+        [self setModulesPath:@"Modules/"]; // TODO: conf
         [self setDelegate:self];
     }
     
@@ -59,17 +59,15 @@
 
 - (void)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
-    [self removeAllTabs];
-     
+    var center = [CPNotificationCenter defaultCenter];
+    
+    [self removeAllTabs]; 
     [self setEntity:anEntity];
     [self setRoster:aRoster];
     [self setModuleType:aType];
     
-    var center = [CPNotificationCenter defaultCenter];
-
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
-    
     
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self populateTabs];
@@ -135,7 +133,6 @@
     [[self loadedModulesScrollViews] setObject:scrollView forKey:moduleName];
 }
 
-
 - (void)populateTabs
 {
     var allValues = [[self loadedModulesScrollViews] allValues];
@@ -160,6 +157,7 @@
         var moduleLabel = [module moduleLabel];
         var moduleName  = [module moduleName];
         
+        console.log([self moduleType]);
         if ([moduleTypes containsObject:[self moduleType]])
         {
             [self addItemWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
@@ -215,9 +213,37 @@
     }
     else if ([[aNotification object] status] == TNStropheContactStatusOnline)
     {
-        [self populateTabs];
+        var center = [CPNotificationCenter defaultCenter];
+        
+        [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
     }
         
+}
+
+- (CPString)analyseVCard:(id)aVCard
+{
+    if (aVCard)
+    {
+        var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
+        
+        if (itemType)
+            return itemType;
+        else 
+            return TNArchipelEntityTypeUser;
+    }
+    
+    return TNArchipelEntityTypeUser;
+}
+
+- (void)_didReceiveVcard:(CPNotification)aNotification
+{
+    var center  = [CPNotificationCenter defaultCenter];
+    var vCard   = [[aNotification object] vCard];
+    
+    [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:[self entity]];
+    [self setModuleType:[self analyseVCard:vCard]];
+    
+    [self populateTabs];
 }
 
 // tabview delegate
