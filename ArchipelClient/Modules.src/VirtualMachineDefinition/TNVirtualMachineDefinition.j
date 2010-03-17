@@ -206,7 +206,7 @@ function generateMacAddr()
         [[self buttonArchitecture] addItem:item];
     }
     
-    var hypervisorsTypes = ["kvm", "xen", "openvz", "qemu", "lxc", "uml", "virtualbox", "vmware"];
+    var hypervisorsTypes = ["kvm", "xen", "openvz", "qemu", "kqemu", "lxc", "uml", "vbox", "vmware", "one"];
     for (var i = 0; i < hypervisorsTypes.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:hypervisorsTypes[i] action:nil keyEquivalent:nil];
@@ -408,9 +408,19 @@ function generateMacAddr()
     [stanza up];
     
     [stanza addChildName:@"devices"];
-    [stanza addChildName:@"emulator"];
-    [stanza addTextNode:@"/usr/bin/kvm"];
-    [stanza up];
+    
+    if (hypervisor == @"kvm")
+    {
+        [stanza addChildName:@"emulator"];
+        [stanza addTextNode:@"/usr/bin/kvm"];
+        [stanza up];
+    }
+    if (hypervisor == @"qemu")
+    {
+        [stanza addChildName:@"emulator"];
+        [stanza addTextNode:@"/usr/bin/qemu"];
+        [stanza up];
+    }
     
     for (var i = 0; i < [drives count]; i++)
     {
@@ -444,8 +454,11 @@ function generateMacAddr()
     [stanza addChildName:@"input" withAttributes:{"bus": "ps2", "type": "mouse"}];
     [stanza up];
     
-    [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1", "keymap": [[self buttonVNCKeymap] title]}];
-    [stanza up];
+    if (hypervisor == "kvm" || hypervisor == "qemu" || hypervisor == "kqemu" || hypervisor == "xen")
+    {
+        [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1", "keymap": [[self buttonVNCKeymap] title]}];
+        [stanza up];
+    }
     
     //devices up
     [stanza up];
