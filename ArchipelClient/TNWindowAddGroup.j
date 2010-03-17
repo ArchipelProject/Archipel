@@ -33,6 +33,7 @@
 {
     [[self newGroupName] setStringValue:@""];
     [self center];
+    [self makeFirstResponder:[self newGroupName]];
     [super orderFront:sender];
 }
 
