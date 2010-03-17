@@ -90,18 +90,4 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
 {
     
 }
-
-// - (id)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
-// {
-//     var uid     = [[self connection] getUniqueId];
-//     var params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];;
-//     var ret     = nil;
-//     
-//     ret = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
-//     [_registredSelectors addObject:ret];
-//     
-//     [[self connection] send:aStanza];
-// 
-//     return ret;
-// }
 @end

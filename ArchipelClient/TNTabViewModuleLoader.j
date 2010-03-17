@@ -30,8 +30,7 @@
     CPString                modulesPath                 @accessors;
     CPDictionary            loadedModulesScrollViews    @accessors;
     
-    id  _modulesPList;
-    
+    id          _modulesPList;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -45,6 +44,16 @@
         [self setDelegate:self];
     }
     
+    var message = [CPTextField labelWithTitle:@"Entity is currently offline. You can't interract with it."];
+    var bounds = [self bounds];
+    
+    [message setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
+    [message setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
+    [message setAlignment:CPCenterTextAlignment]
+    [message setFont:[CPFont boldSystemFontOfSize:18]];
+    [message setTextColor:[CPColor grayColor]];
+    [self addSubview:message];
+    
     return self;
 }
 
@@ -55,6 +64,12 @@
     [self setEntity:anEntity];
     [self setRoster:aRoster];
     [self setModuleType:aType];
+    
+    var center = [CPNotificationCenter defaultCenter];
+
+    [center removeObserver:self];
+    [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
+    
     
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self populateTabs];
@@ -190,6 +205,19 @@
         [[[aTabViewItem view] documentView] setRoster:nil];
         [self removeTabViewItem:aTabViewItem];
     }
+}
+
+- (void)_didPresenceUpdated:(CPNotification)aNotification
+{
+    if ([[aNotification object] status] == TNStropheContactStatusOffline)
+    {
+        [self removeAllTabs];
+    }
+    else if ([[aNotification object] status] == TNStropheContactStatusOnline)
+    {
+        [self populateTabs];
+    }
+        
 }
 
 // tabview delegate
