@@ -107,7 +107,7 @@ TNArchipelEntityTypeUser            = @"user";
     [[self leftSplitView] addSubview:[self propertiesView]];
     [[self leftSplitView] setPosition:[[self leftSplitView] bounds].size.height ofDividerAtIndex:0];
     
-    // filter view. it is unused for now.
+    // filter view.
     var bundle = [CPBundle bundleForClass:self];
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
     

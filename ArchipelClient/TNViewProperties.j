@@ -22,26 +22,6 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 
 
-@implementation TNEditableLabel: CPTextField
-{
-    CPColor _oldColor;
-}
-- (void)mouseDown:(CPEvent)anEvent
-{
-    [self setEditable:YES];
-    [self selectAll:nil];
-
-    [super mouseDown:anEvent];
-}
-
-- (void)textDidBlur:(CPNotification)aNotification
-{
-    [self setEditable:NO];
-    
-    [super textDidBlur:aNotification];
-}
-@end
-
 @implementation TNViewProperties: CPView 
 {
     @outlet TNEditableLabel entryName       @accessors;

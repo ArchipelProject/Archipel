@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-
 @implementation TNViewOutlineViewContact : CPView
 {
     CPImageView statusIcon  @accessors;
@@ -47,6 +46,9 @@
         [events setFont:[CPFont boldSystemFontOfSize:11]];
         [events setTextColor:[CPColor whiteColor]];
         
+        [[self name] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [[self name] setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        
         [[self events] setHidden:NO];
     }
     return self;
@@ -70,6 +72,18 @@
         [[self events] setHidden:YES];
     }
         
+}
+
+- (void)setThemeState:(id)aState
+{
+    [super setThemeState:aState];
+    [[self name] setThemeState:aState];
+}
+
+- (void)unsetThemeState:(id)aState
+{
+    [super unsetThemeState:aState];
+    [[self name] unsetThemeState:aState];
 }
 
 - (id)initWithCoder:(CPCoder)aCoder
@@ -116,6 +130,8 @@
         _dataViewForRoot = [[CPTextField alloc] init];
     	[_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
     	[_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+    	[_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
     
     	_dataViewForOther = [[TNViewOutlineViewContact alloc] init];

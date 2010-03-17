@@ -169,4 +169,23 @@
 }
 @end
 
+@implementation TNEditableLabel: CPTextField
+{
+    CPColor _oldColor;
+}
+- (void)mouseDown:(CPEvent)anEvent
+{
+    [self setEditable:YES];
+    [self selectAll:nil];
+
+    [super mouseDown:anEvent];
+}
+
+- (void)textDidBlur:(CPNotification)aNotification
+{
+    [self setEditable:NO];
+    
+    [super textDidBlur:aNotification];
+}
+@end
 
