@@ -173,7 +173,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [creationStanza addChildName:@"jid"];
     [creationStanza addTextNode:uuid];
     
-    [[self entity] sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:) ofObject:self];
+    [self sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
     
     [buttonCreateVM setEnabled:NO];
 }

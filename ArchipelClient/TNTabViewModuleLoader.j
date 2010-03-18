@@ -31,6 +31,7 @@
     CPDictionary            loadedModulesScrollViews    @accessors;
     
     id                      _modulesPList;
+    CPString                _previousStatus;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -69,6 +70,7 @@
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
     
+    _previousStatus = [[self entity] status]; 
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self populateTabs];
 }
@@ -208,12 +210,15 @@
 {
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
     {
+        _previousStatus = TNStropheContactStatusOffline;
         [self removeAllTabs];
+        
     }
-    else if ([[aNotification object] status] == TNStropheContactStatusOnline)
+    else if (([[aNotification object] status] == TNStropheContactStatusOnline) && (_previousStatus) && (_previousStatus == TNStropheContactStatusOffline))
     {
         var center = [CPNotificationCenter defaultCenter];
-        
+
+        _previousStatus = nil;        
         [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
     }
         

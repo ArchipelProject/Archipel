@@ -96,4 +96,10 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
     [_registredSelectors addObject:selectorID];
 }
+
+- (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector withSpecificID:(id)anUid
+{
+    var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
+    [_registredSelectors addObject:selectorID];
+}
 @end

@@ -8,5 +8,7 @@
 	<string>Archipel</string>
 	<key>CPPrincipalClass</key>
 	<string>CPApplication</string>
+    <key>CPBundleIconFile</key>
+    <string>icon.png</string>
 </dict>
 </plist>
