@@ -68,7 +68,7 @@ if os.path.isdir(build_dir):
     os.system("cp -a "+base_path+"/Modules "+build_dir+"/");
 
 
-native_app_dir = "/Users/Tonio/Desktop/Archipel.app/Contents/Resources/Objective-J/Client/";
+native_app_dir = base_path + "/NativeApplications/MacOS/Archipel.app/Contents/Resources/Objective-J/Client/";
 
 if "native-mac" in sys.argv:
     print "# generation of the native Mac OS Application"
