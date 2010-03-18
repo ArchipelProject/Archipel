@@ -4,5 +4,6 @@ syntax: glob
 ArchipelClient/Frameworks
 ArchipelClient/Build
 ArchipelClient/Documentation
+ArchipelClient/NativeApplications/MacOS/Archipel.app/Contents/Resources/Objective-J/Client/*
 *Build
 Modules/*
