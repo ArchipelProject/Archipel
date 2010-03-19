@@ -36,6 +36,7 @@
 @import "TNModule.j"
 @import "TNAlert.j"
 @import "TNViewLineable.j"
+@import "TNMapView.j"
 
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
@@ -43,18 +44,17 @@ TNArchipelEntityTypeUser            = @"user";
 
 @implementation AppController : CPObject
 {
-    @outlet CPView              leftView                @accessors;	
-    @outlet CPView              filterView              @accessors;
-    @outlet CPSearchField       filterField             @accessors;
-    @outlet CPView              rightView               @accessors;
-    @outlet CPSplitView         leftSplitView           @accessors;
-    @outlet CPWindow            theWindow               @accessors;
-    @outlet CPSplitView         mainHorizontalSplitView @accessors;
-    
-    @outlet TNViewProperties    propertiesView      @accessors;
-    @outlet TNWindowAddContact  addContactWindow    @accessors;
-    @outlet TNWindowAddGroup    addGroupWindow      @accessors;
-    @outlet TNWindowConnection  connectionWindow    @accessors;
+    @outlet CPView              leftView                    @accessors;	
+    @outlet CPView              filterView                  @accessors;
+    @outlet CPSearchField       filterField                 @accessors;
+    @outlet CPView              rightView                   @accessors;
+    @outlet CPSplitView         leftSplitView               @accessors;
+    @outlet CPWindow            theWindow                   @accessors;
+    @outlet CPSplitView         mainHorizontalSplitView     @accessors;
+    @outlet TNViewProperties    propertiesView              @accessors;
+    @outlet TNWindowAddContact  addContactWindow            @accessors;
+    @outlet TNWindowAddGroup    addGroupWindow              @accessors;
+    @outlet TNWindowConnection  connectionWindow            @accessors;
     
     TNTabViewModuleLoader       _moduleView;
     TNDatasourceRoster          _mainRoster;
@@ -62,6 +62,7 @@ TNArchipelEntityTypeUser            = @"user";
     TNToolbar                   _hypervisorToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
     CPScrollView                _outlineScrollView;
+    TNMapView                   _globalMapView;
 }
 
 // initialization
@@ -122,7 +123,11 @@ TNArchipelEntityTypeUser            = @"user";
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
     
+    var bounds      = [[self rightView] bounds];
+    _globalMapView  = [[TNMapView alloc] initWithFrame:bounds];
+    [_globalMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 }
+
 
 // Toolbar actions
 - (IBAction)toolbarItemLogoutClick:(id)sender 
@@ -169,6 +174,24 @@ TNArchipelEntityTypeUser            = @"user";
         [sender setLabel:@"View log"];
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
         [[TNViewLog sharedLogger] removeFromSuperview];
+    }
+        
+}
+
+- (IBAction)toolbarItemViewMapClick:(id)sender
+{
+    if (![_globalMapView superview])
+    {
+        [sender setLabel:@"Hide Map"];
+        
+        var bounds = [[self rightView] bounds];
+        [_globalMapView setFrame:bounds];
+        [[self rightView] addSubview:_globalMapView];
+    }       
+    else
+    {
+        [sender setLabel:@"View Map"];
+        [_globalMapView removeFromSuperview];
     }
         
 }
@@ -223,7 +246,10 @@ TNArchipelEntityTypeUser            = @"user";
     [_moduleView setEntity:item ofType:entityType andRoster:_mainRoster];
     
     if ([_moduleView superview] != [self rightView])
+    {
+        [_moduleView setFrame:[[self rightView] bounds]];
         [[self rightView] addSubview:_moduleView];
+    }
     
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];

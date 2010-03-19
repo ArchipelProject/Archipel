@@ -91,7 +91,10 @@ VIR_DOMAIN_RUNNING	                        =	1;
         var infoNode = [aStanza firstChildWithName:@"info"];
         var libvirtSate = [infoNode valueForAttribute:@"state"];
         if (libvirtSate != VIR_DOMAIN_RUNNING)
+        {
+            [[self maskingView] setFrame:[self bounds]];
             [self addSubview:[self maskingView]];
+        }
         else
         {
             [[self maskingView] removeFromSuperview];

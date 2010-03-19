@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
@@ -61,7 +59,7 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
         [self connect:nil];
     else
         [[self credentialRemember] setState:CPOffState];
-       
+    
     [self setShowsResizeIndicator:NO];
 }
 

@@ -514,7 +514,10 @@ function generateMacAddr()
         var infoNode = [aStanza firstChildWithName:@"info"];
         var libvirtSate = [infoNode valueForAttribute:@"state"];
         if (libvirtSate == VIR_DOMAIN_RUNNING || libvirtSate == VIR_DOMAIN_PAUSED)
+        {
+            [[self maskingView] setFrame:[self bounds]];
             [self addSubview:[self maskingView]];
+        }
         else
             [[self maskingView] removeFromSuperview];
     }   

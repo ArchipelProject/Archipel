@@ -209,6 +209,7 @@ VIR_DOMAIN_CRASHED	                        =	6;
       }
       else
       {
+          [[self maskingView] setFrame:[self bounds]];
           [self addSubview:[self maskingView]];
       }
 }

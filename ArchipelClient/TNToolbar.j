@@ -21,13 +21,14 @@
 @import <AppKit/AppKit.j>
 
 
-TNToolBarItemLogout = @"TNToolBarItemLogout";
-TNToolBarItemAddJid = @"TNToolBarItemAddJid";
-TNToolBarItemDeleteJid = @"TNToolBarItemDeleteJid";
-TNToolBarItemAddGroup = @"TNToolBarItemAddGroup";
-TNToolBarItemDeleteGroup = @"TNToolBarItemDeleteGroup";
-TNToolBarItemViewLog = @"TNToolBarItemViewLog";
-TNToolBarItemClearLog = @"TNToolBarItemClearLog";
+TNToolBarItemLogout         = @"TNToolBarItemLogout";
+TNToolBarItemAddJid         = @"TNToolBarItemAddJid";
+TNToolBarItemDeleteJid      = @"TNToolBarItemDeleteJid";
+TNToolBarItemAddGroup       = @"TNToolBarItemAddGroup";
+TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
+TNToolBarItemViewLog        = @"TNToolBarItemViewLog";
+TNToolBarItemClearLog       = @"TNToolBarItemClearLog";
+TNToolBarItemViewMap        = @"TNToolBarItemViewMap";
 
 TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotification";
 
@@ -41,6 +42,7 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     CPToolbarItem itemLogout        @accessors;
     CPToolbarItem itemViewLog       @accessors;
     CPToolbarItem itemClearLog      @accessors;
+    CPToolbarItem itemViewMap       @accessors;
 }
 
 -(id)initWithTarget:(id)aTarget
@@ -80,6 +82,12 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
         //[[self itemDeleteGroup] setAction:@selector(toolbarItemDeleteClick:)];
         
         
+        [self setItemViewMap:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemViewMap]];
+        [[self itemViewMap] setLabel:@"View Map"];
+        [[self itemViewMap] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"map.png"] size:CPSizeMake(32,32)]];
+        [[self itemViewMap] setTarget:aTarget];
+        [[self itemViewMap] setAction:@selector(toolbarItemViewMapClick:)];
+        
         [self setItemViewLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemViewLog]];
         [[self itemViewLog] setLabel:@"View log"];
         [[self itemViewLog] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
@@ -101,7 +109,8 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 - (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar 
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid, CPToolbarSeparatorItemIdentifier, 
-                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
+                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier,
+                TNToolBarItemViewMap, CPToolbarSeparatorItemIdentifier,
                 TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
                 TNToolBarItemLogout];
 }
@@ -109,7 +118,8 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar 
 {
    return [TNToolBarItemAddJid,TNToolBarItemDeleteJid,CPToolbarSeparatorItemIdentifier, 
-                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier, 
+                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier,
+                TNToolBarItemViewMap, CPToolbarSeparatorItemIdentifier, 
                 TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
                 TNToolBarItemLogout];
 }
@@ -132,7 +142,9 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
         toolbarItem = [self itemViewLog];
     else if (anItemIdentifier == TNToolBarItemClearLog)
         toolbarItem = [self itemClearLog];
-    
+    else if (anItemIdentifier == TNToolBarItemViewMap)
+        toolbarItem = [self itemViewMap];
+            
     return toolbarItem;
 }
 @end
