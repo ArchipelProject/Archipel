@@ -16,7 +16,7 @@
         <string>TNVirtualMachineDefinition</string>
         <key>PluginDisplayName</key>
         <string>Definition</string>
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>1</integer>		

@@ -1,5 +1,5 @@
 /*  
- * TNMapView.j
+ * TNViewHypervisorControl.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -18,61 +18,66 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <MapKit/MKMapView.j>
 
-@implementation TNMarkerBubbleView : CPView
+@import "Resources/MapKit/MKMapView.j"
+
+@implementation TNMapView : TNModule 
 {
+    @outlet CPView      mapViewContainer    @accessors;
     
-}
-
-- (id)initWithFrame:(CGRect)aFrame
-{
-    if (self = [super initWithFrame:aFrame])
-    {
-        [self setBackgroundColor:[CPColor blueColor]];
-    }
-    return self;
-}
-
-- (id)initAtPosition:(CGPoint)aPoint
-{
-    var frame = CGRectMake(aPoint.x, aPoint.y, 200, 100);
-    
-    if (self = [super initWithFrame:frame])
-    {
-        [self setBackgroundColor:[CPColor blueColor]];
-    }
-    return self;
-}
-@end
-
-@implementation TNMapView : CPView
-{
     MKMapView   _mapView;
 }
 
-- (id)initWithFrame:(CGRect)aFrame
+- (id)awakeFromCib
 {
-    if (self = [super initWithFrame:aFrame])
-    {
-        var bounds = [self bounds];
-        
-        _mapView = [[MKMapView alloc] initWithFrame:bounds apiKey:''];
-        
-        [_mapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [_mapView setDelegate:self];
-        [self addSubview:_mapView];
-        
-    }
-    return self;
+
+    CPLogConsole("YOUHOU!!!!!");
+    
+    var bounds = [self bounds];
+    
+    _mapView = [[MKMapView alloc] initWithFrame:bounds apiKey:''];
+
+    [_mapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_mapView setDelegate:self];
+
+    [mapViewContainer setFrame:bounds];
+    [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [mapViewContainer addSubview:_mapView];
+    [mapViewContainer setBackgroundColor:[CPColor blueColor]];
+}
+
+
+- (void)willLoad
+{
+    [super willLoad];
+
+    var bounds = [self bounds];
+    
+    [_mapView setFrame:bounds];
+    [mapViewContainer setFrame:bounds];
+}
+
+- (void)willShow 
+{
+    [super willShow];
+    
+    var bounds = [[self superview] bounds];
+    [self setFrame:bounds];
+}
+
+- (void)willHide 
+{
+    [super willHide];
 }
 
 - (void)mapViewIsReady:(MKMapView)aMapView
 {
+    CPLogConsole("MapView is ready");
+    
     var loc = [[MKLocation alloc] initWithLatitude:48.8542 andLongitude:2.3449];
     var marker = [[MKMarker alloc] initAtLocation:loc];
     [marker closeInfoWindow];
-    [marker addToMapView:_mapView];
+    [marker addToMapView:aMapView];
     [marker addEventForName:@"click" withFunction:function(theEvent){
         
         var aPoint = [CPEvent mouseLocation];
@@ -81,6 +86,12 @@
         [self addSubview:bubble];
     }]
     
-    [_mapView setCenter:loc];
+    [aMapView setCenter:loc];
 }
+
+
+
 @end
+
+
+

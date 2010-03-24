@@ -16,7 +16,7 @@
         <string>TNVirtualMachineDiskCreation</string>
         <key>PluginDisplayName</key>
         <string>Disks</string>
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>2</integer>

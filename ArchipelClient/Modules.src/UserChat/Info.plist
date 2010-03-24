@@ -16,7 +16,7 @@
         <string>TNUserChat</string>
         <key>PluginDisplayName</key>
         <string>Chat</string>
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>tab</string>
         <key>TabIndex</key>
 		<integer>10</integer>

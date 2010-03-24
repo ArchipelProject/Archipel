@@ -1,0 +1,57 @@
+h1. MapKit for Cappuccino
+
+Please take a look at "this demo":http://github.com/jfahrenkrug/MapKit-HelloWorld and "this more extensive demo":http://github.com/jfahrenkrug/CappuccinoLocations1
+
+h2. Usage
+
+Copy the MapKit folder to your project's Frameworks folder and include @@import <MapKit/MKMapView.j>@ in your class/controller/whatever.
+Then create your MapView as you would create a normal CPView:
+
+<pre><code>
+  @implementation AppController : CPObject
+  {
+      MKMapView   _mapView;
+  }
+
+  - (void)applicationDidFinishLaunching:(CPNotification)aNotification
+  {
+      var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
+          contentView = [theWindow contentView];
+
+      var frameRect = CGRectMake(0,0, CPRectGetWidth([contentView frame]), CPRectGetHeight([contentView frame]));
+      _mapView = [[MKMapView alloc] initWithFrame:CGRectMake(0, 0, frameRect.size.width, frameRect.size.height) apiKey:''];
+      [_mapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+      [_mapView setDelegate:self];
+      [contentView addSubview:_mapView];
+
+      [theWindow orderFront:self];
+  }
+
+  - (void)mapViewIsReady:(MKMapView)mapView {
+      var loc = [[MKLocation alloc] initWithLatitude:51.8978655 andLongitude:-8.4710941];
+      var marker = [[MKMarker alloc] initAtLocation:loc];
+      [marker addToMapView:_mapView];
+      [mapView setCenter:loc];
+
+      //draw line
+      var line = [MKPolyline polyline];
+      [line addLocation:[MKLocation locationWithLatitude:51.8978655 andLongitude:-8.4710941]];
+      [line addLocation:[MKLocation locationWithLatitude:37.775196 andLongitude:-122.419204]];
+      [line addToMapView:_mapView];
+
+      //add another marker
+      var marker = [[MKMarker alloc] initAtLocation:[MKLocation locationWithLatitude:37.775196 andLongitude:-122.419204]];
+      [marker addToMapView:_mapView];
+  }
+
+  @end  
+</code></pre>
+
+Note the @apiKey@ parameter in MKMapView's initWithFrame. You'll need it for your GoogleMaps API key (not necessary if you test it on your local disk).
+
+Also, if you want to use any of the Google datatypes and functions, you need to call @var gm = [MKMapView gmNamespace];@. They all live in that namespace, so you can do @new gm.LatLng();@.
+
+If you set the mapView's delegate, it will look for (and call) the @mapViewIsReady:@ method on your delegate once map has finished loading and initializing.
+
+Have fun!
+

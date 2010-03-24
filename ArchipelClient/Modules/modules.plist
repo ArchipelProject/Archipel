@@ -3,14 +3,10 @@
 <plist version="1.0">
 <dict>
 	<key>Modules</key>
-	<array>
-
-        <dict>
-              <key>folder</key>
-              <string>SampleToolBarModule</string>
-        </dict>
-        
-        
+	<array>        
+        <!--
+            Tab modules
+        -->
         <dict>
             <key>folder</key>
             <string>HypervisorHealth</string>
@@ -51,7 +47,19 @@
             <string>VirtualMachineDiskCreation</string>
       </dict>
 
-
+      
+      <!--
+          Toolbar modules
+      -->
+      <dict>
+          <key>folder</key>
+          <string>ToolbarMapView</string>
+      </dict>
+      
+      <dict>
+          <key>folder</key>
+          <string>SampleToolbarModule</string>
+      </dict>
 	</array>
 </dict>
 </plist>

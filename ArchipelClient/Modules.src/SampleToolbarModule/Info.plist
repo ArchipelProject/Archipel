@@ -13,11 +13,10 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNSampleModule</string>
+        <string>TNSampleToolbarModule</string>
         <key>PluginDisplayName</key>
         <string>Sample</string>
-        
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>toolbar</string>
 		<key>ToolbarIndex</key>
 		<string>6</string>

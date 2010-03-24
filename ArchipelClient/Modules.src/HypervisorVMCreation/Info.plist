@@ -16,7 +16,7 @@
         <string>TNHypervisorVMCreation</string>
         <key>PluginDisplayName</key>
         <string>Virtual Machines</string>
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>1</integer>

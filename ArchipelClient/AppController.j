@@ -36,7 +36,6 @@
 @import "TNModule.j"
 @import "TNAlert.j"
 @import "TNViewLineable.j"
-@import "TNMapView.j"
 
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
@@ -62,7 +61,6 @@ TNArchipelEntityTypeUser            = @"user";
     TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
     CPScrollView                _outlineScrollView;
-    TNMapView                   _globalMapView;
 }
 
 // initialization
@@ -124,12 +122,6 @@ TNArchipelEntityTypeUser            = @"user";
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
-    
-    
-    // Map View
-    var bounds      = [[self rightView] bounds];
-    _globalMapView  = [[TNMapView alloc] initWithFrame:bounds];
-    [_globalMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 }
 
 
@@ -178,24 +170,6 @@ TNArchipelEntityTypeUser            = @"user";
         [sender setLabel:@"View log"];
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
         [[TNViewLog sharedLogger] removeFromSuperview];
-    }
-        
-}
-
-- (IBAction)toolbarItemViewMapClick:(id)sender
-{
-    if (![_globalMapView superview])
-    {
-        [sender setLabel:@"Hide Map"];
-        
-        var bounds = [[self rightView] bounds];
-        [_globalMapView setFrame:bounds];
-        [[self rightView] addSubview:_globalMapView];
-    }       
-    else
-    {
-        [sender setLabel:@"View Map"];
-        [_globalMapView removeFromSuperview];
     }
         
 }

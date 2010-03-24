@@ -19,7 +19,7 @@ for folder in os.listdir(modules_base_paths):
     
         
 ### overide to define only a set of modules;        
-#modules_paths = [modules_base_paths + "SampleToolbarModule", modules_base_paths + "SampleTabModule"];
+modules_paths = [modules_base_paths + "ToolbarMapView"];
 
 if "modules" in sys.argv:
     build_paths = modules_paths
@@ -30,8 +30,6 @@ else:
 
 print "# base path is " + base_path
 
-os.system("rm -rf " + base_path + "/Modules/*")
-
 for path in build_paths:
     print "# moving to " + path 
     os.chdir(path);
@@ -39,7 +37,9 @@ for path in build_paths:
     if not "keep" in sys.argv:
         print "# removing " + path + "/Build/"
         shutil.rmtree("./Build/", ignore_errors=True);
-
+    
+    os.system("rm -rf " + base_path + "/Modules/" + path.split("/")[-1])
+    
     code = 0;
     if not "clean" in sys.argv:
         print "# jaking..."

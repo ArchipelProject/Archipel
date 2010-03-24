@@ -84,7 +84,7 @@
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
     
-    //[connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
+    [connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
     [connection start];
 }
 
@@ -111,10 +111,11 @@
 
 - (void)bundleDidFinishLoading:(TNBundle)aBundle
 {
+    CPLogConsole("Bundle loaded : " + aBundle)
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
     var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"insertionType"];
+    var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
     var moduleIdentifier    = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
 
     var theViewController   = [[CPViewController alloc] initWithCibName:moduleCibName bundle:aBundle];
@@ -151,6 +152,8 @@
         [[self mainToolbar] addItemWithIdentifier:moduleName label:moduleLabel icon:[aBundle pathForResource:@"icon.png"] target:self action:@selector(didToolbarModuleClicked:)];
         [[self mainToolbar] setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
         
+        [[theViewController view] willLoad];
+                
         [[self mainToolbar] _reloadToolbarItems];
     }
     
@@ -283,37 +286,44 @@
 // action for toolbaritems
 - (IBAction)didToolbarModuleClicked:(id)sender
 {
-    if (!_currentToolbarView)
-    {
-        var view            = [[self loadedModulesScrollViews] objectForKey:[sender itemIdentifier]];
-        var bounds          = [[self mainRightView] bounds];
-        var moduleBundle    = [[view documentView] moduleBundle];
-        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
-        
-        //[sender setLabel:[moduleBundle objectForInfoDictionaryKey:@"AlternativePluginDisplayName"]];
-        [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-        
-        [view setFrame:bounds];
-        
-        [[self mainRightView] addSubview:view];
-        
-        _currentToolbarView = view;
-        _currentToolbarItem = sender;
-    }
-    else
+    var oldView;
+    
+    if (_currentToolbarView)
     {
         var moduleBundle    = [[_currentToolbarView documentView] moduleBundle];
         var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"ToolbarIcon"]];
-        
-        
+
         //[_currentToolbarItem setLabel:[moduleBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
         [_currentToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-        
+
+        [[_currentToolbarView documentView] willHide];
         [_currentToolbarView removeFromSuperview];
+        
+        oldView = _currentToolbarView;
         
         _currentToolbarView = nil;
         _currentToolbarItem = nil;
     }
     
+    var view            = [[self loadedModulesScrollViews] objectForKey:[sender itemIdentifier]];
+    
+    if (oldView != view)
+    {
+        var bounds          = [[self mainRightView] bounds];
+        var moduleBundle    = [[view documentView] moduleBundle];
+        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
+
+        //[sender setLabel:[moduleBundle objectForInfoDictionaryKey:@"AlternativePluginDisplayName"]];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
+
+        [view setFrame:bounds];
+
+        [[view documentView] willShow];
+
+        [[self mainRightView] addSubview:view];
+
+        _currentToolbarView = view;
+        _currentToolbarItem = sender;
+    }
 }
 @end

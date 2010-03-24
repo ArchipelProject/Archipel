@@ -13,12 +13,12 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNSampleModule</string>
+        <string>TNSampleTabModule</string>
         <key>PluginDisplayName</key>
         <string>Sample</string>
 		<key>TabIndex</key>
 		<integer>0</integer>
-		<key>insertionType</key>
+		<key>InsertionType</key>
 		<string>tab</string>
 		<key>SupportedEntityTypes</key>
 		<array>

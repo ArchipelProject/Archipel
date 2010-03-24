@@ -3,28 +3,30 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.hypervisornetworks</string>
+        <string>org.archipelproject.toolbarmapview</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
-        <string>HypervisorNetworks</string>
+        <string>ToolbarMapView</string>
         <key>CPBundlePackageType</key>
         <string>280N</string>
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNHypervisorNetworks</string>
+        <string>TNMapView</string>
         <key>PluginDisplayName</key>
-        <string>Networks</string>
+        <string>Map View</string>        
         <key>InsertionType</key>
-		<string>tab</string>
-		<key>TabIndex</key>
-		<integer>3</integer>
-		<key>SupportedEntityTypes</key>
-		<array>
-		    <string>hypervisor</string>
-		</array>		
+		<string>toolbar</string>
+		<key>ToolbarIndex</key>
+		<string>6</string>
+        <key>AlternativePluginDisplayName</key>
+        <string>Hide Map</string>
+        <key>ToolbarIcon</key>
+        <string>icon.png</string>
+        <key>AlternativeToolbarIcon</key>
+        <string>icon-alt.png</string>
         <key>CibName</key>
-        <string>HypervisorNetworks</string>
+        <string>ToolbarMapView</string>
     </dict>
 </plist>

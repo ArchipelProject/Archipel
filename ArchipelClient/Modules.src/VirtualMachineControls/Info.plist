@@ -16,7 +16,7 @@
         <string>TNVirtualMachineControls</string>
         <key>PluginDisplayName</key>
         <string>Controls</string>
-        <key>insertionType</key>
+        <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>0</integer>
