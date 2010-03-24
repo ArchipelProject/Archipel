@@ -16,6 +16,8 @@
         <string>TNVirtualMachineVNC</string>
         <key>PluginDisplayName</key>
         <string>VNC Console</string>
+        <key>insertionType</key>
+		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>3</integer>
         <key>CibName</key>

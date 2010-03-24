@@ -290,7 +290,6 @@
         var moduleBundle    = [[view documentView] moduleBundle];
         var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
         
-        CPLogConsole(moduleBundle);
         //[sender setLabel:[moduleBundle objectForInfoDictionaryKey:@"AlternativePluginDisplayName"]];
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
         

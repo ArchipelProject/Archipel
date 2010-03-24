@@ -7,15 +7,10 @@
 
         <dict>
               <key>folder</key>
-              <string>SampleTabModule</string>
-        </dict>
-        
-        <dict>
-              <key>folder</key>
               <string>SampleToolBarModule</string>
         </dict>
         
-        <!-- 
+        
         <dict>
             <key>folder</key>
             <string>HypervisorHealth</string>
@@ -55,7 +50,7 @@
             <key>folder</key>
             <string>VirtualMachineDiskCreation</string>
       </dict>
- -->
+
 
 	</array>
 </dict>

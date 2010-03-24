@@ -16,6 +16,8 @@
         <string>TNHypervisorNetworks</string>
         <key>PluginDisplayName</key>
         <string>Networks</string>
+        <key>insertionType</key>
+		<string>tab</string>
 		<key>TabIndex</key>
 		<integer>3</integer>
 		<key>SupportedEntityTypes</key>

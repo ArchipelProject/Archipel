@@ -16,6 +16,8 @@
         <string>TNUserChat</string>
         <key>PluginDisplayName</key>
         <string>Chat</string>
+        <key>insertionType</key>
+		<string>tab</string>
         <key>TabIndex</key>
 		<integer>10</integer>
 		<key>SupportedEntityTypes</key>
