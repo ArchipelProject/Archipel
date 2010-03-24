@@ -32,6 +32,7 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPString                moduleName          @accessors;
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
+    CPBundle                moduleBundle        @accessors;
 
     CPArray                 _registredSelectors  @accessors;
 }

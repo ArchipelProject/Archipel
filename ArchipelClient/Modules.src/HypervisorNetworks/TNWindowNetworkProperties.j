@@ -87,8 +87,6 @@
     [_tableViewRanges addTableColumn:columRangeStart];
     [_tableViewRanges addTableColumn:columRangeEnd];
 
-    [_tableViewRanges setDataSource:_datasourceDHCPRanges];
-
     // TABLE FOR HOSTS
     _datasourceDHCPHosts     = [[TNDatasourceDHCPEntries alloc] init];
     _tableViewHosts          = [[CPTableView alloc] initWithFrame:[[self scrollViewDHCPHosts] bounds]];
@@ -121,9 +119,8 @@
     [_tableViewHosts addTableColumn:columHostMac];
     [_tableViewHosts addTableColumn:columHostName];
     [_tableViewHosts addTableColumn:columHostIP];
-
-    [_tableViewHosts setDataSource:_datasourceDHCPHosts];
-
+        
+    // setting delegate
     [_tableViewHosts setDelegate:self];
     [_tableViewRanges setDelegate:self];
 }

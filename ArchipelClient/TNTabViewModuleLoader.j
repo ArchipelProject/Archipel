@@ -29,9 +29,13 @@
     CPString                moduleType                  @accessors;
     CPString                modulesPath                 @accessors;
     CPDictionary            loadedModulesScrollViews    @accessors;
-    
+    TNToolbar               mainToolbar                 @accessors;
+    CPView                  mainRightView               @accessors;
+        
     id                      _modulesPList;
     CPString                _previousStatus;
+    CPView                  _currentToolbarView;
+    CPToolbarItem           _currentToolbarItem;
 }
 
 - (void)initWithFrame:(CGRect)aFrame
@@ -108,30 +112,48 @@
 - (void)bundleDidFinishLoading:(TNBundle)aBundle
 {
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
-    var moduleTabTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
     var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    
+    var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"insertionType"];
+    var moduleIdentifier    = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+
     var theViewController   = [[CPViewController alloc] initWithCibName:moduleCibName bundle:aBundle];
     var scrollView          = [[CPScrollView alloc] initWithFrame:[self bounds]];
-	
-	[scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-	[scrollView setAutohidesScrollers:YES];
-	[scrollView setBackgroundColor:[CPColor whiteColor]];
-	
-	var frame = [scrollView bounds];
-	frame.size.height = [[theViewController view] frame].size.height;
-	
-	[[theViewController view] setFrame:frame];
-	[[theViewController view] setAutoresizingMask: CPViewWidthSizable];
-	[scrollView setDocumentView:[theViewController view]];
-
-	[[theViewController view] setModuleTypes:moduleTabTypes];
-	[[theViewController view] setModuleTabIndex:moduleTabIndex];
-	[[theViewController view] setModuleName:moduleName];
-	[[theViewController view] setModuleLabel:moduleLabel];
-	
+    
+    [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [scrollView setAutohidesScrollers:YES];
+    [scrollView setBackgroundColor:[CPColor whiteColor]];
+    
+    var frame = [scrollView bounds];
+    frame.size.height = [[theViewController view] frame].size.height;
+    
+    [[theViewController view] setFrame:frame];
+    [[theViewController view] setAutoresizingMask: CPViewWidthSizable];
+    [[theViewController view] setModuleName:moduleName];
+    [[theViewController view] setModuleLabel:moduleLabel];
+    [[theViewController view] setModuleBundle:aBundle];
+    
+    [scrollView setDocumentView:[theViewController view]];
+    
+    if (moduleInsertionType == @"tab")
+    {
+        var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
+        var moduleTabTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+        
+        [[theViewController view] setModuleTypes:moduleTabTypes];
+        [[theViewController view] setModuleTabIndex:moduleTabIndex];
+        
+    }
+    else if (moduleInsertionType == @"toolbar")
+    {
+        var moduleToolbarIndex = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
+        
+        [[self mainToolbar] addItemWithIdentifier:moduleName label:moduleLabel icon:[aBundle pathForResource:@"icon.png"] target:self action:@selector(didToolbarModuleClicked:)];
+        [[self mainToolbar] setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
+        
+        [[self mainToolbar] _reloadToolbarItems];
+    }
+    
     [[self loadedModulesScrollViews] setObject:scrollView forKey:moduleName];
 }
 
@@ -256,5 +278,42 @@
     [[[[self selectedTabViewItem] view] documentView] willHide];
     
     [[[anItem view] documentView] willShow];
+}
+
+// action for toolbaritems
+- (IBAction)didToolbarModuleClicked:(id)sender
+{
+    if (!_currentToolbarView)
+    {
+        var view            = [[self loadedModulesScrollViews] objectForKey:[sender itemIdentifier]];
+        var bounds          = [[self mainRightView] bounds];
+        var moduleBundle    = [[view documentView] moduleBundle];
+        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
+        
+        CPLogConsole(moduleBundle);
+        //[sender setLabel:[moduleBundle objectForInfoDictionaryKey:@"AlternativePluginDisplayName"]];
+        [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
+        
+        [view setFrame:bounds];
+        
+        [[self mainRightView] addSubview:view];
+        
+        _currentToolbarView = view;
+        _currentToolbarItem = sender;
+    }
+    else
+    {
+        var moduleBundle    = [[_currentToolbarView documentView] moduleBundle];
+        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"ToolbarIcon"]];
+        
+        //[_currentToolbarItem setLabel:[moduleBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+        [_currentToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
+        
+        [_currentToolbarView removeFromSuperview];
+        
+        _currentToolbarView = nil;
+        _currentToolbarItem = nil;
+    }
+    
 }
 @end

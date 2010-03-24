@@ -24,17 +24,17 @@ var ENV = require("system").env,
     app = require("cappuccino/jake").app,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug";
 
-app ("SampleModule", function(task)
+app ("SampleTabModule", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "SampleModule.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", "SampleTabModule.build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("SampleModule");
+    task.setProductName("SampleTabModule");
     task.setIdentifier("org.archipelproject");
     task.setVersion("1.0");
     task.setAuthor("Antoine Mercadal");
     task.setEmail("feedback @nospam@ yourcompany.com");
-    task.setSummary("SampleModule");
+    task.setSummary("SampleTabModule");
     task.setSources(new FileList("**/*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
@@ -45,4 +45,4 @@ app ("SampleModule", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["SampleModule"]);
+task ("default", ["SampleTabModule"]);

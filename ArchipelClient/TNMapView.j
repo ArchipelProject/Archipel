@@ -41,7 +41,6 @@
     if (self = [super initWithFrame:frame])
     {
         [self setBackgroundColor:[CPColor blueColor]];
-        console.log("YEAH");
     }
     return self;
 }
@@ -56,8 +55,6 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        console.log([self bounds]);
-        
         var bounds = [self bounds];
         
         _mapView = [[MKMapView alloc] initWithFrame:bounds apiKey:''];

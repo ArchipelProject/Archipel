@@ -3,7 +3,7 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.samplemodule</string>
+        <string>org.archipelproject.sampletoolbarmodule</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
@@ -16,13 +16,18 @@
         <string>TNSampleModule</string>
         <key>PluginDisplayName</key>
         <string>Sample</string>
-		<key>TabIndex</key>
-		<integer>0</integer>
-		<key>SupportedEntityTypes</key>
-		<array>
-		    <string>virtualmachine</string>
-		</array>		
+        
+        <key>insertionType</key>
+		<string>toolbar</string>
+		<key>ToolbarIndex</key>
+		<string>6</string>
+        <key>AlternativePluginDisplayName</key>
+        <string>Deactive Sample</string>
+        <key>ToolbarIcon</key>
+        <string>icon.png</string>
+        <key>AlternativeToolbarIcon</key>
+        <string>icon-alt.png</string>
         <key>CibName</key>
-        <string>SampleModule</string>
+        <string>SampleToolbarModule</string>
     </dict>
 </plist>

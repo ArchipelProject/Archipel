@@ -59,7 +59,7 @@ TNArchipelEntityTypeUser            = @"user";
     TNTabViewModuleLoader       _moduleView;
     TNDatasourceRoster          _mainRoster;
     TNOutlineViewRoster         _rosterOutlineView;
-    TNToolbar                   _hypervisorToolbar;
+    TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
     CPScrollView                _outlineScrollView;
     TNMapView                   _globalMapView;
@@ -74,8 +74,8 @@ TNArchipelEntityTypeUser            = @"user";
     [theWindow orderOut:nil];
     
     // toolbar
-    _hypervisorToolbar = [[TNToolbar alloc] initWithTarget:self];
-    [theWindow setToolbar:_hypervisorToolbar];
+    _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
+    [theWindow setToolbar:_mainToolbar];
     
     //outlineview
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(0,0,0,0)];    
@@ -114,6 +114,8 @@ TNArchipelEntityTypeUser            = @"user";
     
     //module view :
     _moduleView = [[TNTabViewModuleLoader alloc] initWithFrame:[[self rightView] bounds]];
+    [_moduleView setMainToolbar:_mainToolbar];
+    [_moduleView setMainRightView:[self rightView]];
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleView setBackgroundColor:[CPColor whiteColor]];
     [_moduleView load];
@@ -123,6 +125,8 @@ TNArchipelEntityTypeUser            = @"user";
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
     
+    
+    // Map View
     var bounds      = [[self rightView] bounds];
     _globalMapView  = [[TNMapView alloc] initWithFrame:bounds];
     [_globalMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];

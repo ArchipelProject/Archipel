@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import os, sys, commands, shutil;
 
-config = "release"
+config = "Release"
 if "debug" in sys.argv:
-    config = "debug"
+    config = "Debug"
 
 really_base_path = commands.getoutput("pwd");
 os.system("export PATH=/usr/local/narwhal/bin:$PATH");
@@ -19,7 +19,7 @@ for folder in os.listdir(modules_base_paths):
     
         
 ### overide to define only a set of modules;        
-#modules_paths = [modules_base_paths + "VirtualMachineDefinition"];
+modules_paths = [modules_base_paths + "SampleToolbarModule", modules_base_paths + "SampleTabModule"];
 
 if "modules" in sys.argv:
     build_paths = modules_paths
@@ -51,7 +51,7 @@ for path in build_paths:
             sys.exit("error during build")
 
         if path != ".":
-            print "# linking module"
+            print "# copying module build"
             os.chdir(base_path + "/Modules")
             os.system("rm -f " +  path.split("/")[-1]);
             os.system("cp -a " + path + "/Build/" + config + "/" + path.split("/")[-1] + " ./" + path.split("/")[-1]);

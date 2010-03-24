@@ -34,15 +34,9 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
 
 
 @implementation TNToolbar  : CPToolbar
-{    
-    CPToolbarItem itemAddJid        @accessors;
-    CPToolbarItem itemDeleteJid     @accessors;
-    CPToolbarItem itemAddGroup      @accessors;
-    CPToolbarItem itemDeleteGroup   @accessors;
-    CPToolbarItem itemLogout        @accessors;
-    CPToolbarItem itemViewLog       @accessors;
-    CPToolbarItem itemClearLog      @accessors;
-    CPToolbarItem itemViewMap       @accessors;
+{
+    CPDictionary    toolbarItems            @accessors;
+    CPArray         toolbarItemsOrder       @accessors;
 }
 
 -(id)initWithTarget:(id)aTarget
@@ -51,54 +45,29 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     
     if (self = [super init])
     {
-        [self setItemLogout:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemLogout]];
-        [[self itemLogout] setLabel:@"Log out"];
-        [[self itemLogout] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logout.png"] size:CPSizeMake(32,32)]];
-        [[self itemLogout] setTarget:aTarget];
-        [[self itemLogout] setAction:@selector(toolbarItemLogoutClick:)];
-
-        [self setItemAddJid:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemAddJid]];
-        [[self itemAddJid] setLabel:@"Add JID"];
-        [[self itemAddJid] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"add.png"] size:CPSizeMake(32,32)]];
-        [[self itemAddJid] setTarget:aTarget];
-        [[self itemAddJid] setAction:@selector(toolbarItemAddContactClick:)];
-
-        [self setItemDeleteJid:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemDeleteJid]];
-        [[self itemDeleteJid] setLabel:@"Delete JID"];
-        [[self itemDeleteJid] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"delete.png"] size:CPSizeMake(32,32)]];
-        [[self itemDeleteJid] setTarget:aTarget];
-        [[self itemDeleteJid] setAction:@selector(toolbarItemDeleteContactClick:)];
-
-        [self setItemAddGroup:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemAddGroup]];
-        [[self itemAddGroup] setLabel:@"Add Group"];
-        [[self itemAddGroup] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groupAdd.png"] size:CPSizeMake(32,32)]];
-        [[self itemAddGroup] setTarget:aTarget];
-        [[self itemAddGroup] setAction:@selector(toolbarItemAddGroupClick:)];
-
-        [self setItemDeleteGroup:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemDeleteGroup]];
-        [[self itemDeleteGroup] setLabel:@"Delete Group"];
-        [[self itemDeleteGroup] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groupDelete.png"] size:CPSizeMake(32,32)]];
-        //[[self itemDeleteGroup] setTarget:aTarget];
-        //[[self itemDeleteGroup] setAction:@selector(toolbarItemDeleteClick:)];
+        toolbarItems        = [CPDictionary dictionary];
+        toolbarItemsOrder   = [CPArray array];
+        
+        [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
+        [self addItemWithIdentifier:TNToolBarItemAddJid label:@"Add JID" icon:[bundle pathForResource:@"add.png"] target:aTarget action:@selector(toolbarItemAddContactClick:)];
+        [self addItemWithIdentifier:TNToolBarItemDeleteJid label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
+        [self addItemWithIdentifier:TNToolBarItemAddGroup label:@"Add Group" icon:[bundle pathForResource:@"groupAdd.png"] target:aTarget action:@selector(toolbarItemAddGroupClick:)];
+        [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:nil action:nil];
+        [self addItemWithIdentifier:TNToolBarItemViewLog label:@"View Log" icon:[bundle pathForResource:@"log.png"] target:aTarget action:@selector(toolbarItemViewLogClick:)];
+        [self addItemWithIdentifier:TNToolBarItemClearLog label:@"Clear Log" icon:[bundle pathForResource:@"clearlog.png"] target:aTarget action:@selector(toolbarItemClearLogClick:)];
         
         
-        [self setItemViewMap:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemViewMap]];
-        [[self itemViewMap] setLabel:@"View Map"];
-        [[self itemViewMap] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"map.png"] size:CPSizeMake(32,32)]];
-        [[self itemViewMap] setTarget:aTarget];
-        [[self itemViewMap] setAction:@selector(toolbarItemViewMapClick:)];
-        
-        [self setItemViewLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemViewLog]];
-        [[self itemViewLog] setLabel:@"View log"];
-        [[self itemViewLog] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
-        [[self itemViewLog] setTarget:aTarget];
-        [[self itemViewLog] setAction:@selector(toolbarItemViewLogClick:)];
-        
-        [self setItemClearLog:[[CPToolbarItem alloc] initWithItemIdentifier:TNToolBarItemClearLog]];
-        [[self itemClearLog] setLabel:@"Clear log"];
-        [[self itemClearLog] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"clearlog.png"] size:CPSizeMake(32,32)]];
-        [[self itemClearLog] setTarget:aTarget];
-        [[self itemClearLog] setAction:@selector(toolbarItemClearLogClick:)];
+        [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemAddJid];
+        [self setPosition:1 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
+        [self setPosition:2 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemAddGroup];
+        [self setPosition:4 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
+        [self setPosition:5 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:6 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        [self setPosition:7 forToolbarItemIdentifier:TNToolBarItemViewLog];
+        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemClearLog];
+        [self setPosition:9 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:10 forToolbarItemIdentifier:TNToolBarItemLogout];
         
         [self setDelegate:self];
     }
@@ -106,45 +75,37 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     return self;
 }
 
+- (void)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction
+{
+    var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
+    
+    [newItem setLabel:aLabel];
+    [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
+    [newItem setTarget:aTarget];
+    [newItem setAction:anAction];
+    
+    [[self toolbarItems] setObject:newItem forKey:anIdentifier];
+}
+
+- (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
+{
+     [[self toolbarItemsOrder] insertObject:anIndentifier atIndex:aPosition];
+}
+
 - (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar 
 {
-   return [TNToolBarItemAddJid,TNToolBarItemDeleteJid, CPToolbarSeparatorItemIdentifier, 
-                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier,
-                TNToolBarItemViewMap, CPToolbarSeparatorItemIdentifier,
-                TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
-                TNToolBarItemLogout];
+    return  [self toolbarItemsOrder];
 }
 
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar 
 {
-   return [TNToolBarItemAddJid,TNToolBarItemDeleteJid,CPToolbarSeparatorItemIdentifier, 
-                TNToolBarItemAddGroup, TNToolBarItemDeleteGroup, CPToolbarFlexibleSpaceItemIdentifier,
-                TNToolBarItemViewMap, CPToolbarSeparatorItemIdentifier, 
-                TNToolBarItemViewLog, TNToolBarItemClearLog, CPToolbarSeparatorItemIdentifier,
-                TNToolBarItemLogout];
+    return  [self toolbarItemsOrder];
 }
 
 - (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
 {     
     var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
     
-    if (anItemIdentifier == TNToolBarItemLogout)
-        toolbarItem = [self itemLogout];
-    else if (anItemIdentifier == TNToolBarItemAddJid)
-        toolbarItem = [self itemAddJid];
-    else if (anItemIdentifier == TNToolBarItemDeleteJid)
-        toolbarItem = [self itemDeleteJid];
-    else if (anItemIdentifier == TNToolBarItemDeleteGroup)
-        toolbarItem = [self itemDeleteGroup];
-    else if (anItemIdentifier == TNToolBarItemAddGroup)
-        toolbarItem = [self itemAddGroup];
-    else if (anItemIdentifier == TNToolBarItemViewLog)
-        toolbarItem = [self itemViewLog];
-    else if (anItemIdentifier == TNToolBarItemClearLog)
-        toolbarItem = [self itemClearLog];
-    else if (anItemIdentifier == TNToolBarItemViewMap)
-        toolbarItem = [self itemViewMap];
-            
-    return toolbarItem;
+    return ([[self toolbarItems] objectForKey:anItemIdentifier]) ? [[self toolbarItems] objectForKey:anItemIdentifier] : toolbarItem;
 }
 @end

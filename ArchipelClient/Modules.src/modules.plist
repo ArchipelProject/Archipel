@@ -6,15 +6,26 @@
 	<array>
 
         <dict>
+              <key>folder</key>
+              <string>SampleTabModule</string>
+        </dict>
+        
+        <dict>
+              <key>folder</key>
+              <string>SampleToolBarModule</string>
+        </dict>
+        
+        <!-- 
+        <dict>
             <key>folder</key>
             <string>HypervisorHealth</string>
         </dict>
-		
-		<dict>
-			<key>folder</key>
-			<string>HypervisorVMCreation</string>
-		</dict>
-		
+        
+        <dict>
+            <key>folder</key>
+            <string>HypervisorVMCreation</string>
+        </dict>
+        
         <dict>
             <key>folder</key>
             <string>VirtualMachineControls</string>        
@@ -31,21 +42,21 @@
         </dict>
         
         <dict>
-           <key>folder</key>
-           <string>VirtualMachineVNC</string>
+            <key>folder</key>
+            <string>VirtualMachineVNC</string>
        </dict>
        
        <dict>
-          <key>folder</key>
-          <string>UserChat</string>
+            <key>folder</key>
+            <string>UserChat</string>
       </dict>
       
       <dict>
             <key>folder</key>
             <string>VirtualMachineDiskCreation</string>
-        </dict>
+      </dict>
+ -->
 
-      
 	</array>
 </dict>
 </plist>

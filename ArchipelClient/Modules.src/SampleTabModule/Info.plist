@@ -3,30 +3,29 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.hypervisorhealth</string>
+        <string>org.archipelproject.sampletabmodule</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
-        <string>HypervisorSummary</string>
+        <string>SampleTabModule</string>
         <key>CPBundlePackageType</key>
         <string>280N</string>
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNHypervisorHealth</string>
+        <string>TNSampleModule</string>
         <key>PluginDisplayName</key>
-        <string>Health</string>
+        <string>Sample</string>
 		<key>TabIndex</key>
 		<integer>0</integer>
+		<key>insertionType</key>
+		<string>tab</string>
 		<key>SupportedEntityTypes</key>
 		<array>
-			<string>hypervisor</string>
+		    <string>virtualmachine</string>
+		    <string>hypervisor</string>
 		</array>		
         <key>CibName</key>
-        <string>HypervisorHealth</string>
-        <key>RefreshStatsInterval</key>
-        <integer>5</integer>
-        <key>StatsHistoryCollectionSize</key>
-        <integer>50</integer>
+        <string>SampleTabModule</string>
     </dict>
 </plist>
