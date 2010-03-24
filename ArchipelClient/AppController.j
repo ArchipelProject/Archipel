@@ -117,7 +117,9 @@ TNArchipelEntityTypeUser            = @"user";
     [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleView setBackgroundColor:[CPColor whiteColor]];
     [_moduleView load];
-    
+    [_moduleView setFrame:[[self rightView] bounds]];
+    [[self rightView] addSubview:_moduleView];
+        
     // notifications
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
@@ -190,7 +192,9 @@ TNArchipelEntityTypeUser            = @"user";
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:[self filterField]];
     [[self propertiesView] setRoster:_mainRoster];
-    [_mainRoster getRoster];  
+    [_mainRoster getRoster]; 
+    
+    [_moduleView setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
 }
 
 - (void)logoutStrophe:(CPNotification)aNotification 
@@ -223,11 +227,11 @@ TNArchipelEntityTypeUser            = @"user";
     
     [_moduleView setEntity:item ofType:entityType andRoster:_mainRoster];
     
-    if ([_moduleView superview] != [self rightView])
-    {
-        [_moduleView setFrame:[[self rightView] bounds]];
-        [[self rightView] addSubview:_moduleView];
-    }
+    // if ([_moduleView superview] != [self rightView])
+    // {
+    //     [_moduleView setFrame:[[self rightView] bounds]];
+    //     [[self rightView] addSubview:_moduleView];
+    // }
     
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];

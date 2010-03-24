@@ -7,13 +7,17 @@
 {
     Marker      _gMarker    @accessors(property=gMarker);
     MKLocation  _location   @accessors(property=location);
-    BOOL        _draggable  @accessors(property=draggable);
+    BOOL        _draggable  @accessors(getter=isDraggable, setter=setDraggable:);
     BOOL        _withShadow  @accessors(property=withShadow);
+    BOOL        _clickable  @accessors(getter=isClickable, setter=setClickable:);
     CPString    _iconUrl    @accessors(property=iconUrl);
     CPString    _shadowUrl  @accessors(property=shadowUrl);
     id          _delegate  @accessors(property=delegate);
     CPString    _infoWindowHTML;
     CPDictionary _eventHandlers;
+    
+    CPDictionary    userInfo @accessors;
+    id              delegate @accessors;
 }
 
 + (MKMarker)marker
@@ -27,6 +31,11 @@
         _location = aLocation;
         _withShadow = YES;
         _draggable = YES;
+        _clickable = YES;
+        [self addEventForName:@"click" withFunction:function(){
+            if ([[self delegate] respondsToSelector:@selector(markerClicked:userInfo:)])
+                [[self delegate] markerClicked:self userInfo:[self userInfo]];
+        }];
     }
     return self;
 }
@@ -40,119 +49,6 @@
     }
 }
 
-/*!
-    Sets the icon URL based on this url pattern:
-    http://maps.google.com/mapfiles/ms/micons/<anIconName>.png
-    
-    Some examples:
-    
-    POI
-    arts
-    bar
-    blue-dot
-    blue-pushpin
-    blue
-    bus
-    cabs
-    camera
-    campfire
-    campground
-    caution
-    coffeehouse
-    convienancestore
-    cycling
-    dollar
-    drinking_water
-    earthquake
-    electronics
-    euro
-    fallingrocks
-    ferry
-    firedept
-    fishing
-    flag
-    gas
-    golfer
-    green-dot
-    green
-    grn-pushpin
-    grocerystore
-    groecerystore
-    helicopter
-    hiker
-    homegardenbusiness
-    horsebackriding
-    hospitals
-    hotsprings
-    info
-    info_circle
-    landmarks-jp
-    lightblue
-    lodging
-    ltblu-pushpin
-    ltblue-dot
-    man
-    marina
-    mechanic
-    motorcycling
-    movies
-    orange-dot
-    orange
-    parkinglot
-    partly_cloudy
-    pharmacy-us
-    phone
-    picnic
-    pink-dot
-    pink-pushpin
-    pink
-    plane
-    police
-    postoffice-jp
-    postoffice-us
-    purple-dot
-    purple-pushpin
-    purple
-    question
-    rail
-    rainy
-    rangerstation
-    realestate
-    recycle
-    red-dot
-    red-pushpin
-    red
-    restaurant
-    sailing
-    salon
-    shopping
-    ski
-    ski
-    snack_bar
-    snowflake_simple
-    sportvenue
-    subway
-    sunny
-    swimming
-    toilets
-    trail
-    tram
-    tree
-    truck
-    volcano
-    water
-    waterfalls
-    webcam
-    wheel_chair_accessible
-    woman
-    yellow-dot
-    yellow
-    yen
-    ylw-pushpin
-    
-    You can find a list of official google maps icons here:
-    http://www.visual-case.it/cgi-bin/vc/GMapsIcons.pl
-*/
 - (void)setGoogleIcon:(CPString)anIconName withShadow:(BOOL)withShadow
 {
     _withShadow = withShadow;
@@ -257,7 +153,7 @@
         icon.shadowSize = new gm.Size(59, 32);
     }
         
-    var markerOptions = { "icon":icon, "clickable":false, "draggable":_draggable };    
+    var markerOptions = { "icon":icon, "clickable":_clickable, "draggable":_draggable };    
     _gMarker = new gm.Marker([_location googleLatLng], markerOptions);
     
     // add the infowindow html

@@ -23,38 +23,38 @@
 
 @implementation TNMapView : TNModule 
 {
-    @outlet CPView      mapViewContainer    @accessors;
+    @outlet CPView      mapViewContainer            @accessors;
+    @outlet CPTextField textFieldOriginName         @accessors;
+    @outlet CPTextField textFieldDestinationName    @accessors;
+    @outlet CPSplitView splitViewVertical           @accessors;
+    @outlet CPSplitView splitViewHorizontal         @accessors;
     
+    @outlet CPCollectionView    collectionViewOrigin        @accessors;
+    @outlet CPCollectionView    collectionViewDestination   @accessors;
     MKMapView   _mapView;
 }
 
 - (id)awakeFromCib
 {
-
-    CPLogConsole("YOUHOU!!!!!");
-    
-    var bounds = [self bounds];
-    
-    _mapView = [[MKMapView alloc] initWithFrame:bounds apiKey:''];
+    _mapView = [[MKMapView alloc] initWithFrame:[[self mapViewContainer] bounds] apiKey:''];
 
     [_mapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mapView setDelegate:self];
-
-    [mapViewContainer setFrame:bounds];
+    
     [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [mapViewContainer addSubview:_mapView];
-    [mapViewContainer setBackgroundColor:[CPColor blueColor]];
+    
+    [[self splitViewVertical] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [[self splitViewVertical] setIsPaneSplitter:YES];
 }
 
 
 - (void)willLoad
 {
     [super willLoad];
-
-    var bounds = [self bounds];
     
-    [_mapView setFrame:bounds];
-    [mapViewContainer setFrame:bounds];
+    //[_mapView setFrame:bounds];
+    //[mapViewContainer setFrame:bounds];
 }
 
 - (void)willShow 
@@ -62,7 +62,8 @@
     [super willShow];
     
     var bounds = [[self superview] bounds];
-    [self setFrame:bounds];
+    
+    [[self splitViewVertical] setFrame:bounds];
 }
 
 - (void)willHide 
@@ -72,21 +73,38 @@
 
 - (void)mapViewIsReady:(MKMapView)aMapView
 {
-    CPLogConsole("MapView is ready");
+    var rosterItems = [[self roster] contacts];
+    CPLogConsole([self roster]);
     
-    var loc = [[MKLocation alloc] initWithLatitude:48.8542 andLongitude:2.3449];
-    var marker = [[MKMarker alloc] initAtLocation:loc];
-    [marker closeInfoWindow];
-    [marker addToMapView:aMapView];
-    [marker addEventForName:@"click" withFunction:function(theEvent){
+    var latitude = 48.8542;
+    for (var i = 0; i < [rosterItems count]; i++)
+    {
+        var item = [rosterItems objectAtIndex:i];
         
-        var aPoint = [CPEvent mouseLocation];
-        console.log(aPoint.x + ":" + aPoint.y);
-        var bubble = [[TNMarkerBubbleView alloc] initAtPosition:aPoint];
-        [self addSubview:bubble];
-    }]
+        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
+        {
+            CPLogConsole("found one hypervisor with name " + [item nickname]);
+            
+            var loc     = [[MKLocation alloc] initWithLatitude:latitude andLongitude:2.3449]; //TODO: GET POSITION OF HYPERVISOR
+            var marker  = [[MKMarker alloc] initAtLocation:loc];
+            
+            latitude++;
+            
+            [marker setDraggable:NO];
+            [marker setClickable:YES];
+            [marker setDelegate:self];
+            [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
+            
+            [marker addToMapView:_mapView];
+        }
+    }
+}
+
+- (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
+{
+    var item    = [someUserInfo objectForKey:@"rosterItem"];
     
-    [aMapView setCenter:loc];
+    [[self textFieldDestinationName] setStringValue:[item nickname]];
 }
 
 

@@ -24,13 +24,14 @@
 
 @implementation TNTabViewModuleLoader: CPTabView 
 {
-    TNStropheRoster         roster                      @accessors;
-    id                      entity                      @accessors;
-    CPString                moduleType                  @accessors;
-    CPString                modulesPath                 @accessors;
-    CPDictionary            loadedModulesScrollViews    @accessors;
-    TNToolbar               mainToolbar                 @accessors;
-    CPView                  mainRightView               @accessors;
+    TNStropheRoster         roster                          @accessors;
+    id                      entity                          @accessors;
+    CPString                moduleType                      @accessors;
+    CPString                modulesPath                     @accessors;
+    CPDictionary            loadedTabModulesScrollViews     @accessors;
+    CPDictionary            loadedToolbarModulesScrollViews @accessors;
+    TNToolbar               mainToolbar                     @accessors;
+    CPView                  mainRightView                   @accessors;
         
     id                      _modulesPList;
     CPString                _previousStatus;
@@ -42,9 +43,10 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-        [self setLoadedModulesScrollViews:[[CPDictionary alloc] init]];
+        loadedTabModulesScrollViews     = [CPDictionary dictionary];
+        loadedToolbarModulesScrollViews = [CPDictionary dictionary];
         
+        [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
         [self setModulesPath:@"Modules/"]; // TODO: conf
         [self setDelegate:self];
     }
@@ -126,9 +128,7 @@
     [scrollView setBackgroundColor:[CPColor whiteColor]];
     
     var frame = [scrollView bounds];
-    frame.size.height = [[theViewController view] frame].size.height;
-    
-    [[theViewController view] setFrame:frame];
+
     [[theViewController view] setAutoresizingMask: CPViewWidthSizable];
     [[theViewController view] setModuleName:moduleName];
     [[theViewController view] setModuleLabel:moduleLabel];
@@ -144,6 +144,8 @@
         [[theViewController view] setModuleTypes:moduleTabTypes];
         [[theViewController view] setModuleTabIndex:moduleTabIndex];
         
+        [[self loadedTabModulesScrollViews] setObject:scrollView forKey:moduleName];
+        frame.size.height = [[theViewController view] frame].size.height;
     }
     else if (moduleInsertionType == @"toolbar")
     {
@@ -153,16 +155,18 @@
         [[self mainToolbar] setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
         
         [[theViewController view] willLoad];
-                
+        
         [[self mainToolbar] _reloadToolbarItems];
+        
+        [[self loadedToolbarModulesScrollViews] setObject:scrollView forKey:moduleName];
     }
     
-    [[self loadedModulesScrollViews] setObject:scrollView forKey:moduleName];
+    [[theViewController view] setFrame:frame];
 }
 
 - (void)populateTabs
 {
-    var allValues = [[self loadedModulesScrollViews] allValues];
+    var allValues = [[self loadedTabModulesScrollViews] allValues];
     
     var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
         var indexA = [[a documentView] moduleTabIndex];
@@ -231,6 +235,18 @@
     }
 }
 
+
+- (void)setRosterForToolbarItems:(TNStropheRoster)aRoster andConnection:(TNStropheConnection)aConnection
+{
+    var allValues = [[self loadedToolbarModulesScrollViews] allValues];
+
+    for(var i = 0; i < [allValues count]; i++)
+    {
+        var toolbarModule = [[allValues objectAtIndex:i] documentView];
+        [toolbarModule initializeWithEntity:nil connection:aConnection andRoster:aRoster];
+    }
+    
+}
 - (void)_didPresenceUpdated:(CPNotification)aNotification
 {
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
@@ -305,7 +321,7 @@
         _currentToolbarItem = nil;
     }
     
-    var view            = [[self loadedModulesScrollViews] objectForKey:[sender itemIdentifier]];
+    var view            = [[self loadedToolbarModulesScrollViews] objectForKey:[sender itemIdentifier]];
     
     if (oldView != view)
     {
