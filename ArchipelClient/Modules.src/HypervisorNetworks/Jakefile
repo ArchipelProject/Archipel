@@ -30,13 +30,13 @@ app ("HypervisorNetworks", function(task)
     task.setBuildPath(FILE.join("Build", configuration));
 
     task.setProductName("HypervisorNetworks");
-    task.setIdentifier("org.archipelproject");
+    task.setIdentifier("org.archipelproject.hypervisornetworks");
     task.setVersion("1.0");
     task.setAuthor("Antoine Mercadal");
     task.setEmail("feedback @nospam@ yourcompany.com");
     task.setSummary("HypervisorNetworks");
-    task.setSources(new FileList("**/*.j"));
-    task.setResources(new FileList("Resources/*"));
+    task.setSources(new FileList("*.j"));
+    task.setResources(new FileList("Resources/**"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")

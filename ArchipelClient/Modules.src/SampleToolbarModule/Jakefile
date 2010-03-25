@@ -35,7 +35,7 @@ app ("SampleToolbarModule", function(task)
     task.setAuthor("Antoine Mercadal");
     task.setEmail("feedback @nospam@ yourcompany.com");
     task.setSummary("SampleToolbarModule");
-    task.setSources(new FileList("**/*.j"));
+    task.setSources(new FileList("*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
 

@@ -69,9 +69,9 @@
     [[self fieldMessage] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil]
 }
 
-- (void)observeValueForKeyPath:(CPString)keyPath ofObject:(id)object change:(CPDictionary)change context:(id)context 
+- (void)observeValueForKeyPath:(CPString)aKeyPath ofObject:(id)anObject change:(CPDictionary)aChange context:(id)aContext 
 {
-    if ([object stringValue] == @"")
+    if ([anObject stringValue] == @"")
     {
         [[self entity] sendComposePaused];
     }
@@ -200,7 +200,7 @@
 }
 
 
-- (IBAction)sendMessage:(id)sender
+- (IBAction)sendMessage:(id)aSender
 {
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
@@ -210,7 +210,7 @@
     [[self fieldMessage] setStringValue:@""];
 }
 
-- (IBAction)clearHistory:(id)sender
+- (IBAction)clearHistory:(id)aSender
 {
     localStorage.removeItem("communicationWith" + [[self entity] jid]);
     [_messages removeAllObjects];

@@ -1,5 +1,5 @@
 /*  
- * TNViewHypervisorControl.j
+ * TNMapView.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,21 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-
-@import "Resources/MapKit/MKMapView.j"
+@import "MapKit/MKMapView.j"
 
 @implementation TNMapView : TNModule 
 {
-    @outlet CPView      mapViewContainer            @accessors;
-    @outlet CPTextField textFieldOriginName         @accessors;
-    @outlet CPTextField textFieldDestinationName    @accessors;
-    @outlet CPSplitView splitViewVertical           @accessors;
-    @outlet CPSplitView splitViewHorizontal         @accessors;
+    @outlet CPView          mapViewContainer            @accessors;
+    @outlet CPTextField     textFieldOriginName         @accessors;
+    @outlet CPTextField     textFieldDestinationName    @accessors;
+    @outlet CPSplitView     splitViewVertical           @accessors;
+    @outlet CPSplitView     splitViewHorizontal         @accessors;
     
-    @outlet CPCollectionView    collectionViewOrigin        @accessors;
-    @outlet CPCollectionView    collectionViewDestination   @accessors;
+    // @outlet CPCollectionView    collectionViewOrigin        @accessors;
+    // @outlet CPCollectionView    collectionViewDestination   @accessors;
     MKMapView   _mapView;
 }
 
@@ -61,9 +61,9 @@
 {
     [super willShow];
     
-    var bounds = [[self superview] bounds];
-    
-    [[self splitViewVertical] setFrame:bounds];
+    // var bounds = [[self superview] bounds];
+    // 
+    // [[self splitViewVertical] setFrame:bounds];
 }
 
 - (void)willHide 

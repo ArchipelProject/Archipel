@@ -37,8 +37,8 @@ app ("Archipel", function(task)
     task.setAuthor("Antoine Mercadal");
     task.setEmail("antoine.mercadal @nospam@ inframonde.eu");
     task.setSummary("Archipel");
-    task.setSources(new FileList("*.j", "StropheCappuccino/*.j"));
-    task.setResources(new FileList("Resources/*"));
+    task.setSources(new FileList("*.j"));
+    task.setResources(new FileList("Resources/**"));
     task.setIndexFilePath("index.html");
     task.setInfoPlistPath("Info.plist");
 

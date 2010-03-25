@@ -76,7 +76,7 @@
     var roster = [aNotification object];
     
     [self setDataSource:roster];
-    [roster setOutlineView:self];
+    [roster setMainOutlineView:self];
     [self expandAll];
 }
 

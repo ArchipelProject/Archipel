@@ -107,7 +107,14 @@
         var path                = [self modulesPath] + [module objectForKey:@"folder"];
         var bundle              = [CPBundle bundleWithPath:path];
         
-        [bundle loadWithDelegate:self];
+        try
+        {
+            [bundle loadWithDelegate:self];
+        }
+        catch(err)
+        {
+            alert(err);
+        }
     }
 }
 

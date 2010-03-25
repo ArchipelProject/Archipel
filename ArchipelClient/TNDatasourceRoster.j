@@ -24,7 +24,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 @implementation TNDatasourceRoster  : TNStropheRoster 
 {
-    CPOutlineView   outlineView     @accessors;
+    CPOutlineView   mainOutlineView @accessors;
     CPString        filter          @accessors;
     CPSearchField   filterField     @accessors;
 
@@ -63,23 +63,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [[self filterField] setSendsSearchStringImmediately:YES]
     [[self filterField] setTarget:self];
     [[self filterField] setAction:@selector(filterFieldDidChange:)];
-    
-    // var menu            = [[CPMenu alloc] initWithTitle:@"Recent Searches"];
-    // var itemAll         = [[CPMenuItem alloc] initWithTitle:@"Search all" action:nil keyEquivalent:nil];
-    // var itemGroups      = [[CPMenuItem alloc] initWithTitle:@"Search virtual machines" action:nil keyEquivalent:nil];    
-    // var itemHypervisors = [[CPMenuItem alloc] initWithTitle:@"Search hypervisors" action:nil keyEquivalent:nil];
-    // var itemUsers       = [[CPMenuItem alloc] initWithTitle:@"Search users" action:nil keyEquivalent:nil];
-    // var itemGroups      = [[CPMenuItem alloc] initWithTitle:@"Search groups" action:nil keyEquivalent:nil];
-    // 
-    // [itemAll setTag:1];
-    // [itemGroups setTag:2];
-    // 
-    // [menu addItem:itemAll];
-    // [menu addItem:itemGroups];
-    // [menu addItem:itemHypervisors];
-    // [menu addItem:itemUsers];
-    // [menu addItem:itemGroups];
-    // [[self filterField] setSearchMenuTemplate:menu];
 }
 
 - (IBAction)filterFieldDidChange:(id)sender
@@ -90,37 +73,37 @@ TNDragTypeContact   = @"TNDragTypeContact";
                        
 - (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
 {   
-    [[self outlineView] reloadData];
+    [[self mainOutlineView] reloadData];
 }
 
 - (void)updateOutlineView:(CPNotification)aNotification 
 {       
-    [[self outlineView] reloadData];
+    [[self mainOutlineView] reloadData];
     
-    var index   = [[self outlineView] rowForItem:[aNotification object]];
+    var index   = [[self mainOutlineView] rowForItem:[aNotification object]];
     
     if (index != -1)
     {
         var set     = [CPIndexSet indexSetWithIndex:index];
-        [[self outlineView] selectRowIndexes:set byExtendingSelection:NO];
+        [[self mainOutlineView] selectRowIndexes:set byExtendingSelection:NO];
     }
 }
 
 
 - (void)updateOutlineViewItem:(CPNotification)aNotification
 {
-    [[self outlineView] reloadData];
+    [[self mainOutlineView] reloadData];
     //[[self outlineView] reloadItem:[aNotification object]];
 }
 
 - (void)updateOutlineViewGroupItem:(CPNotification)aNotification
 {
-    [[self outlineView] reloadData];
+    [[self mainOutlineView] reloadData];
     //[[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
 }
 
 
-- (int)outlineView:(CPOutlineView)outlineView numberOfChildrenOfItem:(id)item 
+- (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item 
 {
     if (!item) 
     {
@@ -132,12 +115,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
 	}
 }
 
-- (BOOL)outlineView:(CPOutlineView)outlineView isItemExpandable:(id)item 
+- (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item 
 {
 	return ([item type] == @"group") ? YES : NO;
 }
 
-- (id)outlineView:(CPOutlineView)outlineView child:(int)index ofItem:(id)item  
+- (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item  
 {   
     if (!item) 
     {
@@ -149,7 +132,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
-- (id)outlineView:(CPOutlineView)outlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item 
+- (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item 
 {
     var cid = [tableColumn identifier];
 
@@ -256,10 +239,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return CPDragOperationEvery;
 }
 
-- (BOOL)outlineView:(CPOutlineView)outlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
+- (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
     [_draggedItem changeGroup:[theItem name]];
-    [[self outlineView] reloadData];
+    [[self mainOutlineView] reloadData];
     
     return YES;
 }

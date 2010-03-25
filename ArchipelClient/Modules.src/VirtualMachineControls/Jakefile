@@ -35,8 +35,8 @@ app ("VirtualMachineControls", function(task)
     task.setAuthor("Antoine Mercadal");
     task.setEmail("feedback @nospam@ yourcompany.com");
     task.setSummary("VirtualMachineControls");
-    task.setSources(new FileList("**/*.j"));
-    task.setResources(new FileList("Resources/*"));
+    task.setSources(new FileList("*.j"));
+    task.setResources(new FileList("Resources/**"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")

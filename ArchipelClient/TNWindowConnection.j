@@ -35,7 +35,7 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     @outlet CPTextField boshService         @accessors;
     @outlet CPCheckBox  credentialRemember  @accessors;
     
-    TNStropheConnection     strophe         @accessors;
+    TNStropheConnection     JSStrophe         @accessors;
     CPCookie                cookieLogin     @accessors;
     CPCookie                cookiePassword  @accessors;
 }
@@ -74,40 +74,40 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
         localStorage.setItem("lastpassword", JSON.stringify([password stringValue]));
     }
 
-    [self setStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
-    [[self strophe] setDelegate:self];                                      
-    [[self strophe] connect];   
+    [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
+    [[self JSStrophe] setDelegate:self];                                      
+    [[self JSStrophe] connect];   
 }
 
 //TNStrophe delegate
-- (void)onStropheConnecting:(TNStrophe)strophe 
+- (void)onStropheConnecting:(id)aStrophe 
 {
     [[self spinning] setHidden:NO];
 }
 
-- (void)onStropheConnected:(TNStrophe)strophe
+- (void)onStropheConnected:(id)aStrophe
 {
     var center = [CPNotificationCenter defaultCenter];    
-    [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self strophe]];
+    [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self JSStrophe]];
     [[self spinning] setHidden:YES];
     
     [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
 }
 
-- (void)onStropheConnectFail:(TNStrophe)strophe
+- (void)onStropheConnectFail:(id)aStrophe
 {
     var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNStropheConnectionFailNotification object:self userInfo:[self strophe]];
+    [center postNotificationName:TNStropheConnectionFailNotification object:self userInfo:[self JSStrophe]];
     [[self spinning] setHidden:YES];
     [[self message] setStringValue:@"strophe connection failed"];
     
     [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
 }
 
-- (void)onStropheDisconnected:(TNStrophe)strophe
+- (void)onStropheDisconnected:(id)sStrophe
 {
     var center = [CPNotificationCenter defaultCenter];   
-    [center postNotificationName:TNStropheDisconnectionNotification object:self userInfo:[self strophe]];
+    [center postNotificationName:TNStropheDisconnectionNotification object:self userInfo:[self JSStrophe]];
     
     [[self jid] setStringValue:""]; 
     [[self password] setStringValue:""];
