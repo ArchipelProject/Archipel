@@ -201,10 +201,10 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
     _currentItem = [someUserInfo objectForKey:@"rosterItem"];
     
     [CPAlert alertWithTitle:@"Define path" 
-                    message:@"Please choose if this hypervisor is origin or destination" 
+                    message:@"Please choose if this " + [_currentItem nickname] + @" is origin or destination of the migration." 
                       style:CPInformationalAlertStyle 
                    delegate:self 
-                    buttons:["Origin", "Destination"]];
+                    buttons:["Origin", "Destination", "Cancel"]];
 
 }
 
@@ -215,12 +215,14 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
         [self setOriginHypervisor:_currentItem];
         [[self textFieldOriginName] setStringValue:[_currentItem nickname]];
     }
-    else
+    else if (returnCode == 1)
     {
         [self setDestinationHypervisor:_currentItem];
         [[self textFieldDestinationName] setStringValue:[_currentItem nickname]];
     }
-    
+    else
+        return;
+        
     [self rosterOfHypervisor:_currentItem];
 }
 
