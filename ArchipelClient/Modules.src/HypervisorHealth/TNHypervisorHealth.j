@@ -191,6 +191,9 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthHistory, "limit": _statsHistoryCollectionSize}];
     
+    [[self imageCPULoading] setHidden:NO];
+    [[self imageMemoryLoading] setHidden:NO];
+    
     [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
 }
 

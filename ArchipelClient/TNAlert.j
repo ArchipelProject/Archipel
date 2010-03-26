@@ -22,7 +22,7 @@
 
 @implementation CPAlert (CPAlertWithQuickModal)
 {
-    
+
 }
 
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle
@@ -41,3 +41,20 @@
 {
     [CPAlert alertWithTitle:aTitle message:aMessage style:CPInformationalAlertStyle];
 }
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle delegate:(id)aDelegate buttons:(CPArray)someButtons
+{
+    var alert = [[CPAlert alloc] init];
+    [alert setTitle:aTitle];
+    [alert setMessageText:aMessage];
+    [alert setWindowStyle:CPHUDBackgroundWindowMask];
+    [alert setAlertStyle:aStyle];
+    [alert setDelegate:aDelegate];
+    
+    for (var i = 0; i < [someButtons count]; i++)
+        [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
+    
+    [alert runModal];
+}
+
+@end

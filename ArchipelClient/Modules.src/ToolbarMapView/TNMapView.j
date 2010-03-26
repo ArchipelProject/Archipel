@@ -19,7 +19,16 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+
 @import "MapKit/MKMapView.j"
+@import "TNDatasourceMigrationVMs.j"
+
+
+TNArchipelTypeHypervisorControl            = @"archipel:hypervisor:control";
+
+TNArchipelTypeHypervisorControlAlloc       = @"alloc";
+TNArchipelTypeHypervisorControlFree        = @"free";
+TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
 
 @implementation TNMapView : TNModule 
 {
@@ -29,8 +38,20 @@
     @outlet CPSplitView     splitViewVertical           @accessors;
     @outlet CPSplitView     splitViewHorizontal         @accessors;
     
-    // @outlet CPCollectionView    collectionViewOrigin        @accessors;
-    // @outlet CPCollectionView    collectionViewDestination   @accessors;
+    @outlet CPScrollView    scrollViewOrigin            @accessors;
+    @outlet CPScrollView    scrollViewDestination       @accessors;
+    
+    CPTableView             tableOriginVMs                  @accessors;
+    CPTableView             tableDestinationVMs             @accessors;
+    
+    TNDatasourceMigrationVMs     vmOrginDatasource          @accessors;
+    TNDatasourceMigrationVMs     vmDestinationDatasource    @accessors;
+    
+    TNStropheContact            originHypervisor            @accessors;
+    TNStropheContact            destinationHypervisor       @accessors;
+    
+    id  _currentItem;
+    
     MKMapView   _mapView;
 }
 
@@ -46,6 +67,81 @@
     
     [[self splitViewVertical] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [[self splitViewVertical] setIsPaneSplitter:YES];
+    
+    
+    // VM origin table view
+    vmOrginDatasource       = [[TNDatasourceMigrationVMs alloc] init];
+    tableOriginVMs          = [[CPTableView alloc] initWithFrame:[[self scrollViewOrigin] bounds]];
+    
+    [[self scrollViewOrigin] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self scrollViewOrigin] setAutohidesScrollers:YES];
+    [[self scrollViewOrigin] setDocumentView:[self tableOriginVMs]];
+    [[self scrollViewOrigin] setBorderedWithHexColor:@"#9e9e9e"];
+    
+    [[self tableOriginVMs] setUsesAlternatingRowBackgroundColors:YES];
+    [[self tableOriginVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self tableOriginVMs] setAllowsColumnReordering:YES];
+    [[self tableOriginVMs] setAllowsColumnResizing:YES];
+    [[self tableOriginVMs] setAllowsEmptySelection:YES];
+    
+    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    //[vmColumNickname setWidth:250];
+    [[vmColumNickname headerView] setStringValue:@"Name"];
+    
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    //[vmColumJID setWidth:450];
+    [[vmColumJID headerView] setStringValue:@"Jabber ID"];
+    
+    var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
+    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    [imgView setImageScaling:CPScaleNone];
+    [vmColumStatusIcon setDataView:imgView];
+    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
+    [vmColumStatusIcon setWidth:16];
+    [[vmColumStatusIcon headerView] setStringValue:@""];
+    
+    [[self tableOriginVMs] addTableColumn:vmColumStatusIcon];
+    [[self tableOriginVMs] addTableColumn:vmColumNickname];
+    [[self tableOriginVMs] addTableColumn:vmColumJID];
+    
+    [[self tableOriginVMs] setDataSource:[self vmOrginDatasource]];
+    
+    // VM Destination table view
+    vmDestinationDatasource     = [[TNDatasourceMigrationVMs alloc] init];
+    tableDestinationVMs         = [[CPTableView alloc] initWithFrame:[[self scrollViewDestination] bounds]];
+    
+    [[self scrollViewDestination] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self scrollViewDestination] setAutohidesScrollers:YES];
+    [[self scrollViewDestination] setDocumentView:[self tableDestinationVMs]];
+    [[self scrollViewDestination] setBorderedWithHexColor:@"#9e9e9e"];
+    
+    [[self tableDestinationVMs] setUsesAlternatingRowBackgroundColors:YES];
+    [[self tableDestinationVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [[self tableDestinationVMs] setAllowsColumnReordering:YES];
+    [[self tableDestinationVMs] setAllowsColumnResizing:YES];
+    [[self tableDestinationVMs] setAllowsEmptySelection:YES];
+    
+    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    //[vmColumNickname setWidth:250];
+    [[vmColumNickname headerView] setStringValue:@"Name"];
+    
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    //[vmColumJID setWidth:450];
+    [[vmColumJID headerView] setStringValue:@"Jabber ID"];
+    
+    var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
+    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    [imgView setImageScaling:CPScaleNone];
+    [vmColumStatusIcon setDataView:imgView];
+    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
+    [vmColumStatusIcon setWidth:16];
+    [[vmColumStatusIcon headerView] setStringValue:@""];
+    
+    [[self tableDestinationVMs] addTableColumn:vmColumStatusIcon];
+    [[self tableDestinationVMs] addTableColumn:vmColumNickname];
+    [[self tableDestinationVMs] addTableColumn:vmColumJID];
+    
+    [[self tableDestinationVMs] setDataSource:[self vmDestinationDatasource]];
 }
 
 
@@ -102,11 +198,91 @@
 
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
-    var item    = [someUserInfo objectForKey:@"rosterItem"];
+    _currentItem = [someUserInfo objectForKey:@"rosterItem"];
     
-    [[self textFieldDestinationName] setStringValue:[item nickname]];
+    [CPAlert alertWithTitle:@"Define path" 
+                    message:@"Please choose if this hypervisor is origin or destination" 
+                      style:CPInformationalAlertStyle 
+                   delegate:self 
+                    buttons:["Origin", "Destination"]];
+
 }
 
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+{   
+    if (returnCode == 0)
+    {
+        [self setOriginHypervisor:_currentItem];
+        [[self textFieldOriginName] setStringValue:[_currentItem nickname]];
+    }
+    else
+    {
+        [self setDestinationHypervisor:_currentItem];
+        [[self textFieldDestinationName] setStringValue:[_currentItem nickname]];
+    }
+    
+    [self rosterOfHypervisor:_currentItem];
+}
+
+- (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
+{
+    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+        
+    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
+    
+    if (anHypervisor == [self originHypervisor])
+        [anHypervisor sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
+    else
+        [anHypervisor sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
+}
+
+- (void)didReceiveOriginHypervisorRoster:(id)aStanza 
+{
+    var queryItems  = [aStanza childrenWithName:@"item"];
+    var center      = [CPNotificationCenter defaultCenter];
+    
+    [[[self vmOrginDatasource] VMs] removeAllObjects];
+    
+    for (var i = 0; i < [queryItems count]; i++)
+    {
+        var jid     = [[queryItems objectAtIndex:i] text];
+        var entry   = [[self roster] getContactFromJID:jid];
+        
+        if (entry) 
+        {
+           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+           {
+                [[self vmOrginDatasource] addVM:entry];
+                //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
+           }
+        }
+    }
+    [[self tableOriginVMs] reloadData];
+}
+
+- (void)didReceiveDestinationHypervisorRoster:(id)aStanza 
+{
+    var queryItems  = [aStanza childrenWithName:@"item"];
+    var center      = [CPNotificationCenter defaultCenter];
+    
+    [[[self vmDestinationDatasource] VMs] removeAllObjects];
+    
+    for (var i = 0; i < [queryItems count]; i++)
+    {
+        var jid     = [[queryItems objectAtIndex:i] text];
+        var entry   = [[self roster] getContactFromJID:jid];
+        
+        if (entry) 
+        {
+           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+           {
+                [[self vmDestinationDatasource] addVM:entry];
+                //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
+           }
+        }
+    }
+    [[self tableDestinationVMs] reloadData];
+}
 
 
 @end
