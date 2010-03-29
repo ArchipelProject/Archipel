@@ -23,7 +23,7 @@ import time
 from threading import Thread
 from utils import *
 
-from pysnmp.entity.rfc3413.oneliner import cmdgen
+#from pysnmp.entity.rfc3413.oneliner import cmdgen
 
 
 class TNThreadedHealthCollector(Thread):
@@ -31,35 +31,37 @@ class TNThreadedHealthCollector(Thread):
     """
     this class collects hypervisor stats regularly
     """
-    def __init__(self, database_file, collection_interval, snmp_agent, snmp_community, snmp_version, snmp_port):
+    def __init__(self, database_file, collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port):
         """
         the contructor of the class
         """
         self.database_file = database_file;
         self.collection_interval = collection_interval;
+        self.max_rows_before_purge = max_rows_before_purge;
         
-        self.snmp_community     = cmdgen.CommunityData(snmp_agent, snmp_community, snmp_version)
-        self.snmp_udptransport  = cmdgen.UdpTransportTarget(('localhost', snmp_port))
+        #self.snmp_community     = cmdgen.CommunityData(snmp_agent, snmp_community, snmp_version)
+        #self.snmp_udptransport  = cmdgen.UdpTransportTarget(('localhost', snmp_port))
         
         # ## uname
         # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,1,0))
         # uname = str(varBinds[0][1])
         # uname = uname.split()
         # self.uname_stats = {"krelease": uname[2] , "kname": uname[0] , "machine": uname[1], "os": uname[11]}
+        
         uname = commands.getoutput("uname -rsmo").split();
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
         
         log(self, LOG_LEVEL_INFO, "opening stats database file {0}".format(self.database_file))
+        self.database_thread_connection = sqlite3.connect(self.database_file, check_same_thread=False)
         
-        self.query_database_connection = sqlite3.connect(self.database_file)
-        try:
-            self.query_database_connection.execute("create table cpu (collection_date date, idle int)")
-            self.query_database_connection.execute("create table memory (collection_date date, free integer, used integer, total integer, swapped integer)")
-            self.query_database_connection.execute("create table disk (collection_date date, total int, used int, free int, free_percentage int)")
-            self.query_database_connection.execute("create table load (collection_date date, one float, five float, fifteen float)")
-            log(self, LOG_LEVEL_INFO, "database schema created.")   
-        except Exception as ex:
-            log(self, LOG_LEVEL_INFO, "tables seems to be already here. recovering.")
+        #self.query_database_connection = sqlite3.connect(self.database_file)
+        self.cursor = self.database_thread_connection.cursor();
+        
+        self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
+        self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
+        self.cursor.execute("create table if not exists disk (collection_date date, total int, used int, free int, free_percentage int)")
+        self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
+        log(self, LOG_LEVEL_INFO, "Database ready.")
             
         Thread.__init__(self)
     
@@ -71,41 +73,30 @@ class TNThreadedHealthCollector(Thread):
         @return: the L{TNArchipelVirtualMachine} instance
         """        
         log(self, LOG_LEVEL_DEBUG, "Retrieving last "+ str(limit) + " recorded stats data for sending")
-        tempdatabase = self.query_database_connection;
         
-        query = "select * from cpu, memory, disk, load order by collection_date desc limit " + str(limit);
-        
-        cpustat_cursor = tempdatabase.cursor();
-        cpustat_cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
+        self.cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
         cpu_stats = [];
-        for values in cpustat_cursor:
+        for values in self.cursor:
             date, idle = values
             cpu_stats.append({"date": date, "id": idle})
-        cpustat_cursor.close();
         
-        memstat_cursor = tempdatabase.cursor();
-        memstat_cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
+        self.cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
         memory_stats = [];
-        for values in memstat_cursor:
+        for values in self.cursor:
             date, free, used, total, swapped = values
             memory_stats.append({"date": date, "free": free, "used" : used, "total": total, "swapped": swapped})
-        memstat_cursor.close();
         
-        diskstat_cursor = tempdatabase.cursor();
-        diskstat_cursor.execute("select * from disk order by collection_date desc limit " + str(limit))
+        self.cursor.execute("select * from disk order by collection_date desc limit " + str(limit))
         disk_stats = [];
-        for values in diskstat_cursor:
+        for values in self.cursor:
             date, total, used, free, free_percentage = values
             disk_stats.append({"date": date, "total": total, "used": used, "free": free, "free_percentage": free_percentage})
-        diskstat_cursor.close();
         
-        loadstat_cursor = tempdatabase.cursor();
-        loadstat_cursor.execute("select * from load order by collection_date desc limit " + str(limit))
+        self.cursor.execute("select * from load order by collection_date desc limit " + str(limit))
         load_stats = [];
-        for values in loadstat_cursor:
+        for values in self.cursor:
             date, one, five, fifteen = values
             load_stats.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
-        loadstat_cursor.close();
         
         # uptime
         # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,3,0))
@@ -113,9 +104,8 @@ class TNThreadedHealthCollector(Thread):
         # uptime_stats = {"up" : uptime};
         uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
         uptime_stats = {"up" : uptime};
-                 
-        log(self, LOG_LEVEL_DEBUG, "Stat collection terminated");
-        return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats};
+        
+        return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats}
     
     
     def get_memory_stats(self):
@@ -195,15 +185,19 @@ class TNThreadedHealthCollector(Thread):
         """
         overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
-        self.database_thread_connection = sqlite3.connect(self.database_file)
         while(1):
-            log(self, LOG_LEVEL_DEBUG, "starting to collect stats")
+            self.cursor.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
+            self.cursor.execute("insert into cpu values(?,?)", self.get_cpu_stats())
+            self.cursor.execute("insert into load values(?,?,?,?)", self.get_load_stats());
+            self.cursor.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
             
-            self.database_thread_connection.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
-            self.database_thread_connection.execute("insert into cpu values(?,?)", self.get_cpu_stats())
-            self.database_thread_connection.execute("insert into load values(?,?,?,?)", self.get_load_stats());
-            self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
-            
+            if int(self.cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
+                log(self, LOG_LEVEL_DEBUG, "Purging the last entry.");
+                self.cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.cursor.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+        
             self.database_thread_connection.commit()
             
             log(self, LOG_LEVEL_DEBUG, "Stats collected")

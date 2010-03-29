@@ -200,9 +200,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza 
 {
     if ([aStanza getType] == @"success")
-    {
+    {   
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();
+        console.log([stats count]);
         
         for (var i = 0; i < [stats count]; i++)
         {
@@ -215,12 +216,11 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
             [[self healthMemUsage] setStringValue:freeMem + " Mo"];
             [[self healthMemSwapped] setStringValue:swapped + " Mo"];
             
-            
             var cpuNode = [currentNode firstChildWithName:@"cpu"];
             var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
             
             [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
-
+            
             [_cpuDatasource pushData:parseInt(cpuFree)];
             [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
             // [_memoryDatasource pushDataMemSwapped:parseInt([memNode valueForAttribute:@"swapped"]) * 1024];
