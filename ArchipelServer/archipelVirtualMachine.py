@@ -71,9 +71,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         ipaddr, other = s.getsockname();
         self.hypervisor = hypervisor;
         
-        if not os.path.isdir(self.vm_disk_base_path + jid):
-            os.mkdir(self.vm_disk_base_path + jid);
-                
+        self.vm_disk_base_path  = self.configuration.get("Virtual Machines", "disk_base_path") + "/"
+        self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
+        
+        if not os.path.isdir(self.vm_own_folder):
+            os.mkdir(self.vm_own_folder);
+        
         self.ipaddr = ipaddr;
     
     
@@ -103,8 +106,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         remove the folder of the virtual with all its contents
         """
-        path = self.vm_disk_base_path + str(self.jid);
-        os.system("rm -rf " + path);
+        os.system("rm -rf " + self.vm_own_folder);
     
     
     

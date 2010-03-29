@@ -203,7 +203,6 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     {   
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();
-        console.log([stats count]);
         
         for (var i = 0; i < [stats count]; i++)
         {

@@ -51,11 +51,14 @@ class TNThreadedHealthCollector(Thread):
         uname = commands.getoutput("uname -rsmo").split();
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
         
+        
         log(self, LOG_LEVEL_INFO, "opening stats database file {0}".format(self.database_file))
-        self.database_thread_connection = sqlite3.connect(self.database_file, check_same_thread=False)
+        
+        self.database_query_connection = sqlite3.connect(self.database_file)
+        
         
         #self.query_database_connection = sqlite3.connect(self.database_file)
-        self.cursor = self.database_thread_connection.cursor();
+        self.cursor = self.database_query_connection.cursor();
         
         self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
@@ -185,18 +188,20 @@ class TNThreadedHealthCollector(Thread):
         """
         overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
+        self.database_thread_connection = sqlite3.connect(self.database_file)
+        
         while(1):
-            self.cursor.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
-            self.cursor.execute("insert into cpu values(?,?)", self.get_cpu_stats())
-            self.cursor.execute("insert into load values(?,?,?,?)", self.get_load_stats());
-            self.cursor.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
+            self.database_thread_connection.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
+            self.database_thread_connection.execute("insert into cpu values(?,?)", self.get_cpu_stats())
+            self.database_thread_connection.execute("insert into load values(?,?,?,?)", self.get_load_stats());
+            self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
             
-            if int(self.cursor.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                log(self, LOG_LEVEL_DEBUG, "Purging the last entry.");
-                self.cursor.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.cursor.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.cursor.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.cursor.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+            if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
+                log(self, LOG_LEVEL_DEBUG, "Purging the last entries.");
+                self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                self.database_thread_connection.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
         
             self.database_thread_connection.commit()
             

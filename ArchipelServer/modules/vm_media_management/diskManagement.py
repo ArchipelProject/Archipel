@@ -31,8 +31,9 @@ NS_ARCHIPEL_VM_DISK = "archipel:vm:disk"
 ######################################################################################################
 
 def __module_init__disk_management(self):
-    self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path") + "/"
-    self.shared_isos_folder = self.configuration.get("Module Disks", "iso_base_path") + "/"
+    pass
+    # self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path") + "/"
+    self.shared_isos_folder = self.configuration.get("Module Medias", "iso_base_path") + "/"
     
 def __module_register_stanza__disk_management(self):
     self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_disk, typ=NS_ARCHIPEL_VM_DISK)
@@ -91,16 +92,15 @@ def __disk_create(self, iq):
     @return: a ready to send IQ containing the result of the action
     """
     try:
-        path = self.vm_disk_base_path + str(self.jid);
-        if not os.path.isdir(path):
-            os.mkdir(path);
+        if not os.path.isdir(self.vm_own_folder):
+            os.mkdir(self.vm_own_folder);
         
         query_node = iq.getTag("query");
         disk_name = query_node.getTag("name").getData()
         disk_size = query_node.getTag("size").getData()
         disk_unit = query_node.getTag("unit").getData()
         
-        ret = os.system("qemu-img create -f qcow2 " + path + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
+        ret = os.system("qemu-img create -f qcow2 " + self.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
         if not ret == 0:
             raise Exception("Unable to create drive. Error code is " + ret);
          
@@ -127,8 +127,6 @@ def __disk_delete(self, iq):
     @return: a ready to send IQ containing the result of the action
     """
     try:
-        path = self.vm_disk_base_path + str(self.jid);
-    
         query_node = iq.getTag("query");
         disk_name = query_node.getTag("name").getData();
         
@@ -157,15 +155,14 @@ def __disk_get(self, iq):
     @return: a ready to send IQ containing the result of the action
     """
     try:
-        path = self.vm_disk_base_path + str(self.jid);
-        disks = commands.getoutput("ls " + path).split()
+        disks = commands.getoutput("ls " + self.vm_own_folder).split()
         nodes = []
         
         for disk in disks:
-            if commands.getoutput("file " + path + "/" + disk).lower().find("format: qcow") > -1:
-                diskinfo = commands.getoutput("qemu-img info " + path + "/" + disk).split("\n");
+            if commands.getoutput("file " + self.vm_own_folder + "/" + disk).lower().find("format: qcow") > -1:
+                diskinfo = commands.getoutput("qemu-img info " + self.vm_own_folder + "/" + disk).split("\n");
                 node = xmpp.Node(tag="disk", attrs={ "name": disk,
-                    "path": path + "/" + disk,
+                    "path": self.vm_own_folder + "/" + disk,
                     "format": diskinfo[1].split(": ")[1],
                     "virtualSize": diskinfo[2].split(": ")[1],
                     "diskSize": diskinfo[3].split(": ")[1],
@@ -196,13 +193,12 @@ def __isos_get(self, iq):
     @return: a ready to send IQ containing the result of the action
     """
     try:
-        path = self.vm_disk_base_path + str(self.jid);
         nodes = []
         
-        isos = commands.getoutput("ls " + path).split()
+        isos = commands.getoutput("ls " + self.vm_own_folder).split()
         for iso in isos:
-            if commands.getoutput("file " + path + "/" + iso).lower().find("iso 9660") > -1:
-                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": path + "/" + iso })
+            if commands.getoutput("file " + self.vm_own_folder + "/" + iso).lower().find("iso 9660") > -1:
+                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.vm_own_folder + "/" + iso })
                 nodes.append(node);
         
         sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 
