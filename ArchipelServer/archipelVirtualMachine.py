@@ -66,9 +66,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
         self.register_actions_to_perform_on_auth("connect_libvirt", None)
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('google.com', 0));
-        ipaddr, other = s.getsockname();
         self.hypervisor = hypervisor;
         
         self.vm_disk_base_path  = self.configuration.get("Virtual Machines", "disk_base_path") + "/"
@@ -76,8 +73,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         if not os.path.isdir(self.vm_own_folder):
             os.mkdir(self.vm_own_folder);
-        
-        self.ipaddr = ipaddr;
     
     
     def register_handler(self):

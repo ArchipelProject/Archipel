@@ -24,11 +24,13 @@
 @import "TNDatasourceMigrationVMs.j"
 
 
-TNArchipelTypeHypervisorControl            = @"archipel:hypervisor:control";
+TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
+TNArchipelTypeHypervisorControlAlloc        = @"alloc";
+TNArchipelTypeHypervisorControlFree         = @"free";
+TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
-TNArchipelTypeHypervisorControlAlloc       = @"alloc";
-TNArchipelTypeHypervisorControlFree        = @"free";
-TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
+TNArchipelTypeHypervisorGeolocalization     = @"archipel:hypervisor:geolocalization";
+TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 @implementation TNMapView : TNModule 
 {
@@ -50,21 +52,13 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
     TNStropheContact            originHypervisor            @accessors;
     TNStropheContact            destinationHypervisor       @accessors;
     
-    id  _currentItem;
-    
-    MKMapView   _mapView;
+    id          _currentItem;
+    MKMapView   _mainMapView;
 }
 
 - (id)awakeFromCib
 {
-    _mapView = [[MKMapView alloc] initWithFrame:[[self mapViewContainer] bounds] apiKey:''];
-
-    [_mapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_mapView setDelegate:self];
-    
-    [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [mapViewContainer addSubview:_mapView];
-    
+    [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable]; 
     [[self splitViewVertical] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [[self splitViewVertical] setIsPaneSplitter:YES];
     
@@ -145,11 +139,12 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
 }
 
 
+// TNModule
 - (void)willLoad
 {
     [super willLoad];
     
-    //[_mapView setFrame:bounds];
+    //[_mainMapView setFrame:bounds];
     //[mapViewContainer setFrame:bounds];
 }
 
@@ -157,73 +152,70 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
 {
     [super willShow];
     
-    // var bounds = [[self superview] bounds];
-    // 
-    // [[self splitViewVertical] setFrame:bounds];
+    _mainMapView = [[MKMapView alloc] initWithFrame:[[self mapViewContainer] bounds] apiKey:''];
+
+    [_mainMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_mainMapView setDelegate:self];
+    
+    [mapViewContainer addSubview:_mainMapView];
 }
 
 - (void)willHide 
 {
     [super willHide];
+    
+    [_mainMapView clearOverlays];
+    [_mainMapView setDelegate:nil];
+    [_mainMapView removeFromSuperview];
+    [_mainMapView clean];
+    _mainMapView = nil;
 }
 
+
+// mapview delegate
 - (void)mapViewIsReady:(MKMapView)aMapView
 {
     var rosterItems = [[self roster] contacts];
-    CPLogConsole([self roster]);
     
-    var latitude = 48.8542;
     for (var i = 0; i < [rosterItems count]; i++)
     {
         var item = [rosterItems objectAtIndex:i];
         
-        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
-        {
-            CPLogConsole("found one hypervisor with name " + [item nickname]);
-            
-            var loc     = [[MKLocation alloc] initWithLatitude:latitude andLongitude:2.3449]; //TODO: GET POSITION OF HYPERVISOR
-            var marker  = [[MKMarker alloc] initAtLocation:loc];
-            
-            latitude++;
-            
-            [marker setDraggable:NO];
-            [marker setClickable:YES];
-            [marker setDelegate:self];
-            [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
-            
-            [marker addToMapView:_mapView];
-        }
+        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")   
+            [self locationOfHypervisor:item]
     }
 }
 
-- (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
+
+// Archipel
+- (void)locationOfHypervisor:(TNStropheContact)anHypervisor
 {
-    _currentItem = [someUserInfo objectForKey:@"rosterItem"];
+    var geolocStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorGeolocalization}];
+        
+    [geolocStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorGeolocalizationGet}];
     
-    [CPAlert alertWithTitle:@"Define path" 
-                    message:@"Please choose if this " + [_currentItem nickname] + @" is origin or destination of the migration." 
-                      style:CPInformationalAlertStyle 
-                   delegate:self 
-                    buttons:["Origin", "Destination", "Cancel"]];
-
+    [anHypervisor sendStanza:geolocStanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
 }
 
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
-{   
-    if (returnCode == 0)
-    {
-        [self setOriginHypervisor:_currentItem];
-        [[self textFieldOriginName] setStringValue:[_currentItem nickname]];
-    }
-    else if (returnCode == 1)
-    {
-        [self setDestinationHypervisor:_currentItem];
-        [[self textFieldDestinationName] setStringValue:[_currentItem nickname]];
-    }
-    else
-        return;
-        
-    [self rosterOfHypervisor:_currentItem];
+- (void)didReceivedGeolocalization:(id)aStanza 
+{
+    // TODO : add success control
+    var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
+    var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
+    var item        = [[self roster] getContactFromJID:[aStanza getFromNode]];
+    
+    var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
+    var marker      = [[MKMarker alloc] initAtLocation:loc];
+    
+    [marker setDraggable:NO];
+    [marker setClickable:YES];
+    [marker setDelegate:self];
+    [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
+    
+    //[_mainMapView addMarker:marker atLocation:loc];
+    [marker addToMapView:_mainMapView];
+    [_mainMapView setCenter:loc];
+    
 }
 
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
@@ -286,6 +278,37 @@ TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
     [[self tableDestinationVMs] reloadData];
 }
 
+
+// marker delegate
+- (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
+{
+    _currentItem = [someUserInfo objectForKey:@"rosterItem"];
+    
+    [CPAlert alertWithTitle:@"Define path" 
+                    message:@"Please choose if this " + [_currentItem nickname] + @" is origin or destination of the migration." 
+                      style:CPInformationalAlertStyle 
+                   delegate:self 
+                    buttons:["Origin", "Destination", "Cancel"]];
+
+}
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+{
+    if (returnCode == 0)
+    {
+        [self setOriginHypervisor:_currentItem];
+        [[self textFieldOriginName] setStringValue:[_currentItem nickname]];
+    }
+    else if (returnCode == 1)
+    {
+        [self setDestinationHypervisor:_currentItem];
+        [[self textFieldDestinationName] setStringValue:[_currentItem nickname]];
+    }
+    else
+        return;
+        
+    [self rosterOfHypervisor:_currentItem];
+}
 
 @end
 

@@ -53,10 +53,10 @@ var gmNamespace = nil;
 
 - (void)webView:(CPWebView)aWebView didFinishLoadForFrame:(id)aFrame {
     // this is called twice for some reason
-    //if(!hasLoaded) {
+    if(!hasLoaded) {
         [self loadGoogleMapsWhenReady];
-    //}
-    //hasLoaded = YES;
+    }
+    hasLoaded = YES;
 }
 
 - (void)loadGoogleMapsWhenReady() {
@@ -173,6 +173,11 @@ var gmNamespace = nil;
 - (BOOL)isMapReady 
 {
     return _mapReady;
+}
+
+- (void)clean
+{
+    gmNamespace = nil;
 }
 
 + (JSObject)gmNamespace {

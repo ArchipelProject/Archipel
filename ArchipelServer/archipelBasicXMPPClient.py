@@ -62,6 +62,11 @@ class TNArchipelBasicXMPPClient(object):
         self.roster_retreived = False;
         self.registered_actions_to_perform_on_connection = [];
         
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('google.com', 0));
+        ipaddr, other = s.getsockname();
+        self.ipaddr = ipaddr;
+        
         for method in self.__class__.__dict__:
             if not method.find("__module_init__") == -1:
                 m = getattr(self, method)

@@ -6,7 +6,6 @@ from archipelBasicXMPPClient import *
 class XMPPVirtualMachineController(TNArchipelBasicXMPPClient):
                 
     def send_iq(self, iq):
-        print "LA";
         if sys.argv[2] == "archipel:vm:definition":
             f = open(sys.argv[4])
             data = f.read()
@@ -41,6 +40,6 @@ iq.addChild(name="query", attrs={"type": sys.argv[3]})
 iq.getTag("query").addChild(name="target", payload="vnet1");
 # iq.getTag("query").addChild(name="target", payload="vnet0");
 
-vm = XMPPVirtualMachineController("controller@pulsar.local", "password")
+vm = XMPPVirtualMachineController("controller@virt-hyperviseur", "password", None)
 vm.register_actions_to_perform_on_auth("send_iq", iq)
 vm.connect()

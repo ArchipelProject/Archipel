@@ -259,13 +259,12 @@ def __networkstats(self, iq):
     return reply
 
 
-
-setattr(archipel.TNArchipelVirtualMachine, "__module_init__disk_management", __module_init__disk_management)
-setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__disk_management", __module_register_stanza__disk_management)
 setattr(archipel.TNArchipelVirtualMachine, "__process_iq_archipel_disk", __process_iq_archipel_disk)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_create", __disk_create)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_delete", __disk_delete)
 setattr(archipel.TNArchipelVirtualMachine, "__disk_get", __disk_get)
 setattr(archipel.TNArchipelVirtualMachine, "__isos_get", __isos_get)
 setattr(archipel.TNArchipelVirtualMachine, "__networkstats", __networkstats)
+setattr(archipel.TNArchipelVirtualMachine, "__module_init__disk_management", __module_init__disk_management)
+setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__disk_management", __module_register_stanza__disk_management)
 
