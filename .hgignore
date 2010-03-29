@@ -6,4 +6,5 @@ ArchipelClient/Build
 ArchipelClient/Documentation
 ArchipelClient/NativeApplications/MacOS/Archipel.app/Contents/Resources/Objective-J/Client/*
 *Build
+ArchipelClient/Modules/*
 Modules/*
