@@ -32,7 +32,6 @@ NS_ARCHIPEL_VM_DISK = "archipel:vm:disk"
 
 def __module_init__disk_management(self):
     pass
-    # self.vm_disk_base_path = self.configuration.get("Module Disks", "disk_base_path") + "/"
     self.shared_isos_folder = self.configuration.get("Module Medias", "iso_base_path") + "/"
     
 def __module_register_stanza__disk_management(self):
