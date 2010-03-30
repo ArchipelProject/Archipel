@@ -119,7 +119,11 @@
     [_tableViewHosts addTableColumn:columHostMac];
     [_tableViewHosts addTableColumn:columHostName];
     [_tableViewHosts addTableColumn:columHostIP];
-        
+    
+    //setting datasources
+    [_tableViewRanges setDataSource:_datasourceDHCPRanges];
+    [_tableViewHosts setDataSource:_datasourceDHCPHosts];
+    
     // setting delegate
     [_tableViewHosts setDelegate:self];
     [_tableViewRanges setDelegate:self];
@@ -144,7 +148,7 @@
 
     [_datasourceDHCPRanges setEntries:[network DHCPEntriesRanges]];
     [_datasourceDHCPHosts setEntries:[network DHCPEntriesHosts]];
-
+    
     [_tableViewRanges reloadData];
     [_tableViewHosts reloadData];
 
