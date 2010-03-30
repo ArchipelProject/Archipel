@@ -26,7 +26,6 @@ GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_SRC_PATH + "modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
 
 os.system("export PATH=/usr/local/narwhal/bin:$PATH");
-# os.system("cd " + GLOBAL_BASE_PATH)
 
 def main():
     try:
@@ -97,10 +96,10 @@ def main():
         
         if o in ("--exportsdk"):
             opt_export_sdk_path = a
-
+            
         if o in ("--exportarchipel"):
             opt_export_archipel_path = a
-
+            
         if o in ("-u", "--uninstallmodules"):
             opt_should_copy_modules = False;
             opt_should_remove_modules = True;
@@ -147,8 +146,9 @@ def main():
     
     if opt_export_archipel_path:
         export_archipel(opt_export_archipel_path, opt_build_config);
-
     
+
+
 def clean(paths, config, ignorepaths):
     for path in paths:
         if path in ignorepaths:
@@ -317,9 +317,10 @@ def export_sdk(path):
     os.system("cp -a TNModuleLoader.j " + path + "/");
     os.system("cp -a Archipel.doxygen " + path + "/");
 
+
 def export_archipel(path, config):
     print "# exporting Archipel application to " + path
-
+    
     build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
     os.system("mkdir -p " + path);
     os.system("cp -a " + build_dir + " " + path + "/");
