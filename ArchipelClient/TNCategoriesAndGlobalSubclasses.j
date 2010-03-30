@@ -18,9 +18,6 @@
 
 //thoses categories make CPTabView beatiful.
 @implementation CPTabView (myTabView)
-{
- 
-}
 
 - (void)_createBezelBorder
 {
@@ -57,9 +54,6 @@
 @end
 
 @implementation _CPTabLabelsView (MyLabelView)
-{
-    
-}
 
 - (id)initWithFrame:(CGRect)aFrame
 {
@@ -97,9 +91,6 @@
 @end
 
 @implementation _CPTabLabel (myTabLabel)
-{
-    
-}
 
 - (void)setTabState:(CPTabState)aTabState
 {
@@ -127,9 +118,6 @@
 
 // allow  CPView with border
 @implementation CPView (BorderedView)
-{
-    
-}
 
 - (void)setBordered
 {
@@ -157,8 +145,7 @@
 
 // allow CPString to generate UUID rfc4122 compliant
 @implementation CPString (CPStringWithUUIDSeparated)
-{
-}
+
 + (CPString)UUID
 {
     var g = @"";
@@ -199,9 +186,6 @@
 
 // Allow to create CPAlert quickly.
 @implementation CPAlert (CPAlertWithQuickModal)
-{
-
-}
 
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle
 {

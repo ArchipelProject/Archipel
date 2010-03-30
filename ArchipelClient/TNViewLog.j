@@ -42,14 +42,14 @@ var theSharedLogger;
         [self setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
         
         var storedLogs = JSON.parse(localStorage.getItem("storedLogs"));
-
+        
         if (storedLogs)
             [self setLogs:storedLogs];
         else
             [self setLogs:[[CPArray alloc] init]];
         
         [self setLogTable:[[CPTableView alloc] initWithFrame:[[self contentView] frame]]];
-
+        
         [[self logTable] setUsesAlternatingRowBackgroundColors:YES];
         [[self logTable] setAllowsColumnResizing:YES];
         [[self logTable] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -58,27 +58,19 @@ var theSharedLogger;
         [columnText setWidth:768];
         [columnText setResizingMask:CPTableColumnAutoresizingMask ] ;
         [[columnText headerView] setStringValue:@"Content"];
-
+        
         var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
         [columnDate setWidth:260];
         [[columnDate headerView] setStringValue:@"Date"];
-
+        
         [[self logTable] addTableColumn:columnDate];
         [[self logTable] addTableColumn:columnText];
-
-        [[self logTable] setDataSource:self];
-
-        [self setDocumentView:[self logTable]];
-
-        theSharedLogger = self;   
         
-        // var frame = [self frame];
-        // //frame.size.height = 40;
-        // //frame.size.width = 1000;
-        // [self setControlView:[[CPView alloc] initWithFrame:frame]];
-        // [[self controlView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-        // [[self controlView] setBackgroundColor:[CPColor blueColor]];
-        // [self addSubview:[self controlView]];        
+        [[self logTable] setDataSource:self];
+        
+        [self setDocumentView:[self logTable]];
+        
+        theSharedLogger = self;   
     }
     
     return self;

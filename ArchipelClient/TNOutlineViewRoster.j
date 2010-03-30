@@ -25,9 +25,6 @@
 
 
 @implementation TNOutlineViewRoster: CPOutlineView 
-{
-}
-
 
 - (id)initWithFrame:(CPRect)aFrame 
 {
@@ -61,7 +58,6 @@
         }
     }
 }
-
 
 - (void)populateOutlineViewFromRoster:(CPNotification)aNotification 
 {

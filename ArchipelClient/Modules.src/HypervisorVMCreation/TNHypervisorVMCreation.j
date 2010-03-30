@@ -22,7 +22,6 @@
 @import "TNDatasourceVMs.j"
 
 TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
-
 TNArchipelTypeHypervisorControlAlloc        = @"alloc";
 TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";

@@ -16,7 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* enter the following information about you and your module */ 
+var AUTHOR		= "Antoine Mercadal";
+var EMAIL		= "antoine.mercadal@inframonde.eu";
+var COMPANY		= "org.archipelproject";
+var NAME 		= "ToolbarMapView";
+var SUMMARY		= "Module that allow to display loacalization of hypervisors and doing live migration";
+var VERSION		= "1.0";
 
+
+
+
+/* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
 var ENV = require("system").env,
     FILE = require("file"),
     task = require("jake").task,
@@ -24,18 +35,18 @@ var ENV = require("system").env,
     app = require("cappuccino/jake").app,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug";
 
-app ("ToolbarMapView", function(task)
+app ("buildmodule", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "ToolbarMapView.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", NAME + ".build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("ToolbarMapView");
-    task.setIdentifier("org.archipelproject.ToolbarMapView");
-    task.setVersion("1.0");
-    task.setAuthor("Antoine Mercadal");
-    task.setEmail("feedback @nospam@ yourcompany.com");
-    task.setSummary("ToolbarMapView");
-    task.setSources(new FileList("*.j", "MapKit/*.j"));
+    task.setProductName(NAME);
+    task.setIdentifier( COMPANY + "." + NAME);
+    task.setVersion(VERSION);
+    task.setAuthor(AUTHOR);
+    task.setEmail(EMAIL);
+    task.setSummary(SUMMARY);
+	task.setSources(new FileList("*.j", "MapKit/*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
 
@@ -45,4 +56,4 @@ app ("ToolbarMapView", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["ToolbarMapView"]);
+task ("default", ["buildmodule"]);

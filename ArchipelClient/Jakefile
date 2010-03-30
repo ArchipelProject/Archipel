@@ -1,6 +1,5 @@
 /*  
  * Jakefile
- * Archipel
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -17,10 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* enter the following information about you and your module */ 
+var AUTHOR		= "Antoine Mercadal";
+var EMAIL		= "antoine.mercadal@inframonde.eu";
+var COMPANY		= "org.archipelproject";
+var NAME 		= "Archipel";
+var SUMMARY		= "The next generation Orchestrator";
+var VERSION		= "1.0";
 
+
+
+
+/* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
 var ENV = require("system").env,
     FILE = require("file"),
-	OS = require("os"),
     task = require("jake").task,
     FileList = require("jake").FileList,
     app = require("cappuccino/jake").app,
@@ -28,18 +37,17 @@ var ENV = require("system").env,
 
 app ("Archipel", function(task)
 {
-    task.setBuildIntermediatesPath(FILE.join("Build", "Archipel.build", configuration));
+    task.setBuildIntermediatesPath(FILE.join("Build", NAME + ".build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
 
-    task.setProductName("Archipel");
-    task.setIdentifier("org.archipelprpoject.ArchipelClient");
-    task.setVersion("1.0");
-    task.setAuthor("Antoine Mercadal");
-    task.setEmail("antoine.mercadal @nospam@ inframonde.eu");
-    task.setSummary("Archipel");
+    task.setProductName(NAME);
+    task.setIdentifier( COMPANY + "." + NAME);
+    task.setVersion(VERSION);
+    task.setAuthor(AUTHOR);
+    task.setEmail(EMAIL);
+    task.setSummary(SUMMARY);
     task.setSources(new FileList("*.j"));
-    task.setResources(new FileList("Resources/**"));
-    task.setIndexFilePath("index.html");
+    task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")
@@ -47,7 +55,6 @@ app ("Archipel", function(task)
     else
         task.setCompilerFlags("-O");
 });
-
 
 task ("documentation", function(task)
 {
