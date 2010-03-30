@@ -276,6 +276,8 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
         -e | --example           : display some usage example;
         --native=<platform>      : generate a native app. platform supported are [MacOS] (case sensitive).
         --ignoremodules=<list>   : ignore list of modules. <list> is "moduleA,moduleC" whith no space.
+        --exportsdk=<path>       : generate and export Archipel SDK to <path>
+        --exportarchipel=<path>  : export the ready to use application to <path>
     """
     sys.exit(0);
 
