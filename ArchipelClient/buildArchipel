@@ -30,7 +30,10 @@ os.system("export PATH=/usr/local/narwhal/bin:$PATH");
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", ["project", "all", "modules=", "allmodules", "native=", "clean", "config=", "build", "installmodules", "uninstallmodules", "generateplist", "help", "example", "ignoremodules="])
+        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", [   "project", "all", "modules=", "allmodules", "native=", "clean", 
+                                                                    "config=", "build", "installmodules", "uninstallmodules", 
+                                                                    "generateplist", "help", "example", "ignoremodules=",
+                                                                    "exportsdk=", "exportarchipel="])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -43,6 +46,8 @@ def main():
     opt_should_generate_plist   = False;
     opt_build_only_modules      = False;
     opt_should_clean            = False;
+    opt_export_sdk_path         = None;
+    opt_export_archipel_path    = None;
     opt_build_native            = None;
     opt_modules_paths           = [];
     opt_ignore_modules_paths    = [];
@@ -89,7 +94,13 @@ def main():
         if o in ("--ignoremodules"):
             for p in a.split(","):
                 opt_ignore_modules_paths.append(GLOBAL_MODULES_SRC_PATH + p)
-            
+        
+        if o in ("--exportsdk"):
+            opt_export_sdk_path = a
+
+        if o in ("--exportarchipel"):
+            opt_export_archipel_path = a
+
         if o in ("-u", "--uninstallmodules"):
             opt_should_copy_modules = False;
             opt_should_remove_modules = True;
@@ -106,9 +117,11 @@ def main():
     # append any chosen modules to the build path
     opt_build_paths.extend(opt_modules_paths);
     
-    if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules and not opt_should_copy_modules and not opt_should_build and not opt_should_clean):
-        print "Error: no targets specified. Use --help for usage"
-        sys.exit(-1)
+    if not opt_export_sdk_path and not opt_export_archipel_path:
+        if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules 
+                and not opt_should_copy_modules and not opt_should_build and not opt_should_clean):
+            print "Error: no targets specified. Use --help for usage"
+            sys.exit(-1)
     
     # clean if asked
     if opt_should_clean:
@@ -128,8 +141,14 @@ def main():
     
     if opt_should_generate_plist:
         generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths);
+    
+    if opt_export_sdk_path:
+        export_sdk(opt_export_sdk_path);
+    
+    if opt_export_archipel_path:
+        export_archipel(opt_export_archipel_path, opt_build_config);
 
-
+    
 def clean(paths, config, ignorepaths):
     for path in paths:
         if path in ignorepaths:
@@ -177,8 +196,6 @@ def copy_modules(modules_paths, config, ignorepaths):
         
         print "# copying module : " + module_name 
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
-        
-    os.system("cp " + GLOBAL_MODULES_PLIST_PATH + " " + GLOBAL_MODULES_BUILD_PATH)
 
 
 def remove_modules(modules_paths, config, ignorepaths):
@@ -291,5 +308,20 @@ Examples:
     sys.exit(0);
 
 
+def export_sdk(path):
+    print "# exporting Archipel SDK to " + path
+    os.system("mkdir -p " + path);
+    os.system("cp -a " + GLOBAL_MODULES_SRC_PATH + "/Sample* " + path + "/");
+    os.system("cp -a TNModuleLoader.j " + path + "/");
+    os.system("cp -a Archipel.doxygen " + path + "/");
+
+def export_archipel(path, config):
+    print "# exporting Archipel application to " + path
+
+    build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
+    os.system("mkdir -p " + path);
+    os.system("cp -a " + build_dir + " " + path + "/");
+    os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + path + "/Modules/");
+    
 if __name__ == "__main__":
     main();
