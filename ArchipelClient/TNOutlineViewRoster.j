@@ -22,7 +22,6 @@
 @import <AppKit/CPOutlineView.j>
 
 @import "TNOutlineTableColumn.j"
-@import "TNWindowRosterEdition.j"
 
 
 @implementation TNOutlineViewRoster: CPOutlineView 
@@ -34,23 +33,18 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        //[self setFrameOrigin:CGPointMake(5, 5)];
+        var center      = [CPNotificationCenter defaultCenter];
+        var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
         
-        //[self setRowHeight:20];
+        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
+        
+        [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
-        //[self setIndentationPerLevel:10];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         
-        var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
-        //[columnLabel setResizingMask:CPTableColumnAutoresizingMask];
         [self addTableColumn:columnLabel];  
-        
         [self setOutlineTableColumn:columnLabel];
-        
-        var center = [CPNotificationCenter defaultCenter];
-        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
     }
     
 	return self;
@@ -58,9 +52,7 @@
 
 - (void)expandAll 
 {
-    var count;
-    
-    for (count = 0; [self itemAtRow:count]; count++) 
+    for (var count = 0; [self itemAtRow:count]; count++) 
     {
         var item = [self itemAtRow:count];
         if ([self isExpandable:item]) 

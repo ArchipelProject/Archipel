@@ -26,7 +26,7 @@
 {
     @outlet CPTextField newGroupName    @accessors;
     
-    TNStropheRoster     roster @accessors;
+    TNStropheRoster     roster          @accessors;
 }
 
 - (void)orderFront:(id)sender

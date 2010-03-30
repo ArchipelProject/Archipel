@@ -124,6 +124,8 @@
 
 @end
 
+
+// allow  CPView with border
 @implementation CPView (BorderedView)
 {
     
@@ -145,12 +147,15 @@
 }
 @end
 
+// Menu item with userInfo
 @implementation TNMenuItem : CPMenuItem
 {
     CPString stringValue @accessors;
 }
 @end
 
+
+// allow CPString to generate UUID rfc4122 compliant
 @implementation CPString (CPStringWithUUIDSeparated)
 {
 }
@@ -169,6 +174,8 @@
 }
 @end
 
+
+// A Label that is editable on click
 @implementation TNEditableLabel: CPTextField
 {
     CPColor _oldColor;
@@ -189,3 +196,43 @@
 }
 @end
 
+
+// Allow to create CPAlert quickly.
+@implementation CPAlert (CPAlertWithQuickModal)
+{
+
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle
+{
+    var alert = [[CPAlert alloc] init];
+    [alert setTitle:aTitle];
+    [alert setMessageText:aMessage];
+    [alert setWindowStyle:CPHUDBackgroundWindowMask];
+    [alert setAlertStyle:aStyle];
+    [alert addButtonWithTitle:@"OK"];
+    
+    [alert runModal];
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage
+{
+    [CPAlert alertWithTitle:aTitle message:aMessage style:CPInformationalAlertStyle];
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle delegate:(id)aDelegate buttons:(CPArray)someButtons
+{
+    var alert = [[CPAlert alloc] init];
+    [alert setTitle:aTitle];
+    [alert setMessageText:aMessage];
+    [alert setWindowStyle:CPHUDBackgroundWindowMask];
+    [alert setAlertStyle:aStyle];
+    [alert setDelegate:aDelegate];
+    
+    for (var i = 0; i < [someButtons count]; i++)
+        [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
+    
+    [alert runModal];
+}
+
+@end

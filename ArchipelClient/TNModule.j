@@ -33,8 +33,8 @@ TNExceptionModuleMethodNRequired = @"TNExceptionModuleMethodNRequired";
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
     CPBundle                moduleBundle        @accessors;
-
-    CPArray                 _registredSelectors  @accessors;
+    
+    CPArray                 _registredSelectors;
 }
 
 - (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster

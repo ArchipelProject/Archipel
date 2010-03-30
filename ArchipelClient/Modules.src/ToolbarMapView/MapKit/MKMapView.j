@@ -175,8 +175,17 @@ var gmNamespace = nil;
     return _mapReady;
 }
 
+- (void)physicalMode
+{
+    if (_mapReady)
+    {
+        _gMap.setMapType(gmNamespace.G_PHYSICAL_MAP);
+        _gMap.setUIToDefault();
+    }
+}
 - (void)clean
 {
+    gmNamespace.GUnload();
     gmNamespace = nil;
 }
 

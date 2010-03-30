@@ -35,9 +35,9 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     @outlet CPTextField boshService         @accessors;
     @outlet CPCheckBox  credentialRemember  @accessors;
     
-    TNStropheConnection     JSStrophe         @accessors;
-    CPCookie                cookieLogin     @accessors;
-    CPCookie                cookiePassword  @accessors;
+    TNStropheConnection JSStrophe           @accessors;
+    CPCookie            cookieLogin         @accessors;
+    CPCookie            cookiePassword      @accessors;
 }
 
 // initialization

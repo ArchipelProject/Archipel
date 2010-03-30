@@ -13,7 +13,7 @@ They must be placed in
 ./Frameworks/Objective-j
 
 ./StropheCappuccino
-./StropheCappuccino/TNStropheConnetction.j
+./StropheCappuccino/TNStropheConnection.j
 ./StropheCappuccino/TNStropheRoster.j
 ./StropheCappuccino/TNStropheStanza.j
 

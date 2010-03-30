@@ -56,7 +56,6 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
         [self addItemWithIdentifier:TNToolBarItemViewLog label:@"View Log" icon:[bundle pathForResource:@"log.png"] target:aTarget action:@selector(toolbarItemViewLogClick:)];
         [self addItemWithIdentifier:TNToolBarItemClearLog label:@"Clear Log" icon:[bundle pathForResource:@"clearlog.png"] target:aTarget action:@selector(toolbarItemClearLogClick:)];
         
-        
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemAddJid];
         [self setPosition:1 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
         [self setPosition:2 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];

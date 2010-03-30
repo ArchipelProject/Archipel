@@ -22,20 +22,20 @@
 @import <LPKit/LPKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-@import "TNAlertPresenceSubscription.j"
-@import "TNAlertRemoveContact.j"
-@import "TNDatasourceRoster.j"
-@import "TNOutlineViewRoster.j"
-@import "TNToolbar.j"
-@import "TNTabViewModuleLoader.j"
-@import "TNViewLog.j"
-@import "TNViewProperties.j"
-@import "TNWindowAddContact.j"
-@import "TNWindowAddGroup.j"
-@import "TNWindowConnection.j"
-@import "TNModule.j"
-@import "TNAlert.j"
-@import "TNViewLineable.j"
+@import "TNCategoriesAndGlobalSubclasses.j";
+@import "TNAlertPresenceSubscription.j";
+@import "TNAlertRemoveContact.j";
+@import "TNDatasourceRoster.j";
+@import "TNOutlineViewRoster.j";
+@import "TNToolbar.j";
+@import "TNTabViewModuleLoader.j";
+@import "TNViewLog.j";
+@import "TNViewProperties.j";
+@import "TNWindowAddContact.j";
+@import "TNWindowAddGroup.j";
+@import "TNWindowConnection.j";
+@import "TNModule.j";
+@import "TNViewLineable.j";
 
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
@@ -79,12 +79,13 @@ TNArchipelEntityTypeUser            = @"user";
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(0,0,0,0)];    
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
+    
     // init scroll view of the outline view
-	_outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
-	[_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-	[_outlineScrollView setAutohidesScrollers:YES];
-	[[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-	[_outlineScrollView setDocumentView:_rosterOutlineView];
+    _outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
+    [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_outlineScrollView setAutohidesScrollers:YES];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [_outlineScrollView setDocumentView:_rosterOutlineView];
     
     // left view
     [[self leftView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -93,7 +94,6 @@ TNArchipelEntityTypeUser            = @"user";
     // right view
     [[self rightView] setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [[self rightView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    
     
     //connection window
     [[self connectionWindow] center];
@@ -161,9 +161,11 @@ TNArchipelEntityTypeUser            = @"user";
     
     if (![[TNViewLog sharedLogger] superview])
     {
+        var bounds = [[self rightView]  bounds];
+        
         [sender setLabel:@"Go back"];
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
-        var bounds = [[self rightView]  bounds];
+        
         [[TNViewLog sharedLogger] setFrame:bounds];
         [[self rightView] addSubview:[TNViewLog sharedLogger]];
     }       
@@ -207,9 +209,9 @@ TNArchipelEntityTypeUser            = @"user";
 // roster delegates
 - (void)didReceiveSubscriptionRequest:(id)requestStanza 
 {
-    var alert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
+    var presenceAlert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
     
-    [alert runModal];
+    [presenceAlert runModal];
 }
 
 
@@ -226,12 +228,6 @@ TNArchipelEntityTypeUser            = @"user";
     var entityType  = [_moduleView analyseVCard:vCard];
     
     [_moduleView setEntity:item ofType:entityType andRoster:_mainRoster];
-    
-    // if ([_moduleView superview] != [self rightView])
-    // {
-    //     [_moduleView setFrame:[[self rightView] bounds]];
-    //     [[self rightView] addSubview:_moduleView];
-    // }
     
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];

@@ -21,28 +21,28 @@
  
 @import "TNDatasourceVMs.j"
 
-TNArchipelTypeHypervisorControl            = @"archipel:hypervisor:control";
+TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
 
-TNArchipelTypeHypervisorControlAlloc       = @"alloc";
-TNArchipelTypeHypervisorControlFree        = @"free";
-TNArchipelTypeHypervisorControlRosterVM    = @"rostervm";
+TNArchipelTypeHypervisorControlAlloc        = @"alloc";
+TNArchipelTypeHypervisorControlFree         = @"free";
+TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
 TNArchipelPushNotificationSubscription      = @"archipel:push:subscription";
 TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 @implementation TNHypervisorVMCreation : TNModule 
 {
-    @outlet CPTextField     fieldJID            @accessors;
-    @outlet CPTextField     fieldName           @accessors;
-    @outlet CPButton        buttonCreateVM      @accessors;
-    @outlet CPPopUpButton   popupDeleteMachine  @accessors;
-    @outlet CPButton        buttonDeleteVM      @accessors;
-    @outlet CPScrollView    scrollViewListVM    @accessors;
+    @outlet CPTextField     fieldJID                    @accessors;
+    @outlet CPTextField     fieldName                   @accessors;
+    @outlet CPButton        buttonCreateVM              @accessors;
+    @outlet CPPopUpButton   popupDeleteMachine          @accessors;
+    @outlet CPButton        buttonDeleteVM              @accessors;
+    @outlet CPScrollView    scrollViewListVM            @accessors;
     
-    CPTableView         tableVirtualMachines        @accessors;
-    TNDatasourceVMs     virtualMachinesDatasource   @accessors;
+    CPTableView             tableVirtualMachines        @accessors;
+    TNDatasourceVMs         virtualMachinesDatasource   @accessors;
     
-    TNStropheContact    _virtualMachineRegistredForDeletion;
+    TNStropheContact        _virtualMachineRegistredForDeletion;
 }
 
 - (void)awakeFromCib
@@ -70,8 +70,8 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
     
-    var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
-    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    var vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
+    var imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
@@ -129,7 +129,6 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
         
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
-    
     [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
 }
 
@@ -154,6 +153,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
            }
         }
     }
+    
     [[self tableVirtualMachines] reloadData];
 }
 
@@ -203,19 +203,16 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     }
     
     var selectedIndex                       = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
-    _virtualMachineRegistredForDeletion     = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
     
-    var alert = [[CPAlert alloc] init];
+    _virtualMachineRegistredForDeletion     = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
     
     [buttonDeleteVM setEnabled:NO];
     
-    [alert setDelegate:self];
-    [alert setTitle:@"Destroying a Virtual Machine"];
-    [alert setMessageText:@"Are you sure you want to completely remove this virtual machine ?"];
-    [alert setWindowStyle:CPHUDBackgroundWindowMask];
-    [alert addButtonWithTitle:@"Yes"];
-    [alert addButtonWithTitle:@"No"];
-    [alert runModal];
+    [CPAlert alertWithTitle:@"Destroying a Virtual Machine" 
+                    message:@"Are you sure you want to completely remove this virtual machine ?"
+                      style:CPInformationalAlertStyle 
+                   delegate:self 
+                    buttons:[@"Yes", @"No"]];
 }
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 

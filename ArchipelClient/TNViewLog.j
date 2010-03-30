@@ -25,7 +25,6 @@ var theSharedLogger;
 {
     CPArray         logs        @accessors;
     CPTableView     logTable    @accessors;
-    // CPView          controlView @accessors;
 }
 
 + (id)sharedLogger

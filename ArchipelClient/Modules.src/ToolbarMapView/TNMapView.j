@@ -70,7 +70,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [[self scrollViewOrigin] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewOrigin] setAutohidesScrollers:YES];
     [[self scrollViewOrigin] setDocumentView:[self tableOriginVMs]];
-    [[self scrollViewOrigin] setBorderedWithHexColor:@"#9e9e9e"];
+    // [[self scrollViewOrigin] setBorderedWithHexColor:@"#9e9e9e"];
     
     [[self tableOriginVMs] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableOriginVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -107,7 +107,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [[self scrollViewDestination] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewDestination] setAutohidesScrollers:YES];
     [[self scrollViewDestination] setDocumentView:[self tableDestinationVMs]];
-    [[self scrollViewDestination] setBorderedWithHexColor:@"#9e9e9e"];
+    // [[self scrollViewDestination] setBorderedWithHexColor:@"#9e9e9e"];
     
     [[self tableDestinationVMs] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableDestinationVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -175,6 +175,9 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 // mapview delegate
 - (void)mapViewIsReady:(MKMapView)aMapView
 {
+    [_mainMapView setZoom:2];
+    [_mainMapView physicalMode];
+    
     var rosterItems = [[self roster] contacts];
     
     for (var i = 0; i < [rosterItems count]; i++)
