@@ -53,6 +53,7 @@
         [events setFont:[CPFont boldSystemFontOfSize:11]];
         [events setTextColor:[CPColor whiteColor]];
         
+        [[self name] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [[self name] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [[self name] setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
@@ -159,7 +160,9 @@
         
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
         [_dataViewForRoot setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
+        
+        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelected];
         
         [_dataViewForRoot setVerticalAlignment:CPCenterVerticalTextAlignment];
         

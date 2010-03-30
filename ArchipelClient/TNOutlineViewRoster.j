@@ -47,6 +47,10 @@
         
         [self addTableColumn:columnLabel];  
         [self setOutlineTableColumn:columnLabel];
+        
+        _sourceListActiveGradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
+        _sourceListActiveTopLineColor = [CPColor colorWithHexString:@"9eafcd"];
+        _sourceListActiveBottomLineColor = [CPColor colorWithHexString:@"7c95bb"];
     }
     
 	return self;

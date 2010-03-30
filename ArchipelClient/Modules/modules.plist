@@ -15,12 +15,6 @@
                 <string>HypervisorVMCreation</string>
             </dict>            <dict>
                 <key>folder</key>
-                <string>SampleTabModule</string>
-            </dict>            <dict>
-                <key>folder</key>
-                <string>SampleToolbarModule</string>
-            </dict>            <dict>
-                <key>folder</key>
                 <string>ToolbarMapView</string>
             </dict>            <dict>
                 <key>folder</key>
