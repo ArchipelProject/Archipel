@@ -10,3 +10,4 @@ ArchipelClient/NativeApplications/MacOS/Archipel.app/Contents/Resources/Objectiv
 ArchipelClient/Modules/modules.plist
 ArchipelClient/Modules/*
 Modules/*
+ArchipelClient/Modules/modules.plist
