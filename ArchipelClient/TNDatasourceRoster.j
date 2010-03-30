@@ -1,17 +1,17 @@
-/*  
+/*
  * TNDatasourceRoster.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,7 +29,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 /*! @ingroup archipelcore
     Subclass of TNStropheRoster that allow TNOutlineViewRoster to use it as Data Source.
 */
-@implementation TNDatasourceRoster  : TNStropheRoster 
+@implementation TNDatasourceRoster  : TNStropheRoster
 {
     CPOutlineView   mainOutlineView @accessors;
     CPString        filter          @accessors;
@@ -47,23 +47,23 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (self = [super initWithConnection:aConnection])
     {
         [self setFilter:nil];
-        
+
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterRemovedContactNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterAddedContactNotification object:nil];
-        
+
         [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
-        
+
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
-        
+
         [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageTreatedNotification object:nil];
     }
-     
+
     return self;
 }
 
@@ -73,7 +73,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (void)setFilterField:(CPSearchField)aField
 {
     filterField = aField;
-    
+
     [[self filterField] setSendsSearchStringImmediately:YES]
     [[self filterField] setTarget:self];
     [[self filterField] setAction:@selector(filterFieldDidChange:)];
@@ -92,7 +92,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 /*! Reload the content of the datasource and try to keep the old selection
     @param aNotification CPNotification that trigger the message
 */
-- (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
+- (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification
 {
     [[self mainOutlineView] reloadData];
 }
@@ -100,12 +100,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
 /*! Reload the content of the datasource
     @param aNotification CPNotification that trigger the message
 */
-- (void)updateOutlineView:(CPNotification)aNotification 
+- (void)updateOutlineView:(CPNotification)aNotification
 {
     [[self mainOutlineView] reloadData];
-    
+
     var index   = [[self mainOutlineView] rowForItem:[aNotification object]];
-    
+
     if (index != -1)
     {
         var set     = [CPIndexSet indexSetWithIndex:index];
@@ -135,20 +135,20 @@ TNDragTypeContact   = @"TNDragTypeContact";
     @param aFilter CPString containing the filter
     @return a CPArray containing the contacts that matches the filters
 */
-- (CPArray)_getEntriesMatching:(CPString)aFilter 
+- (CPArray)_getEntriesMatching:(CPString)aFilter
 {
     var theEntries      = [self entries];
     var filteredEntries = [[CPArray alloc] init];
     var i;
-    
+
     if (!aFilter)
         return theEntries;
-    
+
     //@each (var entry in theEntries)
     for(var i = 0; i < [theEntries count]; i++)
     {
         var entry = [theEntries objectAtIndex:i];
-        
+
         if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry]
     }
@@ -165,19 +165,19 @@ TNDragTypeContact   = @"TNDragTypeContact";
     var theEntries      = [self getContactsInGroup:aGroup];
     var filteredEntries = [[CPArray alloc] init];
     var i;
-    
+
     if (!aFilter)
         return theEntries;
-    
+
     //@each (var entry in theEntries)
     for(var i = 0; i < [theEntries count]; i++)
     {
         var entry = [theEntries objectAtIndex:i];
-        
+
         if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
             [filteredEntries addObject:entry];
     }
-    
+
     return filteredEntries;
 }
 
@@ -191,19 +191,19 @@ TNDragTypeContact   = @"TNDragTypeContact";
     var theGroups      = [self groups];
     var filteredGroup   = [[CPArray alloc] init];
     var i;
-    
+
     if (!aFilter)
         return [self groups];
-        
+
     //@each (var group in theGroups)
     for(var i = 0; i < [theGroups count]; i++)
     {
         var group = [theGroups objectAtIndex:i];
-        
+
         if ([[self _getEntriesMatching:aFilter inGroup:[group name]] count] > 0)
             [filteredGroup addObject:group];
     }
-    
+
     return filteredGroup;
 }
 
@@ -215,25 +215,25 @@ TNDragTypeContact   = @"TNDragTypeContact";
     var draggedItem = [theItems objectAtIndex:0];
     if ([draggedItem type] == @"group")
         return NO;
-    
+
     _draggedItem = [theItems objectAtIndex:0];
-    
-    [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];    
+
+    [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
     [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
-    
+
     return YES;
 }
 
 
 /*! CPOutlineView Delegate
 */
-- (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item 
+- (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
-    if (!item) 
+    if (!item)
     {
 	    return [[self _getGroupContainingEntriesMatching:[self filter]] count];
 	}
-	else 
+	else
 	{
 	    return [[self _getEntriesMatching:[self filter] inGroup:item] count];
 	}
@@ -241,20 +241,20 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 /*! CPOutlineView Delegate
 */
-- (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item 
+- (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
 	return ([item type] == @"group") ? YES : NO;
 }
 
 /*! CPOutlineView Delegate
 */
-- (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item  
+- (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
-    if (!item) 
+    if (!item)
     {
         return [[self _getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];
     }
-    else 
+    else
     {
         return [[self _getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
     }
@@ -262,7 +262,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 /*! CPOutlineView Delegate
 */
-- (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item 
+- (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item
 {
     var cid = [tableColumn identifier];
 
@@ -270,7 +270,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         return item;
     }
-    // else if (cid == @"statusIcon") 
+    // else if (cid == @"statusIcon")
     // {
     //     if ([item type] == @"contact")
     //         return [item statusIcon];
@@ -285,9 +285,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if ([theItem type] != @"group")
          return CPDragOperationNone;
-           
+
     [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
-   
+
     return CPDragOperationEvery;
 }
 
@@ -297,7 +297,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     [_draggedItem changeGroup:[theItem name]];
     [[self mainOutlineView] reloadData];
-    
+
     return YES;
 }
 

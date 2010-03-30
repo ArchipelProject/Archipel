@@ -1,17 +1,17 @@
-/*  
+/*
  * TNWindowDriveEdition.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -68,19 +68,19 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [[self buttonTarget] removeAllItems];
     [[self buttonBus] removeAllItems];
     [[self buttonSource] removeAllItems];
-    
+
     for (var i = 0; i < TNXMLDescDiskTypes.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTypes[i] action:nil keyEquivalent:nil];
         [[self buttonType] addItem:item];
     }
-    
+
     for (var i = 0; i < TNXMLDescDiskTargetsIDE.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskTargetsIDE[i] action:nil keyEquivalent:nil];
         [[self buttonTarget] addItem:item];
     }
-    
+
     for (var i = 0; i < TNXMLDescDiskBuses.length; i++)
     {
         var item = [[CPMenuItem alloc] initWithTitle:TNXMLDescDiskBuses[i] action:nil keyEquivalent:nil];
@@ -103,21 +103,21 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 break;
             }
         }
-       
+
         [[self buttonType] selectItemWithTitle:[drive type]];
         [[self buttonTarget] selectItemWithTitle:[drive target]];
         [[self buttonBus] selectItemWithTitle:[drive bus]];
-        
+
         if ([drive device] == @"disk")
             [[[[self radioDriveType] radios] objectAtIndex:0] setState:CPOnState];
         else if ([drive device] == @"cdrom")
             [[[[self radioDriveType] radios] objectAtIndex:1] setState:CPOnState];
 
         [self performRadioDriveTypeChanged:[self radioDriveType]];
-        
+
         [self populateTargetButton];
     }
-    
+
     [super orderFront:sender];
 }
 
@@ -152,25 +152,25 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
     [drive setSource:[[[self buttonSource] selectedItem] stringValue]];
     [drive setType:[[self buttonType] title]];
-    
+
     var driveType = [[[self radioDriveType] selectedRadio] title];
-    
+
     if (driveType == @"Hard drive")
         [drive setDevice:@"disk"];
     else
         [drive setDevice:@"cdrom"];
-        
-    
+
+
     [drive setTarget:[[self buttonTarget] title]];
     [drive setBus:[[self buttonBus] title]];
-    
+
     [[self table] reloadData];
 }
 
 - (IBAction)performRadioDriveTypeChanged:(id)sender
 {
     var driveType = [[sender selectedRadio] title];
-    
+
     if (driveType == @"Hard drive")
     {
         [self getDisksInfo];
@@ -198,7 +198,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
-- (void)didReceiveDisksInfo:(id)aStanza 
+- (void)didReceiveDisksInfo:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
@@ -214,15 +214,15 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             var vSize   = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0];
             var label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk valueForAttribute:@"diskSize"] + ")";
             var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
-            
+
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [[self buttonSource] addItem:item];
         }
-        
+
         for (var i = 0; i < [[[self buttonSource] itemArray] count]; i++)
         {
             var item  = [[[self buttonSource] itemArray] objectAtIndex:i];
-            
+
             if ([item stringValue] == [drive source])
                 [[self buttonSource] selectItem:item];
         }
@@ -233,13 +233,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 -(void)getISOsInfo
 {
     var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-    
+
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineISOGet}];
-    
+
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
-- (void)didReceiveISOsInfo:(id)aStanza 
+- (void)didReceiveISOsInfo:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
@@ -254,11 +254,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             var iso     = [isos objectAtIndex:i];
             var label   = [iso valueForAttribute:@"name"];
             var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
-            
+
             [item setStringValue:[iso valueForAttribute:@"path"]];
             [[self buttonSource] addItem:item];
         }
-        
+
         for (var i = 0; i < [[[self buttonSource] itemArray] count]; i++)
         {
             var item  = [[[self buttonSource] itemArray] objectAtIndex:i];

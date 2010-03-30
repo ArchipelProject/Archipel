@@ -1,17 +1,17 @@
-/*  
+/*
  * TNDatasourceDHCPRanges.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,26 +32,26 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     CPString    IP      @accessors;
 }
 
-+ (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress 
++ (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress
 {
     var entry = [[TNDHCPEntry alloc] init];
-    
+
     [entry setType:TNDHCPEntryTypeRange]
     [entry setStart:aStartAddr];
     [entry setEnd:aEndAddress];
-    
+
     return entry;
 }
 
-+ (TNDHCPEntry)DHCPHostWithMac:(CPString)aMac  name:(CPString)aName ip:(CPString)anIP 
++ (TNDHCPEntry)DHCPHostWithMac:(CPString)aMac  name:(CPString)aName ip:(CPString)anIP
 {
     var entry = [[TNDHCPEntry alloc] init];
-    
+
     [entry setType:TNDHCPEntryTypeHost]
     [entry setMac:aMac];
     [entry setName:aName];
     [entry setIP:anIP];
-    
+
     return entry;
 }
 @end
@@ -77,7 +77,7 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 }
 
 // Datasource impl.
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 
+- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self entries] count];
 }
@@ -92,6 +92,6 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 - (void)tableView:(CPTableView)aTableCiew setObjectValue:(id)aValue forTableColumn:(CPTableColumn)aCol row:(int)aRow
 {
     var identifier = [aCol identifier];
-    
+
     [[entries objectAtIndex:aRow] setValue:aValue forKey:identifier];
 }

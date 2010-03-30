@@ -1,17 +1,17 @@
-/*  
+/*
  * temp_graphDatasource.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,7 +41,7 @@
 }
 
 - (CPNumber)chart:(LPChartView)aChartView numberOfValuesInSet:(CPNumber)setIndex
-{   
+{
     if (setIndex == 0)
         return [_datasMemUsed count];
     else
@@ -54,12 +54,12 @@
     {
         return (_datasMemUsed.length > 0) ? _datasMemUsed[itemIndex] : 0;
     }
-        
+
     else
     {
         return (_datasMemSwapped.length > 0) ? _datasMemSwapped[itemIndex] : 0;
     }
-        
+
 }
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
@@ -71,7 +71,7 @@
 {
     if ([_datasMemUsed count] >= _maxNumberOfPoints)
         [_datasMemUsed removeObjectAtIndex:0];
-        
+
     [_datasMemUsed addObject:data];
 }
 
@@ -79,7 +79,7 @@
 {
     if ([_datasMemSwapped count] >= _maxNumberOfPoints)
         [_datasMemSwapped removeObjectAtIndex:0];
-        
+
     [_datasMemSwapped addObject:data];
 }
 

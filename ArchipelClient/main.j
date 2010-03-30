@@ -26,16 +26,15 @@
     Archipel is distributed under the @ref license "AGPL".
 
     @htmlonly <pre>@endhtmlonly
-    @htmlinclude README
+    @htmlinclude ./README
     @htmlonly </pre>@endhtmlonly
 
     @page license License
     @htmlonly <pre>@endhtmlonly
-    @htmlinclude LICENSE
+    @htmlinclude ./LICENSE
     @htmlonly </pre>@endhtmlonly
 
     @defgroup archipelmodules Archipel Modules
-    @defgroup archipelcore Archipel Core
     @defgroup utils Utilities
 */
 

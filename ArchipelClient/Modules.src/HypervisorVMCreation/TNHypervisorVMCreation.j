@@ -49,26 +49,26 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     // VM table view
     virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
     tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[[self scrollViewListVM] bounds]];
-    
+
     [[self scrollViewListVM] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewListVM] setAutohidesScrollers:YES];
     [[self scrollViewListVM] setDocumentView:[self tableVirtualMachines]];
     [[self scrollViewListVM] setBorderedWithHexColor:@"#9e9e9e"];
-    
+
     [[self tableVirtualMachines] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableVirtualMachines] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self tableVirtualMachines] setAllowsColumnReordering:YES];
     [[self tableVirtualMachines] setAllowsColumnResizing:YES];
     [[self tableVirtualMachines] setAllowsEmptySelection:YES];
-    
+
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
-    
+
     var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
-    
+
     var vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
     var imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
@@ -76,11 +76,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
-    
+
     [[self tableVirtualMachines] addTableColumn:vmColumStatusIcon];
     [[self tableVirtualMachines] addTableColumn:vmColumNickname];
     [[self tableVirtualMachines] addTableColumn:vmColumJID];
-    
+
     [[self tableVirtualMachines] setDataSource:[self virtualMachinesDatasource]];
 }
 

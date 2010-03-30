@@ -1,17 +1,17 @@
-/*  
+/*
  * TNModule.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,13 +27,13 @@
 TNArchipelPushNotificationNamespace = @"archipel:push";
 
 
-/*! @ingroup archipelmodules
+/*! @ingroup archipelcore
     This is the root class of every module.
     All modules must inherit from TNModule.
-    
+
     If the child class must perform custom operations on module events (see below),
     it *MUST* call the super method or the module can make all archipel unstable.
-    
+
     Modules events are the following :
      - <b>willLoad</b>: This message is sent when module will be called by changing selection in roster.
         This assert than the module has its roster and entity properties sets.
@@ -41,18 +41,18 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         with another roster and entity.
      - <b>willShow</b>: This message is sent when user will display the GUI of the module.
      - <b>willHide</b>: This message is sent when user displays other module.
-    
+
     A module can perform background task only if it is loaded. Loaded doesn't mean displayed on the screen. For example
-    a statistique module can start collecting data on willLoad message in background. When message willShow is sent, 
+    a statistique module can start collecting data on willLoad message in background. When message willShow is sent,
     module can perform operation to display the collected data in background and update this display. When willHide
-    message is sent, module can stop to update the UI, but will continue to collect data. On willUnload message, the 
+    message is sent, module can stop to update the UI, but will continue to collect data. On willUnload message, the
     module *MUST* stop anything.
-    
+
     The root class willUnload will remove all TNStropheConnection handler, and remove the module from any subscription
     to CPNotification and all Archipel Push Notifications.
-    
+
     You can use SampleTabModule and SampleToolbarModule to get example of module implémentation.
-    
+
 */
 @implementation TNModule : CPView
 {
@@ -65,13 +65,13 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     CPString                moduleLabel         @accessors;
     CPArray                 moduleTypes         @accessors;
     CPBundle                moduleBundle        @accessors;
-    
+
     CPArray                 _registredSelectors;
 }
 
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
     YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleLoader will do the job for you.
-    
+
     @param anEntity : TNStropheContact concerned by the module
     @param aConnection : TNStropheConnection general connection
     @param aRoster : TNStropheRoster general roster
@@ -121,10 +121,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     for(var i = 0; i < [_registredSelectors count]; i++)
     {
         var selector = [_registredSelectors objectAtIndex:i];
-        
+
         [[self connection] deleteRegistredSelector:selector];
     }
-    
+
     // remove all notification observers
     var center  = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
@@ -134,14 +134,14 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willShow
 {
-    
+
 }
 
 /*! this message is sent when user click on another module.
 */
 - (void)willHide
 {
-    
+
 }
 
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact

@@ -16,7 +16,7 @@
     [card setModel:aModel];
     [card setMac:aMac];
     [card setSource:aSource];
-    
+
     return card;
 }
 
@@ -43,7 +43,7 @@
 
 
 // Datasource impl.
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 
+- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self nics] count];
 }
@@ -51,7 +51,7 @@
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
     var identifier = [aCol identifier];
-    
+
     return [[[self nics] objectAtIndex:aRow] valueForKey:identifier];
 }
 

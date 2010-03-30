@@ -1,17 +1,17 @@
-/*  
+/*
  * TNAlertRemoveContact.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,7 +25,7 @@
 /*! @ingroup archipelcore
     Subclass of CPAlert that manages the removing of contact
 */
-@implementation TNAlertRemoveContact: CPAlert 
+@implementation TNAlertRemoveContact: CPAlert
 {
     CPString        jid     @accessors;
     TNStropheRoster roster  @accessors;
@@ -36,7 +36,7 @@
     @param aRoster TNStropheRoster instance to remove from
     @return an initialized TNAlertRemoveContact
 */
-- (id)initWithJid:(CPString)aJid roster:(TNStropheRoster)aRoster 
+- (id)initWithJid:(CPString)aJid roster:(TNStropheRoster)aRoster
 {
     if (self = [super init])
     {
@@ -55,17 +55,17 @@
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];
     }
-    
+
     return self;
 }
 
 /*! Delegate of itself. Will perform, according to the user answer,
     the removing of the jid from the roster.
-    
+
     @param theAlert itself
     @param returnCode the return code of the CPAlert
 */
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
     if (returnCode == 0)
     {

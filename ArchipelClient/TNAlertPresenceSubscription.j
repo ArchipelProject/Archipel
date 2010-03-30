@@ -1,17 +1,17 @@
-/*  
+/*
  * TNAlertPresenceSubscription.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@
 /*! @ingroup archipelcore
     Subclass of CPAlert that manages the subscription request.
 */
-@implementation TNAlertPresenceSubscription: CPAlert 
+@implementation TNAlertPresenceSubscription: CPAlert
 {
     id              stanza @accessors;
     TNStropheRoster roster @accessors;
@@ -32,10 +32,10 @@
 /*! This method have to be use for the initialization.
     @param aStanza the subscription request TNStropheStanza
     @param aRoster a TNStropheRoster
-    
-    @return an 
+
+    @return an
 */
-- (id)initWithStanza:(id)aStanza roster:(TNStropheRoster)aRoster 
+- (id)initWithStanza:(id)aStanza roster:(TNStropheRoster)aRoster
 {
     if (self = [super init])
     {
@@ -52,14 +52,14 @@
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];
     }
-    
+
     return self;
 }
 
 /*! Delegate of itself. It will, according to the user answer, add or not the
     requester to the roster.
 */
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
     if (returnCode == 0)
     {
@@ -71,7 +71,7 @@
         [[self roster] answerAuthorizationRequest:[self stanza] answer:NO];
         [[TNViewLog sharedLogger] log:@"Authorization request rejected from " + [[self stanza] valueForAttribute:@"from"]];
     }
-        
+
 }
 
 @end
