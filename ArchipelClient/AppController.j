@@ -28,7 +28,7 @@
 @import "TNDatasourceRoster.j";
 @import "TNOutlineViewRoster.j";
 @import "TNToolbar.j";
-@import "TNTabViewModuleLoader.j";
+@import "TNModuleLoader.j";
 @import "TNViewLog.j";
 @import "TNViewProperties.j";
 @import "TNWindowAddContact.j";
@@ -37,10 +37,37 @@
 @import "TNModule.j";
 @import "TNViewLineable.j";
 
+/*! @global 
+    @group TNArchipelEntityType
+    This represent a Hypervisor XMPP entity
+*/
 TNArchipelEntityTypeHypervisor      = @"hypervisor";
+
+/*! @global 
+    @group TNArchipelEntityType
+    This represent a virtual machine XMPP entity
+*/
 TNArchipelEntityTypeVirtualMachine  = @"virtualmachine";
+
+
+/*! @global 
+    @group TNArchipelEntityType
+    This represent a user XMPP entity
+*/
 TNArchipelEntityTypeUser            = @"user";
 
+/*! @global 
+    @group TNArchipelEntityType
+    This represent a group XMPP entity
+*/
+TNArchipelEntityTypeGroup            = @"user";
+
+
+/*! @ingroup archipelcore
+    This is the main application controller. It is loaded from MainMenu.cib.
+    Anyone that is interessted in the way of Archipel is working should begin 
+    to read this class. This is the main application entry point.
+*/
 @implementation AppController : CPObject
 {
     @outlet CPView              leftView                    @accessors;	
@@ -55,7 +82,9 @@ TNArchipelEntityTypeUser            = @"user";
     @outlet TNWindowAddGroup    addGroupWindow              @accessors;
     @outlet TNWindowConnection  connectionWindow            @accessors;
     
-    TNTabViewModuleLoader       _moduleView;
+    TNModuleLoader              _moduleLoader;
+    CPTabView                   _moduleTabView;
+    
     TNDatasourceRoster          _mainRoster;
     TNOutlineViewRoster         _rosterOutlineView;
     TNToolbar                   _mainToolbar;
@@ -63,7 +92,9 @@ TNArchipelEntityTypeUser            = @"user";
     CPScrollView                _outlineScrollView;
 }
 
-// initialization
+/*! This method initialize the content of the GUI when the CIB file
+    as finished to load.
+*/
 - (void)awakeFromCib
 {
     [mainHorizontalSplitView setIsPaneSplitter:YES];
@@ -110,15 +141,24 @@ TNArchipelEntityTypeUser            = @"user";
     var bundle = [CPBundle bundleForClass:self];
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
     
-    //module view :
-    _moduleView = [[TNTabViewModuleLoader alloc] initWithFrame:[[self rightView] bounds]];
-    [_moduleView setMainToolbar:_mainToolbar];
-    [_moduleView setMainRightView:[self rightView]];
-    [_moduleView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_moduleView setBackgroundColor:[CPColor whiteColor]];
-    [_moduleView load];
-    [_moduleView setFrame:[[self rightView] bounds]];
-    [[self rightView] addSubview:_moduleView];
+    //tab module view :
+    _moduleTabView = [[CPTabView alloc] initWithFrame:[[self rightView] bounds]];
+    [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
+    [[self rightView] addSubview:_moduleTabView];
+    
+    // module Loader
+    _moduleLoader = [[TNModuleLoader alloc] init]
+    
+    [_moduleTabView setDelegate:_moduleLoader];
+    
+    [_moduleLoader setMainToolbar:_mainToolbar];
+    [_moduleLoader setMainTabView:_moduleTabView];
+    [_moduleLoader setModulesPath:@"Modules/"]
+    [_moduleLoader setMainRightView:[self rightView]];
+    
+    [_moduleLoader load];
+    
         
     // notifications
     var center = [CPNotificationCenter defaultCenter];
@@ -126,19 +166,35 @@ TNArchipelEntityTypeUser            = @"user";
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
 }
 
-
-// Toolbar actions
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on logout item click
+    To have more information about the toolbar, see TNToolbar
+    
+    @param sender the sender of the action (the CPToolbarItem)
+*/
 - (IBAction)toolbarItemLogoutClick:(id)sender 
 {
     [_mainRoster disconnect];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on add JID item click
+    To have more information about the toolbar, see TNToolbar
+    
+    @param sender the sender of the action (the CPToolbarItem)
+*/
 - (IBAction)toolbarItemAddContactClick:(id)sender 
 {
     [[self addContactWindow] setRoster:_mainRoster];
     [[self addContactWindow] orderFront:nil];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on delete JID item click
+    To have more information about the toolbar, see TNToolbar
+    
+    @param sender the sender of the action (the CPToolbarItem)
+*/
 - (IBAction)toolbarItemDeleteContactClick:(id)sender 
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
@@ -149,12 +205,22 @@ TNArchipelEntityTypeUser            = @"user";
         [alert runModal];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on add group item click
+    To have more information about the toolbar, see TNToolbar
+*/
 - (IBAction)toolbarItemAddGroupClick:(id)sender 
 {
     [[self addGroupWindow] setRoster:_mainRoster];
     [[self addGroupWindow] orderFront:nil];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on view log item click
+    To have more information about the toolbar, see TNToolbar
+    
+    @param sender the sender of the action (the CPToolbarItem)
+*/
 - (IBAction)toolbarItemViewLogClick:(id)sender
 {
     var bundle = [CPBundle bundleForClass:self]
@@ -178,13 +244,23 @@ TNArchipelEntityTypeUser            = @"user";
         
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on clear log item click
+    To have more information about the toolbar, see TNToolbar
+    
+    @param sender the sender of the action (the CPToolbarItem)
+*/
 - (IBAction)toolbarItemClearLogClick:(id)sender
 {
     [[TNViewLog sharedLogger] clearLog];
 }
 
 
-// strophe 
+/*! Notification responder of TNStropheConnection
+    will be performed on login
+    
+    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
+*/
 - (void)loginStrophe:(CPNotification)aNotification 
 {
     [[self connectionWindow] orderOut:nil];
@@ -196,9 +272,14 @@ TNArchipelEntityTypeUser            = @"user";
     [[self propertiesView] setRoster:_mainRoster];
     [_mainRoster getRoster]; 
     
-    [_moduleView setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
 }
 
+/*! Notification responder of TNStropheConnection
+    will be performed on logout
+    
+    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
+*/
 - (void)logoutStrophe:(CPNotification)aNotification 
 {
     [[self theWindow] orderOut:nil];
@@ -206,7 +287,11 @@ TNArchipelEntityTypeUser            = @"user";
 }
 
 
-// roster delegates
+/*! Delegate method of main TNStropheRoster.
+    will be performed when a subscription request is sent
+    
+    @param requestStanza TNStropheStanza cotainining the subscription request
+*/
 - (void)didReceiveSubscriptionRequest:(id)requestStanza 
 {
     var presenceAlert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
@@ -215,7 +300,12 @@ TNArchipelEntityTypeUser            = @"user";
 }
 
 
-// outline view delegate
+/*! Delegate of TNOutlineView
+    will be performed when selection changes. Tab Modules displaying
+    if managed by this message
+    
+    @param aNotification the received notification
+*/
 - (void)outlineViewSelectionDidChange:(CPNotification)notification 
 {
     var index    = [_rosterOutlineView selectedRowIndexes];
@@ -225,9 +315,9 @@ TNArchipelEntityTypeUser            = @"user";
         return // TODO : manage group
     
     var vCard       = [item vCard];
-    var entityType  = [_moduleView analyseVCard:vCard];
+    var entityType  = [_moduleLoader analyseVCard:vCard];
     
-    [_moduleView setEntity:item ofType:entityType andRoster:_mainRoster];
+    [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
     
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];

@@ -21,7 +21,9 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-
+/*! @ingroup archipelcore
+    subclass of CPWindow that allows to add grou in roster
+*/
 @implementation TNWindowAddGroup: CPWindow 
 {
     @outlet CPTextField newGroupName    @accessors;
@@ -29,6 +31,9 @@
     TNStropheRoster     roster          @accessors;
 }
 
+/*! overide of the orderFront
+    @param sender the sender
+*/
 - (void)orderFront:(id)sender
 {
     [[self newGroupName] setStringValue:@""];
@@ -37,6 +42,9 @@
     [super orderFront:sender];
 }
 
+/*! add a group according to the outlets
+    @param sender the sender
+*/
 - (IBAction)addGroup:(id)sender
 {   
     if ([[self newGroupName] stringValue] == "") 

@@ -27,7 +27,8 @@
 TNArchipelPushNotificationNamespace = @"archipel:push";
 
 
-/*! This is the root class of every module.
+/*! @ingroup archipelmodules
+    This is the root class of every module.
     All modules must inherit from TNModule.
     
     If the child class must perform custom operations on module events (see below),
@@ -38,8 +39,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         This assert than the module has its roster and entity properties sets.
      - <b>willUnload</b>: This message is sent when user change roster selection. It can be reloaded instant later,
         with another roster and entity.
-    - <b>willShow</b>: This message is sent when user will display the GUI of the module.
-    - <b>willHide</b>: This message is sent when user displays other module.
+     - <b>willShow</b>: This message is sent when user will display the GUI of the module.
+     - <b>willHide</b>: This message is sent when user displays other module.
     
     A module can perform background task only if it is loaded. Loaded doesn't mean displayed on the screen. For example
     a statistique module can start collecting data on willLoad message in background. When message willShow is sent, 
@@ -164,4 +165,5 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
     [_registredSelectors addObject:selectorID];
 }
+
 @end

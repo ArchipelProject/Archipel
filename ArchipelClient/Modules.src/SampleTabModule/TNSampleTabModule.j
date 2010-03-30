@@ -19,6 +19,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+/*! @ingroup archipelmodules
+    Sample tabbed module implementation
+*/
 @implementation TNSampleTabModule : TNModule 
 {
     

@@ -22,10 +22,27 @@
 
 @import "TNViewLog.j"
 
+/*! @global
+    @group TNStropheConnection
+    Notification that indicates successfull connection
+*/
 TNStropheConnectionSuccessNotification  = @"TNStropheConnectionSuccessNotification";
+
+/*! @global
+    @group TNStropheConnection
+    Notification that indicates disconnection
+*/
 TNStropheDisconnectionNotification      = @"TNStropheDisconnectionNotification";
+
+/*! @global
+    @group TNStropheConnection
+    Notification that indicates unsuccessfull connection
+*/
 TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification";
 
+/*! @ingroup archipelcore
+    subclass of CPWindow that allows to manage connection to XMPP Server
+*/
 @implementation TNWindowConnection: CPWindow 
 {
     @outlet CPImageView spinning            @accessors;
@@ -40,7 +57,8 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     CPCookie            cookiePassword      @accessors;
 }
 
-// initialization
+/*! initialize the window when CIB is loaded
+*/
 - (void) awakeFromCib 
 {
     [[self password] setSecure:YES];
@@ -64,7 +82,9 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 }
 
 
-// actions
+/*! connection action
+    @param sender the sender
+*/
 - (IBAction)connect:(id)sender
 {
     localStorage.setItem("lastboshservice", JSON.stringify([[self boshService] stringValue]));
@@ -79,12 +99,17 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [[self JSStrophe] connect];   
 }
 
-//TNStrophe delegate
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
 - (void)onStropheConnecting:(id)aStrophe 
 {
     [[self spinning] setHidden:NO];
 }
 
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
 - (void)onStropheConnected:(id)aStrophe
 {
     var center = [CPNotificationCenter defaultCenter];    
@@ -94,6 +119,9 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
 }
 
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
 - (void)onStropheConnectFail:(id)aStrophe
 {
     var center = [CPNotificationCenter defaultCenter];
@@ -104,6 +132,9 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
 }
 
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
 - (void)onStropheDisconnected:(id)sStrophe
 {
     var center = [CPNotificationCenter defaultCenter];   

@@ -22,13 +22,21 @@
 
 @import "TNViewLog.j"
 
+/*! @ingroup archipelcore
+    Subclass of CPAlert that manages the removing of contact
+*/
 @implementation TNAlertRemoveContact: CPAlert 
 {
     CPString        jid     @accessors;
     TNStropheRoster roster  @accessors;
 }
 
-- (id)initWithJid:(id)aJid roster:(TNStropheRoster)aRoster 
+/*! init the class with the JID to remove and the roster to remove contact from
+    @param aJid CPString containing the jid the remove
+    @param aRoster TNStropheRoster instance to remove from
+    @return an initialized TNAlertRemoveContact
+*/
+- (id)initWithJid:(CPString)aJid roster:(TNStropheRoster)aRoster 
 {
     if (self = [super init])
     {
@@ -51,6 +59,12 @@
     return self;
 }
 
+/*! Delegate of itself. Will perform, according to the user answer,
+    the removing of the jid from the roster.
+    
+    @param theAlert itself
+    @param returnCode the return code of the CPAlert
+*/
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
 {
     if (returnCode == 0)

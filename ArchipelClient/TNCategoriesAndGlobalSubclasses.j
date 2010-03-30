@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//thoses categories make CPTabView beatiful.
+/*! @ingroup utils
+    Categories that make CPTabView like iTunes' one
+*/
 @implementation CPTabView (myTabView)
 
 - (void)_createBezelBorder
@@ -53,6 +55,9 @@
 
 @end
 
+/*! @ingroup utils
+    Categories that make CPTabView like iTunes' one
+*/
 @implementation _CPTabLabelsView (MyLabelView)
 
 - (id)initWithFrame:(CGRect)aFrame
@@ -90,6 +95,9 @@
 }
 @end
 
+/*! @ingroup utils
+    Categories that make CPTabView like iTunes' one
+*/
 @implementation _CPTabLabel (myTabLabel)
 
 - (void)setTabState:(CPTabState)aTabState
@@ -116,7 +124,9 @@
 @end
 
 
-// allow  CPView with border
+/*! @ingroup utils
+    Categories that allows CPView with border
+*/
 @implementation CPView (BorderedView)
 
 - (void)setBordered
@@ -135,7 +145,10 @@
 }
 @end
 
-// Menu item with userInfo
+
+/*! @ingroup utils
+    Menu item with userInfo
+*/
 @implementation TNMenuItem : CPMenuItem
 {
     CPString stringValue @accessors;
@@ -143,7 +156,9 @@
 @end
 
 
-// allow CPString to generate UUID rfc4122 compliant
+/*! @ingroup utils
+    Categories that allows CPString to generate UUID rfc4122 compliant
+*/
 @implementation CPString (CPStringWithUUIDSeparated)
 
 + (CPString)UUID
@@ -162,7 +177,9 @@
 @end
 
 
-// A Label that is editable on click
+/*! @ingroup utils
+    A Label that is editable on click
+*/
 @implementation TNEditableLabel: CPTextField
 {
     CPColor _oldColor;
@@ -184,7 +201,9 @@
 @end
 
 
-// Allow to create CPAlert quickly.
+/*! @ingroup utils
+    Categories that allows to create CPAlert quickly.
+*/
 @implementation CPAlert (CPAlertWithQuickModal)
 
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle

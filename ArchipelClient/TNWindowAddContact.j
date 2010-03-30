@@ -21,17 +21,22 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-
+/*! @ingroup archipelcore
+    subclass of CPWindow that allows to add a TNStropheContact
+*/
 @implementation TNWindowAddContact: CPWindow 
 {
     @outlet CPPopUpButton   newContactGroup     @accessors;
     @outlet CPTextField     newContactJid       @accessors;
     @outlet CPTextField     newContactName      @accessors;
     
-    TNStropheRoster roster  @accessors;    
+    TNStropheRoster         roster              @accessors;    
 }
 
-- (IBAction) orderFront:(id) sender
+/*! overide of the orderFront
+    @param sender the sender
+*/
+- (IBAction) orderFront:(id)sender
 {
     var groups = [roster groups];
     var i;
@@ -63,6 +68,9 @@
     [super orderFront:sender];
 }
 
+/*! add a contact according to the values of the outlets
+    @param sender the sender
+*/
 - (IBAction)addContact:(id)sender
 {
     var group   = [[self newContactGroup] title];

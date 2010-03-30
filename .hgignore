@@ -1,6 +1,7 @@
 syntax: glob
 .DS_Store
 *~
+ArchipelClient/debug.txt
 ArchipelClient/Frameworks
 ArchipelClient/Build
 ArchipelClient/Documentation

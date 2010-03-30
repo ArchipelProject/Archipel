@@ -19,6 +19,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+
+/*! @ingroup archipelmodules
+    Sample toolbar module implementation
+*/
 @implementation TNSampleToolbarModule : TNModule 
 {
     

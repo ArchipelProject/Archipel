@@ -23,17 +23,22 @@
 
 @import "TNOutlineTableColumn.j"
 
+/*! @ingroup archipelcore
+    Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
+*/
+@implementation TNOutlineViewRoster: CPOutlineView
 
-@implementation TNOutlineViewRoster: CPOutlineView 
-
-- (id)initWithFrame:(CPRect)aFrame 
+/*! init the class
+    @param aFrame CPRect the frame of the view
+*/
+- (id)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
         var center      = [CPNotificationCenter defaultCenter];
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
         
-        [center addObserver:self selector:@selector(populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
+        [center addObserver:self selector:@selector(_populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];   
         
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
@@ -47,7 +52,9 @@
 	return self;
 }
 
-- (void)expandAll 
+/*! Expand all items in the view
+*/
+- (void)expandAll
 {
     for (var count = 0; [self itemAtRow:count]; count++) 
     {
@@ -59,7 +66,11 @@
     }
 }
 
-- (void)populateOutlineViewFromRoster:(CPNotification)aNotification 
+/*! Use to set the delegate. It plugs what needed to be plugged. It will be trigger by 
+    TNStropheRosterRetrievedNotification notification sent by TNStropheRoster
+    @param aNotification CPNotification sent by TNStropheRoster
+*/
+- (void)_populateOutlineViewFromRoster:(CPNotification)aNotification
 {
     var roster = [aNotification object];
     

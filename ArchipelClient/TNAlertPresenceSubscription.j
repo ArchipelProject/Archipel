@@ -20,13 +20,21 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-
+/*! @ingroup archipelcore
+    Subclass of CPAlert that manages the subscription request.
+*/
 @implementation TNAlertPresenceSubscription: CPAlert 
 {
     id              stanza @accessors;
     TNStropheRoster roster @accessors;
 }
 
+/*! This method have to be use for the initialization.
+    @param aStanza the subscription request TNStropheStanza
+    @param aRoster a TNStropheRoster
+    
+    @return an 
+*/
 - (id)initWithStanza:(id)aStanza roster:(TNStropheRoster)aRoster 
 {
     if (self = [super init])
@@ -48,6 +56,9 @@
     return self;
 }
 
+/*! Delegate of itself. It will, according to the user answer, add or not the
+    requester to the roster.
+*/
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
 {
     if (returnCode == 0)

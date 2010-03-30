@@ -20,8 +20,15 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
+/*! @global
+    @group TNDragType
+    Drag type for contacts
+*/
 TNDragTypeContact   = @"TNDragTypeContact";
 
+/*! @ingroup archipelcore
+    Subclass of TNStropheRoster that allow TNOutlineViewRoster to use it as Data Source.
+*/
 @implementation TNDatasourceRoster  : TNStropheRoster 
 {
     CPOutlineView   mainOutlineView @accessors;
@@ -31,6 +38,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
     id              _draggedItem;
 }
 
+/*! init the datasource
+    @param aConnection a valid connected TNStropheConnection
+    @return initialized instance of TNDatasourceRoster
+*/
 - (id)initWithConnection:(TNStropheConnection)aConnection
 {
     if (self = [super initWithConnection:aConnection])
@@ -56,6 +67,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return self;
 }
 
+/*! allow to define a CPSearchField to filter entries
+    @param aField CPSearchField to use for filtering
+*/
 - (void)setFilterField:(CPSearchField)aField
 {
     filterField = aField;
@@ -65,19 +79,29 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [[self filterField] setAction:@selector(filterFieldDidChange:)];
 }
 
+/*! Action that will be plugged to the CPSearchField in order to catch
+    when user changes the value
+*/
 - (IBAction)filterFieldDidChange:(id)sender
 {
     [self setFilter:[sender stringValue]];
     [self updateOutlineView:nil];
 }
-                       
+
+
+/*! Reload the content of the datasource and try to keep the old selection
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification 
-{   
+{
     [[self mainOutlineView] reloadData];
 }
 
+/*! Reload the content of the datasource
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)updateOutlineView:(CPNotification)aNotification 
-{       
+{
     [[self mainOutlineView] reloadData];
     
     var index   = [[self mainOutlineView] rowForItem:[aNotification object]];
@@ -89,69 +113,29 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
-
+/*! Reload the content of the item given as object of aNotification
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)updateOutlineViewItem:(CPNotification)aNotification
 {
     [[self mainOutlineView] reloadData];
     //[[self outlineView] reloadItem:[aNotification object]];
 }
 
+/*! Reload the content of the group given as object of aNotification
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)updateOutlineViewGroupItem:(CPNotification)aNotification
 {
     [[self mainOutlineView] reloadData];
     //[[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
 }
 
-
-- (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item 
-{
-    if (!item) 
-    {
-	    return [[self getGroupContainingEntriesMatching:[self filter]] count];
-	}
-	else 
-	{
-	    return [[self getEntriesMatching:[self filter] inGroup:item] count];
-	}
-}
-
-- (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item 
-{
-	return ([item type] == @"group") ? YES : NO;
-}
-
-- (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item  
-{   
-    if (!item) 
-    {
-        return [[self getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];
-    }
-    else 
-    {
-        return [[self getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
-    }
-}
-
-- (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item 
-{
-    var cid = [tableColumn identifier];
-
-    if (cid == @"nickname")
-    {
-        return item;
-    }
-    // else if (cid == @"statusIcon") 
-    // {
-    //     if ([item type] == @"contact")
-    //         return [item statusIcon];
-    //     else
-    //         return nil;
-    // }
-}
-
-
-
-- (CPArray)getEntriesMatching:(CPString)aFilter 
+/*! Message use internally for filtering
+    @param aFilter CPString containing the filter
+    @return a CPArray containing the contacts that matches the filters
+*/
+- (CPArray)_getEntriesMatching:(CPString)aFilter 
 {
     var theEntries      = [self entries];
     var filteredEntries = [[CPArray alloc] init];
@@ -171,7 +155,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return filteredEntries;
 }
 
-- (CPArray)getEntriesMatching:(CPString)aFilter inGroup:(CPString)aGroup
+/*! Message use internally for filtering
+    @param aFilter CPString containing the filter
+    @param inGroup CPString containing the group of filter
+    @return a CPArray containing the contacts in aGroup that matches the filters
+*/
+- (CPArray)_getEntriesMatching:(CPString)aFilter inGroup:(CPString)aGroup
 {
     var theEntries      = [self getContactsInGroup:aGroup];
     var filteredEntries = [[CPArray alloc] init];
@@ -192,7 +181,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return filteredEntries;
 }
 
-- (CPArray)getGroupContainingEntriesMatching:(CPString)aFilter
+
+/*! Message use internally for filtering
+    @param aFilter CPString containing the filter
+    @return a CPArray groups containing contacts matching aFilter
+*/
+- (CPArray)_getGroupContainingEntriesMatching:(CPString)aFilter
 {
     var theGroups      = [self groups];
     var filteredGroup   = [[CPArray alloc] init];
@@ -206,7 +200,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var group = [theGroups objectAtIndex:i];
         
-        if ([[self getEntriesMatching:aFilter inGroup:[group name]] count] > 0)
+        if ([[self _getEntriesMatching:aFilter inGroup:[group name]] count] > 0)
             [filteredGroup addObject:group];
     }
     
@@ -214,7 +208,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-// drag and drop
+/*! CPOutlineView Delegate
+*/
 - (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
 {
     var draggedItem = [theItems objectAtIndex:0];
@@ -229,6 +224,63 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return YES;
 }
 
+
+/*! CPOutlineView Delegate
+*/
+- (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item 
+{
+    if (!item) 
+    {
+	    return [[self _getGroupContainingEntriesMatching:[self filter]] count];
+	}
+	else 
+	{
+	    return [[self _getEntriesMatching:[self filter] inGroup:item] count];
+	}
+}
+
+/*! CPOutlineView Delegate
+*/
+- (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item 
+{
+	return ([item type] == @"group") ? YES : NO;
+}
+
+/*! CPOutlineView Delegate
+*/
+- (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item  
+{
+    if (!item) 
+    {
+        return [[self _getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];
+    }
+    else 
+    {
+        return [[self _getEntriesMatching:[self filter] inGroup:[item name]].sort() objectAtIndex:index];
+    }
+}
+
+/*! CPOutlineView Delegate
+*/
+- (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item 
+{
+    var cid = [tableColumn identifier];
+
+    if (cid == @"nickname")
+    {
+        return item;
+    }
+    // else if (cid == @"statusIcon") 
+    // {
+    //     if ([item type] == @"contact")
+    //         return [item statusIcon];
+    //     else
+    //         return nil;
+    // }
+}
+
+/*! CPOutlineView Delegate
+*/
 - (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
     if ([theItem type] != @"group")
@@ -239,6 +291,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return CPDragOperationEvery;
 }
 
+/*! CPOutlineView Delegate
+*/
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
     [_draggedItem changeGroup:[theItem name]];

@@ -20,25 +20,61 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-
+/*! @global
+    @group TNToolBarItem
+    identifier for item logout
+*/
 TNToolBarItemLogout         = @"TNToolBarItemLogout";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item add jid
+*/
 TNToolBarItemAddJid         = @"TNToolBarItemAddJid";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item delete jid
+*/
 TNToolBarItemDeleteJid      = @"TNToolBarItemDeleteJid";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item add group
+*/
 TNToolBarItemAddGroup       = @"TNToolBarItemAddGroup";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item delete group 
+*/
 TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item view log
+*/
 TNToolBarItemViewLog        = @"TNToolBarItemViewLog";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item clear log
+*/
 TNToolBarItemClearLog       = @"TNToolBarItemClearLog";
-TNToolBarItemViewMap        = @"TNToolBarItemViewMap";
 
-TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotification";
-
-
+/*! @ingroup archipelcore
+    subclass of CPToolbar that allow dynamic insertion. This is used by TNModuleLoader
+*/
 @implementation TNToolbar  : CPToolbar
 {
     CPDictionary    toolbarItems            @accessors;
     CPArray         toolbarItemsOrder       @accessors;
 }
 
+/*! initialize the class with a target
+    @param aTarget the target
+    @return a initialized instance of TNToolbar
+*/
 -(id)initWithTarget:(id)aTarget
 {
     var bundle = [CPBundle bundleForClass:self];
@@ -74,6 +110,13 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     return self;
 }
 
+/*! add a new CPToolbarItem
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+*/
 - (void)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel icon:(CPImage)anImage target:(id)aTarget action:(SEL)anAction
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
@@ -86,25 +129,35 @@ TNToolBarItemLogoutClickedNotification = @"TNToolBarItemLogoutClickedNotificatio
     [[self toolbarItems] setObject:newItem forKey:anIdentifier];
 }
 
+/*! define the position of a given existing CPToolbarItem according to its identifier
+    @param anIndentifier CPString containing the identifier
+*/
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
      [[self toolbarItemsOrder] insertObject:anIndentifier atIndex:aPosition];
 }
 
+/*! CPToolbar Protocol
+*/
 - (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar 
 {
     return  [self toolbarItemsOrder];
 }
 
+/*! CPToolbar Protocol
+*/
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar 
 {
     return  [self toolbarItemsOrder];
 }
 
+/*! CPToolbar Protocol
+*/
 - (CPToolbarItem)toolbar:(CPToolbar)aToolbar itemForItemIdentifier:(CPString)anItemIdentifier willBeInsertedIntoToolbar:(BOOL)aFlag
-{     
+{
     var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
     
     return ([[self toolbarItems] objectForKey:anItemIdentifier]) ? [[self toolbarItems] objectForKey:anItemIdentifier] : toolbarItem;
 }
+
 @end

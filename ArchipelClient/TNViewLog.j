@@ -21,12 +21,18 @@
 
 var theSharedLogger;
 
+/*! @ingroup archipelcore
+    provides a logging facility. Logs are store using HTML5 storage.
+*/
 @implementation TNViewLog: CPScrollView 
 {
     CPArray         logs        @accessors;
     CPTableView     logTable    @accessors;
 }
 
+/*! get the shared logger
+    @return the shared logger
+*/
 + (id)sharedLogger
 {
     if (!theSharedLogger)
@@ -35,7 +41,10 @@ var theSharedLogger;
     return theSharedLogger;
 }
 
-- (id)initWithFrame:(CGRect)aFrame
+/*! init the class with a rect
+    @param aFrame a CPRect containing the frame information
+*/
+- (id)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
@@ -76,6 +85,9 @@ var theSharedLogger;
     return self;
 }
 
+/*! write log to the logger
+    @param aString CPString containing the log message
+*/
 - (void)log:(CPString)aString 
 {
     [[self logs] insertObject:{ "date" : [CPDate date], "content" : aString} atIndex:0];
@@ -85,6 +97,8 @@ var theSharedLogger;
     localStorage.setItem("storedLogs", JSON.stringify(storedLogs));
 }
 
+/*! remove all previous stored logs
+*/
 - (void)clearLog 
 {
     [[self logs] removeAllObjects];
@@ -94,13 +108,15 @@ var theSharedLogger;
     localStorage.setItem("storedLogs", JSON.stringify(storedLogs));
 }
 
-
-// tableView delegate
+/*! CPTableView delegate
+*/
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable 
 {
     return [[self logs] count]
 }
 
+/*! CPTableView delegate
+*/
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
 {
     return logs[aRow][[aCol identifier]];

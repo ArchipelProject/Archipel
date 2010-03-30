@@ -21,7 +21,10 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-
+/*! @ingroup archipelcore
+    subclass of CPView that represent the bottom-left property panel.
+    it allows to change nickname of a TNStropheContact and give informations about it.
+*/
 @implementation TNViewProperties: CPView 
 {
     @outlet TNEditableLabel entryName       @accessors;
@@ -36,6 +39,9 @@
     CPNumber                _height;
 }
 
+/*! init the class
+    @param aRect CPRect containing frame informations
+*/
 - (id)initWithFrame:(CPRect)aRect 
 {
     _height = 180;
@@ -46,6 +52,8 @@
     return self;
 }
 
+/*! initialize some values on CIB awakening
+*/
 - (void)awakeFromCib
 {
     [self setAutoresizingMask: CPViewNotSizable];
@@ -54,24 +62,18 @@
     [[self entryName] setFont:[CPFont boldSystemFontOfSize:13]];
     [[self entryName] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
     
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didGroupAdded:) name:TNStropheRosterAddedGroupNotification object:nil];
-    
     [self setHidden:YES];
     
     [[self entryName] setTarget:self];
     [[self entryName] setAction:@selector(changeNickName:)];
     
-    [center addObserver:self selector:@selector(didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
-    [center addObserver:self selector:@selector(didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
+    [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 }
 
-- (void)didGroupAdded:(CPNotification)aNotification
-{
-    if (![self isHidden])
-        [self reload];
-}
-
+/*! hide the panel
+*/
 - (void)hide 
 {
     var splitView = [self superview];
@@ -80,6 +82,8 @@
     [splitView setPosition:[splitView bounds].size.height ofDividerAtIndex:0];
 }
 
+/*! show the panel
+*/
 - (void)show 
 {
     var splitView = [self superview];
@@ -88,6 +92,8 @@
     [splitView setPosition:([splitView bounds].size.height - _height) ofDividerAtIndex:0];
 }
 
+/*! reload the panel
+*/
 - (void)reload
 {
     if ((![self contact]) || ([[self contact] type] == "group"))
@@ -103,22 +109,33 @@
     [[self entryStatusIcon] setImage:[contact statusIcon]];
 }
 
-- (void)didContactUpdatePresence:(CPNotification)aNotification
+/*! message performed when contact update its presence in order to update information
+*/
+- (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
     [[self entryStatusIcon] setImage:[contact statusIcon]];
     [[self entryResource] setStringValue:[contact resource]];
 }
 
-- (void)didLabelEntryNameBlur:(CPNotification)aNotification
+/*! message performed when the TNEditableLabel hase been changed
+    will call doChangeNickName
+    @param aNotification the blur notification
+*/
+- (void)_didLabelEntryNameBlur:(CPNotification)aNotification
 {
     [self doChangeNickName];
 }
 
+/*! action sent by the TNEditableLabel when ok. Will blur it
+    @param sender the sender
+*/
 - (IBAction)changeNickName:(id)sender
 {
     [sender _inputElement].blur();
 }
 
+/*! it will update the name of the current TNStropheContact
+*/
 - (void)doChangeNickName
 {
     var theJid = [contact jid];

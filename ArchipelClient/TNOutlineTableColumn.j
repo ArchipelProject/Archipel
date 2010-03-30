@@ -19,6 +19,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+
+/*! @ingroup archipelcore
+    Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
+*/
 @implementation TNViewOutlineViewContact : CPView
 {
     CPImageView statusIcon  @accessors;
@@ -26,6 +30,9 @@
     CPTextField name        @accessors;
 }
 
+/*! initialize the class
+    @return a initialized instance of TNViewOutlineViewContact
+*/
 - (id)init
 {
     if (self = [super init])
@@ -54,6 +61,9 @@
     return self;
 }
 
+/*! Message used by CPOutlineView to set the value of the object
+    @param aContact TNStropheContact to represent
+*/
 - (void)setObjectValue:(id)aContact
 {
     [name setAutoresizingMask:CPViewWidthSizable];
@@ -74,18 +84,24 @@
         
 }
 
+/*! implement theming in order to allow change color of selected item
+*/
 - (void)setThemeState:(id)aState
 {
     [super setThemeState:aState];
     [[self name] setThemeState:aState];
 }
 
+/*! implement theming in order to allow change color of selected item
+*/
 - (void)unsetThemeState:(id)aState
 {
     [super unsetThemeState:aState];
     [[self name] unsetThemeState:aState];
 }
 
+/*! CPCoder compliance
+*/
 - (id)initWithCoder:(CPCoder)aCoder
 {
     self = [super initWithCoder:aCoder];
@@ -100,6 +116,8 @@
     return self;
 }
 
+/*! CPCoder compliance
+*/
 - (void)encodeWithCoder:(CPCoder)aCoder
 {
     [super encodeWithCoder:aCoder];
@@ -112,7 +130,9 @@
 @end
 
 
-
+/*! @ingroup archipelcore
+    Subclass of CPTableColumn. This is used to define the content of the TNOutlineViewRoster
+*/
 @implementation TNOutlineTableColumnLabel  : CPTableColumn 
 {
     CPOutlineView       _outlineView;
@@ -120,6 +140,10 @@
     CPView              _dataViewForRoot;
 }
 
+/*! init the class
+    @param anIdentifier CPString containing the CPTableColumn identifier
+    @param anOutlineView CPOutlineView the outlineView where the column will be insered. This is used to know the level
+*/
 - (id)initWithIdentifier:(CPString)anIdentifier outlineView:(CPOutlineView)anOutlineView 
 {
     if (self = [super initWithIdentifier:anIdentifier])
@@ -145,6 +169,9 @@
     return self;
 }
 
+/*! Return a dataview for item can be a CPTextField for groups or TNViewOutlineViewContact for TNStropheContact
+    @return the dataview
+*/
 - (id)dataViewForRow:(int)aRowIndex 
 {
     var outlineViewItem = [_outlineView itemAtRow:aRowIndex];

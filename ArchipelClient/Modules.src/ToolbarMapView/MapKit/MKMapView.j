@@ -185,7 +185,6 @@ var gmNamespace = nil;
 }
 - (void)clean
 {
-    gmNamespace.GUnload();
     gmNamespace = nil;
 }
 
