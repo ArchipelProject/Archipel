@@ -23,7 +23,7 @@
 
 @import "TNMessageView.j"
 
-/*! @defgroup userchat User Chat
+/*! @defgroup userchat Module UserChat
     @desc this module allows to chat with XMPP entities.
 */
 
@@ -37,8 +37,7 @@
     @outlet CPScrollView    messageScrollView       @accessors;
     @outlet CPImageView     imageSpinnerWriting     @accessors;
 
-    CPCollectionView        messageCollectionView   @accessors;
-
+    CPCollectionView        _messageCollectionView;
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
 }
@@ -57,20 +56,21 @@
 
     [messageView setAutoresizingMask:CPViewWidthSizable];
 
-    messageCollectionView = [[CPCollectionView alloc] initWithFrame:frame];
-    [[self messageCollectionView] setAutoresizingMask:CPViewWidthSizable];
-    [[self messageCollectionView] setMinItemSize:CGSizeMake(100, 60)];
-    [[self messageCollectionView] setMaxItemSize:CGSizeMake(1700, 2024)];
-    [[self messageCollectionView] setMaxNumberOfColumns:1];
-    [[self messageCollectionView] setVerticalMargin:2.0];
-    [[self messageCollectionView] setSelectable:NO]
-    [[self messageCollectionView] setItemPrototype:[[CPCollectionViewItem alloc] init]];
-    [[[self messageCollectionView] itemPrototype] setView:messageView];
-    [[self messageCollectionView] setContent:_messages];
+    _messageCollectionView = [[CPCollectionView alloc] initWithFrame:frame];
+    [_messageCollectionView setAutoresizingMask:CPViewWidthSizable];
+    [_messageCollectionView setMinItemSize:CGSizeMake(100, 60)];
+    [_messageCollectionView setMaxItemSize:CGSizeMake(1700, 2024)];
+    [_messageCollectionView setMaxNumberOfColumns:1];
+    [_messageCollectionView setVerticalMargin:2.0];
+    [_messageCollectionView setSelectable:NO]
+    [_messageCollectionView setItemPrototype:[[CPCollectionViewItem alloc] init]];
+    [[_messageCollectionView itemPrototype] setView:messageView];
+    [_messageCollectionView setContent:_messages];
 
-    [[self messageScrollView] setDocumentView:messageCollectionView];
+    [[self messageScrollView] setDocumentView:_messageCollectionView];
 
     var mainBundle = [CPBundle mainBundle];
+    
     [[self imageSpinnerWriting] setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
     [[self imageSpinnerWriting] setHidden:YES];
 
@@ -92,7 +92,7 @@
 
 
     var frame = [[[self messageScrollView] documentView] bounds];
-    [[self messageCollectionView] setFrame:frame];
+    [_messageCollectionView setFrame:frame];
 
     var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self entity] jid]));
 
@@ -112,10 +112,10 @@
         }
     }
 
-    [[self messageCollectionView] reloadContent];
+    [_messageCollectionView reloadContent];
     var frame = [[[self messageScrollView] documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
-    [messageCollectionView scrollPoint:newScrollOrigin];
+    [_messageCollectionView scrollPoint:newScrollOrigin];
 }
 
 /*! TNModule implementation
@@ -128,7 +128,7 @@
     localStorage.setItem("communicationWith" + [[self entity] jid], JSON.stringify(_messages));
 
     [_messages removeAllObjects];
-    [[self messageCollectionView] reloadContent];
+    [_messageCollectionView reloadContent];
 }
 
 /*! TNModule implementation
@@ -193,12 +193,12 @@
     var newMessageDict = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color"];
 
     [_messages addObject:newMessageDict];
-    [[self messageCollectionView] reloadContent];
+    [_messageCollectionView reloadContent];
 
     // scroll to bottom;
     var frame = [[[self messageScrollView] documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
-    [messageCollectionView scrollPoint:newScrollOrigin];
+    [_messageCollectionView scrollPoint:newScrollOrigin];
 }
 
 /*! performed when TNStropheContactMessageReceivedNotification is received from current entity.
@@ -258,7 +258,7 @@
 {
     localStorage.removeItem("communicationWith" + [[self entity] jid]);
     [_messages removeAllObjects];
-    [[self messageCollectionView] reloadContent];
+    [_messageCollectionView reloadContent];
 }
 
 @end

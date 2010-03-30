@@ -22,20 +22,20 @@
 @import "AppController.j"
 
 /*! @mainpage
-
-    Archipel is distributed under the @ref license "AGPL".
-
     @htmlonly <pre>@endhtmlonly
     @htmlinclude ./README
     @htmlonly </pre>@endhtmlonly
 
+    Archipel is distributed under the @ref license "AGPL".
+    
     @page license License
     @htmlonly <pre>@endhtmlonly
     @htmlinclude ./LICENSE
     @htmlonly </pre>@endhtmlonly
-
+    
+    
     @defgroup archipelmodules Archipel Modules
-    @defgroup utils Utilities
+    @defgroup utils Archipel Utilities
 */
 
 

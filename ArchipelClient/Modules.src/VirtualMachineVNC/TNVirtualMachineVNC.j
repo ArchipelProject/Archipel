@@ -21,7 +21,7 @@
 @import <AppKit/CPWebView.j>
 
 
-/*! @defgroup  virtualmachinevnc VirtualMachineVNC 
+/*! @defgroup  virtualmachinevnc Module VirtualMachineVNC 
     @desc This module allows to access to virtual machine displays
     using VNC.
 */

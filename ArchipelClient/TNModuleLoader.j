@@ -129,7 +129,8 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     {
         var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
 
-        if (itemType)
+        if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor)
+            || (itemType == TNArchipelEntityTypeGroup))
             return itemType;
         else
             return TNArchipelEntityTypeUser;
@@ -162,14 +163,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
         var path                = [self modulesPath] + [module objectForKey:@"folder"];
         var bundle              = [CPBundle bundleWithPath:path];
 
-        try
-        {
-            [bundle loadWithDelegate:self];
-        }
-        catch(err)
-        {
-            alert(err);
-        }
+        [bundle loadWithDelegate:self];
     }
 }
 
@@ -202,6 +196,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 
         if ([moduleTypes containsObject:[self moduleType]])
         {
+
             [self _addItemToModulesTabViewWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
         }
     }
@@ -355,9 +350,9 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     if (moduleInsertionType == TNArchipelModuleTypeTab)
     {
         var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
-        var moduleTabTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+        var supportedTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
 
-        [[theViewController view] setModuleTypes:moduleTabTypes];
+        [[theViewController view] setModuleTypes:supportedTypes];
         [[theViewController view] setModuleTabIndex:moduleTabIndex];
 
         [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];

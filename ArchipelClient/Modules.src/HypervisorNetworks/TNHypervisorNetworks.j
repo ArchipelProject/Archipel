@@ -31,9 +31,6 @@ TNArchipelTypeHypervisorNetworkUndefine    = @"undefine";
 TNArchipelTypeHypervisorNetworkCreate      = @"create";
 TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
-
-
-
 @implementation TNHypervisorNetworks : TNModule
 {
     @outlet CPScrollView                scrollViewNetworks      @accessors;
