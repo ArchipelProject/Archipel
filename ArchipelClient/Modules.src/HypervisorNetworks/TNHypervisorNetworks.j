@@ -33,6 +33,8 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 @implementation TNHypervisorNetworks : TNModule
 {
+    @outlet CPTextField                 fieldJID                @accessors;
+    @outlet CPTextField                 fieldName               @accessors;
     @outlet CPScrollView                scrollViewNetworks      @accessors;
     @outlet TNWindowNetworkProperties   windowProperties        @accessors;
 
@@ -105,12 +107,32 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 }
 
+- (void)willLoad
+{
+    [super willLoad];
+
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+}
+
 - (void)willShow
 {
     [super willShow];
 
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
+    
     [self getHypervisorNetworks];
 }
+
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
+}
+
 
 - (void)getHypervisorNetworks
 {

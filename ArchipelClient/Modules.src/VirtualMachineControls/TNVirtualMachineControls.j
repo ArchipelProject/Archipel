@@ -39,6 +39,8 @@ VIR_DOMAIN_CRASHED  = 6;
 
 @implementation TNVirtualMachineControls : TNModule
 {
+    @outlet CPTextField     fieldJID                    @accessors;
+    @outlet CPTextField     fieldName                   @accessors;
     @outlet CPTextField     fieldVMName                 @accessors;
     @outlet CPTextField     fieldVMJid                  @accessors;
     @outlet CPTextField     fieldInfoState              @accessors;

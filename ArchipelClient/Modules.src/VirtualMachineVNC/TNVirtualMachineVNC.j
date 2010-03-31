@@ -51,6 +51,8 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
 */
 @implementation TNVirtualMachineVNC : TNModule
 {
+    @outlet CPTextField     fieldJID        @accessors;
+    @outlet CPTextField     fieldName       @accessors;
     @outlet     CPWebView   vncWebView      @accessors;
     @outlet     CPView      maskingView     @accessors;
 
@@ -72,11 +74,24 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
 
 /*! TNModule implementation
 */
+- (void)willLoad
+{
+    [super willLoad];
+    
+    var center = [CPNotificationCenter defaultCenter];   
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+}
+
+/*! TNModule implementation
+*/
 - (void)willShow
 {
     [super willShow];
 
     [[self maskingView] setFrame:[self bounds]];
+    
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
     
     if ([[self entity] status] == TNStropheContactStatusOnline)
     {
@@ -111,6 +126,13 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
     [[self maskingView] removeFromSuperview];
 }
 
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
+}
 /*! send stanza to get the current virtual machine VNC display
 */
 - (void)getVirtualMachineVNCDisplay

@@ -32,6 +32,8 @@
 */
 @implementation TNUserChat : TNModule
 {
+    @outlet CPTextField     fieldJID                @accessors;
+    @outlet CPTextField     fieldName               @accessors;
     @outlet CPTextField     fieldUserJid            @accessors;
     @outlet CPTextField     fieldMessage            @accessors;
     @outlet CPScrollView    messageScrollView       @accessors;
@@ -89,7 +91,7 @@
     [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self entity]];
     [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self entity]];
-
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
 
     var frame = [[[self messageScrollView] documentView] bounds];
     [_messageCollectionView setFrame:frame];
@@ -149,6 +151,19 @@
     }
 
     [[self entity] freeMessagesQueue];
+    
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
+}
+
+/*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
+*/
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
 }
 
 /*! observe if user is typing. If yes then send the "compose" XMPP status.

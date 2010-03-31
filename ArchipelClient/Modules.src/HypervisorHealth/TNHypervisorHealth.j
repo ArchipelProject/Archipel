@@ -97,10 +97,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 - (void)willLoad
 {
     [super willLoad];
-
+    
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
     _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
 

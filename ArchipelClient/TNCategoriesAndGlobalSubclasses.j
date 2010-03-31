@@ -42,7 +42,7 @@
 
     if (_tabViewType == CPTopTabsBezelBorder)
     {
-        var labelsViewHeight = 32.0//[_CPTabLabelsView height],
+        var labelsViewHeight = 33.0//[_CPTabLabelsView height],
             auxiliaryViewHeight = _auxiliaryView ? CGRectGetHeight([_auxiliaryView frame]) : 0.0,
             separatorViewHeight = 0.0;
 
@@ -71,7 +71,7 @@
 
         [self setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"CPiTunesTabView/tabViewLabelBackground.png"]]]]
 
-        [self setFrameSize:CGSizeMake(CGRectGetWidth(aFrame), 32.0)];
+        [self setFrameSize:CGSizeMake(CGRectGetWidth(aFrame), 33.0)];
     }
 
     return self;
@@ -86,7 +86,7 @@
     for (; index < count; ++index)
     {
         var label = _tabLabels[index],
-            frame = CGRectMake(x, 14.0, width, 58.0);
+            frame = CGRectMake(x, 15.0, width, 58.0);
 
         [label setFrame:frame];
         x = CGRectGetMaxX(frame);

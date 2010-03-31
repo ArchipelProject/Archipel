@@ -90,6 +90,8 @@ function generateMacAddr()
 
 @implementation TNVirtualMachineDefinition : TNModule
 {
+    @outlet CPTextField             fieldJID                @accessors;
+    @outlet CPTextField             fieldName               @accessors;
     @outlet CPScrollView            scrollViewForNics       @accessors;
     @outlet CPScrollView            scrollViewForDrives     @accessors;
     @outlet CPTextField             fieldMemory             @accessors;
@@ -100,8 +102,8 @@ function generateMacAddr()
     @outlet CPButton                buttonDelNic            @accessors;
     @outlet CPButton                buttonArchitecture      @accessors;
     @outlet CPButton                buttonHypervisor        @accessors;
-    @outlet TNWindowNicEdition      windowNicEdition         @accessors;
-    @outlet TNWindowDriveEdition    windowDriveEdition       @accessors;
+    @outlet TNWindowNicEdition      windowNicEdition        @accessors;
+    @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;
     @outlet CPView                  maskingView             @accessors;
 
     CPTableView                     tableNetworkCards   @accessors;
@@ -249,12 +251,24 @@ function generateMacAddr()
 }
 
 // TNModule impl.
+
+- (void)willLoad
+{
+    [super willLoad];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+}
+
 - (void)willShow
 {
     [super willShow];
-
+    
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
+    
     [[self maskingView] setFrame:[self bounds]];
-
+    
     [self getVirtualMachineInfo];
     [self getXMLDesc];
 }
@@ -284,6 +298,14 @@ function generateMacAddr()
     [super willUnload];
 
     [[self maskingView] removeFromSuperview];
+}
+
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
 }
 
 //  XML Desc
@@ -609,7 +631,6 @@ function generateMacAddr()
 
     [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
-
 
 - (void)onLibvirtError:(TNStropheStanza)errorStanza
 {

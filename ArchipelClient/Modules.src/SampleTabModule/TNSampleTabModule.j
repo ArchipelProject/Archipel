@@ -29,31 +29,43 @@
 */
 @implementation TNSampleTabModule : TNModule
 {
-
+    @outlet CPTextField             fieldJID                @accessors;
+    @outlet CPTextField             fieldName               @accessors;
 }
 
 - (void)willLoad
 {
     [super willLoad];
-    // message sent when view will be added from superview;
+    
+    var center = [CPNotificationCenter defaultCenter];   
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
 }
 
 - (void)willUnload
 {
     [super willUnload];
-   // message sent when view will be removed from superview;
 }
 
 - (void)willShow
 {
     [super willShow];
-    // message sent when the tab is clicked
+
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
 }
 
 - (void)willHide
 {
     [super willHide];
-    // message sent when the tab is changed
+}
+
+
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
 }
 @end
 

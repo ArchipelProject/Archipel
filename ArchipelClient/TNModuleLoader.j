@@ -1,17 +1,17 @@
-/*
- * TNTabViewModuleLoader.j
- *
+/*  
+ * TNModuleLoader.j
+ *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -66,16 +66,6 @@ TNArchipelModuleTypeToolbar = @"toolbar";
         _loadedTabModulesScrollViews     = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
     }
-
-    // var message = [CPTextField labelWithTitle:@"Entity is currently offline. You can't interract with it."];
-    //     var bounds  = [self bounds];
-    //
-    //     [message setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
-    //     [message setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
-    //     [message setAlignment:CPCenterTextAlignment]
-    //     [message setFont:[CPFont boldSystemFontOfSize:18]];
-    //     [message setTextColor:[CPColor grayColor]];
-    //     [self addSubview:message];
 
     return self;
 }
@@ -209,13 +199,6 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     var arrayCpy        = [[mainTabView tabViewItems] copy];
     var selectedItem    = [mainTabView selectedTabViewItem];
     var theModule       = [[selectedItem view] documentView]
-
-    [theModule willUnload];
-    [theModule setEntity:nil];
-    [theModule setRoster:nil];
-
-    [[selectedItem view] removeFromSuperview];
-    [mainTabView removeTabViewItem:selectedItem];
 
     //@each(var aTabViewItem in [self tabViewItems])
     for(var i = 0; i < [arrayCpy count]; i++)

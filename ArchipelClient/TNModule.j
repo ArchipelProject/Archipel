@@ -105,7 +105,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     }
 }
 
-/*! This message is sent when module is loaded
+/*! This message is sent when module is loaded. It will
+    reinitialize the _registredSelectors dictionnary
 */
 - (void)willLoad
 {

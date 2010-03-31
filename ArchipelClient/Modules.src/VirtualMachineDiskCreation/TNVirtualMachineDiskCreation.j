@@ -32,6 +32,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 @implementation TNVirtualMachineDiskCreation : TNModule
 {
+    @outlet CPTextField     fieldJID                @accessors;
+    @outlet CPTextField     fieldName               @accessors;
     @outlet CPTextField     fieldNewDiskName        @accessors;
     @outlet CPTextField     fieldNewDiskSize        @accessors;
     @outlet CPPopUpButton   buttonNewDiskSizeUnit   @accessors;
@@ -100,17 +102,30 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     _registredDiskListeningId = nil;
 
     var params = [[CPDictionary alloc] init];
-
+    
     [self registerSelector:@selector(didReceivedDiskPushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
+    
+    var center = [CPNotificationCenter defaultCenter];   
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
 }
 
 - (void)willShow
 {
     [super willShow];
 
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
+    
     [self getDisksInfo];
 }
 
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+       [[self fieldName] setStringValue:[[self entity] nickname]]
+    }
+}
 
 - (BOOL)didReceivedDiskPushNotification:(TNStropheStanza)aStanza
 {
