@@ -26,7 +26,9 @@
     Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
 */
 @implementation TNOutlineViewRoster: CPOutlineView
-
+{
+    TNOutlineTableColumnLabel   columnLabel @accessors;
+}
 /*! init the class
     @param aFrame CPRect the frame of the view
 */
@@ -43,13 +45,21 @@
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-
+        
+        [columnLabel setWidth:aFrame.size.width];
+        
+        [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+        
+        
+        //[columnLabel setResizingMask:CPTableColumnAutoresizingMask];
+        
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
 
-        _sourceListActiveGradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
-        _sourceListActiveTopLineColor = [CPColor colorWithHexString:@"9eafcd"];
-        _sourceListActiveBottomLineColor = [CPColor colorWithHexString:@"7c95bb"];
+        // highlight style
+        _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
+        _sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"9eafcd"];
+        _sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"7c95bb"];
     }
 
 	return self;
@@ -81,5 +91,4 @@
     [roster setMainOutlineView:self];
     [self expandAll];
 }
-
 @end

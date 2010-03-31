@@ -41,7 +41,7 @@
         name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 170, 100)];
         events      = [[CPTextField alloc] initWithFrame:CGRectMake(148, 2, 23, 14)];
 
-        [self setAutoresizingMask: CPViewWidthSizable];
+        //[self setAutoresizingMask: CPViewWidthSizable];
         [self addSubview:statusIcon];
         [self addSubview:name];
         [self addSubview:events];
@@ -67,12 +67,18 @@
 */
 - (void)setObjectValue:(id)aContact
 {
-    [name setAutoresizingMask:CPViewWidthSizable];
+    //[name setAutoresizingMask:CPViewWidthSizable];
     [events setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
 
     [[self name] setStringValue:[aContact nickname]];
     [[self statusIcon] setImage:[aContact statusIcon]];
-
+    [[self name] sizeToFit];
+    
+    var bounds = [[self name] frame];
+    bounds.size.width += 10;
+    
+    [[self name] setFrame:bounds];
+    
     if ([aContact numberOfEvents] > 0)
     {
         [[self events] setHidden:NO];
@@ -150,9 +156,9 @@
     if (self = [super initWithIdentifier:anIdentifier])
     {
         _outlineView = anOutlineView;
-
-        [self setWidth:200];
+        
         _dataViewForRoot = [[CPTextField alloc] init];
+        
         [_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
         [_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
@@ -179,13 +185,17 @@
 {
     var outlineViewItem = [_outlineView itemAtRow:aRowIndex];
     var itemLevel       = [_outlineView levelForItem:outlineViewItem];
-
+    
     if (itemLevel == 0)
     {
         return _dataViewForRoot;
     }
     else
     {
+        var bounds = [_dataViewForOther bounds];
+        bounds.size.width = [_outlineView bounds].size.width;
+        [_dataViewForOther setBounds:bounds];
+        
         return _dataViewForOther;
     }
 

@@ -53,8 +53,6 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     @outlet CPCheckBox  credentialRemember  @accessors;
 
     TNStropheConnection JSStrophe           @accessors;
-    CPCookie            cookieLogin         @accessors;
-    CPCookie            cookiePassword      @accessors;
 }
 
 /*! initialize the window when CIB is loaded
@@ -62,23 +60,38 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 - (void) awakeFromCib
 {
     [[self password] setSecure:YES];
-
-    var lastBoshService  = JSON.parse(localStorage.getItem("lastboshservice"));
-    var lastJID          = JSON.parse(localStorage.getItem("lastjid"));
-    var lastPassword     = JSON.parse(localStorage.getItem("lastpassword"));
-
-    if (lastBoshService)
-        [[self boshService] setStringValue:lastBoshService];
-
-    [[self jid] setStringValue:lastJID];
-    [[self password] setStringValue:lastPassword];
-
-    if (lastJID && lastPassword)
-        [self connect:nil];
-    else
-        [[self credentialRemember] setState:CPOffState];
-
     [self setShowsResizeIndicator:NO];
+    
+    [self initCredentials];
+}
+
+/*! Initialize credentials informations according to the Application Defaults
+*/
+- (void)initCredentials
+{
+    var defaults            = [TNUserDefaults standardUserDefaults];
+
+   var lastBoshService     = [defaults stringForKey:@"loginService"];
+   var lastJID             = [defaults stringForKey:@"loginJID"];
+   var lastPassword        = [defaults stringForKey:@"loginPassword"];
+   var lastRememberCred    = [defaults boolForKey:@"loginRememberCredentials"];
+
+   if (lastBoshService)
+       [[self boshService] setStringValue:lastBoshService];
+
+    CPLogConsole("---->" + lastRememberCred);
+    
+   if (lastRememberCred)
+   {
+       [[self jid] setStringValue:lastJID];
+       [[self password] setStringValue:lastPassword];
+       [[self credentialRemember] setState:CPOnState];
+   }
+   else
+       [[self credentialRemember] setState:CPOffState];
+
+   if (lastRememberCred)
+       [self connect:nil];
 }
 
 /*! connection action
@@ -87,15 +100,36 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 - (IBAction)connect:(id)sender
 {
     localStorage.setItem("lastboshservice", JSON.stringify([[self boshService] stringValue]));
+    
+    var defaults = [TNUserDefaults standardUserDefaults];
+    [defaults stringForKey:@"loginService"];
+    
     if ([[self credentialRemember] state] == CPOnState)
     {
-        localStorage.setItem("lastjid", JSON.stringify([jid stringValue]));
-        localStorage.setItem("lastpassword", JSON.stringify([password stringValue]));
+        CPLogConsole("Registring creds");
+        [defaults setObject:[jid stringValue] forKey:@"loginJID"];
+        [defaults setObject:[password stringValue] forKey:@"loginPassword"];
+        [defaults setObject:[boshService stringValue] forKey:@"loginService"];
+        [defaults setBool:YES forKey:@"loginRememberCredentials"];
+    }
+    else
+    {
+        [defaults setBool:NO forKey:@"loginRememberCredentials"];
     }
 
     [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
     [[self JSStrophe] setDelegate:self];
     [[self JSStrophe] connect];
+}
+
+- (IBAction)rememberCredentials:(id)sender
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    if ([sender state] == CPOnState)
+        [defaults setBool:YES forKey:@"loginRememberCredentials"];
+    else
+        [defaults setBool:NO forKey:@"loginRememberCredentials"];
 }
 
 /*! delegate of TNStropheConnection
@@ -137,14 +171,12 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 - (void)onStropheDisconnected:(id)sStrophe
 {
     var center = [CPNotificationCenter defaultCenter];
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
     [center postNotificationName:TNStropheDisconnectionNotification object:self userInfo:[self JSStrophe]];
-
-    [[self jid] setStringValue:""];
-    [[self password] setStringValue:""];
-
-    localStorage.setItem("lastjid", JSON.stringify(""));
-    localStorage.setItem("lastpassword", JSON.stringify(""));
-
+    
+    [self initCredentials];
+    
     [[TNViewLog sharedLogger] log:@"Strophe is disconnected"];
 }
 @end

@@ -103,8 +103,10 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     {
         var currentItem             = [[self mainTabView] selectedTabViewItem];
         var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:currentItem];
-        
-        localStorage.setItem("selectedIndexFor" + [[self entity] jid], JSON.stringify(currentSelectedIndex));
+        var defaults                = [TNUserDefaults standardUserDefaults];
+        var memid                   = @"selectedTabIndexFor" + [[self entity] jid];
+
+        [defaults setInteger:currentSelectedIndex forKey:memid];
     }
 }
 
@@ -114,7 +116,9 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 {
     if ([self entity])
     {
-        var oldSelectedIndex = JSON.parse(localStorage.getItem("selectedIndexFor" + [[self entity] jid]));
+        var defaults            = [TNUserDefaults standardUserDefaults];
+        var memid               = @"selectedTabIndexFor" + [[self entity] jid];
+        var oldSelectedIndex    = [defaults integerForKey:memid];
 
         if (oldSelectedIndex)
             [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];

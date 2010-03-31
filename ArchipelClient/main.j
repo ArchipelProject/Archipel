@@ -41,5 +41,13 @@
 
 function main(args, namedArgs)
 {
+    // Application Defaults
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var appDefaults = [CPDictionary dictionary];
+    
+    [appDefaults setObject:@"archipel.org" forKey:@"loginService"];
+
+    [defaults registerDefaults:appDefaults];
+    
     CPApplicationMain(args, namedArgs);
 }

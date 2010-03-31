@@ -36,6 +36,7 @@
 @import "TNWindowConnection.j";
 @import "TNModule.j";
 @import "TNViewLineable.j";
+@import "TNUserDefaults.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -97,8 +98,23 @@ TNArchipelEntityTypeGroup            = @"user";
 */
 - (void)awakeFromCib
 {
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
     [mainHorizontalSplitView setIsPaneSplitter:YES];
+    
+    
+    var posx;
+    if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
+    {
+        [mainHorizontalSplitView setPosition:posx ofDividerAtIndex:0];
 
+        var bounds = [[self leftView] bounds];
+        bounds.size.width = posx;
+        [[self leftView] setFrame:bounds];
+        [[self leftView] setBackgroundColor:[CPColor redColor]]
+    }
+    [mainHorizontalSplitView setDelegate:self];    
+    
     //hide main window
     [theWindow orderOut:nil];
 
@@ -107,7 +123,7 @@ TNArchipelEntityTypeGroup            = @"user";
     [theWindow setToolbar:_mainToolbar];
 
     //outlineview
-    _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:CGRectMake(0,0,0,0)];
+    _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[[self leftView] bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
 
@@ -115,11 +131,9 @@ TNArchipelEntityTypeGroup            = @"user";
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]]; //D8DFE8
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
-    // left view
-    [[self leftView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [[self leftView] addSubview:_outlineScrollView];
 
     // right view
@@ -160,13 +174,13 @@ TNArchipelEntityTypeGroup            = @"user";
 
     // module Loader
     _moduleLoader = [[TNModuleLoader alloc] init]
-
+    
     [_moduleTabView setDelegate:_moduleLoader];
     [_moduleLoader setMainToolbar:_mainToolbar];
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setModulesPath:@"Modules/"]
     [_moduleLoader setMainRightView:[self rightView]];
-
+    
     [_moduleLoader load];
 
 
@@ -174,7 +188,7 @@ TNArchipelEntityTypeGroup            = @"user";
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];    
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -185,6 +199,11 @@ TNArchipelEntityTypeGroup            = @"user";
 */
 - (IBAction)toolbarItemLogoutClick:(id)sender
 {
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [defaults removeObjectForKey:@"loginPassword"];
+    [defaults setBool:NO forKey:@"loginRememberCredentials"];
+    
     [_mainRoster disconnect];
 }
 
@@ -333,4 +352,17 @@ TNArchipelEntityTypeGroup            = @"user";
     [[self propertiesView] setContact:item];
     [[self propertiesView] reload];
 }
+
+
+/*! Delegate of mainSplitView
+*/
+- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
+{
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var splitView   = [aNotification object];
+    var newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
+    
+    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
+}
+
 @end
