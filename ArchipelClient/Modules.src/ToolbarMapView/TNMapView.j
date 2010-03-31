@@ -57,15 +57,13 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (id)awakeFromCib
 {
-    [[self splitViewHorizontal] setDelegate:self];
-    
     var defaults    = [TNUserDefaults standardUserDefaults];
     var posy;
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
     {
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
     }
-    
+    [[self splitViewHorizontal] setDelegate:self];
     
     [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [[self splitViewVertical] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -327,9 +325,9 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 {
     var defaults    = [TNUserDefaults standardUserDefaults];
     var splitView   = [aNotification object];
-    var newWidth    = [splitView rectOfDividerAtIndex:0].origin.y;
+    var newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
     
-    [defaults setInteger:newWidth forKey:@"mapViewSplitViewPosition"];
+    [defaults setInteger:newPos forKey:@"mapViewSplitViewPosition"];
 }
 
 @end
