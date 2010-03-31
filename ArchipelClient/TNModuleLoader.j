@@ -77,6 +77,14 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
+    if ([self entity])
+    {
+        var currentItem             = [[self mainTabView] selectedTabViewItem];
+        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:currentItem];
+        
+        localStorage.setItem("selectedIndexFor" + [[self entity] jid], JSON.stringify(currentSelectedIndex));
+    }
+    
     var center = [CPNotificationCenter defaultCenter];
 
     [self _removeAllTabsFromModulesTabView];
@@ -186,10 +194,14 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 
         if ([moduleTypes containsObject:[self moduleType]])
         {
-
             [self _addItemToModulesTabViewWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
         }
     }
+    
+    var oldSelectedIndex = JSON.parse(localStorage.getItem("selectedIndexFor" + [[self entity] jid]));
+    
+    if (oldSelectedIndex)
+        [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
 /*! will remove all loaded modules and send message willUnload to all TNModules
@@ -282,9 +294,10 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
 {
-    var oldModule   = [[[aTabView selectedTabViewItem] view] documentView];
-    var newModule   = [[anItem view] documentView];
-
+    var currentTabItem          = [aTabView selectedTabViewItem];
+    var oldModule               = [[currentTabItem view] documentView];
+    var newModule               = [[anItem view] documentView];
+    
     [oldModule willHide];
     [newModule willShow];
 }
