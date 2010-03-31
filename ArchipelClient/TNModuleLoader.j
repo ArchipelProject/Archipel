@@ -77,13 +77,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
-    if ([self entity])
-    {
-        var currentItem             = [[self mainTabView] selectedTabViewItem];
-        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:currentItem];
-        
-        localStorage.setItem("selectedIndexFor" + [[self entity] jid], JSON.stringify(currentSelectedIndex));
-    }
+    [self rememberLastSelectedTabIndex];
     
     var center = [CPNotificationCenter defaultCenter];
 
@@ -99,6 +93,32 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     _previousStatus = [[self entity] status];
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self _populateModulesTabView];
+}
+
+/*! store in HTML5 local storage last selected tab index for entity
+*/
+- (void)rememberLastSelectedTabIndex
+{
+    if ([self entity])
+    {
+        var currentItem             = [[self mainTabView] selectedTabViewItem];
+        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:currentItem];
+        
+        localStorage.setItem("selectedIndexFor" + [[self entity] jid], JSON.stringify(currentSelectedIndex));
+    }
+}
+
+/*! Reselect the last remembered tab index for entity
+*/
+- (void)recoverFromLastSelectedIndex
+{
+    if ([self entity])
+    {
+        var oldSelectedIndex = JSON.parse(localStorage.getItem("selectedIndexFor" + [[self entity] jid]));
+
+        if (oldSelectedIndex)
+            [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+    }
 }
 
 /*! Set the roster and the connection for the Toolbar Modules.
@@ -198,10 +218,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
         }
     }
     
-    var oldSelectedIndex = JSON.parse(localStorage.getItem("selectedIndexFor" + [[self entity] jid]));
-    
-    if (oldSelectedIndex)
-        [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+    [self recoverFromLastSelectedIndex];
 }
 
 /*! will remove all loaded modules and send message willUnload to all TNModules
@@ -258,6 +275,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
     {
         _previousStatus = TNStropheContactStatusOffline;
+        [self rememberLastSelectedTabIndex];
         [self _removeAllTabsFromModulesTabView];
 
     }

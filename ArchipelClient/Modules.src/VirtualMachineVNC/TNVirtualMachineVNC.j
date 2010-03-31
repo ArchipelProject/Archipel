@@ -68,7 +68,10 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
     [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
     [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self maskingView] setAlphaValue:0.9];
-
+    
+    //[vncWebView setAutoresizingMask: CPViewWidthSizable];
+    //[vncWebView setFrame:CGRectMake(0, 0, 701, 501)];
+    
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
 }
 
@@ -80,6 +83,10 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    
+    var viewBounds = [self bounds];
+    viewBounds.size.height = 1000;
+    [self setFrame:viewBounds];
 }
 
 /*! TNModule implementation
