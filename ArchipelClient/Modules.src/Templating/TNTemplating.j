@@ -21,6 +21,12 @@
 
 @import "TNVMCastDatasource.j";
 
+
+TNArchipelTypeHypervisorVMCasting             = @"archipel:hypervisor:vmcasting"
+TNArchipelTypeHypervisorVMCastingGet          = @"get";
+TNArchipelTypeHypervisorVMCastingRegister     = @"register";
+TNArchipelTypeHypervisorVMCastingUnregister   = @"unregister";
+
 /*! @defgroup  templatingmodule Module Templating
     
     @desc This module manages XVM2 templating system
@@ -56,28 +62,19 @@
     [columnDescription setResizingMask:CPTableColumnAutoresizingMask];
     [columnDescription setWidth:300];
     
+    var columnUrl = [[CPTableColumn alloc] initWithIdentifier:@"URL"];
+    [[columnUrl headerView] setStringValue:@"URL"];
+    [columnUrl setWidth:300];
+    
+    var columnSize = [[CPTableColumn alloc] initWithIdentifier:@"size"];
+    [[columnSize headerView] setStringValue:@"Size"];
+    [columnSize setResizingMask:CPTableColumnAutoresizingMask];
+    
     [_mainOutlineView setOutlineTableColumn:columnName];
     [_mainOutlineView addTableColumn:columnName];
     [_mainOutlineView addTableColumn:columnDescription];
-    
-    // test
-    
-    var urlA        = [CPURL URLWithString:@"http://enomalism.com/vmcast_appliances.php"];
-    
-    var newSourceA = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 A" URL:urlA comment:@"My first datasource"];
-    //var newSourceB = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 B" URL:nil comment:@"My second datasource"];
-
-    
-    // var newCastA    = [TNVMCast VMCastWithName:@"Debian 4.0" downloadURL:nil comment:@"Debian 4.0 packaged"];
-    // var newCastB    = [TNVMCast VMCastWithName:@"RHEL 4.0" downloadURL:nil comment:@"RHEL 4.0 packaged"];
-    
-    //[[newSourceA content] addObject:newCastA];
-    //[[newSourceA content] addObject:newCastB];
-    
-    [newSourceA populate];
-    [_castsDatasource addSource:newSourceA];
-    // [_castsDatasource addSource:newSourceB];
-    // end test
+    [_mainOutlineView addTableColumn:columnSize];
+    [_mainOutlineView addTableColumn:columnUrl];
     
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setBorderedWithHexColor:@"#9e9e9e"]
@@ -85,11 +82,11 @@
     [_mainOutlineView reloadData];
 }
 
-
 - (void)willLoad
 {
     [super willLoad];
-    // message sent when view will be added from superview;
+
+    [self getVMCasts]
 }
 
 - (void)willUnload
@@ -108,6 +105,65 @@
 {
     [super willHide];
     // message sent when the tab is changed
+}
+
+- (void)getVMCasts
+{
+    var stanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+        
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingGet}];
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceivedVMCasts:) ofObject:self];
+    
+}
+
+- (void)didReceivedVMCasts:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        var sources = [aStanza childrenWithName:@"source"];
+        
+        for (var i = 0; i < [sources count]; i++)
+        {
+            var source  = [sources objectAtIndex:i];
+            var name    = [source valueForAttribute:@"name"];
+            var url     = [CPURL URLWithString:[source valueForAttribute:@"url"]];
+            var comment = [source valueForAttribute:@"description"];
+            
+            var newSource = [TNVMCastSource VMCastSourceWithName:name URL:url comment:comment];
+            
+            var appliances = [source childrenWithName:@"appliance"];
+            
+            for (var j = 0; j < [appliances count]; j++)
+            {
+                var appliance   = [appliances objectAtIndex:j];
+                var name        = [appliance valueForAttribute:@"name"];
+                var url         = [CPURL URLWithString:[appliance valueForAttribute:@"url"]];
+                var comment     = [appliance valueForAttribute:@"description"];
+                var size        = [appliance valueForAttribute:@"size"];
+                var date        = [appliance valueForAttribute:@"pubDate"];
+                
+                var newCast    = [TNVMCast VMCastWithName:name URL:url comment:comment size:size pubDate:date];
+                
+                [[newSource content] addObject:newCast];
+            }
+            
+            [_castsDatasource addSource:newSource];
+        }
+        [_mainOutlineView reloadData];
+    }
+    // var newSourceA = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 A" URL:urlA comment:@"My first datasource"];
+    // //var newSourceB = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 B" URL:nil comment:@"My second datasource"];
+    // 
+    // 
+    // // var newCastA    = [TNVMCast VMCastWithName:@"Debian 4.0" downloadURL:nil comment:@"Debian 4.0 packaged"];
+    // // var newCastB    = [TNVMCast VMCastWithName:@"RHEL 4.0" downloadURL:nil comment:@"RHEL 4.0 packaged"];
+    // 
+    // //[[newSourceA content] addObject:newCastA];
+    // //[[newSourceA content] addObject:newCastB];
+    // 
+    // [newSourceA populate];
+    // [_castsDatasource addSource:newSourceA];
+    // // [_castsDatasource addSource:newSourceB];
 }
 
 @end

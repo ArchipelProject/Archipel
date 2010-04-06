@@ -46,17 +46,9 @@
     return self;
 }
 
-- (void)populate
+- (id)valueForUndefinedKey:(CPString)aKey
 {
-    var request     = [CPURLRequest requestWithURL:[self URL]];
-    var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
-    
-    [connection start];
-}
-
-- (void)connection:(CPURLConnection)connection didReceiveData:(CPString)data
-{
-    CPLogConsole("RECEIVED DATA: " + data);
+    return @"Not Applicable";
 }
 
 - (CPString)description
@@ -69,16 +61,20 @@
 @implementation TNVMCast : CPObject
 {
     CPString    name            @accessors;
-    CPURL       downloadURL     @accessors;
+    CPURL       URL             @accessors;
     CPString    comment         @accessors;
+    CPString    size            @accessors;
+    CPString    pubDate         @accessors;
 }
 
-+ (TNVMCast)VMCastWithName:(CPString)aName downloadURL:(CPURL)anURL comment:(CPString)aComment
++ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate
 {
     var vmcast = [[TNVMCast alloc] init];
     [vmcast setName:aName];
-    [vmcast setDownloadURL:anURL];
+    [vmcast setURL:anURL];
     [vmcast setComment:aComment];
+    [vmcast setSize:aSize];
+    [vmcast setPubDate:aDate];
     
     return vmcast;
 }
@@ -152,14 +148,12 @@
 */
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
-    CPLogConsole("FILTER child number " + index + " of item " + item);
     if (!item)
     {
         return [_contents objectAtIndex:index];
     }
     else
     {
-        CPLogConsole("+++++++++++++> " + item);
         return [[item content] objectAtIndex:index];
     }
 }
@@ -168,7 +162,6 @@
 */
 - (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item
 {
-    CPLogConsole("FILTER Getting value for item " + item)
     var identifier = [tableColumn identifier];
     
     return [item valueForKey:identifier];
