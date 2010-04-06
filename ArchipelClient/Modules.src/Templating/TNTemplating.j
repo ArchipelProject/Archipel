@@ -22,10 +22,11 @@
 @import "TNVMCastDatasource.j";
 
 
-TNArchipelTypeHypervisorVMCasting             = @"archipel:hypervisor:vmcasting"
-TNArchipelTypeHypervisorVMCastingGet          = @"get";
-TNArchipelTypeHypervisorVMCastingRegister     = @"register";
-TNArchipelTypeHypervisorVMCastingUnregister   = @"unregister";
+TNArchipelTypeHypervisorVMCasting               = @"archipel:hypervisor:vmcasting"
+TNArchipelTypeHypervisorVMCastingGet            = @"get";
+TNArchipelTypeHypervisorVMCastingRegister       = @"register";
+TNArchipelTypeHypervisorVMCastingUnregister     = @"unregister";
+TNArchipelTypeHypervisorVMCastingDownload       = @"download";
 
 /*! @defgroup  templatingmodule Module Templating
     
@@ -141,8 +142,9 @@ TNArchipelTypeHypervisorVMCastingUnregister   = @"unregister";
                 var comment     = [appliance valueForAttribute:@"description"];
                 var size        = [appliance valueForAttribute:@"size"];
                 var date        = [appliance valueForAttribute:@"pubDate"];
+                var uuid        = [appliance valueForAttribute:@"uuid"];
                 
-                var newCast    = [TNVMCast VMCastWithName:name URL:url comment:comment size:size pubDate:date];
+                var newCast    = [TNVMCast VMCastWithName:name URL:url comment:comment size:size pubDate:date UUID:uuid];
                 
                 [[newSource content] addObject:newCast];
             }
@@ -151,21 +153,26 @@ TNArchipelTypeHypervisorVMCastingUnregister   = @"unregister";
         }
         [_mainOutlineView reloadData];
     }
-    // var newSourceA = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 A" URL:urlA comment:@"My first datasource"];
-    // //var newSourceB = [TNVMCastSource VMCastSourceWithName:@"Amazon EC2 B" URL:nil comment:@"My second datasource"];
-    // 
-    // 
-    // // var newCastA    = [TNVMCast VMCastWithName:@"Debian 4.0" downloadURL:nil comment:@"Debian 4.0 packaged"];
-    // // var newCastB    = [TNVMCast VMCastWithName:@"RHEL 4.0" downloadURL:nil comment:@"RHEL 4.0 packaged"];
-    // 
-    // //[[newSourceA content] addObject:newCastA];
-    // //[[newSourceA content] addObject:newCastB];
-    // 
-    // [newSourceA populate];
-    // [_castsDatasource addSource:newSourceA];
-    // // [_castsDatasource addSource:newSourceB];
 }
 
+
+- (IBAction)download:(id)sender
+{
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    var selectedIndex   = [[[self _mainOutlineView] selectedRowIndexes] firstIndex];
+    var item            = [[_castsDatasource content] objectAtIndex:selectedRowIndexes];
+    var uuid            = [item UUID];
+    
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
+    
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didDownload:) ofObject:self];
+    
+}
+
+- (void)didDownload:(TNStropheStanza)aStanza
+{
+    console.log("done...");
+}
 @end
 
 

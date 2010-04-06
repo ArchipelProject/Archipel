@@ -65,15 +65,17 @@
     CPString    comment         @accessors;
     CPString    size            @accessors;
     CPString    pubDate         @accessors;
+    CPString    uuid            @accessors;
 }
 
-+ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate
++ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID
 {
     var vmcast = [[TNVMCast alloc] init];
     [vmcast setName:aName];
     [vmcast setURL:anURL];
     [vmcast setComment:aComment];
     [vmcast setSize:aSize];
+    [vmcast setUUID:anUUID];
     [vmcast setPubDate:aDate];
     
     return vmcast;

@@ -26,13 +26,15 @@ import urllib
 
 class TNHypervisorVMCasting:
     
-    def __init__(self, database_path):
+    def __init__(self, database_path, repository_path):
         log(self, LOG_LEVEL_INFO, "opening vmcasting database file {0}".format(database_path))
         
+        self.repository_path = repository_path;
         self.database_connection = sqlite3.connect(database_path)
         self.cursor = self.database_connection.cursor();
         
         self.cursor.execute("create table if not exists vmcastsourses (name text, comment text, url text)")
+        self.cursor.execute("create table if not exists vmcastappliances (name text, comment text, url text, uuid text unique)")
         
         log(self, LOG_LEVEL_INFO, "Database ready.");
         
@@ -44,22 +46,26 @@ class TNHypervisorVMCasting:
         iqType = iq.getTag("query").getAttr("type");
 
         if iqType == "get":
-            reply = self.__vmcasting_get(iq)
+            reply = self.__get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
         if iqType == "register":
-            reply = self.__vmcasting_register(iq)
+            reply = self.__register(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
         if iqType == "unregister":
-            reply = self.__vmcasting_unregister(iq)
+            reply = self.__unregister(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
+        if iqType == "download":
+            reply = self.__download(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
-    def __vmcasting_get(self, iq):
+    def __get(self, iq):
         reply = iq.buildReply("success");
         try:
             nodes = self.parseRSS()
@@ -73,7 +79,7 @@ class TNHypervisorVMCasting:
             reply.setQueryPayload([payload])
         return reply
 
-    def __vmcasting_register(self, iq):
+    def __register(self, iq):
         reply       = iq.buildReply("success");
         url         = iq.getTag("query").getAttr("url");
         name        = iq.getTag("query").getAttr("name");
@@ -83,13 +89,27 @@ class TNHypervisorVMCasting:
         
         return reply
         
-    def __vmcasting_unregister(self, iq):
+    def __unregister(self, iq):
         reply = iq.buildReply("success");
         
-        url = iq.getTag("query").getAttr("url");
+        url = iq.getTag("query").getAttr("uuid");
         
         self.cursor.execute("DELETE FROM vmcastsourses WHERE url='?'", (url));
         
+        return reply
+        
+    
+    def __download(self, iq):
+        reply = iq.buildReply("success");
+        
+        dl_uuid = iq.getTag("query").getAttr("uuid");
+        self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='?'", (dl_uuid));
+        
+        for values in self.cursor:
+            name, comment, url, uuid = values;
+            print "WILL DOWNLOAD " + str(url) + " FROM UUID " + str(uuid);
+        
+        #urllib.urlretrieve()
         return reply
         
         
@@ -113,8 +133,14 @@ class TNHypervisorVMCasting:
                 url             = str(item.getTag("enclosure").getAttr("url"));
                 size            = str(item.getTag("enclosure").getAttr("length"));
                 pubdate         = str(item.getTag("pubDate").getCDATA());
-                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate})
+                uuid            = str(item.getTag("uuid").getCDATA());
+                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid})
                 content_nodes.append(new_node);
+                try:
+                    self.cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?)", (name, description, url, uuid));
+                except Exception as ex:
+                    pass
+                self.database_connection.commit();
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node);

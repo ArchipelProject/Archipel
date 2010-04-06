@@ -193,7 +193,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     }
 }
 
-- (IBAction) deleteVirtualMachine:(id)sender
+- (IBAction)deleteVirtualMachine:(id)sender
 {
     if (([[self tableVirtualMachines] numberOfRows] == 0) || ([[self tableVirtualMachines] numberOfSelectedRows] <= 0))
     {
