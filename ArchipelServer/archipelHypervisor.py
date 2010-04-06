@@ -114,6 +114,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
             sys.exit(0) 
         log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
         
     
@@ -337,7 +338,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = self.__send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+    
   
 
 

@@ -18,253 +18,232 @@
 
 # we need to import the package containing the class to surclass
 from utils import *
+import xmpp
 import archipel
 import commands
-import xmpp
-import os
+import os, sys
 
-NS_ARCHIPEL_VM_DISK = "archipel:vm:disk"
-
-
-######################################################################################################
-### Registring of the stanza
-######################################################################################################
-
-def __module_init__disk_management(self):
-    self.shared_isos_folder = self.configuration.get("Module Medias", "iso_base_path") + "/"
+class TNMediaManagement:
     
-def __module_register_stanza__disk_management(self):
-    self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_disk, typ=NS_ARCHIPEL_VM_DISK)
+    def __init__(self, shared_isos_folder, entity):
+        self.entity = entity;
+        self.shared_isos_folder =  shared_isos_folder
 
-######################################################################################################
-### Disk definition
-######################################################################################################
 
-def __process_iq_archipel_disk(self, conn, iq):
-    """
-    Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
+    def process_iq(self, conn, iq):
+        """
+        Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
     
-    it understands IQ of type:
-    - create
-    - delete
-    - get
+        it understands IQ of type:
+        - create
+        - delete
+        - get
     
-    @type conn: xmpp.Dispatcher
-    @param conn: ths instance of the current connection that send the message
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
-    """
-    log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
-    iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type");
     
-    if iqType == "create":
-        reply = self.__disk_create(iq)
-        conn.send(reply)
-        raise xmpp.protocol.NodeProcessed
+        if iqType == "create":
+            reply = self.__disk_create(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
-    if iqType == "delete":
-        reply = self.__disk_delete(iq)
-        conn.send(reply)
-        raise xmpp.protocol.NodeProcessed
+        if iqType == "delete":
+            reply = self.__disk_delete(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
-    if iqType == "get":
-        reply = self.__disk_get(iq)
-        conn.send(reply)
-        raise xmpp.protocol.NodeProcessed
+        if iqType == "get":
+            reply = self.__disk_get(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
-    if iqType == "getiso":
-        reply = self.__isos_get(iq)
-        conn.send(reply)
-        raise xmpp.protocol.NodeProcessed
+        if iqType == "getiso":
+            reply = self.__isos_get(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
 
 
-def __disk_create(self, iq):
-    """
-    Create a disk in QCOW2 format
+    def __disk_create(self, iq):
+        """
+        Create a disk in QCOW2 format
     
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
     
-    @rtype: xmpp.Protocol.Iq
-    @return: a ready to send IQ containing the result of the action
-    """
-    try:
-        if not os.path.isdir(self.vm_own_folder):
-            os.mkdir(self.vm_own_folder);
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            query_node = iq.getTag("query");
+            disk_name = query_node.getTag("name").getData()
+            disk_size = query_node.getTag("size").getData()
+            disk_unit = query_node.getTag("unit").getData()
         
-        query_node = iq.getTag("query");
-        disk_name = query_node.getTag("name").getData()
-        disk_size = query_node.getTag("size").getData()
-        disk_unit = query_node.getTag("unit").getData()
-        
-        ret = os.system("qemu-img create -f qcow2 " + self.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
-        if not ret == 0:
-            raise Exception("Unable to create drive. Error code is " + ret);
+            ret = os.system("qemu-img create -f qcow2 " + self.entity.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
+            if not ret == 0:
+                raise Exception("Unable to create drive. Error code is " + ret);
          
-        reply = iq.buildReply('success')
-        log(self, LOG_LEVEL_INFO, " disk created")
-        self.push_change("disk", "created")
-    except Exception as ex:
-        log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-        reply = iq.buildReply('error')
-        payload = xmpp.Node("error", attrs={})
-        payload.addData(str(ex))
-        reply.setQueryPayload([payload])
-    return reply
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, " disk created")
+            self.push_change("disk", "created")
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
 
 
-def __disk_delete(self, iq):
-    """
-    delete a virtual hard drive
+    def __disk_delete(self, iq):
+        """
+        delete a virtual hard drive
     
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
     
-    @rtype: xmpp.Protocol.Iq
-    @return: a ready to send IQ containing the result of the action
-    """
-    try:
-        query_node = iq.getTag("query");
-        disk_name = query_node.getTag("name").getData();
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            query_node = iq.getTag("query");
+            disk_name = query_node.getTag("name").getData();
         
-        os.system("rm -rf " + disk_name);
+            os.system("rm -rf " + disk_name);
         
-        reply = iq.buildReply('success')
-        log(self, LOG_LEVEL_INFO, " disk deleted")
-        self.push_change("disk", "deleted")
-    except Exception as ex:
-        log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-        reply = iq.buildReply('error')
-        payload = xmpp.Node("error", attrs={})
-        payload.addData(str(ex))
-        reply.setQueryPayload([payload])
-    return reply
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, " disk deleted")
+            self.push_change("disk", "deleted")
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
 
 
-def __disk_get(self, iq):
-    """
-    Get the virtual hatd drives of the virtual machine
+    def __disk_get(self, iq):
+        """
+        Get the virtual hatd drives of the virtual machine
     
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
     
-    @rtype: xmpp.Protocol.Iq
-    @return: a ready to send IQ containing the result of the action
-    """
-    try:
-        disks = commands.getoutput("ls " + self.vm_own_folder).split()
-        nodes = []
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            disks = commands.getoutput("ls " + self.entity.vm_own_folder).split()
+            nodes = []
         
-        for disk in disks:
-            if commands.getoutput("file " + self.vm_own_folder + "/" + disk).lower().find("format: qcow") > -1:
-                diskinfo = commands.getoutput("qemu-img info " + self.vm_own_folder + "/" + disk).split("\n");
-                node = xmpp.Node(tag="disk", attrs={ "name": disk,
-                    "path": self.vm_own_folder + "/" + disk,
-                    "format": diskinfo[1].split(": ")[1],
-                    "virtualSize": diskinfo[2].split(": ")[1],
-                    "diskSize": diskinfo[3].split(": ")[1],
+            for disk in disks:
+                if commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower().find("format: qcow") > -1:
+                    diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n");
+                    node = xmpp.Node(tag="disk", attrs={ "name": disk,
+                        "path": self.entity.vm_own_folder + "/" + disk,
+                        "format": diskinfo[1].split(": ")[1],
+                        "virtualSize": diskinfo[2].split(": ")[1],
+                        "diskSize": diskinfo[3].split(": ")[1],
+                    })
+                    nodes.append(node);
+        
+            reply = iq.buildReply('success')
+            reply.setQueryPayload(nodes);
+            log(self, LOG_LEVEL_INFO, "info about disks sent")
+        
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
+
+
+    def __isos_get(self, iq):
+        """
+        Get the virtual cdrom ISO of the virtual machine
+    
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+    
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            nodes = []
+        
+            isos = commands.getoutput("ls " + self.entity.vm_own_folder).split()
+            for iso in isos:
+                if commands.getoutput("file " + self.entity.vm_own_folder + "/" + iso).lower().find("iso 9660") > -1:
+                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.vm_own_folder + "/" + iso })
+                    nodes.append(node);
+        
+            sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 
+            for iso in sharedisos:
+                if commands.getoutput("file " + self.shared_isos_folder + "/" + iso).lower().find("iso 9660") > -1:
+                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
+                    nodes.append(node);
+        
+            reply = iq.buildReply('success')
+            reply.setQueryPayload(nodes);
+            log(self, LOG_LEVEL_INFO, "info about iso sent")
+        
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply    
+
+
+    def __networkstats(self, iq):
+        """
+        get statistics about network uses of the VM.
+    
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+    
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            target_nodes = iq.getQueryPayload();
+            nodes = [];
+        
+            for target in target_nodes:
+                stats = self.domain.interfaceStats(target.getData());
+                node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
+                    "rx_bytes":     stats[0],
+                    "rx_packets":   stats[1],
+                    "rx_errs":      stats[2],
+                    "rx_drops":     stats[3],
+                    "tx_bytes":     stats[4],
+                    "tx_packets":   stats[5],
+                    "tx_errs":      stats[6],
+                    "tx_drops":     stats[7]
                 })
                 nodes.append(node);
         
-        reply = iq.buildReply('success')
-        reply.setQueryPayload(nodes);
-        log(self, LOG_LEVEL_INFO, "info about disks sent")
+            reply = iq.buildReply('success')
+            reply.setQueryPayload(nodes);
+            log(self, LOG_LEVEL_INFO, "info about network sent");
         
-    except Exception as ex:
-        log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-        reply = iq.buildReply('error')
-        payload = xmpp.Node("error", attrs={})
-        payload.addData(str(ex))
-        reply.setQueryPayload([payload])
-    return reply
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error", attrs={})
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        return reply
 
 
-def __isos_get(self, iq):
-    """
-    Get the virtual cdrom ISO of the virtual machine
-    
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
-    
-    @rtype: xmpp.Protocol.Iq
-    @return: a ready to send IQ containing the result of the action
-    """
-    try:
-        nodes = []
-        
-        isos = commands.getoutput("ls " + self.vm_own_folder).split()
-        for iso in isos:
-            if commands.getoutput("file " + self.vm_own_folder + "/" + iso).lower().find("iso 9660") > -1:
-                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.vm_own_folder + "/" + iso })
-                nodes.append(node);
-        
-        sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 
-        for iso in sharedisos:
-            if commands.getoutput("file " + self.shared_isos_folder + "/" + iso).lower().find("iso 9660") > -1:
-                node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
-                nodes.append(node);
-        
-        reply = iq.buildReply('success')
-        reply.setQueryPayload(nodes);
-        log(self, LOG_LEVEL_INFO, "info about iso sent")
-        
-    except Exception as ex:
-        log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-        reply = iq.buildReply('error')
-        payload = xmpp.Node("error", attrs={})
-        payload.addData(str(ex))
-        reply.setQueryPayload([payload])
-    return reply    
-
-
-def __networkstats(self, iq):
-    """
-    get statistics about network uses of the VM.
-    
-    @type iq: xmpp.Protocol.Iq
-    @param iq: the received IQ
-    
-    @rtype: xmpp.Protocol.Iq
-    @return: a ready to send IQ containing the result of the action
-    """
-    try:
-        target_nodes = iq.getQueryPayload();
-        nodes = [];
-        
-        for target in target_nodes:
-            stats = self.domain.interfaceStats(target.getData());
-            node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
-                "rx_bytes":     stats[0],
-                "rx_packets":   stats[1],
-                "rx_errs":      stats[2],
-                "rx_drops":     stats[3],
-                "tx_bytes":     stats[4],
-                "tx_packets":   stats[5],
-                "tx_errs":      stats[6],
-                "tx_drops":     stats[7]
-            })
-            nodes.append(node);
-        
-        reply = iq.buildReply('success')
-        reply.setQueryPayload(nodes);
-        log(self, LOG_LEVEL_INFO, "info about network sent");
-        
-    except Exception as ex:
-        log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-        reply = iq.buildReply('error')
-        payload = xmpp.Node("error", attrs={})
-        payload.addData(str(ex))
-        reply.setQueryPayload([payload])
-    return reply
-
-
-setattr(archipel.TNArchipelVirtualMachine, "__process_iq_archipel_disk", __process_iq_archipel_disk)
-setattr(archipel.TNArchipelVirtualMachine, "__disk_create", __disk_create)
-setattr(archipel.TNArchipelVirtualMachine, "__disk_delete", __disk_delete)
-setattr(archipel.TNArchipelVirtualMachine, "__disk_get", __disk_get)
-setattr(archipel.TNArchipelVirtualMachine, "__isos_get", __isos_get)
-setattr(archipel.TNArchipelVirtualMachine, "__networkstats", __networkstats)
-setattr(archipel.TNArchipelVirtualMachine, "__module_init__disk_management", __module_init__disk_management)
-setattr(archipel.TNArchipelVirtualMachine, "__module_register_stanza__disk_management", __module_register_stanza__disk_management)
 

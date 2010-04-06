@@ -23,25 +23,13 @@ import archipel
 
 
 
+class TNSampleModule:
+    
+    def __init__(self):
+        #internal module initialization
+        pass
 
-# this method will be call at loading
-def __module_init__sample_module(self):
-    log(self, LOG_LEVEL_INFO, "hello from sample module");
-
-# this method will be called at registration of handlers for XMPP
-def __module_register_stanza__sample_module(self):
-    self.xmppclient.RegisterHandler('iq', self.__process_sample_iq, typ="a:type:that:doesnt:exists")
-
-
-# this method is called according to the registration below
-def __module__sample_module_process_sample_iq(self, conn, iq):
+    # this method is called according to the registration below
+    def process_iq(self, conn, iq):
     reply = iq.buildReply("success");
     return reply
-
-
-
-
-# finally, we add the methods to the class
-#setattr(archipelHypervisor.TNArchipelHypervisor, "__module_init__sample_module", __module_init__sample_module)
-#setattr(archipelHypervisor.TNArchipelHypervisor, "__module_register_stanza__sample_module", __module_register_stanza__sample_module)
-#setattr(archipelHypervisor.TNArchipelHypervisor, "__module__sample_module_process_sample_iq", __module__sample_module_process_sample_iq)

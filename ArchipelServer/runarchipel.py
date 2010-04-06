@@ -39,6 +39,7 @@ def load_modules():
         for module, should_load in config.items("Modules"):
             if should_load == "yes":
                 __import__(module_dir + "." + module, None, locals())
+    
                 
 def main():
     """

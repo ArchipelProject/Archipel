@@ -51,6 +51,7 @@ class TNArchipelBasicXMPPClient(object):
         @type password: string
         @param password: the password of the JID account.
         """
+        self.xmppclient = None;
         self.configuration = configuration;
         self.auto_register = auto_register
         self.password = password

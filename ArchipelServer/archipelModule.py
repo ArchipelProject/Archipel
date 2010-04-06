@@ -1,5 +1,5 @@
 # 
-# archipel.py
+# archipelModule.py
 # 
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
@@ -15,9 +15,12 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-This is the main package to import in order to use Archipel.
-"""
-from archipelVirtualMachine import * 
-from archipelHypervisor import *
-from archipelModule import *
+
+class TNModule:
+    
+    def module_stanza_registration(self):
+        raise Exception("Must be implemented")
+        
+    def module_initialization(self):
+        raise Exception("Must be implemented")
+    

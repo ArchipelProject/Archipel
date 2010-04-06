@@ -61,15 +61,16 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     ###  Super methods overrided
     ######################################################################################################
     
-    def __init__(self, jid, password, hypervisor, configuration):
+    def __init__(self, jid, password, hypervisor, configuration):        
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
+        
+        self.vm_disk_base_path  = self.configuration.get("Virtual Machines", "disk_base_path") + "/"
+        self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
+        
         self.libvirt_connection = None;
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
         self.register_actions_to_perform_on_auth("connect_libvirt", None)
         self.hypervisor = hypervisor;
-        
-        self.vm_disk_base_path  = self.configuration.get("Virtual Machines", "disk_base_path") + "/"
-        self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
         
         if not os.path.isdir(self.vm_own_folder):
             os.mkdir(self.vm_own_folder);

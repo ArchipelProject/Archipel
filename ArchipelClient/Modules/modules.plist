@@ -15,6 +15,9 @@
                 <string>HypervisorVMCreation</string>
             </dict>            <dict>
                 <key>folder</key>
+                <string>Templating</string>
+            </dict>            <dict>
+                <key>folder</key>
                 <string>ToolbarMapView</string>
             </dict>            <dict>
                 <key>folder</key>
