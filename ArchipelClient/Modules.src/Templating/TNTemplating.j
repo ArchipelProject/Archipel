@@ -22,11 +22,15 @@
 @import "TNVMCastDatasource.j";
 
 
-TNArchipelTypeHypervisorVMCasting               = @"archipel:hypervisor:vmcasting"
-TNArchipelTypeHypervisorVMCastingGet            = @"get";
-TNArchipelTypeHypervisorVMCastingRegister       = @"register";
-TNArchipelTypeHypervisorVMCastingUnregister     = @"unregister";
-TNArchipelTypeHypervisorVMCastingDownload       = @"download";
+TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
+TNArchipelTypeHypervisorVMCastingGet                = @"get";
+TNArchipelTypeHypervisorVMCastingRegister           = @"register";
+TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
+TNArchipelTypeHypervisorVMCastingDownload           = @"download";
+TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
+
+// TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting:download";
+// TNArchipelPushNotificationSubscriptionAdded = @"downloaded";
 
 /*! @defgroup  templatingmodule Module Templating
     
@@ -39,7 +43,8 @@ TNArchipelTypeHypervisorVMCastingDownload       = @"download";
 */
 @implementation TNTemplating : TNModule
 {
-    @outlet CPScrollView    mainScrollView @accessors;
+    @outlet CPScrollView        mainScrollView  @accessors;
+    @outlet CPProgressIndicator downloadIndicator     @accessors;
     
     CPOutlineView           _mainOutlineView;
     TNVMCastDatasource      _castsDatasource;
@@ -86,8 +91,6 @@ TNArchipelTypeHypervisorVMCastingDownload       = @"download";
 - (void)willLoad
 {
     [super willLoad];
-
-    [self getVMCasts]
 }
 
 - (void)willUnload
@@ -99,7 +102,9 @@ TNArchipelTypeHypervisorVMCastingDownload       = @"download";
 - (void)willShow
 {
     [super willShow];
-    // message sent when the tab is clicked
+    
+    [[_castsDatasource contents] removeAllObjects];
+    [self getVMCasts];
 }
 
 - (void)willHide
@@ -107,6 +112,7 @@ TNArchipelTypeHypervisorVMCastingDownload       = @"download";
     [super willHide];
     // message sent when the tab is changed
 }
+
 
 - (void)getVMCasts
 {
@@ -155,24 +161,40 @@ TNArchipelTypeHypervisorVMCastingDownload       = @"download";
     }
 }
 
-
 - (IBAction)download:(id)sender
 {
     var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
-    var selectedIndex   = [[[self _mainOutlineView] selectedRowIndexes] firstIndex];
-    var item            = [[_castsDatasource content] objectAtIndex:selectedRowIndexes];
+    var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
+    var item            = [_mainOutlineView itemAtRow:selectedIndex];
     var uuid            = [item UUID];
     
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
     
     [[self entity] sendStanza:stanza andRegisterSelector:@selector(didDownload:) ofObject:self];
-    
 }
 
 - (void)didDownload:(TNStropheStanza)aStanza
 {
     console.log("done...");
+    
+    //[CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateDownloadProgress:) userInfo:nil repeats:YES];
 }
+
+- (void)updateDownloadProgress:(CPTimer)aTimer
+{
+    CPLogConsole("sending progress getter..")
+    var stanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+        
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownloadProgress}];
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didDownloadProgress:) ofObject:self];
+}
+
+- (void)didDownloadProgress:(TNStropheStanza)aStanza
+{
+    //var download [aStanza firstChildWithName:@"query"]
+    CPLogConsole("UPDATED DL PROGRESS...");
+}
+
 @end
 
 

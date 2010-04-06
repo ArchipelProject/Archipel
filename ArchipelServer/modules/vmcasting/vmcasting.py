@@ -23,13 +23,35 @@ import archipel
 import sqlite3
 from xml.dom import minidom
 import urllib
+from threading import Thread
 
+class TNApplianceDownloader(Thread):
+    def __init__(self, url, save_path, uuid):
+        self.url = url;
+        self.uuid = uuid
+        self.save_path = save_path
+        self.progress = 0.0;
+        Thread.__init__(self)
+    
+    def run(self):
+        urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
+    
+    def get_progress(self):
+        return self.progress;
+        
+    def downloading_callback(self, blocks_count, block_size, total_size):
+           percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100;
+           print "downloaded " + str(percentage) + "%"
+           self.progress = percentage;
+    
 class TNHypervisorVMCasting:
     
-    def __init__(self, database_path, repository_path):
+    def __init__(self, database_path, repository_path, entity):
         log(self, LOG_LEVEL_INFO, "opening vmcasting database file {0}".format(database_path))
         
+        self.entity = entity
         self.repository_path = repository_path;
+        self.download_queue = {};
         self.database_connection = sqlite3.connect(database_path)
         self.cursor = self.database_connection.cursor();
         
@@ -41,29 +63,35 @@ class TNHypervisorVMCasting:
         
     # this method is called according to the registration below
     def process_iq(self, conn, iq):
-        log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-
         iqType = iq.getTag("query").getAttr("type");
-
+        
+        log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
+        
         if iqType == "get":
             reply = self.__get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "register":
             reply = self.__register(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "unregister":
             reply = self.__unregister(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if iqType == "download":
             reply = self.__download(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        if iqType == "downloadprogress":
+            reply = self.__get_download_progress(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
     
     def __get(self, iq):
         reply = iq.buildReply("success");
@@ -78,7 +106,8 @@ class TNHypervisorVMCasting:
             payload.addData(str(ex))
             reply.setQueryPayload([payload])
         return reply
-
+    
+    
     def __register(self, iq):
         reply       = iq.buildReply("success");
         url         = iq.getTag("query").getAttr("url");
@@ -88,7 +117,8 @@ class TNHypervisorVMCasting:
         self.cursor.execute("INSERT INTO vmcastsourses (name, comment, url) VALUES (?,?,?)", (name, description, url));
         
         return reply
-        
+    
+    
     def __unregister(self, iq):
         reply = iq.buildReply("success");
         
@@ -99,20 +129,36 @@ class TNHypervisorVMCasting:
         return reply
         
     
+    
     def __download(self, iq):
         reply = iq.buildReply("success");
         
         dl_uuid = iq.getTag("query").getAttr("uuid");
-        self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='?'", (dl_uuid));
+        
+        print "SELECT * FROM vmcastappliances WHERE uuid='?'"
+        self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
         
         for values in self.cursor:
             name, comment, url, uuid = values;
-            print "WILL DOWNLOAD " + str(url) + " FROM UUID " + str(uuid);
-        
-        #urllib.urlretrieve()
+            downloader = TNApplianceDownloader(url, self.repository_path + "/" + uuid + ".xvm2", uuid);
+            downloader.daemon = True;
+            downloader.start();
+            self.download_queue[uuid] = downloader;
+            
         return reply
+    
+    
+    
+    def __get_download_progress(self, iq):
+        reply = iq.buildReply("success"); 
+        dl_uuid = iq.getTag("query").getAttr("uuid");
         
+        reply.setAttr('progress', str(self.download_queue[dl_uuid].get_progress()));
+
         
+        return reply;
+    
+    
     def parseRSS(self):
         sources = self.cursor.execute("SELECT * FROM vmcastsourses");
         nodes = [];
@@ -144,5 +190,6 @@ class TNHypervisorVMCasting:
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node);
-
+            
         return nodes;
+    

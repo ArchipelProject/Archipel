@@ -65,7 +65,7 @@
     CPString    comment         @accessors;
     CPString    size            @accessors;
     CPString    pubDate         @accessors;
-    CPString    uuid            @accessors;
+    CPString    UUID            @accessors;
 }
 
 + (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID
@@ -91,7 +91,7 @@
 
 @implementation TNVMCastDatasource : CPObject
 {
-    CPArray _contents;
+    CPArray _contents @accessors(getter=contents);
 }
 
 /*! Initialization of the class
