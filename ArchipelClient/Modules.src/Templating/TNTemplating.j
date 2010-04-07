@@ -45,6 +45,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     @outlet CPTextField         fieldJID                @accessors;
     @outlet CPTextField         fieldName               @accessors;
     @outlet CPTextField         fieldNewURL             @accessors;
+    @outlet CPCheckBox          checkBoxOnlyInstalled   @accessors;
     
     @outlet CPScrollView        mainScrollView          @accessors;
     @outlet CPProgressIndicator downloadIndicator       @accessors;
@@ -97,6 +98,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [mainScrollView setDocumentView:_mainOutlineView];
     [_mainOutlineView reloadData];
     [_mainOutlineView expandAll];
+    
+    [_mainOutlineView setTarget:self];
+    [_mainOutlineView setDoubleAction:@selector(download:)]
 }
 
 - (void)willLoad
@@ -209,6 +213,12 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var item            = [_mainOutlineView itemAtRow:selectedIndex];
     var uuid            = [item UUID];
     
+    if ([[item status] uppercaseString] == @"INSTALLED")
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"Appliance is already downloaded"];
+        return;
+        
+    }
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
     
     [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
@@ -230,8 +240,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didDownloadProgress:(TNStropheStanza)aStanza
 {
-    //var download [aStanza firstChildWithName:@"query"]
-    CPLogConsole("UPDATED DL PROGRESS...");
+
 }
 
 - (IBAction)addNewVMCast:(id)sender
@@ -283,6 +292,17 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         var msg = [[aStanza firstChildWithName:@"error"] text];
         [CPAlert alertWithTitle:@"Error" message:msg];
     }
+}
+
+- (IBAction)clickOnFilterCheckBox:(id)sender
+{
+    if ([sender state] == CPOnState)
+        [_castsDatasource setFilterInstalled:YES];
+    else
+        [_castsDatasource setFilterInstalled:NO];
+        
+    [_mainOutlineView reloadData];
+    [_mainOutlineView expandAll];
 }
 @end
 

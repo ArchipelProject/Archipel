@@ -96,6 +96,7 @@
 @implementation TNVMCastDatasource : CPObject
 {
     CPArray _contents @accessors(getter=contents);
+    BOOL    filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
 }
 
 /*! Initialization of the class
@@ -106,6 +107,7 @@
     if (self = [super init])
     {
         _contents = [CPArray array];
+        filterInstalled = NO;
     }
     
     return self;
@@ -127,19 +129,33 @@
     return [_contents objectAtIndex:anIndex];
 }
 
+- (CPArray)filterOnlyInstalled:(CPArray)anArray
+{
+    if (filterInstalled)
+    {
+        var array = [CPArray array];
+        for (var i = 0; i < [anArray count]; i++)
+        {
+            if ([[[anArray objectAtIndex:i] status] uppercaseString] == @"INSTALLED")
+                [array addObject:[anArray objectAtIndex:i]];
+        }
+        return array;
+    }
+    else
+        return anArray;
+}
+
 /*! CPOutlineView Delegate
 */
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
-    CPLogConsole("FILTER get number of child for item " + item);
     if (!item)
     {
 	    return [_contents count];
 	}
 	else
 	{
-	    CPLogConsole(" FILTER answer is " + [[item content] count])
-        return [[item content] count];
+        return [[self filterOnlyInstalled:[item content]] count];
 	}
 }
 
@@ -160,7 +176,7 @@
     }
     else
     {
-        return [[item content] objectAtIndex:index];
+        return [[self filterOnlyInstalled:[item content]] objectAtIndex:index];
     }
 }
 
