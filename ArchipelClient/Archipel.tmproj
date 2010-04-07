@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/ToolbarMapView/TNMapView.j</string>
+	<string>Modules.src/Templating/TNTemplating.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,29 +40,29 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>114</integer>
+				<integer>340</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>92</integer>
+			<integer>309</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>69</integer>
 				<key>line</key>
-				<integer>105</integer>
+				<integer>341</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>5</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>114</integer>
+				<integer>340</integer>
 			</dict>
 		</dict>
 		<key>Archipel.doxygen</key>
@@ -430,7 +430,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -590,28 +590,12 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>113</integer>
+				<integer>342</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>35</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>140</integer>
-				<key>line</key>
-				<integer>114</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>113</integer>
-			</dict>
+			<integer>133</integer>
 		</dict>
 		<key>Modules.src/HypervisorNetworks/TNWindowNetworkProperties.j</key>
 		<dict>
@@ -625,7 +609,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>10</integer>
+			<integer>26</integer>
 		</dict>
 		<key>Modules.src/HypervisorVMCreation/Info.plist</key>
 		<dict>
@@ -646,7 +630,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -674,35 +658,67 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>50</integer>
+				<integer>47</integer>
 				<key>line</key>
-				<integer>31</integer>
+				<integer>109</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>-1</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>75</integer>
+				<key>line</key>
+				<integer>109</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>47</integer>
+				<key>line</key>
+				<integer>109</integer>
+			</dict>
 		</dict>
 		<key>Modules.src/SampleTabModule/Info.plist</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>24</integer>
+				<integer>16</integer>
 				<key>line</key>
-				<integer>74</integer>
+				<integer>75</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>43</integer>
+			<integer>30</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>70</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>16</integer>
+				<key>line</key>
+				<integer>75</integer>
+			</dict>
 		</dict>
 		<key>Modules.src/SampleTabModule/Jakefile</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>45</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -723,14 +739,14 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>21</integer>
+			<integer>33</integer>
 		</dict>
 		<key>Modules.src/SampleToolbarModule/Info.plist</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>31</integer>
+				<integer>8</integer>
 				<key>line</key>
 				<integer>15</integer>
 			</dict>
@@ -744,7 +760,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>47</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -767,6 +783,62 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Modules.src/Templating/Info.plist</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>9</integer>
+				<key>line</key>
+				<integer>34</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Modules.src/Templating/Jakefile</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>54</integer>
+				<key>line</key>
+				<integer>23</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>9</integer>
+		</dict>
+		<key>Modules.src/Templating/TNTemplating.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>6</integer>
+				<key>line</key>
+				<integer>179</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>18</integer>
+		</dict>
+		<key>Modules.src/Templating/TNVMCastDatasource.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>20</integer>
+				<key>line</key>
+				<integer>67</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>113</integer>
+		</dict>
 		<key>Modules.src/ToolbarMapView/Info.plist</key>
 		<dict>
 			<key>caret</key>
@@ -786,7 +858,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>51</integer>
+				<integer>34</integer>
 				<key>line</key>
 				<integer>37</integer>
 			</dict>
@@ -930,7 +1002,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -1016,7 +1088,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -1058,7 +1130,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -1186,7 +1258,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>47</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -1272,7 +1344,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>1</integer>
 				<key>line</key>
 				<integer>38</integer>
 			</dict>
@@ -1328,7 +1400,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>48</integer>
+				<integer>43</integer>
 				<key>line</key>
 				<integer>17</integer>
 			</dict>
@@ -1412,42 +1484,74 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>33</integer>
+				<integer>18</integer>
 				<key>line</key>
-				<integer>44</integer>
+				<integer>136</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>33</integer>
+			<integer>107</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>8</integer>
+				<key>line</key>
+				<integer>136</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>136</integer>
+			</dict>
 		</dict>
 		<key>TNDatasourceRoster.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>1</integer>
 				<key>line</key>
-				<integer>27</integer>
+				<integer>279</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>6</integer>
+			<integer>43</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>212</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>279</integer>
+			</dict>
 		</dict>
 		<key>TNModule.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>44</integer>
 				<key>line</key>
-				<integer>139</integer>
+				<integer>99</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>116</integer>
+			<integer>82</integer>
 		</dict>
 		<key>TNModuleLoader.j</key>
 		<dict>
@@ -1491,7 +1595,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>60</integer>
+			<integer>80</integer>
 		</dict>
 		<key>TNOutlineViewRoster.j</key>
 		<dict>
@@ -1500,12 +1604,28 @@
 				<key>column</key>
 				<integer>8</integer>
 				<key>line</key>
-				<integer>49</integer>
+				<integer>55</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>21</integer>
+			<integer>30</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>49</integer>
+				<key>line</key>
+				<integer>56</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>8</integer>
+				<key>line</key>
+				<integer>55</integer>
+			</dict>
 		</dict>
 		<key>TNToolbar.j</key>
 		<dict>
@@ -1638,7 +1758,7 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>116</integer>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>23</integer>
 			</dict>
@@ -1658,7 +1778,7 @@
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>116</integer>
+				<integer>0</integer>
 				<key>line</key>
 				<integer>23</integer>
 			</dict>
@@ -1737,6 +1857,10 @@
 		<string>Modules.src/ToolbarMapView/Info.plist</string>
 		<string>Modules.src/ToolbarMapView/Jakefile</string>
 		<string>Modules.src/ToolbarMapView/TNMapView.j</string>
+		<string>Modules.src/Templating/Info.plist</string>
+		<string>Modules.src/Templating/TNTemplating.j</string>
+		<string>Modules.src/Templating/TNVMCastDatasource.j</string>
+		<string>Modules.src/Templating/Jakefile</string>
 		<string>Modules.src/ToolbarMapView/MapKit/MKMapView.j</string>
 		<string>Modules.src/ToolbarMapView/MapKit/MKMapScene.j</string>
 		<string>Modules.src/ToolbarMapView/MapKit/MKPolyline.j</string>
@@ -1829,6 +1953,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{114, 95}, {890, 783}}</string>
+	<string>{{31, 89}, {890, 783}}</string>
 </dict>
 </plist>

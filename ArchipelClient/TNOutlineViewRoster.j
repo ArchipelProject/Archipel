@@ -65,20 +65,6 @@
 	return self;
 }
 
-/*! Expand all items in the view
-*/
-- (void)expandAll
-{
-    for (var count = 0; [self itemAtRow:count]; count++)
-    {
-        var item = [self itemAtRow:count];
-        if ([self isExpandable:item])
-        {
-            [self expandItem:item];
-        }
-    }
-}
-
 /*! Use to set the delegate. It plugs what needed to be plugged. It will be trigger by
     TNStropheRosterRetrievedNotification notification sent by TNStropheRoster
     @param aNotification CPNotification sent by TNStropheRoster

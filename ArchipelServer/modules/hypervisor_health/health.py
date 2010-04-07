@@ -65,7 +65,7 @@ class TNHypervisorHealth:
     def __healthinfo_history(self, iq):
         """
         get a range of old stat history according to the limit parameters in iq node
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq

@@ -27,9 +27,8 @@ TNArchipelTypeHypervisorVMCastingGet                = @"get";
 TNArchipelTypeHypervisorVMCastingRegister           = @"register";
 TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
 TNArchipelTypeHypervisorVMCastingDownload           = @"download";
-TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
 
-// TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting:download";
+TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 // TNArchipelPushNotificationSubscriptionAdded = @"downloaded";
 
 /*! @defgroup  templatingmodule Module Templating
@@ -43,11 +42,16 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
 */
 @implementation TNTemplating : TNModule
 {
-    @outlet CPScrollView        mainScrollView  @accessors;
-    @outlet CPProgressIndicator downloadIndicator     @accessors;
+    @outlet CPTextField         fieldJID                @accessors;
+    @outlet CPTextField         fieldName               @accessors;
+    @outlet CPTextField         fieldNewURL             @accessors;
     
-    CPOutlineView           _mainOutlineView;
-    TNVMCastDatasource      _castsDatasource;
+    @outlet CPScrollView        mainScrollView          @accessors;
+    @outlet CPProgressIndicator downloadIndicator       @accessors;
+    @outlet CPWindow            windowDownloadQueue     @accessors;
+
+    CPOutlineView               _mainOutlineView;
+    TNVMCastDatasource          _castsDatasource;
 }
 
 - (void)awakeFromCib
@@ -66,44 +70,58 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
     var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
     [[columnDescription headerView] setStringValue:@"Comment"];
     [columnDescription setResizingMask:CPTableColumnAutoresizingMask];
-    [columnDescription setWidth:300];
+    [columnDescription setWidth:250];
     
     var columnUrl = [[CPTableColumn alloc] initWithIdentifier:@"URL"];
     [[columnUrl headerView] setStringValue:@"URL"];
-    [columnUrl setWidth:300];
+    [columnUrl setWidth:250];
     
     var columnSize = [[CPTableColumn alloc] initWithIdentifier:@"size"];
     [[columnSize headerView] setStringValue:@"Size"];
     [columnSize setResizingMask:CPTableColumnAutoresizingMask];
     
+    var columnStatus = [[CPTableColumn alloc] initWithIdentifier:@"status"];
+    [[columnStatus headerView] setStringValue:@"Status"];
+    
     [_mainOutlineView setOutlineTableColumn:columnName];
     [_mainOutlineView addTableColumn:columnName];
-    [_mainOutlineView addTableColumn:columnDescription];
     [_mainOutlineView addTableColumn:columnSize];
-    [_mainOutlineView addTableColumn:columnUrl];
-    
+    [_mainOutlineView addTableColumn:columnStatus];
+    [_mainOutlineView addTableColumn:columnDescription];
+    //[_mainOutlineView addTableColumn:columnUrl];
+
+    [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setBorderedWithHexColor:@"#9e9e9e"]
     [mainScrollView setDocumentView:_mainOutlineView];
     [_mainOutlineView reloadData];
+    [_mainOutlineView expandAll];
 }
 
 - (void)willLoad
 {
     [super willLoad];
+    [[self windowDownloadQueue] setEntity:[self entity]];
+    [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 }
 
 - (void)willUnload
 {
     [super willUnload];
-   // message sent when view will be removed from superview;
+    
 }
 
 - (void)willShow
 {
     [super willShow];
     
-    [[_castsDatasource contents] removeAllObjects];
+    [[self fieldName] setStringValue:[[self entity] nickname]];
+    [[self fieldJID] setStringValue:[[self entity] jid]];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    
     [self getVMCasts];
 }
 
@@ -114,19 +132,34 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
 }
 
 
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    [[self fieldName] setStringValue:[[self entity] nickname]] 
+}
+
+- (BOOL)didVMCastingPushReceived:(TNStropheStanza)aStanza
+{
+    CPLogConsole("PUSH RECIEVED")
+    [self getVMCasts];
+    
+    return YES;
+}
+
 - (void)getVMCasts
 {
     var stanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
         
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingGet}];
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceivedVMCasts:) ofObject:self];
-    
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceivedVMCasts:)]
 }
 
 - (void)didReceivedVMCasts:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"success")
     {
+        [[_castsDatasource contents] removeAllObjects];
+        
         var sources = [aStanza childrenWithName:@"source"];
         
         for (var i = 0; i < [sources count]; i++)
@@ -134,9 +167,10 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
             var source  = [sources objectAtIndex:i];
             var name    = [source valueForAttribute:@"name"];
             var url     = [CPURL URLWithString:[source valueForAttribute:@"url"]];
+            var uuid    = [CPURL URLWithString:[source valueForAttribute:@"uuid"]];
             var comment = [source valueForAttribute:@"description"];
             
-            var newSource = [TNVMCastSource VMCastSourceWithName:name URL:url comment:comment];
+            var newSource = [TNVMCastSource VMCastSourceWithName:name UUID:uuid URL:url comment:comment];
             
             var appliances = [source childrenWithName:@"appliance"];
             
@@ -149,8 +183,9 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
                 var size        = [appliance valueForAttribute:@"size"];
                 var date        = [appliance valueForAttribute:@"pubDate"];
                 var uuid        = [appliance valueForAttribute:@"uuid"];
-                
-                var newCast    = [TNVMCast VMCastWithName:name URL:url comment:comment size:size pubDate:date UUID:uuid];
+                var status      = [appliance valueForAttribute:@"status"];
+
+                var newCast     = [TNVMCast VMCastWithName:name URL:url comment:comment size:size pubDate:date UUID:uuid status:status];
                 
                 [[newSource content] addObject:newCast];
             }
@@ -158,6 +193,12 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
             [_castsDatasource addSource:newSource];
         }
         [_mainOutlineView reloadData];
+        [_mainOutlineView expandAll];
+    }
+    else if ([aStanza getType] == @"error")
+    {
+        var msg = [[aStanza firstChildWithName:@"error"] text];
+        [CPAlert alertWithTitle:@"Error" message:msg];
     }
 }
 
@@ -170,14 +211,12 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
     
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
     
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didDownload:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
 }
 
 - (void)didDownload:(TNStropheStanza)aStanza
 {
-    console.log("done...");
-    
-    //[CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(updateDownloadProgress:) userInfo:nil repeats:YES];
+    [[self windowDownloadQueue] orderFront:nil];
 }
 
 - (void)updateDownloadProgress:(CPTimer)aTimer
@@ -195,6 +234,56 @@ TNArchipelTypeHypervisorVMCastingDownloadProgress   = @"downloadprogress";
     CPLogConsole("UPDATED DL PROGRESS...");
 }
 
+- (IBAction)addNewVMCast:(id)sender
+{
+    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    var url         = [fieldNewURL stringValue];
+    
+    [fieldNewURL setStringValue:@""];
+    
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingRegister, "url": url}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didRegistred:)]
+}
+
+- (void)didRegistred:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"error")
+    {
+        var msg = [[aStanza firstChildWithName:@"error"] text];
+        [CPAlert alertWithTitle:@"Error" message:msg];
+    }
+    else
+        [self getVMCasts];
+}
+
+- (IBAction)removeVMCast:(id)sender
+{
+    if (([_mainOutlineView numberOfRows] == 0) || ([_mainOutlineView numberOfSelectedRows] <= 0))
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast"];
+        return;
+    }
+
+    var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
+    var currentVMCast   = [[_castsDatasource contents] objectAtIndex:selectedIndex];
+    var uuid             = [currentVMCast UUID];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    
+    
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
+}
+
+- (void)didUnregistred:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"error")
+    {
+        var msg = [[aStanza firstChildWithName:@"error"] text];
+        [CPAlert alertWithTitle:@"Error" message:msg];
+    }
+}
 @end
 
 

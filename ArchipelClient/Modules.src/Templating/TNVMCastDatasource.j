@@ -23,14 +23,16 @@
     CPString    name            @accessors;
     CPURL       URL             @accessors;
     CPString    comment         @accessors;
+    CPString    UUID            @accessors;
     CPArray     content         @accessors;
 }
 
-+ (TNVMCastSource)VMCastSourceWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment
++ (TNVMCastSource)VMCastSourceWithName:(CPString)aName UUID:(CPString)anUUID URL:(CPURL)anURL comment:(CPString)aComment
 {
     var source = [[TNVMCastSource alloc] init];
     [source setName:aName];
     [source setURL:anURL];
+    [source setUUID:anUUID];
     [source setComment:aComment];
     
     return source;
@@ -66,9 +68,10 @@
     CPString    size            @accessors;
     CPString    pubDate         @accessors;
     CPString    UUID            @accessors;
+    CPString    status          @accessors;
 }
 
-+ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID
++ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID status:(CPString)aStatus
 {
     var vmcast = [[TNVMCast alloc] init];
     [vmcast setName:aName];
@@ -77,6 +80,7 @@
     [vmcast setSize:aSize];
     [vmcast setUUID:anUUID];
     [vmcast setPubDate:aDate];
+    [vmcast setStatus:aStatus];
     
     return vmcast;
 }

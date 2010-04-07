@@ -23,46 +23,162 @@ import archipel
 import sqlite3
 from xml.dom import minidom
 import urllib
+import urlparse
+import os
 from threading import Thread
 
 class TNApplianceDownloader(Thread):
-    def __init__(self, url, save_path, uuid):
-        self.url = url;
-        self.uuid = uuid
-        self.save_path = save_path
-        self.progress = 0.0;
+    """
+    implementation of a downloader. This run in a separate thread.
+    """
+    def __init__(self, url, save_folder, uuid, name, finish_callback):
+        """
+        initialization of the class
+        @type url: string
+        @param url: the url to download
+        @type save_folder: string
+        @param save_folder: the folder where the download will be saved
+        @type uuid: string
+        @param uuid: the uuid of the appliance to download
+        @type name: string
+        @param name: the name of the download
+        @type finish_callback: method
+        @param finish_callback the callback method to execute when a download is finished
+        """
         Thread.__init__(self)
+        self.url                = url
+        self.save_folder        = save_folder
+        self.uuid               = uuid
+        self.name               = name
+        self.finish_callback    = finish_callback
+        self.save_path          = self.save_folder + "/" + uuid + ".xvm2"
+        self.progress           = 0.0;
+    
     
     def run(self):
+        """
+        main loop of the thread. will start to download
+        """
+        log(self, LOG_LEVEL_INFO, "starting to download appliance %s " % self.url)
         urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
     
+    
     def get_progress(self):
-        return self.progress;
-        
+        """
+        @return: the progress percentage of the download
+        """
+        return self.progress
+    
+    
+    def get_uuid(self):
+        """
+        @return: the uuid of the download
+        """
+        return self.uuid
+    
+    
+    def get_total_size(self):
+        """
+        @return: the total size in bytes of the download
+        """
+        return self.total_size
+    
+    
+    def get_name(self):
+        """
+        @return: the name of the download
+        """
+        return self.name;
+    
+    
+    def stop(self):
+        """
+        stop the download. NOT IMPLEMENTED
+        """
+        raise NotImplemented
+    
+    
     def downloading_callback(self, blocks_count, block_size, total_size):
-           percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100;
-           print "downloaded " + str(percentage) + "%"
-           self.progress = percentage;
+        """
+        internal callback of the download status called by urlretrieve.
+        If percentage reach 100, it will call the finish_callback with uuid as parameter
+        @type blocks_count: integer
+        @param blocks_count: the downloaded number of blocks
+        @type block_size: integer
+        @param block_size: the size of one block
+        @param total_size: the total size in bytes of the file downloaded
+        
+        """
+        percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100;
+        #print "downloading: " + str(percentage) + "%"
+        if percentage >= 100.0:
+            self.finish_callback(self.uuid, self.save_path);
+        self.total_size = total_size;
+        self.progress = percentage;
     
+
+
 class TNHypervisorVMCasting:
-    
+    """
+    Implementation of the module
+    """
     def __init__(self, database_path, repository_path, entity):
+        """
+        initialize the class
+        @type database_path: string
+        @param database_path: the path of the sqlite3 database to use
+        @type repository_path: string
+        @param repository_path: the path of the repository to download and store appliances
+        @type entity: TNArchipelHypervisor
+        @param entity: the instance of the TNArchipelHypervisor. Will be used for push.
+        """
         log(self, LOG_LEVEL_INFO, "opening vmcasting database file {0}".format(database_path))
         
         self.entity = entity
+        self.database_path = database_path;
         self.repository_path = repository_path;
         self.download_queue = {};
-        self.database_connection = sqlite3.connect(database_path)
+        self.database_connection = sqlite3.connect(database_path, check_same_thread = False)
         self.cursor = self.database_connection.cursor();
         
-        self.cursor.execute("create table if not exists vmcastsourses (name text, comment text, url text)")
-        self.cursor.execute("create table if not exists vmcastappliances (name text, comment text, url text, uuid text unique)")
+        self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
+        self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status text, source text not null, save_path text)")
         
         log(self, LOG_LEVEL_INFO, "Database ready.");
-        
-        
-    # this method is called according to the registration below
+    
+    
+    def on_download_complete(self, uuid, path):
+          """
+          callback triggered by a TNApplianceDownloader when download is over
+          @type uuid: string
+          @param uuid: the uuid of the download
+          @type path: string
+          @param path: the path of the downloaded file
+          """
+          self.cursor.execute("UPDATE vmcastappliances SET status='Installed', save_path='%s' WHERE uuid='%s'" % (path, uuid));
+          
+          del self.download_queue[uuid];
+          self.database_connection.commit()
+          self.entity.push_change("vmcasting", "download_complete")
+    
+    
     def process_iq(self, conn, iq):
+        """
+        process incoming IQ of type NS_ARCHIPEL_HYPERVISOR_VMCASTING.
+        it understands IQ of type:
+            - get
+            - register
+            - unregister
+            - download
+            - downloadqueue
+            - getappliance
+            - deleteappliance
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
         iqType = iq.getTag("query").getAttr("type");
         
         log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
@@ -87,18 +203,35 @@ class TNHypervisorVMCasting:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "downloadprogress":
-            reply = self.__get_download_progress(iq)
+        if iqType == "downloadqueue":
+            reply = self.__get_download_queue(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
+        if iqType == "getappliance":
+            reply = self.__get_appliance(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed   
+        
+        if iqType == "deleteappliance":
+            reply = self.__delete_appliance(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
     
     
     def __get(self, iq):
+        """
+        get the sources and appliances. Replay parseRSS at each time to be up to date
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results"""
         reply = iq.buildReply("success");
         try:
             nodes = self.parseRSS()
             reply.setQueryPayload(nodes)
-            
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -107,71 +240,240 @@ class TNHypervisorVMCasting:
             reply.setQueryPayload([payload])
         return reply
     
-    
+        
     def __register(self, iq):
+        """
+        register to a new VMCast
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
         reply       = iq.buildReply("success");
         url         = iq.getTag("query").getAttr("url");
-        name        = iq.getTag("query").getAttr("name");
-        description = iq.getTag("query").getAttr("description");
         
-        self.cursor.execute("INSERT INTO vmcastsourses (name, comment, url) VALUES (?,?,?)", (name, description, url));
-        
+        try:
+            if not url or url=="":
+                raise Exception("Emtpy values", "Stanza must have url")
+            self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url);
+            self.database_connection.commit();
+            self.entity.push_change("vmcasting", "register")
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+            
         return reply
     
     
     def __unregister(self, iq):
+        """
+        unregister from a VMCasts and remove all its appliances (not the files)
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
         reply = iq.buildReply("success");
         
-        url = iq.getTag("query").getAttr("uuid");
+        uuid = iq.getTag("query").getAttr("uuid");
         
-        self.cursor.execute("DELETE FROM vmcastsourses WHERE url='?'", (url));
+        try:
+            self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid);
+            self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid);
+            self.database_connection.commit()
+            self.entity.push_change("vmcasting", "unregister")
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
         
         return reply
-        
     
     
     def __download(self, iq):
+        """
+        start a download of appliance according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
         reply = iq.buildReply("success");
         
         dl_uuid = iq.getTag("query").getAttr("uuid");
         
-        print "SELECT * FROM vmcastappliances WHERE uuid='?'"
-        self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+        try:
+            self.cursor.execute("UPDATE vmcastappliances SET status='Installing...' WHERE uuid='%s'" % dl_uuid);
+            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+            self.database_connection.commit();
+            
+            self.entity.push_change("vmcasting", "download_start")
+            
+            for values in self.cursor:
+                name, description, url, uuid, status, source, path = values;
+                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete);
+                downloader.start();
+                self.download_queue[uuid] = downloader;
         
-        for values in self.cursor:
-            name, comment, url, uuid = values;
-            downloader = TNApplianceDownloader(url, self.repository_path + "/" + uuid + ".xvm2", uuid);
-            downloader.daemon = True;
-            downloader.start();
-            self.download_queue[uuid] = downloader;
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
             
         return reply
     
     
-    
-    def __get_download_progress(self, iq):
-        reply = iq.buildReply("success"); 
-        dl_uuid = iq.getTag("query").getAttr("uuid");
+    def __get_download_queue(self, iq):
+        """
+        get the state of the download queue.
         
-        reply.setAttr('progress', str(self.download_queue[dl_uuid].get_progress()));
-
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("success"); 
+        nodes = [];
+        
+        try:
+            for uuid, download in self.download_queue.items():
+                dl = xmpp.Node(tag="download", attrs={"uuid": download.get_uuid(), "name": download.get_name(), "percentage": download.get_progress(), "total": download.get_total_size()})
+                nodes.append(dl)
+            
+            reply.setQueryPayload(nodes);
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
         
         return reply;
     
     
+    def __stop_download(self, iq):
+        """
+        stop a download according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("success");
+        dl_uuid = iq.getTag("query").getAttr("uuid");
+        self.download_queue[dl_uuid].stop();
+        return reply
+    
+    def __get_appliance(self, iq):
+        """
+        get the info about an appliances according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("success");
+        uuid = iq.getTag("query").getAttr("uuid");
+        
+        try:
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+            for values in self.cursor:
+                path = values[0]
+                name = values[1]
+                description = values[2]
+            
+            node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
+            reply.setQueryPayload([node])
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+        
+        return reply
+    
+    def __delete_appliance(self, iq):
+        """
+        delete an appliance according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("success");
+        uuid = iq.getTag("query").getAttr("uuid");
+        
+        try:
+            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+            for values in self.cursor:
+                path = values[0]
+                
+            os.remove(path);
+            
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+            
+        return reply
+    
+    
     def parseRSS(self):
-        sources = self.cursor.execute("SELECT * FROM vmcastsourses");
+        """
+        parse the content of the database, update the feed, create the answer node.
+        """
+        sources = self.cursor.execute("SELECT * FROM vmcastsources");
         nodes = [];
         
         for values in self.cursor:
-            name, comment, url = values
-            
-            source_node = xmpp.Node(tag="source", attrs={"name": name, "description": comment, "url": url});
+            name, description, url, uuid = values
+            source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid});
             content_nodes = [];
             
-            f               = urllib.urlopen(url);
-            feed_content    = xmpp.simplexml.NodeBuilder(data=str(f.read())).getDom();
-            items           = feed_content.getTag("channel").getTags("item");
+            try:
+                f = urllib.urlopen(url);
+            except Exception as ex:
+                self.cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
+                self.database_connection.commit()
+                self.entity.push_change("vmcasting", "unregister")
+                raise Exception("404", "Feed is not reponding. removed from database.")
+            
+            try:
+                feed_content        = xmpp.simplexml.NodeBuilder(data=str(f.read())).getDom();
+                feed_uuid           = feed_content.getTag("channel").getTag("uuid").getCDATA()
+                feed_description    = feed_content.getTag("channel").getTag("description").getCDATA()
+                feed_name           = feed_content.getTag("channel").getTag("title").getCDATA()
+                items               = feed_content.getTag("channel").getTags("item")
+                            
+                if not feed_uuid or not feed_name:
+                    raise
+            except:
+                self.cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
+                self.database_connection.commit();
+                raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed")
+            
+            try:
+                self.cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url));
+                self.database_connection.commit();
+            except Exception as ex:
+                log(self, LOG_LEVEL_DEBUG, "unable to update source because: " + str(ex))
+                pass
             
             for item in items:
                 name            = str(item.getTag("title").getCDATA());
@@ -180,13 +482,21 @@ class TNHypervisorVMCasting:
                 size            = str(item.getTag("enclosure").getAttr("length"));
                 pubdate         = str(item.getTag("pubDate").getCDATA());
                 uuid            = str(item.getTag("uuid").getCDATA());
-                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid})
-                content_nodes.append(new_node);
+                status          = "Not installed";
+                
                 try:
-                    self.cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?)", (name, description, url, uuid));
+                    self.cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'));
+                    self.database_connection.commit();
                 except Exception as ex:
-                    pass
-                self.database_connection.commit();
+                    self.cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid);
+                    for values in self.cursor:
+                        status = values[0];
+                    if status == "Installing..." and not self.download_queue.has_key(uuid):
+                        status = "Not complete"
+                    
+                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": status})
+                content_nodes.append(new_node); 
+                
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node);

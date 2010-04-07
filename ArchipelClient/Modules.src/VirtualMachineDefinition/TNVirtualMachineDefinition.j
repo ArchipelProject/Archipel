@@ -661,7 +661,7 @@ function generateMacAddr()
 
 
 // delegate for panels
--(BOOL)windowShouldClose:(id)window
+- (BOOL)windowShouldClose:(id)window
 {
     [self defineXML:nil];
 
