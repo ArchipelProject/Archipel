@@ -20,8 +20,6 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-@import "TNViewLog.j"
-
 /*! @global
     @group TNStropheConnection
     Notification that indicates successfull connection

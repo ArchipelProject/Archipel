@@ -82,7 +82,7 @@
 {
     var index = 0,
         count = _tabLabels.length,
-        width = 100.0,
+        width = 110.0,
         x = 15;
 
     for (; index < count; ++index)

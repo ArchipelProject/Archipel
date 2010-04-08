@@ -174,7 +174,7 @@ def build(paths, config, ignorepaths):
         return_code = os.system("export CONFIG=" + config + ";jake");
                         
         if not str(return_code) == "0":
-            print "# Error in build : " + str(code)
+            print "# Error in build : " + str(return_code)
             sys.exit("error during build")
         
         print "# Build success.";
@@ -195,7 +195,6 @@ def copy_modules(modules_paths, config, ignorepaths):
         remove_modules([path], config, ignorepaths);
         
         print "# copying module : " + module_name 
-        print "--> " + "cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
         os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
 

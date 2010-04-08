@@ -20,8 +20,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNViewLog.j"
-
 /*! @ingroup archipelcore
     Subclass of CPAlert that manages the removing of contact
 */

@@ -28,6 +28,7 @@ TNLogLevelInfo  = @"info";
 TNLogLevelDebug = @"debug";
 TNLogLevelTrace = @"trace";
 
+TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelWarn, TNLogLevelError, TNLogLevelFatal];
 
 // var TNLog = function (aMessage, aLevel, aTitle) {
 //     [theSharedLogger logMessage:aMessage title:aTitle level:aLevel];
@@ -43,9 +44,11 @@ TNLogLevelTrace = @"trace";
 @implementation TNToolbarLogs: TNModule
 {
     @outlet CPScrollView    mainScrollView;
+    @outlet CPPopUpButton   buttonLogLevel;
     
     CPArray         _logs;
     CPTableView     _tableViewLogging;
+    id              _logFunction;
 }
 
 /*! get the shared logger
@@ -87,15 +90,21 @@ TNLogLevelTrace = @"trace";
 */
 - (void)awakeFromCib
 {
+    _logFunction = function (aMessage, aLevel, aTitle) {
+        [self logMessage:aMessage title:aTitle level:aLevel];
+    };
+    
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setBorderedWithHexColor:@"#9e9e9e"];
     [mainScrollView setAutohidesScrollers:YES];
     
-    var maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNLogLevel"];
+    var defaults = [TNUserDefaults standardUserDefaults];
+    maxLogLevel = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
     
-    CPLogRegister(function (aMessage, aLevel, aTitle) {
-        [self logMessage:aMessage title:aTitle level:aLevel];
-    }, maxLogLevel);
+    if (!maxLogLevel)
+        maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
+    
+    CPLogRegister(_logFunction, maxLogLevel);
     CPLogRegister(CPLogConsole, maxLogLevel);
     
     _logs = [self restaure];
@@ -131,7 +140,15 @@ TNLogLevelTrace = @"trace";
     [_tableViewLogging setDataSource:self];
 
     [mainScrollView setDocumentView:_tableViewLogging];
-
+    
+    [buttonLogLevel removeAllItems];
+    for (var i = 0; i < [TNLogLevels count]; i++)
+    {
+        var item = [[CPMenuItem alloc] initWithTitle:[TNLogLevels objectAtIndex:i] action:nil keyEquivalent:nil];
+        [buttonLogLevel addItem:item];
+    }
+    [buttonLogLevel selectItemWithTitle:maxLogLevel];
+    
     theSharedLogger = self;
 }
 
@@ -179,6 +196,21 @@ TNLogLevelTrace = @"trace";
     [_tableViewLogging reloadData];
 
     [self save];
+}
+
+- (IBAction)setLogLevel:(id)sender
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    var logLevel = [buttonLogLevel title];
+    
+    [defaults setObject:logLevel forKey:@"TNArchipelLogStoredMaximumLevel"];
+    
+    CPLogUnregister(_logFunction);
+    CPLogUnregister(CPLogConsole);
+    
+    CPLogRegister(_logFunction, logLevel);
+    CPLogRegister(CPLogConsole, logLevel);
+    CPLog.info(@"Log level set to " + logLevel);
 }
 
 /*! CPTableView delegate

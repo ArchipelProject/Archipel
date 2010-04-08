@@ -105,6 +105,7 @@ TNArchipelEntityTypeGroup            = @"user";
     var posx;
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
+        CPLog.trace("recovering with of main vertical CPSplitView from last state");
         [mainHorizontalSplitView setPosition:posx ofDividerAtIndex:0];
 
         var bounds = [[self leftView] bounds];
@@ -117,33 +118,41 @@ TNArchipelEntityTypeGroup            = @"user";
     //hide main window
     [theWindow orderOut:nil];
 
+    
     // toolbar
+    CPLog.trace("initializing mianToolbar");
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
     [theWindow setToolbar:_mainToolbar];
 
     //outlineview
+    CPLog.trace(@"initializing _rosterOutlineView");
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[[self leftView] bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
 
     // init scroll view of the outline view
+    CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[[self leftView] bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]]; //D8DFE8
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
+    CPLog.trace(@"adding _outlineScrollView as subview of leftView");
     [[self leftView] addSubview:_outlineScrollView];
 
     // right view
+    CPLog.trace(@"initializing rightView");
     [[self rightView] setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [[self rightView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
     //connection window
+    CPLog.trace(@"positionnig the connectionWindow");
     [[self connectionWindow] center];
     [[self connectionWindow] orderFront:nil];
 
     // properties view
+    CPLog.trace(@"initializing the leftSplitView");
     [[self leftSplitView] setIsPaneSplitter:YES];
     [[self leftSplitView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[[self leftSplitView] subviews][1] removeFromSuperview];
@@ -151,10 +160,12 @@ TNArchipelEntityTypeGroup            = @"user";
     [[self leftSplitView] setPosition:[[self leftSplitView] bounds].size.height ofDividerAtIndex:0];
 
     // filter view.
+    CPLog.trace(@"initializing the filterView");
     var bundle = [CPBundle bundleForClass:self];
     [[self filterView] setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
 
-    //tab module view :
+    //tab module view
+    CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[CPTabView alloc] initWithFrame:[[self rightView] bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
@@ -172,20 +183,28 @@ TNArchipelEntityTypeGroup            = @"user";
     [_moduleTabView addSubview:message];
 
     // module Loader
+    CPLog.trace(@"initializing _moduleLoader");
     _moduleLoader = [[TNModuleLoader alloc] init]
     
     [_moduleTabView setDelegate:_moduleLoader];
     [_moduleLoader setMainToolbar:_mainToolbar];
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setModulesPath:@"Modules/"]
-    [_moduleLoader setMainRightView:[self rightView]];    
+    [_moduleLoader setMainRightView:[self rightView]];
+
+    CPLog.trace(@"loading all modules");
     [_moduleLoader load];
 
     // notifications
     var center = [CPNotificationCenter defaultCenter];
 
+    CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
+    
+    CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
+    
+    CPLog.info(@"AppController initialized");
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -201,6 +220,7 @@ TNArchipelEntityTypeGroup            = @"user";
     [defaults removeObjectForKey:@"loginPassword"];
     [defaults setBool:NO forKey:@"loginRememberCredentials"];
     
+    CPLog.info(@"starting to disconnect");
     [_mainRoster disconnect];
 }
 
@@ -345,8 +365,10 @@ TNArchipelEntityTypeGroup            = @"user";
         return // TODO : manage group
 
     var vCard       = [item vCard];
+    
     var entityType  = [_moduleLoader analyseVCard:vCard];
 
+    CPLog.info(@"setting the entity as " + item + " of type " + entityType);
     [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
 
     [[self propertiesView] setContact:item];
@@ -362,6 +384,7 @@ TNArchipelEntityTypeGroup            = @"user";
     var splitView   = [aNotification object];
     var newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
     
+    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 

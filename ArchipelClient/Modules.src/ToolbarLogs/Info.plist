@@ -28,7 +28,7 @@
         <string>icon-alt.png</string>
         <key>CibName</key>
         <string>ToolbarLogs</string>
-        <key>TNLogLevel</key>
+        <key>TNDefaultLogLevel</key>
         <string>info</string>
     </dict>
 </plist>
