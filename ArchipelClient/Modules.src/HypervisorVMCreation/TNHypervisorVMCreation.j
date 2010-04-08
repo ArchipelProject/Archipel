@@ -184,12 +184,12 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     if ([aStanza getType] == @"success")
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-        [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
+        // [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
     }
     else
     {
         [CPAlert alertWithTitle:@"Error" message:@"Unable to create virtual machine" style:CPCriticalAlertStyle];
-        [[TNViewLog sharedLogger] log:@"error during creation a virtual machine"];
+        // [[TNViewLog sharedLogger] log:@"error during creation a virtual machine"];
     }
 }
 
@@ -241,13 +241,13 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     _virtualMachineRegistredForDeletion = Nil;
     if ([aStanza getType] == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
+        // [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
         [self getHypervisorRoster];
     }
     else
     {
         [CPAlert alertWithTitle:@"Error" message:@"Unable to free virtual machine" style:CPCriticalAlertStyle];
-        [[TNViewLog sharedLogger] log:@"error during free a virtual machine"];
+        // [[TNViewLog sharedLogger] log:@"error during free a virtual machine"];
     }
 }
 

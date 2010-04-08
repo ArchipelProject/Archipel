@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "Resources/DateFormat.js";
+
 /*! @ingroup utils
     Categories that make CPTabView like iTunes' one
 */
@@ -80,7 +82,7 @@
 {
     var index = 0,
         count = _tabLabels.length,
-        width = 150.0,
+        width = 100.0,
         x = 15;
 
     for (; index < count; ++index)
@@ -307,5 +309,14 @@
             [self expandItem:item];
         }
     }
+}
+@end
+
+@implementation CPDate (withFormat)
+
++ (CPString)dateWithFormat:(CPString)aFormat
+{
+    var theDate = new Date();
+    return theDate.dateFormat(aFormat);
 }
 @end

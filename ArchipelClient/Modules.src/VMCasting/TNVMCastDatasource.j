@@ -18,6 +18,13 @@
 
 @import <Foundation/Foundation.j>
 
+TNArchipelApplianceInstalled            = 1;
+TNArchipelApplianceInstalling           = 2;
+TNArchipelApplianceNotInstalled         = 3;
+TNArchipelApplianceInstallationError    = 4;
+
+TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"Not installed", @"Installation error"];
+
 @implementation TNVMCastSource : CPObject
 {
     CPString    name            @accessors;
@@ -50,7 +57,7 @@
 
 - (id)valueForUndefinedKey:(CPString)aKey
 {
-    return @"Not Applicable";
+    return @"";
 }
 
 - (CPString)description
@@ -68,10 +75,10 @@
     CPString    size            @accessors;
     CPString    pubDate         @accessors;
     CPString    UUID            @accessors;
-    CPString    status          @accessors;
+    int         status          @accessors;
 }
 
-+ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID status:(CPString)aStatus
++ (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID status:(int)aStatus
 {
     var vmcast = [[TNVMCast alloc] init];
     [vmcast setName:aName];
@@ -90,12 +97,16 @@
     return [self name];
 }
 
+- (CPString)size
+{
+    return @"" + Math.round(parseInt(size) / 1024 / 1024) + @" Mo";
+}
 @end
 
 
 @implementation TNVMCastDatasource : CPObject
 {
-    CPArray _contents @accessors(getter=contents);
+    CPArray _contents       @accessors(getter=contents);
     BOOL    filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
 }
 
@@ -136,7 +147,7 @@
         var array = [CPArray array];
         for (var i = 0; i < [anArray count]; i++)
         {
-            if ([[[anArray objectAtIndex:i] status] uppercaseString] == @"INSTALLED")
+            if ([[anArray objectAtIndex:i] status] == TNArchipelApplianceInstalled)
                 [array addObject:[anArray objectAtIndex:i]];
         }
         return array;

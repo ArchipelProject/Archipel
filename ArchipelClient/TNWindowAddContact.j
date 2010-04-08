@@ -85,7 +85,7 @@
 
     var msg     = @"Presence subsciption has been sent to " + jid + ".";
 
-    [[TNViewLog sharedLogger] log:@"added contact " + jid];
+    // [[TNViewLog sharedLogger] log:@"added contact " + jid];
 }
 
 @end

@@ -15,7 +15,13 @@
                 <string>HypervisorVMCreation</string>
             </dict>            <dict>
                 <key>folder</key>
-                <string>Templating</string>
+                <string>SampleTabModule</string>
+            </dict>            <dict>
+                <key>folder</key>
+                <string>SampleToolbarModule</string>
+            </dict>            <dict>
+                <key>folder</key>
+                <string>ToolbarLogs</string>
             </dict>            <dict>
                 <key>folder</key>
                 <string>ToolbarMapView</string>
@@ -34,6 +40,9 @@
             </dict>            <dict>
                 <key>folder</key>
                 <string>VirtualMachineVNC</string>
+            </dict>            <dict>
+                <key>folder</key>
+                <string>VMCasting</string>
             </dict>
         </array>
     </dict>

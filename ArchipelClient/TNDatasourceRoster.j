@@ -35,6 +35,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPString        filter          @accessors;
     CPSearchField   filterField     @accessors;
 
+    BOOL            _isInitializing
     id              _draggedItem;
 }
 
@@ -47,21 +48,22 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (self = [super initWithConnection:aConnection])
     {
         [self setFilter:nil];
-
+        _isInitializing = YES;
+        
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterRemovedContactNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheRosterAddedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
 
-        [center addObserver:self selector:@selector(updateOutlineViewItem:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactPresenceUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
 
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
 
-        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageReceivedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineViewAndKeepOldSelection:) name:TNStropheContactMessageTreatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageReceivedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
     }
 
     return self;
@@ -89,46 +91,22 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-/*! Reload the content of the datasource and try to keep the old selection
-    @param aNotification CPNotification that trigger the message
-*/
-- (void)updateOutlineViewAndKeepOldSelection:(CPNotification)aNotification
-{
-    [[self mainOutlineView] reloadData];
-}
 
 /*! Reload the content of the datasource
     @param aNotification CPNotification that trigger the message
 */
 - (void)updateOutlineView:(CPNotification)aNotification
 {
+    var index   = -1;//[[self mainOutlineView] rowForItem:[aNotification object]];
+    
     [[self mainOutlineView] reloadData];
-
-    var index   = [[self mainOutlineView] rowForItem:[aNotification object]];
-
+    
     if (index != -1)
     {
-        var set     = [CPIndexSet indexSetWithIndex:index];
+        var set = [CPIndexSet indexSetWithIndex:index];
+        
         [[self mainOutlineView] selectRowIndexes:set byExtendingSelection:NO];
     }
-}
-
-/*! Reload the content of the item given as object of aNotification
-    @param aNotification CPNotification that trigger the message
-*/
-- (void)updateOutlineViewItem:(CPNotification)aNotification
-{
-    [[self mainOutlineView] reloadData];
-    //[[self outlineView] reloadItem:[aNotification object]];
-}
-
-/*! Reload the content of the group given as object of aNotification
-    @param aNotification CPNotification that trigger the message
-*/
-- (void)updateOutlineViewGroupItem:(CPNotification)aNotification
-{
-    [[self mainOutlineView] reloadData];
-    //[[self outlineView] reloadItem:[self getGroup:[[aNotification object] group]]];
 }
 
 /*! Message use internally for filtering
@@ -223,7 +201,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
     return YES;
 }
-
 
 /*! CPOutlineView Delegate
 */

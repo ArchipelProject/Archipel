@@ -119,9 +119,11 @@ TNArchipelModuleTypeToolbar = @"toolbar";
         var defaults            = [TNUserDefaults standardUserDefaults];
         var memid               = @"selectedTabIndexFor" + [[self entity] jid];
         var oldSelectedIndex    = [defaults integerForKey:memid];
-
-        if (oldSelectedIndex)
+        
+        if ((oldSelectedIndex) && (oldSelectedIndex != -1))
             [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+        else
+            [[self mainTabView] selectTabViewItemAtIndex:0];
     }
 }
 
@@ -342,7 +344,8 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    CPLogConsole("Bundle loaded : " + aBundle)
+    CPLog("Bundle loaded : " + aBundle, "info", "ModuleLoader");
+    
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
     var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];

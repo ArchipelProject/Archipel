@@ -282,7 +282,7 @@ VIR_DOMAIN_CRASHED  = 6;
     if (responseType == @"success")
     {
         var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
-        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
+        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
 
         [self getVirtualMachineInfo:nil];
     }
@@ -301,7 +301,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
+        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
 
         [self getVirtualMachineInfo:nil];
     }
@@ -320,7 +320,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
+        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
 
         [self getVirtualMachineInfo:nil];
     }
@@ -339,7 +339,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
+        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
 
         [self getVirtualMachineInfo:nil];
     }
@@ -358,7 +358,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been rebooted"];
+        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been rebooted"];
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -378,7 +378,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
 
-    [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    // [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
 }
 
 // button management

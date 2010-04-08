@@ -65,7 +65,7 @@
 	return self;
 }
 
-/*! Use to set the delegate. It plugs what needed to be plugged. It will be trigger by
+/*! Use to set the datasource. It plugs what needed to be plugged. It will be trigger by
     TNStropheRosterRetrievedNotification notification sent by TNStropheRoster
     @param aNotification CPNotification sent by TNStropheRoster
 */

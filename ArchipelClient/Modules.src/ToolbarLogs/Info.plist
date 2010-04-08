@@ -2,42 +2,33 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
-        <!--
-            the bundle identifier. It MUST BE UNIQUE
-        -->
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.vmcasting</string>
-        
+        <string>org.archipelproject.toolbarlogs</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
-        
         <key>CPBundlePackageType</key>
         <string>280N</string>
-        
         <key>CPBundleVersion</key>
         <string>1.0</string>
-
         <key>CPBundleName</key>
-        <string>VMCasting</string>
-
+        <string>ToolbarLogs</string>
         <key>CPPrincipalClass</key>
-        <string>TNVMCasting</string>
-        
+        <string>TNToolbarLogs</string>
         <key>PluginDisplayName</key>
-        <string>VMCasts</string>
-        
+        <string>Logs</string>
+        <key>AlternativePluginDisplayName</key>
+        <string>Hide Logs</string>
         <key>InsertionType</key>
-        <string>tab</string>
-        
-        <key>TabIndex</key>
-        <string>4</string>
-        
-        <key>SupportedEntityTypes</key>
-        <array>
-            <string>hypervisor</string>
-        </array>
-        
+        <string>toolbar</string>
+        <key>ToolbarIndex</key>
+        <string>8</string>
+        <key>ToolbarIcon</key>
+        <string>icon.png</string>
+        <key>AlternativeToolbarIcon</key>
+        <string>icon-alt.png</string>
         <key>CibName</key>
-        <string>VMCasting</string>
+        <string>ToolbarLogs</string>
+        <key>TNLogLevel</key>
+        <string>info</string>
     </dict>
 </plist>

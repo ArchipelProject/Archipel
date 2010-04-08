@@ -89,8 +89,8 @@ TNToolBarItemClearLog       = @"TNToolBarItemClearLog";
         [self addItemWithIdentifier:TNToolBarItemDeleteJid label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
         [self addItemWithIdentifier:TNToolBarItemAddGroup label:@"Add Group" icon:[bundle pathForResource:@"groupAdd.png"] target:aTarget action:@selector(toolbarItemAddGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:nil action:nil];
-        [self addItemWithIdentifier:TNToolBarItemViewLog label:@"View Log" icon:[bundle pathForResource:@"log.png"] target:aTarget action:@selector(toolbarItemViewLogClick:)];
-        [self addItemWithIdentifier:TNToolBarItemClearLog label:@"Clear Log" icon:[bundle pathForResource:@"clearlog.png"] target:aTarget action:@selector(toolbarItemClearLogClick:)];
+        //[self addItemWithIdentifier:TNToolBarItemViewLog label:@"View Log" icon:[bundle pathForResource:@"log.png"] target:aTarget action:@selector(toolbarItemViewLogClick:)];
+        //[self addItemWithIdentifier:TNToolBarItemClearLog label:@"Clear Log" icon:[bundle pathForResource:@"clearlog.png"] target:aTarget action:@selector(toolbarItemClearLogClick:)];
 
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemAddJid];
         [self setPosition:1 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
@@ -99,8 +99,8 @@ TNToolBarItemClearLog       = @"TNToolBarItemClearLog";
         [self setPosition:4 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
         [self setPosition:5 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [self setPosition:6 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [self setPosition:7 forToolbarItemIdentifier:TNToolBarItemViewLog];
-        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemClearLog];
+//        [self setPosition:7 forToolbarItemIdentifier:TNToolBarItemViewLog];
+//        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemClearLog];
         [self setPosition:9 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [self setPosition:10 forToolbarItemIdentifier:TNToolBarItemLogout];
 

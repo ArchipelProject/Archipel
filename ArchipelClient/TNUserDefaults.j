@@ -91,6 +91,11 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
     localStorage.setItem(identifier, [datas rawString]);
 }
 
+- (void)clean
+{
+    localStorage.clear();
+}
+
 - (void)registerDefaults:(CPDictionary)someDefaults
 {
     _appDefaults = [someDefaults copy];

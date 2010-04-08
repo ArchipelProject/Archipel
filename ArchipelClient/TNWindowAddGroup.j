@@ -55,7 +55,7 @@
     {
         [[self roster] addGroup:[[self newGroupName] stringValue]];
         [[self newGroupName] setStringValue:@""];
-        [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
+        // [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
 
         [self performClose:nil];
     }

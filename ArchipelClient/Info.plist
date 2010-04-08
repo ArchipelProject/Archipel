@@ -4,12 +4,12 @@
 <dict>
     <key>CPBundleIdentifier</key>
     <string>org.archipelproject.archipel</string>
-	<key>Main cib file base name</key>
-	<string>MainMenu.cib</string>
-	<key>CPBundleName</key>
-	<string>Archipel</string>
-	<key>CPPrincipalClass</key>
-	<string>CPApplication</string>
+    <key>Main cib file base name</key>
+    <string>MainMenu.cib</string>
+    <key>CPBundleName</key>
+    <string>Archipel</string>
+    <key>CPPrincipalClass</key>
+    <string>CPApplication</string>
     <key>CPBundleIconFile</key>
     <string>icon.png</string>
 </dict>

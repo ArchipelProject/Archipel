@@ -70,7 +70,7 @@
     if (returnCode == 0)
     {
         [[self roster] removeContact:[self jid]];
-        [[TNViewLog sharedLogger] log:@"contact " + [self jid] + "removed"];
+        // [[TNViewLog sharedLogger] log:@"contact " + [self jid] + "removed"];
     }
 }
 

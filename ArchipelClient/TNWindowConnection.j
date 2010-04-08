@@ -78,8 +78,6 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 
    if (lastBoshService)
        [[self boshService] setStringValue:lastBoshService];
-
-    CPLogConsole("---->" + lastRememberCred);
     
    if (lastRememberCred)
    {
@@ -99,14 +97,12 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 */
 - (IBAction)connect:(id)sender
 {
-    localStorage.setItem("lastboshservice", JSON.stringify([[self boshService] stringValue]));
-    
     var defaults = [TNUserDefaults standardUserDefaults];
     [defaults stringForKey:@"loginService"];
     
     if ([[self credentialRemember] state] == CPOnState)
     {
-        CPLogConsole("Registring creds");
+        CPLog.info("Saving logging information");
         [defaults setObject:[jid stringValue] forKey:@"loginJID"];
         [defaults setObject:[password stringValue] forKey:@"loginPassword"];
         [defaults setObject:[boshService stringValue] forKey:@"loginService"];
@@ -148,8 +144,10 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self JSStrophe]];
     [[self spinning] setHidden:YES];
-
-    [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
+    
+    CPLog.info("XMPP connection sucessfull");
+    
+    // [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
 }
 
 /*! delegate of TNStropheConnection
@@ -162,7 +160,9 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     [[self spinning] setHidden:YES];
     [[self message] setStringValue:@"strophe connection failed"];
 
-    [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
+    CPLog.info("XMPP connection failed");
+    
+    // [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
 }
 
 /*! delegate of TNStropheConnection
@@ -177,6 +177,6 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
     
     [self initCredentials];
     
-    [[TNViewLog sharedLogger] log:@"Strophe is disconnected"];
+    CPLog.info("XMPP connection is now disconnected");
 }
 @end

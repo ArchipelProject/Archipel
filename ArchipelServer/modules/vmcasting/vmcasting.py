@@ -27,6 +27,11 @@ import urlparse
 import os
 from threading import Thread
 
+ARCHIPEL_APPLIANCES_INSTALLED           = 1
+ARCHIPEL_APPLIANCES_INSTALLING          = 2
+ARCHIPEL_APPLIANCES_NOT_INSTALLED       = 3
+ARCHIPEL_APPLIANCES_INSTALLATION_ERROR  = 4
+
 class TNApplianceDownloader(Thread):
     """
     implementation of a downloader. This run in a separate thread.
@@ -142,7 +147,7 @@ class TNHypervisorVMCasting:
         self.cursor = self.database_connection.cursor();
         
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
-        self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status text, source text not null, save_path text)")
+        self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status int, source text not null, save_path text)")
         
         log(self, LOG_LEVEL_INFO, "Database ready.");
     
@@ -155,7 +160,7 @@ class TNHypervisorVMCasting:
           @type path: string
           @param path: the path of the downloaded file
           """
-          self.cursor.execute("UPDATE vmcastappliances SET status='Installed', save_path='%s' WHERE uuid='%s'" % (path, uuid));
+          self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='%s' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLED, path, uuid));
           
           del self.download_queue[uuid];
           self.database_connection.commit()
@@ -218,7 +223,10 @@ class TNHypervisorVMCasting:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-    
+        if iqType == "getinstalledappliances":
+            reply = self.__get_installed_appliance(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     def __get(self, iq):
         """
@@ -311,7 +319,7 @@ class TNHypervisorVMCasting:
         dl_uuid = iq.getTag("query").getAttr("uuid");
         
         try:
-            self.cursor.execute("UPDATE vmcastappliances SET status='Installing...' WHERE uuid='%s'" % dl_uuid);
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid));
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
             self.database_connection.commit();
             
@@ -405,6 +413,37 @@ class TNHypervisorVMCasting:
         
         return reply
     
+    def __get_installed_appliance(self, iq):
+        """
+        get all installed appliances
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("success");
+        uuid = iq.getTag("query").getAttr("uuid");
+        
+        try:
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED, dl_uuid));
+            for values in self.cursor:
+                path = values[0]
+                name = values[1]
+                description = values[2]
+                
+            node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
+            reply.setQueryPayload([node])
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+            
+        return reply
+    
+    
     def __delete_appliance(self, iq):
         """
         delete an appliance according to its uuid
@@ -482,7 +521,7 @@ class TNHypervisorVMCasting:
                 size            = str(item.getTag("enclosure").getAttr("length"));
                 pubdate         = str(item.getTag("pubDate").getCDATA());
                 uuid            = str(item.getTag("uuid").getCDATA());
-                status          = "Not installed";
+                status          = ARCHIPEL_APPLIANCES_NOT_INSTALLED;
                 
                 try:
                     self.cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'));
@@ -491,10 +530,10 @@ class TNHypervisorVMCasting:
                     self.cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid);
                     for values in self.cursor:
                         status = values[0];
-                    if status == "Installing..." and not self.download_queue.has_key(uuid):
-                        status = "Not complete"
+                    if status == ARCHIPEL_APPLIANCES_INSTALLING and not self.download_queue.has_key(uuid):
+                        status = ARCHIPEL_APPLIANCES_INSTALLATION_ERROR
                     
-                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": status})
+                new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": str(status)})
                 content_nodes.append(new_node); 
                 
             

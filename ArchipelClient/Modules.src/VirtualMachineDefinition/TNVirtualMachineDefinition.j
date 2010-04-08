@@ -641,7 +641,7 @@ function generateMacAddr()
 
     [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
 
-    [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
+    // [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
 }
 
 - (void)didDefineXML:(id)aStanza
@@ -651,7 +651,7 @@ function generateMacAddr()
 
     if (responseType == @"success")
     {
-        [[TNViewLog sharedLogger] log:@"definition of virtual machine " + responseFrom + " sucessfuly updated"];
+        // [[TNViewLog sharedLogger] log:@"definition of virtual machine " + responseFrom + " sucessfuly updated"];
     }
     else
     {

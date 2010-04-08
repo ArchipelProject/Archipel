@@ -64,12 +64,12 @@
     if (returnCode == 0)
     {
         [[self roster] answerAuthorizationRequest:[self stanza] answer:YES];
-        [[TNViewLog sharedLogger] log:@"Authorization request accepted from " + [[self stanza] valueForAttribute:@"from"]];
+        // [[TNViewLog sharedLogger] log:@"Authorization request accepted from " + [[self stanza] valueForAttribute:@"from"]];
     }
     else
     {
         [[self roster] answerAuthorizationRequest:[self stanza] answer:NO];
-        [[TNViewLog sharedLogger] log:@"Authorization request rejected from " + [[self stanza] valueForAttribute:@"from"]];
+        // [[TNViewLog sharedLogger] log:@"Authorization request rejected from " + [[self stanza] valueForAttribute:@"from"]];
     }
 
 }

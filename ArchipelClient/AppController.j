@@ -29,7 +29,6 @@
 @import "TNOutlineViewRoster.j";
 @import "TNToolbar.j";
 @import "TNModuleLoader.j";
-@import "TNViewLog.j";
 @import "TNViewProperties.j";
 @import "TNWindowAddContact.j";
 @import "TNWindowAddGroup.j";
@@ -179,16 +178,14 @@ TNArchipelEntityTypeGroup            = @"user";
     [_moduleLoader setMainToolbar:_mainToolbar];
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setModulesPath:@"Modules/"]
-    [_moduleLoader setMainRightView:[self rightView]];
-    
+    [_moduleLoader setMainRightView:[self rightView]];    
     [_moduleLoader load];
-
 
     // notifications
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];    
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -251,28 +248,28 @@ TNArchipelEntityTypeGroup            = @"user";
 
     @param sender the sender of the action (the CPToolbarItem)
 */
-- (IBAction)toolbarItemViewLogClick:(id)sender
-{
-    var bundle = [CPBundle bundleForClass:self]
-
-    if (![[TNViewLog sharedLogger] superview])
-    {
-        var bounds = [[self rightView]  bounds];
-
-        [sender setLabel:@"Go back"];
-        [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
-
-        [[TNViewLog sharedLogger] setFrame:bounds];
-        [[self rightView] addSubview:[TNViewLog sharedLogger]];
-    }
-    else
-    {
-        [sender setLabel:@"View log"];
-        [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
-        [[TNViewLog sharedLogger] removeFromSuperview];
-    }
-
-}
+// - (IBAction)toolbarItemViewLogClick:(id)sender
+// {
+//     var bundle = [CPBundle bundleForClass:self]
+// 
+//     if (![[TNViewLog sharedLogger] superview])
+//     {
+//         var bounds = [[self rightView]  bounds];
+// 
+//         [sender setLabel:@"Go back"];
+//         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
+// 
+//         [[TNViewLog sharedLogger] setFrame:bounds];
+//         [[self rightView] addSubview:[TNViewLog sharedLogger]];
+//     }
+//     else
+//     {
+//         [sender setLabel:@"View log"];
+//         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
+//         [[TNViewLog sharedLogger] removeFromSuperview];
+//     }
+// 
+// }
 
 /*! Delegate of toolbar imutables toolbar items.
     Trigger on clear log item click
@@ -280,10 +277,10 @@ TNArchipelEntityTypeGroup            = @"user";
 
     @param sender the sender of the action (the CPToolbarItem)
 */
-- (IBAction)toolbarItemClearLogClick:(id)sender
-{
-    [[TNViewLog sharedLogger] clearLog];
-}
+// - (IBAction)toolbarItemClearLogClick:(id)sender
+// {
+//     [[TNViewLog sharedLogger] clearLog];
+// }
 
 
 /*! Notification responder of TNStropheConnection
@@ -338,8 +335,11 @@ TNArchipelEntityTypeGroup            = @"user";
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var index    = [_rosterOutlineView selectedRowIndexes];
-    var item     = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    var index       = [_rosterOutlineView selectedRowIndexes];
+    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    
+    //[defaults setObject:index forKey:@"rosterOutlineViewSelectedIndex"];
 
     if ([item type] == "group")
         return // TODO : manage group

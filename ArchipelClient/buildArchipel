@@ -195,7 +195,9 @@ def copy_modules(modules_paths, config, ignorepaths):
         remove_modules([path], config, ignorepaths);
         
         print "# copying module : " + module_name 
+        print "--> " + "cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
+        os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
 
 
 def remove_modules(modules_paths, config, ignorepaths):

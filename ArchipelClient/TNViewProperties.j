@@ -144,7 +144,7 @@
     [[self roster] changeNickname:theName forJID:theJid];
     [[self entryName] setStringValue:theName];
 
-    [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
+    // [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
 }
 
 @end
