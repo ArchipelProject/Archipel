@@ -242,59 +242,6 @@
 
 @end
 
-
-@implementation CPProgressIndicator (CPCodingCompliant)
-//double                      _minValue;
-//double                      _maxValue;
-//
-//double                      _doubleValue;
-//
-//CPControlSize               _controlSize;
-//
-//BOOL                        _isIndeterminate;
-//CPProgressIndicatorStyle    _style;
-//
-//BOOL                        _isAnimating;
-//
-//BOOL                        _isDisplayedWhenStoppedSet;
-//BOOL                        _isDisplayedWhenStopped;
-//
-//CPView                      _barView;
-
-- (id)initWithCoder:(CPCoder)aCoder
-{
-    CPLogConsole("I'm THERE MOTHAFUCKA");
-    
-    self = [super initWithCoder:aCoder];
-    
-    _minValue = 0.0
-    _maxValue = 100.0
-    _doubleValue = 0.0;
-    
-    _barView = [aCoder decodeObjectForKey:@"_barView"];
-    
-    _isAnimating = NO;
-    _isDisplayedWhenStoppedSet = YES;
-    _isDisplayedWhenStopped  = YES;
-    
-    return self;
-}
-
-- (void)encodeWithCoder:(CPCoder)aCoder
-{
-    CPLogConsole("I'm HERE MOTHAFUCKA");
-    
-    [super encodeWithCoder:aCoder];
-    
-    [aCoder encodeBool:_isIndeterminate forKey:@"_isIndeterminate"];
-    [aCoder encodeBool:_isAnimating forKey:@"_isAnimating"];
-    [aCoder encodeBool:_isDisplayedWhenStoppedSet forKey:@"_isDisplayedWhenStoppedSet"];
-    [aCoder encodeBool:_isDisplayedWhenStopped forKey:@"_isDisplayedWhenStopped"];
-    
-    [aCoder encodeObject:_barView forKey:@"_barView"];
-}
-@end
-
 @implementation CPOutlineView (expandAll)
 
 /*! Expand all items in the view

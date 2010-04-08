@@ -45,10 +45,12 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 {
     @outlet CPScrollView    mainScrollView;
     @outlet CPPopUpButton   buttonLogLevel;
+    @outlet CPSearchField   fieldFilter;
     
     CPArray         _logs;
     CPTableView     _tableViewLogging;
     id              _logFunction;
+    CPString        _filter;
 }
 
 /*! get the shared logger
@@ -90,6 +92,11 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (void)awakeFromCib
 {
+    // search field
+    [fieldFilter setSendsSearchStringImmediately:YES];
+    [fieldFilter setTarget:self];
+    [fieldFilter setAction:@selector(filterFieldDidChange:)];
+    
     _logFunction = function (aMessage, aLevel, aTitle) {
         [self logMessage:aMessage title:aTitle level:aLevel];
     };
@@ -150,6 +157,12 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [buttonLogLevel selectItemWithTitle:maxLogLevel];
     
     theSharedLogger = self;
+}
+
+- (IBAction)filterFieldDidChange:(id)sender
+{
+    _filter = [sender stringValue];
+    [_tableViewLogging reloadData];
 }
 
 - (void)save
@@ -213,20 +226,45 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     CPLog.info(@"Log level set to " + logLevel);
 }
 
+
+- (CPArray)getEntriesInArray:(CPArray)anArray matchingFilter:(CPString)aFilter
+{
+    if (!aFilter)
+        return anArray;
+
+    var filteredArray = [CPArray array];
+    
+    for (var i = 0; i < [anArray count]; i++)
+    {
+        var entry = [anArray objectAtIndex:i];
+
+        if ((entry["level"].toUpperCase().indexOf([aFilter uppercaseString]) != -1) 
+            || (entry["message"].toUpperCase().indexOf([aFilter uppercaseString]) != -1)
+            || (entry["date"].toUpperCase().indexOf([aFilter uppercaseString]) != -1))
+            [filteredArray addObject:entry];
+    }
+
+    return filteredArray;
+}
+
 /*! CPTableView delegate
 */
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
-    return [_logs count]
+    var entry = [self getEntriesInArray:_logs matchingFilter:_filter];
+    
+    return [entry count];
 }
 
 /*! CPTableView delegate
 */
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPTableColumn)aCol row:(CPNumber)aRow
 {
+    var entry           = [self getEntriesInArray:_logs matchingFilter:_filter];
     var anIdentifier    = [aCol identifier];
-    var value           = _logs[aRow][anIdentifier];
+    var value           = entry[aRow][anIdentifier];
     
+    console.log("SLIP");
     return value;
 }
 
