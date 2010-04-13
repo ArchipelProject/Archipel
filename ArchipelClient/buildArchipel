@@ -236,7 +236,7 @@ def generate_modules_plist(modules_paths, ignorepaths):
         if path in ignorepaths:
             continue
         module_name         = path.split("/")[-1]
-        module_cell = "            <dict>\n                <key>folder</key>\n                <string>" + module_name + "</string>\n            </dict>"
+        module_cell = "            <dict>\n                <key>folder</key>\n                <string>" + module_name + "</string>\n            </dict>\n"
         plist += module_cell;
     
     plist +="""

@@ -213,7 +213,7 @@
     var alert = [[CPAlert alloc] init];
     [alert setTitle:aTitle];
     [alert setMessageText:aMessage];
-    [alert setWindowStyle:CPHUDBackgroundWindowMask];
+    //[alert setWindowStyle:CPHUDBackgroundWindowMask];
     [alert setAlertStyle:aStyle];
     [alert addButtonWithTitle:@"OK"];
 
@@ -230,7 +230,7 @@
     var alert = [[CPAlert alloc] init];
     [alert setTitle:aTitle];
     [alert setMessageText:aMessage];
-    [alert setWindowStyle:CPHUDBackgroundWindowMask];
+    //[alert setWindowStyle:CPHUDBackgroundWindowMask];
     [alert setAlertStyle:aStyle];
     [alert setDelegate:aDelegate];
 

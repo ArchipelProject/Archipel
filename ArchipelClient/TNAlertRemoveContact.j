@@ -48,7 +48,7 @@
         var msg = @"Are you sure you want to remove " + aJid + " ?";
         [self setTitle:@"Remove entity"];
         [self setMessageText:msg];
-        [self setWindowStyle:CPHUDBackgroundWindowMask];
+        //[self setWindowStyle:CPHUDBackgroundWindowMask];
         [self setAlertStyle:CPInformationalAlertStyle];
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];

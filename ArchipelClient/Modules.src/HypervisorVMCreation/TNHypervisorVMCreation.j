@@ -169,7 +169,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     var uuid            = [CPString UUID];
     
     [creationStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorControlAlloc}];
-    [creationStanza addChildName:@"jid"];
+    [creationStanza addChildName:@"uuid"];
     [creationStanza addTextNode:uuid];
     
     [self sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
@@ -184,12 +184,14 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     if ([aStanza getType] == @"success")
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
-        // [[TNViewLog sharedLogger] log:@"sucessfully create a virtual machine"];
+        CPLog.info(@"sucessfully create a virtual machine");
     }
     else
     {
-        [CPAlert alertWithTitle:@"Error" message:@"Unable to create virtual machine" style:CPCriticalAlertStyle];
-        // [[TNViewLog sharedLogger] log:@"error during creation a virtual machine"];
+        var msg = [[aStanza firstChildWithName:@"error"] text];
+        
+        [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
+        CPLog.error(@"error during creation a virtual machine" + msg);
     }
 }
 
@@ -241,13 +243,15 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     _virtualMachineRegistredForDeletion = Nil;
     if ([aStanza getType] == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"sucessfully deallocating a virtual machine"];
         [self getHypervisorRoster];
+        CPLog.info(@"sucessfully deallocating a virtual machine");
     }
     else
     {
-        [CPAlert alertWithTitle:@"Error" message:@"Unable to free virtual machine" style:CPCriticalAlertStyle];
-        // [[TNViewLog sharedLogger] log:@"error during free a virtual machine"];
+        var msg = [[aStanza firstChildWithName:@"error"] text];
+        
+        [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
+        CPLog.error(@"Unable to free virtual machine : " + msg);
     }
 }
 

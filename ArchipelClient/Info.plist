@@ -12,5 +12,13 @@
     <string>CPApplication</string>
     <key>CPBundleIconFile</key>
     <string>icon.png</string>
+    
+    <key>LPCrashReporterLoggingURL</key>
+    <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
+    
+    <!-- Local storage information. It can be TNUserDefaultStorageTypeHTML5 of TNUserDefaultStorageTypeCookie -->
+    <key>TNUserDefaultStorageType</key>
+    <string>TNUserDefaultStorageTypeHTML5</string>
+    
 </dict>
 </plist>

@@ -18,8 +18,9 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <LPKit/LPKit.j>
+//@import <LPKit/LPKit.j>
 
+@import "LPChartView.j"
 @import "TNDatasourceGraphCPU.j"
 @import "TNDatasourceGraphMemory.j"
 @import "TNDatasourceGraphDisks.j"

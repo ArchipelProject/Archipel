@@ -80,29 +80,41 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     [self rememberLastSelectedTabIndex];
     
     var center = [CPNotificationCenter defaultCenter];
-
+    
     [self _removeAllTabsFromModulesTabView];
-
+    
     [self setEntity:anEntity];
     [self setRoster:aRoster];
     [self setModuleType:aType];
 
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
-
+    
     _previousStatus = [[self entity] status];
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self _populateModulesTabView];
 }
 
-/*! store in HTML5 local storage last selected tab index for entity
+/*! store in TNUserDefaults last selected tab index for entity
 */
 - (void)rememberLastSelectedTabIndex
 {
-    if ([self entity])
+    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0))
     {
-        var currentItem             = [[self mainTabView] selectedTabViewItem];
-        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:currentItem];
+        var currentItem = [[self mainTabView] selectedTabViewItem];
+        
+        [self rememberSelectedIndexOfItem:currentItem];
+    }
+}
+
+/*! set wich item tab to remember
+    @param anItem: the CPTabView item to remember
+*/
+- (void)rememberSelectedIndexOfItem:(id)anItem
+{
+    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0))
+    {
+        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:anItem];
         var defaults                = [TNUserDefaults standardUserDefaults];
         var memid                   = @"selectedTabIndexFor" + [[self entity] jid];
 
@@ -114,16 +126,20 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)recoverFromLastSelectedIndex
 {
-    if ([self entity])
+    var defaults            = [TNUserDefaults standardUserDefaults];
+    var memid               = @"selectedTabIndexFor" + [[self entity] jid];
+    var oldSelectedIndex    = [defaults integerForKey:memid];
+    
+    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0) && ([[[self mainTabView] tabViewItems] count] >= oldSelectedIndex))
     {
-        var defaults            = [TNUserDefaults standardUserDefaults];
-        var memid               = @"selectedTabIndexFor" + [[self entity] jid];
-        var oldSelectedIndex    = [defaults integerForKey:memid];
-        
-        if ((oldSelectedIndex) && (oldSelectedIndex != -1))
+        if  ((oldSelectedIndex) && (oldSelectedIndex != -1))
+        {
             [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+        }
         else
+        {
             [[self mainTabView] selectTabViewItemAtIndex:0];
+        }
     }
 }
 
@@ -170,7 +186,6 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
 
-    [connection cancel]; // recommended by Cappuccino, but generates an Aborted Request error in Firefox.
     [connection start];
 }
 
@@ -183,11 +198,20 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 {
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
-        var module              = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
-        var path                = [self modulesPath] + [module objectForKey:@"folder"];
-        var bundle              = [CPBundle bundleWithPath:path];
-
-        [bundle loadWithDelegate:self];
+        var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
+        var path    = [self modulesPath] + [module objectForKey:@"folder"];
+        
+        CPLog.debug("Folder for module " + [module objectForKey:@"folder"])
+        try
+        {
+            var bundle = [CPBundle bundleWithPath:path];
+            
+            [bundle loadWithDelegate:self];
+        }
+        catch(ex)
+        {
+            CPLog.error(ex);
+        }
     }
 }
 
@@ -208,7 +232,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
             else
                 return CPOrderedSame;
     }]
-
+    
     //@each(var module in [_modulesPList objectForKey:@"Modules"])
     for(var i = 0; i < [sortedValue count]; i++)
     {
@@ -222,7 +246,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
         {
             [self _addItemToModulesTabViewWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
         }
-    }
+    }    
     
     [self recoverFromLastSelectedIndex];
 }
@@ -318,6 +342,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
 {
+    CPLog.debug("Changing module")
     var currentTabItem          = [aTabView selectedTabViewItem];
     var oldModule               = [[currentTabItem view] documentView];
     var newModule               = [[anItem view] documentView];
@@ -335,7 +360,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     var cpdata = [CPData dataWithRawString:data];
 
     _modulesPList = [cpdata plistObject];
-
+    
     [self _loadAllBundles];
 }
 
@@ -344,7 +369,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    CPLog("Bundle loaded : " + aBundle, "info", "ModuleLoader");
+    CPLog.info("Bundle loaded : " + aBundle);
     
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];

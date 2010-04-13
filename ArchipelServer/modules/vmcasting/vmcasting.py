@@ -26,6 +26,7 @@ import urllib
 import urlparse
 import os
 from threading import Thread
+import uuid
 
 ARCHIPEL_APPLIANCES_INSTALLED           = 1
 ARCHIPEL_APPLIANCES_INSTALLING          = 2
@@ -224,9 +225,15 @@ class TNHypervisorVMCasting:
             raise xmpp.protocol.NodeProcessed
         
         if iqType == "getinstalledappliances":
-            reply = self.__get_installed_appliance(iq)
+            reply = self.__get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        # if iqType == "install":
+        #     reply = self.__install(iq)
+        #     conn.send(reply)
+        #     raise xmpp.protocol.NodeProcessed
+    
     
     def __get(self, iq):
         """
@@ -383,6 +390,7 @@ class TNHypervisorVMCasting:
         self.download_queue[dl_uuid].stop();
         return reply
     
+    
     def __get_appliance(self, iq):
         """
         get the info about an appliances according to its uuid
@@ -413,7 +421,8 @@ class TNHypervisorVMCasting:
         
         return reply
     
-    def __get_installed_appliance(self, iq):
+    
+    def __get_installed_appliances(self, iq):
         """
         get all installed appliances
         
@@ -424,16 +433,17 @@ class TNHypervisorVMCasting:
         """
         reply = iq.buildReply("success");
         uuid = iq.getTag("query").getAttr("uuid");
-        
+        nodes = [];
         try:
-            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED, dl_uuid));
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED));
             for values in self.cursor:
                 path = values[0]
                 name = values[1]
-                description = values[2]
-                
-            node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
-            reply.setQueryPayload([node])
+                description = values[2]    
+                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
+                nodes.append(node)
+            
+            reply.setQueryPayload(nodes)
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
@@ -472,6 +482,28 @@ class TNHypervisorVMCasting:
             
         return reply
     
+    
+    # def __install(self, iq):
+    #     """
+    #     instanciate a new virtualmachine from an installed appliance
+    #     @type iq: xmpp.Protocol.Iq
+    #     @param iq: the sender request IQ
+    #     @rtype: xmpp.Protocol.Iq
+    #     @return: a ready-to-send IQ containing the results
+    #     """
+    #     #build a alloc iq for hypervisor entity
+    #     
+    # 
+    #     uuidNode    = xmpp.Node(tag='jid', payload=str(uuid.uuid1()));
+    #     queryNode   = xmpp.Node(tag='query', attrs={'type':'alloc'}, payload=[uuidNode]);
+    #     allocIq     = xmpp.Node(attrs={"type":'archipel:hypervisor:control', "xmlns":"jabber:client", "from": iq.getFrom(), "to": iq.getTo()}, tag="iq", payload=[queryNode]);
+    #     
+    #     print allocIq;
+    #     respIq = self.entity.alloc_xmppvirtualmachine(allocIq);
+    #     
+    #     #print respIq
+    #     
+    #     return iq.buildReply('sucess');
     
     def parseRSS(self):
         """

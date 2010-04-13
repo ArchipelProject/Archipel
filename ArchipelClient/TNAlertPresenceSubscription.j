@@ -48,7 +48,7 @@
         [self setDelegate:self];
         [self setTitle:@"Presence Subscription"];
         [self setMessageText:msg];
-        [self setWindowStyle:CPHUDBackgroundWindowMask];
+        //[self setWindowStyle:CPHUDBackgroundWindowMask];
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];
     }

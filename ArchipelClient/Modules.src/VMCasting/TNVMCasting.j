@@ -27,6 +27,7 @@ TNArchipelTypeHypervisorVMCastingGet                = @"get";
 TNArchipelTypeHypervisorVMCastingRegister           = @"register";
 TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
 TNArchipelTypeHypervisorVMCastingDownload           = @"download";
+TNArchipelTypeHypervisorVMCastingInstall            = @"install";
 
 TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 // TNArchipelPushNotificationSubscriptionAdded = @"downloaded";
@@ -212,20 +213,25 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (IBAction)download:(id)sender
 {
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
     var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
     var item            = [_mainOutlineView itemAtRow:selectedIndex];
     var uuid            = [item UUID];
     
     if ([item status] != TNArchipelApplianceNotInstalled)
     {
-        [CPAlert alertWithTitle:@"Error" message:@"Appliance is already downloaded"];
+        [CPAlert alertWithTitle:@"Error" message:@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module."];
         return;
         
     }
-    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
-    
-    [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
+    else
+    {
+        var stanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+        
+        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
+
+        [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
+        
+    }
 }
 
 - (void)didDownload:(TNStropheStanza)aStanza
@@ -279,8 +285,16 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
 
     var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
-    var currentVMCast   = [[_castsDatasource contents] objectAtIndex:selectedIndex];
-    var uuid             = [currentVMCast UUID];
+    var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
+    
+    if ([currentVMCast class] != TNVMCastSource)
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast, not an appliance"];
+        return;
+    }
+    
+    
+    var uuid            = [currentVMCast UUID];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
     
     

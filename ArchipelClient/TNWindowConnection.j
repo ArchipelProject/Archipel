@@ -96,21 +96,23 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 - (IBAction)connect:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    [defaults stringForKey:@"loginService"];
     
     if ([[self credentialRemember] state] == CPOnState)
     {
-        CPLog.info("Saving logging information");
         [defaults setObject:[jid stringValue] forKey:@"loginJID"];
         [defaults setObject:[password stringValue] forKey:@"loginPassword"];
         [defaults setObject:[boshService stringValue] forKey:@"loginService"];
         [defaults setBool:YES forKey:@"loginRememberCredentials"];
+
+        CPLog.info("logging information saved");
     }
     else
     {
         [defaults setBool:NO forKey:@"loginRememberCredentials"];
     }
-
+    
+    [defaults synchronize];
+    
     [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
     [[self JSStrophe] setDelegate:self];
     [[self JSStrophe] connect];

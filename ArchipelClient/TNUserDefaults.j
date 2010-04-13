@@ -18,9 +18,14 @@
 
 @import <Foundation/Foundation.j>
 
-var standardUserDefaultsInstance;
+var standardUserDefaultsInstance = nil;
 
 TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
+
+
+TNUserDefaultStorageTypeHTML5   = @"TNUserDefaultStorageTypeHTML5";
+TNUserDefaultStorageTypeCookie  = @"TNUserDefaultStorageTypeCookie";
+TNUserDefaultStorageType        = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNUserDefaultStorageType"];
 
 @implementation TNUserDefaults : CPObject
 {
@@ -49,7 +54,6 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 - (TNUserDefaults)initWithUser:(CPString)aUser
 {
     var recovering;
-    
     if (recovering = [self recover])
     {
         self = recovering;
@@ -60,7 +64,6 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
         _user       = aUser;
         
         [_defaults setObject:[CPDictionary dictionary] forKey:_user];
-        [self synchronize];
     }
     
     return self;
@@ -75,10 +78,32 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 {
     var rawDataString;
     var ret;
-    var identifier = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    
+    CPLog.debug("starting recovering from storage");
+    
+    if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
+    {
+        CPLog.debug(@"recovering from HTML5 storage");
+        
+        if (rawDataString = localStorage.getItem(identifier))
+            ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:rawDataString]];
+    }
+    else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
+    {
+        CPLog.debug(@"recovering from cookie storage");
+        
+        if ((rawDataString = [[CPCookie alloc] initWithName:identifier]) && [rawDataString value] != @"")
+        {
+            var decodedString =  [rawDataString value].replace(/__dotcoma__/g, ";").replace(/__dollar__/g, "$");
 
-    if (rawDataString = localStorage.getItem(identifier))
-        ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:rawDataString]];
+            ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:decodedString]];
+        }
+    }
+    else
+    {
+        throw new Error("Unknown storage type: " + _defaultStorageType + " storage type is unknown");
+    }
     
     return ret;
 }
@@ -87,13 +112,51 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 {
     var datas       = [CPKeyedArchiver archivedDataWithRootObject:self];
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-
-    localStorage.setItem(identifier, [datas rawString]);
+    var string      = [datas rawString];
+    
+    CPLog.debug("Starting storage synchronization");
+    
+    if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
+    {
+        localStorage.setItem(identifier, string);
+    }
+    else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
+    {
+        CPLog.debug(@"saving into cookie storage");
+        
+        var cookie      = [[CPCookie alloc] initWithName:identifier];
+        var theString   = string.replace(/;/g, "__dotcoma__").replace(/$/g, "__dollar__");
+        
+        [cookie setValue:theString expires:[CPDate distantFuture] domain:@""];
+    }
+    else
+    {
+        throw new Error("Unknown storage type: " + TNUserDefaultStorageType + " storage type is unknown");
+    }
 }
 
 - (void)clean
 {
-    localStorage.clear();
+    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    
+    if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
+    {
+        CPLog.debug(@"clearing HTML5 storage");
+        
+        localStorage.removeItem(identifier);
+    }
+    else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
+    {
+        CPLog.debug(@"clearing cookie storage");
+        
+        var cookie  = [[CPCookie alloc] initWithName:identifier];
+        
+        [cookie setValue:@"" expires:[CPDate distantFuture] domain:@""];
+    }
+    else
+    {
+        throw new Error("Unknown storage type: " + TNUserDefaultStorageType + " storage type is unknown");
+    }
 }
 
 - (void)registerDefaults:(CPDictionary)someDefaults
@@ -186,6 +249,8 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
     
     [currentDefault setObject:aValue forKey:aKey];
     
+    CPLog.info("setting something " + aKey + " = " + aValue);
+    
     [self synchronize];
 }
 
@@ -218,9 +283,9 @@ TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 
 - (id)initWithCoder:(CPCoder)aCoder
 {
-    _defaults       = [aCoder decodeObjectForKey:@"_defaults"];
-    _appDefaults    = [aCoder decodeObjectForKey:@"_appDefaults"];
-    _user           = [aCoder decodeObjectForKey:@"_user"];
+    _defaults        = [aCoder decodeObjectForKey:@"_defaults"];
+    _appDefaults     = [aCoder decodeObjectForKey:@"_appDefaults"];
+    _user            = [aCoder decodeObjectForKey:@"_user"];
     
     return self;
 }

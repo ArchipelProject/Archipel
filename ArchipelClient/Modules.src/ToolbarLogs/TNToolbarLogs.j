@@ -30,14 +30,6 @@ TNLogLevelTrace = @"trace";
 
 TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelWarn, TNLogLevelError, TNLogLevelFatal];
 
-// var TNLog = function (aMessage, aLevel, aTitle) {
-//     [theSharedLogger logMessage:aMessage title:aTitle level:aLevel];
-// }
-// 
-// var theSharedLogger;
-
-
-
 /*! @ingroup archipelcore
     provides a logging facility. Logs are store using HTML5 storage.
 */
@@ -52,16 +44,6 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     id              _logFunction;
     CPString        _filter;
 }
-
-/*! get the shared logger
-    @return the shared logger
-*/
-
-// + (id)sharedLogger
-// {
-//     return theSharedLogger;
-// }
-
 
 - (void)willLoad
 {
@@ -111,6 +93,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     if (!maxLogLevel)
         maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
     
+    CPLogUnregister(CPLogConsole);
+    
     CPLogRegister(_logFunction, maxLogLevel);
     CPLogRegister(CPLogConsole, maxLogLevel);
     
@@ -129,10 +113,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
     [columnDate setWidth:130];
     [[columnDate headerView] setStringValue:@"Date"];
-    
-    var columnTitle = [[CPTableColumn alloc] initWithIdentifier:@"title"];
-    [[columnTitle headerView] setStringValue:@"Title"];
-    
+
     var levelCellPrototype = [[TNCellLogLevel alloc] init];
     var columnLevel = [[CPTableColumn alloc] initWithIdentifier:@"level"];
     [columnLevel setWidth:50];
@@ -141,7 +122,6 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     
     [_tableViewLogging addTableColumn:columnLevel];
     [_tableViewLogging addTableColumn:columnDate];
-    // [_tableViewLogging addTableColumn:columnTitle];
     [_tableViewLogging addTableColumn:columnMessage];
 
     [_tableViewLogging setDataSource:self];
@@ -168,20 +148,23 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (void)save
 {
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setObject:_logs forKey:@"storedLogs"];    
-    // ?????
+    // [defaults setObject:JSON.stringify(_logs) forKey:@"TNArchipelLogStored"];    
+    // I can't use TNDefault here or Safari hangs. This is weird.
     
-    localStorage.setItem("storedLogs", JSON.stringify(_logs));
-
+    
+    CPLog.debug("Saving logs");
+    localStorage.setItem("TNArchipelLogStored", JSON.stringify(_logs));
 }
 
 - (CPArray)restaure
 {
     // var defaults        = [TNUserDefaults standardUserDefaults];
-    // var recoveredLogs   = [defaults objectForKey:@"storedLogs"];
-    // ?????
+    // var recoveredLogs   = JSON.parse([defaults objectForKey:@"TNArchipelLogStored"]);
+    // I can't use TNDefault here or Safari hangs. This is weird.
     
-    var recoveredLogs = JSON.parse(localStorage.getItem("storedLogs"));
+    
+    CPLog.debug("Recovering logs");
+    var recoveredLogs = JSON.parse(localStorage.getItem("TNArchipelLogStored"));
     
     return (recoveredLogs) ? recoveredLogs : [CPArray array];
 }
@@ -191,7 +174,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (void)logMessage:(CPString)aMessage title:(CPString)aTitle level:(CPString)aLevel
 {
-    var theDate     = [CPDate dateWithFormat:@"Y/m/d H:i:s"];
+    var theDate     = [CPDate dateWithFormat:@"Y-m-d H:i:s"];
     var logEntry    = {"date": theDate, "message": aMessage, "title": aTitle, "level": aLevel};
     
     [_logs insertObject:logEntry atIndex:0];
@@ -219,11 +202,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [defaults setObject:logLevel forKey:@"TNArchipelLogStoredMaximumLevel"];
     
     CPLogUnregister(_logFunction);
-    CPLogUnregister(CPLogConsole);
     
     CPLogRegister(_logFunction, logLevel);
-    CPLogRegister(CPLogConsole, logLevel);
-    CPLog.info(@"Log level set to " + logLevel);
 }
 
 
@@ -264,7 +244,6 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     var anIdentifier    = [aCol identifier];
     var value           = entry[aRow][anIdentifier];
     
-    console.log("SLIP");
     return value;
 }
 

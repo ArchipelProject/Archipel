@@ -137,17 +137,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.database = sqlite3.connect(self.database_file)
         
         log(self, LOG_LEVEL_INFO, "populating database if not exists")
-        try:
-            self.database.execute("create table virtualmachines (jid text, password text, creation_date date, comment text)")
-            log(self, LOG_LEVEL_INFO, "database schema created.")
-        except Exception as ex:
-            log(self, LOG_LEVEL_INFO, "tables seems to be already here. recovering.")
-            c = self.database.cursor();
-            c.execute("select * from virtualmachines")
-            for vm in c:
-                jid, password, date, comment = vm
-                vm = self.__create_threaded_vm(jid, password)
-                self.virtualmachines[jid.split("@")[0]] = vm
+        
+        self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text)")
+            
+        c = self.database.cursor();
+        c.execute("select * from virtualmachines")
+        for vm in c:
+            jid, password, date, comment = vm
+            vm = self.__create_threaded_vm(jid, password)
+            self.virtualmachines[jid.split("@")[0]] = vm
     
         
     def __create_threaded_vm(self, jid, password):
@@ -180,7 +178,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
-    def __alloc_xmppvirtualmachine(self, iq):
+    def alloc_xmppvirtualmachine(self, iq):
         """
         this method creates a threaded L{TNArchipelVirtualMachine} with UUID given 
         as paylood in IQ and register the hypervisor and the iq sender in 
@@ -190,50 +188,48 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = None
-        
-        query = iq.getQueryChildren();
-        
-        domain_uuid = None;
-        nickname = None;
-        for node in query:
-            if node.getName() == "jid":
-                domain_uuid = query[0].getCDATA();
-            if node.getName() == "nickname":
-                nickname = query[1].getCDATA();
-        
-        
-        if not domain_uuid:
-            log(self, LOG_LEVEL_ERROR, "IQ malformed missing UUID")
-            reply = iq.buildReply('error')
-            reply.setQueryPayload(["missing UUID"])
-            return reply
-            
-        vm_password = "password" #temp method
-        vm_jid = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
-        
-        log(self, LOG_LEVEL_INFO, "adding the xmpp vm ({0}) to my roster".format(vm_jid))
-        self.add_jid(vm_jid, [GROUP_VM])
-        
-        vm = self.__create_threaded_vm(vm_jid, vm_password)
-        log(self, LOG_LEVEL_INFO, "XMPP VM thread started")
-        
-        log(self, LOG_LEVEL_INFO, "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
-        vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
-        
-        log(self, LOG_LEVEL_INFO, "registering the new VM in hypervisor's memory")
-        self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid,vm_password, datetime.datetime.now(), 'no comment'))
-        self.database.commit()
-        self.virtualmachines[domain_uuid] = vm
-        
         reply = iq.buildReply('success')
-        payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
-        reply.setQueryPayload([payload])
-        log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
+        
+        try:
+            uuidnode    = iq.getTag("query").getTag("uuid");
+            
+            if not uuidnode:
+                raise Exception('IncorrectUUID', "Missing or malformed UUID");
+            
+            domain_uuid = uuidnode.getCDATA();
+            vm_password = "password" #temp method
+            vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
+            
+            log(self, LOG_LEVEL_INFO, "adding the xmpp vm ({0}) to my roster".format(vm_jid))
+            self.add_jid(vm_jid, [GROUP_VM])
+            
+            vm = self.__create_threaded_vm(vm_jid, vm_password)
+            log(self, LOG_LEVEL_INFO, "XMPP VM thread started")
+            
+            log(self, LOG_LEVEL_INFO, "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
+            vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
+            
+            log(self, LOG_LEVEL_INFO, "registering the new VM in hypervisor's memory")
+            self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid,vm_password, datetime.datetime.now(), 'no comment'))
+            self.database.commit()
+            self.virtualmachines[domain_uuid] = vm
+            
+            
+            payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
+            reply.setQueryPayload([payload])
+            log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
+            
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+            reply = iq.buildReply('error')
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
+            
         return reply
     
-             
-    def __free_xmppvirtualmachine(self, iq):
+    
+    def free_xmppvirtualmachine(self, iq):
         """
         this method destroy a threaded L{TNArchipelVirtualMachine} with UUID given 
         as paylood in IQ and remove it from the hypervisor roster
@@ -243,47 +239,47 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = None
-        
-        vm_jid = str(iq.getQueryPayload()[0])
-        domain_uuid = vm_jid.split("@")[0];
+        reply = iq.buildReply('success')
         
         try:
-            vm = self.virtualmachines[domain_uuid];
-        except KeyError as ex:
-            log(self, LOG_LEVEL_ERROR, "Key Error exception raised no key {0}".format(ex))
+            vm_jid      = str(iq.getQueryPayload()[0])
+            domain_uuid = vm_jid.split("@")[0];
+            vm          = self.virtualmachines[domain_uuid];
+            
+            if (vm.get_instance().domain):
+                if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
+                    vm.get_instance().domain.destroy()
+                vm.get_instance().domain.undefine()
+            
+            log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
+            self.remove_jid(vm_jid)
+            
+            log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
+            vm.get_instance().remove_own_folder();
+            
+            log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
+            self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))
+            self.database.commit()
+            
+            del self.virtualmachines[domain_uuid]
+            
+            log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
+            vm.get_instance()._inband_unregistration()
+            
+            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
+            log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
+            
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
             reply = iq.buildReply('error')
-            reply.setQueryPayload(["Key {0} not found".format(ex)])
-            return reply
+            payload = xmpp.Node("error")
+            payload.addData(str(ex))
+            reply.setQueryPayload([payload])
         
-        if (vm.get_instance().domain):
-            if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
-                vm.get_instance().domain.destroy()
-            vm.get_instance().domain.undefine()
-        
-        log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
-        self.remove_jid(vm_jid)
-        
-        log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
-        vm.get_instance().remove_own_folder();
-        
-        log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
-        self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))
-        self.database.commit()
-        
-        del self.virtualmachines[domain_uuid]
-        
-        log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
-        vm.get_instance()._inband_unregistration()
-        
-        reply = iq.buildReply('success')
-        reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
-        
-        log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
         return reply
     
    
-    def __send_roster_virtualmachine(self, iq):
+    def send_roster_virtualmachine(self, iq):
         """
         send the hypervisor roster content
         
@@ -325,17 +321,17 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         iqType = iq.getTag("query").getAttr("type");
         
         if iqType == "alloc":
-            reply = self.__alloc_xmppvirtualmachine(iq)
+            reply = self.alloc_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if iqType == "free":
-            reply = self.__free_xmppvirtualmachine(iq)
+            reply = self.free_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if iqType == "rostervm":
-            reply = self.__send_roster_virtualmachine(iq)
+            reply = self.send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

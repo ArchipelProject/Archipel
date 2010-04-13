@@ -19,8 +19,8 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <LPKit/LPKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
+//@import <LPKit/LPCrashReporter.j>
 
 @import "TNCategoriesAndGlobalSubclasses.j";
 @import "TNAlertPresenceSubscription.j";
@@ -60,7 +60,7 @@ TNArchipelEntityTypeUser            = @"user";
     @group TNArchipelEntityType
     This represent a group XMPP entity
 */
-TNArchipelEntityTypeGroup            = @"user";
+TNArchipelEntityTypeGroup            = @"group";
 
 
 /*! @ingroup archipelcore
@@ -97,6 +97,8 @@ TNArchipelEntityTypeGroup            = @"user";
 */
 - (void)awakeFromCib
 {
+    CPLogRegister(CPLogConsole);
+    
     var defaults = [TNUserDefaults standardUserDefaults];
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
@@ -262,45 +264,10 @@ TNArchipelEntityTypeGroup            = @"user";
     [[self addGroupWindow] orderFront:nil];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on view log item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-// - (IBAction)toolbarItemViewLogClick:(id)sender
-// {
-//     var bundle = [CPBundle bundleForClass:self]
-// 
-//     if (![[TNViewLog sharedLogger] superview])
-//     {
-//         var bounds = [[self rightView]  bounds];
-// 
-//         [sender setLabel:@"Go back"];
-//         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"logo_archipel.png"] size:CPSizeMake(32,32)]];
-// 
-//         [[TNViewLog sharedLogger] setFrame:bounds];
-//         [[self rightView] addSubview:[TNViewLog sharedLogger]];
-//     }
-//     else
-//     {
-//         [sender setLabel:@"View log"];
-//         [sender setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"log.png"] size:CPSizeMake(32,32)]];
-//         [[TNViewLog sharedLogger] removeFromSuperview];
-//     }
-// 
-// }
-
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on clear log item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-// - (IBAction)toolbarItemClearLogClick:(id)sender
-// {
-//     [[TNViewLog sharedLogger] clearLog];
-// }
+- (IBAction)toolbarItemDeleteGroupClick:(id)sender
+{
+    [CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
+}
 
 
 /*! Notification responder of TNStropheConnection
@@ -355,24 +322,31 @@ TNArchipelEntityTypeGroup            = @"user";
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var index       = [_rosterOutlineView selectedRowIndexes];
-    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    
-    //[defaults setObject:index forKey:@"rosterOutlineViewSelectedIndex"];
+    try
+    {
+        var index       = [_rosterOutlineView selectedRowIndexes];
+        var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
+        var defaults    = [TNUserDefaults standardUserDefaults];
 
-    if ([item type] == "group")
-        return // TODO : manage group
+        if ([item type] == "group")
+            return; //[CPException raise:@"NotImplemented" reason:@"Group module are not implemented"]
 
-    var vCard       = [item vCard];
-    
-    var entityType  = [_moduleLoader analyseVCard:vCard];
+        var vCard       = [item vCard];
+        var entityType  = [_moduleLoader analyseVCard:vCard];
 
-    CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-    [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
-
-    [[self propertiesView] setContact:item];
-    [[self propertiesView] reload];
+        CPLog.info(@"setting the entity as " + item + " of type " + entityType);
+        [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+        
+    }
+    catch(ex)
+    {
+        CPLog.error(ex);
+    }
+    finally
+    {
+        [[self propertiesView] setContact:item];
+        [[self propertiesView] reload];
+    }
 }
 
 

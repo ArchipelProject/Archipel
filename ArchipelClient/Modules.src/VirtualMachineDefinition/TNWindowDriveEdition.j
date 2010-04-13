@@ -34,6 +34,7 @@ TNXMLDescDiskTargetSda  = @"sda";
 TNXMLDescDiskTargetSdb  = @"sdb";
 TNXMLDescDiskTargetSdc  = @"sdc";
 TNXMLDescDiskTargetSdd  = @"sdd";
+
 TNXMLDescDiskTargets        = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
                                 TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd,
                                 TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
@@ -262,7 +263,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         for (var i = 0; i < [[[self buttonSource] itemArray] count]; i++)
         {
             var item  = [[[self buttonSource] itemArray] objectAtIndex:i];
-            console.log([item stringValue] + " == " + [drive source]);
+            
             if ([item stringValue] == [drive source])
                 [[self buttonSource] selectItem:item];
         }
