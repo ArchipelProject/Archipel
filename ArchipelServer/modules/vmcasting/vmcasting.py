@@ -248,11 +248,7 @@ class TNHypervisorVMCasting:
             nodes = self.parseRSS()
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         return reply
     
         
@@ -270,17 +266,12 @@ class TNHypervisorVMCasting:
         
         try:
             if not url or url=="":
-                raise Exception("Emtpy values", "Stanza must have url")
+                raise Exception("IncorrectStanza", "Stanza must have url")
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url);
             self.database_connection.commit();
             self.entity.push_change("vmcasting", "register")
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-            
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -303,12 +294,7 @@ class TNHypervisorVMCasting:
             self.database_connection.commit()
             self.entity.push_change("vmcasting", "unregister")
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-        
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -339,12 +325,7 @@ class TNHypervisorVMCasting:
                 self.download_queue[uuid] = downloader;
         
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-            
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -367,12 +348,7 @@ class TNHypervisorVMCasting:
             
             reply.setQueryPayload(nodes);
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-        
+            reply = build_error_iq(self, ex, iq)        
         return reply;
     
     
@@ -413,12 +389,7 @@ class TNHypervisorVMCasting:
             node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
             reply.setQueryPayload([node])
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-        
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -445,12 +416,7 @@ class TNHypervisorVMCasting:
             
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-            
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -474,12 +440,7 @@ class TNHypervisorVMCasting:
             os.remove(path);
             
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-            
+            reply = build_error_iq(self, ex, iq)            
         return reply
     
     

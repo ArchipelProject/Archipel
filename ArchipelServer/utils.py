@@ -5,6 +5,7 @@ functionalities or others common stuffs
 import sys
 import datetime
 import ConfigParser
+import xmpp
 
 LOG_LEVEL_DEBUG = 0
 """This level of log is the most verbose"""
@@ -143,5 +144,12 @@ def log(logger, level, message) :
         f.write(entry + "\n")
 
 
+def build_error_iq(originclass, ex, iq):
+    log(originclass, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+    reply = iq.buildReply('error')
+    payload = xmpp.Node("error")
+    payload.addData(str(ex))
+    reply.setQueryPayload([payload])
+    return reply
             
         

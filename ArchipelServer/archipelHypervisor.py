@@ -220,11 +220,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
             
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
             
         return reply
     
@@ -270,11 +266,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
             
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error")
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         
         return reply
     
@@ -291,11 +283,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         # TODO : add some ACL here later
         reply = iq.buildReply('success')
         nodes = []
-        for item in self.roster.getItems():
-            n = xmpp.Node("item")
-            n.addData(item)
-            nodes.append(n)
-        reply.setQueryPayload(nodes)
+        try:
+            for item in self.roster.getItems():
+                n = xmpp.Node("item")
+                n.addData(item)
+                nodes.append(n)
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+            
         return reply
     
     

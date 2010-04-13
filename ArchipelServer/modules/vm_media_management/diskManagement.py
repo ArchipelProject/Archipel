@@ -87,17 +87,13 @@ class TNMediaManagement:
         
             ret = os.system("qemu-img create -f qcow2 " + self.entity.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
             if not ret == 0:
-                raise Exception("Unable to create drive. Error code is " + ret);
+                raise Exception("DriveError", "Unable to create drive. Error code is " + ret);
          
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk created")
             self.push_change("disk", "created")
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         return reply
 
 
@@ -121,11 +117,7 @@ class TNMediaManagement:
             log(self, LOG_LEVEL_INFO, " disk deleted")
             self.push_change("disk", "deleted")
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         return reply
 
 
@@ -159,11 +151,7 @@ class TNMediaManagement:
             log(self, LOG_LEVEL_INFO, "info about disks sent")
         
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         return reply
 
 
@@ -197,53 +185,45 @@ class TNMediaManagement:
             log(self, LOG_LEVEL_INFO, "info about iso sent")
         
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+            reply = build_error_iq(self, ex, iq)
         return reply    
 
 
-    def __networkstats(self, iq):
-        """
-        get statistics about network uses of the VM.
-    
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-    
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready to send IQ containing the result of the action
-        """
-        try:
-            target_nodes = iq.getQueryPayload();
-            nodes = [];
-        
-            for target in target_nodes:
-                stats = self.domain.interfaceStats(target.getData());
-                node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
-                    "rx_bytes":     stats[0],
-                    "rx_packets":   stats[1],
-                    "rx_errs":      stats[2],
-                    "rx_drops":     stats[3],
-                    "tx_bytes":     stats[4],
-                    "tx_packets":   stats[5],
-                    "tx_errs":      stats[6],
-                    "tx_drops":     stats[7]
-                })
-                nodes.append(node);
-        
-            reply = iq.buildReply('success')
-            reply.setQueryPayload(nodes);
-            log(self, LOG_LEVEL_INFO, "info about network sent");
-        
-        except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-        return reply
+    # def __networkstats(self, iq):
+    #     """
+    #     get statistics about network uses of the VM.
+    # 
+    #     @type iq: xmpp.Protocol.Iq
+    #     @param iq: the received IQ
+    # 
+    #     @rtype: xmpp.Protocol.Iq
+    #     @return: a ready to send IQ containing the result of the action
+    #     """
+    #     try:
+    #         target_nodes = iq.getQueryPayload();
+    #         nodes = [];
+    #     
+    #         for target in target_nodes:
+    #             stats = self.domain.interfaceStats(target.getData());
+    #             node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
+    #                 "rx_bytes":     stats[0],
+    #                 "rx_packets":   stats[1],
+    #                 "rx_errs":      stats[2],
+    #                 "rx_drops":     stats[3],
+    #                 "tx_bytes":     stats[4],
+    #                 "tx_packets":   stats[5],
+    #                 "tx_errs":      stats[6],
+    #                 "tx_drops":     stats[7]
+    #             })
+    #             nodes.append(node);
+    #     
+    #         reply = iq.buildReply('success')
+    #         reply.setQueryPayload(nodes);
+    #         log(self, LOG_LEVEL_INFO, "info about network sent");
+    #     
+    #     except Exception as ex:
+    #         reply = build_error_iq(self, ex, iq)
+    #     return reply
 
 
 

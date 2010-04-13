@@ -92,20 +92,15 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = None
         try:
             network_node = iq.getTag("query").getTag("network");
-        
+            
             reply = iq.buildReply('success')
             self.libvirt_connection.networkDefineXML(str(network_node))
             log(self, LOG_LEVEL_INFO, "virtual network XML is defined")
             self.entity.push_change("network", "defined")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 
@@ -127,12 +122,8 @@ class TNHypervisorNetworks:
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network XML is undefined")
             self.entity.push_change("network", "undefined")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 
@@ -154,12 +145,8 @@ class TNHypervisorNetworks:
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network created")
             self.entity.push_change("network", "created")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 
@@ -181,12 +168,8 @@ class TNHypervisorNetworks:
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network destroyed")
             self.entity.push_change("network", "destroyed")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 

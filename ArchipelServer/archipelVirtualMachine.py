@@ -146,7 +146,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("dnd", "shutdown");
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-        except:
+        except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "unexpected exception")
             sys.exit(0)
     
@@ -170,12 +170,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "virtual machine created")
             self.change_presence("", "Running");
             self.push_change("virtualmachine", "created")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -196,12 +192,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
             self.change_presence("xa", "shutdown");
             self.push_change("virtualmachine", "shutdowned")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -221,12 +213,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine rebooted")
             self.push_change("virtualmachine", "rebooted")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -247,12 +235,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
             self.change_presence("away", "paused");
             self.push_change("virtualmachine", "suspended")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -273,12 +257,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
             self.change_presence("", "running");
             self.push_change("virtualmachine", "resumed")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -301,18 +281,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 reply.setQueryPayload([response])
                 log(self, LOG_LEVEL_DEBUG, "virtual machine info sent")
             else:
-                reply = iq.buildReply('error')
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
-                
+                reply = iq.buildReply('error')  
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            reply.setQueryPayload([str(ex)])
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -334,16 +305,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics");
             payload = xmpp.Node("vncdisplay", attrs={"port": str(graphicnode.getAttr("port")), "host": self.ipaddr})
             reply.setQueryPayload([payload])
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            reply.setQueryPayload([str(ex)])
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -363,16 +326,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             xmldesc = self.domain.XMLDesc(0);
             xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
             reply.setQueryPayload([xmldescnode])
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            reply.setQueryPayload([str(ex)])
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -396,28 +351,15 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
            domain_node = xmpp.simplexml.XML2Node(str(iq.getQueryPayload()[0]));
            domain_uuid = domain_node.getTag("uuid").getData()
            if domain_uuid != self.jid.getNode():
-               log(self, LOG_LEVEL_ERROR, "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
-               reply = iq.buildReply('error')
-               return reply
-       except Exception as ex:
-           log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-           reply = iq.buildReply('error')
-           reply.setQueryPayload([str(ex)])
-           return reply 
-           
-       try:
+               raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
            reply = iq.buildReply('success')
            self.libvirt_connection.defineXML(str(iq.getQueryPayload()[0]))
            log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
            if not self.domain:
                self.connect_libvirt()
            self.push_change("virtualmachine", "defined")
-       except libvirt.libvirtError as ex:
-           log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-           reply = iq.buildReply('error')
-           payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-           payload.addData(str(ex))
-           reply.setQueryPayload([payload])
+       except Exception as ex:
+           reply = build_error_iq(self, ex, iq)
        return reply
     
     
@@ -438,12 +380,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.undefine()
             log(self, LOG_LEVEL_INFO, "virtual machine is undefined")
             self.push_change("virtualmachine", "undefined")
-        except libvirt.libvirtError as ex:
-            log(self, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
-            reply = iq.buildReply('error')
-            payload = xmpp.Node("error", attrs={"code": str(ex.get_error_code())})
-            payload.addData(str(ex))
-            reply.setQueryPayload([payload])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     

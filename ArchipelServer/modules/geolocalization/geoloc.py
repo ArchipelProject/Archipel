@@ -35,7 +35,10 @@ class TNHypervisorGeolocalization:
         
     def __module__get_geolocalization(self, iq):
         reply = iq.buildReply('success')
-        reply.setQueryPayload([self.localization_information]);
+        try:
+            reply.setQueryPayload([self.localization_information]);
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply;
     
 
