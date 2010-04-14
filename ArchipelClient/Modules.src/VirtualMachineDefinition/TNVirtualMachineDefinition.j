@@ -32,7 +32,7 @@ TNArchipelTypeVirtualMachineControlInfo            = @"info";
 TNArchipelTypeVirtualMachineDefinitionDefine       = @"define";
 TNArchipelTypeVirtualMachineDefinitionUndefine     = @"undefine";
 
-TNArchipelPushNotificationDefintition      = @"archipel:push:virtualmachine:definition";
+TNArchipelPushNotificationDefinitition      = @"archipel:push:virtualmachine:definition";
 
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
@@ -261,7 +261,7 @@ function generateMacAddr()
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     
-    [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefintition];
+    [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 }
 
 - (void)willShow

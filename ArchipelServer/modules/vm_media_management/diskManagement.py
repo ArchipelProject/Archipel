@@ -136,7 +136,8 @@ class TNMediaManagement:
             nodes = []
         
             for disk in disks:
-                if commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower().find("format: qcow") > -1:
+                file_cmd_output = commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower();
+                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector;") > -1):
                     diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n");
                     node = xmpp.Node(tag="disk", attrs={ "name": disk,
                         "path": self.entity.vm_own_folder + "/" + disk,

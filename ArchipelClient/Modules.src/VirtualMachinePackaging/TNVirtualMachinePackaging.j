@@ -22,10 +22,13 @@
 
 @import "TNInstalledAppliancesDatasource.j";
 
-TNArchipelTypeHypervisorVMCasting                           = @"archipel:hypervisor:vmcasting"
-TNArchipelTypeHypervisorVMCastingGetInstalledAppliances  = @"getinstalledappliances";
-TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
+TNArchipelTypeVirtualMachineVMCasting                       = @"archipel:virtualmachine:vmcasting";
 
+TNArchipelTypeVirtualMachineVMCastingInstalledAppliances    = @"getinstalledappliances";
+TNArchipelTypeVirtualMachineVMCastingInstall                = @"install";
+
+TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcasting";
+    
 /*! @defgroup  virtualmachinepackaging Module VirtualMachinePackaging
     @desc Allow to instanciate virtual machine from installed appliances
 */
@@ -61,19 +64,22 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
     [_tableAppliances setAllowsColumnReordering:YES];
     [_tableAppliances setAllowsColumnResizing:YES];
     [_tableAppliances setAllowsEmptySelection:YES];
-
+    [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
+    [columnName setWidth:200]
     [[columnName headerView] setStringValue:@"Name"];
 
-    var columnPath = [[CPTableColumn alloc] initWithIdentifier:@"path"];
-    [[columnPath headerView] setStringValue:@"Path"];
-
     var columnComment = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
+    [columnComment setWidth:250];
     [[columnComment headerView] setStringValue:@"Comment"];
+    
+    var columnUUID = [[CPTableColumn alloc] initWithIdentifier:@"UUID"];
+    [[columnUUID headerView] setStringValue:@"UUID"];
 
     [_tableAppliances addTableColumn:columnName];
     [_tableAppliances addTableColumn:columnComment];
-    [_tableAppliances addTableColumn:columnPath];
+    [_tableAppliances addTableColumn:columnUUID];
 
 
     [_tableAppliances setDataSource:_appliancesDatasource];
@@ -85,6 +91,8 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    
+    [self registerSelector:@selector(didDownloadPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 }
 
 - (void)willUnload
@@ -115,11 +123,19 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
     }
 }
 
+- (BOOL)didDownloadPushReceived:(TNStropheStanza)aStanza
+{
+    CPLog.info("receiving push notification TNArchipelPushNotificationVMCast");
+    [self getInstalledAppliances];
+    
+    return YES;
+}
+
 - (void)getInstalledAppliances
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
 
-    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingGetInstalledAppliances}];
+    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingInstalledAppliances}];
 
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
 }
@@ -161,9 +177,9 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
 
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
     var appliance       = [[_appliancesDatasource content] objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
 
-    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingInstall}];
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingInstall}];
     [stanza addChildName:@"uuid"];
     [stanza addTextNode:[appliance UUID]];
 
@@ -181,6 +197,7 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 @end
 
 

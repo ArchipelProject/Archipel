@@ -27,6 +27,7 @@ TNArchipelTypeHypervisorVMCastingGet                = @"get";
 TNArchipelTypeHypervisorVMCastingRegister           = @"register";
 TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
 TNArchipelTypeHypervisorVMCastingDownload           = @"download";
+TNArchipelTypeHypervisorVMCastingDeleteAppliance    = @"deleteappliance";
 
 TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 // TNArchipelPushNotificationSubscriptionAdded = @"downloaded";
@@ -83,6 +84,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [columnSize setResizingMask:CPTableColumnAutoresizingMask];
     
     var columnStatus        = [[CPTableColumn alloc] initWithIdentifier:@"status"];
+    [columnStatus setWidth:120];
     var dataViewPrototype   = [[TNCellApplianceStatus alloc] init];
       
     [[columnStatus headerView] setStringValue:@"Status"];
@@ -147,7 +149,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (BOOL)didVMCastingPushReceived:(TNStropheStanza)aStanza
 {
-    CPLogConsole("PUSH RECIEVED")
+    CPLog.info(@"Receiving push notification of type TNArchipelPushNotificationVMCasting");
     [self getVMCasts];
     
     return YES;
@@ -205,8 +207,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
     else if ([aStanza getType] == @"error")
     {
-        var msg = [[aStanza firstChildWithName:@"error"] text];
-        [CPAlert alertWithTitle:@"Error" message:msg];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -216,7 +217,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var item            = [_mainOutlineView itemAtRow:selectedIndex];
     var uuid            = [item UUID];
     
-    if ([item status] != TNArchipelApplianceNotInstalled)
+    if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
     {
         [CPAlert alertWithTitle:@"Error" message:@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module."];
         return;
@@ -280,25 +281,55 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     if (([_mainOutlineView numberOfRows] == 0) || ([_mainOutlineView numberOfSelectedRows] <= 0))
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast"];
+        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast or an Appliance"];
         return;
     }
-
+    
     var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
     var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
     
-    if ([currentVMCast class] != TNVMCastSource)
+    if ([currentVMCast class] == TNVMCast)
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast, not an appliance"];
-        return;
+        var msg = @"Are you sure you want to remove this appliance? It will be removed from the hypervisor. This doesn't affect virtual machine"
+            + @" that have been instanciated from this template.";
+        [CPAlert alertWithTitle:@"Appliance deletion" message:msg style:CPInformationalAlertStyle delegate:self buttons:[@"OK", @"Cancel"]];
     }
-    
-    var uuid            = [currentVMCast UUID];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
-        
-    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
+    else if ([currentVMCast class] == TNVMCast)
+    {
+        var uuid            = [currentVMCast UUID];
+        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
+        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
+
+        [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
+    }
+}
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
+{
+    if (returnCode == 0)
+    {
+        var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
+        var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
+        var uuid            = [currentVMCast UUID];
+        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+
+        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDeleteAppliance, "uuid": uuid}];
+
+        [self sendStanza:stanza andRegisterSelector:@selector(didDeleteAppliance:)]
+    }
+}
+
+- (void)didDeleteAppliance:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        [self getVMCasts];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (void)didUnregistred:(TNStropheStanza)aStanza
@@ -308,6 +339,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 
 - (IBAction)clickOnFilterCheckBox:(id)sender
 {

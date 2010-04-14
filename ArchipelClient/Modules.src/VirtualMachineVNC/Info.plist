@@ -19,7 +19,7 @@
         <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
-		<integer>3</integer>
+		<integer>4</integer>
         <key>CibName</key>
         <string>VirtualMachineVNC</string>
         <key>SupportedEntityTypes</key>

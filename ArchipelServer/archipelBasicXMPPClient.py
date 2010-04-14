@@ -298,12 +298,11 @@ class TNArchipelBasicXMPPClient(object):
     
     def push_change(self, namespace, change):
         ns = "archipel:push:" + namespace;
+        self.roster = self.xmppclient.getRoster();
         for item in self.roster.getItems():
-            push = xmpp.Iq(typ="archipel:push", to=item + "/controller");
-            push.setQueryNS(ns);
-            push.getTag("query").setAttr("change", change);
-            log(self, LOG_LEVEL_DEBUG, "pushing " + ns + "/ " + change + " to item " + str(item))
-            self.xmppclient.send(push)
+            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change});
+            log(self, LOG_LEVEL_DEBUG, "pushing " + ns + " / " + change + " to item " + str(item))
+            self.xmppclient.send(push_message)
     
     
     def add_jid(self, jid, groups=[]):

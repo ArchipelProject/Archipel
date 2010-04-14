@@ -26,7 +26,7 @@ TNArchipelTypeHypervisorControlAlloc        = @"alloc";
 TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
-TNArchipelPushNotificationSubscription      = @"archipel:push:subscription";
+TNArchipelPushNotificationVirtualMachine    = @"archipel:push:subcription";
 TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 @implementation TNHypervisorVMCreation : TNModule 
@@ -88,7 +88,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 {
     [super willLoad];
     
-    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:TNArchipelPushNotificationSubscription];
+    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:TNArchipelPushNotificationVirtualMachine];
 }
 
 - (void)willShow
@@ -107,8 +107,8 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
 {
-    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == TNArchipelPushNotificationSubscriptionAdded)
-        [self getHypervisorRoster];
+    CPLog.info("Receiving push notification of type TNArchipelPushNotificationVirtualMachine");
+    [self getHypervisorRoster];
     
     return YES;
 }

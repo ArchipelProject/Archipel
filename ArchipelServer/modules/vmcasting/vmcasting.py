@@ -429,15 +429,20 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
-        uuid = iq.getTag("query").getAttr("uuid");
         
         try:
-            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+            reply = iq.buildReply("success");
+            uuid = iq.getTag("query").getAttr("uuid");
+            
+            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid);
             for values in self.cursor:
                 path = values[0]
                 
             os.remove(path);
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid));
+            self.database_connection.commit();
+            
+            self.entity.push_change("vmcasting", "appliancedeleted");
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)            

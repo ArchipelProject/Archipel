@@ -118,6 +118,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
+        self.push_change("virtualmachine", "initialized");
+        
         self.domain = None;
         self.libvirt_connection = None;
         

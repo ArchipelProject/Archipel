@@ -213,7 +213,6 @@ VIR_DOMAIN_CRASHED  = 6;
       {
           [[self maskingView] setFrame:[self bounds]];
           [self addSubview:[self maskingView]];
-          [self handleIqErrorFromStanza:aStanza];
       }
 }
 

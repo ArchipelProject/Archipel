@@ -19,7 +19,7 @@
         <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
-		<integer>2</integer>
+		<integer>3</integer>
 		<key>SupportedEntityTypes</key>
 		<array>
 		    <string>virtualmachine</string>

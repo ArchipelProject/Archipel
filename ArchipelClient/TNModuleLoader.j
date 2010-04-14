@@ -342,7 +342,6 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
 {
-    CPLog.debug("Changing module")
     var currentTabItem          = [aTabView selectedTabViewItem];
     var oldModule               = [[currentTabItem view] documentView];
     var newModule               = [[anItem view] documentView];

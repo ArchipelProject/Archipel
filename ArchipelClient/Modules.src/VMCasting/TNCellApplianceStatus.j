@@ -33,10 +33,13 @@
     if (self = [super init])
     {
         _imageStatus = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
-        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 170, 100)];
+        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 200, 100)];
         
         [self addSubview:_imageStatus];
         [self addSubview:_fieldStatus];
+        
+        [_fieldStatus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [_fieldStatus setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
         var bundle          = [CPBundle bundleForClass:[self class]];
         _iconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"]];
@@ -65,6 +68,23 @@
         [_imageStatus setImage:nil];
 }
 
+/*! implement theming in order to allow change color of selected item
+*/
+- (void)setThemeState:(id)aState
+{
+    [super setThemeState:aState];
+    [_fieldStatus setThemeState:aState];
+    [_fieldStatus sizeToFit];
+}
+
+/*! implement theming in order to allow change color of selected item
+*/
+- (void)unsetThemeState:(id)aState
+{
+    [super unsetThemeState:aState];
+    [_fieldStatus unsetThemeState:aState];
+    [_fieldStatus sizeToFit];
+}
 
 /*! CPCoder compliance
 */
