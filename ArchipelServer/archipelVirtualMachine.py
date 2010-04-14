@@ -348,16 +348,21 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        reply = None
        
        try :
-           domain_node = xmpp.simplexml.XML2Node(str(iq.getQueryPayload()[0]));
+           domain_node = iq.getTag("query").getTag("domain");
+           
            domain_uuid = domain_node.getTag("uuid").getData()
            if domain_uuid != self.jid.getNode():
                raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
+           
            reply = iq.buildReply('success')
-           self.libvirt_connection.defineXML(str(iq.getQueryPayload()[0]))
+           
+           # the dirty replace below is to avoid having this xmlns wrote by xmpp.Node automatically.
+           # I've sepnd two hours, trying to remove it, I'm done.
+           self.libvirt_connection.defineXML(str(domain_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', ''))
            log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
            if not self.domain:
                self.connect_libvirt()
-           self.push_change("virtualmachine", "defined")
+           self.push_change("virtualmachine:definition", "defined")
        except Exception as ex:
            reply = build_error_iq(self, ex, iq)
        return reply
@@ -379,7 +384,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             self.domain.undefine()
             log(self, LOG_LEVEL_INFO, "virtual machine is undefined")
-            self.push_change("virtualmachine", "undefined")
+            self.push_change("virtualmachine:definition", "undefined")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

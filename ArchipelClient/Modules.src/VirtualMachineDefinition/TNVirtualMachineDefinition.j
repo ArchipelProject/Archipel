@@ -32,6 +32,8 @@ TNArchipelTypeVirtualMachineControlInfo            = @"info";
 TNArchipelTypeVirtualMachineDefinitionDefine       = @"define";
 TNArchipelTypeVirtualMachineDefinitionUndefine     = @"undefine";
 
+TNArchipelPushNotificationDefintition      = @"archipel:push:virtualmachine:definition";
+
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
 VIR_DOMAIN_BLOCKED	                        =	2;
@@ -258,6 +260,8 @@ function generateMacAddr()
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    
+    [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefintition];
 }
 
 - (void)willShow
@@ -276,9 +280,6 @@ function generateMacAddr()
 - (void)willHide
 {
     [super willHide];
-
-    [[[self nicsDatasource] nics] removeAllObjects];
-    [[[self drivesDatasource] drives] removeAllObjects];
 
     [[self tableNetworkCards] reloadData];
     [[self tableDrives] reloadData];
@@ -308,6 +309,14 @@ function generateMacAddr()
     }
 }
 
+- (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
+{
+    CPLog.info("Push notification definition received");
+    [self getXMLDesc];
+    
+    return YES;
+}
+
 //  XML Desc
 - (void)getXMLDesc
 {
@@ -322,9 +331,10 @@ function generateMacAddr()
 {
     if ([aStanza getType] == @"error")
     {
-        CPLogConsole("XML not defined");
+        [self handleIqErrorFromStanza:aStanza];
         return;
     }
+    
     var domain      = [aStanza firstChildWithName:@"domain"];
     var hypervisor  = [domain valueForAttribute:@"type"];
     var memory      = [[domain firstChildWithName:@"currentMemory"] text];
@@ -335,6 +345,9 @@ function generateMacAddr()
     var disks       = [domain childrenWithName:@"disk"];
     var graphics    = [domain childrenWithName:@"graphics"];
 
+    [[[self nicsDatasource] nics] removeAllObjects];
+    [[[self drivesDatasource] drives] removeAllObjects];
+    
     [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
     [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
 

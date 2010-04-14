@@ -444,28 +444,6 @@ class TNHypervisorVMCasting:
         return reply
     
     
-    # def __install(self, iq):
-    #     """
-    #     instanciate a new virtualmachine from an installed appliance
-    #     @type iq: xmpp.Protocol.Iq
-    #     @param iq: the sender request IQ
-    #     @rtype: xmpp.Protocol.Iq
-    #     @return: a ready-to-send IQ containing the results
-    #     """
-    #     #build a alloc iq for hypervisor entity
-    #     
-    # 
-    #     uuidNode    = xmpp.Node(tag='jid', payload=str(uuid.uuid1()));
-    #     queryNode   = xmpp.Node(tag='query', attrs={'type':'alloc'}, payload=[uuidNode]);
-    #     allocIq     = xmpp.Node(attrs={"type":'archipel:hypervisor:control', "xmlns":"jabber:client", "from": iq.getFrom(), "to": iq.getTo()}, tag="iq", payload=[queryNode]);
-    #     
-    #     print allocIq;
-    #     respIq = self.entity.alloc_xmppvirtualmachine(allocIq);
-    #     
-    #     #print respIq
-    #     
-    #     return iq.buildReply('sucess');
-    
     def parseRSS(self):
         """
         parse the content of the database, update the feed, create the answer node.

@@ -167,4 +167,15 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [_registredSelectors addObject:selectorID];
 }
 
+/*! This message allow to display an error when stanza type is error
+*/
+
+- (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
+{
+    var msg = [[aStanza firstChildWithName:@"error"] text];
+    
+    [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
+    CPLog.error(msg);
+}
+
 @end

@@ -19,13 +19,15 @@ import os, sys
 import tempfile
 import tarfile
 import gzip
+from utils import *
 from threading import Thread
+from xml.dom import minidom
 import xmpp
 import shutil
 
 class TNArchipelPackage(Thread):
     
-    def __init__(self, working_dir, disk_exts):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback):
         """
         initialize a TNArchipelPackage
         
@@ -38,27 +40,52 @@ class TNArchipelPackage(Thread):
         self.working_dir        = working_dir;
         self.disk_extensions    = disk_exts;
         self.description_file   = None;
-        self.disk_files         = [];
+        self.disk_files         = {};
         self.other_files        = [];
+        self.xvm2_package_path  = xvm2_package_path
+        self.uuid               = uuid
+        self.install_path       = install_path
+        self.define_callback    = define_callback
         
         Thread.__init__(self);
     
+    def run(self):
+        
+        log(self, LOG_LEVEL_INFO, "unpacking to %s" % self.working_dir)
+        self.unpack();
+        
+        log(self, LOG_LEVEL_INFO, "defining UUID in description file as %s" % self.uuid)
+        self.update_description()
+        
+        log(self, LOG_LEVEL_INFO, "installing package in %s" % self.install_path)
+        self.install()
+        
+        log(self, LOG_LEVEL_INFO, "cleaning...");
+        self.clean();
+        
+        desc_node = self.get_description_node();
+        
+        define_iq = xmpp.Iq();
+        define_iq.setQueryPayload([desc_node])
+        
+        self.define_callback(define_iq);
     
-    def unpack(self, xvm2_package_path):
+    def unpack(self):
         """
         unpack the given xvm2 package
-        @type xvm2_package_path: string
-        @param xvm2_package_path: The path to the package
+        @type self.xvm2_package_path: string
+        @param self.xvm2_package_path: The path to the package
         """
-        self.package_path   = xvm2_package_path;
+        self.package_path   = self.xvm2_package_path;
         self.temp_path      = tempfile.mkdtemp(dir=self.working_dir);
-        extract_path        = os.path.join(temp_path, "export");
+        self.extract_path   = os.path.join(self.temp_path, "export");
         package             = tarfile.open(name=self.package_path);
         
-        package.extractall(path=extract_path);
+        package.extractall(path=self.extract_path);
         
-        for aFile in os.listdir(extract_path):
-            full_path = os.path.join(extract_path, aFile);
+        for aFile in os.listdir(self.extract_path):
+            full_path = os.path.join(self.extract_path, aFile);
+            log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
             
             if os.path.splitext(full_path)[-1] == ".gz":
                 i = gzip.open(full_path, 'rb')
@@ -66,15 +93,21 @@ class TNArchipelPackage(Thread):
                 o.write(i.read());
                 i.close()
                 o.close()
+                log(self, LOG_LEVEL_DEBUG, "found one gziped disk : %s" % full_path)
+                self.disk_files[aFile] = full_path.replace(".gz", "");
             
             if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                self.disk_files.append(full_path);
+                log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
+                self.disk_files[aFile] = full_path;
             
             if aFile == "description.xml":
-                self.description_file = full_path;
+                log(self, LOG_LEVEL_DEBUG, "found description.xml file : %s" % full_path)
+                o = open(full_path, 'r');
+                self.description_file = o.read();
+                o.close();
     
     
-    def define_uuid(self, uuid):
+    def update_description(self):
         """
         define the uuid to write in the description file
         
@@ -84,45 +117,42 @@ class TNArchipelPackage(Thread):
         if not self.description_file:
             return False;
         
-        self.uuid = uuid;
-        
-        f = open(self.description_file, 'r');
-        desc_string = f.read()
-        f.close();
+        desc_string = self.description_file
         
         xml_desc = xmpp.simplexml.NodeBuilder(data=desc_string).getDom();
         
         name_node = xml_desc.getTag("name");
         uuid_node = xml_desc.getTag("uuid");
+        disk_nodes = xml_desc.getTag("devices").getTags("disk");
+        for disk in disk_nodes:
+            source = disk.getTag("source");
+            source_file = source.getAttr("file");
+            source.setAttr("file", self.install_path + "/" + source_file.replace(".gz", ""))
         name_node.setData(self.uuid);
         uuid_node.setData(self.uuid);
         
-        f = open(self.description_file, 'w');
-        f.write(str(xml_desc)) 
-        f.close();
+        self.description_node = xml_desc
         
         return True;
     
     
-    def get_description_file(self):
-        return self.description_file;
+    def get_description_node(self):
+        return self.description_node;
     
     
-    def install(self, basepath):
+    def install(self):
         """
         install a untared and uuid defined package
         @type basepath: string
         @param uuid: the base path to create the folder and install disks
         """
         
-        if not self.description_file or not self.uuid:
+        if not self.description_file:
             return False;
-            
-        self.basepath = os.path.join(basepath, self.uuid);
-        os.mkdir(self.basepath);
         
-        for path in self.disk_files:
-            shutil.move(path, self.basepath);
+        for key, path in self.disk_files.items():
+            log(self, LOG_LEVEL_DEBUG, "moving %s to %s" % (path, self.install_path));
+            shutil.move(path, self.install_path);
         
         return True;
     

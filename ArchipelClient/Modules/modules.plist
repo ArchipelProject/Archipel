@@ -42,6 +42,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>VirtualMachinePackaging</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>VirtualMachineVNC</string>
             </dict>
             <dict>
