@@ -133,27 +133,34 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
-    var queryItems  = [aStanza childrenWithName:@"item"];
-    var center      = [CPNotificationCenter defaultCenter];
-    
-    [[[self virtualMachinesDatasource] VMs] removeAllObjects];
-    
-    for (var i = 0; i < [queryItems count]; i++)
+    if ([aStanza getType] == @"success")
     {
-        var jid     = [[queryItems objectAtIndex:i] text];
-        var entry   = [[self roster] getContactFromJID:jid];
-        
-        if (entry) 
-        {
-           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-           {
-                [[self virtualMachinesDatasource] addVM:entry];
-                [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
-           }
-        }
-    }
+        var queryItems  = [aStanza childrenWithName:@"item"];
+        var center      = [CPNotificationCenter defaultCenter];
     
-    [[self tableVirtualMachines] reloadData];
+        [[[self virtualMachinesDatasource] VMs] removeAllObjects];
+    
+        for (var i = 0; i < [queryItems count]; i++)
+        {
+            var jid     = [[queryItems objectAtIndex:i] text];
+            var entry   = [[self roster] getContactFromJID:jid];
+        
+            if (entry) 
+            {
+               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+               {
+                    [[self virtualMachinesDatasource] addVM:entry];
+                    [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
+               }
+            }
+        }
+    
+        [[self tableVirtualMachines] reloadData];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (void)didVirtualMachineChangesStatus:(CPNotification)aNotif
@@ -188,10 +195,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     }
     else
     {
-        var msg = [[aStanza firstChildWithName:@"error"] text];
-        
-        [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
-        CPLog.error(@"error during creation a virtual machine" + msg);
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -248,10 +252,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     }
     else
     {
-        var msg = [[aStanza firstChildWithName:@"error"] text];
-        
-        [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
-        CPLog.error(@"Unable to free virtual machine : " + msg);
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 

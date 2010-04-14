@@ -166,6 +166,10 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
 
         [[self vncWebView] setMainFrameURL:url];
     }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 @end

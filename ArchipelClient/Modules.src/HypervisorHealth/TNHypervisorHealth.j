@@ -182,6 +182,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 
@@ -237,6 +241,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         // reload the charts view
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
     }
 
     [[self imageCPULoading] setHidden:YES];

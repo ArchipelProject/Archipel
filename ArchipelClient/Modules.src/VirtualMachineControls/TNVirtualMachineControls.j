@@ -213,6 +213,7 @@ VIR_DOMAIN_CRASHED  = 6;
       {
           [[self maskingView] setFrame:[self bounds]];
           [self addSubview:[self maskingView]];
+          [self handleIqErrorFromStanza:aStanza];
       }
 }
 
@@ -288,7 +289,7 @@ VIR_DOMAIN_CRASHED  = 6;
     }
     else
     {
-       [self onLibvirtError:aStanza from:responseFrom];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -307,7 +308,7 @@ VIR_DOMAIN_CRASHED  = 6;
     }
     else
     {
-        [self onLibvirtError:aStanza from:responseFrom];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -326,7 +327,7 @@ VIR_DOMAIN_CRASHED  = 6;
     }
     else
     {
-        [self onLibvirtError:aStanza from:responseFrom];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -345,7 +346,7 @@ VIR_DOMAIN_CRASHED  = 6;
     }
     else
     {
-        [self onLibvirtError:aStanza from:responseFrom];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -363,22 +364,8 @@ VIR_DOMAIN_CRASHED  = 6;
     }
     else
     {
-        [self onLibvirtError:aStanza from:responseFrom];
+        [self handleIqErrorFromStanza:aStanza];
     }
-}
-
-
-// error displaying
-- (void)onLibvirtError:(TNStropheStanza)errorStanza from:(CPString)responseFrom
-{
-    var errorNode               = [errorStanza firstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
-    var libvirtErrorMessage     = [errorNode text];
-    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
-
-    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-
-    // [[TNViewLog sharedLogger] log:@"Error: " + responseFrom + ". error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
 }
 
 // button management

@@ -208,23 +208,28 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceivedGeolocalization:(id)aStanza
 {
-    // TODO : add success control
-    var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
-    var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
-    var item        = [[self roster] getContactFromJID:[aStanza getFromNode]];
+    if ([aStanza getType] == @"success")
+    {
+        var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
+        var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
+        var item        = [[self roster] getContactFromJID:[aStanza getFromNode]];
 
-    var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
-    var marker      = [[MKMarker alloc] initAtLocation:loc];
+        var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
+        var marker      = [[MKMarker alloc] initAtLocation:loc];
 
-    [marker setDraggable:NO];
-    [marker setClickable:YES];
-    [marker setDelegate:self];
-    [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
+        [marker setDraggable:NO];
+        [marker setClickable:YES];
+        [marker setDelegate:self];
+        [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
 
-    //[_mainMapView addMarker:marker atLocation:loc];
-    [marker addToMapView:_mainMapView];
-    [_mainMapView setCenter:loc];
-
+        //[_mainMapView addMarker:marker atLocation:loc];
+        [marker addToMapView:_mainMapView];
+        [_mainMapView setCenter:loc];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
@@ -241,50 +246,64 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceiveOriginHypervisorRoster:(id)aStanza
 {
-    var queryItems  = [aStanza childrenWithName:@"item"];
-    var center      = [CPNotificationCenter defaultCenter];
-
-    [[[self vmOrginDatasource] VMs] removeAllObjects];
-
-    for (var i = 0; i < [queryItems count]; i++)
+    if ([aStanza getType] == @"success")
     {
-        var jid     = [[queryItems objectAtIndex:i] text];
-        var entry   = [[self roster] getContactFromJID:jid];
+        var queryItems  = [aStanza childrenWithName:@"item"];
+        var center      = [CPNotificationCenter defaultCenter];
 
-        if (entry)
+        [[[self vmOrginDatasource] VMs] removeAllObjects];
+
+        for (var i = 0; i < [queryItems count]; i++)
         {
-           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-           {
-                [[self vmOrginDatasource] addVM:entry];
-                //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
-           }
+            var jid     = [[queryItems objectAtIndex:i] text];
+            var entry   = [[self roster] getContactFromJID:jid];
+
+            if (entry)
+            {
+               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+               {
+                    [[self vmOrginDatasource] addVM:entry];
+                    //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
+               }
+            }
         }
+        [[self tableOriginVMs] reloadData];
     }
-    [[self tableOriginVMs] reloadData];
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (void)didReceiveDestinationHypervisorRoster:(id)aStanza
 {
-    var queryItems  = [aStanza childrenWithName:@"item"];
-    var center      = [CPNotificationCenter defaultCenter];
-
-    [[[self vmDestinationDatasource] VMs] removeAllObjects];
-
-    for (var i = 0; i < [queryItems count]; i++)
+    if ([aStanza getType] == @"success")
     {
-        var jid     = [[queryItems objectAtIndex:i] text];
-        var entry   = [[self roster] getContactFromJID:jid];
+        var queryItems  = [aStanza childrenWithName:@"item"];
+        var center      = [CPNotificationCenter defaultCenter];
 
-        if (entry)
+        [[[self vmDestinationDatasource] VMs] removeAllObjects];
+
+        for (var i = 0; i < [queryItems count]; i++)
         {
-           if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-           {
-                [[self vmDestinationDatasource] addVM:entry];
-                //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
-           }
+            var jid     = [[queryItems objectAtIndex:i] text];
+            var entry   = [[self roster] getContactFromJID:jid];
+
+            if (entry)
+            {
+               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+               {
+                    [[self vmDestinationDatasource] addVM:entry];
+                    //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
+               }
+            }
         }
+        [[self tableDestinationVMs] reloadData];
     }
-    [[self tableDestinationVMs] reloadData];
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 

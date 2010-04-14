@@ -329,84 +329,85 @@ function generateMacAddr()
 
 - (void)didReceiveXMLDesc:(id)aStanza
 {
-    if ([aStanza getType] == @"error")
+    if ([aStanza getType] == @"success")
     {
-        [self handleIqErrorFromStanza:aStanza];
-        return;
-    }
-    
-    var domain      = [aStanza firstChildWithName:@"domain"];
-    var hypervisor  = [domain valueForAttribute:@"type"];
-    var memory      = [[domain firstChildWithName:@"currentMemory"] text];
-    var arch        = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
-    var vcpu        = [[domain firstChildWithName:@"vcpu"] text];
-    var boot        = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
-    var interfaces  = [domain childrenWithName:@"interface"];
-    var disks       = [domain childrenWithName:@"disk"];
-    var graphics    = [domain childrenWithName:@"graphics"];
+        var domain      = [aStanza firstChildWithName:@"domain"];
+        var hypervisor  = [domain valueForAttribute:@"type"];
+        var memory      = [[domain firstChildWithName:@"currentMemory"] text];
+        var arch        = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
+        var vcpu        = [[domain firstChildWithName:@"vcpu"] text];
+        var boot        = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
+        var interfaces  = [domain childrenWithName:@"interface"];
+        var disks       = [domain childrenWithName:@"disk"];
+        var graphics    = [domain childrenWithName:@"graphics"];
 
-    [[[self nicsDatasource] nics] removeAllObjects];
-    [[[self drivesDatasource] drives] removeAllObjects];
+        [[[self nicsDatasource] nics] removeAllObjects];
+        [[[self drivesDatasource] drives] removeAllObjects];
     
-    [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
-    [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
+        [[self fieldMemory] setStringValue:(parseInt(memory) / 1024)];
+        [[self buttonNumberCPUs] selectItemWithTitle:vcpu];
 
-    for (var i = 0; i < [graphics count]; i++)
-    {
-        var graphic = [graphics objectAtIndex:i];
-        if ([graphic valueForAttribute:@"type"] == "vnc")
+        for (var i = 0; i < [graphics count]; i++)
         {
-            var keymap = [graphic valueForAttribute:@"keymap"];
-            if (keymap)
+            var graphic = [graphics objectAtIndex:i];
+            if ([graphic valueForAttribute:@"type"] == "vnc")
             {
-                [[self buttonVNCKeymap] selectItemWithTitle:keymap];
-                break;
+                var keymap = [graphic valueForAttribute:@"keymap"];
+                if (keymap)
+                {
+                    [[self buttonVNCKeymap] selectItemWithTitle:keymap];
+                    break;
+                }
             }
         }
-    }
 
-    if (boot == "cdrom")
-        [[self buttonBoot] selectItemWithTitle:TNXMLDescBootCDROM];
+        if (boot == "cdrom")
+            [[self buttonBoot] selectItemWithTitle:TNXMLDescBootCDROM];
+        else
+            [[self buttonBoot] selectItemWithTitle:TNXMLDescBootHardDrive];
+
+        // NICs
+        for (var i = 0; i < [interfaces count]; i++)
+        {
+            var currentInterface    = [interfaces objectAtIndex:i];
+            var iType               = [currentInterface valueForAttribute:@"type"];
+            var iModel              = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
+            var iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"];
+
+            if (iType == "bridge")
+                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
+            else if (iType == "network")
+                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"];
+
+
+            var iTarget = "";//interfaces[i].getElementsByTagName("target")[0].getAttribute("dev");
+
+            var newNic = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource]
+
+            [[self nicsDatasource] addNic:newNic];
+        }
+        [[self tableNetworkCards] reloadData];
+
+        //Drives
+        for (var i = 0; i < [disks count]; i++)
+        {
+            var currentDisk = [disks objectAtIndex:i];
+            var iType       = [currentDisk valueForAttribute:@"type"];
+            var iDevice     = [currentDisk valueForAttribute:@"device"];
+            var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
+            var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
+            var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
+
+            var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
+
+            [[self drivesDatasource] addDrive:newDrive];
+        }
+        [[self tableDrives] reloadData];
+    }
     else
-        [[self buttonBoot] selectItemWithTitle:TNXMLDescBootHardDrive];
-
-    // NICs
-    for (var i = 0; i < [interfaces count]; i++)
     {
-        var currentInterface    = [interfaces objectAtIndex:i];
-        var iType               = [currentInterface valueForAttribute:@"type"];
-        var iModel              = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
-        var iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"];
-
-        if (iType == "bridge")
-            var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
-        else if (iType == "network")
-            var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"];
-
-
-        var iTarget = "";//interfaces[i].getElementsByTagName("target")[0].getAttribute("dev");
-
-        var newNic = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource]
-
-        [[self nicsDatasource] addNic:newNic];
+        [self handleIqErrorFromStanza:aStanza];
     }
-    [[self tableNetworkCards] reloadData];
-
-    //Drives
-    for (var i = 0; i < [disks count]; i++)
-    {
-        var currentDisk = [disks objectAtIndex:i];
-        var iType       = [currentDisk valueForAttribute:@"type"];
-        var iDevice     = [currentDisk valueForAttribute:@"device"];
-        var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
-        var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
-        var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
-
-        var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
-
-        [[self drivesDatasource] addDrive:newDrive];
-    }
-    [[self tableDrives] reloadData];
 }
 
 // generation of XML
@@ -556,6 +557,10 @@ function generateMacAddr()
         else
             [[self maskingView] removeFromSuperview];
     }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 
@@ -645,18 +650,6 @@ function generateMacAddr()
     [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
-- (void)onLibvirtError:(TNStropheStanza)errorStanza
-{
-    var errorNode               = [errorStanza firstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
-    var libvirtErrorMessage     = [errorNode text];
-    var title                   = @"Unable to create virtual machine. Error " + libvirtErrorCode;
-
-    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-
-    // [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
-}
-
 - (void)didDefineXML:(id)aStanza
 {
     var responseType    = [aStanza getType];
@@ -664,11 +657,11 @@ function generateMacAddr()
 
     if (responseType == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"definition of virtual machine " + responseFrom + " sucessfuly updated"];
+        CPLog.info(@"definition of virtual machine " + responseFrom + " sucessfuly updated")
     }
     else
     {
-        [self onLibvirtError:aStanza];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 

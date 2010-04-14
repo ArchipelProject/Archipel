@@ -146,7 +146,9 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
         [_tableAppliances reloadData];
     }
     else
+    {
         [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)instanciate:(id)sender
@@ -175,7 +177,9 @@ TNArchipelTypeHypervisorVMCastingInstall                    = @"install";
          [CPAlert alertWithTitle:@"GOOF" message:@"GOOD"];
     }
     else
+    {
         [self handleIqErrorFromStanza:aStanza];
+    }
 }
 @end
 

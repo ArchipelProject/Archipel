@@ -266,13 +266,14 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didRegistred:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"error")
+    if ([aStanza getType] == @"success")
     {
-        var msg = [[aStanza firstChildWithName:@"error"] text];
-        [CPAlert alertWithTitle:@"Error" message:msg];
+        [self getVMCasts];
     }
     else
-        [self getVMCasts];
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)removeVMCast:(id)sender
@@ -292,11 +293,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         return;
     }
     
-    
     var uuid            = [currentVMCast UUID];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
-    
-    
+        
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
@@ -306,8 +305,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     if ([aStanza getType] == @"error")
     {
-        var msg = [[aStanza firstChildWithName:@"error"] text];
-        [CPAlert alertWithTitle:@"Error" message:msg];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 

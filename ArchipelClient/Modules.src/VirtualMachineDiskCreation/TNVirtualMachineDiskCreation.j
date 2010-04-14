@@ -170,6 +170,10 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         }
         [[self tableMedias] reloadData];
     }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)createDisk:(id)sender

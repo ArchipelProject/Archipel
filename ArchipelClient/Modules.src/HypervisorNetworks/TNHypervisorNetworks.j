@@ -133,7 +133,6 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     }
 }
 
-
 - (void)getHypervisorNetworks
 {
     var networksStanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorNetwork}];
@@ -145,79 +144,86 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
 {
-    var activeNetworks      = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
-    var unactiveNetworks    = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
-    var allNetworks         = [CPArray array];
-
-    [allNetworks addObjectsFromArray:activeNetworks];
-    [allNetworks addObjectsFromArray:unactiveNetworks];
-
-    [[_datasourceNetworks networks] removeAllObjects];
-
-    for (var i = 0; i < [allNetworks count]; i++)
+    if ([aStanza getType] == @"success")
     {
-        var network             = [allNetworks objectAtIndex:i];
-        var name                = [[network firstChildWithName:@"name"] text];
-        var uuid                = [[network firstChildWithName:@"uuid"] text];
-        var bridge              = [network firstChildWithName:@"bridge"];
-        var bridgeName          = [bridge valueForAttribute:@"name"];
-        var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
-        var bridgeDelay         = [bridge valueForAttribute:@"delay"];
-        var forward             = [network firstChildWithName:@"forward"];
-        var forwardMode         = [forward valueForAttribute:@"mode"];
-        var forwardDev          = [forward valueForAttribute:@"dev"];
-        var ip                  = [network firstChildWithName:@"ip"];
-        var bridgeIP            = [ip valueForAttribute:@"address"];
-        var bridgeNetmask       = [ip valueForAttribute:@"netmask"];
-        var dhcp                = [ip firstChildWithName:@"dhcp"];
-        var DHCPEnabled         = (dhcp) ? YES : NO;
-        var DHCPRangeEntries    = [dhcp childrenWithName:@"range"];
-        var DHCPHostEntries     = [dhcp childrenWithName:@"host"];
-        var networkActive       = [activeNetworks containsObject:network];
+        var activeNetworks      = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
+        var unactiveNetworks    = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
+        var allNetworks         = [CPArray array];
 
-        var DHCPRangeEntriesArray = [CPArray array];
-        for (var j = 0; DHCPEnabled && j < [DHCPRangeEntries count]; j++)
+        [allNetworks addObjectsFromArray:activeNetworks];
+        [allNetworks addObjectsFromArray:unactiveNetworks];
+
+        [[_datasourceNetworks networks] removeAllObjects];
+
+        for (var i = 0; i < [allNetworks count]; i++)
         {
-            var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j];
-            var randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"];
-            var rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"];
+            var network             = [allNetworks objectAtIndex:i];
+            var name                = [[network firstChildWithName:@"name"] text];
+            var uuid                = [[network firstChildWithName:@"uuid"] text];
+            var bridge              = [network firstChildWithName:@"bridge"];
+            var bridgeName          = [bridge valueForAttribute:@"name"];
+            var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
+            var bridgeDelay         = [bridge valueForAttribute:@"delay"];
+            var forward             = [network firstChildWithName:@"forward"];
+            var forwardMode         = [forward valueForAttribute:@"mode"];
+            var forwardDev          = [forward valueForAttribute:@"dev"];
+            var ip                  = [network firstChildWithName:@"ip"];
+            var bridgeIP            = [ip valueForAttribute:@"address"];
+            var bridgeNetmask       = [ip valueForAttribute:@"netmask"];
+            var dhcp                = [ip firstChildWithName:@"dhcp"];
+            var DHCPEnabled         = (dhcp) ? YES : NO;
+            var DHCPRangeEntries    = [dhcp childrenWithName:@"range"];
+            var DHCPHostEntries     = [dhcp childrenWithName:@"host"];
+            var networkActive       = [activeNetworks containsObject:network];
 
-            var DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
+            var DHCPRangeEntriesArray = [CPArray array];
+            for (var j = 0; DHCPEnabled && j < [DHCPRangeEntries count]; j++)
+            {
+                var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j];
+                var randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"];
+                var rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"];
 
-            [DHCPRangeEntriesArray addObject:DHCPEntryObject];
+                var DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
+
+                [DHCPRangeEntriesArray addObject:DHCPEntryObject];
+            }
+
+            var DHCPHostEntriesArray = [CPArray array];
+            for (var j = 0; DHCPEnabled && j < [DHCPHostEntries count]; j++)
+            {
+                var DHCPEntry   = [DHCPHostEntries objectAtIndex:j];
+                var hostsMac    = [DHCPEntry valueForAttribute:@"mac"];
+                var hostName    = [DHCPEntry valueForAttribute:@"name"];
+                var hostIP      = [DHCPEntry valueForAttribute:@"ip"];
+
+                var DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
+
+                [DHCPHostEntriesArray addObject:DHCPEntryObject];
+            }
+
+            var newNetwork  = [TNNetwork networkWithName:name
+                                                    UUID:uuid
+                                              bridgeName:bridgeName
+                                             bridgeDelay:parseInt(bridgeDelay)
+                                       bridgeForwardMode:forwardMode
+                                     bridgeForwardDevice:forwardDev
+                                                bridgeIP:bridgeIP
+                                           bridgeNetmask:bridgeNetmask
+                                       DHCPEntriesRanges:DHCPRangeEntriesArray
+                                        DHCPEntriesHosts:DHCPHostEntriesArray
+                                          networkEnabled:networkActive
+                                              STPEnabled:bridgeSTP
+                                             DHCPEnabled:DHCPEnabled]
+
+            [[_datasourceNetworks networks] addObject:newNetwork];
         }
 
-        var DHCPHostEntriesArray = [CPArray array];
-        for (var j = 0; DHCPEnabled && j < [DHCPHostEntries count]; j++)
-        {
-            var DHCPEntry   = [DHCPHostEntries objectAtIndex:j];
-            var hostsMac    = [DHCPEntry valueForAttribute:@"mac"];
-            var hostName    = [DHCPEntry valueForAttribute:@"name"];
-            var hostIP      = [DHCPEntry valueForAttribute:@"ip"];
-
-            var DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
-
-            [DHCPHostEntriesArray addObject:DHCPEntryObject];
-        }
-
-        var newNetwork  = [TNNetwork networkWithName:name
-                                                UUID:uuid
-                                          bridgeName:bridgeName
-                                         bridgeDelay:parseInt(bridgeDelay)
-                                   bridgeForwardMode:forwardMode
-                                 bridgeForwardDevice:forwardDev
-                                            bridgeIP:bridgeIP
-                                       bridgeNetmask:bridgeNetmask
-                                   DHCPEntriesRanges:DHCPRangeEntriesArray
-                                    DHCPEntriesHosts:DHCPHostEntriesArray
-                                      networkEnabled:networkActive
-                                          STPEnabled:bridgeSTP
-                                         DHCPEnabled:DHCPEnabled]
-
-        [[_datasourceNetworks networks] addObject:newNetwork];
+        [_tableViewNetworks reloadData];
     }
-
-    [_tableViewNetworks reloadData];
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(CPNumber)anUid
@@ -339,6 +345,10 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     {
         [self onLibvirtError:aStanza];
     }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)activateNetworkSwitch:(id)sender
@@ -373,7 +383,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     }
     else
     {
-        [self onLibvirtError:aStanza];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -428,7 +438,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     }
     else
     {
-        [self onLibvirtError:aStanza];
+        [self handleIqErrorFromStanza:aStanza];
     }
 }
 
@@ -439,17 +449,6 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     return YES;
 }
 
-- (void)onLibvirtError:(TNStropheStanza)errorStanza
-{
-    var errorNode               = [errorStanza firstChildWithName:@"error"];
-    var libvirtErrorCode        = [errorNode valueForAttribute:@"code"];
-    var libvirtErrorMessage     = [errorNode text];
-    var title                   = @"Error " + libvirtErrorCode;
-
-    [CPAlert alertWithTitle:title message:libvirtErrorMessage style:CPCriticalAlertStyle]
-
-    [[TNViewLog sharedLogger] log:@"Error code :" + libvirtErrorCode + ". " + libvirtErrorMessage];
-}
 
 @end
 
