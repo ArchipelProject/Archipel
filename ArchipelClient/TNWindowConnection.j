@@ -20,23 +20,7 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-/*! @global
-    @group TNStropheConnection
-    Notification that indicates successfull connection
-*/
-TNStropheConnectionSuccessNotification  = @"TNStropheConnectionSuccessNotification";
 
-/*! @global
-    @group TNStropheConnection
-    Notification that indicates disconnection
-*/
-TNStropheDisconnectionNotification      = @"TNStropheDisconnectionNotification";
-
-/*! @global
-    @group TNStropheConnection
-    Notification that indicates unsuccessfull connection
-*/
-TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification";
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
@@ -131,38 +115,72 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 /*! delegate of TNStropheConnection
     @param aStrophe TNStropheConnection
 */
-- (void)onStropheConnecting:(id)aStrophe
+- (void)onStropheConnecting:(TNStropheConnection)aStrophe
 {
+    [[self message] setStringValue:@"Connecting"];
     [[self spinning] setHidden:NO];
 }
 
 /*! delegate of TNStropheConnection
     @param aStrophe TNStropheConnection
 */
-- (void)onStropheConnected:(id)aStrophe
+- (void)onStropheConnected:(TNStropheConnection)aStrophe
 {
-    var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNStropheConnectionSuccessNotification object:self userInfo:[self JSStrophe]];
+    [[self message] setStringValue:@"Connected."];
     [[self spinning] setHidden:YES];
     
-    CPLog.info("XMPP connection sucessfull");
-    
-    // [[TNViewLog sharedLogger] log:@"Strophe is now connected using JID " + [[self jid] stringValue]];
+    CPLog.info(@"Strophe is now connected using JID " + [[self jid] stringValue]);
 }
 
 /*! delegate of TNStropheConnection
     @param aStrophe TNStropheConnection
 */
-- (void)onStropheConnectFail:(id)aStrophe
+- (void)onStropheConnectFail:(TNStropheConnection)aStrophe
 {
-    var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNStropheConnectionFailNotification object:self userInfo:[self JSStrophe]];
     [[self spinning] setHidden:YES];
-    [[self message] setStringValue:@"strophe connection failed"];
+    [[self message] setStringValue:@"Connection failed."];
 
     CPLog.info("XMPP connection failed");
-    
-    // [[TNViewLog sharedLogger] log:@"Strophe connection failed"];
+}
+
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
+- (void)onStropheAuthenticating:(TNStropheConnection)aStrophe
+{
+    [[self message] setStringValue:@"Authenticating..."];
+
+    CPLog.info("XMPP authenticating...");
+}
+
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
+- (void)onStropheAuthFail:(TNStropheConnection)aStrophe
+{
+    [[self spinning] setHidden:YES];
+    [[self message] setStringValue:@"Authentication failed."];
+
+    CPLog.info("XMPP auth failed");
+}
+
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
+- (void)onStropheError:(TNStropheConnection)aStrophe
+{
+    [[self spinning] setHidden:YES];
+    [[self message] setStringValue:@"Unknown error."];
+
+    CPLog.info("XMPP unknown error");
+}
+
+-(void) onStropheDisconnecting:(TNStropheConnection)aStrophe
+{
+    //[[self spinning] setHidden:YES];
+    [[self message] setStringValue:@"Disconnecting."];
+
+   CPLog.info("XMPP is disconnecting");
 }
 
 /*! delegate of TNStropheConnection
@@ -170,12 +188,10 @@ TNStropheConnectionFailNotification     = @"TNStropheConnectionFailNotification"
 */
 - (void)onStropheDisconnected:(id)sStrophe
 {
-    var center = [CPNotificationCenter defaultCenter];
     var defaults = [TNUserDefaults standardUserDefaults];
-    
-    [center postNotificationName:TNStropheDisconnectionNotification object:self userInfo:[self JSStrophe]];
-    
     [self initCredentials];
+    
+    [[self message] setStringValue:@"Disconnected."];
     
     CPLog.info("XMPP connection is now disconnected");
 }

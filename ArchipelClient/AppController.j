@@ -201,10 +201,12 @@ TNArchipelEntityTypeGroup            = @"group";
     var center = [CPNotificationCenter defaultCenter];
 
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
-    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
+    //[center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:[self connectionWindow]];
+    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
     
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
+    //[center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
     
     CPLog.info(@"AppController initialized");
 }
@@ -280,7 +282,7 @@ TNArchipelEntityTypeGroup            = @"group";
     [[self connectionWindow] orderOut:nil];
     [[self theWindow] orderFront:nil];
 
-    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification userInfo]];
+    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:[self filterField]];
     [[self propertiesView] setRoster:_mainRoster];

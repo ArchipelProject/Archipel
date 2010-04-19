@@ -76,7 +76,15 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     var columnUUID = [[CPTableColumn alloc] initWithIdentifier:@"UUID"];
     [[columnUUID headerView] setStringValue:@"UUID"];
-
+    
+    var columnInUsed    = [[CPTableColumn alloc] initWithIdentifier:@"isUsed"];
+    var imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    [imgView setImageScaling:CPScaleNone];
+    [columnInUsed setDataView:imgView];
+    [columnInUsed setWidth:16];
+    [[columnInUsed headerView] setStringValue:@" "];
+    
+    [_tableAppliances addTableColumn:columnInUsed];
     [_tableAppliances addTableColumn:columnName];
     [_tableAppliances addTableColumn:columnComment];
     [_tableAppliances addTableColumn:columnUUID];
@@ -155,8 +163,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
             var comment     = [appliance valueForAttribute:@"description"];
             var path        = [appliance valueForAttribute:@"path"];
             var uuid        = [appliance valueForAttribute:@"uuid"];
+            var used        = ([appliance valueForAttribute:@"used"] == "true") ? YES : NO;
 
-            var newAppliance = [TNInstalledAppliance InstalledApplianceWithName:name UUID:uuid path:path comment:comment];
+            var newAppliance = [TNInstalledAppliance InstalledApplianceWithName:name UUID:uuid path:path comment:comment used:used];
             [_appliancesDatasource addInstalledAppliance:newAppliance];
         }
         [_tableAppliances reloadData];

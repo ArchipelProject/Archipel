@@ -81,7 +81,11 @@ class TNArchipelPackageInstancier:
                 name = values[1]
                 description = values[2]
                 uuid = values[3]
-                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid})
+                if os.system("ls " + self.entity.vm_own_folder + "/" + uuid + ".package") == 0:
+                    used = "true"
+                else:
+                    used = "false"
+                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid, "used": used})
                 nodes.append(node)
             reply.setQueryPayload(nodes)
         except Exception as ex:
@@ -107,6 +111,8 @@ class TNArchipelPackageInstancier:
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions));
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path));
             appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define);
+            
+            os.system("touch " + self.entity.vm_own_folder + "/" + uuid + ".package");
             
             appliance_packager.start();
             

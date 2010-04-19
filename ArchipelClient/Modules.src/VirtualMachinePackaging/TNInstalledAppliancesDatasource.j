@@ -26,17 +26,44 @@ TNArchipelApplianceInstalled            = 1;
     CPString    path            @accessors;
     CPString    comment         @accessors;
     CPString    UUID            @accessors;
+    BOOL        _used           @accessors(getter=isUsed,setter=setUsed:);
+    
+    CPImage     _usedIcon;
 }
 
-+ (TNInstalledAppliance)InstalledApplianceWithName:(CPString)aName UUID:(CPString)anUUID path:(CPString)aPath comment:(CPString)aComment
++ (TNInstalledAppliance)InstalledApplianceWithName:(CPString)aName UUID:(CPString)anUUID path:(CPString)aPath comment:(CPString)aComment used:(BOOL)inUse
 {
     var appliance = [[TNInstalledAppliance alloc] init];
     [appliance setName:aName];
     [appliance setPath:aPath];
     [appliance setUUID:anUUID];
+    [appliance setUsed:inUse];
     [appliance setComment:aComment];
     
     return appliance;
+}
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+        _usedIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"used.png"]];
+    }
+    
+    return self
+}
+
+- (CPImage)isUsed
+{
+    if (_used)
+    {
+        return _usedIcon
+    }
+    else
+    {
+        return [[CPImage alloc] init];
+    }
 }
 
 - (CPString)description
