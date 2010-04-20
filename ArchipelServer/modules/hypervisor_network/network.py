@@ -23,12 +23,10 @@ import xmpp
 import os
 import archipel
 
-NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
 try:
     import libvirt
 except ImportError:
-    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
-
+    pass;
 
 
 
@@ -37,7 +35,7 @@ class TNHypervisorNetworks:
     def __init__(self, entity):
         self.entity = entity;
         
-        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             self.libvirt_connection = libvirt.open(None)
             if self.libvirt_connection == None:
                 log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
@@ -47,7 +45,7 @@ class TNHypervisorNetworks:
     
     def process_iq_for_hypervisor(self, conn, iq):
         
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur");
@@ -81,7 +79,7 @@ class TNHypervisorNetworks:
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         log(self, LOG_LEVEL_INFO, "received network iq for virtual machine");
@@ -105,7 +103,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         try:
@@ -130,7 +128,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -156,7 +154,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -182,7 +180,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -208,7 +206,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = iq.buildReply('success')
@@ -248,7 +246,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = iq.buildReply('success')

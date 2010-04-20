@@ -25,6 +25,7 @@ from archipelSimpleWebServer import *
 
 
 
+
 def load_modules():
     """
     this function load modules
@@ -56,6 +57,9 @@ def main():
     jid         = config.get("HYPERVISOR", "hypervisor_xmpp_jid")
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
+    
+    globals()["NS_ARCHIPEL_USE_LIBVIRT_MODULE"] = True if config.get("GLOBAL", "use_libvirt") == "yes" else False
+    
     hyp = archipel.TNArchipelHypervisor(jid, password, config, database)
     hyp.connect()
     

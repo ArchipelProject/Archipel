@@ -69,6 +69,8 @@ COLORING_MAPPING_LOG_LEVEL  = { LOG_LEVEL_INFO: COLOR_INFO,
                                 LOG_LEVEL_DEBUG: COLOR_DEBUG, 
                                 LOG_LEVEL_ERROR: COLOR_ERROR}
 
+NS_ARCHIPEL_USE_LIBVIRT_MODULE = True;
+
 def init_conf(path):
     """
     this method intialize the configuration object (that will be passed to all 

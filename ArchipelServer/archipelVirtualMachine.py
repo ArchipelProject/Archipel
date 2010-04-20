@@ -38,11 +38,10 @@ import commands
 from utils import *
 from archipelBasicXMPPClient import *
 
-NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
 try:
     import libvirt
 except ImportError:
-    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
+    pass;
 
 
 VIR_DOMAIN_NOSTATE	                        =	0;
@@ -72,7 +71,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "disk_base_path") + "/"
         self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
         
-        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             self.libvirt_connection = None;
             self.register_actions_to_perform_on_auth("connect_libvirt", None)
         
@@ -103,7 +102,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         self.xmppclient.disconnect()
         
-        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             if self.libvirt_connection:
                 self.libvirt_connection.close() 
     
@@ -129,8 +128,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
+        
         self.push_change("virtualmachine", "initialized");
         
         self.domain = None;
@@ -176,7 +176,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -203,7 +203,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -228,7 +228,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -252,7 +252,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -277,7 +277,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -302,7 +302,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -378,7 +378,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        @rtype: xmpp.Protocol.Iq
        @return: a ready to send IQ containing the result of the action
        """
-       if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+       if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
            return
        
        reply = None
@@ -415,7 +415,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         reply = None
@@ -451,7 +451,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         
@@ -519,7 +519,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))

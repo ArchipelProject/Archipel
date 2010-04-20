@@ -32,12 +32,10 @@ from utils import *
 from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 
-NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
-
 try:
     import libvirt
 except ImportError:
-    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
+    pass;
 
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
@@ -114,7 +112,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.database_file = database_file;
         self.__manage_persistance()
         
-        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             self.libvirt_connection = libvirt.open(None)
             if self.libvirt_connection == None:
                 log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
@@ -249,7 +247,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             domain_uuid = vm_jid.split("@")[0];
             vm          = self.virtualmachines[domain_uuid];
             
-            if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
                 if (vm.get_instance().domain):
                     if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
                         vm.get_instance().domain.destroy()
