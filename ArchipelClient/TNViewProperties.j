@@ -29,6 +29,7 @@
 {
     @outlet TNEditableLabel entryName       @accessors;
     @outlet CPImageView     entryStatusIcon @accessors;
+    @outlet CPImageView     entryAvatar     @accessors;
     @outlet CPTextField     entryDomain     @accessors;
     @outlet CPTextField     entryResource   @accessors;
     @outlet CPTextField     newNickName     @accessors;
@@ -62,6 +63,7 @@
     [[self entryName] setFont:[CPFont boldSystemFontOfSize:13]];
     [[self entryName] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
 
+    [[self entryAvatar] setBorderedWithHexColor:@"#a5a5a5"];
     [self setHidden:YES];
 
     [[self entryName] setTarget:self];
@@ -70,6 +72,7 @@
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
 
 /*! hide the panel
@@ -107,6 +110,7 @@
     [[self entryDomain] setStringValue:[contact domain]];
     [[self entryResource] setStringValue:[contact resource]];
     [[self entryStatusIcon] setImage:[contact statusIcon]];
+    [[self entryAvatar] setImage:[contact avatar]];
 }
 
 /*! message performed when contact update its presence in order to update information
@@ -114,6 +118,7 @@
 - (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
     [[self entryStatusIcon] setImage:[contact statusIcon]];
+    [[self entryAvatar] setImage:[contact avatar]];
     [[self entryResource] setStringValue:[contact resource]];
 }
 

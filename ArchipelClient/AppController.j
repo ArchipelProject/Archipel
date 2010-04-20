@@ -209,7 +209,7 @@ TNArchipelEntityTypeGroup            = @"group";
     CPLog.info(@"AppController initialized");
 }
 
-/*! delegate of TNModuleLoader
+/*! delegate of TNModuleLoader sent when all modules are loaded
 */
 - (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
 {
@@ -220,7 +220,7 @@ TNArchipelEntityTypeGroup            = @"group";
     [connectionWindow orderFront:nil];
 }
 
-/*! delegate of TNModuleLoader
+/*! delegate of TNModuleLoader sent when a module is loaded
 */
 - (void)moduleLoader:(TNModuleLoader)aLoader hasLoadBundle:(CPBundle)aBundle
 {

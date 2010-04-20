@@ -34,12 +34,20 @@ TNArchipelModuleTypeTab     = @"tab";
 */
 TNArchipelModuleTypeToolbar = @"toolbar";
 
-/*! @ingroup archipelcore
-    this is the module loader of Archipel
-*/
 
+/*! this notification is sent when all modules are loaded
+*/
 TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingCompleteNotification"
 
+/*! @ingroup archipelcore
+    
+    this is the Archipel Module loader.
+    It supports 3 delegates :
+    
+     - moduleLoader:hasLoadBundle: is sent when a module is loaded
+     - moduleLoader:willLoadBundle: is sent when a module will be loaded
+     - moduleLoaderLoadingComplete: is sent when all modules has been loaded
+*/
 @implementation TNModuleLoader: CPObject
 {
     TNToolbar               mainToolbar                     @accessors;
@@ -217,6 +225,9 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
                        
         [bundle loadWithDelegate:self];
     }
+    
+    if ((_numberOfModulesToLoad == 0) && ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
+        [delegate moduleLoaderLoadingComplete:self];
 }
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -428,6 +439,9 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         
     if (_numberOfModulesLoaded >= _numberOfModulesToLoad)
     {
+        var center = [CPNotificationCenter defaultCenter];
+        [center postNotificationName:TNArchipelModulesLoadingCompleteNotification object:self];
+        
         if ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
             [delegate moduleLoaderLoadingComplete:self];
     }

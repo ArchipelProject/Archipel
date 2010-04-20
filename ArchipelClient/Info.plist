@@ -16,7 +16,12 @@
     <key>LPCrashReporterLoggingURL</key>
     <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
     
-    <!-- Local storage information. It can be TNUserDefaultStorageTypeHTML5 of TNUserDefaultStorageTypeCookie -->
+    <!-- 
+        Local storage information. It can be 
+            - TNUserDefaultStorageTypeHTML5
+            - TNUserDefaultStorageTypeCookie
+            - TNUserDefaultStorageTypeNoStorage
+    -->
     <key>TNUserDefaultStorageType</key>
     <string>TNUserDefaultStorageTypeHTML5</string>
     

@@ -23,9 +23,11 @@ var standardUserDefaultsInstance = nil;
 TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 
 
-TNUserDefaultStorageTypeHTML5   = @"TNUserDefaultStorageTypeHTML5";
-TNUserDefaultStorageTypeCookie  = @"TNUserDefaultStorageTypeCookie";
-TNUserDefaultStorageType        = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNUserDefaultStorageType"];
+TNUserDefaultStorageTypeHTML5       = @"TNUserDefaultStorageTypeHTML5";
+TNUserDefaultStorageTypeCookie      = @"TNUserDefaultStorageTypeCookie";
+TNUserDefaultStorageTypeNoStorage   = @"TNUserDefaultStorageTypeNoStorage";
+
+TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNUserDefaultStorageType"];
 
 @implementation TNUserDefaults : CPObject
 {
@@ -100,6 +102,12 @@ TNUserDefaultStorageType        = [[CPBundle mainBundle] objectForInfoDictionary
             ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:decodedString]];
         }
     }
+    else if ( TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
+    {
+        CPLog.debug(@"No storage specified");
+        
+        ret = nil;
+    }
     else
     {
         throw new Error("Unknown storage type: " + _defaultStorageType + " storage type is unknown");
@@ -128,6 +136,10 @@ TNUserDefaultStorageType        = [[CPBundle mainBundle] objectForInfoDictionary
         var theString   = string.replace(/;/g, "__dotcoma__").replace(/$/g, "__dollar__");
         
         [cookie setValue:theString expires:[CPDate distantFuture] domain:@""];
+    }
+    else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
+    {
+        // we do nothing here
     }
     else
     {
