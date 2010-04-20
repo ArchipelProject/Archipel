@@ -2,6 +2,7 @@ syntax: glob
 .DS_Store
 *~
 *.pyc
+*.sqlite3
 ArchipelClient/debug.txt
 ArchipelClient/Frameworks
 ArchipelClient/Build

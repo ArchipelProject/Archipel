@@ -79,14 +79,14 @@ def init_conf(path):
     """
     conf = ConfigParser.ConfigParser()
     conf.readfp(open(path))
-    logging_level = conf.get("Logging", "logging_level")
+    logging_level = conf.get("LOGGING", "logging_level")
     if logging_level == "debug":
         globals()["LOG_LEVEL"] = LOG_LEVEL_DEBUG
     elif logging_level == "info":
         globals()["LOG_LEVEL"] = LOG_LEVEL_INFO
     elif logging_level == "error":
         globals()["LOG_LEVEL"] = LOG_LEVEL_ERROR
-    log_file = conf.get("Logging", "logging_file_path")
+    log_file = conf.get("LOGGING", "logging_file_path")
     globals()["LOG_WRITE_IN_FILE"] = log_file
     
     return conf;

@@ -105,6 +105,13 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [self getHypervisorRoster];
 }
 
+- (void)willUnload
+{
+    [super willUnload];
+    
+    [buttonCreateVM setEnabled:YES];
+}
+
 - (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
 {
     CPLog.info("Receiving push notification of type TNArchipelPushNotificationVirtualMachine");

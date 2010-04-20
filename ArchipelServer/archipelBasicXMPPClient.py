@@ -24,7 +24,10 @@ import xmpp
 import sys
 import socket
 from utils import *
-import uuid;
+import uuid
+import os
+import base64
+import hashlib
 
 LOOP_OFF = 0
 """indicates loop off status"""
@@ -63,10 +66,10 @@ class TNArchipelBasicXMPPClient(object):
         self.roster_retreived = False;
         self.registered_actions_to_perform_on_connection = [];
         
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('google.com', 0));
-        ipaddr, other = s.getsockname();
-        self.ipaddr = ipaddr;
+        # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        # s.connect(('google.com', 0));
+        # ipaddr, other = s.getsockname();
+        self.ipaddr = self.configuration.get("GLOBAL", "machine_ip")
         
         for method in self.__class__.__dict__:
             if not method.find("__module_init__") == -1:
@@ -355,24 +358,68 @@ class TNArchipelBasicXMPPClient(object):
               return False
     
               
-    def set_vcard_entity_type(self, entity_type):
+    def set_vcard_entity_type(self, params):
         """
         allows to define a vCard type for the entry
         
-        @type vcard_content: String
-        @param vcard_content: a string representation of the XML vCard.
+        @type params: dict
+        @param params: adict containing at least entity_type keys, and options avatar_file key
         """
         log(self, LOG_LEVEL_DEBUG, "vcard making started");
 
         node_iq = (xmpp.Iq(typ='set', xmlns=None))
         
         type_node = xmpp.Node(tag="TYPE");
-        type_node.setData(entity_type);
+        type_node.setData(params["entity_type"]);
         
-        node_iq.addChild(name="vCard", payload=[type_node], namespace="vcard-temp")
+        avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory");
         
-        self.xmppclient.send(node_iq)
-        log(self, LOG_LEVEL_DEBUG, "vcard information sent with type: {0}".format(entity_type))        
+        try:
+            avatar_file = params["avatar_file"];
+        except:
+            avatar_file = "default.png"
+        
+        f = open(os.path.join(avatar_dir, avatar_file), "r");
+        photo_data = base64.b64encode(f.read());
+        f.close()
+        
+        node_photo_content_type = xmpp.Node(tag="TYPE")
+        node_photo_content_type.setData("image/png");
+        
+        node_photo_data = xmpp.Node(tag="BINVAL")
+        node_photo_data.setData(photo_data);
+        
+        node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
+        
+        node_iq.addChild(name="vCard", payload=[type_node, node_photo], namespace="vcard-temp")
+        
+        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard, args={"photo_hash": hashlib.sha224(photo_data).hexdigest()})
+        
+        log(self, LOG_LEVEL_DEBUG, "vcard information sent with type: {0}".format(params["entity_type"]))        
+    
+    
+    def send_update_vcard(self, conn, presence, photo_hash=None):
+        """
+        this method is called by set_vcard_entity_type when the update of the
+        vCard is OK. It will send the presence stanza to indicates the update of 
+        the vCard
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type presence: xmpp.Protocol.Iq
+        @param presence: the received IQ
+        @type photo_hash: string
+        @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
+        """
+        node_presence = xmpp.Presence(frm=self.jid)
+        
+        if photo_hash:
+            node_photo_sha1 = xmpp.Node(tag="photo")
+            node_photo_sha1.setData(photo_hash)
+            node_presence.addChild(name="x", namespace='vcard-temp:x:update', payload=[node_photo_sha1]);
+        
+        self.xmppclient.send(node_presence);
+        log(self, LOG_LEVEL_DEBUG, "vcard update presence sent") 
     
     
     def set_loop_status(self, status):

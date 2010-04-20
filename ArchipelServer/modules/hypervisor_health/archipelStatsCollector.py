@@ -27,7 +27,7 @@ from utils import *
 
 
 class TNThreadedHealthCollector(Thread):
-    from pysnmp.entity.rfc3413.oneliner import cmdgen
+    #from pysnmp.entity.rfc3413.oneliner import cmdgen
     """
     this class collects hypervisor stats regularly
     """

@@ -348,10 +348,10 @@ TNArchipelEntityTypeGroup            = @"group";
 
         if ([item type] == "group")
             return; //[CPException raise:@"NotImplemented" reason:@"Group module are not implemented"]
-
+        
         var vCard       = [item vCard];
         var entityType  = [_moduleLoader analyseVCard:vCard];
-
+        
         CPLog.info(@"setting the entity as " + item + " of type " + entityType);
         [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
         

@@ -11,16 +11,16 @@ NS_ARCHIPEL_VIRTUALMACHINE_VMCASTING    = "archipel:virtualmachine:vmcasting"
 globals()["COLORING_MAPPING_CLASS"].update({"TNHypervisorVMCasting": u'\033[36m', "TNArchipelPackageInstancier": u'\033[37m'})
 
 def __module_init__vmcasting_module_for_hypervisor(self):
-    db_path     = self.configuration.get("VMCasting", "vmcasting_database_path");
-    repo_path   = self.configuration.get("VMCasting", "repository_path");
+    db_path     = self.configuration.get("VMCASTING", "vmcasting_database_path");
+    repo_path   = self.configuration.get("VMCASTING", "repository_path");
     
     self.module_vmcasting = vmcasting.TNHypervisorVMCasting(db_path, repo_path, self);
 
 def __module_init__vmcasting_module_for_virtualmachine(self):
-    db_path     = self.configuration.get("VMCasting", "vmcasting_database_path");
-    repo_path   = self.configuration.get("VMCasting", "repository_path");
-    temp_path   = self.configuration.get("VMCasting", "temp_path");
-    disks_ext   = self.configuration.get("VMCasting", "disks_extensions");
+    db_path     = self.configuration.get("VMCASTING", "vmcasting_database_path");
+    repo_path   = self.configuration.get("VMCASTING", "repository_path");
+    temp_path   = self.configuration.get("VMCASTING", "temp_path");
+    disks_ext   = self.configuration.get("VMCASTING", "disks_extensions");
     
     self.module_packaging = instancier.TNArchipelPackageInstancier(db_path, temp_path, disks_ext, self);
 

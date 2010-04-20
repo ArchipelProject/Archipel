@@ -18,25 +18,26 @@
 
 import os, sys, commands
 import new
+import getopt
 import archipel
 import utils
 from archipelSimpleWebServer import *
 
-config = utils.init_conf(sys.argv[1]);
+
 
 def load_modules():
     """
     this function load modules
     """
-    module_dir      = config.get("General", "modules_dir_name")
-    module_dir_path = str(config.get("General" , "modules_dir_base_path")) + "/" + module_dir
+    module_dir      = config.get("GLOBAL", "modules_dir_name")
+    module_dir_path = str(config.get("GLOBAL" , "modules_dir_base_path")) + "/" + module_dir
 
-    if config.getboolean("General", "general_auto_load_module"):        
+    if config.getboolean("GLOBAL", "general_auto_load_module"):        
         for subdir, dirs, files in os.walk(module_dir_path):
             for module in dirs:
                 __import__(module_dir + "." + module, None, locals())
     else:
-        for module, should_load in config.items("Modules"):
+        for module, should_load in config.items("MODULES"):
             if should_load == "yes":
                 __import__(module_dir + "." + module, None, locals())
     
@@ -46,36 +47,52 @@ def main():
     main function of Archipel
     """
     # starting simple web server for Java VNC applet
-    port = config.getint("Simple Webserver", "webserver_port")
+    port = config.getint("WEBSERVER", "webserver_port")
     httpd = TNThreadedWebServer(port);
     httpd.daemon = True
     httpd.start()
 
     # initializing the hypervisor XMPP entity
-    jid         = config.get("Archipel Hypervisor", "hypervisor_xmpp_jid")
-    password    = config.get("Archipel Hypervisor", "hypervisor_xmpp_password")
-    hyp = archipel.TNArchipelHypervisor(jid, password, config)
+    jid         = config.get("HYPERVISOR", "hypervisor_xmpp_jid")
+    password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
+    database    = config.get("HYPERVISOR", "hypervisor_database_path")
+    hyp = archipel.TNArchipelHypervisor(jid, password, config, database)
     hyp.connect()
     
     
 if __name__ == "__main__":
-    try:
-        pid = os.fork()
-        if pid > 0:
-            sys.exit(0)
-    except OSError as e:
-        os.exit(1)
+    opts, args = getopt.getopt(sys.argv[1:], "n", ["nofork", "config="])
     
-    os.chdir(config.get("General", "general_exec_dir"))
+    configPath = None;
+    fork = True;
+    
+    for o, a in opts:
+        if o in ("--config"):
+            configPath = a;
+        if o in ("-n", "--nofork"):
+            fork = False
+    
+    if fork:
+        try:
+            pid = os.fork()
+            if pid > 0:
+                sys.exit(0)
+        except OSError as e:
+            os.exit(1)
+    
+    config = utils.init_conf(configPath);
+    os.chdir(config.get("GLOBAL", "general_exec_dir"))
     load_modules();
-    os.setsid()
-    os.umask(0)
+
+    if fork:
+        os.setsid()
+        os.umask(0)
         
-    try:
-        pid = os.fork()
-        if pid > 0:
-          sys.exit(0)
-    except OSError as e:
-        sys.exit(1)
+        try:
+            pid = os.fork()
+            if pid > 0:
+              sys.exit(0)
+        except OSError as e:
+            sys.exit(1)
     
     main()

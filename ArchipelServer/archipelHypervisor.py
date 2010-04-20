@@ -21,7 +21,6 @@ Contains TNArchipelVirtualMachines, the entities uses for hypervisor
 This provides the possibility to instanciate TNArchipelVirtualMachines
 """
 import xmpp
-import libvirt
 import sys
 import socket
 import sqlite3
@@ -33,11 +32,17 @@ from utils import *
 from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 
+NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
+
+try:
+    import libvirt
+except ImportError:
+    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
+
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
 
 NS_ARCHIPEL_HYPERVISOR_CONTROL = "archipel:hypervisor:control"
-
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -91,7 +96,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Super methods overrided
     ######################################################################################################
     
-    def __init__(self, jid, password, configuration, database_file="./database.db"):
+    def __init__(self, jid, password, configuration, database_file="./database.sqlite3"):
         """
         this is the constructor of the class.
         
@@ -109,13 +114,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.database_file = database_file;
         self.__manage_persistance()
         
-        self.libvirt_connection = libvirt.open(None)
-        if self.libvirt_connection == None:
-            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
-            sys.exit(0) 
-        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            self.libvirt_connection = libvirt.open(None)
+            if self.libvirt_connection == None:
+                log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+                sys.exit(0) 
+            log(self, LOG_LEVEL_INFO, "connected to  libvirt")
         
-        self.register_actions_to_perform_on_auth("set_vcard_entity_type", "hypervisor")
+        default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
+        self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "hypervisor", "avatar_file": default_avatar})
         
     
     
@@ -242,10 +249,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             domain_uuid = vm_jid.split("@")[0];
             vm          = self.virtualmachines[domain_uuid];
             
-            if (vm.get_instance().domain):
-                if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
-                    vm.get_instance().domain.destroy()
-                vm.get_instance().domain.undefine()
+            if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+                if (vm.get_instance().domain):
+                    if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
+                        vm.get_instance().domain.destroy()
+                    vm.get_instance().domain.undefine()
             
             log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
             self.remove_jid(vm_jid)

@@ -14,13 +14,13 @@ globals()["COLORING_MAPPING_CLASS"].update({"TNThreadedHealthCollector": u'\033[
 ######################################################################################################
 
 def __module_init__health_module(self):
-    db_file                 = self.configuration.get("Module Health", "health_database_path")
-    snmp_agent              = self.configuration.get("Module Health", "health_snmp_agent")
-    snmp_community          = self.configuration.get("Module Health", "health_snmp_community")
-    snmp_version            = self.configuration.getint("Module Health", "health_snmp_version")
-    snmp_port               = self.configuration.getint("Module Health", "health_snmp_port")
-    collection_interval     = self.configuration.getint("Module Health", "health_collection_interval")
-    max_rows_before_purge   = self.configuration.getint("Module Health", "max_rows_before_purge")
+    db_file                 = self.configuration.get("HEALTH", "health_database_path")
+    snmp_agent              = self.configuration.get("HEALTH", "health_snmp_agent")
+    snmp_community          = self.configuration.get("HEALTH", "health_snmp_community")
+    snmp_version            = self.configuration.getint("HEALTH", "health_snmp_version")
+    snmp_port               = self.configuration.getint("HEALTH", "health_snmp_port")
+    collection_interval     = self.configuration.getint("HEALTH", "health_collection_interval")
+    max_rows_before_purge   = self.configuration.getint("HEALTH", "max_rows_before_purge")
     
     self.module_health = health.TNHypervisorHealth(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port);
 

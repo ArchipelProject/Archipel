@@ -31,13 +31,19 @@ Also the JID of the virtual machine MUST be the UUID use in the libvirt domain, 
 fail.
 """
 import xmpp
-import libvirt
 import sys
 import socket
 import os
 import commands
 from utils import *
 from archipelBasicXMPPClient import *
+
+NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
+try:
+    import libvirt
+except ImportError:
+    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
+
 
 VIR_DOMAIN_NOSTATE	                        =	0;
 VIR_DOMAIN_RUNNING	                        =	1;
@@ -63,12 +69,15 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def __init__(self, jid, password, hypervisor, configuration):
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         
-        self.vm_disk_base_path  = self.configuration.get("Virtual Machines", "disk_base_path") + "/"
+        self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "disk_base_path") + "/"
         self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
         
-        self.libvirt_connection = None;
-        self.register_actions_to_perform_on_auth("set_vcard_entity_type", "virtualmachine")
-        self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            self.libvirt_connection = None;
+            self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        
+        default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         self.hypervisor = hypervisor;
         
         if not os.path.isdir(self.vm_own_folder):
@@ -93,8 +102,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         method in order to connect also from libvirt
         """
         self.xmppclient.disconnect()
-        if self.libvirt_connection:
-            self.libvirt_connection.close() 
+        
+        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            if self.libvirt_connection:
+                self.libvirt_connection.close() 
     
     
     def remove_own_folder(self):
@@ -118,6 +129,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
         self.push_change("virtualmachine", "initialized");
         
         self.domain = None;
@@ -163,6 +176,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             self.domain.create()
@@ -187,6 +203,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             self.domain.shutdown()
@@ -209,6 +228,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             self.domain.reboot(0) # flags not used in libvirt but required.
@@ -230,6 +252,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             self.domain.suspend()
@@ -252,6 +277,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             self.domain.resume()
@@ -274,6 +302,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             reply = iq.buildReply('success')
@@ -347,6 +378,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        @rtype: xmpp.Protocol.Iq
        @return: a ready to send IQ containing the result of the action
        """
+       if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+           return
+       
        reply = None
        
        try :
@@ -381,6 +415,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         reply = None
         try:
             reply = iq.buildReply('success')
@@ -414,15 +451,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
+        
         log(self, LOG_LEVEL_DEBUG, "Control IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-        
-        #if not self.is_jid_subscribed(xmpp.JID(iq.getFrom())):
-        #    return
-            #reply = iq.buildReply('error')
-            #response = xmpp.Node(tag="subscription-required")
-            #reply.setQueryPayload([response])
-            #raise xmpp.protocol.NodeProcessed
-        
         
         iqType = iq.getTag("query").getAttr("type");
         
@@ -485,6 +518,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+        
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type");

@@ -18,11 +18,16 @@
 
 # we need to import the package containing the class to surclass
 from utils import *
-import archipel
 import commands
 import xmpp
 import os
-import libvirt
+import archipel
+
+NS_ARCHIPEL_WITH_LIBVIRT_MODULE = True
+try:
+    import libvirt
+except ImportError:
+    NS_ARCHIPEL_WITH_LIBVIRT_MODULE = False
 
 
 
@@ -32,14 +37,19 @@ class TNHypervisorNetworks:
     def __init__(self, entity):
         self.entity = entity;
         
-        self.libvirt_connection = libvirt.open(None)
-        if self.libvirt_connection == None:
-            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
-            sys.exit(0) 
-        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        if NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            self.libvirt_connection = libvirt.open(None)
+            if self.libvirt_connection == None:
+                log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+                sys.exit(0) 
+            log(self, LOG_LEVEL_INFO, "connected to  libvirt")
     
     
     def process_iq_for_hypervisor(self, conn, iq):
+        
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur");
         
         iqType = iq.getTag("query").getAttr("type");
@@ -71,6 +81,9 @@ class TNHypervisorNetworks:
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         log(self, LOG_LEVEL_INFO, "received network iq for virtual machine");
         
         iqType = iq.getTag("query").getAttr("type");
@@ -92,6 +105,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         try:
             network_node = iq.getTag("query").getTag("network");
             
@@ -114,6 +130,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData();
@@ -137,6 +156,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData();
@@ -160,6 +182,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData();
@@ -183,6 +208,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         reply = iq.buildReply('success')
         active_networks_nodes = []; 
         not_active_networks_nodes = []; #xmpp.Node(tag="unactivedNetworks");
@@ -220,6 +248,9 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if not NS_ARCHIPEL_WITH_LIBVIRT_MODULE:
+            return
+            
         reply = iq.buildReply('success')
         active_networks_nodes = []; 
         

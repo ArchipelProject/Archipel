@@ -105,6 +105,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
     
     _previousStatus = [[self entity] status];
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
@@ -115,7 +116,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)rememberLastSelectedTabIndex
 {
-    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0))
+    if ([self entity] && ([[self mainTabView] numberOfTabViewItems] > 0))
     {
         var currentItem = [[self mainTabView] selectedTabViewItem];
         
@@ -128,7 +129,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
-    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0))
+    if (anItem && [self entity] && ([[self mainTabView] numberOfTabViewItems] > 0))
     {
         var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:anItem];
         var defaults                = [TNUserDefaults standardUserDefaults];
@@ -142,11 +143,12 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)recoverFromLastSelectedIndex
 {
+    return
     var defaults            = [TNUserDefaults standardUserDefaults];
     var memid               = @"selectedTabIndexFor" + [[self entity] jid];
     var oldSelectedIndex    = [defaults integerForKey:memid];
     
-    if ([self entity] && ([[[self mainTabView] tabViewItems] count] > 0) && ([[[self mainTabView] tabViewItems] count] >= oldSelectedIndex))
+    if ([self entity] && ([[self mainTabView] numberOfTabViewItems] > 0) && ([[self mainTabView] numberOfTabViewItems] >= oldSelectedIndex))
     {
         if  ((oldSelectedIndex) && (oldSelectedIndex != -1))
         {
@@ -270,9 +272,12 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)_removeAllTabsFromModulesTabView
 {
+    if ([mainTabView numberOfTabViewItems] <= 0)
+        return;
+        
     var arrayCpy        = [[mainTabView tabViewItems] copy];
-    var selectedItem    = [mainTabView selectedTabViewItem];
-    var theModule       = [[selectedItem view] documentView]
+    // var selectedItem    = [mainTabView selectedTabViewItem];
+    // var theModule       = [[selectedItem view] documentView];
 
     //@each(var aTabViewItem in [self tabViewItems])
     for(var i = 0; i < [arrayCpy count]; i++)
@@ -326,10 +331,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     }
     else if (([[aNotification object] status] == TNStropheContactStatusOnline) && (_previousStatus) && (_previousStatus == TNStropheContactStatusOffline))
     {
-        var center = [CPNotificationCenter defaultCenter];
-
         _previousStatus = nil;
-        [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
     }
 
 }
@@ -339,12 +341,11 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
-    var center  = [CPNotificationCenter defaultCenter];
     var vCard   = [[aNotification object] vCard];
 
-    [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:[self entity]];
     [self setModuleType:[self analyseVCard:vCard]];
-
+    
+    [self _removeAllTabsFromModulesTabView];
     [self _populateModulesTabView];
 }
 
@@ -357,11 +358,19 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
 {
-    var currentTabItem          = [aTabView selectedTabViewItem];
-    var oldModule               = [[currentTabItem view] documentView];
-    var newModule               = [[anItem view] documentView];
+    if ([aTabView numberOfTabViewItems] <= 0)
+        return
     
-    [oldModule willHide];
+    
+    var currentTabItem = [aTabView selectedTabViewItem];
+    
+    if (currentTabItem)
+    {
+        var oldModule = [[currentTabItem view] documentView];
+        [oldModule willHide];
+    }
+    
+    var newModule = [[anItem view] documentView];
     [newModule willShow];
 }
 

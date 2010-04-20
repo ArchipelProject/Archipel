@@ -64,6 +64,8 @@
     [[self entryName] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
 
     [[self entryAvatar] setBorderedWithHexColor:@"#a5a5a5"];
+    [[self entryAvatar] setBackgroundColor:[CPColor whiteColor]];
+    
     [self setHidden:YES];
 
     [[self entryName] setTarget:self];

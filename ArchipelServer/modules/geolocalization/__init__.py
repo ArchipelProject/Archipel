@@ -7,10 +7,10 @@ NS_ARCHIPEL_HYPERVISOR_GEOLOC = "archipel:hypervisor:geolocalization"
 
 # this method will be call at loading
 def __module_init__geoloc(self):
-    service = self.configuration.get("Geolocalization", "service_url")
-    request = self.configuration.get("Geolocalization", "service_request")
-    method  = self.configuration.get("Geolocalization", "service_method")
-    root_info_node = self.configuration.get("Geolocalization", "service_response_root_node")
+    service = self.configuration.get("GEOLOCALIZATION", "service_url")
+    request = self.configuration.get("GEOLOCALIZATION", "service_request")
+    method  = self.configuration.get("GEOLOCALIZATION", "service_method")
+    root_info_node = self.configuration.get("GEOLOCALIZATION", "service_response_root_node")
     
     self.module_geolocalization = geoloc.TNHypervisorGeolocalization(service, request, method, root_info_node);
 
