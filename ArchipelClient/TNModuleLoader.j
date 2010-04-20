@@ -37,11 +37,15 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 /*! @ingroup archipelcore
     this is the module loader of Archipel
 */
+
+TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingCompleteNotification"
+
 @implementation TNModuleLoader: CPObject
 {
     TNToolbar               mainToolbar                     @accessors;
     CPTabView               mainTabView                     @accessors;
-
+    id                      delegate                        @accessors;
+    
     TNStropheRoster         roster                          @accessors;
     id                      entity                          @accessors;
     CPString                moduleType                      @accessors;
@@ -54,6 +58,8 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     CPString                _previousStatus;
     CPView                  _currentToolbarView;
     CPToolbarItem           _currentToolbarItem;
+    int                     _numberOfModulesToLoad;
+    int                     _numberOfModulesLoaded;
 }
 
 /*! initialize the module loader
@@ -65,6 +71,8 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     {
         _loadedTabModulesScrollViews     = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
+        _numberOfModulesToLoad = 0;
+        _numberOfModulesLoaded = 0;
     }
 
     return self;
@@ -200,18 +208,14 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     {
         var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
         var path    = [self modulesPath] + [module objectForKey:@"folder"];
+        var bundle  = [CPBundle bundleWithPath:path];
         
-        CPLog.debug("Folder for module " + [module objectForKey:@"folder"])
-        try
-        {
-            var bundle = [CPBundle bundleWithPath:path];
+        _numberOfModulesToLoad++;    
             
-            [bundle loadWithDelegate:self];
-        }
-        catch(ex)
-        {
-            CPLog.error(ex);
-        }
+        if ([delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
+            [delegate moduleLoader:self willLoadBundle:bundle];
+                       
+        [bundle loadWithDelegate:self];
     }
 }
 
@@ -368,7 +372,7 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    CPLog.info("Bundle loaded : " + aBundle);
+    _numberOfModulesLoaded++;
     
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
@@ -418,6 +422,15 @@ TNArchipelModuleTypeToolbar = @"toolbar";
     }
 
     [[theViewController view] setFrame:frame];
+    
+    if ([delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
+        [delegate moduleLoader:self hasLoadBundle:aBundle];
+        
+    if (_numberOfModulesLoaded >= _numberOfModulesToLoad)
+    {
+        if ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
+            [delegate moduleLoaderLoadingComplete:self];
+    }
 }
 
 /*! Action that respond on Toolbar TNModules to display the view of the module.
