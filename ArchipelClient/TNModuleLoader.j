@@ -104,9 +104,9 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     [self setModuleType:aType];
 
     [center removeObserver:self];
-    [center addObserver:self selector:@selector(_didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
-    
+
     _previousStatus = [[self entity] status];
     if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
         [self _populateModulesTabView];
@@ -134,7 +134,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:anItem];
         var defaults                = [TNUserDefaults standardUserDefaults];
         var memid                   = @"selectedTabIndexFor" + [[self entity] jid];
-
+        
         [defaults setInteger:currentSelectedIndex forKey:memid];
     }
 }
@@ -143,14 +143,14 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)recoverFromLastSelectedIndex
 {
-    return
     var defaults            = [TNUserDefaults standardUserDefaults];
     var memid               = @"selectedTabIndexFor" + [[self entity] jid];
     var oldSelectedIndex    = [defaults integerForKey:memid];
+    var numberOfTabItems    = [[self mainTabView] numberOfTabViewItems];
     
-    if ([self entity] && ([[self mainTabView] numberOfTabViewItems] > 0) && ([[self mainTabView] numberOfTabViewItems] >= oldSelectedIndex))
+    if ([self entity] && (numberOfTabItems > 0) && (numberOfTabItems >= oldSelectedIndex))
     {
-        if  ((oldSelectedIndex) && (oldSelectedIndex != -1))
+        if  (oldSelectedIndex && (oldSelectedIndex != -1))
         {
             [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
         }
@@ -306,7 +306,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     var theConnection   = [[self entity] connection];
     var theRoster       = [self roster];
     var theModule       = [aModuleScrollView documentView];
-
+    
     [theModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
     [theModule willLoad];
 
@@ -320,18 +320,18 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to
     know what TNModules to load.
 */
-- (void)_didPresenceUpdated:(CPNotification)aNotification
+- (void)_didPresenceUpdate:(CPNotification)aNotification
 {
+    [self _removeAllTabsFromModulesTabView];
+    
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
     {
         _previousStatus = TNStropheContactStatusOffline;
-        [self rememberLastSelectedTabIndex];
-        [self _removeAllTabsFromModulesTabView];
-
     }
     else if (([[aNotification object] status] == TNStropheContactStatusOnline) && (_previousStatus) && (_previousStatus == TNStropheContactStatusOffline))
     {
         _previousStatus = nil;
+        [self _populateModulesTabView];
     }
 
 }
@@ -407,14 +407,12 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     [scrollView setAutohidesScrollers:YES];
     [scrollView setBackgroundColor:[CPColor whiteColor]];
 
-    var frame = [scrollView bounds];
-
+    var frame = [[scrollView contentView] bounds];
+    
     [[theViewController view] setAutoresizingMask: CPViewWidthSizable];
     [[theViewController view] setModuleName:moduleName];
     [[theViewController view] setModuleLabel:moduleLabel];
     [[theViewController view] setModuleBundle:aBundle];
-
-    [scrollView setDocumentView:[theViewController view]];
 
     if (moduleInsertionType == TNArchipelModuleTypeTab)
     {
@@ -425,7 +423,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         [[theViewController view] setModuleTabIndex:moduleTabIndex];
 
         [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];
-        frame.size.height = [[theViewController view] frame].size.height;
+        frame.size.height = [[theViewController view] bounds].size.height;
     }
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
     {
@@ -442,6 +440,8 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     }
 
     [[theViewController view] setFrame:frame];
+    [scrollView setDocumentView:[theViewController view]];
+    
     
     if ([delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
         [delegate moduleLoader:self hasLoadBundle:aBundle];

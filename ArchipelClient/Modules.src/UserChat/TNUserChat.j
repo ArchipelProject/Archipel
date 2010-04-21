@@ -19,7 +19,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <AppKit/CPCollectionView.j>
 
 @import "TNMessageView.j"
 
@@ -36,7 +35,7 @@
     @outlet CPTextField     fieldName               @accessors;
     @outlet CPTextField     fieldUserJid            @accessors;
     @outlet CPTextField     fieldMessage            @accessors;
-    @outlet CPScrollView    messageScrollView       @accessors;
+    @outlet CPScrollView    messagesScrollView      @accessors;
     @outlet CPImageView     imageSpinnerWriting     @accessors;
 
     CPCollectionView        _messageCollectionView;
@@ -48,35 +47,36 @@
 */
 - (void)awakeFromCib
 {
+    CPLog.debug(messagesScrollView);
     _messages = [CPArray array];
-
-    [[self messageScrollView] setBorderedWithHexColor:@"#9e9e9e"];
-    [[self messageScrollView] setAutoresizingMask:CPViewWidthSizable];
-
-    var frame           = [[[self messageScrollView] documentView] bounds];
-    var messageView     = [[TNMessageView alloc] initWithFrame:CGRectMakeZero()];
-
-    [messageView setAutoresizingMask:CPViewWidthSizable];
-
-    _messageCollectionView = [[CPCollectionView alloc] initWithFrame:frame];
-    [_messageCollectionView setAutoresizingMask:CPViewWidthSizable];
-    [_messageCollectionView setMinItemSize:CGSizeMake(100, 60)];
-    [_messageCollectionView setMaxItemSize:CGSizeMake(1700, 2024)];
-    [_messageCollectionView setMaxNumberOfColumns:1];
-    [_messageCollectionView setVerticalMargin:2.0];
-    [_messageCollectionView setSelectable:NO]
-    [_messageCollectionView setItemPrototype:[[CPCollectionViewItem alloc] init]];
-    [[_messageCollectionView itemPrototype] setView:messageView];
-    [_messageCollectionView setContent:_messages];
-
-    [[self messageScrollView] setDocumentView:_messageCollectionView];
-
-    var mainBundle = [CPBundle mainBundle];
-    
-    [[self imageSpinnerWriting] setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
-    [[self imageSpinnerWriting] setHidden:YES];
-
-    [[self fieldMessage] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil]
+     
+     [[self messagesScrollView] setBorderedWithHexColor:@"#9e9e9e"];
+     [[self messagesScrollView] setAutoresizingMask:CPViewWidthSizable];
+     
+     var frame           = [[[self messagesScrollView] contentView] bounds];
+     var messageView     = [[TNMessageView alloc] initWithFrame:CGRectMakeZero()];
+     
+     [messageView setAutoresizingMask:CPViewWidthSizable];
+     
+     _messageCollectionView = [[CPCollectionView alloc] initWithFrame:frame];
+     [_messageCollectionView setAutoresizingMask:CPViewWidthSizable];
+     [_messageCollectionView setMinItemSize:CGSizeMake(100, 60)];
+     [_messageCollectionView setMaxItemSize:CGSizeMake(1700, 2024)];
+     [_messageCollectionView setMaxNumberOfColumns:1];
+     [_messageCollectionView setVerticalMargin:2.0];
+     [_messageCollectionView setSelectable:NO]
+     [_messageCollectionView setItemPrototype:[[CPCollectionViewItem alloc] init]];
+     [[_messageCollectionView itemPrototype] setView:messageView];
+     [_messageCollectionView setContent:_messages];
+     
+     [[self messagesScrollView] setDocumentView:_messageCollectionView];
+     
+     var mainBundle = [CPBundle mainBundle];
+     
+     [[self imageSpinnerWriting] setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
+     [[self imageSpinnerWriting] setHidden:YES];
+     
+     [[self fieldMessage] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 }
 
 /*! TNModule implementation.
@@ -93,11 +93,18 @@
     [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self entity]];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
 
-    var frame = [[[self messageScrollView] documentView] bounds];
+    var frame = [[[self messagesScrollView] documentView] bounds];
     [_messageCollectionView setFrame:frame];
 
+    // var defaults = [TNUserDefaults standardUserDefaults];
+    // var lastConversation = [defaults objectForKey:"communicationWith" + [[self entity] jid]];
+    // 
+    // console.log(lastConversation);
+    // if (lastConversation)
+    //     _messages = lastConversation;
+    
     var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self entity] jid]));
-
+    
     if (lastConversation)
     {
         for (var i = 0; i < lastConversation.length; i++)
@@ -106,16 +113,16 @@
             var aSender     = dict._buckets.name        // yes I know this is awful. But
             var aMessage    = dict._buckets.message;    // I've passed 2 hours, and I'm tired of this shitty bug.
             var aColor      = dict._buckets.color;
-
+    
             if (! aColor)
                 aColor = "ffffff";
-
+    
             [_messages addObject:[CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", aColor, @"color"]];
         }
     }
 
     [_messageCollectionView reloadContent];
-    var frame = [[[self messageScrollView] documentView] frame];
+    var frame = [[[self messagesScrollView] documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageCollectionView scrollPoint:newScrollOrigin];
 }
@@ -128,7 +135,10 @@
     [super willUnload];
 
     localStorage.setItem("communicationWith" + [[self entity] jid], JSON.stringify(_messages));
-
+    // var defaults = [TNUserDefaults standardUserDefaults];
+    // [defaults setArray:_messages forKey:"communicationWith" + [[self entity] jid]];
+    // console.log("HERE" + _messages);
+    
     [_messages removeAllObjects];
     [_messageCollectionView reloadContent];
 }
@@ -209,9 +219,9 @@
 
     [_messages addObject:newMessageDict];
     [_messageCollectionView reloadContent];
-
+    
     // scroll to bottom;
-    var frame = [[[self messageScrollView] documentView] frame];
+    var frame = [[[self messagesScrollView] documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageCollectionView scrollPoint:newScrollOrigin];
 }
@@ -227,8 +237,11 @@
 
         if ([stanza containsChildrenWithName:@"body"])
         {
+            var messageBody = [[stanza firstChildWithName:@"body"] text];
             [[self imageSpinnerWriting] setHidden:YES];
-            [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+            [self appendMessageToBoard:messageBody from:[stanza valueForAttribute:@"from"]];
+
+            CPLog.info("message received : " + messageBody);
         }
     }
     else

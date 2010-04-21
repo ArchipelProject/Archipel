@@ -95,8 +95,6 @@
         [defaults setBool:NO forKey:@"loginRememberCredentials"];
     }
     
-    [defaults synchronize];
-    
     [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
     [[self JSStrophe] setDelegate:self];
     [[self JSStrophe] connect];
