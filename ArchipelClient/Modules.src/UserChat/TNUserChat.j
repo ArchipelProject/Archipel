@@ -50,10 +50,11 @@
     CPLog.debug(messagesScrollView);
     _messages = [CPArray array];
      
-     [[self messagesScrollView] setBorderedWithHexColor:@"#9e9e9e"];
-     [[self messagesScrollView] setAutoresizingMask:CPViewWidthSizable];
+     [messagesScrollView setBorderedWithHexColor:@"#9e9e9e"];
+     [messagesScrollView setAutoresizingMask:CPViewWidthSizable];
+     [messagesScrollView setAutohidesScrollers:YES];
      
-     var frame           = [[[self messagesScrollView] contentView] bounds];
+     var frame           = [[messagesScrollView contentView] bounds];
      var messageView     = [[TNMessageView alloc] initWithFrame:CGRectMakeZero()];
      
      [messageView setAutoresizingMask:CPViewWidthSizable];
@@ -69,14 +70,14 @@
      [[_messageCollectionView itemPrototype] setView:messageView];
      [_messageCollectionView setContent:_messages];
      
-     [[self messagesScrollView] setDocumentView:_messageCollectionView];
+     [messagesScrollView setDocumentView:_messageCollectionView];
      
      var mainBundle = [CPBundle mainBundle];
      
-     [[self imageSpinnerWriting] setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
-     [[self imageSpinnerWriting] setHidden:YES];
+     [imageSpinnerWriting setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
+     [imageSpinnerWriting setHidden:YES];
      
-     [[self fieldMessage] addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
+     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 }
 
 /*! TNModule implementation.
@@ -93,7 +94,7 @@
     [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self entity]];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
 
-    var frame = [[[self messagesScrollView] documentView] bounds];
+    var frame = [[messagesScrollView documentView] bounds];
     [_messageCollectionView setFrame:frame];
 
     // var defaults = [TNUserDefaults standardUserDefaults];
@@ -122,7 +123,8 @@
     }
 
     [_messageCollectionView reloadContent];
-    var frame = [[[self messagesScrollView] documentView] frame];
+    
+    var frame = [[messagesScrollView documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageCollectionView scrollPoint:newScrollOrigin];
 }
@@ -162,8 +164,8 @@
 
     [[self entity] freeMessagesQueue];
     
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[[self entity] nickname]];
+    [fieldJID setStringValue:[[self entity] jid]];
 }
 
 /*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
@@ -172,7 +174,7 @@
 {
     if ([aNotification object] == [self entity])
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[[self entity] nickname]]
     }
 }
 
@@ -213,15 +215,14 @@
 */
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender
 {
-    var color = (aSender == @"me") ? "d9dfe8" : "ffffff";
-
-    var newMessageDict = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color"];
-
+    var color           = (aSender == @"me") ? "d9dfe8" : "ffffff";
+    var newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color"];
+    var frame           = [[messagesScrollView documentView] frame];
+    
     [_messages addObject:newMessageDict];
     [_messageCollectionView reloadContent];
     
     // scroll to bottom;
-    var frame = [[[self messagesScrollView] documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageCollectionView scrollPoint:newScrollOrigin];
 }
@@ -238,7 +239,7 @@
         if ([stanza containsChildrenWithName:@"body"])
         {
             var messageBody = [[stanza firstChildWithName:@"body"] text];
-            [[self imageSpinnerWriting] setHidden:YES];
+            [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[stanza valueForAttribute:@"from"]];
 
             CPLog.info("message received : " + messageBody);
@@ -255,7 +256,7 @@
 */
 - (void)didReceivedMessageComposing:(CPNotification)aNotification
 {
-    [[self imageSpinnerWriting] setHidden:NO];
+    [imageSpinnerWriting setHidden:NO];
 }
 
 /*! performed when TNStropheContactMessagePaused is received from current entity.
@@ -263,7 +264,7 @@
 */
 - (void)didReceivedMessagePause:(CPNotification)aNotification
 {
-    [[self imageSpinnerWriting] setHidden:YES];
+    [imageSpinnerWriting setHidden:YES];
 }
 
 /*! send a message to the contact containing the content of the outlet message CPTextField
@@ -274,9 +275,9 @@
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
 
-    [[self entity] sendMessage:[[self fieldMessage] stringValue]];
-    [self appendMessageToBoard:[[self fieldMessage] stringValue] from:@"me"];
-    [[self fieldMessage] setStringValue:@""];
+    [[self entity] sendMessage:[fieldMessage stringValue]];
+    [self appendMessageToBoard:[fieldMessage stringValue] from:@"me"];
+    [fieldMessage setStringValue:@""];
 }
 
 /*! Clear all localstorage  of the old messages

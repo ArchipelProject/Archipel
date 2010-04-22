@@ -25,5 +25,15 @@
     <key>TNUserDefaultStorageType</key>
     <string>TNUserDefaultStorageTypeHTML5</string>
     
+    <!--
+        Url of the welcome page. It can be any URL (online) or "local" to 
+        display the defaut welcome page (offline)
+    -->
+    <key>TNHelpWindowURL</key>
+    <string>http://antoinemercadal.fr/archipelhelp/</string>
+    
+    <key>TNArchipelVersion</key>
+    <string>Alpha-0.7</string>
+    
 </dict>
 </plist>

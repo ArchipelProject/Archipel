@@ -74,6 +74,7 @@ TNArchipelEntityTypeGroup            = @"group";
     @outlet CPView              filterView                  @accessors;
     @outlet CPSearchField       filterField                 @accessors;
     @outlet CPView              rightView                   @accessors;
+    @outlet CPWebView           helpView                    @accessors;
     @outlet CPSplitView         leftSplitView               @accessors;
     @outlet CPWindow            theWindow                   @accessors;
     @outlet CPWindow            windowModuleLoading         @accessors;
@@ -85,12 +86,14 @@ TNArchipelEntityTypeGroup            = @"group";
 
     TNModuleLoader              _moduleLoader;
     CPTabView                   _moduleTabView;
-
+    
     TNDatasourceRoster          _mainRoster;
     TNOutlineViewRoster         _rosterOutlineView;
     TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
     CPScrollView                _outlineScrollView;
+    BOOL                        _shouldShowHelpView;
+    CPWindow                    _helpWindow;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -195,16 +198,21 @@ TNArchipelEntityTypeGroup            = @"group";
     CPLog.trace(@"loading all modules");
     [_moduleLoader load];
 
+
+    _shouldShowHelpView = YES;
+    [self showHelpView];
+    
     // notifications
     var center = [CPNotificationCenter defaultCenter];
 
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
-    //[center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionSuccessNotification object:connectionWindow];
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
     
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
-    //[center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheDisconnectionNotification object:nil];
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
+    
+    CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
+    [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     
     CPLog.info(@"AppController initialized");
 }
@@ -282,11 +290,55 @@ TNArchipelEntityTypeGroup            = @"group";
     [addGroupWindow orderFront:nil];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on delete group item click
+    NOT IMPLEMENTED
+    To have more information about the toolbar, see TNToolbar
+*/
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
     [CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on delete help item click.
+    This will show a window conataining the helpView
+    To have more information about the toolbar, see TNToolbar
+*/
+- (IBAction)toolbarItemHelpClick:(id)sender
+{
+    if (!_helpWindow)
+    {
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask];
+        var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
+        
+        [_helpWindow setDelegate:self];
+        [helpView setFrame:[[scrollView contentView] bounds]];
+        [scrollView setAutohidesScrollers:YES];
+        [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+        [scrollView setDocumentView:helpView];
+
+        [[_helpWindow contentView] addSubview:scrollView];
+        [_helpWindow center];
+        [_helpWindow makeKeyAndOrderFront:nil];
+    }
+    else
+    {
+        [_helpWindow close];
+        _helpWindow = nil;
+    }
+}
+
+/*! Delegate for CPWindow.
+    Tipically set _helpWindow to nil on closes.
+*/
+- (void)windowWillClose:(CPWindow)aWindow
+{
+    if (aWindow == _helpWindow)
+    {
+        _helpWindow = nil;
+    }
+}
 
 /*! Notification responder of TNStropheConnection
     will be performed on login
@@ -318,6 +370,13 @@ TNArchipelEntityTypeGroup            = @"group";
     [connectionWindow orderFront:nil];
 }
 
+/*! Notification responder for CPApplicationWillTerminateNotification
+*/
+- (void)onApplicationTerminate:(CPNotification)aNotification
+{
+    [_mainRoster disconnect];
+}
+
 
 /*! Delegate method of main TNStropheRoster.
     will be performed when a subscription request is sent
@@ -332,6 +391,33 @@ TNArchipelEntityTypeGroup            = @"group";
 }
 
 
+/*! Display the helpView in the rightView
+*/
+- (void)showHelpView
+{
+    if (![helpView mainFrameURL])
+    {
+        var bundle  = [CPBundle mainBundle];
+        var url     = [bundle objectForInfoDictionaryKey:@"TNHelpWindowURL"];
+        var version = [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"];
+        
+        if (!url || (url == @"local"))
+            url = @"help/index.html";
+        
+        [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
+    }
+    
+    [helpView setFrame:[rightView bounds]];
+    [rightView addSubview:helpView];
+}
+
+/*! Hide the helpView from the rightView
+*/
+- (void)hideHelpView
+{
+    [helpView removeFromSuperview];
+}
+
 /*! Delegate of TNOutlineView
     will be performed when selection changes. Tab Modules displaying
     if managed by this message
@@ -343,6 +429,15 @@ TNArchipelEntityTypeGroup            = @"group";
     try
     {
         var index       = [_rosterOutlineView selectedRowIndexes];
+        
+        if ([index firstIndex] == -1)
+        {
+            [self showHelpView];
+            return;
+        }
+        
+        [self hideHelpView];
+        
         var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
         var defaults    = [TNUserDefaults standardUserDefaults];
 

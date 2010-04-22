@@ -50,6 +50,11 @@ TNToolBarItemAddGroup       = @"TNToolBarItemAddGroup";
 */
 TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
 
+/*! @global
+    @group TNToolBarItem
+    identifier for item help
+*/
+TNToolBarItemHelp           = @"TNToolBarItemHelp";
 
 /*! @ingroup archipelcore
     subclass of CPToolbar that allow dynamic insertion. This is used by TNModuleLoader
@@ -78,6 +83,8 @@ TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
         [self addItemWithIdentifier:TNToolBarItemDeleteJid label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
         [self addItemWithIdentifier:TNToolBarItemAddGroup label:@"Add Group" icon:[bundle pathForResource:@"groupAdd.png"] target:aTarget action:@selector(toolbarItemAddGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
+        [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
+        [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
 
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemAddJid];
         [self setPosition:1 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
@@ -87,7 +94,9 @@ TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
         [self setPosition:5 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [self setPosition:6 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
         [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemLogout];
+        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemHelp];
+        [self setPosition:9 forToolbarItemIdentifier:TNToolBarItemLogout];
+        
 
         [self setDelegate:self];
     }
