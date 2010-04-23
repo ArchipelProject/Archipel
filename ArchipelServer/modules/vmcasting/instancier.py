@@ -81,10 +81,17 @@ class TNArchipelPackageInstancier:
                 name = values[1]
                 description = values[2]
                 uuid = values[3]
-                if os.system("ls " + self.entity.vm_own_folder + "/" + uuid + ".package") == 0:
-                    used = "true"
-                else:
-                    used = "false"
+                
+                used = "false";
+                try:
+                    f = open(self.entity.vm_own_folder + "/current.package", "r");
+                    puuid = f.read()
+                    f.close()
+                    if puuid == uuid:
+                        used = "true"
+                except:
+                    pass
+
                 node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid, "used": used})
                 nodes.append(node)
             reply.setQueryPayload(nodes)
@@ -110,9 +117,7 @@ class TNArchipelPackageInstancier:
             
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions));
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path));
-            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define);
-            
-            os.system("touch " + self.entity.vm_own_folder + "/" + uuid + ".package");
+            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.entity, uuid);
             
             appliance_packager.start();
             

@@ -89,7 +89,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
 {
-    if ([[self entity] class] === TNStropheContact)
+    if ([[self entity] class] == TNStropheContact)
     {
         CPLog.info([self class] + " is registring for push notification of type : " + aPushType);
         var params = [[CPDictionary alloc] init];

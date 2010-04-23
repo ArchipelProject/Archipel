@@ -64,8 +64,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)awakeFromCib
 {
-    var mainBundle  = [CPBundle mainBundle];
-    var spinner     = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]];
+    var bundle  = [CPBundle bundleForClass:[self class]];
+    var spinner = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]];
 
     [[self imageCPULoading] setImage:spinner];
     [[self imageMemoryLoading] setImage:spinner];

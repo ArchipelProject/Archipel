@@ -322,15 +322,16 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)_didPresenceUpdate:(CPNotification)aNotification
 {
-    [self _removeAllTabsFromModulesTabView];
-    
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
     {
+        [self _removeAllTabsFromModulesTabView];
         _previousStatus = TNStropheContactStatusOffline;
     }
     else if (([[aNotification object] status] == TNStropheContactStatusOnline) && (_previousStatus) && (_previousStatus == TNStropheContactStatusOffline))
     {
         _previousStatus = nil;
+        
+        [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
 

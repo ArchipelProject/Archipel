@@ -40,12 +40,12 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 {
     @outlet CPTextField                 fieldJID                @accessors;
     @outlet CPTextField                 fieldName               @accessors;
-    
+    @outlet CPTextField                 fieldInfoStatus         @accessors;
+    @outlet CPImageView                 fieldInfoImage         @accessors;
     @outlet CPScrollView                mainScrollView;
     
     CPTableView                         _tableAppliances;
     TNInstalledAppliancesDatasource     _appliancesDatasource;
-    
 }
 
 - (void)awakeFromCib
@@ -54,6 +54,11 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     _appliancesDatasource    = [[TNInstalledAppliancesDatasource alloc] init];
     _tableAppliances         = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
 
+    var bundle = [CPBundle bundleForClass:[self class]];
+    
+    [fieldInfoImage setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]]];
+    [fieldInfoImage setHidden:YES];
+    
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setDocumentView:_tableAppliances];
@@ -133,8 +138,36 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (BOOL)didDownloadPushReceived:(TNStropheStanza)aStanza
 {
-    CPLog.info("receiving push notification TNArchipelPushNotificationVMCast");
-    [self getInstalledAppliances];
+    var sender = [aStanza getFrom].split("/")[0];
+    var change = [aStanza valueForAttribute:@"change"];
+    
+    CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
+    
+    if (sender != [[self entity] jid])
+        return;
+    
+    if (change == @"applianceunpacking")
+    {
+        [fieldInfoImage setHidden:NO];
+        [fieldInfoStatus setStringValue:@"Appliance is unpacking..."];
+    }
+
+    else if (change == @"applianceunpacked")
+    {
+        [fieldInfoImage setHidden:NO];
+        [fieldInfoStatus setStringValue:@"Appliance is unpacked"];
+    }   
+    else if (change == @"applianceinstalling")
+    {
+        [fieldInfoImage setHidden:NO];
+        [fieldInfoStatus setStringValue:@"Appliance is installing"];
+    }
+    else
+    {
+        [fieldInfoImage setHidden:YES];
+        [fieldInfoStatus setStringValue:@""];
+        [self getInstalledAppliances];
+    }
     
     return YES;
 }
@@ -199,7 +232,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 {
     if ([aStanza getType] == @"success")
     {
-         [CPAlert alertWithTitle:@"GOOF" message:@"GOOD"];
+        var msg = @"The instanciation of the package has started."
+        [CPAlert alertWithTitle:@"Instanciation processing" message:msg];
     }
     else
     {

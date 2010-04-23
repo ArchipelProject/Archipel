@@ -35,7 +35,7 @@ class TNHypervisorNetworks:
     def __init__(self, entity):
         self.entity = entity;
         
-        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             self.libvirt_connection = libvirt.open(None)
             if self.libvirt_connection == None:
                 log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
@@ -45,7 +45,7 @@ class TNHypervisorNetworks:
     
     def process_iq_for_hypervisor(self, conn, iq):
         
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur");
@@ -79,7 +79,7 @@ class TNHypervisorNetworks:
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         log(self, LOG_LEVEL_INFO, "received network iq for virtual machine");
@@ -103,7 +103,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         try:
@@ -128,7 +128,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -154,7 +154,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -180,7 +180,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = None
@@ -206,7 +206,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = iq.buildReply('success')
@@ -246,7 +246,7 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
+        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
         reply = iq.buildReply('success')

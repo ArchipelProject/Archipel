@@ -53,6 +53,7 @@ VIR_DOMAIN_CRASHED  = 6;
     @outlet CPButton        buttonPause                 @accessors;
     @outlet CPButton        buttonStop                  @accessors;
     @outlet CPButton        buttonReboot                @accessors;
+    @outlet CPButtonBar     buttonBarTransport          @accessors;
 
     CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
@@ -73,6 +74,32 @@ VIR_DOMAIN_CRASHED  = 6;
     [[self maskingView] setAlphaValue:0.9];
 
     [[self fieldVMJid] setSelectable:YES];
+    
+    // var  butts = [buttonPlay, buttonPause, buttonStop, buttonReboot];
+    // 
+    // var bundle = [CPBundle bundleForClass:[self class]];
+    // 
+    // var buttonBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
+    //         [
+    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
+    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
+    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]]
+    //         ]
+    //     isVertical:NO]];
+    // 
+    // var color = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
+    //             [
+    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/left.png"]],
+    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
+    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/right.png"]]
+    //             ]
+    //         isVertical:NO]];
+    // 
+    // [buttonBarTransport setValue:color forThemeAttribute:@"bezel-color" ];
+    // [buttonBarTransport setValue:buttonBezelColor forThemeAttribute:@"button-bezel-color"];
+    // 
+    // [buttonBarTransport setButtons:butts];
+
 }
 
 // TNModule implementation

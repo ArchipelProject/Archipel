@@ -163,7 +163,6 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
         _VMHost         = [displayNode valueForAttribute:@"host"];
 
         var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
-
         [[self vncWebView] setMainFrameURL:url];
     }
     else

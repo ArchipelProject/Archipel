@@ -27,7 +27,7 @@ import shutil
 
 class TNArchipelPackage(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, entity, package_uuid):
         """
         initialize a TNArchipelPackage
         
@@ -46,6 +46,8 @@ class TNArchipelPackage(Thread):
         self.uuid               = uuid
         self.install_path       = install_path
         self.define_callback    = define_callback
+        self.entity             = entity;
+        self.package_uuid       = package_uuid;
         
         Thread.__init__(self);
     
@@ -83,6 +85,8 @@ class TNArchipelPackage(Thread):
         
         package.extractall(path=self.extract_path);
         
+        self.entity.push_change("vmcasting", "applianceunpacking");
+        
         for aFile in os.listdir(self.extract_path):
             full_path = os.path.join(self.extract_path, aFile);
             log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
@@ -94,7 +98,7 @@ class TNArchipelPackage(Thread):
                 i.close()
                 o.close()
                 log(self, LOG_LEVEL_DEBUG, "found one gziped disk : %s" % full_path)
-                self.disk_files[aFile] = full_path.replace(".gz", "");
+                self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "");
             
             if os.path.splitext(full_path)[-1] in self.disk_extensions:
                 log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
@@ -105,6 +109,8 @@ class TNArchipelPackage(Thread):
                 o = open(full_path, 'r');
                 self.description_file = o.read();
                 o.close();
+            
+        self.entity.push_change("vmcasting", "applianceunpacked");
     
     
     def update_description(self):
@@ -150,9 +156,22 @@ class TNArchipelPackage(Thread):
         if not self.description_file:
             return False;
         
+        self.entity.push_change("vmcasting", "applianceinstalling");
+        
         for key, path in self.disk_files.items():
             log(self, LOG_LEVEL_DEBUG, "moving %s to %s" % (path, self.install_path));
-            shutil.move(path, self.install_path);
+            try:
+                shutil.move(path, self.install_path);
+            except:
+                os.remove(self.install_path + "/" + key);
+            finally:
+                shutil.move(path, self.install_path);
+            
+        f = open(self.install_path + "/current.package", "w");
+        f.write(self.package_uuid)
+        f.close()
+        
+        self.entity.push_change("vmcasting", "applianceinstalled");
         
         return True;
     

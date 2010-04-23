@@ -148,12 +148,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "sucessfully connect to domain uuid {0}".format(self.uuid))
             
             dominfo = self.domain.info()
+            log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0]);
             if dominfo[0] == VIR_DOMAIN_RUNNING:
-                self.change_presence("", "shutdown");
+                self.change_presence("", "running");
             elif dominfo[0] == VIR_DOMAIN_PAUSED:
-                self.change_presence("away", "shutdown");
+                self.change_presence("away", "paused");
             elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
-                self.change_presence("xa", "shutdown");
+                self.change_presence("xa", "shutdowned");
             
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
@@ -161,8 +162,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("dnd", "shutdown");
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                self.change_presence("dnd", "unknown error");
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "unexpected exception")
+            log(self, LOG_LEVEL_ERROR, "unexpected exception : " + str(ex))
             sys.exit(0)
     
     

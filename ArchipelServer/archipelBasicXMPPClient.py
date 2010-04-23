@@ -54,6 +54,8 @@ class TNArchipelBasicXMPPClient(object):
         @type password: string
         @param password: the password of the JID account.
         """
+        self.xmppstatus = None;
+        self.xmppstatushow = None;
         self.xmppclient = None;
         self.configuration = configuration;
         self.auto_register = auto_register
@@ -279,6 +281,8 @@ class TNArchipelBasicXMPPClient(object):
     
     
     def change_presence(self, presence_show, presence_status):
+        self.xmppstatus = presence_status
+        self.xmppstatushow = presence_show
         pres = xmpp.Presence(status=presence_status, show=presence_show)
         self.xmppclient.send(pres)
         
@@ -326,7 +330,7 @@ class TNArchipelBasicXMPPClient(object):
         
         self.push_change("subscription", "added");
     
-     
+    
     def remove_jid(self, jid):
         """
         Remove a jid from roster and unauthorizes it
@@ -411,7 +415,7 @@ class TNArchipelBasicXMPPClient(object):
         @type photo_hash: string
         @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
         """
-        node_presence = xmpp.Presence(frm=self.jid)
+        node_presence = xmpp.Presence(frm=self.jid, status=self.xmppstatus, show=self.xmppstatushow)
         
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
