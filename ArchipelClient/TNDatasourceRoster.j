@@ -64,6 +64,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
     }
 
     return self;

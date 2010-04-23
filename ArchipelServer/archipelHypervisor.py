@@ -42,6 +42,8 @@ GROUP_HYPERVISOR = "hypervisors"
 
 NS_ARCHIPEL_HYPERVISOR_CONTROL = "archipel:hypervisor:control"
 
+NS_ARCHIPEL_STATUS_ONLINE       = "Online";
+
 class TNThreadedVirtualMachine(Thread):
     """
     this class is used to run L{ArchipelVirtualMachine} main loop
@@ -121,6 +123,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "hypervisor", "avatar_file": default_avatar})
+        self.register_actions_to_perform_on_auth("update_presence")
+    
+    
+    def update_presence(self, params=None):
+        count = len(self.virtualmachines);
+        self.change_presence("", NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")");
         
     
     
@@ -219,6 +227,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             self.database.commit()
             self.virtualmachines[domain_uuid] = vm
             
+            self.update_presence()
             
             payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
             reply.setQueryPayload([payload])
@@ -267,6 +276,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
             vm.get_instance()._inband_unregistration()
+            
+            self.update_presence()
             
             reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")

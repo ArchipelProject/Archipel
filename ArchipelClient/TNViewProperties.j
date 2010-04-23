@@ -32,6 +32,7 @@
     @outlet CPImageView     entryAvatar     @accessors;
     @outlet CPTextField     entryDomain     @accessors;
     @outlet CPTextField     entryResource   @accessors;
+    @outlet CPTextField     entryShow       @accessors;
     @outlet CPTextField     newNickName     @accessors;
 
     TNStropheRoster         roster          @accessors;
@@ -107,12 +108,13 @@
         return;
     }
     [self show];
-
+    
     [[self entryName] setStringValue:[contact nickname]];
     [[self entryDomain] setStringValue:[contact domain]];
     [[self entryResource] setStringValue:[contact resource]];
     [[self entryStatusIcon] setImage:[contact statusIcon]];
     [[self entryAvatar] setImage:[contact avatar]];
+    [[self entryShow] setStringValue:[contact show]];
 }
 
 /*! message performed when contact update its presence in order to update information
@@ -122,6 +124,7 @@
     [[self entryStatusIcon] setImage:[contact statusIcon]];
     [[self entryAvatar] setImage:[contact avatar]];
     [[self entryResource] setStringValue:[contact resource]];
+    [[self entryShow] setStringValue:[contact show]];
 }
 
 /*! message performed when the TNEditableLabel hase been changed

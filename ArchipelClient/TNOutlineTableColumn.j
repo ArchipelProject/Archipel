@@ -28,6 +28,8 @@
     CPImageView statusIcon  @accessors;
     CPTextField events      @accessors;
     CPTextField name        @accessors;
+    CPTextField show        @accessors;
+    CPImageView avatar      @accessors;
 }
 
 /*! initialize the class
@@ -37,14 +39,19 @@
 {
     if (self = [super init])
     {
-        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
-        name        = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(148, 2, 23, 14)];
+        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
+        name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
+        show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(181, 2, 23, 14)];
+        
+        avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
 
         //[self setAutoresizingMask: CPViewWidthSizable];
         [self addSubview:statusIcon];
         [self addSubview:name];
         [self addSubview:events];
+        [self addSubview:show];
+        [self addSubview:avatar];
 
         var bundle = [CPBundle mainBundle];
         [events setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]]]
@@ -56,7 +63,16 @@
         [[self name] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [[self name] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [[self name] setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
-
+        
+        
+        [[self show] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [[self show] setValue:[CPFont fontWithName:@"Verdana-Italic" size:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
+        [[self show] setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
+        
+        [[self show] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        // [[self show] setValue:[CPFont systemFontOfSize:9] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        
+        
         [[self events] setHidden:NO];
     }
     return self;
@@ -71,13 +87,22 @@
     [events setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
 
     [[self name] setStringValue:[aContact nickname]];
-    [[self statusIcon] setImage:[aContact statusIcon]];
     [[self name] sizeToFit];
     
-    var bounds = [[self name] frame];
-    bounds.size.width += 10;
+    [[self show] setStringValue:[aContact show]];
+    [[self show] sizeToFit];
     
-    [[self name] setFrame:bounds];
+    [[self statusIcon] setImage:[aContact statusIcon]];
+    
+    [[self avatar] setImage:[aContact avatar]];
+    
+    var boundsName = [[self name] frame];
+    boundsName.size.width += 10;
+    [[self name] setFrame:boundsName];
+    
+    var boundsShow = [[self show] frame];
+    boundsShow.size.width += 10;
+    [[self show] setFrame:boundsShow];
     
     if ([aContact numberOfEvents] > 0)
     {
@@ -97,6 +122,7 @@
 {
     [super setThemeState:aState];
     [[self name] setThemeState:aState];
+    [[self show] setThemeState:aState];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -105,6 +131,7 @@
 {
     [super unsetThemeState:aState];
     [[self name] unsetThemeState:aState];
+    [[self show] unsetThemeState:aState];
 }
 
 /*! CPCoder compliance
@@ -116,8 +143,10 @@
     if (self)
     {
         [self setName:[aCoder decodeObjectForKey:@"name"]];
+        [self setShow:[aCoder decodeObjectForKey:@"show"]];
         [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
         [self setEvents:[aCoder decodeObjectForKey:@"events"]];
+        [self setAvatar:[aCoder decodeObjectForKey:@"avatar"]];
     }
 
     return self;
@@ -130,8 +159,10 @@
     [super encodeWithCoder:aCoder];
 
     [aCoder encodeObject:name forKey:@"name"];
+    [aCoder encodeObject:show forKey:@"show"];
     [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
     [aCoder encodeObject:events forKey:@"events"];
+    [aCoder encodeObject:avatar forKey:@"avatar"];
 }
 
 @end

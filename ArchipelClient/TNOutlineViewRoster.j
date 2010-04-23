@@ -40,11 +40,13 @@
         var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
 
         [center addObserver:self selector:@selector(_populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];
-
+        
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+        [self setRowHeight:35];
+        [self setIndentationPerLevel:13];
         
         [columnLabel setWidth:aFrame.size.width];
         

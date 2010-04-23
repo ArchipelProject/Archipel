@@ -52,6 +52,11 @@ VIR_DOMAIN_SHUTDOWN	                        =	4;
 VIR_DOMAIN_SHUTOFF	                        =	5;
 VIR_DOMAIN_CRASHED	                        =	6;
 
+NS_ARCHIPEL_STATUS_RUNNING      = "Running";
+NS_ARCHIPEL_STATUS_PAUSED       = "Paused";
+NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off";
+NS_ARCHIPEL_STATUS_ERROR        = "Error";
+
 NS_ARCHIPEL_VM_CONTROL      = "archipel:vm:control"
 NS_ARCHIPEL_VM_DEFINITION   = "archipel:vm:definition"
 
@@ -150,19 +155,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             dominfo = self.domain.info()
             log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0]);
             if dominfo[0] == VIR_DOMAIN_RUNNING:
-                self.change_presence("", "running");
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
             elif dominfo[0] == VIR_DOMAIN_PAUSED:
-                self.change_presence("away", "paused");
+                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED);
             elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
-                self.change_presence("xa", "shutdowned");
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED);
             
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.change_presence("dnd", "shutdown");
+                self.change_presence("dnd", NS_ARCHIPEL_STATUS_SHUTDOWNED);
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.change_presence("dnd", "unknown error");
+                self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR);
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "unexpected exception : " + str(ex))
             sys.exit(0)
@@ -188,7 +193,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             payload = xmpp.Node("domain", attrs={"id": str(self.domain.ID())})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
-            self.change_presence("", "Running");
+            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
             self.push_change("virtualmachine", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -213,7 +218,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.shutdown()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
-            self.change_presence("xa", "shutdown");
+            self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED);
             self.push_change("virtualmachine", "shutdowned")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -262,7 +267,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.suspend()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
-            self.change_presence("away", "paused");
+            self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED);
             self.push_change("virtualmachine", "suspended")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -287,7 +292,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.resume()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
-            self.change_presence("", "running");
+            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
             self.push_change("virtualmachine", "resumed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
