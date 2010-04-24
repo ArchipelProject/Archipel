@@ -63,6 +63,10 @@ TNArchipelEntityTypeUser            = @"user";
 TNArchipelEntityTypeGroup            = @"group";
 
 
+TNArchipelStatusAvailableLabel  = @"Available";
+TNArchipelStatusAwayLabel       = @"Away";
+TNArchipelStatusBusyLabel       = @"Busy";
+
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
     Anyone that is interessted in the way of Archipel is working should begin
@@ -297,7 +301,11 @@ TNArchipelEntityTypeGroup            = @"group";
 */
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
-    [CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
+    //[CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
+    CPLog.trace(@"loading all modules");
+    [_moduleLoader load];
+    [windowModuleLoading center]
+    [windowModuleLoading orderFront:nil];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -327,6 +335,32 @@ TNArchipelEntityTypeGroup            = @"group";
         [_helpWindow close];
         _helpWindow = nil;
     }
+}
+
+- (IBAction)toolbarItemPresenceStatusClick:(id)sender
+{
+    var xmppStatus;
+    var statusLabel = [sender title];
+    
+    switch (statusLabel)
+    {
+        case TNArchipelStatusAvailableLabel:
+            xmppStatus = TNStropheContactStatusOnline
+            break;
+        case TNArchipelStatusAwayLabel:
+            xmppStatus = TNStropheContactStatusAway
+            break;
+        case TNArchipelStatusBusyLabel:
+            xmppStatus = TNStropheContactStatusBusy
+            break;
+    }
+    
+    var presence    = [TNStropheStanza presenceWithAttributes:{"status": xmppStatus}];
+    [presence addChildName:@"show"];
+    [presence addTextNode:xmppStatus];
+    CPLog.info("Changing presence to " + statusLabel + ":" + xmppStatus);
+    
+    [[_mainRoster connection] send:presence];
 }
 
 /*! Delegate for CPWindow.

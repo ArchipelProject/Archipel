@@ -93,10 +93,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     if (!maxLogLevel)
         maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
     
-    CPLogUnregister(CPLogConsole);
-    
     CPLogRegister(_logFunction, maxLogLevel);
-    CPLogRegister(CPLogConsole, maxLogLevel);
     
     _logs = [self restaure];
 
@@ -151,8 +148,6 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     // [defaults setObject:JSON.stringify(_logs) forKey:@"TNArchipelLogStored"];    
     // I can't use TNDefault here or Safari hangs. This is weird.
     
-    
-    CPLog.debug("Saving logs");
     localStorage.setItem("TNArchipelLogStored", JSON.stringify(_logs));
 }
 
@@ -162,8 +157,6 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     // var recoveredLogs   = JSON.parse([defaults objectForKey:@"TNArchipelLogStored"]);
     // I can't use TNDefault here or Safari hangs. This is weird.
     
-    
-    CPLog.debug("Recovering logs");
     var recoveredLogs = JSON.parse(localStorage.getItem("TNArchipelLogStored"));
     
     return (recoveredLogs) ? recoveredLogs : [CPArray array];

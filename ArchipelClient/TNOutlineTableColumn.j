@@ -42,7 +42,7 @@
         statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
         name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
         show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(181, 2, 23, 14)];
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(140, 2, 23, 14)];
         
         avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
 

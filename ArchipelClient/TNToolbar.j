@@ -56,6 +56,14 @@ TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
 */
 TNToolBarItemHelp           = @"TNToolBarItemHelp";
 
+/*! @global
+    @group TNToolBarItem
+    identifier for item status
+*/
+TNToolBarItemStatus           = @"TNToolBarItemStatus";
+
+
+
 /*! @ingroup archipelcore
     subclass of CPToolbar that allow dynamic insertion. This is used by TNModuleLoader
 */
@@ -71,10 +79,10 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
 */
 -(id)initWithTarget:(id)aTarget
 {
-    var bundle = [CPBundle bundleForClass:self];
-
     if (self = [super init])
     {
+        var bundle          = [CPBundle bundleForClass:self];
+        
         toolbarItems        = [CPDictionary dictionary];
         toolbarItemsOrder   = [CPArray array];
 
@@ -85,19 +93,41 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
         [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
         [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
-
-        [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemAddJid];
-        [self setPosition:1 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
-        [self setPosition:2 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemAddGroup];
-        [self setPosition:4 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
-        [self setPosition:5 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:6 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:8 forToolbarItemIdentifier:TNToolBarItemHelp];
-        [self setPosition:9 forToolbarItemIdentifier:TNToolBarItemLogout];
         
+        var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)];
 
+        var availableItem = [[CPMenuItem alloc] init];
+        [availableItem setTitle:TNArchipelStatusAvailableLabel];
+        [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Available.png"]]];
+        [statusSelector addItem:availableItem];
+        
+        var awayItem = [[CPMenuItem alloc] init];
+        [awayItem setTitle:TNArchipelStatusAwayLabel];
+        [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Away.png"]]];
+        [statusSelector addItem:awayItem];
+        
+        var busyItem = [[CPMenuItem alloc] init];
+        [busyItem setTitle:TNArchipelStatusBusyLabel];
+        [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
+        [statusSelector addItem:busyItem];
+        
+        [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
+        
+        
+        [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
+        [self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJid];
+        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
+        [self setPosition:4 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:5 forToolbarItemIdentifier:TNToolBarItemAddGroup];
+        [self setPosition:6 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
+        [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:8 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        [self setPosition:9 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:10 forToolbarItemIdentifier:TNToolBarItemHelp];
+        [self setPosition:11 forToolbarItemIdentifier:TNToolBarItemLogout];
+        
+        
         [self setDelegate:self];
     }
 
@@ -117,6 +147,28 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
 
     [newItem setLabel:aLabel];
     [newItem setImage:[[CPImage alloc] initWithContentsOfFile:anImage size:CPSizeMake(32,32)]];
+    [newItem setTarget:aTarget];
+    [newItem setAction:anAction];
+
+    [[self toolbarItems] setObject:newItem forKey:anIdentifier];
+}
+
+/*! add a new CPToolbarItem with a custom view
+    @param anIdentifier CPString containing the identifier
+    @param aLabel CPString containing the label
+    @param anImage CPImage containing the icon of the item
+    @param aTarget an object that will be the target of the item
+    @param anAction a selector of the aTarget to perform on click
+*/
+- (void)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
+{
+    var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
+    
+    [newItem setMinSize:CGSizeMake(120.0, 24.0)];
+    [newItem setMaxSize:CGSizeMake(120.0, 24.0)]
+            
+    [newItem setLabel:aLabel];
+    [newItem setView:aView];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
 

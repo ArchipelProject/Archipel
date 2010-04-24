@@ -61,6 +61,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     CPView                  mainRightView                   @accessors;
 
     id                      _modulesPList;
+    CPArray                 _bundles;
     CPDictionary            _loadedTabModulesScrollViews;
     CPDictionary            _loadedToolbarModulesScrollViews;
     CPString                _previousStatus;
@@ -81,6 +82,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
         _numberOfModulesToLoad = 0;
         _numberOfModulesLoaded = 0;
+        _bundles = [CPArray array];
     }
 
     return self;
@@ -201,12 +203,19 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)load
 {
+    [self unloadAllModules];
+    
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
-
+        
+    [connection cancel];
     [connection start];
 }
 
+- (void)unloadAllModules
+{
+
+}
 
 /// PRIVATES
 
@@ -214,8 +223,12 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)_loadAllBundles
 {
+    CPLog.debug("going to parse the PList");
+    
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
+        CPLog.debug("parsing " + [CPBundle bundleWithPath:path]);
+        
         var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
         var path    = [self modulesPath] + [module objectForKey:@"folder"];
         var bundle  = [CPBundle bundleWithPath:path];
@@ -383,7 +396,11 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 {
     var cpdata = [CPData dataWithRawString:data];
 
+    CPLog.info("Module.plist recovered");
+
     _modulesPList = [cpdata plistObject];
+    
+    [self _removeAllTabsFromModulesTabView];
     
     [self _loadAllBundles];
 }
@@ -393,8 +410,12 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    _numberOfModulesLoaded++;
+    //CPLog.debug("loading bundle " + aBundle);
     
+    _numberOfModulesLoaded++;
+
+    [_bundles addObject:aBundle];
+
     var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
     var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
     var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];

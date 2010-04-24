@@ -52,10 +52,11 @@ VIR_DOMAIN_SHUTDOWN	                        =	4;
 VIR_DOMAIN_SHUTOFF	                        =	5;
 VIR_DOMAIN_CRASHED	                        =	6;
 
-NS_ARCHIPEL_STATUS_RUNNING      = "Running";
-NS_ARCHIPEL_STATUS_PAUSED       = "Paused";
-NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off";
-NS_ARCHIPEL_STATUS_ERROR        = "Error";
+NS_ARCHIPEL_STATUS_RUNNING      = "Running"
+NS_ARCHIPEL_STATUS_PAUSED       = "Paused"
+NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off"
+NS_ARCHIPEL_STATUS_ERROR        = "Error"
+NS_ARCHIPEL_STATUS_NOT_DEFINED  = "Not defined"
 
 NS_ARCHIPEL_VM_CONTROL      = "archipel:vm:control"
 NS_ARCHIPEL_VM_DEFINITION   = "archipel:vm:definition"
@@ -164,7 +165,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.change_presence("dnd", NS_ARCHIPEL_STATUS_SHUTDOWNED);
+                self.change_presence("dnd", NS_ARCHIPEL_STATUS_NOT_DEFINED);
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR);
