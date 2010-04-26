@@ -47,6 +47,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     @outlet CPTextField         fieldName               @accessors;
     @outlet CPTextField         fieldNewURL             @accessors;
     @outlet CPCheckBox          checkBoxOnlyInstalled   @accessors;
+    @outlet CPSearchField       fieldFilter             @accessors;
     
     @outlet CPScrollView        mainScrollView          @accessors;
     @outlet CPProgressIndicator downloadIndicator       @accessors;
@@ -106,8 +107,20 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView expandAll];
     
     [_mainOutlineView setTarget:self];
-    [_mainOutlineView setDoubleAction:@selector(download:)]
+    [_mainOutlineView setDoubleAction:@selector(download:)];
+    
+    // filter field
+    [fieldFilter setSendsSearchStringImmediately:YES];
+    [fieldFilter setTarget:self];
+    [fieldFilter setAction:@selector(fieldFilterDidChange:)];
 }
+
+- (IBAction)fieldFilterDidChange:(id)sender
+{
+    [_castsDatasource setFilter:[sender stringValue]];
+    [_mainOutlineView reloadData];
+}
+
 
 - (void)willLoad
 {
@@ -294,7 +307,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
             + @" that have been instanciated from this template.";
         [CPAlert alertWithTitle:@"Appliance deletion" message:msg style:CPInformationalAlertStyle delegate:self buttons:[@"OK", @"Cancel"]];
     }
-    else if ([currentVMCast class] == TNVMCast)
+    else if ([currentVMCast class] == TNVMCastSource)
     {
         var uuid            = [currentVMCast UUID];
         var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];

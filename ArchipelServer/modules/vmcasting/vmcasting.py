@@ -26,7 +26,10 @@ import urllib
 import urlparse
 import os
 from threading import Thread
+from threading import Timer
 import uuid
+import vmcastmaker
+import time
 
 ARCHIPEL_APPLIANCES_INSTALLED           = 1
 ARCHIPEL_APPLIANCES_INSTALLING          = 2
@@ -128,7 +131,7 @@ class TNHypervisorVMCasting:
     """
     Implementation of the module
     """
-    def __init__(self, database_path, repository_path, entity):
+    def __init__(self, database_path, repository_path, entity, own_repo_params):
         """
         initialize the class
         @type database_path: string
@@ -141,18 +144,34 @@ class TNHypervisorVMCasting:
         log(self, LOG_LEVEL_INFO, "opening vmcasting database file {0}".format(database_path))
         
         self.entity = entity
-        self.database_path = database_path;
-        self.repository_path = repository_path;
+        self.database_path = database_path
+        self.repository_path = repository_path
+        self.own_repo_params = own_repo_params
         self.download_queue = {};
+        
+        self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"], self.own_repo_params["uuid"], 
+                                                        self.own_repo_params["description"], self.own_repo_params["lang"], 
+                                                        self.own_repo_params["url"]);
+        
+        self.parse_timer = Thread(target=self.parse_own_repo);
+        self.parse_timer.start()
+        
         self.database_connection = sqlite3.connect(database_path, check_same_thread = False)
         self.cursor = self.database_connection.cursor();
-        
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
         self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status int, source text not null, save_path text)")
         
         log(self, LOG_LEVEL_INFO, "Database ready.");
     
     
+    def parse_own_repo(self):
+        while True:
+            log(self, LOG_LEVEL_DEBUG, "begin to refresh own vmcast feed");
+            self.own_vmcastmaker.parseDirectory(self.own_repo_params["path"])
+            self.own_vmcastmaker.writeFeed(self.own_repo_params["path"] + "/" + self.own_repo_params["filename"]);
+            log(self, LOG_LEVEL_DEBUG, "finish to refresh own vmcast feed");
+            time.sleep(self.own_repo_params["refresh"]);
+        
     def on_download_complete(self, uuid, path):
           """
           callback triggered by a TNApplianceDownloader when download is over
@@ -456,15 +475,20 @@ class TNHypervisorVMCasting:
         sources = self.cursor.execute("SELECT * FROM vmcastsources");
         nodes = [];
         
-        for values in self.cursor:
+        tmp_cursor = self.database_connection.cursor();
+        
+        for values in sources:
             name, description, url, uuid = values
+            
+            log(self, LOG_LEVEL_DEBUG, "parsing feed with url %s" % url)
+            
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid});
             content_nodes = [];
             
             try:
                 f = urllib.urlopen(url);
             except Exception as ex:
-                self.cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
+                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
                 self.database_connection.commit()
                 self.entity.push_change("vmcasting", "unregister")
                 raise Exception("404", "Feed is not reponding. removed from database.")
@@ -479,12 +503,12 @@ class TNHypervisorVMCasting:
                 if not feed_uuid or not feed_name:
                     raise
             except:
-                self.cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
+                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
                 self.database_connection.commit();
                 raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed")
             
             try:
-                self.cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url));
+                tmp_cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url));
                 self.database_connection.commit();
             except Exception as ex:
                 log(self, LOG_LEVEL_DEBUG, "unable to update source because: " + str(ex))
@@ -500,18 +524,17 @@ class TNHypervisorVMCasting:
                 status          = ARCHIPEL_APPLIANCES_NOT_INSTALLED;
                 
                 try:
-                    self.cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'));
+                    tmp_cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'));
                     self.database_connection.commit();
                 except Exception as ex:
-                    self.cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid);
-                    for values in self.cursor:
+                    tmp_cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid);
+                    for values in tmp_cursor:
                         status = values[0];
                     if status == ARCHIPEL_APPLIANCES_INSTALLING and not self.download_queue.has_key(uuid):
                         status = ARCHIPEL_APPLIANCES_INSTALLATION_ERROR
                     
                 new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": str(status)})
-                content_nodes.append(new_node); 
-                
+                content_nodes.append(new_node);
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node);

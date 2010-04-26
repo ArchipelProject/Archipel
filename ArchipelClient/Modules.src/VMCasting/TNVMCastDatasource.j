@@ -106,8 +106,9 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 @implementation TNVMCastDatasource : CPObject
 {
-    CPArray _contents       @accessors(getter=contents);
-    BOOL    filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
+    CPArray     _contents       @accessors(getter=contents);
+    BOOL        filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
+    CPString    filter          @accessors;
 }
 
 /*! Initialization of the class
@@ -156,6 +157,33 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
         return anArray;
 }
 
+- (CPArray)filterOnlyMatching:(CPArray)anArray
+{
+    if (filter && filter != @"")
+    {
+        var array = [CPArray array];
+        for (var i = 0; i < [anArray count]; i++)
+        {
+            var object = [anArray objectAtIndex:i];
+            
+            if (([[object name] uppercaseString].indexOf([filter uppercaseString]) != -1) 
+                || ([[object comment] uppercaseString].indexOf([filter uppercaseString]) != -1))
+                [array addObject:object];
+        }
+        return array;
+    }
+    else
+        return anArray;
+}
+
+- (CPArray)applyFilters:(CPArray)anArray
+{
+    anArray = [self filterOnlyInstalled:anArray];
+    anArray = [self filterOnlyMatching:anArray];
+    
+    return anArray;
+}
+
 /*! CPOutlineView Delegate
 */
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
@@ -166,7 +194,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 	}
 	else
 	{
-        return [[self filterOnlyInstalled:[item content]] count];
+        return [[self applyFilters:[item content]] count];
 	}
 }
 
@@ -186,8 +214,8 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
         return [_contents objectAtIndex:index];
     }
     else
-    {
-        return [[self filterOnlyInstalled:[item content]] objectAtIndex:index];
+    {   
+        return [[self applyFilters:[item content]] objectAtIndex:index];
     }
 }
 
