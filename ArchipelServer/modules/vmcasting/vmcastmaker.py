@@ -20,12 +20,14 @@ import uuid
 import os, sys
 
 class VMCastMaker:
-    def __init__(self, title, uuid, description, language, baseserverurl):
+    def __init__(self, title, uuid, description, language, baseserverurl, basepath):
         self.baseserverurl  = baseserverurl
-        self.title = title
-        self.uuid = uuid;
-        self.description = description
-        self.language = language;
+        self.basepath       = basepath
+        self.title          = title
+        self.uuid           = uuid;
+        self.description    = description
+        self.language       = language;
+        
         self.items = []
         
     def init_feed(self):
@@ -78,5 +80,5 @@ class VMCastMaker:
                             'Auto imported vmcast', 
                             self.baseserverurl, 
                             str(item_uuid), 
-                            self.baseserverurl + xvm2_file, 
+                            self.basepath + xvm2_file, 
                             str(size))

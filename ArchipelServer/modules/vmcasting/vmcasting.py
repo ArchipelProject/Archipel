@@ -90,7 +90,10 @@ class TNApplianceDownloader(Thread):
         """
         @return: the total size in bytes of the download
         """
-        return self.total_size
+        if self.total_size:
+            return self.total_size
+        else:
+            return -1
     
     
     def get_name(self):
@@ -151,8 +154,9 @@ class TNHypervisorVMCasting:
         
         self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"], self.own_repo_params["uuid"], 
                                                         self.own_repo_params["description"], self.own_repo_params["lang"], 
-                                                        self.own_repo_params["url"]);
+                                                        self.own_repo_params["url"], self.own_repo_params["path"]);
         
+        self.parse_own_repo(loop=False)
         self.parse_timer = Thread(target=self.parse_own_repo);
         self.parse_timer.start()
         
@@ -164,12 +168,14 @@ class TNHypervisorVMCasting:
         log(self, LOG_LEVEL_INFO, "Database ready.");
     
     
-    def parse_own_repo(self):
+    def parse_own_repo(self, loop=True):
         while True:
             log(self, LOG_LEVEL_DEBUG, "begin to refresh own vmcast feed");
             self.own_vmcastmaker.parseDirectory(self.own_repo_params["path"])
             self.own_vmcastmaker.writeFeed(self.own_repo_params["path"] + "/" + self.own_repo_params["filename"]);
             log(self, LOG_LEVEL_DEBUG, "finish to refresh own vmcast feed");
+            if not loop:
+                break;
             time.sleep(self.own_repo_params["refresh"]);
         
     def on_download_complete(self, uuid, path):
