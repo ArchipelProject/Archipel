@@ -158,6 +158,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         for vm in c:
             jid, password, date, comment = vm
             vm = self.__create_threaded_vm(jid, password)
+            # add hypervisor in the VM roster. This allow to manually add vm into the database
+            # and during restart, being able to delete it from the GUI
+            vm.get_instance().register_actions_to_perform_on_auth("add_jid", self.jid.getStripped())
             self.virtualmachines[jid.split("@")[0]] = vm
     
         

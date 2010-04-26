@@ -37,6 +37,7 @@
 
     TNStropheRoster         roster          @accessors;
     TNStropheContact        contact         @accessors;
+    CPImage                 _unknownUserImage;
 
     CPNumber                _height;
 }
@@ -71,7 +72,10 @@
 
     [[self entryName] setTarget:self];
     [[self entryName] setAction:@selector(changeNickName:)];
-
+    
+    var bundle = [CPBundle mainBundle];
+    _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
@@ -102,7 +106,7 @@
 */
 - (void)reload
 {
-    if ((![self contact]) || ([[self contact] type] == "group"))
+    if ((![self contact]) || ([[self contact] class] == TNStropheGroup))
     {
         [self hide];
         return;
@@ -113,7 +117,11 @@
     [[self entryDomain] setStringValue:[contact domain]];
     [[self entryResource] setStringValue:[contact resource]];
     [[self entryStatusIcon] setImage:[contact statusIcon]];
-    [[self entryAvatar] setImage:[contact avatar]];
+    if ([contact avatar])
+        [[self entryAvatar] setImage:[contact avatar]];
+    else
+        [[self entryAvatar] setImage:_unknownUserImage];
+        
     [[self entryShow] setStringValue:[contact show]];
 }
 
@@ -122,7 +130,12 @@
 - (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
     [[self entryStatusIcon] setImage:[contact statusIcon]];
-    [[self entryAvatar] setImage:[contact avatar]];
+    
+    if ([contact avatar])
+        [[self entryAvatar] setImage:[contact avatar]];
+    else
+        [[self entryAvatar] setImage:_unknownUserImage];
+        
     [[self entryResource] setStringValue:[contact resource]];
     [[self entryShow] setStringValue:[contact show]];
 }

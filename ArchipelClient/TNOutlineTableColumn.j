@@ -30,6 +30,8 @@
     CPTextField name        @accessors;
     CPTextField show        @accessors;
     CPImageView avatar      @accessors;
+
+    CPImage     _unknownUserImage;
 }
 
 /*! initialize the class
@@ -72,6 +74,7 @@
         [[self show] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         // [[self show] setValue:[CPFont systemFontOfSize:9] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
+        _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
         [[self events] setHidden:NO];
     }
@@ -94,7 +97,10 @@
     
     [[self statusIcon] setImage:[aContact statusIcon]];
     
-    [[self avatar] setImage:[aContact avatar]];
+    if ([aContact avatar]) 
+        [[self avatar] setImage:[aContact avatar]];
+    else
+        [[self avatar] setImage:_unknownUserImage];
     
     var boundsName = [[self name] frame];
     boundsName.size.width += 10;
@@ -142,6 +148,7 @@
 
     if (self)
     {
+        _unknownUserImage = [aCoder decodeObjectForKey:@"_unknownUserImage"];
         [self setName:[aCoder decodeObjectForKey:@"name"]];
         [self setShow:[aCoder decodeObjectForKey:@"show"]];
         [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
@@ -158,6 +165,7 @@
 {
     [super encodeWithCoder:aCoder];
 
+    [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:name forKey:@"name"];
     [aCoder encodeObject:show forKey:@"show"];
     [aCoder encodeObject:statusIcon forKey:@"statusIcon"];

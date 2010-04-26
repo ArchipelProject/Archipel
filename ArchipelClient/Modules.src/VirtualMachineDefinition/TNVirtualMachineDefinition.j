@@ -24,23 +24,23 @@
 @import "TNWindowNicEdition.j";
 @import "TNWindowDriveEdition.j";
 
-TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineDefinition         = @"archipel:vm:definition";
+TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition";
 
-TNArchipelTypeVirtualMachineControlXMLDesc         = @"xmldesc";
-TNArchipelTypeVirtualMachineControlInfo            = @"info";
-TNArchipelTypeVirtualMachineDefinitionDefine       = @"define";
-TNArchipelTypeVirtualMachineDefinitionUndefine     = @"undefine";
+TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc";
+TNArchipelTypeVirtualMachineControlInfo             = @"info";
+TNArchipelTypeVirtualMachineDefinitionDefine        = @"define";
+TNArchipelTypeVirtualMachineDefinitionUndefine      = @"undefine";
 
-TNArchipelPushNotificationDefinitition      = @"archipel:push:virtualmachine:definition";
+TNArchipelPushNotificationDefinitition              = @"archipel:push:virtualmachine:definition";
 
-VIR_DOMAIN_NOSTATE	                        =	0;
-VIR_DOMAIN_RUNNING	                        =	1;
-VIR_DOMAIN_BLOCKED	                        =	2;
-VIR_DOMAIN_PAUSED	                        =	3;
-VIR_DOMAIN_SHUTDOWN	                        =	4;
-VIR_DOMAIN_SHUTOFF	                        =	5;
-VIR_DOMAIN_CRASHED	                        =	6;
+VIR_DOMAIN_NOSTATE	        =	0;
+VIR_DOMAIN_RUNNING	        =	1;
+VIR_DOMAIN_BLOCKED	        =	2;
+VIR_DOMAIN_PAUSED	        =	3;
+VIR_DOMAIN_SHUTDOWN	        =	4;
+VIR_DOMAIN_SHUTOFF	        =	5;
+VIR_DOMAIN_CRASHED	        =	6;
 
 TNXMLDescBootHardDrive      = @"hd";
 TNXMLDescBootCDROM          = @"cdrom";
@@ -260,6 +260,7 @@ function generateMacAddr()
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
     
     [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 }
@@ -273,7 +274,8 @@ function generateMacAddr()
     
     [[self maskingView] setFrame:[self bounds]];
     
-    [self getVirtualMachineInfo];
+    // [self getVirtualMachineInfo];
+    [self checkIfRunning];
     [self getXMLDesc];
 }
 
@@ -307,6 +309,27 @@ function generateMacAddr()
     {
        [[self fieldName] setStringValue:[[self entity] nickname]]
     }
+}
+
+- (void)didPresenceUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == [self entity])
+    {
+        [self checkIfRunning];
+    }
+}
+
+- (void)checkIfRunning
+{
+    var status = [[self entity] status];
+    
+    if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusOffline))
+    {
+        [[self maskingView] setFrame:[self bounds]];
+        [self addSubview:[self maskingView]];
+    }
+    else
+        [[self maskingView] removeFromSuperview];
 }
 
 - (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
@@ -404,7 +427,7 @@ function generateMacAddr()
         }
         [[self tableDrives] reloadData];
     }
-    else
+    else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -531,37 +554,42 @@ function generateMacAddr()
 }
 
 
-- (void)getVirtualMachineInfo
-{
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
+// - (void)getVirtualMachineInfo
+// {
+//     var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
+// 
+//     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
+// 
+//     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
+// }
 
-    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
-}
-
-- (void)didReceiveVirtualMachineInfo:(id)aStanza
-{
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
-
-    if (responseType == @"success")
-    {
-        var infoNode = [aStanza firstChildWithName:@"info"];
-        var libvirtSate = [infoNode valueForAttribute:@"state"];
-        if (libvirtSate == VIR_DOMAIN_RUNNING || libvirtSate == VIR_DOMAIN_PAUSED)
-        {
-            [[self maskingView] setFrame:[self bounds]];
-            [self addSubview:[self maskingView]];
-        }
-        else
-            [[self maskingView] removeFromSuperview];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
+// - (void)didReceiveVirtualMachineInfo:(id)aStanza
+// {
+//     var responseType    = [aStanza getType];
+//     var responseFrom    = [aStanza getFrom];
+// 
+//     if (responseType == @"success")
+//     {
+//         var infoNode = [aStanza firstChildWithName:@"info"];
+//         var libvirtSate = [infoNode valueForAttribute:@"state"];
+//         if (libvirtSate == VIR_DOMAIN_RUNNING || libvirtSate == VIR_DOMAIN_PAUSED)
+//         {
+//             [[self maskingView] setFrame:[self bounds]];
+//             [self addSubview:[self maskingView]];
+//         }
+//         else
+//             [[self maskingView] removeFromSuperview];
+//     }
+//     else if (responseType == @"ignore")
+//     {
+//         [[self maskingView] removeFromSuperview];
+//     }
+//     else if (responseType == @"error")
+//     {
+//         [self handleIqErrorFromStanza:aStanza];
+//     }
+// }
 
 
 // Actions Nics and drives
@@ -659,7 +687,7 @@ function generateMacAddr()
     {
         CPLog.info(@"definition of virtual machine " + responseFrom + " sucessfuly updated")
     }
-    else
+    else if (responseType == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

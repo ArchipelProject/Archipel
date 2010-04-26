@@ -355,7 +355,10 @@ TNArchipelStatusBusyLabel       = @"Busy";
             break;
     }
     
-    var presence    = [TNStropheStanza presenceWithAttributes:{"status": xmppStatus}];
+    var presence    = [TNStropheStanza presenceWithAttributes:{}];
+    [presence addChildName:@"status"];
+    [presence addTextNode:statusLabel];
+    [presence up]
     [presence addChildName:@"show"];
     [presence addTextNode:xmppStatus];
     CPLog.info("Changing presence to " + statusLabel + ":" + xmppStatus);

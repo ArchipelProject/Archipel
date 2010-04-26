@@ -191,6 +191,7 @@ class TNHypervisorVMCasting:
           del self.download_queue[uuid];
           self.database_connection.commit()
           self.entity.push_change("vmcasting", "download_complete")
+          self.entity.change_status("Downloading complete");
     
     
     def process_iq(self, conn, iq):
@@ -348,7 +349,7 @@ class TNHypervisorVMCasting:
                 downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete);
                 downloader.start();
                 self.download_queue[uuid] = downloader;
-        
+            self.entity.change_status("Downloading appliance...");
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -373,7 +374,7 @@ class TNHypervisorVMCasting:
             
             reply.setQueryPayload(nodes);
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)        
+            reply = build_error_iq(self, ex, iq)
         return reply;
     
     

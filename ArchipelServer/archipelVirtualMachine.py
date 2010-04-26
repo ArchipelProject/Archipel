@@ -165,6 +165,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                self.domain = None;
                 self.change_presence("dnd", NS_ARCHIPEL_STATUS_NOT_DEFINED);
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
@@ -322,7 +323,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 reply.setQueryPayload([response])
                 log(self, LOG_LEVEL_DEBUG, "virtual machine info sent")
             else:
-                reply = iq.buildReply('error')  
+                reply = iq.buildReply('ignore')  
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -338,9 +339,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = None
+        reply = iq.buildReply('success')
         try:
-            reply = iq.buildReply('success')                
+            if not self.domain:
+                return iq.buildReply('ignore')
             xmldesc = self.domain.XMLDesc(0);
             xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
             graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics");
@@ -361,9 +363,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = None
+        reply = iq.buildReply('success')
         try:
-            reply = iq.buildReply('success')
+            if not self.domain:
+                return iq.buildReply('ignore')
             xmldesc = self.domain.XMLDesc(0);
             xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
             reply.setQueryPayload([xmldescnode])

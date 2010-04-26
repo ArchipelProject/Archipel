@@ -165,7 +165,7 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
         var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
         [[self vncWebView] setMainFrameURL:url];
     }
-    else
+    else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

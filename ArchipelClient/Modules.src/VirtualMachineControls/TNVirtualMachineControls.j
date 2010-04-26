@@ -126,6 +126,8 @@ VIR_DOMAIN_CRASHED  = 6;
     [[self fieldVMName] setStringValue:[[self entity] nickname]];
     [[self fieldVMJid] setStringValue:[[self entity] jid]];
 
+    [self checkIfRunning];
+    
     [self getVirtualMachineInfo:nil];
 
     _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getVirtualMachineInfo:) userInfo:nil repeats:YES];
@@ -148,8 +150,6 @@ VIR_DOMAIN_CRASHED  = 6;
     [[self buttonStop] setEnabled:NO];
     [[self buttonPause] setEnabled:NO];
     [[self buttonReboot] setEnabled:NO];
-
-    [[self maskingView] removeFromSuperview];
 }
 
 // Notifications listener
@@ -163,14 +163,25 @@ VIR_DOMAIN_CRASHED  = 6;
 
 - (void)didNickPresenceUpdated:(CPNotification)aNotification
 {
-
     if ([aNotification object] == [self entity])
     {
         [[self imageState] setImage:[[aNotification object] statusIcon]];
-        [[self imageState] setNeedsDisplay:YES];
+        [self checkIfRunning];
     }
 }
 
+- (void)checkIfRunning
+{
+    var status = [[self entity] status];
+    
+    if ((status == TNStropheContactStatusDND))
+    {
+        [[self maskingView] setFrame:[self bounds]];
+        [self addSubview:[self maskingView]];
+    }
+    else
+        [[self maskingView] removeFromSuperview];
+}
 
 // population messages
 - (void)getVirtualMachineInfo:(CPTimer)aTimer
@@ -192,8 +203,6 @@ VIR_DOMAIN_CRASHED  = 6;
 {
       if ([aStanza getType] == @"success")
       {
-          [[self maskingView] removeFromSuperview];
-
           var infoNode      = [aStanza firstChildWithName:@"info"];
           var libvirtState  = [infoNode valueForAttribute:@"state"];
           var cpuTime       = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 6000000000);
@@ -235,11 +244,6 @@ VIR_DOMAIN_CRASHED  = 6;
                     break;
           }
           [[self fieldInfoState] setStringValue:humanState];
-      }
-      else
-      {
-          [[self maskingView] setFrame:[self bounds]];
-          [self addSubview:[self maskingView]];
       }
 }
 

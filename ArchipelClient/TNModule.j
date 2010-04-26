@@ -172,7 +172,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
-    var msg = [[aStanza firstChildWithName:@"error"] text];
+    var msg = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
     
     [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     CPLog.error(msg);

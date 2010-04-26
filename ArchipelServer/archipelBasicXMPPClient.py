@@ -55,11 +55,12 @@ class TNArchipelBasicXMPPClient(object):
         @param password: the password of the JID account.
         """
         self.xmppstatus = None;
-        self.xmppstatushow = None;
+        self.xmppstatusshow = None;
         self.xmppclient = None;
         self.configuration = configuration;
         self.auto_register = auto_register
         self.password = password
+        self.vcard = None;
         self.jid = xmpp.protocol.JID(jid.lower())
         log(self, LOG_LEVEL_INFO, "jid defined as {0}".format(jid.lower()))
         self.ressource = socket.gethostname()
@@ -68,9 +69,6 @@ class TNArchipelBasicXMPPClient(object):
         self.roster_retreived = False;
         self.registered_actions_to_perform_on_connection = [];
         
-        # s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # s.connect(('google.com', 0));
-        # ipaddr, other = s.getsockname();
         self.ipaddr = self.configuration.get("GLOBAL", "machine_ip")
         
         for method in self.__class__.__dict__:
@@ -122,7 +120,10 @@ class TNArchipelBasicXMPPClient(object):
         
         log(self, LOG_LEVEL_INFO, "roster asked")
         self.roster = self.xmppclient.getRoster()
-        self.perform_all_registered_auth_actions();
+        
+        self.get_vcard()
+        self.perform_all_registered_auth_actions()
+
         self.loop();
     
     
@@ -282,12 +283,17 @@ class TNArchipelBasicXMPPClient(object):
     
     def change_presence(self, presence_show, presence_status):
         self.xmppstatus = presence_status
-        self.xmppstatushow = presence_show
+        self.xmppstatusshow = presence_show
         pres = xmpp.Presence(status=presence_status, show=presence_show)
         self.xmppclient.send(pres)
-        
     
     
+    def change_status(self, presence_status):
+        self.xmppstatus = presence_status
+        pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        self.xmppclient.send(pres)
+    
+
     def connect(self):
         """
         Connect and auth to XMPP Server
@@ -361,7 +367,18 @@ class TNArchipelBasicXMPPClient(object):
               log(self, LOG_LEVEL_ERROR, "stanza sent form unauthorized JID {0}".format(jid))
               return False
     
-              
+    
+    def get_vcard(self):
+        
+        log(self, LOG_LEVEL_INFO, "asking for own vCard");
+        node_iq = xmpp.Iq(typ='get', frm=self.jid);
+        node_iq.addChild(name="vCard", namespace="vcard-temp")
+        
+        resp = self.xmppclient.SendAndWaitForResponse(stanza=node_iq)
+        self.vCard = resp.getTag("vCard")
+        log(self, LOG_LEVEL_INFO, "own vcard retrieved");
+        
+        
     def set_vcard_entity_type(self, params):
         """
         allows to define a vCard type for the entry
@@ -371,11 +388,12 @@ class TNArchipelBasicXMPPClient(object):
         """
         log(self, LOG_LEVEL_DEBUG, "vcard making started");
 
-        node_iq = (xmpp.Iq(typ='set', xmlns=None))
+        node_iq = xmpp.Iq(typ='set', xmlns=None)
         
         type_node = xmpp.Node(tag="TYPE");
         type_node.setData(params["entity_type"]);
-        
+            
+            
         avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory");
         
         try:
@@ -393,6 +411,12 @@ class TNArchipelBasicXMPPClient(object):
         node_photo_data = xmpp.Node(tag="BINVAL")
         node_photo_data.setData(photo_data);
         
+        if self.vCard and self.vCard.getTag("PHOTO"):
+            old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA();
+            if old_photo_binval == photo_data:
+                log(self, LOG_LEVEL_INFO, "vCard photo hasn't change.")
+                self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
+            
         node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
         
         node_iq.addChild(name="vCard", payload=[type_node, node_photo], namespace="vcard-temp")
@@ -415,7 +439,7 @@ class TNArchipelBasicXMPPClient(object):
         @type photo_hash: string
         @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
         """
-        node_presence = xmpp.Presence(frm=self.jid, status=self.xmppstatus, show=self.xmppstatushow)
+        node_presence = xmpp.Presence(frm=self.jid, status=self.xmppstatus, show=self.xmppstatusshow)
         
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
