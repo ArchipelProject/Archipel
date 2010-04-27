@@ -36,6 +36,7 @@
 @import "TNModule.j";
 @import "TNViewLineable.j";
 @import "TNUserDefaults.j";
+@import "TNQuickEditView.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -302,10 +303,10 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
     //[CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
-    CPLog.trace(@"loading all modules");
-    [_moduleLoader load];
-    [windowModuleLoading center]
-    [windowModuleLoading orderFront:nil];
+    // CPLog.trace(@"loading all modules");
+    // [_moduleLoader load];
+    // [windowModuleLoading center]
+    // [windowModuleLoading orderFront:nil];
 }
 
 /*! Delegate of toolbar imutables toolbar items.

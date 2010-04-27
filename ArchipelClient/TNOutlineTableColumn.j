@@ -32,6 +32,11 @@
     CPImageView avatar      @accessors;
 
     CPImage     _unknownUserImage;
+    CPImage     _syncImage;
+    CPImage     _syncingImage;
+    CPButton    _syncButton;
+    
+    TNStropheContact    _contact;
 }
 
 /*! initialize the class
@@ -41,21 +46,33 @@
 {
     if (self = [super init])
     {
+        var bundle = [CPBundle mainBundle];
+        
         statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
         name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
         show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(140, 2, 23, 14)];
-        
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 2, 23, 14)];
         avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
-
+        
+        _syncImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sync.png"] size:CGSizeMake(16, 16)];
+        _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
+        _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
+        
+        [_syncButton setImage:_syncImage];
+        [_syncButton setBordered:NO];
+        [_syncButton setHidden:YES];
+        [_syncButton setTarget:self];
+        [_syncButton setAction:@selector(askVCard:)];
+        
         //[self setAutoresizingMask: CPViewWidthSizable];
         [self addSubview:statusIcon];
         [self addSubview:name];
         [self addSubview:events];
         [self addSubview:show];
         [self addSubview:avatar];
+        [self addSubview:_syncButton];
 
-        var bundle = [CPBundle mainBundle];
+        
         [events setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]]]
         [events setAlignment:CPCenterTextAlignment];
         [events setVerticalAlignment:CPCenterVerticalTextAlignment];
@@ -68,15 +85,14 @@
         
         
         [[self show] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [[self show] setValue:[CPFont fontWithName:@"Verdana-Italic" size:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
+        [[self show] setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [[self show] setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         
         [[self show] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
-        // [[self show] setValue:[CPFont systemFontOfSize:9] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
         _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
-        [[self events] setHidden:NO];
+        [events setHidden:YES];
     }
     return self;
 }
@@ -86,8 +102,18 @@
 */
 - (void)setObjectValue:(id)aContact
 {
-    //[name setAutoresizingMask:CPViewWidthSizable];
-    [events setAutoresizingMask:CPViewMinXMargin | CPViewMaxYMargin];
+    _contact = aContact;
+    var mainBounds = [self bounds];
+    
+    var boundsEvents        = [events frame];
+    boundsEvents.origin.x   = mainBounds.size.width - 25;
+    [events setFrame:boundsEvents];
+    [events setAutoresizingMask:CPViewMinXMargin];
+
+    var boundsSync          = [_syncButton frame];
+    boundsSync.origin.x     = mainBounds.size.width - 20;
+    [_syncButton setFrame:boundsSync];
+    [_syncButton setAutoresizingMask:CPViewMinXMargin];
 
     [[self name] setStringValue:[aContact nickname]];
     [[self name] sizeToFit];
@@ -122,6 +148,29 @@
 
 }
 
+- (IBAction)askVCard:(id)sender
+{
+    var bundle  = [CPBundle mainBundle];
+    var center  = [CPNotificationCenter defaultCenter];
+    
+    [_syncButton setImage:_syncingImage];
+    [_contact getVCard];
+    // [_syncButton setImage:]
+    
+    [center addObserver:self selector:@selector(didReceivedVCard:) name:TNStropheContactVCardReceivedNotification object:_contact];
+}
+
+- (void)didReceivedVCard:(CPNotification)aNotification
+{
+    var bundle  = [CPBundle mainBundle];
+    var center  = [CPNotificationCenter defaultCenter];
+    
+    [_syncButton setImage:_syncImage];
+    
+    [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:_contact]
+}
+
+
 /*! implement theming in order to allow change color of selected item
 */
 - (void)setThemeState:(id)aState
@@ -129,6 +178,11 @@
     [super setThemeState:aState];
     [[self name] setThemeState:aState];
     [[self show] setThemeState:aState];
+    
+    if (aState == CPThemeStateSelected)
+        [_syncButton setHidden:NO];
+    else
+        [_syncButton setHidden:YES];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -138,6 +192,11 @@
     [super unsetThemeState:aState];
     [[self name] unsetThemeState:aState];
     [[self show] unsetThemeState:aState];
+    
+    if (aState == CPThemeStateSelected)
+        [_syncButton setHidden:YES];
+    else
+        [_syncButton setHidden:NO];
 }
 
 /*! CPCoder compliance
@@ -149,6 +208,9 @@
     if (self)
     {
         _unknownUserImage = [aCoder decodeObjectForKey:@"_unknownUserImage"];
+        _syncButton = [aCoder decodeObjectForKey:@"_syncButton"];
+        _syncImage = [aCoder decodeObjectForKey:@"_syncImage"];
+        _syncingImage = [aCoder decodeObjectForKey:@"_syncingImage"];
         [self setName:[aCoder decodeObjectForKey:@"name"]];
         [self setShow:[aCoder decodeObjectForKey:@"show"]];
         [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
@@ -165,6 +227,9 @@
 {
     [super encodeWithCoder:aCoder];
 
+    [aCoder encodeObject:_syncButton forKey:@"_syncButton"];
+    [aCoder encodeObject:_syncImage forKey:@"_syncImage"];
+    [aCoder encodeObject:_syncingImage forKey:@"_syncingImage"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:name forKey:@"name"];
     [aCoder encodeObject:show forKey:@"show"];

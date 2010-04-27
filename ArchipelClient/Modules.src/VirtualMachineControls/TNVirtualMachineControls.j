@@ -110,7 +110,7 @@ VIR_DOMAIN_CRASHED  = 6;
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(didNickPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
 }
 
 - (void)willShow
@@ -161,7 +161,7 @@ VIR_DOMAIN_CRASHED  = 6;
     }
 }
 
-- (void)didNickPresenceUpdated:(CPNotification)aNotification
+- (void)didPresenceUpdated:(CPNotification)aNotification
 {
     if ([aNotification object] == [self entity])
     {

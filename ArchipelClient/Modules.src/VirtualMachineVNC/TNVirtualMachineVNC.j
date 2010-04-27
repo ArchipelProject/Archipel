@@ -39,11 +39,6 @@ TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
 */
 TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
-/*! @ingroup virtualmachinevnc
-    @group TNArchipelTypeVirtualMachineControl
-    get virtual machine information
-*/
-TNArchipelTypeVirtualMachineControlInfo         = @"info";
 
 
 /*! @ingroup virtualmachinevnc
@@ -68,9 +63,6 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
     [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
     [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self maskingView] setAlphaValue:0.9];
-    
-    //[vncWebView setAutoresizingMask: CPViewWidthSizable];
-    //[vncWebView setFrame:CGRectMake(0, 0, 701, 501)];
     
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
 }
@@ -161,8 +153,8 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
         _vncDisplay     = [displayNode valueForAttribute:@"port"];
         _VMHost         = [displayNode valueForAttribute:@"host"];
-
-        var url     = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        
+        var url         = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
         [[self vncWebView] setMainFrameURL:url];
     }
     else if ([aStanza getType] == @"error")

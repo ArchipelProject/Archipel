@@ -88,7 +88,7 @@
     for (; index < count; ++index)
     {
         var label = _tabLabels[index],
-            frame = CGRectMake(x, 15.0, width, 58.0);
+            frame = CGRectMake(x, 15.0, width, 20.0);
 
         [label setFrame:frame];
         x = CGRectGetMaxX(frame);

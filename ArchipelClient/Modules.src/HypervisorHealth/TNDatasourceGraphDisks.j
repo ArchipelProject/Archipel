@@ -25,7 +25,7 @@
 {
     if (self = [super init])
     {
-        _datas = [19, 23, 56];
+        _datas = [];
     }
     return self;
 }

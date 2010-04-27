@@ -62,9 +62,20 @@
         _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
         _sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"9eafcd"];
         _sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"7c95bb"];
+        
+        [self setTarget:self];
+        [self setDoubleAction:@selector(onDoubleAction:)];
     }
 
 	return self;
+}
+
+- (IBAction)onDoubleAction:(id)sender
+{
+    // var frame = [self rectOfRow:[[self selectedRowIndexes] firstIndex]];
+    // 
+    // var pv = [[TNQuickEditView alloc] initWithObjectFrame:frame size:CGSizeMake(200,200)];
+    // [pv orderFront:self];
 }
 
 /*! Use to set the datasource. It plugs what needed to be plugged. It will be trigger by
