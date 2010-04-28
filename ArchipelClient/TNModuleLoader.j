@@ -150,16 +150,10 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     var oldSelectedIndex    = [defaults integerForKey:memid];
     var numberOfTabItems    = [[self mainTabView] numberOfTabViewItems];
     
-    if ([self entity] && (numberOfTabItems > 0) && (numberOfTabItems >= oldSelectedIndex))
+    if ([self entity] && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
     {
-        if  (oldSelectedIndex && (oldSelectedIndex != -1))
-        {
-            [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
-        }
-        else
-        {
-            [[self mainTabView] selectTabViewItemAtIndex:0];
-        }
+        CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
+        [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
     }
 }
 

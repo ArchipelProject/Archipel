@@ -165,6 +165,11 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     CPLog.info(@"Receiving push notification of type TNArchipelPushNotificationVMCasting");
     [self getVMCasts];
     
+    if ([aStanza valueForAttribute:@"change"] == @"download_complete")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Appliance" message:@"Download complete" icon:nil];
+    }
     return YES;
 }
 
@@ -283,6 +288,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     if ([aStanza getType] == @"success")
     {
         [self getVMCasts];
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred" icon:nil];
     }
     else
     {
@@ -338,6 +346,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     if ([aStanza getType] == @"success")
     {
         [self getVMCasts];
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled" icon:nil];
     }
     else
     {
@@ -347,7 +358,12 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didUnregistred:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"error")
+    if ([aStanza getType] == @"success")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred" icon:nil];
+    }
+    else
     {
         [self handleIqErrorFromStanza:aStanza];
     }

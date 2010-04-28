@@ -68,7 +68,10 @@
     if (returnCode == 0)
     {
         [[self roster] removeContact:[self jid]];
-        // [[TNViewLog sharedLogger] log:@"contact " + [self jid] + "removed"];
+        CPLog.info(@"contact " + [self jid] + "removed");
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [self jid] + @" has been removed" icon:nil];
     }
 }
 

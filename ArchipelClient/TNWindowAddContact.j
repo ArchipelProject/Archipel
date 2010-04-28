@@ -84,8 +84,11 @@
     [self performClose:nil];
 
     var msg     = @"Presence subsciption has been sent to " + jid + ".";
-
-    // [[TNViewLog sharedLogger] log:@"added contact " + jid];
+    
+    CPLog.info(@"added contact " + jid);
+    
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + jid + @" has been added" icon:nil];
 }
 
 @end

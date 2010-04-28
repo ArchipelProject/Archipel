@@ -32,7 +32,7 @@ def main():
         opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", [   "project", "all", "modules=", "allmodules", "native=", "clean", 
                                                                     "config=", "build", "installmodules", "uninstallmodules", 
                                                                     "generateplist", "help", "example", "ignoremodules=",
-                                                                    "exportsdk=", "exportarchipel="])
+                                                                    "sdk=", "export=", ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -94,10 +94,10 @@ def main():
             for p in a.split(","):
                 opt_ignore_modules_paths.append(GLOBAL_MODULES_SRC_PATH + p)
         
-        if o in ("--exportsdk"):
+        if o in ("--sdk"):
             opt_export_sdk_path = a
             
-        if o in ("--exportarchipel"):
+        if o in ("--export"):
             opt_export_archipel_path = a
             
         if o in ("-u", "--uninstallmodules"):
@@ -320,12 +320,14 @@ def export_sdk(path):
 
 
 def export_archipel(path, config):
-    print "# exporting Archipel application to " + path
+    print "# exporting flattened Archipel application to " + path
     
-    build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
-    os.system("mkdir -p " + path);
-    os.system("cp -a " + build_dir + " " + path + "/");
-    os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + path + "/Modules/");
+    build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("/*", "");
+    print ("flatten %s %s/ArchipelFlattened" % (build_dir, path))
+    os.system("flatten %s %s/ArchipelFlattened" % (build_dir, path))
+    #os.system("mkdir -p " + path);
+    #os.system("cp -a " + build_dir + " " + path + "/");
+    #os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + path + "/Modules/");
     
 if __name__ == "__main__":
     main();

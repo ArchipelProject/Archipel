@@ -53,9 +53,14 @@
     }
     else
     {
-        [[self roster] addGroup:[[self newGroupName] stringValue]];
+        var groupName = [[self newGroupName] stringValue];
+        
+        [[self roster] addGroup:groupName];
         [[self newGroupName] setStringValue:@""];
-        // [[TNViewLog sharedLogger] log:@"new group " + [[self newGroupName] stringValue] + " added."]
+        CPLog.info(@"new group " + groupName + " added.");
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created" icon:nil];
 
         [self performClose:nil];
     }

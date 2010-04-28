@@ -314,7 +314,10 @@ VIR_DOMAIN_CRASHED  = 6;
     {
         var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
-
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running" icon:nil];
+        
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -333,7 +336,9 @@ VIR_DOMAIN_CRASHED  = 6;
     if (responseType == @"success")
     {
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
-
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused" icon:nil];
+        
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -352,7 +357,10 @@ VIR_DOMAIN_CRASHED  = 6;
     if (responseType == @"success")
     {
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
-
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed" icon:nil];
+        
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -371,7 +379,8 @@ VIR_DOMAIN_CRASHED  = 6;
     if (responseType == @"success")
     {
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
-
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped" icon:nil];
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -389,7 +398,8 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been rebooted"];
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting" icon:nil];
         [self getVirtualMachineInfo:nil];
     }
     else

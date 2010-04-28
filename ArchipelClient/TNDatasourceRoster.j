@@ -62,7 +62,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
 
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageReceivedNotification object:nil];
+        [center addObserver:self selector:@selector(onUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
     }
@@ -70,6 +70,16 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return self;
 }
 
+- (void)onUserMessage:(CPNotification)aNotification
+{
+    var user    = [[[aNotification userInfo] objectForKey:@"stanza"] getFromNodeUser];
+    var message = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text];
+    var growl   = [TNGrowlCenter defaultCenter];
+    
+    [growl pushNotificationWithTitle:user message:message icon:nil];
+    
+    [self updateOutlineView:aNotification];
+}
 /*! allow to define a CPSearchField to filter entries
     @param aField CPSearchField to use for filtering
 */

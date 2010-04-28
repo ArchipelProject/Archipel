@@ -154,7 +154,7 @@ function generateMacAddr()
     [[driveColumnTarget headerView] setStringValue:@"Target"];
 
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    [driveColumnSource setWidth:500];
+    [driveColumnSource setWidth:300];
     [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
 
@@ -685,7 +685,11 @@ function generateMacAddr()
 
     if (responseType == @"success")
     {
-        CPLog.info(@"definition of virtual machine " + responseFrom + " sucessfuly updated")
+        var msg = @"Definition of virtual machine " + [[self entity] nickname] + " sucessfuly updated"
+        CPLog.info(msg)
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:msg icon:nil];
     }
     else if (responseType == @"error")
     {

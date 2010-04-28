@@ -199,6 +199,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     {
         var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine " + vmJid + @" has been created" icon:nil];
     }
     else
     {
@@ -256,6 +259,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     {
         [self getHypervisorRoster];
         CPLog.info(@"sucessfully deallocating a virtual machine");
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been removed" icon:nil];
     }
     else
     {

@@ -232,6 +232,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)didCreateDisk:(id)aStanza
 {
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created" icon:nil];
+    
     [self getDisksInfo];
 }
 
@@ -251,11 +254,14 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:[dName path]];
 
-    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
+    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
 }
 
 - (void)didRemoveDisk:(id)aStanza
 {
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed" icon:nil];
+    
     [self getDisksInfo];
 }
 

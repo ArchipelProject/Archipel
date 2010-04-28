@@ -36,7 +36,8 @@
 @import "TNModule.j";
 @import "TNViewLineable.j";
 @import "TNUserDefaults.j";
-@import "TNQuickEditView.j";
+// @import "TNQuickEditView.j";
+@import "TNGrowl.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -107,8 +108,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)awakeFromCib
 {
     CPLogRegister(CPLogConsole);
-    
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var bundle      = [CPBundle bundleForClass:self];
+    var defaults    = [TNUserDefaults standardUserDefaults];
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
@@ -165,7 +166,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 
     // filter view.
     CPLog.trace(@"initializing the filterView");
-    var bundle = [CPBundle bundleForClass:self];
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
 
     //tab module view
@@ -220,6 +220,13 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     
     CPLog.info(@"AppController initialized");
+    
+    var bg = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"growl-bg.png"]]];
+    var defaultIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"growl-info.png"]];
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl setView:rightView];
+    [growl setDefaultIcon:defaultIcon];
+    [growl setBackgroundColor:bg]
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
@@ -282,7 +289,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     var alert   = [[TNAlertRemoveContact alloc] initWithJid:[theJid jid] roster:_mainRoster];
 
     if (alert)
+    {
         [alert runModal];
+    }
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -302,11 +311,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
 */
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
-    //[CPException raise:@"NotImplemented" reason:@"This message is not implemented"];
-    // CPLog.trace(@"loading all modules");
-    // [_moduleLoader load];
-    // [windowModuleLoading center]
-    // [windowModuleLoading orderFront:nil];
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented" icon:nil];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -364,6 +370,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [presence addTextNode:xmppStatus];
     CPLog.info("Changing presence to " + statusLabel + ":" + xmppStatus);
     
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel icon:nil];
+    
     [[_mainRoster connection] send:presence];
 }
 
@@ -395,6 +404,11 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_mainRoster getRoster];
 
     [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+    
+    var user = [[_mainRoster connection] jid];
+    
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user icon:nil];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -424,7 +438,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)didReceiveSubscriptionRequest:(id)requestStanza
 {
     var presenceAlert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
-
+    
     [presenceAlert runModal];
 }
 

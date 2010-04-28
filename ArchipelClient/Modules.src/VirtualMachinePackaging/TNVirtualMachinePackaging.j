@@ -164,6 +164,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     }
     else
     {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed" icon:nil];
+        
         [fieldInfoImage setHidden:YES];
         [fieldInfoStatus setStringValue:@""];
         [self getInstalledAppliances];
@@ -234,6 +237,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     {
         var msg = @"The instanciation of the package has started."
         [CPAlert alertWithTitle:@"Instanciation processing" message:msg];
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Appliance" message:msg icon:nil];
     }
     else
     {
