@@ -176,6 +176,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     
     [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     CPLog.error(msg);
+    
+    var errorIcon   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"growl-error.png"]];
+    var growl       = [TNGrowlCenter defaultCenter];
+    [growl pushNotificationWithTitle:@"Error" message:msg icon:errorIcon];
 }
 
 @end
