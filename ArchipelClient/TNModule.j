@@ -95,9 +95,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         var params = [[CPDictionary alloc] init];
 
         [params setValue:@"message" forKey:@"name"];
-        //[params setValue:[[self entity] jid] forKey:@"from"];
         [params setValue:aPushType forKey:@"type"];
-        //[params setValue:{"matchBare": YES} forKey:@"options"];
 
         var pushSelectorId = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
 

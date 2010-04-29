@@ -496,8 +496,12 @@ TNArchipelStatusBusyLabel       = @"Busy";
         var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
         var defaults    = [TNUserDefaults standardUserDefaults];
 
-        if ([item type] == "group")
-            return; //[CPException raise:@"NotImplemented" reason:@"Group module are not implemented"]
+        if ([item class] == TNStropheGroup)
+        {
+            CPLog.info(@"setting the entity as " + item + " of type group");
+            [_moduleLoader setEntity:item ofType:[item type] andRoster:_mainRoster];
+            return;
+        }
         
         var vCard       = [item vCard];
         var entityType  = [_moduleLoader analyseVCard:vCard];

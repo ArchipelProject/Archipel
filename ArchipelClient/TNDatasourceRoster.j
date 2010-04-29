@@ -298,7 +298,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
-    [_draggedItem changeGroup:[theItem name]];
+    // [_draggedItem changeGroup:[theItem name]];
+    [self changeGroup:[theItem name] forJID:[_draggedItem jid]];
     [[self mainOutlineView] reloadData];
 
     return YES;

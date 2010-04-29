@@ -6,6 +6,10 @@
         <array>
             <dict>
                 <key>folder</key>
+                <string>GroupManagement</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>HypervisorHealth</string>
             </dict>
             <dict>

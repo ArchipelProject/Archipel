@@ -108,9 +108,14 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
-
-    _previousStatus = [[self entity] status];
-    if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
+    
+    if ([[self entity] class] == TNStropheContact)
+    {
+        _previousStatus = [[self entity] status];
+        if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
+            [self _populateModulesTabView];
+    }
+    else
         [self _populateModulesTabView];
 }
 
@@ -133,9 +138,16 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 {
     if (anItem && [self entity] && ([[self mainTabView] numberOfTabViewItems] > 0))
     {
+        var identifier;
+        
+        if ([[self entity] class] == TNStropheContact)
+            identifier = [[self entity] jid];
+        else
+            identifier = [[self entity] name];
+            
         var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:anItem];
         var defaults                = [TNUserDefaults standardUserDefaults];
-        var memid                   = @"selectedTabIndexFor" + [[self entity] jid];
+        var memid                   = @"selectedTabIndexFor" + identifier;
         
         [defaults setInteger:currentSelectedIndex forKey:memid];
     }
@@ -145,8 +157,14 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)recoverFromLastSelectedIndex
 {
+    var identifier;
+    if ([[self entity] class] == TNStropheContact)
+        identifier = [[self entity] jid];
+    else
+        identifier = [[self entity] name];
+    
     var defaults            = [TNUserDefaults standardUserDefaults];
-    var memid               = @"selectedTabIndexFor" + [[self entity] jid];
+    var memid               = @"selectedTabIndexFor" + identifier;
     var oldSelectedIndex    = [defaults integerForKey:memid];
     var numberOfTabItems    = [[self mainTabView] numberOfTabViewItems];
     

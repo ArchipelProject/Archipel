@@ -86,10 +86,13 @@
 */
 - (void)hide
 {
-    var splitView = [self superview];
+    if ([self superview])
+    {
+        var splitView = [self superview];
 
-    [self setHidden:YES];
-    [splitView setPosition:[splitView bounds].size.height ofDividerAtIndex:0];
+        [self setHidden:YES];
+        [splitView setPosition:[splitView bounds].size.height ofDividerAtIndex:0];
+    }
 }
 
 /*! show the panel
@@ -129,6 +132,12 @@
 */
 - (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
+    if ((![self contact]) || ([[self contact] class] == TNStropheGroup))
+    {
+        [self hide];
+        return;
+    }
+    
     [[self entryStatusIcon] setImage:[contact statusIcon]];
     
     if ([contact avatar])
