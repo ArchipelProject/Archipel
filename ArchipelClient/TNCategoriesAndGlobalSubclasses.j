@@ -268,3 +268,30 @@
 }
 @end
 
+@implementation CPWindow (fadeInWindow)
+
+- (IBAction)orderFront:(id)sender
+{
+    if (![self isVisible])
+    {
+        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+        var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+
+        [anim setDuration:0.3];
+        [anim startAnimation];
+    }
+    
+    [_platformWindow orderFront:self];
+    [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
+    
+    if (_firstResponder === self || !_firstResponder)
+        [self makeFirstResponder:[self initialFirstResponder]];
+    
+    if (!CPApp._keyWindow)
+        [self makeKeyWindow];
+    
+    if (!CPApp._mainWindow)
+        [self makeMainWindow];
+}
+@end
+
