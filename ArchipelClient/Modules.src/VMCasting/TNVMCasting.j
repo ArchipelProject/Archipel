@@ -168,7 +168,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     if ([aStanza valueForAttribute:@"change"] == @"download_complete")
     {
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Appliance" message:@"Download complete" icon:nil];
+        [growl pushNotificationWithTitle:@"Appliance" message:@"Download complete"];
     }
     return YES;
 }
@@ -290,7 +290,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         [self getVMCasts];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred" icon:nil];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred"];
     }
     else
     {
@@ -348,7 +348,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         [self getVMCasts];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled" icon:nil];
+        [growl pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled"];
     }
     else
     {
@@ -361,7 +361,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     if ([aStanza getType] == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred" icon:nil];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred"];
     }
     else
     {

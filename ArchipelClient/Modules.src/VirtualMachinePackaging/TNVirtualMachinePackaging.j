@@ -165,7 +165,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     else
     {
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed" icon:nil];
+        [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
         
         [fieldInfoImage setHidden:YES];
         [fieldInfoStatus setStringValue:@""];

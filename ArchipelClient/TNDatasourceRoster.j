@@ -72,14 +72,29 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 - (void)onUserMessage:(CPNotification)aNotification
 {
-    var user    = [[[aNotification userInfo] objectForKey:@"stanza"] getFromNodeUser];
-    var message = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text];
-    var growl   = [TNGrowlCenter defaultCenter];
+    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] getFromNodeUser];
+    var message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text];
+    var growl           = [TNGrowlCenter defaultCenter];
+    var bundle          = [CPBundle mainBundle];
+    var customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]];
+    var currentContact  = [aNotification object];
     
-    [growl pushNotificationWithTitle:user message:message icon:nil];
+    if ([mainOutlineView selectedRow] != [mainOutlineView rowForItem:currentContact])
+    {
+            [growl pushNotificationWithTitle:user message:message customIcon:customIcon target:self action:@selector(growlNotification:clickedWithUser:) actionParameters:currentContact];
+    }
     
     [self updateOutlineView:aNotification];
 }
+
+- (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
+{
+    var row     = [mainOutlineView rowForItem:aContact];
+    var indexes = [CPIndexSet indexSetWithIndex:row];
+    
+    [mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+}
+
 /*! allow to define a CPSearchField to filter entries
     @param aField CPSearchField to use for filtering
 */

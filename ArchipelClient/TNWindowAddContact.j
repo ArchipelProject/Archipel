@@ -88,7 +88,7 @@
     CPLog.info(@"added contact " + jid);
     
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + jid + @" has been added" icon:nil];
+    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + jid + @" has been added"];
 }
 
 @end

@@ -71,7 +71,7 @@
         CPLog.info(@"contact " + [self jid] + "removed");
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [self jid] + @" has been removed" icon:nil];
+        [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [self jid] + @" has been removed"];
     }
 }
 

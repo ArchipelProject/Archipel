@@ -20,6 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
+@import <GrowlCappuccino/GrowlCappuccino.j>
 //@import <LPKit/LPCrashReporter.j>
 
 @import "TNCategoriesAndGlobalSubclasses.j";
@@ -36,8 +37,6 @@
 @import "TNModule.j";
 @import "TNViewLineable.j";
 @import "TNUserDefaults.j";
-// @import "TNQuickEditView.j";
-@import "TNGrowl.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -108,6 +107,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)awakeFromCib
 {
     CPLogRegister(CPLogConsole);
+    
     var bundle      = [CPBundle bundleForClass:self];
     var defaults    = [TNUserDefaults standardUserDefaults];
     
@@ -221,12 +221,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     CPLog.info(@"AppController initialized");
     
-    var bg = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"growl-bg.png"]]];
-    var defaultIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"growl-info.png"]];
     var growl = [TNGrowlCenter defaultCenter];
     [growl setView:rightView];
-    [growl setDefaultIcon:defaultIcon];
-    [growl setBackgroundColor:bg]
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
@@ -250,7 +246,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 /*! Delegate of toolbar imutables toolbar items.
     Trigger on logout item click
     To have more information about the toolbar, see TNToolbar
-
     @param sender the sender of the action (the CPToolbarItem)
 */
 - (IBAction)toolbarItemLogoutClick:(id)sender
@@ -312,7 +307,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented" icon:nil];
+    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented"];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -344,6 +339,11 @@ TNArchipelStatusBusyLabel       = @"Busy";
     }
 }
 
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger presence item change.
+    This will change your own XMPP status
+*/
 - (IBAction)toolbarItemPresenceStatusClick:(id)sender
 {
     var xmppStatus;
@@ -371,7 +371,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.info("Changing presence to " + statusLabel + ":" + xmppStatus);
     
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel icon:nil];
+    [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
     
     [[_mainRoster connection] send:presence];
 }
@@ -389,7 +389,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 
 /*! Notification responder of TNStropheConnection
     will be performed on login
-
     @param aNotification the received notification. This notification will contains as object the TNStropheConnection
 */
 - (void)loginStrophe:(CPNotification)aNotification
@@ -408,12 +407,11 @@ TNArchipelStatusBusyLabel       = @"Busy";
     var user = [[_mainRoster connection] jid];
     
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user icon:nil];
+    [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user];
 }
 
 /*! Notification responder of TNStropheConnection
     will be performed on logout
-
     @param aNotification the received notification. This notification will contains as object the TNStropheConnection
 */
 - (void)logoutStrophe:(CPNotification)aNotification
@@ -432,7 +430,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 
 /*! Delegate method of main TNStropheRoster.
     will be performed when a subscription request is sent
-
     @param requestStanza TNStropheStanza cotainining the subscription request
 */
 - (void)didReceiveSubscriptionRequest:(id)requestStanza
@@ -459,8 +456,15 @@ TNArchipelStatusBusyLabel       = @"Busy";
         [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
     }
     
+    
     [helpView setFrame:[rightView bounds]];
     [rightView addSubview:helpView];
+    
+    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:helpView, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+    
+    [anim setDuration:0.3];
+    [anim startAnimation];
 }
 
 /*! Hide the helpView from the rightView
@@ -473,7 +477,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 /*! Delegate of TNOutlineView
     will be performed when selection changes. Tab Modules displaying
     if managed by this message
-
     @param aNotification the received notification
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
@@ -513,7 +516,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
         [propertiesView reload];
     }
 }
-
 
 /*! Delegate of mainSplitView
 */

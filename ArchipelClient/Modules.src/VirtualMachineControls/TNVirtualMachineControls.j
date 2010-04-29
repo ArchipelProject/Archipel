@@ -316,7 +316,7 @@ VIR_DOMAIN_CRASHED  = 6;
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
         
         [self getVirtualMachineInfo:nil];
     }
@@ -337,7 +337,7 @@ VIR_DOMAIN_CRASHED  = 6;
     {
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
         
         [self getVirtualMachineInfo:nil];
     }
@@ -359,7 +359,7 @@ VIR_DOMAIN_CRASHED  = 6;
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
         
         [self getVirtualMachineInfo:nil];
     }
@@ -380,7 +380,7 @@ VIR_DOMAIN_CRASHED  = 6;
     {
         // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped"];
         [self getVirtualMachineInfo:nil];
     }
     else
@@ -399,7 +399,7 @@ VIR_DOMAIN_CRASHED  = 6;
     if (responseType == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting"];
         [self getVirtualMachineInfo:nil];
     }
     else

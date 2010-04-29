@@ -233,7 +233,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (void)didCreateDisk:(id)aStanza
 {
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created" icon:nil];
+    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
     
     [self getDisksInfo];
 }
@@ -260,7 +260,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (void)didRemoveDisk:(id)aStanza
 {
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed" icon:nil];
+    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
     
     [self getDisksInfo];
 }

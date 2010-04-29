@@ -201,7 +201,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         CPLog.info(@"sucessfully create a virtual machine");
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine " + vmJid + @" has been created" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine " + vmJid + @" has been created"];
     }
     else
     {
@@ -261,7 +261,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         CPLog.info(@"sucessfully deallocating a virtual machine");
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been removed" icon:nil];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been removed"];
     }
     else
     {

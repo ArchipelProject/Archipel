@@ -346,7 +346,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         [self getHypervisorNetworks];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network has been defined" icon:nil];
+        [growl pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
     }
     else
     {
@@ -385,7 +385,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         [self getHypervisorNetworks];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed" icon:nil];
+        [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
     }
     else
     {
@@ -413,7 +413,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [_tableViewNetworks reloadData];
     
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Network" message:@"Network has been added" icon:nil];
+    [growl pushNotificationWithTitle:@"Network" message:@"Network has been added"];
 }
 
 - (IBAction)delNetwork:(id)sender
@@ -446,7 +446,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         [self getHypervisorNetworks];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network has been removed" icon:nil];
+        [growl pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
     }
     else
     {

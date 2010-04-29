@@ -60,7 +60,7 @@
         CPLog.info(@"new group " + groupName + " added.");
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created" icon:nil];
+        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
 
         [self performClose:nil];
     }

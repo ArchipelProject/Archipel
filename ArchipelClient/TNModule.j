@@ -135,14 +135,21 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willShow
 {
-
+    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+    
+    [anim setDuration:0.3];
+    [anim startAnimation];
 }
 
 /*! this message is sent when user click on another module.
 */
 - (void)willHide
 {
+    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey, CPViewAnimationFadeOutEffect, CPViewAnimationEffectKey];
+    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
 
+    // [anim startAnimation];
 }
 
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact
@@ -177,9 +184,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     CPLog.error(msg);
     
-    var errorIcon   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"growl-error.png"]];
     var growl       = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Error" message:msg icon:errorIcon];
+    [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
 }
 
 @end
