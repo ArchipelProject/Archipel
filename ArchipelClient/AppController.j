@@ -280,9 +280,16 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)toolbarItemDeleteContactClick:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var theJid  = [_rosterOutlineView itemAtRow:index];
-    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[theJid jid] roster:_mainRoster];
-
+    var item    = [_rosterOutlineView itemAtRow:index];
+    
+    if ([item class] != TNStropheContact)
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
+        return;
+    }
+    
+    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[item jid] roster:_mainRoster];
     if (alert)
     {
         [alert runModal];
