@@ -69,8 +69,8 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
 */
 @implementation TNToolbar  : CPToolbar
 {
-    CPDictionary    toolbarItems            @accessors;
-    CPArray         toolbarItemsOrder       @accessors;
+    CPDictionary    _toolbarItems;
+    CPArray         _toolbarItemsOrder;
 }
 
 /*! initialize the class with a target
@@ -82,9 +82,8 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
     if (self = [super init])
     {
         var bundle          = [CPBundle bundleForClass:self];
-        
-        toolbarItems        = [CPDictionary dictionary];
-        toolbarItemsOrder   = [CPArray array];
+        _toolbarItems       = [CPDictionary dictionary];
+        _toolbarItemsOrder  = [CPArray array];
 
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemAddJid label:@"Add JID" icon:[bundle pathForResource:@"add.png"] target:aTarget action:@selector(toolbarItemAddContactClick:)];
@@ -150,7 +149,7 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
 
-    [[self toolbarItems] setObject:newItem forKey:anIdentifier];
+    [_toolbarItems setObject:newItem forKey:anIdentifier];
 }
 
 /*! add a new CPToolbarItem with a custom view
@@ -172,7 +171,7 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
 
-    [[self toolbarItems] setObject:newItem forKey:anIdentifier];
+    [_toolbarItems setObject:newItem forKey:anIdentifier];
 }
 
 /*! define the position of a given existing CPToolbarItem according to its identifier
@@ -180,21 +179,21 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
 */
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
-     [[self toolbarItemsOrder] insertObject:anIndentifier atIndex:aPosition];
+     [_toolbarItemsOrder insertObject:anIndentifier atIndex:aPosition];
 }
 
 /*! CPToolbar Protocol
 */
 - (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar
 {
-    return  [self toolbarItemsOrder];
+    return  _toolbarItemsOrder;
 }
 
 /*! CPToolbar Protocol
 */
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar
 {
-    return  [self toolbarItemsOrder];
+    return  _toolbarItemsOrder;
 }
 
 /*! CPToolbar Protocol
@@ -203,7 +202,7 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
 {
     var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
 
-    return ([[self toolbarItems] objectForKey:anItemIdentifier]) ? [[self toolbarItems] objectForKey:anItemIdentifier] : toolbarItem;
+    return ([_toolbarItems objectForKey:anItemIdentifier]) ? [_toolbarItems objectForKey:anItemIdentifier] : toolbarItem;
 }
 
 @end

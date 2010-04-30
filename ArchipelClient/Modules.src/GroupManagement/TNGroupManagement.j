@@ -109,7 +109,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [super willLoad];
     
     var center = [CPNotificationCenter defaultCenter];   
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 }
 
 - (void)willUnload
@@ -121,13 +121,13 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 {
     [super willShow];
 
-    [[self fieldName] setStringValue:[[self entity] name]];
+    [fieldName setStringValue:[_entity name]];
     
     [[_datasourceGroupVM VMs] removeAllObjects];
     
-    for (var i = 0; i < [[[self entity] contacts] count]; i++)
+    for (var i = 0; i < [[_entity contacts] count]; i++)
     {
-        var contact = [[[self entity] contacts] objectAtIndex:i];
+        var contact = [[_entity contacts] objectAtIndex:i];
         var vCard   = [contact vCard];
         
         if (vCard && ([[vCard firstChildWithName:@"TYPE"] text] == TNArchipelEntityTypeVirtualMachine))
@@ -199,7 +199,16 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
 - (void)didSentAction:(TNStropheStanza)aStanza
 {
-    [_tableVirtualMachines reloadData];
+    var sender = [aStanza getFromNodeUser];
+    
+    if ([aStanza getType] == @"success")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" state modified"];
+        
+        [_tableVirtualMachines reloadData];
+    }
+    
 }
 @end
 

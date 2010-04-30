@@ -27,7 +27,6 @@
 */
 @implementation TNOutlineViewRoster: CPOutlineView
 {
-    TNOutlineTableColumnLabel   columnLabel @accessors;
 }
 /*! init the class
     @param aFrame CPRect the frame of the view

@@ -38,29 +38,30 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     @outlet CPButton        buttonDeleteVM              @accessors;
     @outlet CPScrollView    scrollViewListVM            @accessors;
     
-    CPTableView             tableVirtualMachines        @accessors;
-    TNDatasourceVMs         virtualMachinesDatasource   @accessors;
+    CPTableView             _tableVirtualMachines;
+    TNDatasourceVMs         _virtualMachinesDatasource;
     
-    TNStropheContact        _virtualMachineRegistredForDeletion;
+    TNStropheContact        _virtualMachinesForDeletion;
 }
 
 - (void)awakeFromCib
 {
     // VM table view
-    virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
-    tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[[self scrollViewListVM] bounds]];
+    _virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
+    _tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[scrollViewListVM bounds]];
 
-    [[self scrollViewListVM] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self scrollViewListVM] setAutohidesScrollers:YES];
-    [[self scrollViewListVM] setDocumentView:[self tableVirtualMachines]];
-    [[self scrollViewListVM] setBorderedWithHexColor:@"#9e9e9e"];
+    [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewListVM setAutohidesScrollers:YES];
+    [scrollViewListVM setDocumentView:_tableVirtualMachines];
+    [scrollViewListVM setBorderedWithHexColor:@"#9e9e9e"];
 
-    [[self tableVirtualMachines] setUsesAlternatingRowBackgroundColors:YES];
-    [[self tableVirtualMachines] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self tableVirtualMachines] setAllowsColumnReordering:YES];
-    [[self tableVirtualMachines] setAllowsColumnResizing:YES];
-    [[self tableVirtualMachines] setAllowsEmptySelection:YES];
-
+    [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
+    [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableVirtualMachines setAllowsColumnReordering:YES];
+    [_tableVirtualMachines setAllowsColumnResizing:YES];
+    [_tableVirtualMachines setAllowsEmptySelection:YES];
+    [_tableVirtualMachines setAllowsMultipleSelection:YES];
+    
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
@@ -77,11 +78,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
 
-    [[self tableVirtualMachines] addTableColumn:vmColumStatusIcon];
-    [[self tableVirtualMachines] addTableColumn:vmColumNickname];
-    [[self tableVirtualMachines] addTableColumn:vmColumJID];
+    [_tableVirtualMachines addTableColumn:vmColumStatusIcon];
+    [_tableVirtualMachines addTableColumn:vmColumNickname];
+    [_tableVirtualMachines addTableColumn:vmColumJID];
 
-    [[self tableVirtualMachines] setDataSource:[self virtualMachinesDatasource]];
+    [_tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 }
 
 - (void)willLoad
@@ -96,11 +97,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [super willShow];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
     
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
         
     [self getHypervisorRoster];
 }
@@ -127,7 +128,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    [[self fieldName] setStringValue:[[self entity] nickname]] 
+    [fieldName setStringValue:[_entity nickname]] 
 }
 
 - (void)getHypervisorRoster
@@ -135,7 +136,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
         
     [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
-    [[self entity] sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
+    [_entity sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -145,24 +146,24 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
     
-        [[[self virtualMachinesDatasource] VMs] removeAllObjects];
+        [[_virtualMachinesDatasource VMs] removeAllObjects];
     
         for (var i = 0; i < [queryItems count]; i++)
         {
             var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [[self roster] getContactFromJID:jid];
+            var entry   = [_roster getContactFromJID:jid];
         
             if (entry) 
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
-                    [[self virtualMachinesDatasource] addVM:entry];
+                    [_virtualMachinesDatasource addVM:entry];
                     [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
                }
             }
         }
     
-        [[self tableVirtualMachines] reloadData];
+        [_tableVirtualMachines reloadData];
     }
     else
     {
@@ -172,7 +173,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (void)didVirtualMachineChangesStatus:(CPNotification)aNotif
 {
-    [[self tableVirtualMachines] reloadData];
+    [_tableVirtualMachines reloadData];
 }
 
 
@@ -211,20 +212,33 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 
 - (IBAction)deleteVirtualMachine:(id)sender
 {
-    if (([[self tableVirtualMachines] numberOfRows] == 0) || ([[self tableVirtualMachines] numberOfSelectedRows] <= 0))
+    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
          return;
     }
     
-    var selectedIndex                       = [[[self tableVirtualMachines] selectedRowIndexes] firstIndex];
+    _virtualMachinesForDeletion     = [_tableVirtualMachines selectedRowIndexes];
+
+    var msg;
+    var title;
     
-    _virtualMachineRegistredForDeletion     = [[[self virtualMachinesDatasource] VMs] objectAtIndex:selectedIndex];
+    if ([_virtualMachinesForDeletion count] < 2)
+    {   
+        msg     = @"Are you sure you want to completely remove this virtual machine ?";
+        title   = @"Destroying a Virtual Machine"; 
+    }
+    else
+    {                                  
+        title   = @"Destroying some Virtual Machines"; 
+        msg     = @"Are you sure you want to completely remove theses virtual machines ?";
+    }
+        
     
     [buttonDeleteVM setEnabled:NO];
     
-    [CPAlert alertWithTitle:@"Destroying a Virtual Machine" 
-                    message:@"Are you sure you want to completely remove this virtual machine ?"
+    [CPAlert alertWithTitle:title
+                    message:msg
                       style:CPInformationalAlertStyle 
                    delegate:self 
                     buttons:[@"Yes", @"No"]];
@@ -234,19 +248,28 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 {
     if (returnCode == 0)
     {
-        var vm              = _virtualMachineRegistredForDeletion;
-        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+        var indexes         = _virtualMachinesForDeletion;
         
-        [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
-        [freeStanza addTextNode:[vm jid]];
-        
-        [[self roster] removeContact:[vm jid]];
-        
-        [[self entity] sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
+        for (var i = 0; i < [[_virtualMachinesDatasource VMs] count]; i++)
+        {                              
+            if ([indexes containsIndex:i])
+            {
+                var vm              = [[_virtualMachinesDatasource VMs] objectAtIndex:i];
+                var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+
+                [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
+                [freeStanza addTextNode:[vm jid]];
+
+                [_roster removeContact:[vm jid]];
+
+                [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
+                
+            }            
+        }
     }
     else
     {
-        _virtualMachineRegistredForDeletion = Nil;
+        _virtualMachinesForDeletion = Nil;
         [buttonDeleteVM setEnabled:YES];
     }
 }
@@ -254,7 +277,8 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 - (void)didFreeVirtualMachine:(id)aStanza
 {
     [buttonDeleteVM setEnabled:YES];
-    _virtualMachineRegistredForDeletion = Nil;
+    _virtualMachinesForDeletion = Nil;  
+    
     if ([aStanza getType] == @"success")
     {
         [self getHypervisorRoster];

@@ -125,7 +125,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 - (void)willLoad
 {
     [super willLoad];
-    [[self windowDownloadQueue] setEntity:[self entity]];
+    [[self windowDownloadQueue] setEntity:_entity];
     [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 }
 
@@ -139,11 +139,11 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     [super willShow];
     
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
     [self getVMCasts];
 }
@@ -157,7 +157,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    [[self fieldName] setStringValue:[[self entity] nickname]] 
+    [fieldName setStringValue:[_entity nickname]] 
 }
 
 - (BOOL)didVMCastingPushReceived:(TNStropheStanza)aStanza
@@ -263,7 +263,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var stanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
         
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownloadProgress}];
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didDownloadProgress:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didDownloadProgress:) ofObject:self];
 }
 
 - (void)didDownloadProgress:(TNStropheStanza)aStanza

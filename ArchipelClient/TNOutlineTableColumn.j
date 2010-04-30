@@ -79,16 +79,15 @@
         [events setFont:[CPFont boldSystemFontOfSize:11]];
         [events setTextColor:[CPColor whiteColor]];
 
-        [[self name] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [[self name] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
-        [[self name] setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        [name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
         
-        [[self show] setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [[self show] setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
-        [[self show] setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
-        
-        [[self show] setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [show setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
+        [show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
+        [show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         
         _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
@@ -109,17 +108,22 @@
     boundsEvents.origin.x   = mainBounds.size.width - 25;
     [events setFrame:boundsEvents];
     [events setAutoresizingMask:CPViewMinXMargin];
-
+    
     var boundsSync          = [_syncButton frame];
     boundsSync.origin.x     = mainBounds.size.width - 20;
     [_syncButton setFrame:boundsSync];
     [_syncButton setAutoresizingMask:CPViewMinXMargin];
-
-    [[self name] setStringValue:[aContact nickname]];
-    [[self name] sizeToFit];
     
-    [[self show] setStringValue:[aContact show]];
-    [[self show] sizeToFit];
+    if ([aContact status] == TNStropheContactStatusOffline)
+    {
+        [_syncButton setHidden:YES];
+    }
+    
+    [name setStringValue:[aContact nickname]];
+    [name sizeToFit];
+    
+    [show setStringValue:[aContact show]];
+    [show sizeToFit];
     
     [[self statusIcon] setImage:[aContact statusIcon]];
     
@@ -128,13 +132,13 @@
     else
         [[self avatar] setImage:_unknownUserImage];
     
-    var boundsName = [[self name] frame];
+    var boundsName = [name frame];
     boundsName.size.width += 10;
-    [[self name] setFrame:boundsName];
+    [name setFrame:boundsName];
     
-    var boundsShow = [[self show] frame];
+    var boundsShow = [show frame];
     boundsShow.size.width += 10;
-    [[self show] setFrame:boundsShow];
+    [show setFrame:boundsShow];
     
     if ([aContact numberOfEvents] > 0)
     {
@@ -155,7 +159,6 @@
     
     [_syncButton setImage:_syncingImage];
     [_contact getVCard];
-    // [_syncButton setImage:]
     
     [center addObserver:self selector:@selector(didReceivedVCard:) name:TNStropheContactVCardReceivedNotification object:_contact];
 }
@@ -176,10 +179,10 @@
 - (void)setThemeState:(id)aState
 {
     [super setThemeState:aState];
-    [[self name] setThemeState:aState];
-    [[self show] setThemeState:aState];
+    [name setThemeState:aState];
+    [show setThemeState:aState];
     
-    if (aState == CPThemeStateSelected)
+    if ((aState == CPThemeStateSelected) && ([_contact status] != TNStropheContactStatusOffline))
         [_syncButton setHidden:NO];
     else
         [_syncButton setHidden:YES];
@@ -190,8 +193,8 @@
 - (void)unsetThemeState:(id)aState
 {
     [super unsetThemeState:aState];
-    [[self name] unsetThemeState:aState];
-    [[self show] unsetThemeState:aState];
+    [name unsetThemeState:aState];
+    [show unsetThemeState:aState];
     
     if (aState == CPThemeStateSelected)
         [_syncButton setHidden:YES];
@@ -207,15 +210,15 @@
 
     if (self)
     {
-        _unknownUserImage = [aCoder decodeObjectForKey:@"_unknownUserImage"];
-        _syncButton = [aCoder decodeObjectForKey:@"_syncButton"];
-        _syncImage = [aCoder decodeObjectForKey:@"_syncImage"];
-        _syncingImage = [aCoder decodeObjectForKey:@"_syncingImage"];
-        [self setName:[aCoder decodeObjectForKey:@"name"]];
-        [self setShow:[aCoder decodeObjectForKey:@"show"]];
-        [self setStatusIcon:[aCoder decodeObjectForKey:@"statusIcon"]];
-        [self setEvents:[aCoder decodeObjectForKey:@"events"]];
-        [self setAvatar:[aCoder decodeObjectForKey:@"avatar"]];
+        _unknownUserImage   = [aCoder decodeObjectForKey:@"_unknownUserImage"];
+        _syncButton         = [aCoder decodeObjectForKey:@"_syncButton"];
+        _syncImage          = [aCoder decodeObjectForKey:@"_syncImage"];
+        _syncingImage       = [aCoder decodeObjectForKey:@"_syncingImage"];
+        name                = [aCoder decodeObjectForKey:@"name"];
+        show                = [aCoder decodeObjectForKey:@"show"];
+        statusIcon          = [aCoder decodeObjectForKey:@"statusIcon"];
+        events              = [aCoder decodeObjectForKey:@"events"];
+        avatar              = [aCoder decodeObjectForKey:@"avatar"];
     }
 
     return self;

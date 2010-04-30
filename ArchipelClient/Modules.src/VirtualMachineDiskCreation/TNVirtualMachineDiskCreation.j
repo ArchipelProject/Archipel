@@ -106,24 +106,24 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [self registerSelector:@selector(didReceivedDiskPushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
     
     var center = [CPNotificationCenter defaultCenter];   
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 }
 
 - (void)willShow
 {
     [super willShow];
 
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
     
     [self getDisksInfo];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 
@@ -143,7 +143,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
+    [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza
@@ -224,7 +224,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addTextNode:dUnit];
     [diskStanza up];
 
-    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
+    [_entity sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
 
     [[self fieldNewDiskName] setStringValue:@""];
     [[self fieldNewDiskSize] setStringValue:@""];
@@ -254,7 +254,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:[dName path]];
 
-    [[self entity] sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
+    [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
 }
 
 - (void)didRemoveDisk:(id)aStanza

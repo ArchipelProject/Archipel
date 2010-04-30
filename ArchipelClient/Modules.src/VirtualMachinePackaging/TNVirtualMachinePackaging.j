@@ -103,7 +103,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [super willLoad];
     
     var center = [CPNotificationCenter defaultCenter];   
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
     [self registerSelector:@selector(didDownloadPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 }
@@ -117,8 +117,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 {
     [super willShow];
 
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
     
     [self getInstalledAppliances];
 }
@@ -130,9 +130,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 
@@ -143,7 +143,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
     
-    if (sender != [[self entity] jid])
+    if (sender != [_entity jid])
         return;
     
     if (change == @"applianceunpacking")
@@ -181,7 +181,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingInstalledAppliances}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
+    [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
 }
 
 - (void)didReceiveInstalledAppliances:(TNStropheStanza)aStanza
@@ -228,7 +228,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [stanza addChildName:@"uuid"];
     [stanza addTextNode:[appliance UUID]];
 
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didInstallAppliance:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didInstallAppliance:) ofObject:self];
 }
 
 - (void)didInstallAppliance:(TNStropheStanza)aStanza

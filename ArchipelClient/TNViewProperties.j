@@ -35,8 +35,8 @@
     @outlet CPTextField     entryShow       @accessors;
     @outlet CPTextField     newNickName     @accessors;
 
-    TNStropheRoster         roster          @accessors;
-    TNStropheContact        contact         @accessors;
+    TNStropheRoster         _roster         @accessors(getter=roster, setter=setRoster:);
+    TNStropheContact        _entity         @accessors(getter=_entity, setter=setEntity:);
     CPImage                 _unknownUserImage;
 
     CPNumber                _height;
@@ -62,22 +62,22 @@
     [self setAutoresizingMask: CPViewNotSizable];
 
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [[self entryName] setFont:[CPFont boldSystemFontOfSize:13]];
-    [[self entryName] setTextColor:[CPColor colorWithHexString:@"8D929D"]];
+    [entryName setFont:[CPFont boldSystemFontOfSize:13]];
+    [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
 
-    [[self entryAvatar] setBorderedWithHexColor:@"#a5a5a5"];
-    [[self entryAvatar] setBackgroundColor:[CPColor whiteColor]];
+    [entryAvatar setBorderedWithHexColor:@"#a5a5a5"];
+    [entryAvatar setBackgroundColor:[CPColor whiteColor]];
     
     [self setHidden:YES];
 
-    [[self entryName] setTarget:self];
-    [[self entryName] setAction:@selector(changeNickName:)];
+    [entryName setTarget:self];
+    [entryName setAction:@selector(changeNickName:)];
     
     var bundle = [CPBundle mainBundle];
     _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:[self entryName]];
+    [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:entryName];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
@@ -109,44 +109,44 @@
 */
 - (void)reload
 {
-    if ((![self contact]) || ([[self contact] class] == TNStropheGroup))
+    if ((!_entity) || ([_entity class] == TNStropheGroup))
     {
         [self hide];
         return;
     }
     [self show];
     
-    [[self entryName] setStringValue:[contact nickname]];
-    [[self entryDomain] setStringValue:[contact domain]];
-    [[self entryResource] setStringValue:[contact resource]];
-    [[self entryStatusIcon] setImage:[contact statusIcon]];
-    if ([contact avatar])
-        [[self entryAvatar] setImage:[contact avatar]];
+    [entryName setStringValue:[_entity nickname]];
+    [entryDomain setStringValue:[_entity domain]];
+    [entryResource setStringValue:[_entity resource]];
+    [entryStatusIcon setImage:[_entity statusIcon]];
+    if ([_entity avatar])
+        [entryAvatar setImage:[_entity avatar]];
     else
-        [[self entryAvatar] setImage:_unknownUserImage];
+        [entryAvatar setImage:_unknownUserImage];
         
-    [[self entryShow] setStringValue:[contact show]];
+    [entryShow setStringValue:[_entity show]];
 }
 
 /*! message performed when contact update its presence in order to update information
 */
 - (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
-    if ((![self contact]) || ([[self contact] class] == TNStropheGroup))
+    if ((!_entity) || ([_entity class] == TNStropheGroup))
     {
         [self hide];
         return;
     }
     
-    [[self entryStatusIcon] setImage:[contact statusIcon]];
+    [entryStatusIcon setImage:[_entity statusIcon]];
     
-    if ([contact avatar])
-        [[self entryAvatar] setImage:[contact avatar]];
+    if ([_entity avatar])
+        [entryAvatar setImage:[_entity avatar]];
     else
-        [[self entryAvatar] setImage:_unknownUserImage];
+        [entryAvatar setImage:_unknownUserImage];
         
-    [[self entryResource] setStringValue:[contact resource]];
-    [[self entryShow] setStringValue:[contact show]];
+    [entryResource setStringValue:[_entity resource]];
+    [entryShow setStringValue:[_entity show]];
 }
 
 /*! message performed when the TNEditableLabel hase been changed
@@ -170,11 +170,11 @@
 */
 - (void)doChangeNickName
 {
-    var theJid = [contact jid];
-    var theName = [[self entryName] stringValue];
+    var theJid = [_entity jid];
+    var theName = [entryName stringValue];
 
-    [[self roster] changeNickname:theName forJID:theJid];
-    [[self entryName] setStringValue:theName];
+    [_roster changeNickname:theName forJID:theJid];
+    [entryName setStringValue:theName];
 
     // [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
 }

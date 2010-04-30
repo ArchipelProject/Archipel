@@ -25,8 +25,8 @@
 */
 @implementation TNAlertPresenceSubscription: CPAlert
 {
-    id              stanza @accessors;
-    TNStropheRoster roster @accessors;
+    id              _stanza @accessors(getter=stanza, setter=setStanza:);
+    TNStropheRoster _roster @accessors(getter=roster, setter=setRoster:);
 }
 
 /*! This method have to be use for the initialization.
@@ -42,13 +42,12 @@
         var contactName = [aStanza getFrom];
         var msg         = contactName + " want ask you subscription. Do you want to add it ?";
 
-        [self setStanza:aStanza];
-        [self setRoster:aRoster];
+        _stanza = aStanza;
+        _roster = aRoster;
 
         [self setDelegate:self];
         [self setTitle:@"Presence Subscription"];
         [self setMessageText:msg];
-        //[self setWindowStyle:CPHUDBackgroundWindowMask];
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];
     }
@@ -63,15 +62,14 @@
 {
     if (returnCode == 0)
     {
-        [[self roster] answerAuthorizationRequest:[self stanza] answer:YES];
-        // [[TNViewLog sharedLogger] log:@"Authorization request accepted from " + [[self stanza] valueForAttribute:@"from"]];
+        [_roster answerAuthorizationRequest:_stanza answer:YES];
+        CPLog.info(@"Authorization request accepted from " + [_stanza valueForAttribute:@"from"]);
     }
     else
     {
-        [[self roster] answerAuthorizationRequest:[self stanza] answer:NO];
-        // [[TNViewLog sharedLogger] log:@"Authorization request rejected from " + [[self stanza] valueForAttribute:@"from"]];
+        [_roster answerAuthorizationRequest:_stanza answer:NO];
+        CPLog.info(@"Authorization request rejected from " + [_stanza valueForAttribute:@"from"]);
     }
-
 }
 
 @end

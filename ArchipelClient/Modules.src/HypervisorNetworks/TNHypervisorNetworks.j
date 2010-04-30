@@ -119,8 +119,8 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 {
     [super willShow];
 
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[[self entity] nickname]];
+    [fieldJID setStringValue:[[self entity] jid]];
     
     [self getHypervisorNetworks];
 }
@@ -129,7 +129,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 {
     if ([aNotification object] == [self entity])
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[[self entity] nickname]]
     }
 }
 
@@ -333,7 +333,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [[self connection] getUniqueId];
+    var uid             = [_connection getUniqueId];
     var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
 
     [self sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:) withSpecificID:uid];

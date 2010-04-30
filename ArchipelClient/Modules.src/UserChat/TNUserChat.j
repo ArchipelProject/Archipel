@@ -89,22 +89,22 @@
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:[self entity]];
-    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:[self entity]];
-    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:[self entity]];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:_entity];
+    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
+    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:_entity];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
     [_messageCollectionView setFrame:frame];
 
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // var lastConversation = [defaults objectForKey:"communicationWith" + [[self entity] jid]];
+    // var lastConversation = [defaults objectForKey:"communicationWith" + [_entity jid]];
     // 
     // console.log(lastConversation);
     // if (lastConversation)
     //     _messages = lastConversation;
     
-    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [[self entity] jid]));
+    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [_entity jid]));
     
     if (lastConversation)
     {
@@ -136,9 +136,9 @@
 {
     [super willUnload];
 
-    localStorage.setItem("communicationWith" + [[self entity] jid], JSON.stringify(_messages));
+    localStorage.setItem("communicationWith" + [_entity jid], JSON.stringify(_messages));
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setArray:_messages forKey:"communicationWith" + [[self entity] jid]];
+    // [defaults setArray:_messages forKey:"communicationWith" + [_entity jid]];
     // console.log("HERE" + _messages);
     
     [_messages removeAllObjects];
@@ -151,10 +151,10 @@
 {
     [super willShow];
 
-    var messageQueue = [[self entity] messagesQueue];
+    var messageQueue = [_entity messagesQueue];
     var stanza;
 
-    while (stanza = [[self entity] popMessagesQueue])
+    while (stanza = [_entity popMessagesQueue])
     {
         if ([stanza containsChildrenWithName:@"body"])
         {
@@ -162,19 +162,19 @@
         }
     }
 
-    [[self entity] freeMessagesQueue];
+    [_entity freeMessagesQueue];
     
-    [fieldName setStringValue:[[self entity] nickname]];
-    [fieldJID setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
 }
 
 /*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
 */
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [fieldName setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 
@@ -188,7 +188,7 @@
 {
     if ([anObject stringValue] == @"")
     {
-        [[self entity] sendComposePaused];
+        [_entity sendComposePaused];
     }
     else
     {
@@ -196,7 +196,7 @@
             [_composingMessageTimer invalidate];
 
         _composingMessageTimer = [CPTimer scheduledTimerWithTimeInterval:3 target:self selector:@selector(sendComposingPaused:) userInfo:nil repeats:NO];
-        [[self entity] sendComposing];
+        [_entity sendComposing];
     }
 
 }
@@ -206,7 +206,7 @@
 */
 - (void)sendComposingPaused:(CPTimer)aTimer
 {
-    [[self entity] sendComposePaused];
+    [_entity sendComposePaused];
 }
 
 /*! append a new message to the message board
@@ -232,9 +232,9 @@
 */
 - (void)didReceivedMessage:(CPNotification)aNotification
 {
-    if ([[aNotification object] jid] == [[self entity] jid])
+    if ([[aNotification object] jid] == [_entity jid])
     {
-        var stanza =  [[self entity] popMessagesQueue];
+        var stanza =  [_entity popMessagesQueue];
 
         if ([stanza containsChildrenWithName:@"body"])
         {
@@ -275,7 +275,7 @@
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
 
-    [[self entity] sendMessage:[fieldMessage stringValue]];
+    [_entity sendMessage:[fieldMessage stringValue]];
     [self appendMessageToBoard:[fieldMessage stringValue] from:@"me"];
     [fieldMessage setStringValue:@""];
 }
@@ -285,7 +285,7 @@
 */
 - (IBAction)clearHistory:(id)aSender
 {
-    localStorage.removeItem("communicationWith" + [[self entity] jid]);
+    localStorage.removeItem("communicationWith" + [_entity jid]);
     [_messages removeAllObjects];
     [_messageCollectionView reloadContent];
 }

@@ -56,15 +56,15 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 @implementation TNModule : CPView
 {
-    TNStropheRoster         roster              @accessors;
-    TNStropheGroup          group               @accessors;
-    id                      entity              @accessors;
-    TNStropheConnection     connection          @accessors;
-    CPNumber                moduleTabIndex      @accessors;
-    CPString                moduleName          @accessors;
-    CPString                moduleLabel         @accessors;
-    CPArray                 moduleTypes         @accessors;
-    CPBundle                moduleBundle        @accessors;
+    TNStropheRoster         _roster             @accessors(getter=roster, setter=setRoster:);
+    TNStropheGroup          _group              @accessors(getter=group, setter=setGroup:);
+    id                      _entity             @accessors(getter=entity, setter=setEntity:);
+    TNStropheConnection     _connection         @accessors(getter=connection, setter=setConnection:);
+    int                     _moduleTabIndex     @accessors(getter=moduleTabIndex, setter=setModuleTabIndex:);
+    CPString                _moduleName         @accessors(getter=moduleName, setter=setModuleName:);
+    CPString                _moduleLabel        @accessors(getter=moduleLabel, setter=setModuleLabel:);
+    CPArray                 _moduleTypes        @accessors(getter=moduleTypes, setter=setModuleTypes:);
+    CPBundle                _moduleBundle       @accessors(getter=moduleBundle, setter=setModuleBundle:);
 
     CPArray                 _registredSelectors;
 }
@@ -78,9 +78,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
 {
-    [self setEntity:anEntity];
-    [self setRoster:aRoster];
-    [self setConnection:aConnection];
+    _entity     = anEntity;
+    _roster     = aRoster;
+    _connection = aConnection;
 }
 
 /*! This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
@@ -89,7 +89,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
 {
-    if ([[self entity] class] == TNStropheContact)
+    if ([_entity class] == TNStropheContact)
     {
         CPLog.info([self class] + " is registring for push notification of type : " + aPushType);
         var params = [[CPDictionary alloc] init];
@@ -97,7 +97,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         [params setValue:@"message" forKey:@"name"];
         [params setValue:aPushType forKey:@"type"];
 
-        var pushSelectorId = [[self connection] registerSelector:aSelector ofObject:self withDict:params];
+        var pushSelectorId = [_connection registerSelector:aSelector ofObject:self withDict:params];
 
         [_registredSelectors addObject:pushSelectorId];
     }
@@ -121,7 +121,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     {
         var selector = [_registredSelectors objectAtIndex:i];
 
-        [[self connection] deleteRegistredSelector:selector];
+        [_connection deleteRegistredSelector:selector];
     }
 
     // remove all notification observers
@@ -156,7 +156,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector
 {
-    var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
+    var selectorID = [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:self];
     [_registredSelectors addObject:selectorID];
 }
 
@@ -168,7 +168,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)sendStanza:(TNStropheStanza)aStanza andRegisterSelector:(SEL)aSelector withSpecificID:(CPString)anUid
 {
-    var selectorID = [[self entity] sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
+    var selectorID = [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
     [_registredSelectors addObject:selectorID];
 }
 
@@ -178,12 +178,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
     var msg = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
+    var growl = [TNGrowlCenter defaultCenter];
     
     [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
-    CPLog.error(msg);
-    
-    var growl       = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
+    CPLog.error(msg);
 }
 
 @end

@@ -100,7 +100,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     [super willLoad];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
     _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
@@ -126,16 +126,16 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 {
     [super willShow];
 
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
 }
 
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 

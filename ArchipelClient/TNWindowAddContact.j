@@ -30,7 +30,7 @@
     @outlet CPTextField     newContactJid       @accessors;
     @outlet CPTextField     newContactName      @accessors;
 
-    TNStropheRoster         roster              @accessors;
+    TNStropheRoster         _roster             @accessors(getter=roster, setter=setRoster:);
 }
 
 /*! overide of the orderFront
@@ -38,18 +38,18 @@
 */
 - (IBAction) orderFront:(id)sender
 {
-    var groups = [roster groups];
+    var groups = [_roster groups];
     var i;
 
-    [[self newContactJid] setStringValue:@""];
-    [[self newContactName] setStringValue:@""];
-    [[self newContactGroup] removeAllItems];
-    [self makeFirstResponder:[self newContactJid]];
+    [newContactJid setStringValue:@""];
+    [newContactName setStringValue:@""];
+    [newContactGroup removeAllItems];
+    [self makeFirstResponder:newContactJid];
 
-    if (![[self roster] doesRosterContainsGroup:@"General"])
+    if (![_roster doesRosterContainsGroup:@"General"])
     {
         var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""];
-        [[self newContactGroup] addItem:generalItem];
+        [newContactGroup addItem:generalItem];
     }
 
     //@each (var group in groups)
@@ -58,10 +58,10 @@
         var group = [groups objectAtIndex:i];
 
         var item = [[CPMenuItem alloc] initWithTitle:[group name] action:nil keyEquivalent:@""]
-        [[self newContactGroup] addItem:item];
+        [newContactGroup addItem:item];
     }
 
-    [[self newContactGroup] selectItemWithTitle:@"General"];
+    [newContactGroup selectItemWithTitle:@"General"];
 
     [self center];
 
@@ -73,13 +73,14 @@
 */
 - (IBAction)addContact:(id)sender
 {
-    var group   = [[self newContactGroup] title];
+    var group   = [newContactGroup title];
     var jid     = [[newContactJid stringValue] lowercaseString];
     var name    = [newContactName stringValue];
-
-    [[self roster] addContact:jid withName:name inGroup:group];
-    [[self roster] askAuthorizationTo:jid];
-    [[self roster] authorizeJID:jid];
+    var growl   = [TNGrowlCenter defaultCenter];
+    
+    [_roster addContact:jid withName:name inGroup:group];
+    [_roster askAuthorizationTo:jid];
+    [_roster authorizeJID:jid];
 
     [self performClose:nil];
 
@@ -87,7 +88,7 @@
     
     CPLog.info(@"added contact " + jid);
     
-    var growl = [TNGrowlCenter defaultCenter];
+    
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + jid + @" has been added"];
 }
 

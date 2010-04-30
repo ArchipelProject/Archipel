@@ -259,8 +259,8 @@ function generateMacAddr()
     [super willLoad];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
     [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 }
@@ -269,8 +269,8 @@ function generateMacAddr()
 {
     [super willShow];
     
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
     
     [[self maskingView] setFrame:[self bounds]];
     
@@ -305,15 +305,15 @@ function generateMacAddr()
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
         [self checkIfRunning];
     }
@@ -321,7 +321,7 @@ function generateMacAddr()
 
 - (void)checkIfRunning
 {
-    var status = [[self entity] status];
+    var status = [_entity status];
     
     if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusOffline))
     {
@@ -347,7 +347,7 @@ function generateMacAddr()
 
     [xmldescStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlXMLDesc}];
 
-    [[self entity] sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
+    [_entity sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza
@@ -445,17 +445,17 @@ function generateMacAddr()
     var drives      = [[self drivesDatasource] drives];
 
 
-    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [[self entity] fullJID], "id": anUid}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [_entity fullJID], "id": anUid}];
 
     [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
     [stanza addChildName:@"name"];
-    [stanza addTextNode:[[self entity] nodeName]];
+    [stanza addTextNode:[_entity nodeName]];
     [stanza up];
 
     [stanza addChildName:@"uuid"];
-    [stanza addTextNode:[[self entity] nodeName]];
+    [stanza addTextNode:[_entity nodeName]];
     [stanza up];
 
     [stanza addChildName:@"memory"];
@@ -560,7 +560,7 @@ function generateMacAddr()
 // 
 //     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
 // 
-//     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
+//     [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 // }
 
 
@@ -600,7 +600,7 @@ function generateMacAddr()
 
     [[self windowNicEdition] setNic:nicObject];
     [[self windowNicEdition] setTable:[self tableNetworkCards]];
-    [[self windowNicEdition] setEntity:[self entity]];
+    [[self windowNicEdition] setEntity:_entity];
     [[self windowNicEdition] center];
     [[self windowNicEdition] orderFront:nil];
 }
@@ -639,7 +639,7 @@ function generateMacAddr()
 
         [[self windowDriveEdition] setDrive:driveObject];
         [[self windowDriveEdition] setTable:[self tableDrives]];
-        [[self windowDriveEdition] setEntity:[self entity]];
+        [[self windowDriveEdition] setEntity:_entity];
         [[self windowDriveEdition] center];
         [[self windowDriveEdition] orderFront:nil];
     }
@@ -672,10 +672,10 @@ function generateMacAddr()
 // action XML desc
 - (IBAction)defineXML:(id)sender
 {
-    var uid             = [[self connection] getUniqueId];
+    var uid             = [_connection getUniqueId];
     var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
 
-    [[self entity] sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
+    [_entity sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
 - (void)didDefineXML:(id)aStanza
@@ -685,7 +685,7 @@ function generateMacAddr()
 
     if (responseType == @"success")
     {
-        var msg = @"Definition of virtual machine " + [[self entity] nickname] + " sucessfuly updated"
+        var msg = @"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated"
         CPLog.info(msg)
         
         var growl = [TNGrowlCenter defaultCenter];

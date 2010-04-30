@@ -184,7 +184,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [_mainMapView setZoom:2];
     [_mainMapView physicalMode];
 
-    var rosterItems = [[self roster] contacts];
+    var rosterItems = [_roster contacts];
 
     for (var i = 0; i < [rosterItems count]; i++)
     {
@@ -212,7 +212,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
         var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
-        var item        = [[self roster] getContactFromJID:[aStanza getFromNode]];
+        var item        = [_roster getContactFromJID:[aStanza getFromNode]];
 
         var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
         var marker      = [[MKMarker alloc] initAtLocation:loc];
@@ -256,7 +256,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [[self roster] getContactFromJID:jid];
+            var entry   = [_roster getContactFromJID:jid];
 
             if (entry)
             {
@@ -287,7 +287,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [[self roster] getContactFromJID:jid];
+            var entry   = [_roster getContactFromJID:jid];
 
             if (entry)
             {

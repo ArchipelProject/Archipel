@@ -123,8 +123,8 @@ VIR_DOMAIN_CRASHED  = 6;
     [[self buttonStop] setEnabled:NO];
     [[self buttonPause] setEnabled:NO];
 
-    [[self fieldVMName] setStringValue:[[self entity] nickname]];
-    [[self fieldVMJid] setStringValue:[[self entity] jid]];
+    [[self fieldVMName] setStringValue:[_entity nickname]];
+    [[self fieldVMJid] setStringValue:[_entity jid]];
 
     [self checkIfRunning];
     
@@ -155,15 +155,15 @@ VIR_DOMAIN_CRASHED  = 6;
 // Notifications listener
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldVMName] setStringValue:[[self entity] nickname]]
+       [[self fieldVMName] setStringValue:[_entity nickname]]
     }
 }
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
         [[self imageState] setImage:[[aNotification object] statusIcon]];
         [self checkIfRunning];
@@ -172,7 +172,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
 - (void)checkIfRunning
 {
-    var status = [[self entity] status];
+    var status = [_entity status];
     
     if ((status == TNStropheContactStatusDND))
     {
@@ -196,7 +196,7 @@ VIR_DOMAIN_CRASHED  = 6;
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
+    [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
 - (void)didReceiveVirtualMachineInfo:(id)aStanza
@@ -256,7 +256,7 @@ VIR_DOMAIN_CRASHED  = 6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlCreate}];
     [sender setEnabled:NO];
 
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
 - (IBAction)pause:(id)sender
@@ -279,7 +279,7 @@ VIR_DOMAIN_CRASHED  = 6;
         [sender setTitle:@"Resume"];
     }
 
-    [[self entity] sendStanza:controlStanza andRegisterSelector:selector ofObject:self];
+    [_entity sendStanza:controlStanza andRegisterSelector:selector ofObject:self];
 }
 
 - (IBAction)stop:(id)sender
@@ -289,7 +289,7 @@ VIR_DOMAIN_CRASHED  = 6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
     [sender setEnabled:NO];
 
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
 }
 
 - (IBAction)reboot:(id)sender
@@ -299,7 +299,7 @@ VIR_DOMAIN_CRASHED  = 6;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
     [sender setEnabled:NO];
 
-    [[self entity] sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }
 
 // did Actions done selectors

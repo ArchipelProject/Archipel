@@ -220,7 +220,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
         
-    [connection cancel];
+    //[connection cancel];
     [connection start];
 }
 
@@ -368,11 +368,14 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
     var vCard   = [[aNotification object] vCard];
-
-    [self setModuleType:[self analyseVCard:vCard]];
     
-    [self _removeAllTabsFromModulesTabView];
-    [self _populateModulesTabView];
+    if ([vCard text] != [[entity vCard] text])
+    {
+        [self setModuleType:[self analyseVCard:vCard]];
+
+        [self _removeAllTabsFromModulesTabView];
+        [self _populateModulesTabView];
+    }
 }
 
 

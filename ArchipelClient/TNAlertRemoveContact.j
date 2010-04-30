@@ -25,8 +25,8 @@
 */
 @implementation TNAlertRemoveContact: CPAlert
 {
-    CPString        jid     @accessors;
-    TNStropheRoster roster  @accessors;
+    CPString        _JID        @accessors(getter=JID, setter=setJID:);
+    TNStropheRoster _roster      @accessors(getter=roster, setter=setRoster:);
 }
 
 /*! init the class with the JID to remove and the roster to remove contact from
@@ -34,21 +34,21 @@
     @param aRoster TNStropheRoster instance to remove from
     @return an initialized TNAlertRemoveContact
 */
-- (id)initWithJid:(CPString)aJid roster:(TNStropheRoster)aRoster
+- (id)initWithJID:(CPString)aJID roster:(TNStropheRoster)aRoster
 {
     if (self = [super init])
     {
-        if (aJid == nil)
+        if (aJID == nil)
             return nil;
 
-        [self setJid:aJid];
-        [self setRoster:aRoster];
+        _JID    = aJID;
+        _roster = aRoster;
+        
         [self setDelegate:self];
 
-        var msg = @"Are you sure you want to remove " + aJid + " ?";
+        var msg = @"Are you sure you want to remove " + _JID + " ?";
         [self setTitle:@"Remove entity"];
         [self setMessageText:msg];
-        //[self setWindowStyle:CPHUDBackgroundWindowMask];
         [self setAlertStyle:CPInformationalAlertStyle];
         [self addButtonWithTitle:@"Yes"];
         [self addButtonWithTitle:@"No"];
@@ -67,11 +67,12 @@
 {
     if (returnCode == 0)
     {
-        [[self roster] removeContact:[self jid]];
-        CPLog.info(@"contact " + [self jid] + "removed");
-        
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [self jid] + @" has been removed"];
+        
+        [_roster removeContact:_JID];
+        
+        CPLog.info(@"contact " + _JID + "removed");
+        [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + _JID + @" has been removed"];
     }
 }
 

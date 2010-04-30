@@ -281,7 +281,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
     var theJid  = [_rosterOutlineView itemAtRow:index];
-    var alert   = [[TNAlertRemoveContact alloc] initWithJid:[theJid jid] roster:_mainRoster];
+    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[theJid jid] roster:_mainRoster];
 
     if (alert)
     {
@@ -516,7 +516,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     }
     finally
     {
-        [propertiesView setContact:item];
+        [propertiesView setEntity:item];
         [propertiesView reload];
     }
 }

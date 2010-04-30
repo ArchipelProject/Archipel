@@ -74,7 +74,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     [super willLoad];
     
     var center = [CPNotificationCenter defaultCenter];   
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
     var viewBounds = [self bounds];
     viewBounds.size.height = 1000;
@@ -89,10 +89,10 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
     [[self maskingView] setFrame:[self bounds]];
     
-    [[self fieldName] setStringValue:[[self entity] nickname]];
-    [[self fieldJID] setStringValue:[[self entity] jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity jid]];
     
-    if ([[self entity] status] == TNStropheContactStatusOnline)
+    if ([_entity status] == TNStropheContactStatusOnline)
     {
         [[self maskingView] removeFromSuperview];
         [self getVirtualMachineVNCDisplay];
@@ -127,9 +127,9 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == [self entity])
+    if ([aNotification object] == _entity)
     {
-       [[self fieldName] setStringValue:[[self entity] nickname]]
+       [fieldName setStringValue:[_entity nickname]]
     }
 }
 /*! send stanza to get the current virtual machine VNC display
@@ -140,7 +140,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
     [vncStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
 
-    [[self entity] sendStanza:vncStanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
+    [_entity sendStanza:vncStanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }
 
 /*! message sent when VNC display info is received
