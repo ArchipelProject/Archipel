@@ -43,18 +43,17 @@ TNArchipelTransportBarReboot    = 3;
 
 @implementation TNVirtualMachineControls : TNModule
 {
-    @outlet CPTextField     fieldJID                    @accessors;
-    @outlet CPTextField     fieldName                   @accessors;
-    @outlet CPTextField     fieldVMName                 @accessors;
-    @outlet CPTextField     fieldVMJid                  @accessors;
-    @outlet CPTextField     fieldInfoState              @accessors;
-    @outlet CPTextField     fieldInfoMem                @accessors;
-    @outlet CPTextField     fieldInfoCPUs               @accessors;
-    @outlet CPTextField     fieldInfoConsumedCPU        @accessors;
-    @outlet CPImageView     imageState                  @accessors;
-    @outlet CPView          maskingView                 @accessors;
-    
-    @outlet CPSegmentedControl     buttonBarTransport          @accessors;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldVMName;
+    @outlet CPTextField             fieldVMJid;
+    @outlet CPTextField             fieldInfoState;
+    @outlet CPTextField             fieldInfoMem;
+    @outlet CPTextField             fieldInfoCPUs;
+    @outlet CPTextField             fieldInfoConsumedCPU;
+    @outlet CPImageView             imageState;
+    @outlet CPView                  maskingView;
+    @outlet CPSegmentedControl      buttonBarTransport;
 
     CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
@@ -96,7 +95,7 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
 }
 
-// TNModule implementation
+/* TNModule implementation */
 - (void)willLoad
 {
     [super willLoad];
@@ -123,7 +122,6 @@ TNArchipelTransportBarReboot    = 3;
     [imageState setImage:[_entity statusIcon]];
     
     [self checkIfRunning];
-    
     [self getVirtualMachineInfo:nil];
 
     _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getVirtualMachineInfo:) userInfo:nil repeats:YES];
@@ -149,7 +147,7 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 }
 
-// Notifications listener
+/* Notifications listener */
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     [fieldVMName setStringValue:[_entity nickname]]
@@ -174,7 +172,7 @@ TNArchipelTransportBarReboot    = 3;
         [maskingView removeFromSuperview];
 }
 
-// population messages
+/* population messages */
 - (void)getVirtualMachineInfo:(CPTimer)aTimer
 {
     if (![self superview])
@@ -238,7 +236,7 @@ TNArchipelTransportBarReboot    = 3;
       }
 }
 
-
+/* IBAction */
 - (IBAction)segmentedControlClicked:(id)sender
 {
     var segment = [sender selectedSegment];
@@ -260,6 +258,7 @@ TNArchipelTransportBarReboot    = 3;
     }
 }
 
+/* vm controls */
 - (void)play
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
@@ -308,7 +307,7 @@ TNArchipelTransportBarReboot    = 3;
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }
 
-// did Actions done selectors
+/* did Actions done selectors */
 - (void)didPlay:(id)aStanza
 {
     var responseType    = [aStanza getType];
@@ -410,7 +409,7 @@ TNArchipelTransportBarReboot    = 3;
     }
 }
 
-// button management
+/* button management */
 - (void)enableButtonsForRunning
 {
     [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPlay];

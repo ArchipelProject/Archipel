@@ -307,7 +307,29 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)toolbarItemDeleteGroupClick:(id)sender
 {
     var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented"];
+    
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var item    = [_rosterOutlineView itemAtRow:index];
+    
+    if ([item class] == TNStropheGroup)
+    {
+        if ([[item contacts] count] == 0)
+        {
+            [_mainRoster removeGroup:item];
+            [_rosterOutlineView reloadData];
+            [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
+        }
+        else
+        {
+            [growl pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
+        }
+    }
+    else
+    {
+       [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError]; 
+    }
+    
+    
 }
 
 /*! Delegate of toolbar imutables toolbar items.

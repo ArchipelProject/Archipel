@@ -6,7 +6,55 @@
         <array>
             <dict>
                 <key>folder</key>
+                <string>GroupManagement</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>HypervisorHealth</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>HypervisorNetworks</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>HypervisorVMCreation</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>ToolbarLogs</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>ToolbarMapView</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>UserChat</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>VirtualMachineControls</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>VirtualMachineDefinition</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>VirtualMachineDiskCreation</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>VirtualMachinePackaging</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>VirtualMachineVNC</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>VMCasting</string>
             </dict>
 
         </array>
