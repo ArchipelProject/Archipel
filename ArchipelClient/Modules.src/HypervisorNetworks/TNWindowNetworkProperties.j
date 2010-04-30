@@ -45,21 +45,10 @@
 - (void)awakeFromCib
 {
     [buttonForwardMode removeAllItems];
+    [buttonForwardMode addItemsWithTitles:["route", "nat"]];
+    
     [buttonForwardDevice removeAllItems];
-
-    var forwardMode = ["route", "nat"];
-    for (var i = 0; i < forwardMode.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:forwardMode[i] action:nil keyEquivalent:nil];
-        [buttonForwardMode addItem:item];
-    }
-
-    var forwardDev = ["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]; //TODO obvious..
-    for (var i = 0; i < forwardDev.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:forwardDev[i] action:nil keyEquivalent:nil];
-        [buttonForwardDevice addItem:item];
-    }
+    [buttonForwardDevice addItemsWithTitles:["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]];
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNDatasourceDHCPEntries alloc] init];

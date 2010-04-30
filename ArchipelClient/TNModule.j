@@ -180,7 +180,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var msg = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
     var growl = [TNGrowlCenter defaultCenter];
     
-    [CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
+    //[CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
     CPLog.error(msg);
 }

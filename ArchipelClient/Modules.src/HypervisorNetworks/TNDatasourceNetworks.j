@@ -99,7 +99,7 @@
     [[self networks] addObject:aNetwork];
 }
 
-// Datasource impl.
+/* Datasource impl. */
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self networks] count];

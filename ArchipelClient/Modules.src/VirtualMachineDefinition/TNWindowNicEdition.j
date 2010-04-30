@@ -21,6 +21,9 @@
 TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
 TNArchipelTypeHypervisorNetworkList        = @"list";
 
+TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
+TNArchipelNICTypes  = ["network", "bridge", "user"];
+
 @implementation TNWindowNicEdition : CPWindow
 {
     @outlet CPTextField     fieldMac            @accessors;
@@ -29,67 +32,56 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
     @outlet CPPopUpButton   buttonSource        @accessors;
     @outlet CPRadioGroup    radioNetworkType    @accessors;
 
-    TNStropheContact        entity      @accessors;
-    TNNetworkInterface      nic         @accessors;
-    CPTableView             table       @accessors;
+    TNStropheContact        _entity      @accessors(getter=entity, setter=setEntity:);
+    TNNetworkInterface      _nic         @accessors(getter=nic, setter=setNic:);
+    CPTableView             _table       @accessors(getter=table, setter=setTable:);
 }
 
 - (void)awakeFromCib
 {
-    [[self buttonType] removeAllItems];
-    [[self buttonModel] removeAllItems];
-    [[self buttonSource] removeAllItems];
+    [buttonType removeAllItems];
+    [buttonModel removeAllItems];
+    [buttonSource removeAllItems];
 
-    var models = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
-    for (var i = 0; i < models.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:models[i] action:nil keyEquivalent:nil];
-        [[self buttonModel] addItem:item];
-    }
-
-    var types = ["network", "bridge", "user"];
-    for (var i = 0; i < types.length; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:types[i] action:nil keyEquivalent:nil];
-        [[self buttonType] addItem:item];
-    }
+    [buttonModel addItemsWithTitles:TNArchipelNICModels];
+    [buttonType addItemsWithTitles: TNArchipelNICTypes];
 }
 
 - (void)orderFront:(id)sender
 {
     if (![self isVisible])
     {
-        if ([nic mac] == "00:00:00:00:00:00")
-            [[self fieldMac] setStringValue:generateMacAddr()];
+        if ([_nic mac] == "00:00:00:00:00:00")
+            [fieldMac setStringValue:generateMacAddr()];
         else
-            [[self fieldMac] setStringValue:[nic mac]];
+            [fieldMac setStringValue:[_nic mac]];
 
-        [[self buttonSource] removeAllItems];
+        [buttonSource removeAllItems];
 
         for (var i = 0; i < [[radioNetworkType radios] count]; i++)
         {
             var radio = [[radioNetworkType radios] objectAtIndex:i];
 
-            if ([[radio title] lowercaseString] == [nic type])
+            if ([[radio title] lowercaseString] == [_nic type])
             {
                 [radio setState:CPOnState];
                 [self performRadioNicTypeChanged:radioNetworkType];
                 break;
             }
         }
-        [[self buttonType] selectItemWithTitle:[nic type]];
-        [[self buttonModel] selectItemWithTitle:[nic model]];
+        [buttonType selectItemWithTitle:[_nic type]];
+        [buttonModel selectItemWithTitle:[_nic model]];
     }
     [super orderFront:sender];
 }
 
 - (IBAction)save:(id)sender
 {
-    [nic setMac:[[self fieldMac] stringValue]];
-    [nic setModel:[[self buttonModel] title]];
-    [nic setSource:[[self buttonSource] title]];
+    [_nic setMac:[fieldMac stringValue]];
+    [_nic setModel:[buttonModel title]];
+    [_nic setSource:[buttonSource title]];
 
-    [[self table] reloadData];
+    [_table reloadData];
 }
 
 - (void)getHypervisorNetworks
@@ -98,7 +90,7 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
 
     [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkList}];
 
-    [[self entity] sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
+    [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
@@ -109,10 +101,9 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
         for (var i = 0; i < [names count]; i++)
         {
             var name = [[names objectAtIndex:i] valueForAttribute:@"name"];
-            var item = [[CPMenuItem alloc] initWithTitle:name action:nil keyEquivalent:nil];
-            [[self buttonSource] addItem:item];
+            [buttonSource addItemWithTitle:name];
         }
-        [[self buttonSource] selectItemWithTitle:[nic source]];
+        [buttonSource selectItemWithTitle:[_nic source]];
     }
     else
     {
@@ -126,26 +117,24 @@ TNArchipelTypeHypervisorNetworkList        = @"list";
 
     if (nicType == @"Network")
     {
-        [[self buttonSource] removeAllItems];
+        [buttonSource removeAllItems];
+        [_nic setType:@"network"];
+        
         [self getHypervisorNetworks];
-        [[self nic] setType:@"network"];
     }
     else if(nicType == @"Bridge")
     {
-        [[self buttonSource] removeAllItems];
-        [[self nic] setType:@"bridge"];
         var source = ["virbr0", "virbr1", "virbr2"];
-
-        for (var i = 0; i < source.length; i++)
-        {
-            var item = [[CPMenuItem alloc] initWithTitle:source[i] action:nil keyEquivalent:nil];
-            [[self buttonSource] addItem:item];
-        }
+        
+        [_nic setType:@"bridge"];
+        
+        [buttonSource removeAllItems];
+        [buttonSource addItemsWithTitles:source];
     }
     else if(nicType == @"User")
     {
-        [[self buttonSource] removeAllItems];
-        [[self nic] setType:@"user"];
+        [_nic setType:@"user"];
+        [buttonSource removeAllItems];
     }
 }
 

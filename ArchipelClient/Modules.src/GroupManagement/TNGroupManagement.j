@@ -146,11 +146,11 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 {
     var selectedIndexes = [_tableVirtualMachines selectedRowIndexes];
     var contact         = [[_datasourceGroupVM VMs] objectAtIndex:[selectedIndexes firstIndex]];
-    var row             = [[roster mainOutlineView] rowForItem:contact];
+    var row             = [[_roster mainOutlineView] rowForItem:contact];
     
     var indexes         = [CPIndexSet indexSetWithIndex:row];
     
-    [[roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
+    [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
 - (IBAction)applyAction:(id)sender

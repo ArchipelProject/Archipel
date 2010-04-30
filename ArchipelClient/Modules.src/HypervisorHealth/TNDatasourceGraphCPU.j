@@ -51,7 +51,7 @@
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
 {
-    return @"";//@"" + _datas[anIndex] + "%";
+    return @"";
 }
 
 - (void)pushData:(id)data

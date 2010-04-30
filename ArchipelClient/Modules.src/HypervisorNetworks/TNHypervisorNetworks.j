@@ -37,21 +37,24 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     @outlet CPTextField                 fieldName               @accessors;
     @outlet CPScrollView                scrollViewNetworks      @accessors;
     @outlet TNWindowNetworkProperties   windowProperties        @accessors;
-
+    @outlet CPButton                    buttonActivation;
+    @outlet CPButton                    buttonDeactivation;
+    @outlet CPButton                    buttonDelete;
+    
     CPTableView             _tableViewNetworks;
     TNDatasourceNetworks    _datasourceNetworks;
 }
 
 - (void)awakeFromCib
 {
-    // VM table view
+    /* VM table view */
     _datasourceNetworks     = [[TNDatasourceNetworks alloc] init];
-    _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[[self scrollViewNetworks] bounds]];
+    _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[scrollViewNetworks bounds]];
 
-    [[self scrollViewNetworks] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self scrollViewNetworks] setAutohidesScrollers:YES];
-    [[self scrollViewNetworks] setDocumentView:_tableViewNetworks];
-    [[self scrollViewNetworks] setBorderedWithHexColor:@"#9e9e9e"];
+    [scrollViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewNetworks setAutohidesScrollers:YES];
+    [scrollViewNetworks setDocumentView:_tableViewNetworks];
+    [scrollViewNetworks setBorderedWithHexColor:@"#9e9e9e"];
 
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -102,8 +105,15 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [_tableViewNetworks addTableColumn:columBridgeNetmask];
 
     [_tableViewNetworks setDataSource:_datasourceNetworks];
-
-    [[self windowProperties] setDelegate:self];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
+    
+    [windowProperties setDelegate:self];
+    
+    [buttonActivation setEnabled:NO];
+    [buttonDeactivation setEnabled:NO];
+    [buttonDelete setEnabled:NO];
 
 }
 
@@ -280,7 +290,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
         [stanza up];
     }
-    // ip up
+
     [stanza up];
 
     return stanza;
@@ -300,11 +310,11 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
             return
         }
 
-        [[self windowProperties] setNetwork:networkObject];
-        [[self windowProperties] setTable:_tableViewNetworks];
-        [[self windowProperties] setHypervisor:[self entity]];
-        [[self windowProperties] center];
-        [[self windowProperties] orderFront:nil];
+        [windowProperties setNetwork:networkObject];
+        [windowProperties setTable:_tableViewNetworks];
+        [windowProperties setHypervisor:[self entity]];
+        [windowProperties center];
+        [windowProperties orderFront:nil];
     }
 }
 
@@ -354,7 +364,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     }
 }
 
-- (IBAction)activateNetworkSwitch:(id)sender
+- (IBAction)activateNetwork:(id)sender
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
@@ -362,21 +372,38 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         return
 
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
-    var activeStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
+
+    if (![networkObject isNetworkEnabled])
+    {
+        [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkCreate}];
+        [stanza addTextNode:[networkObject UUID]];
+
+        [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+        [_tableViewNetworks deselectAll];
+    }
+}
+
+- (IBAction)deactivateNetwork:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex == -1)
+        return
+
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
 
     if ([networkObject isNetworkEnabled])
     {
-        [activeStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDestroy}];
-    }
-    else
-    {
-        [activeStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkCreate}];
-    }
+        [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDestroy}];
+        [stanza addTextNode:[networkObject UUID]];
 
-    [activeStanza addTextNode:[networkObject UUID]];
-
-    [self sendStanza:activeStanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+        [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+        [_tableViewNetworks deselectAll];
+    }
 }
+
 
 - (void)didNetworkStatusChange:(TNStropheStanza)aStanza
 {
@@ -461,6 +488,35 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     return YES;
 }
 
+- (BOOL)didTableSelectionChange:(CPNotification)aNotification
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+    
+    if (selectedIndex == -1)
+    {
+        [buttonActivation setEnabled:NO];
+        [buttonDeactivation setEnabled:NO];
+        [buttonDelete setEnabled:NO];
+        return YES;
+    }
+           
+    [buttonDelete setEnabled:YES];
+    
+    var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
+    
+    if ([networkObject isNetworkEnabled])
+    {
+        [buttonActivation setEnabled:NO];
+        [buttonDeactivation setEnabled:YES];
+    }
+    else
+    {
+        [buttonActivation setEnabled:YES];
+        [buttonDeactivation setEnabled:NO];
+    }
+    
+    return YES;
+}
 
 @end
 

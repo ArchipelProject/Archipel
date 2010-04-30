@@ -106,8 +106,8 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     [self setModuleType:aType];
 
     [center removeObserver:self];
-    [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:[self entity]];
-    [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:entity];
+    [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:entity];
     
     if ([[self entity] class] == TNStropheContact)
     {
@@ -425,8 +425,6 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    //CPLog.debug("loading bundle " + aBundle);
-    
     _numberOfModulesLoaded++;
 
     [_bundles addObject:aBundle];

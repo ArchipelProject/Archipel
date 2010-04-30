@@ -38,7 +38,7 @@
     [[self VMs] addObject:aVM];
 }
 
-// Datasource impl.
+/* Datasource impl. */
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self VMs] count];

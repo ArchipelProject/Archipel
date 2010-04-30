@@ -37,7 +37,6 @@
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
 {
     return 1;
-    // return 2;
 }
 
 - (CPNumber)chart:(LPChartView)aChartView numberOfValuesInSet:(CPNumber)setIndex
@@ -64,7 +63,7 @@
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
 {
-    return @""; // + Math.round(parseInt(_datasMemUsed[anIndex]) / 1024 /1024 * 100) / 100 + "G";
+    return @"";
 }
 
 - (void)pushDataMemUsed:(CPNumber)data

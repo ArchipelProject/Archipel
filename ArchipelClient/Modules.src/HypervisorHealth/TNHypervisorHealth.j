@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-//@import <LPKit/LPKit.j>
 
 @import "LPChartView.j"
 @import "TNDatasourceGraphCPU.j"
@@ -176,9 +175,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
         [_cpuDatasource pushData:parseInt(cpuFree)];
         [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-        // [_memoryDatasource pushDataMemSwapped:parseInt([memNode valueForAttribute:@"swapped"]) * 1024];
 
-        // reload the charts view
+        /* reload the charts view */
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
@@ -226,7 +224,6 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
             [_cpuDatasource pushData:parseInt(cpuFree)];
             [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-            // [_memoryDatasource pushDataMemSwapped:parseInt([memNode valueForAttribute:@"swapped"]) * 1024];
         }
 
         var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )
@@ -238,7 +235,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
 
-        // reload the charts view
+        /* reload the charts view */
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
@@ -252,7 +249,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
     [self getHypervisorHealth:nil];
 
-    // now get health every 5 seconds
+    /* now get health every 5 seconds */
     _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
 
     return NO;

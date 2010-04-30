@@ -63,8 +63,7 @@
         [_syncButton setHidden:YES];
         [_syncButton setTarget:self];
         [_syncButton setAction:@selector(askVCard:)];
-        
-        //[self setAutoresizingMask: CPViewWidthSizable];
+
         [self addSubview:statusIcon];
         [self addSubview:name];
         [self addSubview:events];

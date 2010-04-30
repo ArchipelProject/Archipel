@@ -76,7 +76,7 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     [[self entries] addObject:anEntry];
 }
 
-// Datasource impl.
+/* Datasource impl. */
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self entries] count];

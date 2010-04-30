@@ -48,17 +48,14 @@
 
     if (![_roster doesRosterContainsGroup:@"General"])
     {
-        var generalItem = [[CPMenuItem alloc] initWithTitle:@"General" action:nil keyEquivalent:@""];
-        [newContactGroup addItem:generalItem];
+        [newContactGroup addItemWithTitle:@"General"];
     }
 
     //@each (var group in groups)
     for(var i = 0; i < [groups count]; i++)
     {
         var group = [groups objectAtIndex:i];
-
-        var item = [[CPMenuItem alloc] initWithTitle:[group name] action:nil keyEquivalent:@""]
-        [newContactGroup addItem:item];
+        [newContactGroup addItemWithTitle:[group name]];
     }
 
     [newContactGroup selectItemWithTitle:@"General"];

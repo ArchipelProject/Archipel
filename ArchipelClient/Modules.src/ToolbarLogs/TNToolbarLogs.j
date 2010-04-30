@@ -126,11 +126,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [mainScrollView setDocumentView:_tableViewLogging];
     
     [buttonLogLevel removeAllItems];
-    for (var i = 0; i < [TNLogLevels count]; i++)
-    {
-        var item = [[CPMenuItem alloc] initWithTitle:[TNLogLevels objectAtIndex:i] action:nil keyEquivalent:nil];
-        [buttonLogLevel addItem:item];
-    }
+    [buttonLogLevel addItemsWithTitles:TNLogLevels];
     [buttonLogLevel selectItemWithTitle:maxLogLevel];
     
     theSharedLogger = self;

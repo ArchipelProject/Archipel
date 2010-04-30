@@ -126,37 +126,37 @@ TNArchipelStatusBusyLabel       = @"Busy";
     }
     [mainHorizontalSplitView setDelegate:self];    
     
-    //hide main window
+    /* hide main window */
     [theWindow orderOut:nil];
     
-    // toolbar
+    /* toolbar */
     CPLog.trace("initializing mianToolbar");
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
     [theWindow setToolbar:_mainToolbar];
 
-    //outlineview
+    /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
 
-    // init scroll view of the outline view
+    /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
     _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]]; //D8DFE8
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
     CPLog.trace(@"adding _outlineScrollView as subview of leftView");
     [leftView addSubview:_outlineScrollView];
 
-    // right view
+    /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
-    // properties view
+    /* properties view */
     CPLog.trace(@"initializing the leftSplitView");
     [leftSplitView setIsPaneSplitter:YES];
     [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
@@ -164,18 +164,18 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [leftSplitView addSubview:propertiesView];
     [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
 
-    // filter view.
+    /* filter view. */
     CPLog.trace(@"initializing the filterView");
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
 
-    //tab module view
+    /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[CPTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
     [rightView addSubview:_moduleTabView];
 
-    // message in _moduleTabView
+    /* message in _moduleTabView */
     var message = [CPTextField labelWithTitle:@"Entity is currently offline. You can't interract with it."];
     var bounds  = [_moduleTabView bounds];
 
@@ -186,7 +186,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [message setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:message];
 
-    // module Loader
+    /* module Loader */
     [windowModuleLoading center]
     [windowModuleLoading orderFront:nil];
     CPLog.trace(@"initializing _moduleLoader");
@@ -207,7 +207,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     _shouldShowHelpView = YES;
     [self showHelpView];
     
-    // notifications
+    /* notifications */
     var center = [CPNotificationCenter defaultCenter];
 
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
@@ -508,7 +508,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
         
         CPLog.info(@"setting the entity as " + item + " of type " + entityType);
         [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
-        
     }
     catch(ex)
     {
