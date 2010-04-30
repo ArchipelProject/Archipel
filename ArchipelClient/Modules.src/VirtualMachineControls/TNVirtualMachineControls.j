@@ -36,6 +36,10 @@ VIR_DOMAIN_SHUTDOWN = 4;
 VIR_DOMAIN_SHUTOFF  = 5;
 VIR_DOMAIN_CRASHED  = 6;
 
+TNArchipelTransportBarPlay      = 0;
+TNArchipelTransportBarPause     = 1;
+TNArchipelTransportBarStop      = 2;
+TNArchipelTransportBarReboot    = 3;
 
 @implementation TNVirtualMachineControls : TNModule
 {
@@ -49,11 +53,8 @@ VIR_DOMAIN_CRASHED  = 6;
     @outlet CPTextField     fieldInfoConsumedCPU        @accessors;
     @outlet CPImageView     imageState                  @accessors;
     @outlet CPView          maskingView                 @accessors;
-    @outlet CPButton        buttonPlay                  @accessors;
-    @outlet CPButton        buttonPause                 @accessors;
-    @outlet CPButton        buttonStop                  @accessors;
-    @outlet CPButton        buttonReboot                @accessors;
-    @outlet CPButtonBar     buttonBarTransport          @accessors;
+    
+    @outlet CPSegmentedControl     buttonBarTransport          @accessors;
 
     CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
@@ -63,43 +64,36 @@ VIR_DOMAIN_CRASHED  = 6;
 - (void)awakeFromCib
 {
     var bundle = [CPBundle bundleForClass:[self class]];
-
-    [[self buttonPlay] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"]]];
-    [[self buttonStop] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_stop.png"]]];
-    [[self buttonPause] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"]]];
-    [[self buttonReboot] setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_reboot.png"]]];
-
-    [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
-    [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self maskingView] setAlphaValue:0.9];
-
-    [[self fieldVMJid] setSelectable:YES];
     
-    // var  butts = [buttonPlay, buttonPause, buttonStop, buttonReboot];
-    // 
-    // var bundle = [CPBundle bundleForClass:[self class]];
-    // 
-    // var buttonBezelColor = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-    //         [
-    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
-    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
-    //             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]]
-    //         ]
-    //     isVertical:NO]];
-    // 
-    // var color = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
-    //             [
-    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/left.png"]],
-    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/middle.png"]],
-    //                 [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"capsule/right.png"]]
-    //             ]
-    //         isVertical:NO]];
-    // 
-    // [buttonBarTransport setValue:color forThemeAttribute:@"bezel-color" ];
-    // [buttonBarTransport setValue:buttonBezelColor forThemeAttribute:@"button-bezel-color"];
-    // 
-    // [buttonBarTransport setButtons:butts];
+    var imagePlay   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"] size:CGSizeMake(20, 20)];
+    var imageStop   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_stop.png"] size:CGSizeMake(20, 20)];
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"] size:CGSizeMake(20, 20)];
+    var imageReboot = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_reboot.png"] size:CGSizeMake(20, 20)];
+    
+    [maskingView setBackgroundColor:[CPColor whiteColor]];
+    [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [maskingView setAlphaValue:0.9];
 
+    [fieldVMJid setSelectable:YES];
+    
+    [buttonBarTransport setSegmentCount:4];
+    [buttonBarTransport setLabel:@"Play" forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:@"Stop" forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setLabel:@"Reboot" forSegment:TNArchipelTransportBarReboot];
+    
+    [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarReboot];
+    
+    [buttonBarTransport setImage:imagePlay forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setImage:imageStop forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:imageReboot forSegment:TNArchipelTransportBarReboot];
+    
+    [buttonBarTransport setTarget:self];
+    [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
 }
 
 // TNModule implementation
@@ -109,23 +103,25 @@ VIR_DOMAIN_CRASHED  = 6;
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 }
 
 - (void)willShow
 {
     [super willShow];
 
-    [[self maskingView] setFrame:[self bounds]];
+    [maskingView setFrame:[self bounds]];
 
-    [[self buttonPlay] setEnabled:NO];
-    [[self buttonStop] setEnabled:NO];
-    [[self buttonPause] setEnabled:NO];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 
-    [[self fieldVMName] setStringValue:[_entity nickname]];
-    [[self fieldVMJid] setStringValue:[_entity jid]];
-
+    [fieldVMName setStringValue:[_entity nickname]];
+    [fieldVMJid setStringValue:[_entity jid]];
+    [imageState setImage:[_entity statusIcon]];
+    
     [self checkIfRunning];
     
     [self getVirtualMachineInfo:nil];
@@ -140,34 +136,29 @@ VIR_DOMAIN_CRASHED  = 6;
     if (_timer)
         [_timer invalidate];
 
-    [[self fieldInfoMem] setStringValue:@"..."];
-    [[self fieldInfoCPUs] setStringValue:@"..."];
-    [[self fieldInfoConsumedCPU] setStringValue:@"..."];
-    [[self fieldInfoState] setStringValue:@"..."];
-    [[self imageState] setImage:nil];
-    [[self buttonPause] setTitle:@"Pause"];
-    [[self buttonPlay] setEnabled:NO];
-    [[self buttonStop] setEnabled:NO];
-    [[self buttonPause] setEnabled:NO];
-    [[self buttonReboot] setEnabled:NO];
+    [fieldInfoMem setStringValue:@"..."];
+    [fieldInfoCPUs setStringValue:@"..."];
+    [fieldInfoConsumedCPU setStringValue:@"..."];
+    [fieldInfoState setStringValue:@"..."];
+    [imageState setImage:nil];
+    
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 }
 
 // Notifications listener
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == _entity)
-    {
-       [[self fieldVMName] setStringValue:[_entity nickname]]
-    }
+    [fieldVMName setStringValue:[_entity nickname]]
 }
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
-    if ([aNotification object] == _entity)
-    {
-        [[self imageState] setImage:[[aNotification object] statusIcon]];
-        [self checkIfRunning];
-    }
+    [imageState setImage:[_entity statusIcon]];
+    [self checkIfRunning];
 }
 
 - (void)checkIfRunning
@@ -176,11 +167,11 @@ VIR_DOMAIN_CRASHED  = 6;
     
     if ((status == TNStropheContactStatusDND))
     {
-        [[self maskingView] setFrame:[self bounds]];
-        [self addSubview:[self maskingView]];
+        [maskingView setFrame:[self bounds]];
+        [self addSubview:maskingView];
     }
     else
-        [[self maskingView] removeFromSuperview];
+        [maskingView removeFromSuperview];
 }
 
 // population messages
@@ -209,9 +200,9 @@ VIR_DOMAIN_CRASHED  = 6;
           var mem           = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
           var humanState;
 
-          [[self fieldInfoMem] setStringValue:mem + @" Mo"];
-          [[self fieldInfoCPUs] setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
-          [[self fieldInfoConsumedCPU] setStringValue:cpuTime + @" min."];
+          [fieldInfoMem setStringValue:mem + @" Mo"];
+          [fieldInfoCPUs setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
+          [fieldInfoConsumedCPU setStringValue:cpuTime + @" min."];
 
           _VMLibvirtStatus = libvirtState;
 
@@ -243,23 +234,42 @@ VIR_DOMAIN_CRASHED  = 6;
                     humanState = @"Crashed";
                     break;
           }
-          [[self fieldInfoState] setStringValue:humanState];
+          [fieldInfoState setStringValue:humanState];
       }
 }
 
 
-// Actions
-- (IBAction)play:(id)sender
+- (IBAction)segmentedControlClicked:(id)sender
+{
+    var segment = [sender selectedSegment];
+    
+    switch(segment)
+    {
+        case TNArchipelTransportBarPlay:
+            [self play];
+            break;
+        case TNArchipelTransportBarPause:
+            [self pause];
+            break;
+        case TNArchipelTransportBarStop:
+            [self stop];
+            break;
+        case TNArchipelTransportBarReboot:
+            [self reboot];
+            break;
+    }
+}
+
+- (void)play
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
 
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlCreate}];
-    [sender setEnabled:NO];
 
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
-- (IBAction)pause:(id)sender
+- (void)pause
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
     var selector;
@@ -269,35 +279,31 @@ VIR_DOMAIN_CRASHED  = 6;
         selector = @selector(didResume:)
 
         [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlResume}];
-        [sender setTitle:@"Pause"];
     }
     else
     {
         selector = @selector(didPause:)
 
         [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlSuspend}];
-        [sender setTitle:@"Resume"];
     }
 
     [_entity sendStanza:controlStanza andRegisterSelector:selector ofObject:self];
 }
 
-- (IBAction)stop:(id)sender
+- (void)stop
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
 
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
-    [sender setEnabled:NO];
 
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
 }
 
-- (IBAction)reboot:(id)sender
+- (void)reboot
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
 
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
-    [sender setEnabled:NO];
 
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }
@@ -335,7 +341,6 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been paused"];
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
         
@@ -356,8 +361,6 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been resumed"];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
         
@@ -378,7 +381,6 @@ VIR_DOMAIN_CRASHED  = 6;
 
     if (responseType == @"success")
     {
-        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " has been stopped"];
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped"];
         [self getVirtualMachineInfo:nil];
@@ -411,29 +413,37 @@ VIR_DOMAIN_CRASHED  = 6;
 // button management
 - (void)enableButtonsForRunning
 {
-    [[self buttonPause] setTitle:@"Pause"];
-    [[self buttonPlay] setEnabled:NO];
-    [[self buttonStop] setEnabled:YES];
-    [[self buttonPause] setEnabled:YES];
-    [[self buttonReboot] setEnabled:YES];
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPlay];
+    
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
 }
 
 - (void)enableButtonsForPaused
 {
-    [[self buttonPause] setTitle:@"Resume"];
-    [[self buttonPlay] setEnabled:NO];
-    [[self buttonStop] setEnabled:YES];
-    [[self buttonPause] setEnabled:YES];
-    [[self buttonReboot] setEnabled:YES];
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPause];
+    
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
+    
 }
 
 - (void)enableButtonsForShutdowned
 {
-    [[self buttonPause] setTitle:@"Pause"];
-    [[self buttonPlay] setEnabled:YES];
-    [[self buttonStop] setEnabled:NO];
-    [[self buttonPause] setEnabled:NO];
-    [[self buttonReboot] setEnabled:NO];
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarStop];
+    
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    
 }
 
 @end
