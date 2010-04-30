@@ -99,6 +99,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPScrollView                _outlineScrollView;
     BOOL                        _shouldShowHelpView;
     CPWindow                    _helpWindow;
+    CPPlatformWindow            _platformHelpWindow;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -348,8 +349,13 @@ TNArchipelStatusBusyLabel       = @"Busy";
 {
     if (!_helpWindow)
     {
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask];
+        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
+        
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
         var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
+        
+        [_helpWindow setPlatformWindow:_platformHelpWindow];
+        [_platformHelpWindow orderFront:nil];
         
         [_helpWindow setDelegate:self];
         [helpView setFrame:[[scrollView contentView] bounds]];

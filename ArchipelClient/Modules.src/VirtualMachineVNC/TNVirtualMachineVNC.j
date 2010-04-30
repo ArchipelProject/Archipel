@@ -48,12 +48,16 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 {
     @outlet CPTextField     fieldJID        @accessors;
     @outlet CPTextField     fieldName       @accessors;
-    @outlet     CPWebView   vncWebView      @accessors;
-    @outlet     CPView      maskingView     @accessors;
+    @outlet CPScrollView    mainScrollView;
+    @outlet CPView          maskingView     @accessors;
 
     CPString    _VMHost;
     CPString    _vncDisplay;
     CPString    _webServerPort;
+    
+    CPWebView           _vncWebView;
+    CPWebView           _vncWebViewForWindow;
+    CPString            _url;
 }
 
 /*! initialize some value at CIB awakening
@@ -65,6 +69,12 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     [[self maskingView] setAlphaValue:0.9];
     
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
+
+    _vncWebView = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
+    [_vncWebView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    
+    [mainScrollView setDocumentView:_vncWebView];
+    [mainScrollView setAutohidesScrollers:YES];
 }
 
 /*! TNModule implementation
@@ -112,8 +122,8 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
     var bundle = [CPBundle bundleForClass:[self class]];
 
-    [[self vncWebView] setMainFrameURL:[bundle pathForResource:@"empty.html"]];
-    [[self maskingView] removeFromSuperview];
+    [_vncWebView setMainFrameURL:[bundle pathForResource:@"empty.html"]];
+    //[_vncWebView removeFromSuperview];
 }
 
 /*! TNModule implementation
@@ -154,13 +164,41 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
         _vncDisplay     = [displayNode valueForAttribute:@"port"];
         _VMHost         = [displayNode valueForAttribute:@"host"];
         
-        var url         = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
-        [[self vncWebView] setMainFrameURL:url];
+        _url         = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        
+        [_vncWebView setMainFrameURL:_url];
     }
     else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+- (IBAction)openInNewWindow:(id)sender
+{
+    var winFrame        = CGRectMake(100,100, 800, 600);
+    var pfWinFrame      = CGRectMake(100,100, 800, 600);
+    var scrollFrame     = CGRectMake(0,0, 800, 600);
+    
+    var VNCWindow           = [[CPWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
+    var scrollView          = [[CPScrollView alloc] initWithFrame:CGRectMakeZero()];
+    var platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+    
+    var vncWebViewForWindow = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
+    
+    [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    [vncWebViewForWindow setMainFrameURL:_url];
+    [scrollView setDocumentView:vncWebViewForWindow];
+    [scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    
+    [[VNCWindow contentView] addSubview:scrollView];
+    [VNCWindow setPlatformWindow:platformVNCWindow];
+    [VNCWindow setDelegate:self];
+    [VNCWindow setTitle:@"Display for " + [_entity nickname]];
+    [scrollView setFrame:[[VNCWindow contentView] bounds]];
+
+    [VNCWindow orderFront:nil];
+    [platformVNCWindow orderFront:nil];
 }
 
 @end
