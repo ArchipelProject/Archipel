@@ -52,7 +52,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     @outlet CPScrollView            VMScrollView;
     @outlet CPPopUpButton           buttonAction;
     
-    CPTableView             _tableVirtualMachines;
+    TNTableView             _tableVirtualMachines;
     TNDatasourceGroupVM     _datasourceGroupVM;
 }
 
@@ -60,7 +60,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 - (void)awakeFromCib
 {
     _datasourceGroupVM      = [[TNDatasourceGroupVM alloc] init];
-    _tableVirtualMachines   = [[CPTableView alloc] initWithFrame:[VMScrollView bounds]];
+    _tableVirtualMachines   = [[TNTableView alloc] initWithFrame:[VMScrollView bounds]];
     
     [VMScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [VMScrollView setAutohidesScrollers:YES];

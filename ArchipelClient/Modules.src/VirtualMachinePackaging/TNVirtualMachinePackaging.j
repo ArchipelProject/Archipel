@@ -138,20 +138,19 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (BOOL)didDownloadPushReceived:(TNStropheStanza)aStanza
 {
-    var sender = [aStanza getFrom].split("/")[0];
+    var sender = [aStanza getFromNode].split("/")[0];
     var change = [aStanza valueForAttribute:@"change"];
     
     CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
     
-    if (sender != [_entity jid])
-        return;
+    // if (sender != [_entity jid])
+    //     return;
     
     if (change == @"applianceunpacking")
     {
         [fieldInfoImage setHidden:NO];
         [fieldInfoStatus setStringValue:@"Appliance is unpacking..."];
     }
-
     else if (change == @"applianceunpacked")
     {
         [fieldInfoImage setHidden:NO];
@@ -162,7 +161,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
         [fieldInfoImage setHidden:NO];
         [fieldInfoStatus setStringValue:@"Appliance is installing"];
     }
-    else
+    else if (change == @"applianceinstalled")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
@@ -171,7 +170,10 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
         [fieldInfoStatus setStringValue:@""];
         [self getInstalledAppliances];
     }
-    
+    else
+    {
+        [self getInstalledAppliances];
+    }
     return YES;
 }
 
@@ -239,7 +241,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
         [CPAlert alertWithTitle:@"Instanciation processing" message:msg];
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Appliance" message:msg icon:nil];
+        [growl pushNotificationWithTitle:@"Appliance" message:msg];
     }
     else
     {

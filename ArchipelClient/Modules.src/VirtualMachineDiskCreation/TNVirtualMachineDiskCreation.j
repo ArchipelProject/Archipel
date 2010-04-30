@@ -32,44 +32,48 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 @implementation TNVirtualMachineDiskCreation : TNModule
 {
-    @outlet CPTextField     fieldJID                @accessors;
-    @outlet CPTextField     fieldName               @accessors;
-    @outlet CPTextField     fieldNewDiskName        @accessors;
-    @outlet CPTextField     fieldNewDiskSize        @accessors;
-    @outlet CPPopUpButton   buttonNewDiskSizeUnit   @accessors;
-    @outlet CPScrollView    scrollViewDisks         @accessors;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldName;
+    @outlet CPTextField     fieldNewDiskName;
+    @outlet CPTextField     fieldNewDiskSize;
+    @outlet CPPopUpButton   buttonNewDiskSizeUnit;
+    @outlet CPPopUpButton   buttonFormatCreate;
+    @outlet CPPopUpButton   buttonFormatConvert;
+    @outlet CPScrollView    scrollViewDisks;
 
-    CPTableView             tableMedias             @accessors;
-    TNDatasourceMedias      mediasDatasource        @accessors;
+    CPTableView             _tableMedias;
+    TNDatasourceMedias      _mediasDatasource;
 
     id  _registredDiskListeningId;
 }
 
 - (void)awakeFromCib
 {
-    [[self buttonNewDiskSizeUnit] removeAllItems];
+    [buttonNewDiskSizeUnit removeAllItems];
+    [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
 
-    var unitTypes = ["Go", "Mo", "Ko"];
-    for (var i = 0; i < unitTypes.length; i++)
-    {
-        var item = [[TNMenuItem alloc] initWithTitle:unitTypes[i] action:nil keyEquivalent:nil];
-        [[self buttonNewDiskSizeUnit] addItem:item];
-    }
-
+    var formats = [@"qcow2", @"qcow (not implemented)", @"cow (not implemented)", @"raw (not implemented)", @"vmdk (not implemented)", @"cloop (not implemented)"];
+    [buttonFormatCreate removeAllItems];
+    [buttonFormatCreate addItemsWithTitles:formats];
+    
+    [buttonFormatConvert removeAllItems];
+    [buttonFormatConvert addItemsWithTitles:formats];
+    
+    
     // Media table view
-    mediasDatasource    = [[TNDatasourceMedias alloc] init];
-    tableMedias         = [[CPTableView alloc] initWithFrame:[[self scrollViewDisks] bounds]];
+    _mediasDatasource    = [[TNDatasourceMedias alloc] init];
+    _tableMedias         = [[CPTableView alloc] initWithFrame:[scrollViewDisks bounds]];
 
-    [[self scrollViewDisks] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self scrollViewDisks] setAutohidesScrollers:YES];
-    [[self scrollViewDisks] setDocumentView:[self tableMedias]];
-    [[self scrollViewDisks] setBorderedWithHexColor:@"#9e9e9e"];
+    [scrollViewDisks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewDisks setAutohidesScrollers:YES];
+    [scrollViewDisks setDocumentView:_tableMedias];
+    [scrollViewDisks setBorderedWithHexColor:@"#9e9e9e"];
 
-    [[self tableMedias] setUsesAlternatingRowBackgroundColors:YES];
-    [[self tableMedias] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self tableMedias] setAllowsColumnReordering:YES];
-    [[self tableMedias] setAllowsColumnResizing:YES];
-    [[self tableMedias] setAllowsEmptySelection:YES];
+    [_tableMedias setUsesAlternatingRowBackgroundColors:YES];
+    [_tableMedias setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableMedias setAllowsColumnReordering:YES];
+    [_tableMedias setAllowsColumnResizing:YES];
+    [_tableMedias setAllowsEmptySelection:YES];
 
     var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [mediaColumName setWidth:150];
@@ -87,12 +91,15 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [mediaColumPath setWidth:500];
     [[mediaColumPath headerView] setStringValue:@"HypervisorPath"];
 
-    [[self tableMedias] addTableColumn:mediaColumName];
-    [[self tableMedias] addTableColumn:mediaColumVirtualSize];
-    [[self tableMedias] addTableColumn:mediaColumDiskSize];
-    [[self tableMedias] addTableColumn:mediaColumPath];
+    [_tableMedias addTableColumn:mediaColumName];
+    [_tableMedias addTableColumn:mediaColumVirtualSize];
+    [_tableMedias addTableColumn:mediaColumDiskSize];
+    [_tableMedias addTableColumn:mediaColumPath];
 
-    [[self tableMedias] setDataSource:[self mediasDatasource]];
+    [_tableMedias setDataSource:_mediasDatasource];
+    
+    [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
+    [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
 }
 
 - (void)willLoad
@@ -129,11 +136,16 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (BOOL)didReceivedDiskPushNotification:(TNStropheStanza)aStanza
 {
-    if ([[aStanza firstChildWithName:@"query"] valueForAttribute:@"change"] == TNArchipelPushNotificationDiskCreated)
-    {
-        [self getDisksInfo]
-    }
-
+    var growl   = [TNGrowlCenter defaultCenter];
+    var change  = [aStanza valueForAttribute:@"change"];
+    
+    if (change == @"created")
+        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
+    else if (change == @"deleted")
+        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
+    
+    [self getDisksInfo];
+    
     return YES;
 }
 
@@ -153,7 +165,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     if (responseType == @"success")
     {
-        [[[self mediasDatasource] medias] removeAllObjects];
+        [[_mediasDatasource medias] removeAllObjects];
 
         var disks = [aStanza childrenWithName:@"disk"];
 
@@ -166,9 +178,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             var name    = [disk valueForAttribute:@"name"];
 
             var newMedia = [TNMedia mediaWithPath:path name:name virtualSize:vSize diskSize:dSize];
-            [[self mediasDatasource] addMedia:newMedia];
+            [_mediasDatasource addMedia:newMedia];
         }
-        [[self tableMedias] reloadData];
+        [_tableMedias reloadData];
     }
     else
     {
@@ -179,8 +191,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (IBAction)createDisk:(id)sender
 {
     var dUnit;
-    var dName       = [[self fieldNewDiskName] stringValue];
-    var dSize       = [[self fieldNewDiskSize] stringValue];
+    var dName       = [fieldNewDiskName stringValue];
+    var dSize       = [fieldNewDiskSize stringValue];
 
     if (dSize == @"" || isNaN(dSize))
     {
@@ -194,17 +206,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         return;
     }
 
-    switch( [[self buttonNewDiskSizeUnit] title])
+    switch( [buttonNewDiskSizeUnit title])
     {
         case "Go":
             dUnit = "G";
             break;
 
         case "Mo":
-            dUnit = "M";
-            break;
-
-        case "Ko":
             dUnit = "M";
             break;
     }
@@ -226,28 +234,28 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     [_entity sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
 
-    [[self fieldNewDiskName] setStringValue:@""];
-    [[self fieldNewDiskSize] setStringValue:@""];
+    [fieldNewDiskName setStringValue:@""];
+    [fieldNewDiskSize setStringValue:@""];
 }
 
 - (void)didCreateDisk:(id)aStanza
 {
-    var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
-    
-    [self getDisksInfo];
+    if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)removeDisk:(id)sender
 {
-    if (([[self tableMedias] numberOfRows]) && ([[self tableMedias] numberOfSelectedRows] <= 0))
+    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
          return;
     }
 
-    var selectedIndex   = [[[self tableMedias] selectedRowIndexes] firstIndex];
-    var dName           = [[[self mediasDatasource] medias] objectAtIndex:selectedIndex];
+    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
+    var dName           = [[_mediasDatasource medias] objectAtIndex:selectedIndex];
     var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
 
     [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
@@ -259,12 +267,18 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)didRemoveDisk:(id)aStanza
 {
-    var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
-    
-    [self getDisksInfo];
+    if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
+- (IBAction)convert:(id)sender
+{
+    var growl   = [TNGrowlCenter defaultCenter];
+    
+    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented"];
+}
 @end
 
 

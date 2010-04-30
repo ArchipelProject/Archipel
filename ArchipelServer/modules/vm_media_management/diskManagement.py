@@ -84,14 +84,20 @@ class TNMediaManagement:
             disk_name = query_node.getTag("name").getData()
             disk_size = query_node.getTag("size").getData()
             disk_unit = query_node.getTag("unit").getData()
-        
+            
+            if disk_unit == "M" and (int(disk_size) >= 1000000000):
+                raise Exception("too big",  "You may be able to do it manually, but I won't try");
+            if disk_unit == "G" and (int(disk_size) >= 10000):
+                raise Exception("too big", "You may be able to do this manually, but I won't try");
+            
             ret = os.system("qemu-img create -f qcow2 " + self.entity.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
+            
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + ret);
          
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, " disk created")
-            self.push_change("disk", "created")
+            log(self, LOG_LEVEL_INFO, "disk created")
+            self.entity.push_change("disk", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -115,7 +121,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")
-            self.push_change("disk", "deleted")
+            self.entity.push_change("disk", "deleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

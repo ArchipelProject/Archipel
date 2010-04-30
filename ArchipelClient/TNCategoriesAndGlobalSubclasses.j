@@ -295,3 +295,22 @@
 }
 @end
 
+
+@implementation TNTableView : CPTableView
+{
+    
+}
+
+-(void)keyDown:(CPEvent)anEvent
+{
+    CPLog.debug([anEvent keyCode]);
+    if (([anEvent keyCode] == 65) && ([anEvent modifierFlags] == CPCommandKeyMask))
+    {
+        var indexes = [CPIndexSet indexSetWithIndexesInRange:CPMakeRange(0, [self numberOfRows])];
+        
+        [self selectRowIndexes:indexes byExtendingSelection:NO];
+        return;
+    }
+    [super keyDown:anEvent];
+}
+@end
