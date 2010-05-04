@@ -251,9 +251,22 @@
     for (var count = 0; [self itemAtRow:count]; count++)
     {
         var item = [self itemAtRow:count];
+        
         if ([self isExpandable:item])
         {
             [self expandItem:item];
+        }
+    }
+}
+
+- (void)collapseAll
+{
+    for (var count = 0; [self itemAtRow:count]; count++)
+    {
+        var item = [self itemAtRow:count];
+        if ([self isExpandable:item])
+        {
+            [self collapseItem:item];
         }
     }
 }

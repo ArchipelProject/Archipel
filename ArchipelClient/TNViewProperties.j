@@ -34,6 +34,10 @@
     @outlet CPTextField     entryResource   @accessors;
     @outlet CPTextField     entryShow       @accessors;
     @outlet CPTextField     newNickName     @accessors;
+    
+    @outlet CPTextField     labelResource   @accessors;
+    @outlet CPTextField     labelDomain     @accessors;
+    @outlet CPTextField     labelStatus     @accessors;
 
     TNStropheRoster         _roster         @accessors(getter=roster, setter=setRoster:);
     TNStropheContact        _entity         @accessors(getter=_entity, setter=setEntity:);
@@ -73,8 +77,9 @@
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
     
-    var bundle = [CPBundle mainBundle];
-    _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    var bundle          = [CPBundle mainBundle];
+    _unknownUserImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:entryName];
@@ -109,44 +114,56 @@
 */
 - (void)reload
 {
-    if ((!_entity) || ([_entity class] == TNStropheGroup))
+    if (!_entity)
     {
         [self hide];
         return;
     }
+    
     [self show];
     
-    [entryName setStringValue:[_entity nickname]];
-    [entryDomain setStringValue:[_entity domain]];
-    [entryResource setStringValue:[_entity resource]];
-    [entryStatusIcon setImage:[_entity statusIcon]];
-    if ([_entity avatar])
-        [entryAvatar setImage:[_entity avatar]];
-    else
-        [entryAvatar setImage:_unknownUserImage];
+    if ([_entity class] == TNStropheContact)
+    {
+        [labelResource setStringValue:@"Resource :"];
+        [labelStatus setHidden:NO];
+        [labelDomain setHidden:NO];
+        [entryAvatar setHidden:NO];
         
-    [entryShow setStringValue:[_entity show]];
+        [entryName setStringValue:[_entity nickname]];
+        
+        [entryDomain setStringValue:[_entity domain]];
+        [entryResource setStringValue:[_entity resource]];
+        [entryStatusIcon setImage:[_entity statusIcon]];
+        if ([_entity avatar])
+            [entryAvatar setImage:[_entity avatar]];
+        else
+            [entryAvatar setImage:_unknownUserImage];
+
+        [entryShow setStringValue:[_entity show]];
+    }
+    else if ([_entity class] == TNStropheGroup)
+    {
+        var population = ([_entity count] > 1) ? [_entity count] + @" contacts in group" : [_entity count] + @" contact in group";
+        
+        [labelResource setStringValue:@"Contents :"];
+        [labelStatus setHidden:YES];
+        [labelDomain setHidden:YES];
+        [entryAvatar setHidden:YES];
+        
+        [entryStatusIcon setImage:_groupUserImage];
+        [entryName setStringValue:[_entity name]];
+        [entryDomain setStringValue:@""];
+        [entryResource setStringValue:population];
+        [entryShow setStringValue:@""];
+    }
+
 }
 
 /*! message performed when contact update its presence in order to update information
 */
 - (void)_didContactUpdatePresence:(CPNotification)aNotification
 {
-    if ((!_entity) || ([_entity class] == TNStropheGroup))
-    {
-        [self hide];
-        return;
-    }
-    
-    [entryStatusIcon setImage:[_entity statusIcon]];
-    
-    if ([_entity avatar])
-        [entryAvatar setImage:[_entity avatar]];
-    else
-        [entryAvatar setImage:_unknownUserImage];
-        
-    [entryResource setStringValue:[_entity resource]];
-    [entryShow setStringValue:[_entity show]];
+    [self reload];
 }
 
 /*! message performed when the TNEditableLabel hase been changed
@@ -155,7 +172,10 @@
 */
 - (void)_didLabelEntryNameBlur:(CPNotification)aNotification
 {
-    [self doChangeNickName];
+    if ([_entity class] == TNStropheContact)
+        [self doChangeNickName];
+    else ([_entity class] == TNStropheGroup)
+        [self doChangeGroupName];
 }
 
 /*! action sent by the TNEditableLabel when ok. Will blur it
@@ -177,6 +197,11 @@
     [entryName setStringValue:theName];
 
     // [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
+}
+
+- (void)doChangeGroupName
+{
+    [_entity rename:[entryName stringValue]];
 }
 
 @end

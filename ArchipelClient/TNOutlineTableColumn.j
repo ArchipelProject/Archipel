@@ -153,7 +153,6 @@
 
 - (IBAction)askVCard:(id)sender
 {
-    var bundle  = [CPBundle mainBundle];
     var center  = [CPNotificationCenter defaultCenter];
     
     [_syncButton setImage:_syncingImage];

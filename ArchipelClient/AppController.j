@@ -256,7 +256,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
     [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
     [groupsMenu addItem:[CPMenuItem separatorItem]];
-    [groupsMenu addItemWithTitle:@"Rename group" action:nil keyEquivalent:@""];
+    [groupsMenu addItemWithTitle:@"Rename group" action:@selector(renameGroup:) keyEquivalent:@""];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
     
     // Contacts
@@ -264,9 +264,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
     [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
     [contactsMenu addItem:[CPMenuItem separatorItem]];
-    [contactsMenu addItemWithTitle:@"Rename contact" action:nil keyEquivalent:@"R"];
+    [contactsMenu addItemWithTitle:@"Rename contact" action:@selector(renameContact:) keyEquivalent:@"R"];
     [contactsMenu addItem:[CPMenuItem separatorItem]];
-    [contactsMenu addItemWithTitle:@"Reload vCard" action:nil keyEquivalent:@""];
+    [contactsMenu addItemWithTitle:@"Reload vCard" action:@selector(reloadContactVCard:) keyEquivalent:@""];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
     
     // Status
@@ -280,15 +280,28 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     // navigation
     var navigationMenu = [[CPMenu alloc] init];
-    [navigationMenu addItemWithTitle:@"Navigation bar" action:nil keyEquivalent:@""];
-    [navigationMenu addItemWithTitle:@"Search entity" action:nil keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Search entity" action:@selector(focusFilter:) keyEquivalent:@"F"];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
     [navigationMenu addItemWithTitle:@"Select next entity" action:@selector(selectNextEntity:) keyEquivalent:@"]"];
     [navigationMenu addItemWithTitle:@"Select previous entity" action:@selector(selectPreviousEntity:) keyEquivalent:@"["];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:@"Expand item" action:nil keyEquivalent:@""];
-    [navigationMenu addItemWithTitle:@"Collapse item" action:nil keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Expand group" action:@selector(expandGroup:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Collapse group" action:@selector(collapseGroup:) keyEquivalent:@""];
+    [navigationMenu addItem:[CPMenuItem separatorItem]];
+    [navigationMenu addItemWithTitle:@"Expand all groups" action:@selector(expandAllGroups:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Collapse all groups" action:@selector(collapseAllGroups:) keyEquivalent:@""];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
+    
+    // navigation
+    var helpMenu = [[CPMenu alloc] init];
+    [helpMenu addItemWithTitle:@"Archipel Help" action:nil keyEquivalent:@""];
+    [helpMenu addItemWithTitle:@"Release note" action:nil keyEquivalent:@""];
+    [helpMenu addItem:[CPMenuItem separatorItem]];
+    [helpMenu addItemWithTitle:@"Go to website" action:@selector(openWebsite:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:@"Report a bug" action:@selector(openBugTracker:) keyEquivalent:@""];
+    [helpMenu addItem:[CPMenuItem separatorItem]];
+    [helpMenu addItemWithTitle:@"Make a donation" action:@selector(openDonationPage:) keyEquivalent:@""];
+    [_mainMenu setSubmenu:helpMenu forItem:helpItem];
     
     [CPApp setMainMenu:_mainMenu];
     [CPMenu setMenuBarVisible:YES];
@@ -396,6 +409,86 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
     
+}
+
+- (IBAction)renameContact:(id)sender
+{
+    [[propertiesView entryName] mouseDown:nil];
+}
+
+- (IBAction)focusFilter:(id)sender
+{
+    [filterField mouseDown:nil];
+}
+
+- (IBAction)expandGroup:(id)sender
+{
+    var index       = [_rosterOutlineView selectedRowIndexes];
+    
+    if ([index firstIndex] == -1)
+        return;
+    
+    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    
+    [_rosterOutlineView expandItem:item];
+}
+
+- (IBAction)collapseGroup:(id)sender
+{
+    var index = [_rosterOutlineView selectedRowIndexes];
+    
+    if ([index firstIndex] == -1)
+        return;
+    
+    var item = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    
+    [_rosterOutlineView collapseItem:item];
+}
+
+- (IBAction)expandAllGroups:(id)sender
+{
+    [_rosterOutlineView expandAll];
+}
+
+- (IBAction)collapseAllGroups:(id)sender
+{
+    [_rosterOutlineView collapseAll];
+}
+
+- (IBAction)reloadContactVCard:(id)sender
+{
+    //
+}
+
+- (IBAction)openWebsite:(id)sender
+{
+    window.open("http://archipelproject.org");
+}
+
+- (IBAction)openDonationPage:(id)sender
+{
+    window.open("http://antoinemercadal.fr/archipelblog/donate/");
+}
+
+- (IBAction)openBugTracker:(id)sender
+{
+    window.open("http://bitbucket.org/primalmotion/archipel/issues/new");
+}
+
+
+- (IBAction)renameGroup:(id)sender
+{
+    var index       = [_rosterOutlineView selectedRowIndexes];
+    
+    if ([index firstIndex] == -1)
+        return;
+    
+    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    
+    if ([item class] == TNStropheGroup)
+    {
+        [item rename:[sender stringValue]];
+    }
 }
 
 /*! Delegate of toolbar imutables toolbar items.

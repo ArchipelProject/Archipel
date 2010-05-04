@@ -89,4 +89,28 @@
     [roster setMainOutlineView:self];
     [self expandAll];
 }
+
+- (void)moveLeft:(id)sender
+{
+    var index = [self selectedRowIndexes];
+    
+    if ([index firstIndex] == -1)
+        return;
+    
+    var item = [self itemAtRow:[index firstIndex]];
+    
+    [self collapseItem:item];
+}
+
+- (void)moveRight:(id)sender
+{
+    var index = [self selectedRowIndexes];
+    
+    if ([index firstIndex] == -1)
+        return;
+    
+    var item = [self itemAtRow:[index firstIndex]];
+    
+    [self expandItem:item];
+}
 @end
