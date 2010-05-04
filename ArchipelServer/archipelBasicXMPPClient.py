@@ -281,10 +281,14 @@ class TNArchipelBasicXMPPClient(object):
     
     
     
-    def change_presence(self, presence_show, presence_status):
-        self.xmppstatus = presence_status
-        self.xmppstatusshow = presence_show
-        pres = xmpp.Presence(status=presence_status, show=presence_show)
+    def change_presence(self, presence_show=None, presence_status=None):
+        if not presence_status == None:
+            self.xmppstatus = presence_status
+        if not presence_show == None:
+            self.xmppstatusshow = presence_show
+        log(self, LOG_LEVEL_DEBUG, "status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow));
+        
+        pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         self.xmppclient.send(pres)
     
     
@@ -392,36 +396,37 @@ class TNArchipelBasicXMPPClient(object):
         
         type_node = xmpp.Node(tag="TYPE");
         type_node.setData(params["entity_type"]);
+        
+        
+        if (self.configuration.get("GLOBAL", "use_avatar") == "yes"):
+            avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory");
+            try:
+                avatar_file = params["avatar_file"];
+            except:
+                avatar_file = "default.png"
+        
+            f = open(os.path.join(avatar_dir, avatar_file), "r");
+            photo_data = base64.b64encode(f.read());
+            f.close()
+        
+            node_photo_content_type = xmpp.Node(tag="TYPE")
+            node_photo_content_type.setData("image/png");
+                    
+            node_photo_data = xmpp.Node(tag="BINVAL")
+            node_photo_data.setData(photo_data);
+        
+            if self.vCard and self.vCard.getTag("PHOTO"):
+                old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA();
+                if old_photo_binval == photo_data:
+                    log(self, LOG_LEVEL_INFO, "vCard photo hasn't change.")
+                    self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
             
-            
-        avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory");
-        
-        try:
-            avatar_file = params["avatar_file"];
-        except:
-            avatar_file = "default.png"
-        
-        f = open(os.path.join(avatar_dir, avatar_file), "r");
-        photo_data = base64.b64encode(f.read());
-        f.close()
-        
-        node_photo_content_type = xmpp.Node(tag="TYPE")
-        node_photo_content_type.setData("image/png");
-        
-        node_photo_data = xmpp.Node(tag="BINVAL")
-        node_photo_data.setData(photo_data);
-        
-        if self.vCard and self.vCard.getTag("PHOTO"):
-            old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA();
-            if old_photo_binval == photo_data:
-                log(self, LOG_LEVEL_INFO, "vCard photo hasn't change.")
-                self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
-            
-        node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
-        
-        node_iq.addChild(name="vCard", payload=[type_node, node_photo], namespace="vcard-temp")
-        
-        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard, args={"photo_hash": hashlib.sha224(photo_data).hexdigest()})
+            node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
+            node_iq.addChild(name="vCard", payload=[type_node, node_photo], namespace="vcard-temp")
+            self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard, args={"photo_hash": hashlib.sha224(photo_data).hexdigest()})
+        else:
+            node_iq.addChild(name="vCard", payload=[type_node], namespace="vcard-temp")
+            self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
         
         log(self, LOG_LEVEL_DEBUG, "vcard information sent with type: {0}".format(params["entity_type"]))        
     

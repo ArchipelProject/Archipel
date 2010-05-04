@@ -157,8 +157,8 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
-                    [_virtualMachinesDatasource addVM:entry];
-                    [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
+                   [_virtualMachinesDatasource addVM:entry];
+                   [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
                }
             }
         }

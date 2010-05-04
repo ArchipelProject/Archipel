@@ -89,6 +89,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     @outlet TNWindowAddGroup    addGroupWindow              @accessors;
     @outlet TNWindowConnection  connectionWindow            @accessors;
 
+
     TNModuleLoader              _moduleLoader;
     CPTabView                   _moduleTabView;
     
@@ -100,6 +101,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     BOOL                        _shouldShowHelpView;
     CPWindow                    _helpWindow;
     CPPlatformWindow            _platformHelpWindow;
+    CPMenu                      _mainMenu;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -224,6 +226,72 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl setView:rightView];
+    
+    [self makeMainMenu];
+}
+
+- (void)makeMainMenu
+{
+    _mainMenu = [[CPMenu alloc] init];
+    
+    var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""];
+    var contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""];
+    var groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""];
+    var statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""];
+    var navigationItem  = [_mainMenu addItemWithTitle:@"Navigation" action:nil keyEquivalent:@""];
+    var helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""];
+    
+    // Archipel
+    var archipelMenu = [[CPMenu alloc] init];
+    [archipelMenu addItemWithTitle:@"About Archipel" action:nil keyEquivalent:@""];
+    [archipelMenu addItem:[CPMenuItem separatorItem]];
+    [archipelMenu addItemWithTitle:@"Preferences" action:nil keyEquivalent:@""];
+    [archipelMenu addItem:[CPMenuItem separatorItem]];
+    [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"q"];
+    [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
+    [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
+    
+    // Groups
+    var groupsMenu = [[CPMenu alloc] init];
+    [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
+    [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
+    [groupsMenu addItem:[CPMenuItem separatorItem]];
+    [groupsMenu addItemWithTitle:@"Rename group" action:nil keyEquivalent:@""];
+    [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
+    
+    // Contacts
+    var contactsMenu = [[CPMenu alloc] init];
+    [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
+    [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
+    [contactsMenu addItem:[CPMenuItem separatorItem]];
+    [contactsMenu addItemWithTitle:@"Rename contact" action:nil keyEquivalent:@"R"];
+    [contactsMenu addItem:[CPMenuItem separatorItem]];
+    [contactsMenu addItemWithTitle:@"Reload vCard" action:nil keyEquivalent:@""];
+    [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
+    
+    // Status
+    var statusMenu = [[CPMenu alloc] init];
+    [statusMenu addItemWithTitle:@"Set status available" action:nil keyEquivalent:@"1"];
+    [statusMenu addItemWithTitle:@"Set status away" action:nil keyEquivalent:@"2"];
+    [statusMenu addItemWithTitle:@"Set status busy" action:nil keyEquivalent:@"3"];
+    [statusMenu addItem:[CPMenuItem separatorItem]];
+    [statusMenu addItemWithTitle:@"Set custom status" action:nil keyEquivalent:@""];
+    [_mainMenu setSubmenu:statusMenu forItem:statusItem];
+    
+    // navigation
+    var navigationMenu = [[CPMenu alloc] init];
+    [navigationMenu addItemWithTitle:@"Navigation bar" action:nil keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Search entity" action:nil keyEquivalent:@""];
+    [navigationMenu addItem:[CPMenuItem separatorItem]];
+    [navigationMenu addItemWithTitle:@"Select next entity" action:@selector(selectNextEntity:) keyEquivalent:@"]"];
+    [navigationMenu addItemWithTitle:@"Select previous entity" action:@selector(selectPreviousEntity:) keyEquivalent:@"["];
+    [navigationMenu addItem:[CPMenuItem separatorItem]];
+    [navigationMenu addItemWithTitle:@"Expand item" action:nil keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:@"Collapse item" action:nil keyEquivalent:@""];
+    [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
+    
+    [CPApp setMainMenu:_mainMenu];
+    [CPMenu setMenuBarVisible:YES];
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
@@ -244,12 +312,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.info("Loading complete for bundle " + aBundle);
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on logout item click
-    To have more information about the toolbar, see TNToolbar
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-- (IBAction)toolbarItemLogoutClick:(id)sender
+
+- (IBAction)logout:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
     
@@ -260,25 +324,13 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_mainRoster disconnect];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on add JID item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-- (IBAction)toolbarItemAddContactClick:(id)sender
+- (IBAction)addContact:(id)sender
 {
     [addContactWindow setRoster:_mainRoster];
     [addContactWindow orderFront:nil];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on delete JID item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-- (IBAction)toolbarItemDeleteContactClick:(id)sender
+- (IBAction)deleteContact:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
     var item    = [_rosterOutlineView itemAtRow:index];
@@ -297,22 +349,13 @@ TNArchipelStatusBusyLabel       = @"Busy";
     }
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on add group item click
-    To have more information about the toolbar, see TNToolbar
-*/
-- (IBAction)toolbarItemAddGroupClick:(id)sender
+- (IBAction)addGroup:(id)sender
 {
     [addGroupWindow setRoster:_mainRoster];
     [addGroupWindow orderFront:nil];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on delete group item click
-    NOT IMPLEMENTED
-    To have more information about the toolbar, see TNToolbar
-*/
-- (IBAction)toolbarItemDeleteGroupClick:(id)sender
+- (IBAction)deleteGroup:(id)sender
 {
     var growl = [TNGrowlCenter defaultCenter];
     
@@ -336,8 +379,75 @@ TNArchipelStatusBusyLabel       = @"Busy";
     {
        [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError]; 
     }
+}
+
+- (IBAction)selectNextEntity:(id)sender
+{
+    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var nextIndex       = (selectedIndex + 1) > [_rosterOutlineView numberOfRows] - 1 ? 0 : (selectedIndex + 1);
     
+    [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
+}
+
+- (IBAction)selectPreviousEntity:(id)sender
+{
+    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var nextIndex       = (selectedIndex - 1) < 0 ? [_rosterOutlineView numberOfRows] -1 : (selectedIndex - 1);
     
+    [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
+    
+}
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on logout item click
+    To have more information about the toolbar, see TNToolbar
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemLogoutClick:(id)sender
+{
+    [self logout:sender];
+}
+
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on add JID item click
+    To have more information about the toolbar, see TNToolbar
+
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemAddContactClick:(id)sender
+{
+    [self addContact:sender];
+}
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on delete JID item click
+    To have more information about the toolbar, see TNToolbar
+
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemDeleteContactClick:(id)sender
+{
+    [self deleteContact:sender]
+}
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on add group item click
+    To have more information about the toolbar, see TNToolbar
+*/
+- (IBAction)toolbarItemAddGroupClick:(id)sender
+{
+    [self addGroup:sender];
+}
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on delete group item click
+    NOT IMPLEMENTED
+    To have more information about the toolbar, see TNToolbar
+*/
+- (IBAction)toolbarItemDeleteGroupClick:(id)sender
+{
+    [self deleteGroup:sender];
 }
 
 /*! Delegate of toolbar imutables toolbar items.

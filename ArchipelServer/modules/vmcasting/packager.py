@@ -18,7 +18,7 @@
 import os, sys
 import tempfile
 import tarfile
-import gzip
+from gzip import GzipFile as gz
 from utils import *
 from threading import Thread
 from xml.dom import minidom
@@ -53,15 +53,20 @@ class TNArchipelPackage(Thread):
     
     def run(self):
         
+        old_status = self.entity.xmppstatus
+        self.entity.change_status("Deflatting appliance...")
         log(self, LOG_LEVEL_INFO, "unpacking to %s" % self.working_dir)
         self.unpack();
         
+        self.entity.change_status("Parsing xml...")
         log(self, LOG_LEVEL_INFO, "defining UUID in description file as %s" % self.uuid)
         self.update_description()
         
+        self.entity.change_status("Installing appliance...")
         log(self, LOG_LEVEL_INFO, "installing package in %s" % self.install_path)
         self.install()
         
+        self.entity.change_status("Cleaning...")
         log(self, LOG_LEVEL_INFO, "cleaning...");
         self.clean();
         
@@ -70,6 +75,7 @@ class TNArchipelPackage(Thread):
         define_iq = xmpp.Iq();
         define_iq.setQueryPayload([desc_node])
         
+        self.entity.change_status(old_status);
         self.define_callback(define_iq);
     
     def unpack(self):
@@ -87,30 +93,35 @@ class TNArchipelPackage(Thread):
         
         self.entity.push_change("vmcasting", "applianceunpacking");
         
-        for aFile in os.listdir(self.extract_path):
-            full_path = os.path.join(self.extract_path, aFile);
-            log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
+        try:
+            for aFile in os.listdir(self.extract_path):
+                full_path = os.path.join(self.extract_path, aFile);
+                log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
             
-            if os.path.splitext(full_path)[-1] == ".gz":
-                i = gzip.open(full_path, 'rb')
-                o = open(full_path.replace(".gz", ""), 'w');
-                o.write(i.read());
-                i.close()
-                o.close()
-                log(self, LOG_LEVEL_DEBUG, "found one gziped disk : %s" % full_path)
-                self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "");
+                if os.path.splitext(full_path)[-1] == ".gz":
+                    log(self, LOG_LEVEL_INFO, "found one gziped disk : %s" % full_path)
+                    i = open(full_path, 'rb')
+                    o = open(full_path.replace(".gz", ""), 'w')
+                    self._gunzip(i, o);
+                    i.close()
+                    o.close()
+                    log(self, LOG_LEVEL_INFO, "file unziped at : %s" % full_path.replace(".gz", ""))
+                    self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "");
             
-            if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
-                self.disk_files[aFile] = full_path;
+                if os.path.splitext(full_path)[-1] in self.disk_extensions:
+                    log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
+                    self.disk_files[aFile] = full_path;
             
-            if aFile == "description.xml":
-                log(self, LOG_LEVEL_DEBUG, "found description.xml file : %s" % full_path)
-                o = open(full_path, 'r');
-                self.description_file = o.read();
-                o.close();
+                if aFile == "description.xml":
+                    log(self, LOG_LEVEL_DEBUG, "found description.xml file : %s" % full_path)
+                    o = open(full_path, 'r');
+                    self.description_file = o.read();
+                    o.close();
             
-        self.entity.push_change("vmcasting", "applianceunpacked");
+            self.entity.push_change("vmcasting", "applianceunpacked");
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, str(ex));
+            
     
     
     def update_description(self):
@@ -164,8 +175,8 @@ class TNArchipelPackage(Thread):
                 shutil.move(path, self.install_path);
             except:
                 os.remove(self.install_path + "/" + key);
-            finally:
                 shutil.move(path, self.install_path);
+                
             
         f = open(self.install_path + "/current.package", "w");
         f.write(self.package_uuid)
@@ -174,6 +185,28 @@ class TNArchipelPackage(Thread):
         self.entity.push_change("vmcasting", "applianceinstalled");
         
         return True;
+    
+    
+    def _gunzip(self, fileobjin, fileobjout):
+        """Returns NamedTemporaryFile with unzipped content of fileobj"""
+        
+        source = gz(fileobj=fileobjin, mode='rb')
+        
+        target = fileobjout
+        
+        try:
+            while 1:
+                data=source.read(65536)
+                if data and len(data):
+                    target.write(data)
+                else:
+                    target.flush()
+                    break
+        except Exception:
+            target.close()
+            raise
+        else:
+            return target
     
     
     def clean(self):
