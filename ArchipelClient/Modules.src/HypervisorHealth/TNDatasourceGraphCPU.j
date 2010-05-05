@@ -25,7 +25,7 @@
 {
     if (self = [super init])
     {
-        _datas = [0];
+        _datas = [];
         _maxNumberOfPoints = 100;
     }
     return self;

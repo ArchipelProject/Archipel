@@ -88,7 +88,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     //[vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     //[vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
@@ -125,7 +125,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     //[vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     //[vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
@@ -212,7 +212,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
         var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
-        var item        = [_roster getContactFromJID:[aStanza getFromNode]];
+        var item        = [_roster contactWithJID:[aStanza getFromNode]];
 
         var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
         var marker      = [[MKMarker alloc] initAtLocation:loc];
@@ -255,8 +255,8 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [_roster getContactFromJID:jid];
+            var JID     = [[queryItems objectAtIndex:i] text];
+            var entry   = [_roster contactWithJID:JID];
 
             if (entry)
             {
@@ -286,8 +286,8 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [_roster getContactFromJID:jid];
+            var JID     = [[queryItems objectAtIndex:i] text];
+            var entry   = [_roster contactWithJID:JID];
 
             if (entry)
             {

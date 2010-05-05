@@ -30,7 +30,7 @@
 }
 
 /*! init the class with the JID to remove and the roster to remove contact from
-    @param aJid CPString containing the jid the remove
+    @param aJID CPString containing the JID the remove
     @param aRoster TNStropheRoster instance to remove from
     @return an initialized TNAlertRemoveContact
 */
@@ -58,7 +58,7 @@
 }
 
 /*! Delegate of itself. Will perform, according to the user answer,
-    the removing of the jid from the roster.
+    the removing of the JID from the roster.
 
     @param theAlert itself
     @param returnCode the return code of the CPAlert
@@ -69,7 +69,7 @@
     {
         var growl = [TNGrowlCenter defaultCenter];
         
-        [_roster removeContact:_JID];
+        [_roster removeContactWithJID:_JID];
         
         CPLog.info(@"contact " + _JID + "removed");
         [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + _JID + @" has been removed"];

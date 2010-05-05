@@ -45,8 +45,6 @@ TNArchipelTransportBarReboot    = 3;
 {
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldName;
-    @outlet CPTextField             fieldVMName;
-    @outlet CPTextField             fieldVMJid;
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoCPUs;
@@ -73,7 +71,7 @@ TNArchipelTransportBarReboot    = 3;
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [maskingView setAlphaValue:0.9];
 
-    [fieldVMJid setSelectable:YES];
+    [fieldJID setSelectable:YES];
     
     [buttonBarTransport setSegmentCount:4];
     [buttonBarTransport setLabel:@"Play" forSegment:TNArchipelTransportBarPlay];
@@ -117,8 +115,8 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 
-    [fieldVMName setStringValue:[_entity nickname]];
-    [fieldVMJid setStringValue:[_entity jid]];
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity JID]];
     [imageState setImage:[_entity statusIcon]];
     
     [self checkIfRunning];
@@ -150,7 +148,7 @@ TNArchipelTransportBarReboot    = 3;
 /* Notifications listener */
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
-    [fieldVMName setStringValue:[_entity nickname]]
+    [fieldName setStringValue:[_entity nickname]]
 }
 
 - (void)didPresenceUpdated:(CPNotification)aNotification

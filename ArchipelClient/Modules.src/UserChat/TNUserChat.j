@@ -33,7 +33,7 @@
 {
     @outlet CPTextField     fieldJID                @accessors;
     @outlet CPTextField     fieldName               @accessors;
-    @outlet CPTextField     fieldUserJid            @accessors;
+    @outlet CPTextField     fieldUserJID            @accessors;
     @outlet CPTextField     fieldMessage            @accessors;
     @outlet CPScrollView    messagesScrollView      @accessors;
     @outlet CPImageView     imageSpinnerWriting     @accessors;
@@ -98,13 +98,13 @@
     [_messageCollectionView setFrame:frame];
 
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // var lastConversation = [defaults objectForKey:"communicationWith" + [_entity jid]];
+    // var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
     // 
     // console.log(lastConversation);
     // if (lastConversation)
     //     _messages = lastConversation;
     
-    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [_entity jid]));
+    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [_entity JID]));
     
     if (lastConversation)
     {
@@ -136,9 +136,9 @@
 {
     [super willUnload];
 
-    localStorage.setItem("communicationWith" + [_entity jid], JSON.stringify(_messages));
+    localStorage.setItem("communicationWith" + [_entity JID], JSON.stringify(_messages));
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setArray:_messages forKey:"communicationWith" + [_entity jid]];
+    // [defaults setArray:_messages forKey:"communicationWith" + [_entity JID]];
     // console.log("HERE" + _messages);
     
     [_messages removeAllObjects];
@@ -165,7 +165,7 @@
     [_entity freeMessagesQueue];
     
     [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity jid]];
+    [fieldJID setStringValue:[_entity JID]];
 }
 
 /*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
@@ -232,7 +232,7 @@
 */
 - (void)didReceivedMessage:(CPNotification)aNotification
 {
-    if ([[aNotification object] jid] == [_entity jid])
+    if ([[aNotification object] JID] == [_entity JID])
     {
         var stanza =  [_entity popMessagesQueue];
 
@@ -285,7 +285,7 @@
 */
 - (IBAction)clearHistory:(id)aSender
 {
-    localStorage.removeItem("communicationWith" + [_entity jid]);
+    localStorage.removeItem("communicationWith" + [_entity JID]);
     [_messages removeAllObjects];
     [_messageCollectionView reloadContent];
 }

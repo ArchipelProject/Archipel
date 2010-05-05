@@ -130,7 +130,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [super willShow];
 
     [fieldName setStringValue:[[self entity] nickname]];
-    [fieldJID setStringValue:[[self entity] jid]];
+    [fieldJID setStringValue:[[self entity] JID]];
     
     [self getHypervisorNetworks];
 }

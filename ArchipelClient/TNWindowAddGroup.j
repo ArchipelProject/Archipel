@@ -55,7 +55,7 @@
     {
         var groupName = [[self newGroupName] stringValue];
         
-        [[self roster] addGroup:groupName];
+        [[self roster] addGroupWithName:groupName];
         [[self newGroupName] setStringValue:@""];
         CPLog.info(@"new group " + groupName + " added.");
         

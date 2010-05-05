@@ -174,7 +174,7 @@
 {
     if ([_entity class] == TNStropheContact)
         [self doChangeNickName];
-    else ([_entity class] == TNStropheGroup)
+    else if ([_entity class] == TNStropheGroup)
         [self doChangeGroupName];
 }
 
@@ -190,18 +190,16 @@
 */
 - (void)doChangeNickName
 {
-    var theJid = [_entity jid];
+    var theJID = [_entity JID];
     var theName = [entryName stringValue];
 
-    [_roster changeNickname:theName forJID:theJid];
+    [_roster changeNickname:theName ofContactWithJID:theJID];
     [entryName setStringValue:theName];
-
-    // [[TNViewLog sharedLogger] log:@"new nickname for contact " + theJid + " : " + theName];
 }
 
 - (void)doChangeGroupName
 {
-    [_entity rename:[entryName stringValue]];
+    [_entity changeName:[entryName stringValue]];
 }
 
 @end

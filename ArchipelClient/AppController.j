@@ -355,7 +355,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
         return;
     }
     
-    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[item jid] roster:_mainRoster];
+    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[item JID] roster:_mainRoster];
     if (alert)
     {
         [alert runModal];
@@ -475,20 +475,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     window.open("http://bitbucket.org/primalmotion/archipel/issues/new");
 }
 
-
 - (IBAction)renameGroup:(id)sender
 {
-    var index       = [_rosterOutlineView selectedRowIndexes];
-    
-    if ([index firstIndex] == -1)
-        return;
-    
-    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
-    
-    if ([item class] == TNStropheGroup)
-    {
-        [item rename:[sender stringValue]];
-    }
+    [[propertiesView entryName] mouseDown:nil];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -638,11 +627,15 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:filterField];
     [propertiesView setRoster:_mainRoster];
+    
+    
     [_mainRoster getRoster];
-
+    
+    
+    
     [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
     
-    var user = [[_mainRoster connection] jid];
+    var user = [[_mainRoster connection] JID];
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user];
@@ -737,15 +730,18 @@ TNArchipelStatusBusyLabel       = @"Busy";
         if ([item class] == TNStropheGroup)
         {
             CPLog.info(@"setting the entity as " + item + " of type group");
-            [_moduleLoader setEntity:item ofType:[item type] andRoster:_mainRoster];
+            [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
             return;
         }
-        
-        var vCard       = [item vCard];
-        var entityType  = [_moduleLoader analyseVCard:vCard];
-        
-        CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-        [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+        else if ([item class] == TNStropheContact)
+        {
+            var vCard       = [item vCard];
+            var entityType  = [_moduleLoader analyseVCard:vCard];
+
+            CPLog.info(@"setting the entity as " + item + " of type " + entityType);
+            [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+            
+        }
     }
     catch(ex)
     {

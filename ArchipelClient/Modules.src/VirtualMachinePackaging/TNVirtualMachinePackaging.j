@@ -118,7 +118,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [super willShow];
 
     [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity jid]];
+    [fieldJID setStringValue:[_entity JID]];
     
     [self getInstalledAppliances];
 }
@@ -143,7 +143,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
     
-    // if (sender != [_entity jid])
+    // if (sender != [_entity JID])
     //     return;
     
     if (change == @"applianceunpacking")

@@ -27,7 +27,7 @@
 @implementation TNWindowAddContact: CPWindow
 {
     @outlet CPPopUpButton   newContactGroup     @accessors;
-    @outlet CPTextField     newContactJid       @accessors;
+    @outlet CPTextField     newContactJID       @accessors;
     @outlet CPTextField     newContactName      @accessors;
 
     TNStropheRoster         _roster             @accessors(getter=roster, setter=setRoster:);
@@ -36,17 +36,17 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (IBAction) orderFront:(id)sender
+- (IBAction)orderFront:(id)sender
 {
     var groups = [_roster groups];
     var i;
 
-    [newContactJid setStringValue:@""];
+    [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
     [newContactGroup removeAllItems];
-    [self makeFirstResponder:newContactJid];
+    [self makeFirstResponder:newContactJID];
 
-    if (![_roster doesRosterContainsGroup:@"General"])
+    if (![_roster containsGroup:@"General"])
     {
         [newContactGroup addItemWithTitle:@"General"];
     }
@@ -54,7 +54,7 @@
     //@each (var group in groups)
     for(var i = 0; i < [groups count]; i++)
     {
-        var group = [groups objectAtIndex:i];
+        var group   = [groups objectAtIndex:i];        
         [newContactGroup addItemWithTitle:[group name]];
     }
 
@@ -71,22 +71,22 @@
 - (IBAction)addContact:(id)sender
 {
     var group   = [newContactGroup title];
-    var jid     = [[newContactJid stringValue] lowercaseString];
+    var JID     = [[newContactJID stringValue] lowercaseString];
     var name    = [newContactName stringValue];
     var growl   = [TNGrowlCenter defaultCenter];
     
-    [_roster addContact:jid withName:name inGroup:group];
-    [_roster askAuthorizationTo:jid];
-    [_roster authorizeJID:jid];
+    [_roster addContact:JID withName:name inGroupWithName:group];
+    [_roster askAuthorizationTo:JID];
+    [_roster authorizeJID:JID];
 
     [self performClose:nil];
 
-    var msg     = @"Presence subsciption has been sent to " + jid + ".";
+    var msg     = @"Presence subsciption has been sent to " + JID + ".";
     
-    CPLog.info(@"added contact " + jid);
+    CPLog.info(@"added contact " + JID);
     
     
-    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + jid + @" has been added"];
+    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
 }
 
 @end

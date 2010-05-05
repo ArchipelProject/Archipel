@@ -51,7 +51,7 @@
     [super willShow];
 
     [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity jid]];
+    [fieldJID setStringValue:[_entity JID]];
 }
 
 - (void)willHide

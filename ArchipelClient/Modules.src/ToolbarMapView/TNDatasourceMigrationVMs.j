@@ -40,12 +40,12 @@
 
 // @implementation TNMigrationVMItem : CPObject
 // {
-//     CPString jid @accessors;
+//     CPString JID @accessors;
 // }
-// + (TNMigrationVMItem)migrationVMitemWithJid:(CPString)aJid
+// + (TNMigrationVMItem)migrationVMitemWithJID:(CPString)aJID
 // {
 //     var item = [[TNMigrationVMItem alloc] init];
-//     [item setJid:aJid];
+//     [item setJID:aJID];
 //     return item;
 // }
 // @end

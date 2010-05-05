@@ -80,7 +80,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 

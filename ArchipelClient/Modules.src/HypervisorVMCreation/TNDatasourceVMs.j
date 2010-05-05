@@ -21,12 +21,12 @@
 
 @implementation TNHypervisorVMItem : CPObject
 {
-    CPString jid @accessors;
+    CPString JID @accessors;
 }
-+ (TNHypervisorVMItem)hypervisorVMitemWithJid:(CPString)aJid
++ (TNHypervisorVMItem)hypervisorVMitemWithJID:(CPString)aJID
 {
     var item = [[TNHypervisorVMItem alloc] init];
-    [item setJid:aJid];
+    [item setJID:aJID];
     return item;
 }
 @end

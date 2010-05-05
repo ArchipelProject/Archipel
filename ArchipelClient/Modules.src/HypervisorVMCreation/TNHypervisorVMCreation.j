@@ -66,7 +66,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
@@ -101,7 +101,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
     
     [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity jid]];
+    [fieldJID setStringValue:[_entity JID]];
         
     [self getHypervisorRoster];
 }
@@ -150,8 +150,8 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var jid     = [[queryItems objectAtIndex:i] text];
-            var entry   = [_roster getContactFromJID:jid];
+            var JID     = [[queryItems objectAtIndex:i] text];
+            var entry   = [_roster contactWithJID:JID];
         
             if (entry) 
             {
@@ -198,11 +198,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     if ([aStanza getType] == @"success")
     {
-        var vmJid   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
+        var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
         
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine " + vmJid + @" has been created"];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine " + vmJID + @" has been created"];
     }
     else
     {
@@ -258,9 +258,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
                 var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
 
                 [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
-                [freeStanza addTextNode:[vm jid]];
+                [freeStanza addTextNode:[vm JID]];
 
-                [_roster removeContact:[vm jid]];
+                [_roster removeContact:vm];
 
                 [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
                 

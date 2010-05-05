@@ -153,7 +153,8 @@
 */
 @implementation TNMenuItem : CPMenuItem
 {
-    CPString stringValue @accessors;
+    CPString    stringValue @accessors;
+    id          objectValue @accessors;
 }
 @end
 

@@ -28,15 +28,15 @@ TNToolBarItemLogout         = @"TNToolBarItemLogout";
 
 /*! @global
     @group TNToolBarItem
-    identifier for item add jid
+    identifier for item add JID
 */
-TNToolBarItemAddJid         = @"TNToolBarItemAddJid";
+TNToolBarItemAddJID         = @"TNToolBarItemAddJID";
 
 /*! @global
     @group TNToolBarItem
-    identifier for item delete jid
+    identifier for item delete JID
 */
-TNToolBarItemDeleteJid      = @"TNToolBarItemDeleteJid";
+TNToolBarItemDeleteJID      = @"TNToolBarItemDeleteJID";
 
 /*! @global
     @group TNToolBarItem
@@ -86,8 +86,8 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
         _toolbarItemsOrder  = [CPArray array];
 
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
-        [self addItemWithIdentifier:TNToolBarItemAddJid label:@"Add JID" icon:[bundle pathForResource:@"add.png"] target:aTarget action:@selector(toolbarItemAddContactClick:)];
-        [self addItemWithIdentifier:TNToolBarItemDeleteJid label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
+        [self addItemWithIdentifier:TNToolBarItemAddJID label:@"Add JID" icon:[bundle pathForResource:@"add.png"] target:aTarget action:@selector(toolbarItemAddContactClick:)];
+        [self addItemWithIdentifier:TNToolBarItemDeleteJID label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
         [self addItemWithIdentifier:TNToolBarItemAddGroup label:@"Add Group" icon:[bundle pathForResource:@"groupAdd.png"] target:aTarget action:@selector(toolbarItemAddGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
@@ -115,8 +115,8 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
         
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
         [self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJid];
-        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJid];
+        [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJID];
+        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJID];
         [self setPosition:4 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [self setPosition:5 forToolbarItemIdentifier:TNToolBarItemAddGroup];
         [self setPosition:6 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];

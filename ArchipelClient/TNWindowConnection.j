@@ -28,7 +28,7 @@
 @implementation TNWindowConnection: CPWindow
 {
     @outlet CPImageView spinning            @accessors;
-    @outlet CPTextField jid                 @accessors;
+    @outlet CPTextField JID                 @accessors;
     @outlet CPTextField message             @accessors;
     @outlet CPTextField password            @accessors;
     @outlet CPTextField boshService         @accessors;
@@ -63,7 +63,7 @@
     
    if (lastRememberCred)
    {
-       [[self jid] setStringValue:lastJID];
+       [[self JID] setStringValue:lastJID];
        [[self password] setStringValue:lastPassword];
        [[self credentialRemember] setState:CPOnState];
    }
@@ -83,7 +83,7 @@
     
     if ([[self credentialRemember] state] == CPOnState)
     {
-        [defaults setObject:[jid stringValue] forKey:@"loginJID"];
+        [defaults setObject:[JID stringValue] forKey:@"loginJID"];
         [defaults setObject:[password stringValue] forKey:@"loginPassword"];
         [defaults setObject:[boshService stringValue] forKey:@"loginService"];
         [defaults setBool:YES forKey:@"loginRememberCredentials"];
@@ -95,7 +95,7 @@
         [defaults setBool:NO forKey:@"loginRememberCredentials"];
     }
     
-    [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] jid:[jid stringValue] password:[password stringValue]]];
+    [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]]];
     [[self JSStrophe] setDelegate:self];
     [[self JSStrophe] connect];
 }
@@ -127,7 +127,7 @@
     [[self message] setStringValue:@"Connected."];
     [[self spinning] setHidden:YES];
     
-    CPLog.info(@"Strophe is now connected using JID " + [[self jid] stringValue]);
+    CPLog.info(@"Strophe is now connected using JID " + [[self JID] stringValue]);
 }
 
 /*! delegate of TNStropheConnection

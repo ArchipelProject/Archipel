@@ -100,7 +100,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     [[self maskingView] setFrame:[self bounds]];
     
     [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity jid]];
+    [fieldJID setStringValue:[_entity JID]];
     
     if ([_entity status] == TNStropheContactStatusOnline)
     {
@@ -164,7 +164,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
         _vncDisplay     = [displayNode valueForAttribute:@"port"];
         _VMHost         = [displayNode valueForAttribute:@"host"];
         
-        _url         = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        _url            = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
         
         [_vncWebView setMainFrameURL:_url];
     }
@@ -188,14 +188,16 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     
     [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [vncWebViewForWindow setMainFrameURL:_url];
-    [scrollView setDocumentView:vncWebViewForWindow];
-    [scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    //[scrollView setDocumentView:vncWebViewForWindow];
+    //[scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     
-    [[VNCWindow contentView] addSubview:scrollView];
+    [[VNCWindow contentView] addSubview:vncWebViewForWindow];
     [VNCWindow setPlatformWindow:platformVNCWindow];
     [VNCWindow setDelegate:self];
     [VNCWindow setTitle:@"Display for " + [_entity nickname]];
-    [scrollView setFrame:[[VNCWindow contentView] bounds]];
+    // [platformVNCWindow setTitle:@"Display for " + [_entity nickname]];
+    //[scrollView setFrame:[[VNCWindow contentView] bounds]];
+    [vncWebViewForWindow setFrame:[[VNCWindow contentView] bounds]];
 
     [VNCWindow orderFront:nil];
     [platformVNCWindow orderFront:nil];

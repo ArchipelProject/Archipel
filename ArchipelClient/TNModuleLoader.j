@@ -141,7 +141,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         var identifier;
         
         if ([[self entity] class] == TNStropheContact)
-            identifier = [[self entity] jid];
+            identifier = [[self entity] JID];
         else
             identifier = [[self entity] name];
             
@@ -159,7 +159,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 {
     var identifier;
     if ([[self entity] class] == TNStropheContact)
-        identifier = [[self entity] jid];
+        identifier = [[self entity] JID];
     else
         identifier = [[self entity] name];
     
