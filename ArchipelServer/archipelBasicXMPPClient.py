@@ -232,7 +232,7 @@ class TNArchipelBasicXMPPClient(object):
         @param msg: the received message 
         """
         
-        if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and msg.getBody():
+        if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and not msg.getType() == "error" and msg.getBody():
             log(self, LOG_LEVEL_DEBUG, "message received from %s (%s)" % (msg.getFrom(), msg.getType()))
             reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!");
             reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE);

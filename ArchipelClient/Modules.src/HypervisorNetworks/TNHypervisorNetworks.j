@@ -106,9 +106,6 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
     [_tableViewNetworks setDataSource:_datasourceNetworks];
     
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
-    
     [windowProperties setDelegate:self];
     
     [buttonActivation setEnabled:NO];
@@ -122,7 +119,9 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
+    
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
 }
 
 - (void)willShow
@@ -492,6 +491,8 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
     
+    CPLog.debug(selectedIndex);
+    
     if (selectedIndex == -1)
     {
         [buttonActivation setEnabled:NO];
@@ -499,8 +500,6 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         [buttonDelete setEnabled:NO];
         return YES;
     }
-           
-    [buttonDelete setEnabled:YES];
     
     var networkObject   = [[_datasourceNetworks networks] objectAtIndex:selectedIndex];
     
@@ -508,11 +507,13 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     {
         [buttonActivation setEnabled:NO];
         [buttonDeactivation setEnabled:YES];
+        [buttonDelete setEnabled:NO];
     }
     else
     {
         [buttonActivation setEnabled:YES];
         [buttonDeactivation setEnabled:NO];
+        [buttonDelete setEnabled:YES];
     }
     
     return YES;
