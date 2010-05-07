@@ -65,7 +65,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     CPString                _moduleLabel        @accessors(getter=moduleLabel, setter=setModuleLabel:);
     CPArray                 _moduleTypes        @accessors(getter=moduleTypes, setter=setModuleTypes:);
     CPBundle                _moduleBundle       @accessors(getter=moduleBundle, setter=setModuleBundle:);
-
+    CPMenuItem              _menuItem           @accessors(getter=menuItem, setter=setMenuItem:);
+    CPMenu                  _menu               @accessors(getter=menu, setter=setMenu:);
+    
     CPArray                 _registredSelectors;
 }
 
@@ -109,6 +111,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 - (void)willLoad
 {
     _registredSelectors = [CPArray array];
+    
+    [_menuItem setEnabled:YES];
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -123,7 +127,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
         [_connection deleteRegistredSelector:selector];
     }
-
+    
+    [_menuItem setEnabled:NO];
+    
     // remove all notification observers
     var center  = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
@@ -148,6 +154,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
 
     // [anim startAnimation];
+}
+
+- (void)menuReady
+{
+    // executed when menu is ready
 }
 
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact

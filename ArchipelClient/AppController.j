@@ -102,6 +102,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPWindow                    _helpWindow;
     CPPlatformWindow            _platformHelpWindow;
     CPMenu                      _mainMenu;
+    CPMenu                      _modulesMenu;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -188,23 +189,27 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [message setFont:[CPFont boldSystemFontOfSize:18]];
     [message setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:message];
-
+    
+    /* main menu */
+    [self makeMainMenu];
+    
     /* module Loader */
     [windowModuleLoading center]
     [windowModuleLoading orderFront:nil];
+    
     CPLog.trace(@"initializing _moduleLoader");
     _moduleLoader = [[TNModuleLoader alloc] init]
     
     [_moduleLoader setDelegate:self];
-    
     [_moduleTabView setDelegate:_moduleLoader];
     [_moduleLoader setMainToolbar:_mainToolbar];
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setModulesPath:@"Modules/"]
     [_moduleLoader setMainRightView:rightView];
-    
+    [_moduleLoader setModulesMenu:_modulesMenu];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
-    CPLog.trace(@"loading all modules");
+
+    CPLog.info(@"Starting loading all modules");
     [_moduleLoader load];
 
 
@@ -227,8 +232,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl setView:rightView];
-    
-    [self makeMainMenu];
 }
 
 - (void)makeMainMenu
@@ -240,6 +243,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     var groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""];
     var statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""];
     var navigationItem  = [_mainMenu addItemWithTitle:@"Navigation" action:nil keyEquivalent:@""];
+    var moduleItem      = [_mainMenu addItemWithTitle:@"Modules" action:nil keyEquivalent:@""];
     var helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""];
     
     // Archipel
@@ -294,7 +298,11 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [navigationMenu addItemWithTitle:@"Collapse all groups" action:@selector(collapseAllGroups:) keyEquivalent:@""];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
     
-    // navigation
+    // Modules
+    _modulesMenu = [[CPMenu alloc] init];
+    [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
+    
+    // help
     var helpMenu = [[CPMenu alloc] init];
     [helpMenu addItemWithTitle:@"Archipel Help" action:nil keyEquivalent:@""];
     [helpMenu addItemWithTitle:@"Release note" action:nil keyEquivalent:@""];

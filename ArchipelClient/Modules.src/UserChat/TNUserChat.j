@@ -69,6 +69,15 @@
      [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 }
 
+- (void)menuReady
+{
+    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""];
+    var clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
+    
+    [sendMenu setTarget:self];
+    [clearMenu setTarget:self];
+}
+
 /*! TNModule implementation.
     Will register to notification and see if messages are present in queue.
     Will recover the contents of the localstorage history.

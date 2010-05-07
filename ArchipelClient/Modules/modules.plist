@@ -56,10 +56,7 @@
                 <key>folder</key>
                 <string>VMCasting</string>
             </dict>
-            <dict>
-                <key>folder</key>
-                <string>SampleTabModule</string>
-            </dict>
+
         </array>
     </dict>
 </plist>

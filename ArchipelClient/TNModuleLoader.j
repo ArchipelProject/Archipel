@@ -59,6 +59,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     CPString                moduleType                      @accessors;
     CPString                modulesPath                     @accessors;
     CPView                  mainRightView                   @accessors;
+    CPMenu                  modulesMenu                     @accessors;
 
     id                      _modulesPList;
     CPArray                 _bundles;
@@ -454,9 +455,22 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     {
         var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
         var supportedTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+        var module              = [theViewController view];
+        
+        var moduleItem          = [modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
+        [moduleItem setEnabled:NO];
+        [moduleItem setTarget:module];
+        
+        var moduleRootMenu  = [[CPMenu alloc] init];
+        [modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
+        
+        [module setMenuItem:moduleItem];
+        [module setMenu:moduleRootMenu];
+        
+        [module setModuleTypes:supportedTypes];
+        [module setModuleTabIndex:moduleTabIndex];
 
-        [[theViewController view] setModuleTypes:supportedTypes];
-        [[theViewController view] setModuleTabIndex:moduleTabIndex];
+        [module menuReady];
 
         [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];
         frame.size.height = [[theViewController view] bounds].size.height;
