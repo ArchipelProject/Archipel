@@ -279,7 +279,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
     var string      = [datas rawString];
     
-    localStorage.setItem(identifier, string);
+    //localStorage.setItem(identifier, string);
+    
+    [self synchronizeObject:aValue forKey:aKey];
 }
 
 - (void)setBool:(BOOL)aValue forKey:(CPString)aKey

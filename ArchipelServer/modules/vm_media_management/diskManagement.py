@@ -97,6 +97,7 @@ class TNMediaManagement:
          
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "disk created")
+            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit));
             self.entity.push_change("disk", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -122,6 +123,7 @@ class TNMediaManagement:
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")
             self.entity.push_change("disk", "deleted")
+            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name));
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

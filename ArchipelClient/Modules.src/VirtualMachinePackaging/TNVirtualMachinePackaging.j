@@ -236,10 +236,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 - (void)didInstallAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"success")
-    {
-        var msg = @"The instanciation of the package has started."
-        [CPAlert alertWithTitle:@"Instanciation processing" message:msg];
-        
+    {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:msg];
     }

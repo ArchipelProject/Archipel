@@ -34,6 +34,8 @@
     CPImage     _unknownUserImage;
     CPImage     _syncImage;
     CPImage     _syncingImage;
+    CPImage     _normalStateCartoucheColor;
+    CPImage     _selectedStateCartoucheColor;
     CPButton    _syncButton;
     
     TNStropheContact    _contact;
@@ -51,12 +53,15 @@
         statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
         name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
         show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 2, 23, 14)];
+        events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
         avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         
         _syncImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sync.png"] size:CGSizeMake(16, 16)];
         _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
         _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
+
+        _normalStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
+        _selectedStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
         
         [_syncButton setImage:_syncImage];
         [_syncButton setBordered:NO];
@@ -72,7 +77,7 @@
         [self addSubview:_syncButton];
 
         
-        [events setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]]]
+        [events setBackgroundColor:_normalStateCartoucheColor];
         [events setAlignment:CPCenterTextAlignment];
         [events setVerticalAlignment:CPCenterVerticalTextAlignment];
         [events setFont:[CPFont boldSystemFontOfSize:11]];
@@ -87,6 +92,8 @@
         [show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         [show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        
+        [events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
         
         _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
@@ -147,6 +154,7 @@
     else
     {
         [[self events] setHidden:YES];
+        [_syncButton setHidden:YES];
     }
 
 }
@@ -179,8 +187,18 @@
     [super setThemeState:aState];
     [name setThemeState:aState];
     [show setThemeState:aState];
+    [events setThemeState:aState];
     
-    if ((aState == CPThemeStateSelected) && ([_contact status] != TNStropheContactStatusOffline))
+    if (aState == CPThemeStateSelected)
+    {
+           [events setBackgroundColor:_selectedStateCartoucheColor];
+    }
+    if (aState == CPThemeStateNormal)
+    {
+           [events setBackgroundColor:_normalStateCartoucheColor];
+    }
+       
+    if ((aState == CPThemeStateSelected) && ([_contact status] != TNStropheContactStatusOffline) && ([events isHidden] == YES))
         [_syncButton setHidden:NO];
     else
         [_syncButton setHidden:YES];
@@ -193,11 +211,19 @@
     [super unsetThemeState:aState];
     [name unsetThemeState:aState];
     [show unsetThemeState:aState];
+    [events unsetThemeState:aState];
     
     if (aState == CPThemeStateSelected)
+    {
         [_syncButton setHidden:YES];
+        [events setBackgroundColor:_normalStateCartoucheColor];
+    }
     else
+    {
         [_syncButton setHidden:NO];
+        [events setBackgroundColor:_selectedStateCartoucheColor];
+    }
+        
 }
 
 /*! CPCoder compliance
@@ -208,6 +234,9 @@
 
     if (self)
     {
+        _normalStateCartoucheColor = [aCoder decodeObjectForKey:@"_normalStateCartoucheColor"];
+        _selectedStateCartoucheColor = [aCoder decodeObjectForKey:@"_selectedStateCartoucheColor"];
+        
         _unknownUserImage   = [aCoder decodeObjectForKey:@"_unknownUserImage"];
         _syncButton         = [aCoder decodeObjectForKey:@"_syncButton"];
         _syncImage          = [aCoder decodeObjectForKey:@"_syncImage"];
@@ -237,6 +266,9 @@
     [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
     [aCoder encodeObject:events forKey:@"events"];
     [aCoder encodeObject:avatar forKey:@"avatar"];
+    
+    [aCoder encodeObject:_normalStateCartoucheColor forKey:@"_normalStateCartoucheColor"];
+    [aCoder encodeObject:_selectedStateCartoucheColor forKey:@"_selectedStateCartoucheColor"];
 }
 
 @end

@@ -27,6 +27,7 @@
 */
 @implementation TNOutlineViewRoster: CPOutlineView
 {
+    CPTabView   _tabViewModules @accessors(setter=setModulesTabView:);
 }
 /*! init the class
     @param aFrame CPRect the frame of the view
@@ -99,7 +100,20 @@
     
     var item = [self itemAtRow:[index firstIndex]];
     
-    [self collapseItem:item];
+    if ([self isExpandable:item])
+        [self collapseItem:item];
+    else
+    {
+        //mouarf... crappy mode on..
+        // I should patch capp..
+        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]];
+        var numberOfItems   = [_tabViewModules numberOfTabViewItems];
+        
+        if (selectedIndex > 0)
+            [_tabViewModules selectPreviousTabViewItem:nil];
+        else if (numberOfItems > 1) // avoid looping if there is one item
+            [_tabViewModules selectLastTabViewItem:nil];
+    }
 }
 
 - (void)moveRight:(id)sender
@@ -111,6 +125,19 @@
     
     var item = [self itemAtRow:[index firstIndex]];
     
-    [self expandItem:item];
+    if ([self isExpandable:item])
+        [self expandItem:item];
+    else
+    {
+        //mouarf... crappy mode on..
+        // I should patch capp..
+        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]];
+        var numberOfItems   = [_tabViewModules numberOfTabViewItems];
+        
+        if (selectedIndex < numberOfItems - 1)
+            [_tabViewModules selectNextTabViewItem:nil];
+        else if (numberOfItems > 1) // avoid looping if there is one item
+            [_tabViewModules selectFirstTabViewItem:nil];
+    }
 }
 @end

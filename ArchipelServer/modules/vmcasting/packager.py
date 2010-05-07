@@ -27,7 +27,7 @@ import shutil
 
 class TNArchipelPackage(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, entity, package_uuid):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, entity, package_uuid, requester):
         """
         initialize a TNArchipelPackage
         
@@ -48,6 +48,7 @@ class TNArchipelPackage(Thread):
         self.define_callback    = define_callback
         self.entity             = entity;
         self.package_uuid       = package_uuid;
+        self.requester          = requester;
         
         Thread.__init__(self);
     
@@ -77,6 +78,7 @@ class TNArchipelPackage(Thread):
         
         self.entity.change_status(old_status);
         self.define_callback(define_iq);
+        self.entity.shout("appliance", "I've terminated to install applicance %s as %s asked me." % (self.xvm2_package_path, self.requester));
     
     def unpack(self):
         """

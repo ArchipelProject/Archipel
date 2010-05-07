@@ -19,8 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-
-@import "TNMessageView.j"
+@import "TNMessageBoard.j"
 
 /*! @defgroup userchat Module UserChat
     @desc this module allows to chat with XMPP entities.
@@ -38,7 +37,7 @@
     @outlet CPScrollView    messagesScrollView      @accessors;
     @outlet CPImageView     imageSpinnerWriting     @accessors;
 
-    CPCollectionView        _messageCollectionView;
+    TNMessageBoard          _messageBoard;
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
 }
@@ -55,22 +54,12 @@
      [messagesScrollView setAutohidesScrollers:YES];
      
      var frame           = [[messagesScrollView contentView] bounds];
-     var messageView     = [[TNMessageView alloc] initWithFrame:CGRectMakeZero()];
+     frame.size.height = 0;
+     _messageBoard = [[TNMessageBoard alloc] initWithFrame:frame];
+     [_messageBoard setAutoresizingMask:CPViewWidthSizable];
+
      
-     [messageView setAutoresizingMask:CPViewWidthSizable];
-     
-     _messageCollectionView = [[CPCollectionView alloc] initWithFrame:frame];
-     [_messageCollectionView setAutoresizingMask:CPViewWidthSizable];
-     [_messageCollectionView setMinItemSize:CGSizeMake(100, 60)];
-     [_messageCollectionView setMaxItemSize:CGSizeMake(1700, 2024)];
-     [_messageCollectionView setMaxNumberOfColumns:1];
-     [_messageCollectionView setVerticalMargin:2.0];
-     [_messageCollectionView setSelectable:NO]
-     [_messageCollectionView setItemPrototype:[[CPCollectionViewItem alloc] init]];
-     [[_messageCollectionView itemPrototype] setView:messageView];
-     [_messageCollectionView setContent:_messages];
-     
-     [messagesScrollView setDocumentView:_messageCollectionView];
+     [messagesScrollView setDocumentView:_messageBoard];
      
      var mainBundle = [CPBundle mainBundle];
      
@@ -95,38 +84,30 @@
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
-    [_messageCollectionView setFrame:frame];
-
-    // var defaults = [TNUserDefaults standardUserDefaults];
-    // var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
-    // 
-    // console.log(lastConversation);
-    // if (lastConversation)
-    //     _messages = lastConversation;
     
-    var lastConversation = JSON.parse(localStorage.getItem("communicationWith" + [_entity JID]));
+    [_messageBoard removeAllMessages:nil];
+    
+    _messages = [CPArray array];
+    
+    var defaults = [TNUserDefaults standardUserDefaults];
+    var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
     
     if (lastConversation)
-    {
-        for (var i = 0; i < lastConversation.length; i++)
-        {
-            var dict        = lastConversation[i];
-            var aSender     = dict._buckets.name        // yes I know this is awful. But
-            var aMessage    = dict._buckets.message;    // I've passed 2 hours, and I'm tired of this shitty bug.
-            var aColor      = dict._buckets.color;
-    
-            if (! aColor)
-                aColor = "ffffff";
-    
-            [_messages addObject:[CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", aColor, @"color"]];
-        }
-    }
+        _messages = lastConversation;
 
-    [_messageCollectionView reloadContent];
+    for (var j = 0; j < [lastConversation count]; j++)
+    {
+        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"];
+        var message = [[lastConversation objectAtIndex:j] objectForKey:@"message"];
+        var color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"];
+        var date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
+        
+        [_messageBoard addMessage:message from:author color:color date:date];
+    }
     
     var frame = [[messagesScrollView documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
-    [_messageCollectionView scrollPoint:newScrollOrigin];
+    [_messageBoard scrollPoint:newScrollOrigin];
 }
 
 /*! TNModule implementation
@@ -135,14 +116,9 @@
 - (void)willUnload
 {
     [super willUnload];
-
-    localStorage.setItem("communicationWith" + [_entity JID], JSON.stringify(_messages));
-    // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setArray:_messages forKey:"communicationWith" + [_entity JID]];
-    // console.log("HERE" + _messages);
-    
+  
     [_messages removeAllObjects];
-    [_messageCollectionView reloadContent];
+    [_messageBoard removeAllMessages:nil];
 }
 
 /*! TNModule implementation
@@ -158,7 +134,11 @@
     {
         if ([stanza containsChildrenWithName:@"body"])
         {
-            [self appendMessageToBoard:[[stanza firstChildWithName:@"body"] text] from:[stanza valueForAttribute:@"from"]];
+            var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity nickname];
+            var message = [[stanza firstChildWithName:@"body"] text];
+            var color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity nickname];
+
+            [self appendMessageToBoard:message from:from];            
         }
     }
 
@@ -215,16 +195,20 @@
 */
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender
 {
-    var color           = (aSender == @"me") ? "d9dfe8" : "ffffff";
-    var newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color"];
+    var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"];
+    var date            = [CPDate date];
+    var newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"];
     var frame           = [[messagesScrollView documentView] frame];
     
     [_messages addObject:newMessageDict];
-    [_messageCollectionView reloadContent];
+    [_messageBoard addMessage:aMessage from:aSender color:color date:date];
     
     // scroll to bottom;
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
-    [_messageCollectionView scrollPoint:newScrollOrigin];
+    [_messageBoard scrollPoint:newScrollOrigin];
+    
+    var defaults = [TNUserDefaults standardUserDefaults];
+    [defaults setObject:_messages forKey:"communicationWith" + [_entity JID]];
 }
 
 /*! performed when TNStropheContactMessageReceivedNotification is received from current entity.
@@ -240,7 +224,7 @@
         {
             var messageBody = [[stanza firstChildWithName:@"body"] text];
             [imageSpinnerWriting setHidden:YES];
-            [self appendMessageToBoard:messageBody from:[stanza valueForAttribute:@"from"]];
+            [self appendMessageToBoard:messageBody from:[_entity nickname]];
 
             CPLog.info("message received : " + messageBody);
         }
@@ -285,9 +269,11 @@
 */
 - (IBAction)clearHistory:(id)aSender
 {
-    localStorage.removeItem("communicationWith" + [_entity JID]);
+    var defaults = [TNUserDefaults standardUserDefaults];
+    [defaults removeObjectForKey:"communicationWith" + [_entity JID]];
+    
     [_messages removeAllObjects];
-    [_messageCollectionView reloadContent];
+    [_messageBoard removeAllMessages:nil];
 }
 
 @end

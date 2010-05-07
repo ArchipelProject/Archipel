@@ -40,6 +40,7 @@ LOOP_RESTART = 2
 
 
 ARCHIPEL_NS_IQ_PUSH = "archipel:push"
+ARCHIPEL_NS_SERVICE_MESSAGE = "archipel:service:usermessage"
 
 class TNArchipelBasicXMPPClient(object):
     """
@@ -123,7 +124,7 @@ class TNArchipelBasicXMPPClient(object):
         
         self.get_vcard()
         self.perform_all_registered_auth_actions()
-
+        
         self.loop();
     
     
@@ -231,9 +232,13 @@ class TNArchipelBasicXMPPClient(object):
         @param msg: the received message 
         """
         
-        if msg.getBody():
+        if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and msg.getBody():
+            log(self, LOG_LEVEL_DEBUG, "message received from %s (%s)" % (msg.getFrom(), msg.getType()))
             reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!");
+            reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE);
             conn.send(reply);
+        else:
+            log(self, LOG_LEVEL_DEBUG, "message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
 
     ######################################################################################################
     ### Public method
@@ -314,14 +319,23 @@ class TNArchipelBasicXMPPClient(object):
     
     
     def push_change(self, namespace, change):
-        ns = "archipel:push:" + namespace;
+        ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace;
         self.roster = self.xmppclient.getRoster();
         for item in self.roster.getItems():
-            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change});
+            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change}, xmlns=ARCHIPEL_NS_IQ_PUSH);
             log(self, LOG_LEVEL_DEBUG, "pushing " + ns + " / " + change + " to item " + str(item))
             self.xmppclient.send(push_message)
     
     
+    def shout(self, subject, message):
+        """send a message to evrybody in roster"""
+        self.roster = self.xmppclient.getRoster();
+        for item in self.roster.getItems():
+            broadcast = xmpp.Message(to=str(item), subject=subject, body=message, typ=ARCHIPEL_NS_SERVICE_MESSAGE);
+            log(self, LOG_LEVEL_DEBUG, "shouting message subject:%s message:%s" % (subject, message))
+            self.xmppclient.send(broadcast)
+    
+
     def add_jid(self, jid, groups=[]):
         """
         Add a jid to the VM Roster and authorizes it
@@ -381,8 +395,8 @@ class TNArchipelBasicXMPPClient(object):
         resp = self.xmppclient.SendAndWaitForResponse(stanza=node_iq)
         self.vCard = resp.getTag("vCard")
         log(self, LOG_LEVEL_INFO, "own vcard retrieved");
-        
-        
+    
+    
     def set_vcard_entity_type(self, params):
         """
         allows to define a vCard type for the entry

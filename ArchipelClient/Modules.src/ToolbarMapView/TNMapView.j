@@ -149,9 +149,9 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 - (void)willLoad
 {
     [super willLoad];
-
-    //[_mainMapView setFrame:bounds];
-    //[mapViewContainer setFrame:bounds];
+    // 
+    // [_mainMapView setFrame:[[self superview] bounds]];
+    // [mapViewContainer setFrame:[[self superview] bounds]];
 }
 
 - (void)willShow

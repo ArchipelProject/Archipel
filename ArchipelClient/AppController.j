@@ -202,7 +202,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setModulesPath:@"Modules/"]
     [_moduleLoader setMainRightView:rightView];
-
+    
+    [_rosterOutlineView setModulesTabView:_moduleTabView];
     CPLog.trace(@"loading all modules");
     [_moduleLoader load];
 
@@ -280,6 +281,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     // navigation
     var navigationMenu = [[CPMenu alloc] init];
+    [navigationMenu addItemWithTitle:@"Hide main menu" action:@selector(switchMainMenu:) keyEquivalent:@"U"];
     [navigationMenu addItemWithTitle:@"Search entity" action:@selector(focusFilter:) keyEquivalent:@"F"];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
     [navigationMenu addItemWithTitle:@"Select next entity" action:@selector(selectNextEntity:) keyEquivalent:@"]"];
@@ -304,7 +306,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_mainMenu setSubmenu:helpMenu forItem:helpItem];
     
     [CPApp setMainMenu:_mainMenu];
-    [CPMenu setMenuBarVisible:YES];
+    [CPMenu setMenuBarVisible:NO];
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
@@ -335,6 +337,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     CPLog.info(@"starting to disconnect");
     [_mainRoster disconnect];
+    
+    [CPMenu setMenuBarVisible:NO];
 }
 
 - (IBAction)addContact:(id)sender
@@ -478,6 +482,14 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)renameGroup:(id)sender
 {
     [[propertiesView entryName] mouseDown:nil];
+}
+
+- (IBAction)switchMainMenu:(id)sender
+{
+    if ([CPMenu menuBarVisible])
+        [CPMenu setMenuBarVisible:NO];
+    else
+        [CPMenu setMenuBarVisible:YES];
 }
 
 /*! Delegate of toolbar imutables toolbar items.
@@ -631,7 +643,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     [_mainRoster getRoster];
     
-    
+    [CPMenu setMenuBarVisible:YES];
     
     [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
     

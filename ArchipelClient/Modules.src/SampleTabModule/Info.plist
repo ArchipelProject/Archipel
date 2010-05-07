@@ -73,6 +73,7 @@
             <string>virtualmachine</string>
             <string>hypervisor</string>
             <string>user</string>
+            <string>group</string>
         </array>
         
         <!--

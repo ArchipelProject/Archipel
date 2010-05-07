@@ -191,6 +191,7 @@ class TNHypervisorVMCasting:
           del self.download_queue[uuid];
           self.database_connection.commit()
           self.entity.push_change("vmcasting", "download_complete")
+          self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid));
           self.entity.change_status(self.old_entity_status);
     
     
@@ -296,6 +297,7 @@ class TNHypervisorVMCasting:
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url);
             self.database_connection.commit();
             self.entity.push_change("vmcasting", "register")
+            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()));
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -319,6 +321,7 @@ class TNHypervisorVMCasting:
             self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid);
             self.database_connection.commit()
             self.entity.push_change("vmcasting", "unregister")
+            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()));
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -470,6 +473,7 @@ class TNHypervisorVMCasting:
             self.database_connection.commit();
             
             self.entity.push_change("vmcasting", "appliancedeleted");
+            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()));
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)            

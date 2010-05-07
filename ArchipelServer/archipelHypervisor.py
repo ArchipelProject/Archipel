@@ -235,7 +235,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
-            
+            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid));
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
             
@@ -284,7 +284,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
-            
+            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()));
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         

@@ -110,6 +110,7 @@ class TNArchipelPackageInstancier:
         """
         try:
             uuid = iq.getTag("query").getTag("uuid").getCDATA();
+            requester = iq.getFrom();
             
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid));
             for values in self.cursor:
@@ -117,7 +118,7 @@ class TNArchipelPackageInstancier:
             
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions));
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path));
-            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.entity, uuid);
+            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.entity, uuid, requester);
             
             appliance_packager.start();
             

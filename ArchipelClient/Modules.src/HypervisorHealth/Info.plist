@@ -29,6 +29,6 @@
         <key>RefreshStatsInterval</key>
         <integer>5</integer>
         <key>StatsHistoryCollectionSize</key>
-        <integer>50</integer>
+        <integer>500</integer>
     </dict>
 </plist>

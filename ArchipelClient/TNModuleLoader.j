@@ -136,18 +136,19 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
-    if (anItem && [self entity] && ([[self mainTabView] numberOfTabViewItems] > 0))
+    if (anItem && [self entity] && ([mainTabView numberOfTabViewItems] > 0))
     {
         var identifier;
+        var memid;
+        var defaults                = [TNUserDefaults standardUserDefaults];
+        var currentSelectedIndex    = [mainTabView indexOfTabViewItem:anItem];
         
         if ([[self entity] class] == TNStropheContact)
             identifier = [[self entity] JID];
         else
             identifier = [[self entity] name];
-            
-        var currentSelectedIndex    = [[self mainTabView] indexOfTabViewItem:anItem];
-        var defaults                = [TNUserDefaults standardUserDefaults];
-        var memid                   = @"selectedTabIndexFor" + identifier;
+
+        memid = @"selectedTabIndexFor" + identifier;
         
         [defaults setInteger:currentSelectedIndex forKey:memid];
     }

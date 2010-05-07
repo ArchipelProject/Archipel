@@ -282,33 +282,64 @@
 }
 @end
 
-@implementation CPWindow (fadeInWindow)
+// @implementation CPWindow (fadeInWindow)
+// 
+// - (IBAction)orderFront:(id)sender
+// {
+//     if (![self isVisible])
+//     {
+//         var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+//         var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+// 
+//         [anim setDuration:0.3];
+//         [anim startAnimation];
+//     }
+//     
+//     [_platformWindow orderFront:self];
+//     [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
+//     
+//     if (_firstResponder === self || !_firstResponder)
+//         [self makeFirstResponder:[self initialFirstResponder]];
+//     
+//     if (!CPApp._keyWindow)
+//         [self makeKeyWindow];
+//     
+//     if (!CPApp._mainWindow)
+//         [self makeMainWindow];
+// }
+// 
+// - (IBAction)orderOut:(id)sender
+// {
+//     var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeOutEffect, CPViewAnimationEffectKey];
+//     var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+// 
+//     [anim setDuration:0.3];
+//     [anim setDelegate:self]
+//     [anim startAnimation];
+// }
+// 
+// - (void)animationDidEnd:(CPViewAnimation)anAnimation
+// {
+//     if ([self _sharesChromeWithPlatformWindow])
+//         [_platformWindow orderOut:self];
+// 
+//     if ([_delegate respondsToSelector:@selector(windowWillClose:)])
+//         [_delegate windowWillClose:self];
+// 
+//     [_platformWindow order:CPWindowOut window:self relativeTo:nil];
+// 
+//     [self _updateMainAndKeyWindows];
+// }
+// 
+// @end
 
-- (IBAction)orderFront:(id)sender
+
+@implementation TNStropheGroup (majName)
+- (CPString)description
 {
-    if (![self isVisible])
-    {
-        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
-        var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-
-        [anim setDuration:0.3];
-        [anim startAnimation];
-    }
-    
-    [_platformWindow orderFront:self];
-    [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
-    
-    if (_firstResponder === self || !_firstResponder)
-        [self makeFirstResponder:[self initialFirstResponder]];
-    
-    if (!CPApp._keyWindow)
-        [self makeKeyWindow];
-    
-    if (!CPApp._mainWindow)
-        [self makeMainWindow];
+    return [_name uppercaseString];
 }
 @end
-
 
 @implementation TNTableView : CPTableView
 {
