@@ -275,6 +275,15 @@ function generateMacAddr()
     [super willUnload];
 
     [maskingView removeFromSuperview];
+    
+    [[_nicsDatasource nics] removeAllObjects];
+    [[[self _drivesDatasource] drives] removeAllObjects];
+    [fieldMemory setStringValue:@""];
+    [buttonBoot selectItemAtIndex:0];
+    [buttonArchitecture selectItemAtIndex:0];
+    [buttonNumberCPUs selectItemAtIndex:0];
+    [buttonVNCKeymap selectItemAtIndex:0];
+    [buttonHypervisor selectItemAtIndex:0];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
