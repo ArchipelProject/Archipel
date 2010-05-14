@@ -58,43 +58,47 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableViewNetworks setAllowsColumnReordering:YES];
     [_tableViewNetworks setAllowsColumnResizing:YES];
     [_tableViewNetworks setAllowsEmptySelection:YES];
     [_tableViewNetworks setTarget:self];
     [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
-
+    
     var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"isNetworkEnabled"];
     var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [columNetworkEnabled setDataView:imgView];
     [columNetworkEnabled setWidth:16];
     [[columNetworkEnabled headerView] setStringValue:@""];
-
-
+    
     var columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"];
-    [columNetworkName setResizingMask:CPTableColumnAutoresizingMask ];
-    [[columNetworkName headerView] setStringValue:@"Network Name"];
+    [[columNetworkName headerView] setStringValue:@"Name"];
+    [columNetworkName setWidth:200];
+    [columNetworkName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkName" ascending:YES]];
 
     var columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"];
-    [columBridgeName setResizingMask:CPTableColumnAutoresizingMask ];
-    [[columBridgeName headerView] setStringValue:@"Bridge Name"];
+    [[columBridgeName headerView] setStringValue:@"Bridge"];
+    [columBridgeName setWidth:60];
+    [columBridgeName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeName" ascending:YES]];
 
     var columForwardMode = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardMode"];
-    [columForwardMode setResizingMask:CPTableColumnAutoresizingMask ];
     [[columForwardMode headerView] setStringValue:@"Forward Mode"];
+    [columForwardMode setWidth:100];
+    [columForwardMode setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardMode" ascending:YES]];
 
     var columForwardDevice = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardDevice"];
-    [columForwardDevice setResizingMask:CPTableColumnAutoresizingMask ];
     [[columForwardDevice headerView] setStringValue:@"Forward Device"];
+    [columForwardDevice setWidth:120];
+    [columForwardDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardDevice" ascending:YES]];
 
     var columBridgeIP = [[CPTableColumn alloc] initWithIdentifier:@"bridgeIP"];
-    [columBridgeIP setResizingMask:CPTableColumnAutoresizingMask ];
     [[columBridgeIP headerView] setStringValue:@"Bridge IP"];
+    [columBridgeIP setWidth:70];
+    [columBridgeIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeIP" ascending:YES]];
 
     var columBridgeNetmask = [[CPTableColumn alloc] initWithIdentifier:@"bridgeNetmask"];
-    [columBridgeNetmask setResizingMask:CPTableColumnAutoresizingMask ];
     [[columBridgeNetmask headerView] setStringValue:@"Bridge Netmask"];
+    [columBridgeNetmask setWidth:150];
+    [columBridgeNetmask setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeNetmask" ascending:YES]];
 
     [_tableViewNetworks addTableColumn:columNetworkEnabled];
     [_tableViewNetworks addTableColumn:columNetworkName];
@@ -104,14 +108,15 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [_tableViewNetworks addTableColumn:columBridgeIP];
     [_tableViewNetworks addTableColumn:columBridgeNetmask];
 
+    [_datasourceNetworks setTable:_tableViewNetworks];
     [_tableViewNetworks setDataSource:_datasourceNetworks];
+    [_tableViewNetworks setDelegate:self];
     
     [windowProperties setDelegate:self];
     
     [buttonActivation setEnabled:NO];
     [buttonDeactivation setEnabled:NO];
     [buttonDelete setEnabled:NO];
-
 }
 
 - (void)willLoad

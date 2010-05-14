@@ -34,6 +34,7 @@
 @implementation TNDatasourceVMs : CPObject
 {
     CPArray VMs @accessors;
+    CPTableView table @accessors;
 }
 
 - (id)init
@@ -62,3 +63,11 @@
 
     return [[[self VMs] objectAtIndex:aRow] valueForKey:identifier];
 }
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [VMs sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
+}
+

@@ -168,23 +168,28 @@ function generateMacAddr()
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [driveColumnType setEditable:YES];
     [[driveColumnType headerView] setStringValue:@"Type"];
-
+    [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
+    
     var driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"];
     [driveColumnDevice setEditable:YES];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
+    [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
 
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
     [driveColumnTarget setEditable:YES];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
+    [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
 
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [driveColumnSource setWidth:300];
     [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
+    [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
     [driveColumnBus setEditable:YES];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
+    [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
 
     [_tableDrives addTableColumn:driveColumnType];
     [_tableDrives addTableColumn:driveColumnDevice];
@@ -192,6 +197,7 @@ function generateMacAddr()
     [_tableDrives addTableColumn:driveColumnBus];
     [_tableDrives addTableColumn:driveColumnSource];
 
+    [_drivesDatasource setTable:_tableDrives];
     [_tableDrives setDataSource:_drivesDatasource];
 
 
@@ -215,25 +221,30 @@ function generateMacAddr()
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [columnType setEditable:YES];
     [[columnType headerView] setStringValue:@"Type"];
-
+    // [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
+    
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
     [columnModel setEditable:YES];
     [[columnModel headerView] setStringValue:@"Model"];
+    // [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
 
     var columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
     [columnMac setEditable:YES];
     [columnMac setWidth:150];
     [[columnMac headerView] setStringValue:@"MAC"];
+    // [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [columnSource setEditable:YES];
     [[columnSource headerView] setStringValue:@"Source"];
+    // [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
     [_tableNetworkCards addTableColumn:columnSource];
     [_tableNetworkCards addTableColumn:columnType];
     [_tableNetworkCards addTableColumn:columnModel];
     [_tableNetworkCards addTableColumn:columnMac];
 
+    [_nicsDatasource setTable:_tableNetworkCards];
     [_tableNetworkCards setDataSource:_nicsDatasource];
 
 

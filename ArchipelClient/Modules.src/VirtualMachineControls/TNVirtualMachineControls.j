@@ -19,6 +19,12 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNArchipelControlNotification                   = @"TNArchipelControlNotification";
+TNArchipelControlPlay                           = @"TNArchipelControlPlay";
+TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
+TNArchipelControlResume                         = @"TNArchipelControlResume";
+TNArchipelControlStop                           = @"TNArchipelControlStop";
+TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 
 TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
 TNArchipelTypeVirtualMachineControlInfo        = @"info";
@@ -91,6 +97,9 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setTarget:self];
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
 }
 
 /* TNModule implementation */
@@ -143,6 +152,42 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+}
+
+- (void)willUnload
+{
+    [super willUnload];
+    
+    var center = [CPNotificationCenter defaultCenter];
+
+    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
+}
+
+- (void)didReceiveControllNotification:(CPNotification)aNotification
+{
+    var params                  = [aNotification userInfo];
+    var currentEntityHandler    = _entity;
+    var commandTargetEntity     = [params objectForKey:@"entity"];
+    var command                 = [params objectForKey:@"command"];
+    
+    _entity = commandTargetEntity; 
+    
+    switch(command)
+    {
+        case TNArchipelControlPlay:
+            [self play];
+            break;
+        
+        case (TNArchipelControlSuspend || TNArchipelControlResume):
+            [self pause];
+            break;
+        
+        case TNArchipelControlReboot:
+            [self reboot];
+            break;
+    }
+    
+    _entity = currentEntityHandler;
 }
 
 /* Notifications listener */

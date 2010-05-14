@@ -23,7 +23,7 @@
             - TNUserDefaultStorageTypeNoStorage
     -->
     <key>TNUserDefaultStorageType</key>
-    <string>TNUserDefaultStorageTypeCookie</string>
+    <string>TNUserDefaultStorageTypeHTML5</string>
     
     <!--
         Url of the welcome page. It can be any URL (online) or "local" to 
@@ -33,7 +33,10 @@
     <string>http://antoinemercadal.fr/archipelhelp/</string>
     
     <key>TNArchipelVersion</key>
-    <string>Alpha-0.7</string>
+    <string>Alpha-0.1 (Beethoven)</string>
+    
+    <key>TNArchipelCopyright</key>
+    <string>Copyright © 2010 Antoine Mercadal</string>
     
 </dict>
 </plist>

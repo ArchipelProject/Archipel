@@ -44,6 +44,7 @@
 @implementation TNDatasourceMedias : CPObject
 {
     CPArray medias @accessors;
+    CPTableView table @accessors;
 }
 
 - (id)init
@@ -71,5 +72,12 @@
     var identifier = [aCol identifier];
 
     return [[[self medias] objectAtIndex:aRow] valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [medias sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 @end

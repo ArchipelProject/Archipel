@@ -203,6 +203,11 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [self makeMainMenu];
     
     /* module Loader */
+    var view    = [windowModuleLoading contentView];
+    var frame   = [windowModuleLoading frame];
+    windowModuleLoading = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
+    [windowModuleLoading setContentView:view];
+    //[windowModuleLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
     [windowModuleLoading center]
     [windowModuleLoading orderFront:nil];
     
@@ -247,6 +252,17 @@ TNArchipelStatusBusyLabel       = @"Busy";
     _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
     _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
     _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
+    
+    // trick
+    var view    = [connectionWindow contentView];
+    var frame   = [connectionWindow frame];
+    connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
+    [connectionWindow setContentView:view];
+    [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
+    
+    
+    // copyright;
+    [self copyright];
 }
 
 - (void)makeMainMenu
@@ -830,4 +846,23 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
+
+- (void)copyright
+{
+    var bundle = [CPBundle bundleForClass:[self class]];
+    
+    var copy = document.createElement("div");
+    copy.style.position = "absolute";
+    copy.style.fontSize = "10px";
+    copy.style.color = "#5a5a5a";
+    copy.style.width = "300px";
+    copy.style.bottom = "8px";
+    copy.style.left = "50%";
+    copy.style.textAlign = "center";
+    copy.style.marginLeft = "-150px";
+    copy.style.textShadow = "0px 1px 0px white";
+    copy.innerHTML =  [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] + @" - " + [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"];
+    document.body.appendChild(copy);
+    
+}
 @end

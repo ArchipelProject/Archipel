@@ -69,18 +69,21 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances setAllowsColumnReordering:YES];
     [_tableAppliances setAllowsColumnResizing:YES];
     [_tableAppliances setAllowsEmptySelection:YES];
-    [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [columnName setWidth:200]
     [[columnName headerView] setStringValue:@"Name"];
-
+    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
+    
     var columnComment = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
     [columnComment setWidth:250];
     [[columnComment headerView] setStringValue:@"Comment"];
+    [columnComment setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
     
     var columnUUID = [[CPTableColumn alloc] initWithIdentifier:@"UUID"];
     [[columnUUID headerView] setStringValue:@"UUID"];
+    [columnUUID setWidth:250];
+    [columnUUID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"UUID" ascending:YES]];
     
     var columnInUsed    = [[CPTableColumn alloc] initWithIdentifier:@"isUsed"];
     var imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
@@ -94,7 +97,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances addTableColumn:columnComment];
     [_tableAppliances addTableColumn:columnUUID];
 
-
+    [_appliancesDatasource setTable:_tableAppliances];
     [_tableAppliances setDataSource:_appliancesDatasource];
 }
 

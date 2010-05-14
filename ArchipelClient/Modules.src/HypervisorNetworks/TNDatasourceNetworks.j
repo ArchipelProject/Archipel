@@ -74,7 +74,7 @@
 @implementation TNDatasourceNetworks : CPObject
 {
     CPArray networks @accessors;
-
+    CPTableView table @accessors;
     CPImage _imageNetworkActive;
     CPImage _imageNetworkUnactive;
 }
@@ -118,5 +118,12 @@
     }
     else
         return [[[self networks] objectAtIndex:aRow] valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [networks sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 

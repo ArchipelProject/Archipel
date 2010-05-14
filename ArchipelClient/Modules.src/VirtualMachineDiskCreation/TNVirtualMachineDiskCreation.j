@@ -78,24 +78,29 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [mediaColumName setWidth:150];
     [[mediaColumName headerView] setStringValue:@"Name"];
-
+    [mediaColumName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
+    
     var mediaColumVirtualSize = [[CPTableColumn alloc] initWithIdentifier:@"virtualSize"];
     [mediaColumVirtualSize setWidth:80];
-    [[mediaColumVirtualSize headerView] setStringValue:@"VirtualSize"];
-
+    [[mediaColumVirtualSize headerView] setStringValue:@"Virtual size"];
+    [mediaColumVirtualSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"virtualSize" ascending:YES]];
+    
     var mediaColumDiskSize = [[CPTableColumn alloc] initWithIdentifier:@"diskSize"];
     [mediaColumDiskSize setWidth:80];
-    [[mediaColumDiskSize headerView] setStringValue:@"RealSize"];
-
+    [[mediaColumDiskSize headerView] setStringValue:@"Real size"];
+    [mediaColumDiskSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"diskSize" ascending:YES]];
+    
     var mediaColumPath = [[CPTableColumn alloc] initWithIdentifier:@"path"];
     [mediaColumPath setWidth:500];
-    [[mediaColumPath headerView] setStringValue:@"HypervisorPath"];
-
+    [[mediaColumPath headerView] setStringValue:@"Path"];
+    [mediaColumPath setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"path" ascending:YES]];
+    
     [_tableMedias addTableColumn:mediaColumName];
     [_tableMedias addTableColumn:mediaColumVirtualSize];
     [_tableMedias addTableColumn:mediaColumDiskSize];
     [_tableMedias addTableColumn:mediaColumPath];
 
+    [_mediasDatasource setTable:_tableMedias];
     [_tableMedias setDataSource:_mediasDatasource];
     
     [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];

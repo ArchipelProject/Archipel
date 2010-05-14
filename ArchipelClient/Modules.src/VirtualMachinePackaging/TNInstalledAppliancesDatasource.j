@@ -77,6 +77,7 @@ TNArchipelApplianceInstalled            = 1;
 @implementation TNInstalledAppliancesDatasource : CPObject
 {
     CPArray _content @accessors(getter=content);
+    CPTableView table @accessors;
 }
 
 - (id)init
@@ -104,5 +105,12 @@ TNArchipelApplianceInstalled            = 1;
     var identifier = [aCol identifier];
 
     return [[_content objectAtIndex:aRow] valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [_content sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 @end

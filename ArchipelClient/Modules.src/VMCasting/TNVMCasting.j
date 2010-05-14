@@ -65,29 +65,33 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     _mainOutlineView = [[CPOutlineView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainOutlineView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainOutlineView setDataSource:_castsDatasource];
+    [_castsDatasource setTable:_mainOutlineView];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
-    [[columnName headerView] setStringValue:@"VM Casts"];
+    [[columnName headerView] setStringValue:@"VMCasts"];
     [columnName setResizingMask:CPTableColumnAutoresizingMask];
     [columnName setWidth:200];
+    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     
     var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
     [[columnDescription headerView] setStringValue:@"Comment"];
     [columnDescription setResizingMask:CPTableColumnAutoresizingMask];
     [columnDescription setWidth:250];
+    [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
     
     var columnUrl = [[CPTableColumn alloc] initWithIdentifier:@"URL"];
     [[columnUrl headerView] setStringValue:@"URL"];
     [columnUrl setWidth:250];
+    [columnUrl setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"URL" ascending:YES]];
     
     var columnSize = [[CPTableColumn alloc] initWithIdentifier:@"size"];
     [[columnSize headerView] setStringValue:@"Size"];
     [columnSize setResizingMask:CPTableColumnAutoresizingMask];
+    [columnSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"size" ascending:YES]];
     
     var columnStatus        = [[CPTableColumn alloc] initWithIdentifier:@"status"];
     [columnStatus setWidth:120];
     var dataViewPrototype   = [[TNCellApplianceStatus alloc] init];
-      
     [[columnStatus headerView] setStringValue:@"Status"];
     [[columnStatus setDataView:dataViewPrototype]];
     

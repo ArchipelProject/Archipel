@@ -109,6 +109,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     CPArray     _contents       @accessors(getter=contents);
     BOOL        filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
     CPString    filter          @accessors;
+    CPTableView table           @accessors;
 }
 
 /*! Initialization of the class
@@ -226,6 +227,13 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     var identifier = [tableColumn identifier];
     
     return [item valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [_contents sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 
 @end

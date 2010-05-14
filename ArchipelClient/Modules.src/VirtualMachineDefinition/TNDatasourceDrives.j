@@ -45,6 +45,7 @@
 @implementation TNDatasourceDrives : CPObject
 {
     CPArray drives @accessors;
+    CPTableView table @accessors;
 }
 
 - (id)init
@@ -72,6 +73,13 @@
     var identifier = [aCol identifier];
 
     return [[[self drives] objectAtIndex:aRow] valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [drives sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 
 @end

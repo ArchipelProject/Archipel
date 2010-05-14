@@ -52,6 +52,7 @@ class TNArchipelPackage(Thread):
         
         Thread.__init__(self);
     
+    
     def run(self):
         
         old_status = self.entity.xmppstatus
@@ -80,6 +81,7 @@ class TNArchipelPackage(Thread):
         self.define_callback(define_iq);
         self.entity.shout("appliance", "I've terminated to install applicance %s as %s asked me." % (self.xvm2_package_path, self.requester));
     
+    
     def unpack(self):
         """
         unpack the given xvm2 package
@@ -99,7 +101,7 @@ class TNArchipelPackage(Thread):
             for aFile in os.listdir(self.extract_path):
                 full_path = os.path.join(self.extract_path, aFile);
                 log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
-            
+                
                 if os.path.splitext(full_path)[-1] == ".gz":
                     log(self, LOG_LEVEL_INFO, "found one gziped disk : %s" % full_path)
                     i = open(full_path, 'rb')
@@ -109,21 +111,20 @@ class TNArchipelPackage(Thread):
                     o.close()
                     log(self, LOG_LEVEL_INFO, "file unziped at : %s" % full_path.replace(".gz", ""))
                     self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "");
-            
+                    
                 if os.path.splitext(full_path)[-1] in self.disk_extensions:
                     log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
                     self.disk_files[aFile] = full_path;
-            
+                    
                 if aFile == "description.xml":
                     log(self, LOG_LEVEL_DEBUG, "found description.xml file : %s" % full_path)
                     o = open(full_path, 'r');
                     self.description_file = o.read();
                     o.close();
-            
+                    
             self.entity.push_change("vmcasting", "applianceunpacked");
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, str(ex));
-            
     
     
     def update_description(self):

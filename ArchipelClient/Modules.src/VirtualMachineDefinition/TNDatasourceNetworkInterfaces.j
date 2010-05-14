@@ -25,6 +25,7 @@
 @implementation TNDatasourceNetworkInterfaces : CPObject
 {
     CPArray nics @accessors;
+    CPTableView table @accessors;
 }
 
 - (id)init
@@ -53,6 +54,13 @@
     var identifier = [aCol identifier];
 
     return [[[self nics] objectAtIndex:aRow] valueForKey:identifier];
+}
+
+- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
+{
+    [nics sortUsingDescriptors:[aTableView sortDescriptors]];
+
+    [table reloadData];
 }
 
 @end

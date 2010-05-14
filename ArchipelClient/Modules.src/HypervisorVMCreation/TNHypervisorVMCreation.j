@@ -65,10 +65,12 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
-
+    [vmColumNickname setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
+    
     var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
+    [vmColumJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"JID" ascending:YES]];
 
     var vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
     var imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
@@ -82,6 +84,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [_tableVirtualMachines addTableColumn:vmColumNickname];
     [_tableVirtualMachines addTableColumn:vmColumJID];
 
+    [_virtualMachinesDatasource setTable:_tableVirtualMachines];
     [_tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 }
 
