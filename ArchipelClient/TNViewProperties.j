@@ -51,7 +51,7 @@
 */
 - (id)initWithFrame:(CPRect)aRect
 {
-    _height = 180;
+    _height = 210;
 
     aRect.size.height = _height;
     self = [super initWithFrame:aRect];

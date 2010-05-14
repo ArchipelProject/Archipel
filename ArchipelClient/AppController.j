@@ -85,6 +85,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     @outlet CPWindow            windowModuleLoading         @accessors;
     @outlet CPSplitView         mainHorizontalSplitView     @accessors;
     @outlet TNViewProperties    propertiesView              @accessors;
+    @outlet CPImageView         ledOut                      @accessors;
+    @outlet CPImageView         ledIn                       @accessors;
+    @outlet CPView              statusBar                   @accessors;
     @outlet TNWindowAddContact  addContactWindow            @accessors;
     @outlet TNWindowAddGroup    addGroupWindow              @accessors;
     @outlet TNWindowConnection  connectionWindow            @accessors;
@@ -103,6 +106,12 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPPlatformWindow            _platformHelpWindow;
     CPMenu                      _mainMenu;
     CPMenu                      _modulesMenu;
+    
+    CPImage                     _imageLedInData;
+    CPImage                     _imageLedOutData;
+    CPImage                     _imageLedNoData;
+    CPTimer                     _ledInTimer;
+    CPTimer                     _ledOutTimer;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -112,7 +121,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 {
     CPLogRegister(CPLogConsole);
     
-    var bundle      = [CPBundle bundleForClass:self];
+    var bundle      = [CPBundle mainBundle];
     var defaults    = [TNUserDefaults standardUserDefaults];
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
@@ -232,6 +241,12 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl setView:rightView];
+    
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"statusBarBg.png"]]]];
+    
+    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
+    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
+    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
 }
 
 - (void)makeMainMenu
@@ -657,9 +672,38 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     var user = [[_mainRoster connection] JID];
     
+    [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
+    [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+    
     var growl = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user];
 }
+
+- (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
+{
+    [ledIn setImage:_imageLedInData];
+    
+    if (_ledInTimer)
+        [_ledInTimer invalidate];
+    
+    _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
+}
+
+- (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
+{
+    [ledOut setImage:_imageLedOutData];
+    
+    if (_ledOutTimer)
+        [_ledOutTimer invalidate];
+    _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
+}
+
+- (void)timeOutDataLed:(CPTimer)aTimer
+{
+    [[aTimer userInfo] setImage:_imageLedNoData];
+}
+
+
 
 /*! Notification responder of TNStropheConnection
     will be performed on logout
