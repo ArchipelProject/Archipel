@@ -110,6 +110,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
 }
 
 - (void)willUnload
@@ -121,6 +122,11 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 {
     [super willShow];
 
+    [self reload:nil];
+}
+
+- (void)reload:(CPNotification)aNotification
+{
     [fieldName setStringValue:[_entity name]];
     
     [[_datasourceGroupVM VMs] removeAllObjects];

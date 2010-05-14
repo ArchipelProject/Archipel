@@ -76,6 +76,23 @@ TNXMLDescVNCKeymapEN_US         = @"en-us";
 TNXMLDescVNCKeymaps             = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR];
 
 
+TNXMLDescLifeCycleDestroy           = @"destroy";
+TNXMLDescLifeCycleRestart           = @"restart";
+TNXMLDescLifeCyclePreserve          = @"preserve";
+TNXMLDescLifeCycleRenameRestart     = @"rename-restart";
+TNXMLDescLifeCycles                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart, 
+                                        TNXMLDescLifeCyclePreserve, TNXMLDescLifeCycleRenameRestart];
+
+TNXMLDescFeaturePAE                 = @"pae";
+TNXMLDescFeatureACPI                = @"acpi";
+TNXMLDescFeatureAPIC                = @"apic";
+
+TNXMLDescClockUTC       = @"utc";
+TNXMLDescClockLocalTime = @"localtime";
+TNXMLDescClockTimezone  = @"timezone";
+TNXMLDescClockVariable  = @"variable";
+TNXMLDescClocks         = [TNXMLDescClockUTC, TNXMLDescClockLocalTime];
+
 function generateMacAddr()
 {
     var hexTab      = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
@@ -104,6 +121,14 @@ function generateMacAddr()
     @outlet CPButton                buttonDelNic            @accessors;
     @outlet CPButton                buttonArchitecture      @accessors;
     @outlet CPButton                buttonHypervisor        @accessors;
+    @outlet CPButton                buttonOnPowerOff        @accessors;
+    @outlet CPButton                buttonOnReboot          @accessors;
+    @outlet CPButton                buttonOnCrash           @accessors;
+    @outlet CPButton                buttonClocks            @accessors;
+    @outlet CPCheckBox              checkboxPAE             @accessors;
+    @outlet CPCheckBox              checkboxACPI            @accessors;
+    @outlet CPCheckBox              checkboxAPIC            @accessors;
+
     @outlet TNWindowNicEdition      windowNicEdition        @accessors;
     @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;
     @outlet CPView                  maskingView             @accessors;
@@ -167,7 +192,7 @@ function generateMacAddr()
     [_tableDrives addTableColumn:driveColumnBus];
     [_tableDrives addTableColumn:driveColumnSource];
 
-    [_tableDrives setDataSource:[self _drivesDatasource]];
+    [_tableDrives setDataSource:_drivesDatasource];
 
 
     // NICs
@@ -218,12 +243,24 @@ function generateMacAddr()
     [buttonArchitecture removeAllItems];
     [buttonHypervisor removeAllItems];
     [buttonVNCKeymap removeAllItems];
+    [buttonOnPowerOff removeAllItems];
+    [buttonOnReboot removeAllItems];
+    [buttonOnCrash removeAllItems];
+    [buttonClocks removeAllItems];
 
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
     [buttonNumberCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
     [buttonArchitecture addItemsWithTitles:TNXMLDescArchs];
     [buttonHypervisor addItemsWithTitles:TNXMLDescHypervisors];
     [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
+    [buttonOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonClocks addItemsWithTitles:TNXMLDescClocks];
+    
+    [checkboxPAE setState:CPOffState];
+    [checkboxACPI setState:CPOffState];
+    [checkboxAPIC setState:CPOffState];
 }
 
 // TNModule impl.
@@ -248,7 +285,8 @@ function generateMacAddr()
     
     [maskingView setFrame:[self bounds]];
     
-    // [self getVirtualMachineInfo];
+    [self setDefaultValues];
+    
     [self checkIfRunning];
     [self getXMLDesc];
 }
@@ -260,30 +298,16 @@ function generateMacAddr()
     [_tableNetworkCards reloadData];
     [_tableDrives reloadData];
 
-    [fieldMemory setStringValue:@""];
-    [buttonNumberCPUs selectItemWithTitle:@"1"];
-    [buttonArchitecture selectItemWithTitle:TNXMLDescHypervisorKVM];
-    [buttonArchitecture selectItemWithTitle:TNXMLDescArchx64];
-
-    [buttonBoot selectItemWithTitle:TNXMLDescBootHardDrive];
-
     [maskingView removeFromSuperview];
 }
 
 - (void)willUnload
 {
     [super willUnload];
-
-    [maskingView removeFromSuperview];
     
-    [[_nicsDatasource nics] removeAllObjects];
-    [[[self _drivesDatasource] drives] removeAllObjects];
-    [fieldMemory setStringValue:@""];
-    [buttonBoot selectItemAtIndex:0];
-    [buttonArchitecture selectItemAtIndex:0];
-    [buttonNumberCPUs selectItemAtIndex:0];
-    [buttonVNCKeymap selectItemAtIndex:0];
-    [buttonHypervisor selectItemAtIndex:0];
+    [self setDefaultValues];
+    
+    [maskingView removeFromSuperview];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -300,6 +324,40 @@ function generateMacAddr()
     {
         [self checkIfRunning];
     }
+}
+
+- (void)setDefaultValues
+{
+    var bundle  = [CPBundle bundleForClass:[self class]];
+    var cpu     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"];
+    var mem     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultMemory"];
+    var arch    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultArchitecture"];
+    var vnck    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultVNCKeymap"];
+    var opo     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"];
+    var or      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"];
+    var oc      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"];
+    var clock   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"];
+    var pae     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"];
+    var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
+    var apic    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"];
+    
+    [buttonNumberCPUs selectItemWithTitle:cpu];
+    [fieldMemory setStringValue:mem];
+    [buttonArchitecture selectItemWithTitle:arch];
+    [buttonVNCKeymap selectItemWithTitle:vnck];
+    [buttonOnPowerOff selectItemWithTitle:opo];
+    [buttonOnReboot selectItemWithTitle:or];
+    [buttonOnCrash selectItemWithTitle:oc];
+    [buttonClocks selectItemWithTitle:clock];
+    [checkboxPAE setState:(pae == 1) ? CPOnState : CPOffState];
+    [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
+    [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
+    
+    [[_nicsDatasource nics] removeAllObjects];
+    [[_drivesDatasource drives] removeAllObjects];
+    [_tableNetworkCards reloadData];
+    [_tableDrives reloadData];
+    
 }
 
 - (void)checkIfRunning
@@ -337,18 +395,23 @@ function generateMacAddr()
 {
     if ([aStanza getType] == @"success")
     {
-        var domain      = [aStanza firstChildWithName:@"domain"];
-        var hypervisor  = [domain valueForAttribute:@"type"];
-        var memory      = [[domain firstChildWithName:@"currentMemory"] text];
-        var arch        = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
-        var vcpu        = [[domain firstChildWithName:@"vcpu"] text];
-        var boot        = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
-        var interfaces  = [domain childrenWithName:@"interface"];
-        var disks       = [domain childrenWithName:@"disk"];
-        var graphics    = [domain childrenWithName:@"graphics"];
+        var domain          = [aStanza firstChildWithName:@"domain"];
+        var hypervisor      = [domain valueForAttribute:@"type"];
+        var memory          = [[domain firstChildWithName:@"currentMemory"] text];
+        var arch            = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
+        var vcpu            = [[domain firstChildWithName:@"vcpu"] text];
+        var boot            = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
+        var interfaces      = [domain childrenWithName:@"interface"];
+        var disks           = [domain childrenWithName:@"disk"];
+        var graphics        = [domain childrenWithName:@"graphics"];
+        var onPowerOff      = [domain firstChildWithName:@"on_poweroff"];
+        var onReboot        = [domain firstChildWithName:@"on_reboot"];
+        var onCrash         = [domain firstChildWithName:@"on_crash"];
+        var features        = [domain firstChildWithName:@"features"];
+        var clock           = [domain firstChildWithName:@"clock"];
 
         [[_nicsDatasource nics] removeAllObjects];
-        [[[self _drivesDatasource] drives] removeAllObjects];
+        [[_drivesDatasource drives] removeAllObjects];
     
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
         [buttonNumberCPUs selectItemWithTitle:vcpu];
@@ -371,7 +434,55 @@ function generateMacAddr()
             [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
         else
             [buttonBoot selectItemWithTitle:TNXMLDescBootHardDrive];
+        
+        
+        //power 
+        if (onPowerOff)
+            [buttonOnPowerOff selectItemWithTitle:[onPowerOff text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+        
+        if (onReboot)
+            [buttonOnReboot selectItemWithTitle:[onReboot text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+                
+        if (onCrash)
+            [buttonOnCrash selectItemWithTitle:[onCrash text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+        
+        // features
+        [checkboxAPIC setState:CPOffState];
+        [checkboxACPI setState:CPOffState];
+        [checkboxPAE setState:CPOffState];
+        if (features)
+        {
+            if ([features firstChildWithName:TNXMLDescFeaturePAE])
+                [checkboxPAE setState:CPOnState];
 
+            if ([features firstChildWithName:TNXMLDescFeatureACPI])
+                [checkboxACPI setState:CPOnState];
+
+            if ([features firstChildWithName:TNXMLDescFeatureAPIC])
+                [checkboxAPIC setState:CPOnState];
+        }
+        
+        //clock
+        if ((hypervisor == TNXMLDescHypervisorKVM) || (hypervisor == TNXMLDescHypervisorQemu) || (hypervisor == TNXMLDescHypervisorKQemu))
+        {
+            [buttonClocks setEnabled:YES];
+            
+            if (clock)
+            {
+                [buttonClocks selectItemWithTitle:[clock valueForAttribute:@"offset"]];
+            }
+        }
+        else
+        {
+            [buttonClocks setEnabled:NO];
+        }
+        
         // NICs
         for (var i = 0; i < [interfaces count]; i++)
         {
@@ -406,7 +517,7 @@ function generateMacAddr()
 
             var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
 
-            [[self _drivesDatasource] addDrive:newDrive];
+            [_drivesDatasource addDrive:newDrive];
         }
         [_tableDrives reloadData];
     }
@@ -425,7 +536,7 @@ function generateMacAddr()
     var nCPUs       = [buttonNumberCPUs title];
     var boot        = [buttonBoot title];
     var nics        = [_nicsDatasource nics];
-    var drives      = [[self _drivesDatasource] drives];
+    var drives      = [_drivesDatasource drives];
 
 
     var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [_entity fullJID], "id": anUid}];
@@ -460,22 +571,51 @@ function generateMacAddr()
     [stanza addChildName:@"boot" withAttributes:{"dev": boot}]
     [stanza up];
     [stanza up];
-
-    [stanza addChildName:@"clock" withAttributes:{"offset": "utc"}];
-    [stanza up];
-
+    
     [stanza addChildName:@"on_poweroff"];
-    [stanza addTextNode:@"destroy"];
+    [stanza addTextNode:[buttonOnPowerOff title]];
     [stanza up];
 
     [stanza addChildName:@"on_reboot"];
-    [stanza addTextNode:@"restart"];
+    [stanza addTextNode:[buttonOnReboot title]];
     [stanza up];
 
     [stanza addChildName:@"on_crash"];
-    [stanza addTextNode:@"destroy"];
+    [stanza addTextNode:[buttonOnCrash title]];
+    [stanza up];
+    
+    // FEATURES
+    [stanza addChildName:@"features"];
+
+    if ([checkboxPAE state] == CPOnState)
+    {
+        [stanza addChildName:TNXMLDescFeaturePAE];
+        [stanza up];
+    }
+    
+    if ([checkboxACPI state] == CPOnState)
+    {
+        [stanza addChildName:TNXMLDescFeatureACPI];
+        [stanza up];
+    }
+    
+    if ([checkboxAPIC state] == CPOnState)
+    {
+        [stanza addChildName:TNXMLDescFeatureAPIC];
+        [stanza up];
+    }
+
     [stanza up];
 
+    //Clock
+    if ((hypervisor == TNXMLDescHypervisorKVM) || (hypervisor == TNXMLDescHypervisorQemu) || (hypervisor == TNXMLDescHypervisorKQemu))
+    {
+        [stanza addChildName:@"clock" withAttributes:{"offset": [buttonClocks title]}];
+        [stanza up];
+    }
+    
+    
+    // Deviaces
     [stanza addChildName:@"devices"];
 
     if (hypervisor == TNXMLDescHypervisorKVM)
@@ -579,7 +719,7 @@ function generateMacAddr()
 
     if (selectedIndex != -1)
     {
-        var driveObject = [[[self _drivesDatasource] drives] objectAtIndex:selectedIndex];
+        var driveObject = [[_drivesDatasource drives] objectAtIndex:selectedIndex];
 
         [windowDriveEdition setDrive:driveObject];
         [windowDriveEdition setTable:_tableDrives];
@@ -599,7 +739,7 @@ function generateMacAddr()
 
      var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
 
-     [[[self _drivesDatasource] drives] removeObjectAtIndex:selectedIndex];
+     [[_drivesDatasource drives] removeObjectAtIndex:selectedIndex];
      [_tableDrives reloadData];
      [self defineXML:nil];
 }
@@ -608,7 +748,7 @@ function generateMacAddr()
 {
     var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"]
 
-    [[self _drivesDatasource] addDrive:defaultDrive];
+    [_drivesDatasource addDrive:defaultDrive];
     [_tableDrives reloadData];
     [self defineXML:nil];
 }
@@ -631,9 +771,6 @@ function generateMacAddr()
     {
         var msg = @"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated"
         CPLog.info(msg)
-        
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:msg];
     }
     else if (responseType == @"error")
     {

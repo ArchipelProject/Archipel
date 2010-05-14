@@ -26,5 +26,33 @@
 		<array>
 			<string>virtualmachine</string>
 		</array>
+		
+		<key>TNDescDefaultNumberCPU</key>
+		<string>1</string>
+		<key>TNDescDefaultMemory</key>
+		<string></string>
+		<key>TNDescDefaultBoot</key>
+		<string>hd</string>
+		<key>TNDescDefaultArchitecture</key>
+		<string>x86_64</string>
+		<key>TNDescDefaultHypervisor</key>
+		<string>kvm</string>
+		<key>TNDescDefaultVNCKeymap</key>
+		<string>en-us</string>
+		<key>TNDescDefaultOnPowerOff</key>
+		<string>destroy</string>
+		<key>TNDescDefaultOnReboot</key>
+		<string>restart</string>
+		<key>TNDescDefaultOnCrash</key>
+		<string>restart</string>
+		<key>TNDescDefaultClockOffset</key>
+		<string>utc</string>
+		<key>TNDescDefaultPAE</key>
+		<integer>0</integer>
+		<key>TNDescDefaultACPI</key>
+		<integer>0</integer>
+		<key>TNDescDefaultAPIC</key>
+		<integer>0</integer>
+		
     </dict>
 </plist>
