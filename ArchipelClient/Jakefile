@@ -30,10 +30,12 @@ var VERSION		= "1.0";
 /* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
 var ENV = require("system").env,
     FILE = require("file"),
+    JAKE = require("jake"),
     task = require("jake").task,
-    FileList = require("jake").FileList,
+    FileList = JAKE.FileList,
     app = require("cappuccino/jake").app,
-    configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug";
+    configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
+    OS = require("os");
 
 
 app ("Archipel", function(task)
@@ -57,11 +59,57 @@ app ("Archipel", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("documentation", function(task)
+task ("default", ["Archipel"], function()
 {
-   OS.system("doxygen Archipel.doxygen")
+    printResults(configuration);
 });
 
-task ("default", ["Archipel"]);
-task ("docs", ["documentation"]);
-task ("all", ["Archipel", "documentation"]);
+task ("build", ["default"]);
+
+task ("debug", function()
+{
+    ENV["CONFIGURATION"] = "Debug";
+    JAKE.subjake(["."], "build", ENV);
+});
+
+task ("release", function()
+{
+    ENV["CONFIGURATION"] = "Release";
+    JAKE.subjake(["."], "build", ENV);
+});
+
+task ("run", ["debug"], function()
+{
+    OS.system(["open", FILE.join("Build", "Debug", "Archipel", "index.html")]);
+});
+
+task ("run-release", ["release"], function()
+{
+    OS.system(["open", FILE.join("Build", "Release", "Archipel", "index.html")]);
+});
+
+task ("deploy", ["release"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Deployment", "Archipel"));
+    OS.system(["press", "-f", FILE.join("Build", "Release", "Archipel"), FILE.join("Build", "Deployment", "Archipel")]);
+    printResults("Deployment")
+});
+
+task ("desktop", ["release"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Desktop", "Archipel"));
+    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", "Archipel"), FILE.join("Build", "Desktop", "Archipel", "Archipel.app"));
+    printResults("Desktop")
+});
+
+task ("run-desktop", ["desktop"], function()
+{
+    OS.system([FILE.join("Build", "Desktop", "Archipel", "Archipel.app", "Contents", "MacOS", "NativeHost"), "-i"]);
+});
+
+function printResults(configuration)
+{
+    print("----------------------------");
+    print(configuration+" app built at path: "+FILE.join("Build", configuration, "Archipel"));
+    print("----------------------------");
+}

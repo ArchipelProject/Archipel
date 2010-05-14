@@ -23,7 +23,7 @@
             - TNUserDefaultStorageTypeNoStorage
     -->
     <key>TNUserDefaultStorageType</key>
-    <string>TNUserDefaultStorageTypeHTML5</string>
+    <string>TNUserDefaultStorageTypeCookie</string>
     
     <!--
         Url of the welcome page. It can be any URL (online) or "local" to 

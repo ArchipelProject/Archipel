@@ -364,7 +364,7 @@ function generateMacAddr()
 {
     var status = [_entity status];
     
-    if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusOffline))
+    if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway) || (status == TNStropheContactStatusOffline))
     {
         [maskingView setFrame:[self bounds]];
         [self addSubview:maskingView];

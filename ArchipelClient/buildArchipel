@@ -213,14 +213,8 @@ def remove_modules(modules_paths, config, ignorepaths):
 
 
 def make_native_app(platform, config):
-    native_app_dir  = GLOBAL_BASE_PATH + "/NativeApplications/"+ platform +"/Archipel.app/Contents/Resources/Objective-J/Client/"
-    build_dir       = GLOBAL_BUILD_PATH.replace("$CONFIG$", config)
-    print build_dir;
     print "# generation of the native " + platform + " Application"
-    os.chdir(GLOBAL_BASE_PATH);
-    os.system("cp -a " + build_dir + " " + native_app_dir);
-    os.system("cp -a "+ GLOBAL_MODULES_BUILD_PATH + " " + native_app_dir + "/Modules");
-    
+    os.system("jake run-desktop")
 
 
 def generate_modules_plist(modules_paths, ignorepaths):
