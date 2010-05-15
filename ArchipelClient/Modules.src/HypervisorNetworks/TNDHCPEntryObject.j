@@ -77,12 +77,12 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 }
 
 /* Datasource impl. */
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
+- (int)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [[self entries] count];
 }
 
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
+- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(id)aCol row:(int)aRow
 {
     var identifier = [aCol identifier];
 

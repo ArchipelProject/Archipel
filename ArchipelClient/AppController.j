@@ -37,7 +37,7 @@
 @import "TNModule.j";
 @import "TNViewLineable.j";
 @import "TNUserDefaults.j";
-
+@import "TNTableViewDataSource.j";
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -120,6 +120,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 */
 - (void)awakeFromCib
 {
+    [connectionWindow orderOut:nil];
     CPLogRegister(CPLogConsole);
     
     var bundle      = [CPBundle mainBundle];
@@ -264,12 +265,15 @@ TNArchipelStatusBusyLabel       = @"Busy";
     // buttonBar
     [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
     
-    var plusButton  = [CPButtonBar plusButton];
+    var plusButton  = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];//[CPButtonBar plusButton];
     var plusMenu    = [[CPMenu alloc] init];
     [plusButton setTarget:self];
-    [plusButton setAction:@selector(displayPlusMenu:)];
-    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(toolbarItemAddContactClick:) keyEquivalent:@""];
-    [plusMenu addItemWithTitle:@"Add a group" action:@selector(toolbarItemAddGroupClick:) keyEquivalent:@""];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
+    [plusButton setBordered:NO];
+    [plusButton setImagePosition:CPImageOnly];
+    
+    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
     [plusButton setMenu:plusMenu];
     
     var bezelColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
@@ -288,6 +292,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
         
     var minusButton = [CPButtonBar minusButton];
     [minusButton setTarget:self];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
     [minusButton setAction:@selector(didMinusBouttonClicked:)];
     
     [buttonBarLeft setButtons:[plusButton, minusButton]];
@@ -305,23 +310,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
         [self deleteContact:sender];
     else if ([item class] == TNStropheGroup)
         [self deleteGroup:sender];
-}
-
-- (IBAction)displayPlusMenu:(id)sender
-{
-    
-    
-    var ev = [CPEvent mouseEventWithType:CPRightMouseDown
-                       location:plusMenu
-                  modifierFlags:CPRightMouseDownMask // 0x100
-                      timestamp:nil
-                   windowNumber:[sender window]
-                        context:nil
-                    eventNumber:0
-                     clickCount:1
-                       pressure:1];
-                                            
-    [CPMenu popUpContextMenu:[sender menu] withEvent:ev forView:sender];
 }
 
 - (void)makeMainMenu
@@ -865,7 +853,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
         
         var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
         var defaults    = [TNUserDefaults standardUserDefaults];
-
+        
+        [_mainRoster setCurrentItem:item];
+        
         if ([item class] == TNStropheGroup)
         {
             CPLog.info(@"setting the entity as " + item + " of type group");

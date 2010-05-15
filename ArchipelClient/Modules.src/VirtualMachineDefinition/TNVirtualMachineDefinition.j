@@ -19,8 +19,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNDatasourceNetworkInterfaces.j"
-@import "TNDatasourceDrives.j"
+@import "TNNetworkInterfaceObject.j"
+@import "TNDriveObject.j";
 @import "TNWindowNicEdition.j";
 @import "TNWindowDriveEdition.j";
 
@@ -129,15 +129,16 @@ function generateMacAddr()
     @outlet CPCheckBox              checkboxACPI            @accessors;
     @outlet CPCheckBox              checkboxAPIC            @accessors;
     @outlet CPButtonBar             buttonBarLeft           @accessors;
-
     @outlet TNWindowNicEdition      windowNicEdition        @accessors;
     @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;
     @outlet CPView                  maskingView             @accessors;
-
+    @outlet CPSearchField           fieldFilterDrives;
+    @outlet CPSearchField           fieldFilterNics;
+    
     CPTableView                     _tableNetworkCards   @accessors;
-    TNDatasourceNetworkInterfaces   _nicsDatasource      @accessors;
+    TNTableViewDataSource           _nicsDatasource      @accessors;
     CPTableView                     _tableDrives         @accessors;
-    TNDatasourceDrives              _drivesDatasource    @accessors;
+    TNTableViewDataSource           _drivesDatasource    @accessors;
 }
 
 - (void)awakeFromCib
@@ -150,14 +151,14 @@ function generateMacAddr()
     [windowDriveEdition setDelegate:self];
 
     //drives
-    _drivesDatasource    = [[TNDatasourceDrives alloc] init];
+    _drivesDatasource    = [[TNTableViewDataSource alloc] init];
     _tableDrives         = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
-
+    
     [scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewForDrives setAutohidesScrollers:YES];
     [scrollViewForDrives setDocumentView:_tableDrives];
     [scrollViewForDrives setBorderedWithHexColor:@"#9e9e9e"];
-
+    
     [_tableDrives setUsesAlternatingRowBackgroundColors:YES];
     [_tableDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableDrives setAllowsColumnReordering:YES];
@@ -165,7 +166,7 @@ function generateMacAddr()
     [_tableDrives setAllowsEmptySelection:YES];
     [_tableDrives setTarget:self];
     [_tableDrives setDoubleAction:@selector(editDrive:)];
-
+    
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [driveColumnType setEditable:YES];
     [[driveColumnType headerView] setStringValue:@"Type"];
@@ -175,35 +176,40 @@ function generateMacAddr()
     [driveColumnDevice setEditable:YES];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
     [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
-
+    
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
     [driveColumnTarget setEditable:YES];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
     [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
-
+    
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [driveColumnSource setWidth:300];
     [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
-
+    
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
     [driveColumnBus setEditable:YES];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
-
+    
     [_tableDrives addTableColumn:driveColumnType];
     [_tableDrives addTableColumn:driveColumnDevice];
     [_tableDrives addTableColumn:driveColumnTarget];
     [_tableDrives addTableColumn:driveColumnBus];
     [_tableDrives addTableColumn:driveColumnSource];
-
+    
     [_drivesDatasource setTable:_tableDrives];
+    [_drivesDatasource setSearchableKeyPaths:[@"type", @"device", @"target", @"source", @"bus"]];
+    
+    [fieldFilterDrives setTarget:_drivesDatasource];
+    [fieldFilterDrives setAction:@selector(filterObjects:)];
+    
     [_tableDrives setDataSource:_drivesDatasource];
 
 
     // NICs
-    _nicsDatasource      = [[TNDatasourceNetworkInterfaces alloc] init];
+    _nicsDatasource      = [[TNTableViewDataSource alloc] init];
     _tableNetworkCards   = [[CPTableView alloc] initWithFrame:[scrollViewForNics bounds]];
 
     [scrollViewForNics setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -222,23 +228,23 @@ function generateMacAddr()
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [columnType setEditable:YES];
     [[columnType headerView] setStringValue:@"Type"];
-    // [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
+    [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
     
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
     [columnModel setEditable:YES];
     [[columnModel headerView] setStringValue:@"Model"];
-    // [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
+    [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
 
     var columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
     [columnMac setEditable:YES];
     [columnMac setWidth:150];
     [[columnMac headerView] setStringValue:@"MAC"];
-    // [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
+    [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [columnSource setEditable:YES];
     [[columnSource headerView] setStringValue:@"Source"];
-    // [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
+    [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
     [_tableNetworkCards addTableColumn:columnSource];
     [_tableNetworkCards addTableColumn:columnType];
@@ -246,6 +252,11 @@ function generateMacAddr()
     [_tableNetworkCards addTableColumn:columnMac];
 
     [_nicsDatasource setTable:_tableNetworkCards];
+    [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"mac", @"source"]];
+    
+    [fieldFilterNics setTarget:_nicsDatasource];
+    [fieldFilterNics setAction:@selector(filterObjects:)];
+    
     [_tableNetworkCards setDataSource:_nicsDatasource];
 
 
@@ -365,8 +376,8 @@ function generateMacAddr()
     [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
     [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
     
-    [[_nicsDatasource nics] removeAllObjects];
-    [[_drivesDatasource drives] removeAllObjects];
+    [_nicsDatasource removeAllObjects];
+    [_drivesDatasource removeAllObjects];
     [_tableNetworkCards reloadData];
     [_tableDrives reloadData];
     
@@ -422,8 +433,8 @@ function generateMacAddr()
         var features        = [domain firstChildWithName:@"features"];
         var clock           = [domain firstChildWithName:@"clock"];
 
-        [[_nicsDatasource nics] removeAllObjects];
-        [[_drivesDatasource drives] removeAllObjects];
+        [_nicsDatasource removeAllObjects];
+        [_drivesDatasource removeAllObjects];
     
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
         [buttonNumberCPUs selectItemWithTitle:vcpu];
@@ -513,7 +524,7 @@ function generateMacAddr()
 
             var newNic = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource]
 
-            [_nicsDatasource addNic:newNic];
+            [_nicsDatasource addObject:newNic];
         }
         [_tableNetworkCards reloadData];
 
@@ -529,7 +540,7 @@ function generateMacAddr()
 
             var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
 
-            [_drivesDatasource addDrive:newDrive];
+            [_drivesDatasource addObject:newDrive];
         }
         [_tableDrives reloadData];
     }
@@ -547,10 +558,11 @@ function generateMacAddr()
     var hypervisor  = [buttonHypervisor title];
     var nCPUs       = [buttonNumberCPUs title];
     var boot        = [buttonBoot title];
-    var nics        = [_nicsDatasource nics];
-    var drives      = [_drivesDatasource drives];
+    var nics        = [_nicsDatasource content];
+    var drives      = [_drivesDatasource content];
 
-
+    CPLog.debug(drives);
+    
     var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [_entity fullJID], "id": anUid}];
 
     [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineDefinitionDefine}];
@@ -692,7 +704,7 @@ function generateMacAddr()
 - (IBAction)editNetworkCard:(id)sender
 {
     var selectedIndex   = [[_tableNetworkCards selectedRowIndexes] firstIndex];
-    var nicObject       = [[_nicsDatasource nics] objectAtIndex:selectedIndex];
+    var nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
     [windowNicEdition setNic:nicObject];
     [windowNicEdition setTable:_tableNetworkCards];
@@ -711,7 +723,7 @@ function generateMacAddr()
 
      var selectedIndex   = [[_tableNetworkCards selectedRowIndexes] firstIndex];
 
-     [[_nicsDatasource nics] removeObjectAtIndex:selectedIndex];
+     [_nicsDatasource removeObjectAtIndex:selectedIndex];
      [_tableNetworkCards reloadData];
      [self defineXML:nil];
 }
@@ -720,7 +732,7 @@ function generateMacAddr()
 {
     var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:generateMacAddr() source:@"virbr0"]
 
-    [_nicsDatasource addNic:defaultNic];
+    [_nicsDatasource addObject:defaultNic];
     [_tableNetworkCards reloadData];
     [self defineXML:nil];
 }
@@ -731,7 +743,7 @@ function generateMacAddr()
 
     if (selectedIndex != -1)
     {
-        var driveObject = [[_drivesDatasource drives] objectAtIndex:selectedIndex];
+        var driveObject = [_drivesDatasource objectAtIndex:selectedIndex];
 
         [windowDriveEdition setDrive:driveObject];
         [windowDriveEdition setTable:_tableDrives];
@@ -751,7 +763,7 @@ function generateMacAddr()
 
      var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
 
-     [[_drivesDatasource drives] removeObjectAtIndex:selectedIndex];
+     [_drivesDatasource removeObjectAtIndex:selectedIndex];
      [_tableDrives reloadData];
      [self defineXML:nil];
 }
@@ -760,7 +772,7 @@ function generateMacAddr()
 {
     var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"]
 
-    [_drivesDatasource addDrive:defaultDrive];
+    [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
     [self defineXML:nil];
 }

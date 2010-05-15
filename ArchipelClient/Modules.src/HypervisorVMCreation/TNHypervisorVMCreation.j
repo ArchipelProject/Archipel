@@ -18,8 +18,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
- 
-@import "TNDatasourceVMs.j"
 
 TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
 TNArchipelTypeHypervisorControlAlloc        = @"alloc";
@@ -37,9 +35,10 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     @outlet CPPopUpButton   popupDeleteMachine          @accessors;
     @outlet CPButton        buttonDeleteVM              @accessors;
     @outlet CPScrollView    scrollViewListVM            @accessors;
+    @outlet CPSearchField   fieldFilterVM;
     
     TNTableView             _tableVirtualMachines;
-    TNDatasourceVMs         _virtualMachinesDatasource;
+    TNTableViewDataSource   _virtualMachinesDatasource;
     
     TNStropheContact        _virtualMachinesForDeletion;
 }
@@ -47,7 +46,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 - (void)awakeFromCib
 {
     // VM table view
-    _virtualMachinesDatasource   = [[TNDatasourceVMs alloc] init];
+    _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     _tableVirtualMachines        = [[TNTableView alloc] initWithFrame:[scrollViewListVM bounds]];
 
     [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -85,6 +84,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [_tableVirtualMachines addTableColumn:vmColumJID];
 
     [_virtualMachinesDatasource setTable:_tableVirtualMachines];
+    [_virtualMachinesDatasource setSearchableKeyPaths:[@"nickname", @"JID"]];
+    
+    [fieldFilterVM setTarget:_virtualMachinesDatasource];
+    [fieldFilterVM setAction:@selector(filterObjects:)];
+    
     [_tableVirtualMachines setDataSource:_virtualMachinesDatasource];
 }
 
@@ -149,7 +153,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
     
-        [[_virtualMachinesDatasource VMs] removeAllObjects];
+        [_virtualMachinesDatasource removeAllObjects];
     
         for (var i = 0; i < [queryItems count]; i++)
         {
@@ -160,7 +164,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
-                   [_virtualMachinesDatasource addVM:entry];
+                   [_virtualMachinesDatasource addObject:entry];
                    [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
                }
             }
@@ -253,11 +257,11 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     {
         var indexes         = _virtualMachinesForDeletion;
         
-        for (var i = 0; i < [[_virtualMachinesDatasource VMs] count]; i++)
+        for (var i = 0; i < [_virtualMachinesDatasource count]; i++)
         {                              
             if ([indexes containsIndex:i])
             {
-                var vm              = [[_virtualMachinesDatasource VMs] objectAtIndex:i];
+                var vm              = [_virtualMachinesDatasource objectAtIndex:i];
                 var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
 
                 [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];

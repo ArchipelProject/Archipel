@@ -20,7 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNInstalledAppliancesDatasource.j";
+@import "TNInstalledAppliancesObject.j";
 
 TNArchipelTypeVirtualMachineVMCasting                       = @"archipel:virtualmachine:vmcasting";
 
@@ -38,26 +38,29 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 */
 @implementation TNVirtualMachinePackaging : TNModule
 {
-    @outlet CPTextField                 fieldJID                @accessors;
-    @outlet CPTextField                 fieldName               @accessors;
-    @outlet CPTextField                 fieldInfoStatus         @accessors;
-    @outlet CPImageView                 fieldInfoImage         @accessors;
+    @outlet CPTextField                 fieldJID                    @accessors;
+    @outlet CPTextField                 fieldName                   @accessors;
+    @outlet CPTextField                 fieldInfoUnpackingStatus    @accessors;
+    @outlet CPImageView                 imageUnpackingInfo          @accessors;
     @outlet CPScrollView                mainScrollView;
+    @outlet CPTextField                 fieldPackagingInfoStatus;
+    @outlet CPImageView                 imagePackagingInfo;
+    @outlet CPSearchField               fieldFilterAppliance;
     
     CPTableView                         _tableAppliances;
-    TNInstalledAppliancesDatasource     _appliancesDatasource;
+    TNTableViewDataSource               _appliancesDatasource;
 }
 
 - (void)awakeFromCib
 {
     // Media table view
-    _appliancesDatasource    = [[TNInstalledAppliancesDatasource alloc] init];
+    _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
     _tableAppliances         = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
 
     var bundle = [CPBundle bundleForClass:[self class]];
     
-    [fieldInfoImage setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]]];
-    [fieldInfoImage setHidden:YES];
+    [imageUnpackingInfo setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]]];
+    [imageUnpackingInfo setHidden:YES];
     
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setAutohidesScrollers:YES];
@@ -98,7 +101,12 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances addTableColumn:columnUUID];
 
     [_appliancesDatasource setTable:_tableAppliances];
+    [_appliancesDatasource setSearchableKeyPaths:[@"name", @"path", @"comment"]]
+    
     [_tableAppliances setDataSource:_appliancesDatasource];
+    
+    [fieldFilterAppliance setTarget:_appliancesDatasource];
+    [fieldFilterAppliance setAction:@selector(filterObjects:)];
 }
 
 - (void)willLoad
@@ -151,26 +159,26 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     if (change == @"applianceunpacking")
     {
-        [fieldInfoImage setHidden:NO];
-        [fieldInfoStatus setStringValue:@"Appliance is unpacking..."];
+        [imageUnpackingInfo setHidden:NO];
+        [fieldInfoUnpackingStatus setStringValue:@"Appliance is unpacking..."];
     }
     else if (change == @"applianceunpacked")
     {
-        [fieldInfoImage setHidden:NO];
-        [fieldInfoStatus setStringValue:@"Appliance is unpacked"];
+        [imageUnpackingInfo setHidden:NO];
+        [fieldInfoUnpackingStatus setStringValue:@"Appliance is unpacked"];
     }   
     else if (change == @"applianceinstalling")
     {
-        [fieldInfoImage setHidden:NO];
-        [fieldInfoStatus setStringValue:@"Appliance is installing"];
+        [imageUnpackingInfo setHidden:NO];
+        [fieldInfoUnpackingStatus setStringValue:@"Appliance is installing"];
     }
     else if (change == @"applianceinstalled")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
         
-        [fieldInfoImage setHidden:YES];
-        [fieldInfoStatus setStringValue:@""];
+        [imageUnpackingInfo setHidden:YES];
+        [fieldInfoUnpackingStatus setStringValue:@""];
         [self getInstalledAppliances];
     }
     else
@@ -193,7 +201,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 {
     if ([aStanza getType] == @"success")
     {
-        [[_appliancesDatasource content] removeAllObjects];
+        [_appliancesDatasource removeAllObjects];
 
         var appliances = [aStanza childrenWithName:@"appliance"];
 
@@ -207,7 +215,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
             var used        = ([appliance valueForAttribute:@"used"] == "true") ? YES : NO;
 
             var newAppliance = [TNInstalledAppliance InstalledApplianceWithName:name UUID:uuid path:path comment:comment used:used];
-            [_appliancesDatasource addInstalledAppliance:newAppliance];
+            [_appliancesDatasource addObject:newAppliance];
         }
         [_tableAppliances reloadData];
     }
@@ -226,7 +234,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     }
 
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
-    var appliance       = [[_appliancesDatasource content] objectAtIndex:selectedIndex];
+    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
 
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingInstall}];

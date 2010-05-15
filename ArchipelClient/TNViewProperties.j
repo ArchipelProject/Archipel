@@ -63,14 +63,15 @@
 */
 - (void)awakeFromCib
 {
-    [self setAutoresizingMask: CPViewNotSizable];
+    //[self setAutoresizingMask: CPViewNotSizable];
 
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
 
     [entryAvatar setBorderedWithHexColor:@"#a5a5a5"];
-    [entryAvatar setBackgroundColor:[CPColor whiteColor]];
+    [entryAvatar setBackgroundColor:[CPColor blackColor]];
+    [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     
     [self setHidden:YES];
 

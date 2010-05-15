@@ -24,7 +24,7 @@
     CPString    networkName             @accessors;
     CPString    UUID                    @accessors;
     CPString    bridgeName              @accessors;
-    CPNumber    bridgeDelay             @accessors;
+    CPString    bridgeDelay             @accessors;
     CPString    bridgeForwardMode       @accessors;
     CPString    bridgeForwardDevice     @accessors;
     CPString    bridgeIP                @accessors;
@@ -34,12 +34,28 @@
     BOOL        isNetworkEnabled        @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);
     BOOL        isSTPEnabled            @accessors(getter=isSTPEnabled, setter=setSTPEnabled:);
     BOOL        isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
+    CPImage     icon                    @accessors;
+    
+    CPImage     imageNetworkActive      @accessors;
+    CPImage     imageNetworkUnactive    @accessors;
+}
+
+- (id)init
+{
+    if (self = [super init])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+        imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
+        imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
+    }
+    
+    return self;
 }
 
 + (TNNetwork)networkWithName:(CPString)aName
                         UUID:(CPString)anUUID
                   bridgeName:(CPString)aBridgeName
-                 bridgeDelay:(CPNumber)aBridgeDelay
+                 bridgeDelay:(CPString)aBridgeDelay
            bridgeForwardMode:(CPString)aForwardMode
          bridgeForwardDevice:(CPString)aForwardDevice
                     bridgeIP:(CPString)anIP
@@ -65,65 +81,13 @@
     [net setNetworkEnabled:networkEnabled];
     [net setSTPEnabled:STPEnabled];
     [net setDHCPEnabled:DHCPEnabled];
-
+    
+    if (networkEnabled)
+        [net setIcon:[net imageNetworkActive]];
+    else
+        [net setIcon:[net imageNetworkUnactive]];
+    
     return net;
 }
+
 @end
-
-
-@implementation TNDatasourceNetworks : CPObject
-{
-    CPArray networks @accessors;
-    CPTableView table @accessors;
-    CPImage _imageNetworkActive;
-    CPImage _imageNetworkUnactive;
-}
-
-- (id)init
-{
-    if (self = [super init])
-    {
-        var bundle  = [CPBundle bundleForClass:[self class]];
-
-        _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
-        _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
-
-        networks = [[CPArray alloc] init];
-
-    }
-    return self;
-}
-
-- (void)addNetwork:(TNNetwork)aNetwork
-{
-    [[self networks] addObject:aNetwork];
-}
-
-/* Datasource impl. */
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
-{
-    return [[self networks] count];
-}
-
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
-{
-    var identifier = [aCol identifier];
-
-    if (identifier == "isNetworkEnabled")
-    {
-        if ([[[self networks] objectAtIndex:aRow] isNetworkEnabled])
-            return _imageNetworkActive;
-        else
-            return _imageNetworkUnactive;
-    }
-    else
-        return [[[self networks] objectAtIndex:aRow] valueForKey:identifier];
-}
-
-- (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
-{
-    [networks sortUsingDescriptors:[aTableView sortDescriptors]];
-
-    [table reloadData];
-}
-

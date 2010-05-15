@@ -38,7 +38,7 @@ def main():
         usage()
         sys.exit(2);
     
-    opt_build_config            = "Release";
+    opt_build_config            = "Debug";
     opt_should_build            = False;
     opt_should_copy_modules     = False;
     opt_should_remove_modules   = False;
@@ -255,7 +255,7 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
         -C | --clean             : clean the TARGETS builded
         
     CONFIG is the following:
-        --config=<conf>          : <conf> can be Release of Debug. If ommited, default config is Release.
+        --config=<conf>          : <conf> can be Release of Debug. If ommited, default config is Debug.
         
     TARGETS are the following:
         -a | --all               : build all. Projects and all modules;

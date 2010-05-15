@@ -359,3 +359,28 @@
     [super keyDown:anEvent];
 }
 @end
+
+@implementation TNButtonBarPopUpButton: CPButton
+{
+    
+}
+
+- (void)mouseDown:(CPEvent)anEvent
+{
+    var wp = CPPointMake(16, 12);
+
+    wp = [self convertPoint:wp toView:nil];
+    
+    var fake = [CPEvent mouseEventWithType:CPRightMouseDown
+                        location:wp
+                        modifierFlags:0 timestamp:[anEvent timestamp]
+                        windowNumber:[anEvent windowNumber]
+                        context:nil
+                        eventNumber:0
+                        clickCount:1
+                        pressure:1];
+
+    [CPMenu popUpContextMenu:[self menu] withEvent:fake forView:self];
+}
+@end
+

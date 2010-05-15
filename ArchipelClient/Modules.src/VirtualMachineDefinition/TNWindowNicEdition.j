@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "TNDatasourceNetworkInterfaces.j"
+@import "TNNetworkInterfaceObject.j"
 
 TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
 TNArchipelTypeHypervisorNetworkList        = @"list";

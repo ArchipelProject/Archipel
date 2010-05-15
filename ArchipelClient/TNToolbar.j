@@ -20,35 +20,14 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "TNAvatarManager.j";
+
 /*! @global
     @group TNToolBarItem
     identifier for item logout
 */
 TNToolBarItemLogout         = @"TNToolBarItemLogout";
 
-/*! @global
-    @group TNToolBarItem
-    identifier for item add JID
-*/
-TNToolBarItemAddJID         = @"TNToolBarItemAddJID";
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item delete JID
-*/
-TNToolBarItemDeleteJID      = @"TNToolBarItemDeleteJID";
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item add group
-*/
-TNToolBarItemAddGroup       = @"TNToolBarItemAddGroup";
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item delete group
-*/
-TNToolBarItemDeleteGroup    = @"TNToolBarItemDeleteGroup";
 
 /*! @global
     @group TNToolBarItem
@@ -60,9 +39,9 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
     @group TNToolBarItem
     identifier for item status
 */
-TNToolBarItemStatus           = @"TNToolBarItemStatus";
+TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
-
+TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 
 /*! @ingroup archipelcore
     subclass of CPToolbar that allow dynamic insertion. This is used by TNModuleLoader
@@ -86,12 +65,7 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
         _toolbarItemsOrder  = [CPArray array];
 
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
-        [self addItemWithIdentifier:TNToolBarItemAddJID label:@"Add JID" icon:[bundle pathForResource:@"add.png"] target:aTarget action:@selector(toolbarItemAddContactClick:)];
-        [self addItemWithIdentifier:TNToolBarItemDeleteJID label:@"Delete JID" icon:[bundle pathForResource:@"delete.png"] target:aTarget action:@selector(toolbarItemDeleteContactClick:)];
-        [self addItemWithIdentifier:TNToolBarItemAddGroup label:@"Add Group" icon:[bundle pathForResource:@"groupAdd.png"] target:aTarget action:@selector(toolbarItemAddGroupClick:)];
-        [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
-        [self addItemWithIdentifier:TNToolBarItemDeleteGroup label:@"Delete Group" icon:[bundle pathForResource:@"groupDelete.png"] target:aTarget action:@selector(toolbarItemDeleteGroupClick:)];
         
         var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)];
 
@@ -110,21 +84,23 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
         [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
         [statusSelector addItem:busyItem];
         
-        [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
+        var statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
+        [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
+        [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
         
+        var avatarSelector = [[TNAvatarManager alloc] initWithFrame:CGRectMake(0.0, 0.0, 32.0, 32.0)];
+        [avatarSelector setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]]];
+
+        var avatarItem = [self addItemWithIdentifier:TNToolBarItemAvatar label:@"Avatar" view:avatarSelector target:nil action:nil];
+        [avatarItem setMinSize:CGSizeMake(32.0, 32.0)];
+        [avatarItem setMaxSize:CGSizeMake(32.0, 32.0)];
         
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
         [self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        // [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJID];
-        // [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJID];
-        // [self setPosition:4 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        // [self setPosition:5 forToolbarItemIdentifier:TNToolBarItemAddGroup];
-        // [self setPosition:6 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
-        // [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [self setPosition:2 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [self setPosition:3 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:900 forToolbarItemIdentifier:TNToolBarItemHelp];
-        [self setPosition:900 forToolbarItemIdentifier:TNToolBarItemLogout];
+        [self setPosition:900 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:901 forToolbarItemIdentifier:TNToolBarItemHelp];
+        [self setPosition:902 forToolbarItemIdentifier:TNToolBarItemLogout];
         
         
         [self setDelegate:self];
@@ -159,12 +135,12 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
     @param aTarget an object that will be the target of the item
     @param anAction a selector of the aTarget to perform on click
 */
-- (void)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
+- (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
     
-    [newItem setMinSize:CGSizeMake(120.0, 24.0)];
-    [newItem setMaxSize:CGSizeMake(120.0, 24.0)]
+    //[newItem setMinSize:CGSizeMake(120.0, 24.0)];
+    //[newItem setMaxSize:CGSizeMake(120.0, 24.0)]
             
     [newItem setLabel:aLabel];
     [newItem setView:aView];
@@ -172,6 +148,8 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
     [newItem setAction:anAction];
 
     [_toolbarItems setObject:newItem forKey:anIdentifier];
+    
+    return newItem
 }
 
 /*! define the position of a given existing CPToolbarItem according to its identifier

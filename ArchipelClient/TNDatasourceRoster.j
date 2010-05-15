@@ -34,6 +34,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPOutlineView   mainOutlineView @accessors;
     CPString        filter          @accessors;
     CPSearchField   filterField     @accessors;
+    id              currentItem     @accessors;
     
     id              _draggedItem;
 }
@@ -126,13 +127,16 @@ TNDragTypeContact   = @"TNDragTypeContact";
     
     [[self mainOutlineView] reloadData];
     
-    if (index != -1)
+    if ((currentItem) && ([mainOutlineView rowForItem:currentItem] != -1))
     {
-        var set = [CPIndexSet indexSetWithIndex:index];
-        
-        [[self mainOutlineView] selectRowIndexes:set byExtendingSelection:NO];
+        var index = [mainOutlineView rowForItem:currentItem];
+        [mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
+    else
+        [mainOutlineView deselectAll];
 }
+
+
 
 /*! Message use internally for filtering
     @param aFilter CPString containing the filter

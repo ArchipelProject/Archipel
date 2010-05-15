@@ -16,7 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "TNDatasourceDHCPEntries.j";
+@import "TNDHCPEntryObject.j";
+@import "TNNetworkObject.j"
 
 @implementation TNWindowNetworkProperties : CPWindow
 {
@@ -36,8 +37,8 @@
     TNStropheContact        hypervisor                  @accessors;
     CPTableView             table                       @accessors;
 
-    TNDatasourceDHCPEntries _datasourceDHCPRanges;
-    TNDatasourceDHCPEntries _datasourceDHCPHosts;
+    TNTableViewDataSource   _datasourceDHCPRanges;
+    TNTableViewDataSource   _datasourceDHCPHosts;
     CPTableView             _tableViewRanges;
     CPTableView             _tableViewHosts;
 }
@@ -51,7 +52,7 @@
     [buttonForwardDevice addItemsWithTitles:["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]];
 
     // TABLE FOR RANGES
-    _datasourceDHCPRanges   = [[TNDatasourceDHCPEntries alloc] init];
+    _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
     _tableViewRanges        = [[CPTableView alloc] initWithFrame:[[self scrollViewDHCPRanges] bounds]];
 
     [[self scrollViewDHCPRanges] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -77,7 +78,7 @@
     [_tableViewRanges addTableColumn:columRangeEnd];
 
     // TABLE FOR HOSTS
-    _datasourceDHCPHosts     = [[TNDatasourceDHCPEntries alloc] init];
+    _datasourceDHCPHosts     = [[TNTableViewDataSource alloc] init];
     _tableViewHosts          = [[CPTableView alloc] initWithFrame:[[self scrollViewDHCPHosts] bounds]];
 
     [[self scrollViewDHCPHosts] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -133,8 +134,8 @@
     [checkBoxSTPEnabled setState:([network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([network isDHCPEnabled]) ? CPOnState : CPOffState];
 
-    [_datasourceDHCPRanges setEntries:[network DHCPEntriesRanges]];
-    [_datasourceDHCPHosts setEntries:[network DHCPEntriesHosts]];
+    [_datasourceDHCPRanges setContent:[network DHCPEntriesRanges]];
+    [_datasourceDHCPHosts setContent:[network DHCPEntriesHosts]];
 
     [_tableViewRanges reloadData];
     [_tableViewHosts reloadData];
@@ -151,8 +152,8 @@
     [network setBridgeForwardDevice:[buttonForwardDevice title]];
     [network setBridgeIP:[fieldBridgeIP stringValue]];
     [network setBridgeNetmask:[fieldBridgeNetmask stringValue]];
-    [network setDHCPEntriesRanges:[_datasourceDHCPRanges entries]];
-    [network setDHCPEntriesHosts:[_datasourceDHCPHosts entries]];
+    [network setDHCPEntriesRanges:[_datasourceDHCPRanges content]];
+    [network setDHCPEntriesHosts:[_datasourceDHCPHosts content]];
     [network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
     [network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
@@ -164,7 +165,7 @@
     var newRange = [TNDHCPEntry DHCPRangeWithStartAddress:@"0.0.0.0"  endAddress:@"0.0.0.0"];
 
     [checkBoxDHCPEnabled setState:CPOnState];
-    [[_datasourceDHCPRanges entries] addObject:newRange];
+    [_datasourceDHCPRanges addObject:newRange];
     [_tableViewRanges reloadData];
     [self save:nil];
 }
@@ -172,7 +173,7 @@
 - (IBAction)removeDHCPRange:(id)sender
 {
     var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex];
-    var rangeObject     = [[_datasourceDHCPRanges entries] removeObjectAtIndex:selectedIndex];
+    var rangeObject     = [_datasourceDHCPRanges removeObjectAtIndex:selectedIndex];
 
     [_tableViewRanges reloadData];
 
@@ -187,7 +188,7 @@
     var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:"domain.com" ip:@"0.0.0.0"];
 
     [checkBoxDHCPEnabled setState:CPOnState];
-    [[_datasourceDHCPHosts entries] addObject:newHost];
+    [_datasourceDHCPHosts addObject:newHost];
     [_tableViewHosts reloadData];
     [self save:nil];
 }
@@ -195,7 +196,7 @@
 - (IBAction)removeDHCPHost:(id)sender
 {
     var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex];
-    var hostsObject     = [[_datasourceDHCPHosts entries] removeObjectAtIndex:selectedIndex];
+    var hostsObject     = [_datasourceDHCPHosts removeObjectAtIndex:selectedIndex];
 
     [_tableViewHosts reloadData];
 
