@@ -115,16 +115,16 @@ TNToolBarItemStatus           = @"TNToolBarItemStatus";
         
         [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
         [self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJID];
-        [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJID];
-        [self setPosition:4 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:5 forToolbarItemIdentifier:TNToolBarItemAddGroup];
-        [self setPosition:6 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
-        [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:8 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [self setPosition:9 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:10 forToolbarItemIdentifier:TNToolBarItemHelp];
-        [self setPosition:11 forToolbarItemIdentifier:TNToolBarItemLogout];
+        // [self setPosition:2 forToolbarItemIdentifier:TNToolBarItemAddJID];
+        // [self setPosition:3 forToolbarItemIdentifier:TNToolBarItemDeleteJID];
+        // [self setPosition:4 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        // [self setPosition:5 forToolbarItemIdentifier:TNToolBarItemAddGroup];
+        // [self setPosition:6 forToolbarItemIdentifier:TNToolBarItemDeleteGroup];
+        // [self setPosition:7 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:2 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        [self setPosition:3 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [self setPosition:900 forToolbarItemIdentifier:TNToolBarItemHelp];
+        [self setPosition:900 forToolbarItemIdentifier:TNToolBarItemLogout];
         
         
         [self setDelegate:self];

@@ -67,11 +67,16 @@ class TNMediaManagement:
             reply = self.__isos_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        if iqType == "convert":
+            reply = self.__disk_convert(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
 
 
     def __disk_create(self, iq):
         """
-        Create a disk in QCOW2 format
+        Create a disk in given format
     
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
@@ -84,16 +89,17 @@ class TNMediaManagement:
             disk_name = query_node.getTag("name").getData()
             disk_size = query_node.getTag("size").getData()
             disk_unit = query_node.getTag("unit").getData()
+            format  = query_node.getTag("format").getData()
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try");
             if disk_unit == "G" and (int(disk_size) >= 10000):
                 raise Exception("too big", "You may be able to do this manually, but I won't try");
             
-            ret = os.system("qemu-img create -f qcow2 " + self.entity.vm_own_folder + "/" + disk_name + ".qcow2" + " " + disk_size + disk_unit);
+            ret = os.system("qemu-img create -f " + format + " " + self.entity.vm_own_folder + "/" + disk_name + "." + format + " " + disk_size + disk_unit);
             
             if not ret == 0:
-                raise Exception("DriveError", "Unable to create drive. Error code is " + ret);
+                raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret));
          
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "disk created")
@@ -102,15 +108,47 @@ class TNMediaManagement:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
+    
+    
+    def __disk_convert(self, iq):
+        """
+        Convert a disk from a format to another
 
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
 
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            query_node = iq.getTag("query");
+            path = query_node.getTag("path").getData()
+            format = query_node.getTag("format").getData()
+            
+            ret = os.system("qemu-img convert " + path + " -O " + format + " " + path.replace(path.split(".")[-1], "") + format);
+            
+            if not ret == 0:
+                raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret));
+            
+            os.unlink(path);
+                        
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, "convertion of  created")
+            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format));
+            self.entity.push_change("disk", "converted")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+        
+        
+    
     def __disk_delete(self, iq):
         """
         delete a virtual hard drive
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-    
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -145,7 +183,8 @@ class TNMediaManagement:
         
             for disk in disks:
                 file_cmd_output = commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower();
-                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector;") > -1):
+                
+                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector;") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
                     diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n");
                     node = xmpp.Node(tag="disk", attrs={ "name": disk,
                         "path": self.entity.vm_own_folder + "/" + disk,

@@ -128,6 +128,7 @@ function generateMacAddr()
     @outlet CPCheckBox              checkboxPAE             @accessors;
     @outlet CPCheckBox              checkboxACPI            @accessors;
     @outlet CPCheckBox              checkboxAPIC            @accessors;
+    @outlet CPButtonBar             buttonBarLeft           @accessors;
 
     @outlet TNWindowNicEdition      windowNicEdition        @accessors;
     @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;

@@ -23,9 +23,10 @@
 
 TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
 
-TNArchipelTypeVirtualMachineDiskCreate = @"create";
-TNArchipelTypeVirtualMachineDiskDelete = @"delete";
-TNArchipelTypeVirtualMachineDiskGet    = @"get";
+TNArchipelTypeVirtualMachineDiskCreate  = @"create";
+TNArchipelTypeVirtualMachineDiskDelete  = @"delete";
+TNArchipelTypeVirtualMachineDiskGet     = @"get";
+TNArchipelTypeVirtualMachineDiskConvert = @"convert";
 
 TNArchipelPushNotificationDisk           = @"archipel:push:disk";
 TNArchipelPushNotificationDiskCreated    = @"created";
@@ -52,7 +53,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
 
-    var formats = [@"qcow2", @"qcow (not implemented)", @"cow (not implemented)", @"raw (not implemented)", @"vmdk (not implemented)", @"cloop (not implemented)"];
+    var formats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [buttonFormatCreate removeAllItems];
     [buttonFormatCreate addItemsWithTitles:formats];
     
@@ -198,7 +199,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var dUnit;
     var dName       = [fieldNewDiskName stringValue];
     var dSize       = [fieldNewDiskSize stringValue];
-
+    var format      = [buttonFormatCreate title];
+    
     if (dSize == @"" || isNaN(dSize))
     {
         [CPAlert alertWithTitle:@"Error" message:@"You must enter a numeric value" style:CPCriticalAlertStyle];
@@ -236,6 +238,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addChildName:@"unit"];
     [diskStanza addTextNode:dUnit];
     [diskStanza up];
+    [diskStanza addChildName:@"format"];
+    [diskStanza addTextNode:format];
+    [diskStanza up];
 
     [_entity sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
 
@@ -244,6 +249,37 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 - (void)didCreateDisk:(id)aStanza
+{
+    if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+- (void)convert:(id)aStanza
+{
+    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
+         return;
+    }
+
+    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
+    var dName           = [[_mediasDatasource medias] objectAtIndex:selectedIndex];
+    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+    
+    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskConvert}];
+    [diskStanza addChildName:@"path"];
+    [diskStanza addTextNode:[dName path]];
+    [diskStanza up];
+    [diskStanza addChildName:@"format"];
+    [diskStanza addTextNode:[buttonFormatConvert title]];
+    [diskStanza up];
+
+    [_entity sendStanza:diskStanza andRegisterSelector:@selector(didConvertDisk:) ofObject:self];
+}
+
+- (void)didConvertDisk:(id)aStanza
 {
     if ([aStanza getType] == @"error")
     {
@@ -278,12 +314,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (IBAction)convert:(id)sender
-{
-    var growl   = [TNGrowlCenter defaultCenter];
-    
-    [growl pushNotificationWithTitle:@"Not implemented" message:@"This function is not implemented"];
-}
 @end
 
 

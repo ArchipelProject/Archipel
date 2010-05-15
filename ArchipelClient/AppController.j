@@ -91,6 +91,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     @outlet TNWindowAddContact  addContactWindow            @accessors;
     @outlet TNWindowAddGroup    addGroupWindow              @accessors;
     @outlet TNWindowConnection  connectionWindow            @accessors;
+    @outlet CPButtonBar         buttonBarLeft               @accessors;
 
 
     TNModuleLoader              _moduleLoader;
@@ -260,9 +261,67 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [connectionWindow setContentView:view];
     [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
     
+    // buttonBar
+    [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
+    
+    var plusButton  = [CPButtonBar plusButton];
+    var plusMenu    = [[CPMenu alloc] init];
+    [plusButton setTarget:self];
+    [plusButton setAction:@selector(displayPlusMenu:)];
+    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(toolbarItemAddContactClick:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:@"Add a group" action:@selector(toolbarItemAddGroupClick:) keyEquivalent:@""];
+    [plusButton setMenu:plusMenu];
+    
+    var bezelColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
+    var leftBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)];
+    var centerBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
+    var rightBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)];
+    var buttonBezel = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]];
+    var leftBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)];
+    var centerBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
+    var rightBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)];
+    var buttonBezelHighlighted = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]];
+    
+    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
+    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
+    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
+        
+    var minusButton = [CPButtonBar minusButton];
+    [minusButton setTarget:self];
+    [minusButton setAction:@selector(didMinusBouttonClicked:)];
+    
+    [buttonBarLeft setButtons:[plusButton, minusButton]];
     
     // copyright;
     [self copyright];
+}
+
+- (IBAction)didMinusBouttonClicked:(id)sender
+{
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var item    = [_rosterOutlineView itemAtRow:index];
+    
+    if ([item class] == TNStropheContact)
+        [self deleteContact:sender];
+    else if ([item class] == TNStropheGroup)
+        [self deleteGroup:sender];
+}
+
+- (IBAction)displayPlusMenu:(id)sender
+{
+    
+    
+    var ev = [CPEvent mouseEventWithType:CPRightMouseDown
+                       location:plusMenu
+                  modifierFlags:CPRightMouseDownMask // 0x100
+                      timestamp:nil
+                   windowNumber:[sender window]
+                        context:nil
+                    eventNumber:0
+                     clickCount:1
+                       pressure:1];
+                                            
+    [CPMenu popUpContextMenu:[sender menu] withEvent:ev forView:sender];
 }
 
 - (void)makeMainMenu
