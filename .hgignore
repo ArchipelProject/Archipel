@@ -14,3 +14,4 @@ ArchipelClient/Modules/*
 Modules/*
 modules.plist
 */Modules/modules.plist
+Documentation/*
