@@ -492,7 +492,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     return YES;
 }
 
-- (BOOL)didTableSelectionChange:(CPNotification)aNotification
+- (void)didTableSelectionChange:(CPNotification)aNotification
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
     

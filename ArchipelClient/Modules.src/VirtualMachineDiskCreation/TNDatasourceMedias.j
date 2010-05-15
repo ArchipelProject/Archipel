@@ -17,22 +17,25 @@
  */
 
 
- @import <Foundation/Foundation.j>
- @import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
+@import <AppKit/AppKit.j>
+
 
 @implementation TNMedia : CPObject
 {
     CPString    path            @accessors;
     CPString    name            @accessors;
+    CPString    format          @accessors;
     CPString    virtualSize     @accessors;
     CPString    diskSize        @accessors;
 }
 
-+ (TNMedia)mediaWithPath:(CPString)aPath name:(CPString)aName virtualSize:(CPString)vSize diskSize:(CPString)dSize
++ (TNMedia)mediaWithPath:(CPString)aPath name:(CPString)aName format:(CPString)aFormat virtualSize:(CPString)vSize diskSize:(CPString)dSize
 {
     var media = [[TNMedia alloc] init];
     [media setPath:aPath];
     [media setName:aName];
+    [media setFormat:aFormat];
     [media setVirtualSize:vSize];
     [media setDiskSize:dSize];
 

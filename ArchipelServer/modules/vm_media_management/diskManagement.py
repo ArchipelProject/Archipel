@@ -72,7 +72,12 @@ class TNMediaManagement:
             reply = self.__disk_convert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
+        if iqType == "rename":
+            reply = self.__disk_rename(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
 
     def __disk_create(self, iq):
         """
@@ -140,7 +145,36 @@ class TNMediaManagement:
             reply = build_error_iq(self, ex, iq)
         return reply
         
-        
+    def __disk_rename(self, iq):
+        """
+        Rename a disk
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            query_node = iq.getTag("query");
+            path = query_node.getTag("path").getData()
+            newname = query_node.getTag("newname").getData()
+
+            newpath = path.replace(path.split("/")[-1].split(".")[0], newname.split(".")[0]);
+            try:
+                ret = os.system("mv " + path + " " + newpath);
+            except:
+                reply = iq.buildReply('ignore')
+                return reply;
+            
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, "renamed hard drive %s into  %s" % (path, newname))
+            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname));
+            self.entity.push_change("disk", "renamed")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+    
     
     def __disk_delete(self, iq):
         """
@@ -186,7 +220,7 @@ class TNMediaManagement:
                 
                 if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector;") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
                     diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n");
-                    node = xmpp.Node(tag="disk", attrs={ "name": disk,
+                    node = xmpp.Node(tag="disk", attrs={ "name": disk.split('.')[0],
                         "path": self.entity.vm_own_folder + "/" + disk,
                         "format": diskinfo[1].split(": ")[1],
                         "virtualSize": diskinfo[2].split(": ")[1],
