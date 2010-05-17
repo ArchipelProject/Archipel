@@ -196,7 +196,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
     
-    CPLog.debug("I asked installed appliances");
+    CPLog.info("I asked installed appliances");
 }
 
 - (void)didReceiveInstalledAppliances:(TNStropheStanza)aStanza
@@ -248,7 +248,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (IBAction)dettach:(id)sender
 {
-    CPLog.debug("================= 1");
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];

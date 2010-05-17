@@ -33,10 +33,10 @@
         
         if ([anEvent keyCode] == CPDownArrowKeyCode)
             indexToSelect = [CPIndexSet indexSetWithIndex:0];
-        else if ([anEvent keyCode] == CPDownArrowKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:([outlineView numberOfRows] + 1)];
+        else if ([anEvent keyCode] == CPUpArrowKeyCode)
+            indexToSelect = [CPIndexSet indexSetWithIndex:([outlineView numberOfRows] - 1)];
         else if ([anEvent keyCode] == CPReturnKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:1];
+            indexToSelect = [CPIndexSet indexSetWithIndex:1];            
             
         [outlineView selectRowIndexes:indexToSelect byExtendingSelection:NO];
 

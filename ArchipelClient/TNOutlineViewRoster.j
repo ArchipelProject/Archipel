@@ -92,6 +92,8 @@
     [self expandAll];
 }
 
+
+
 - (void)moveLeft:(id)sender
 {
     var index = [self selectedRowIndexes];
@@ -166,6 +168,16 @@
     }
     else
         [super moveUp:sender];
+}
+
+- (void)keyDown:(CPEvent)anEvent
+{
+    if ([anEvent keyCode] == CPDeleteKeyCode)
+    {
+        var center = [CPNotificationCenter defaultCenter];
+        [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
+    }
+    [super keyDown:anEvent];
 }
 
 @end

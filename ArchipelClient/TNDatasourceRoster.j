@@ -135,7 +135,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
     else
     {
         currentItem = nil;
-        [mainOutlineView deselectAll];
+        if ([mainOutlineView numberOfSelectedRows] > 0)
+            [mainOutlineView deselectAll];
     }
        
 }

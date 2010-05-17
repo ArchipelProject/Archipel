@@ -97,11 +97,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         var params = [[CPDictionary alloc] init];
 
         [params setValue:@"message" forKey:@"name"];
-        [params setValue:aPushType forKey:@"type"];
+        if (aPushType)
+            [params setValue:aPushType forKey:@"type"];
 
-        var pushSelectorId = [_connection registerSelector:aSelector ofObject:self withDict:params];
-
-        [_registredSelectors addObject:pushSelectorId];
+        [_registredSelectors addObject:[_connection registerSelector:aSelector ofObject:self withDict:params]];
     }
 }
 
@@ -188,8 +187,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
-    var msg = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
-    var growl = [TNGrowlCenter defaultCenter];
+    var growl   = [TNGrowlCenter defaultCenter];
+    var msg     = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
     
     //[CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];

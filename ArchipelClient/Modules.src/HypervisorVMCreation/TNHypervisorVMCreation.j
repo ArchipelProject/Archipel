@@ -39,7 +39,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     @outlet CPButtonBar     buttonBarControl;
     @outlet CPView          viewTableContainer;
     
-    TNTableView             _tableVirtualMachines;
+    CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
 
     TNStropheContact        _virtualMachinesForDeletion;
@@ -51,7 +51,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
-    _tableVirtualMachines        = [[TNTableView alloc] initWithFrame:[scrollViewListVM bounds]];
+    _tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[scrollViewListVM bounds]];
 
     [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewListVM setAutohidesScrollers:YES];

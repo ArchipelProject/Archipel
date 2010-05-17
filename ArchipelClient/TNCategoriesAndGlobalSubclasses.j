@@ -214,7 +214,7 @@
     var alert = [[CPAlert alloc] init];
     [alert setTitle:aTitle];
     [alert setMessageText:aMessage];
-    //[alert setWindowStyle:CPHUDBackgroundWindowMask];
+    // [alert setWindowStyle:CPHUDBackgroundWindowMask];
     [alert setAlertStyle:aStyle];
     [alert addButtonWithTitle:@"OK"];
 
@@ -240,6 +240,17 @@
 
     [alert runModal];
 }
+
+// -(void)keyDown:(CPEvent)anEvent
+// {
+//     CPLog.debug("BIRDEL");
+//     if ([anEvent keyCode] == CPEscapeKeyCode)
+//     {
+//         CPLog.debug("TOTO");
+//         [self _notifyDelegate:[_buttons objectAtIndex:0]];
+//     }
+//     [super keyDown:anEvent];
+// }
 
 @end
 
@@ -282,31 +293,31 @@
 }
 @end
 
-// @implementation CPWindow (fadeInWindow)
-// 
-// - (IBAction)orderFront:(id)sender
-// {
-//     if (![self isVisible])
-//     {
-//         var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
-//         var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-// 
-//         [anim setDuration:0.3];
-//         [anim startAnimation];
-//     }
-//     
-//     [_platformWindow orderFront:self];
-//     [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
-//     
-//     if (_firstResponder === self || !_firstResponder)
-//         [self makeFirstResponder:[self initialFirstResponder]];
-//     
-//     if (!CPApp._keyWindow)
-//         [self makeKeyWindow];
-//     
-//     if (!CPApp._mainWindow)
-//         [self makeMainWindow];
-// }
+@implementation CPWindow (fadeInWindow)
+
+- (IBAction)orderFront:(id)sender
+{
+    if (![self isVisible])
+    {
+        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+        var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+
+        [anim setDuration:0.3];
+        [anim startAnimation];
+    }
+    
+    [_platformWindow orderFront:self];
+    [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
+    
+    if (_firstResponder === self || !_firstResponder)
+        [self makeFirstResponder:[self initialFirstResponder]];
+    
+    if (!CPApp._keyWindow)
+        [self makeKeyWindow];
+    
+    if (!CPApp._mainWindow)
+        [self makeMainWindow];
+}
 // 
 // - (IBAction)orderOut:(id)sender
 // {
@@ -331,7 +342,7 @@
 //     [self _updateMainAndKeyWindows];
 // }
 // 
-// @end
+@end
 
 @implementation TNStropheGroup (majName)
 - (CPString)description
@@ -340,29 +351,22 @@
 }
 @end
 
-@implementation TNTableView : CPTableView
-{
-    
-}
+@implementation CPTableView (PommeA)
 
 -(void)keyDown:(CPEvent)anEvent
 {
-    CPLog.debug([anEvent keyCode]);
-    if (([anEvent keyCode] == 65) && ([anEvent modifierFlags] == CPCommandKeyMask))
+    if ((([anEvent keyCode] == 65) && ([anEvent modifierFlags] == CPCommandKeyMask) && [self allowsMultipleSelection]))
     {
         var indexes = [CPIndexSet indexSetWithIndexesInRange:CPMakeRange(0, [self numberOfRows])];
         
         [self selectRowIndexes:indexes byExtendingSelection:NO];
         return;
     }
-    [super keyDown:anEvent];
+    [self interpretKeyEvents:[anEvent]];
 }
 @end
 
 @implementation TNButtonBarPopUpButton: CPButton
-{
-    
-}
 
 - (void)mouseDown:(CPEvent)anEvent
 {
@@ -390,4 +394,11 @@
     return _cancelButton;
 }
 
+-(void)keyDown:(CPEvent)anEvent
+{
+    if ([anEvent keyCode] == CPEscapeKeyCode)
+        [self _searchFieldCancel:self];
+
+    [super keyDown:anEvent];
+}
 @end

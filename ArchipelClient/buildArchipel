@@ -24,6 +24,7 @@ GLOBAL_MODULES_SRC_PATH     = GLOBAL_BASE_PATH + "/Modules.src/"
 GLOBAL_MODULES_BUILD_PATH   = GLOBAL_BASE_PATH + "/Modules/"
 GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_SRC_PATH + "modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
+GLOBAL_BUILD_NUMBER         = int(commands.getoutput("head -1 %s/.build-number" % (GLOBAL_BASE_PATH)))
 
 os.system("export PATH=/usr/local/narwhal/bin:$PATH");
 
@@ -163,6 +164,11 @@ def clean(paths, config, ignorepaths):
 def build(paths, config, ignorepaths):
     return_code = 0;
     
+    # GLOBAL_BUILD_NUMBER = GLOBAL_BUILD_NUMBER + 1
+    bd = GLOBAL_BUILD_NUMBER;
+    
+    print "# begining build #%d" % (bd)
+    
     for path in paths:
         if path in ignorepaths:
             continue
@@ -175,12 +181,15 @@ def build(paths, config, ignorepaths):
                         
         if not str(return_code) == "0":
             print "# Error in build : " + str(return_code)
-            sys.exit("error during build")
+            sys.exit("error during build")        
         
-        print "# Build success.";
-        
+        print "# Build success."
         print "# get back to " + GLOBAL_BASE_PATH
         os.chdir(GLOBAL_BASE_PATH);
+
+    print "# Build #%d success." % (GLOBAL_BUILD_NUMBER)
+    f = os.system("echo '%d' > ./.build-number" % ((bd + 1)))
+    
 
 
 def copy_modules(modules_paths, config, ignorepaths):
@@ -272,7 +281,7 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
         --native=<platform>      : generate a native app. platform supported are [MacOS] (case sensitive).
         --ignoremodules=<list>   : ignore list of modules. <list> is "moduleA,moduleC" whith no space.
         --exportsdk=<path>       : generate and export Archipel SDK to <path>
-        --exportarchipel=<path>  : export the ready to use application to <path>
+        --export=<path>  : export the ready to use flattened application to <path>
     """
     sys.exit(0);
 
@@ -317,8 +326,7 @@ def export_archipel(path, config):
     print "# exporting flattened Archipel application to " + path
     
     build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("/*", "");
-    print ("flatten %s %s/ArchipelFlattened" % (build_dir, path))
-    os.system("flatten %s %s/ArchipelFlattened" % (build_dir, path))
+    os.system("flatten -f %s %s/Archipel-%s-b%d" % (build_dir, path, config, GLOBAL_BUILD_NUMBER))
     #os.system("mkdir -p " + path);
     #os.system("cp -a " + build_dir + " " + path + "/");
     #os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + path + "/Modules/");

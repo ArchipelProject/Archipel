@@ -77,11 +77,11 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     var ret;
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
     
-    CPLog.debug("starting recovering from storage");
+    CPLog.debug("Recovering from storage");
     
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
-        CPLog.debug(@"recovering from HTML5 storage");
+        CPLog.debug(@"Recovering from HTML5 storage");
         
         try
         {
@@ -95,7 +95,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
-        CPLog.debug(@"recovering from cookie storage");
+        CPLog.debug(@"Recovering from cookie storage");
         
         if ((rawDataString = [[CPCookie alloc] initWithName:identifier]) && [rawDataString value] != @"")
         {
@@ -124,7 +124,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
     var string      = [datas rawString];
     
-    CPLog.debug("Starting storage synchronization");
+    CPLog.debug("Storage synchronized");
     
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {

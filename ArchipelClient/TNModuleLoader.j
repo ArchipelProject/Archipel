@@ -66,6 +66,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
     int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
+    BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
     id                      _modulesPList;
     CPArray                 _bundles;
     CPDictionary            _loadedTabModulesScrollViews;
@@ -92,6 +93,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         _numberOfModulesLoaded  = 0;
         _numberOfActiveModules  = 0;
         _numberOfReadyModules   = 0;
+        _allModulesReady         = NO;
         _bundles = [CPArray array];
     }
 
@@ -111,12 +113,13 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         return NO;
     
     _numberOfActiveModules = 0;
-    [self rememberLastSelectedTabIndex];
+    // [self rememberLastSelectedTabIndex];
     
     var center = [CPNotificationCenter defaultCenter];
     
     [self _removeAllTabsFromModulesTabView];
     _numberOfReadyModules = 0;
+    _allModulesReady = NO;
     
     [self setEntity:anEntity];
     [self setRoster:aRoster];
@@ -156,6 +159,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
+    CPLog.debug(@"rememberSelectedIndexOfItem: with item " + anItem);
     if (anItem && [self entity] && ([mainTabView numberOfTabViewItems] > 0))
     {
         var identifier;
@@ -426,6 +430,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         
         CPLog.debug("sending all modules ready notification")
         [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
+        
+        _allModulesReady = YES;
     }
 }
 
@@ -440,7 +446,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     if ([aTabView numberOfTabViewItems] <= 0)
         return
-    
+
+    if ([self isAllModulesReady])
+        [self rememberSelectedIndexOfItem:anItem];
     
     var currentTabItem = [aTabView selectedTabViewItem];
     

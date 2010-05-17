@@ -66,9 +66,32 @@ TNArchipelEntityTypeUser            = @"user";
 TNArchipelEntityTypeGroup            = @"group";
 
 
+/*! @global
+    @group TNArchipelStatus
+    This string represent a status Available
+*/
 TNArchipelStatusAvailableLabel  = @"Available";
+
+/*! @global
+    @group TNArchipelStatus
+    This string represent a status Away
+*/
 TNArchipelStatusAwayLabel       = @"Away";
+
+/*! @global
+    @group TNArchipelStatus
+    This string represent a status Busy
+*/
 TNArchipelStatusBusyLabel       = @"Busy";
+
+
+
+/*! @global
+    @group TNArchipelAction
+    ask for removing the current roster item
+*/
+TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
+
 
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
@@ -127,12 +150,16 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)awakeFromCib
 {
     [connectionWindow orderOut:nil];
+    
+    // register logs
     CPLogRegister(CPLogConsole);
     
     var bundle      = [CPBundle mainBundle];
     var defaults    = [TNUserDefaults standardUserDefaults];
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
+    
+    [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
     
     var posx;
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
@@ -217,7 +244,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
     var frame   = [windowModuleLoading frame];
     windowModuleLoading = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
     [windowModuleLoading setContentView:view];
-    //[windowModuleLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
     [windowModuleLoading center]
     [windowModuleLoading makeKeyAndOrderFront:nil];
     
@@ -233,12 +259,69 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [_moduleLoader setModulesMenu:_modulesMenu];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
-    CPLog.info(@"Starting loading all modules");
+    CPLog.trace(@"Starting loading all modules");
     [_moduleLoader load];
 
-
+    
+    CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
     [self showHelpView];
+    
+    CPLog.trace(@"initializing Growl");
+    var growl = [TNGrowlCenter defaultCenter];
+    [growl setView:rightView];
+    
+    CPLog.trace(@"Initializing the traffic status LED");
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"statusBarBg.png"]]]];
+    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
+    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
+    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
+    
+    // put the cool background. It a bad method, I know.
+    var view    = [connectionWindow contentView];
+    var frame   = [connectionWindow frame];
+    connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
+    [connectionWindow setContentView:view];
+    [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
+    
+    // buttonBar
+    CPLog.trace(@"Initializing the roster button bar");
+    [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
+    
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
+    var leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)];
+    var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
+    var rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)];
+    var buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]];
+    var leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)];
+    var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
+    var rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)];
+    var buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]];
+    var plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];
+    var plusMenu                = [[CPMenu alloc] init];
+    var minusButton             = [CPButtonBar minusButton];
+    
+    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
+    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
+    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
+    
+    [plusButton setTarget:self];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
+    [plusButton setBordered:NO];
+    [plusButton setImagePosition:CPImageOnly];
+    
+    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
+    [plusButton setMenu:plusMenu];
+    
+    [minusButton setTarget:self];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
+    [minusButton setAction:@selector(didMinusBouttonClicked:)];
+
+    [buttonBarLeft setButtons:[plusButton, minusButton]];
+    
+    // copyright;
+    [self copyright];
     
     /* notifications */
     var center = [CPNotificationCenter defaultCenter];
@@ -252,68 +335,13 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     
+    CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
     [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNArchipelActionRemoveSelectedRosterEntityNotification");
+    [center addObserver:self selector:@selector(didMinusBouttonClicked:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
     
-    
-    CPLog.info(@"AppController initialized");
-    
-    var growl = [TNGrowlCenter defaultCenter];
-    [growl setView:rightView];
-    
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"statusBarBg.png"]]]];
-    
-    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
-    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
-    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
-    
-    // trick
-    var view    = [connectionWindow contentView];
-    var frame   = [connectionWindow frame];
-    connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
-    [connectionWindow setContentView:view];
-    [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
-    
-    // buttonBar
-    [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
-    
-    var bezelColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
-    var leftBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)];
-    var centerBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
-    var rightBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)];
-    var buttonBezel = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]];
-    var leftBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)];
-    var centerBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
-    var rightBezelHighlighted = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)];
-    var buttonBezelHighlighted = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]];
-    
-    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
-    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
-    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-    
-    var plusButton  = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];//[CPButtonBar plusButton];
-    var plusMenu    = [[CPMenu alloc] init];
-    [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
-    [plusButton setBordered:NO];
-    [plusButton setImagePosition:CPImageOnly];
-    
-    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
-    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
-    [plusButton setMenu:plusMenu];
-    
-    var minusButton = [CPButtonBar minusButton];
-    [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
-    [minusButton setAction:@selector(didMinusBouttonClicked:)];
-    
-    [buttonBarLeft setButtons:[plusButton, minusButton]];
-    
-    
-    [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
-    
-    // copyright;
-    [self copyright];
-    
+    CPLog.info(@"Initialization of AppController OK");
 }
 
 - (IBAction)didMinusBouttonClicked:(id)sender
@@ -427,7 +455,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 */
 - (void)moduleLoader:(TNModuleLoader)aLoader hasLoadBundle:(CPBundle)aBundle
 {
-    CPLog.info("Loading complete for bundle " + aBundle);
+    CPLog.info("Bundle loaded : " + aBundle);
 }
 
 
@@ -662,15 +690,25 @@ TNArchipelStatusBusyLabel       = @"Busy";
         var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
         
         [_helpWindow setPlatformWindow:_platformHelpWindow];
-        [_platformHelpWindow makeKeyAndOrderFront:nil];
+        [_platformHelpWindow orderFront:nil];
         
         [_helpWindow setDelegate:self];
-        [helpView setFrame:[[scrollView contentView] bounds]];
+        
+        var newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
+        var bundle          = [CPBundle mainBundle];
+        var url             = [bundle objectForInfoDictionaryKey:@"TNHelpWindowURL"];
+        var version         = [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"];
+        
+        if (!url || (url == @"local"))
+            url = @"help/index.html";
+        
+        [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
+        
         [scrollView setAutohidesScrollers:YES];
         [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [scrollView setDocumentView:helpView];
+        [scrollView setDocumentView:newHelpView];
 
-        [[_helpWindow contentView] addSubview:scrollView];
+        [_helpWindow setContentView:scrollView];
         [_helpWindow center];
         [_helpWindow makeKeyAndOrderFront:nil];
     }
@@ -782,8 +820,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
 {
     [[aTimer userInfo] setImage:_imageLedNoData];
 }
-
-
 
 /*! Notification responder of TNStropheConnection
     will be performed on logout
@@ -922,6 +958,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
+
 
 - (void)allModuleReady:(CPNotification)aNotification
 {

@@ -106,9 +106,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         [buttonSource selectItemWithTitle:[_nic source]];
     }
     else
-    {
-        CPLog.debug("ERROR");
-    }
+        CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
 }
 
 - (IBAction)performRadioNicTypeChanged:(id)sender

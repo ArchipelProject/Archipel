@@ -52,7 +52,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     @outlet CPButtonBar             buttonBarControl;
     @outlet CPView                  viewTableContainer;
     
-    TNTableView             _tableVirtualMachines;
+    CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _datasourceGroupVM;
 }
 
@@ -62,7 +62,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
     
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
-    _tableVirtualMachines   = [[TNTableView alloc] initWithFrame:[VMScrollView bounds]];
+    _tableVirtualMachines   = [[CPTableView alloc] initWithFrame:[VMScrollView bounds]];
     
     [VMScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [VMScrollView setAutohidesScrollers:YES];

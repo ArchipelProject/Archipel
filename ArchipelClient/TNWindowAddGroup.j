@@ -65,4 +65,15 @@
         [self performClose:nil];
     }
 }
+
+-(void)keyDown:(CPEvent)anEvent
+{
+    if ([anEvent keyCode] == CPEscapeKeyCode)
+    {
+        [self close];
+        return;
+    }
+    [super keyDown:anEvent];
+}
+
 @end

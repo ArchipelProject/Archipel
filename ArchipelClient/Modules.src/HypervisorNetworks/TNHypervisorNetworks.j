@@ -569,8 +569,6 @@ function generateIPForNewNetwork()
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
     
-    CPLog.debug(selectedIndex);
-    
     if (selectedIndex == -1)
     {
         [buttonActivation setEnabled:NO];
