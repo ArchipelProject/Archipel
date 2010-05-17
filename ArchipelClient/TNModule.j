@@ -142,8 +142,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var animView    = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
     var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
     
-    [anim setDuration:0.3];
-    [anim startAnimation];
+    //[anim setDuration:0.3];
+    //[anim startAnimation];
 }
 
 /*! this message is sent when user click on another module.

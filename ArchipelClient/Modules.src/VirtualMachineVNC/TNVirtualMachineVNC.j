@@ -85,6 +85,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     var viewBounds = [self bounds];
     viewBounds.size.height = 1000;

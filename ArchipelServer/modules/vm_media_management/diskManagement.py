@@ -159,13 +159,12 @@ class TNMediaManagement:
             query_node = iq.getTag("query");
             path = query_node.getTag("path").getData()
             newname = query_node.getTag("newname").getData()
-
-            newpath = path.replace(path.split("/")[-1].split(".")[0], newname.split(".")[0]);
-            try:
-                ret = os.system("mv " + path + " " + newpath);
-            except:
-                reply = iq.buildReply('ignore')
-                return reply;
+            
+            extension = path.split(".")[-1];
+            newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension));
+            
+            print path + " -> " + newpath
+            os.rename(path, newpath);
             
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "renamed hard drive %s into  %s" % (path, newname))

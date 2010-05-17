@@ -32,6 +32,10 @@
     <key>TNHelpWindowURL</key>
     <string>http://antoinemercadal.fr/archipelhelp/</string>
     
+    <key>TNArchipelModuleLoadingDelay</key>
+    <string>0.3</string>
+    
+    
     <key>TNArchipelVersion</key>
     <string>Alpha-0.1 (Beethoven)</string>
     

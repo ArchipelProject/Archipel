@@ -333,7 +333,6 @@
 // 
 // @end
 
-
 @implementation TNStropheGroup (majName)
 - (CPString)description
 {
@@ -384,3 +383,11 @@
 }
 @end
 
+@implementation CPSearchField (cancelButton)
+
+- (CPButton)cancelButton
+{
+    return _cancelButton;
+}
+
+@end

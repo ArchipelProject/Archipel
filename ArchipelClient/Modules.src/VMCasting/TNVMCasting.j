@@ -52,13 +52,18 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     @outlet CPScrollView        mainScrollView          @accessors;
     @outlet CPProgressIndicator downloadIndicator       @accessors;
     @outlet CPWindow            windowDownloadQueue     @accessors;
-
+    @outlet CPWindow            windowNewCastURL        @accessors;
+    @outlet CPButtonBar         buttonBarControl;
+    @outlet CPView              viewTableContainer;
+    
     CPOutlineView               _mainOutlineView;
     TNVMCastDatasource          _castsDatasource;
 }
 
 - (void)awakeFromCib
 {
+    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    
     [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     _castsDatasource = [[TNVMCastDatasource alloc] init];
     
@@ -105,7 +110,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
 
     [mainScrollView setAutohidesScrollers:YES];
-    [mainScrollView setBorderedWithHexColor:@"#9e9e9e"]
     [mainScrollView setDocumentView:_mainOutlineView];
     [_mainOutlineView reloadData];
     [_mainOutlineView expandAll];
@@ -117,6 +121,28 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [fieldFilter setSendsSearchStringImmediately:YES];
     [fieldFilter setTarget:self];
     [fieldFilter setAction:@selector(fieldFilterDidChange:)];
+    
+    
+    // menuBar
+    var plusButton = [CPButtonBar plusButton];
+    [plusButton setTarget:self];
+    [plusButton setAction:@selector(openNewVMCastURLWindow:)];
+    
+    var minusButton = [CPButtonBar minusButton];
+    [minusButton setTarget:self];
+    [minusButton setAction:@selector(removeVMCast:)];
+    
+    var downloadButton = [CPButtonBar plusButton];
+    [downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-download.png"] size:CPSizeMake(16, 16)]];
+    [downloadButton setTarget:self];
+    [downloadButton setAction:@selector(download:)];
+    
+    var downloadQueueButton = [CPButtonBar plusButton];
+    [downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-view.png"] size:CPSizeMake(16, 16)]];
+    [downloadQueueButton setTarget:self];
+    [downloadQueueButton setAction:@selector(showDownloadQueue:)];
+            
+    [buttonBarControl setButtons:[plusButton, minusButton, downloadButton, downloadQueueButton]];
 }
 
 - (IBAction)fieldFilterDidChange:(id)sender
@@ -131,6 +157,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [super willLoad];
     [[self windowDownloadQueue] setEntity:_entity];
     [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willUnload
@@ -158,6 +187,11 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     // message sent when the tab is changed
 }
 
+- (IBAction)openNewVMCastURLWindow:(id)sender
+{
+    [fieldNewURL setStringValue:@""];
+    [windowNewCastURL orderFront:nil];
+}
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
@@ -233,6 +267,11 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
 }
 
+- (IBAction)showDownloadQueue:(id)sender
+{
+    [[self windowDownloadQueue] orderFront:nil];
+}
+
 - (IBAction)download:(id)sender
 {
     var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
@@ -258,7 +297,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didDownload:(TNStropheStanza)aStanza
 {
-    [[self windowDownloadQueue] orderFront:nil];
+    // [[self windowDownloadQueue] orderFront:nil];
 }
 
 - (void)updateDownloadProgress:(CPTimer)aTimer
@@ -277,6 +316,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (IBAction)addNewVMCast:(id)sender
 {
+    [windowNewCastURL orderOut:nil];
+    
     var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
     var url         = [fieldNewURL stringValue];
     

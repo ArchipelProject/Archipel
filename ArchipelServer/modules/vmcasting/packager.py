@@ -27,7 +27,7 @@ import shutil
 
 class TNArchipelPackage(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, entity, package_uuid, requester):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, finish_callback, entity, package_uuid, requester):
         """
         initialize a TNArchipelPackage
         
@@ -46,6 +46,7 @@ class TNArchipelPackage(Thread):
         self.uuid               = uuid
         self.install_path       = install_path
         self.define_callback    = define_callback
+        self.finish_callback    = finish_callback
         self.entity             = entity;
         self.package_uuid       = package_uuid;
         self.requester          = requester;
@@ -77,8 +78,11 @@ class TNArchipelPackage(Thread):
         define_iq = xmpp.Iq();
         define_iq.setQueryPayload([desc_node])
         
-        self.entity.change_status(old_status);
         self.define_callback(define_iq);
+        self.finish_callback();
+        
+        self.entity.push_change("vmcasting", "applianceinstalled");
+        self.entity.change_status(old_status);
         self.entity.shout("appliance", "I've terminated to install applicance %s as %s asked me." % (self.xvm2_package_path, self.requester));
     
     
@@ -170,7 +174,7 @@ class TNArchipelPackage(Thread):
         if not self.description_file:
             return False;
         
-        self.entity.push_change("vmcasting", "applianceinstalling");
+        self.entity.push_change("vmcasting", "appliancecopying");
         
         for key, path in self.disk_files.items():
             log(self, LOG_LEVEL_DEBUG, "moving %s to %s" % (path, self.install_path));
@@ -185,7 +189,7 @@ class TNArchipelPackage(Thread):
         f.write(self.package_uuid)
         f.close()
         
-        self.entity.push_change("vmcasting", "applianceinstalled");
+        self.entity.push_change("vmcasting", "appliancecopied");
         
         return True;
     

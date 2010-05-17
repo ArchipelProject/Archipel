@@ -31,6 +31,16 @@ TNArchipelTypeHypervisorNetworkUndefine    = @"undefine";
 TNArchipelTypeHypervisorNetworkCreate      = @"create";
 TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
+
+function generateIPForNewNetwork()
+{
+    var dA      = Math.round(Math.random() * 255)
+    var dB      = Math.round(Math.random() * 255)
+    var ipaddress  = dA + "." + dB + ".0.1";
+
+    return ipaddress;
+}
+
 @implementation TNHypervisorNetworks : TNModule
 {
     @outlet CPTextField                 fieldJID                @accessors;
@@ -41,6 +51,8 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     @outlet CPButton                    buttonDeactivation;
     @outlet CPButton                    buttonDelete;
     @outlet CPSearchField               fieldFilterNetworks;
+    @outlet CPButtonBar                 buttonBarControl;
+    @outlet CPView                      viewTableContainer;
     
     CPTableView             _tableViewNetworks;
     TNTableViewDataSource   _datasourceNetworks;
@@ -48,6 +60,8 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (void)awakeFromCib
 {
+    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
     _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[scrollViewNetworks bounds]];
@@ -55,12 +69,13 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [scrollViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewNetworks setAutohidesScrollers:YES];
     [scrollViewNetworks setDocumentView:_tableViewNetworks];
-    [scrollViewNetworks setBorderedWithHexColor:@"#9e9e9e"];
+    
 
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableViewNetworks setAllowsColumnResizing:YES];
     [_tableViewNetworks setAllowsEmptySelection:YES];
+    [_tableViewNetworks setAllowsMultipleSelection:YES];
     [_tableViewNetworks setTarget:self];
     [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
     
@@ -123,6 +138,41 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     [buttonActivation setEnabled:NO];
     [buttonDeactivation setEnabled:NO];
     [buttonDelete setEnabled:NO];
+    
+    var menu = [[CPMenu alloc] init];
+    [menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""];
+    [menu addItem:[CPMenuItem separatorItem]];
+    [menu addItemWithTitle:@"Edit" action:@selector(editNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Activate" action:@selector(activateNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Deactivate" action:@selector(deactivateNetwork:) keyEquivalent:@""];
+    [menu addItem:[CPMenuItem separatorItem]];
+    [menu addItemWithTitle:@"Delete" action:@selector(delNetwork:) keyEquivalent:@""];
+    [_tableViewNetworks setMenu:menu];
+    
+    var plusButton = [CPButtonBar plusButton];
+    [plusButton setTarget:self];
+    [plusButton setAction:@selector(addNetwork:)];
+    var minusButton = [CPButtonBar minusButton];
+    [minusButton setTarget:self];
+    [minusButton setAction:@selector(delNetwork:)];
+    
+    var activateButton = [CPButtonBar plusButton];
+    [activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)]];
+    [activateButton setTarget:self];
+    [activateButton setAction:@selector(activateNetwork:)];
+    
+    var deactivateButton = [CPButtonBar plusButton];
+    [deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)]];
+    [deactivateButton setTarget:self];
+    [deactivateButton setAction:@selector(deactivateNetwork:)];
+    
+    var editButton  = [CPButtonBar plusButton];
+    [editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [editButton setTarget:self];
+    [editButton setAction:@selector(editNetwork:)];
+    
+    [buttonBarControl setButtons:[plusButton, minusButton, editButton, activateButton, deactivateButton]];
+
 }
 
 - (void)willLoad
@@ -133,6 +183,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
     
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willShow
@@ -183,7 +234,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
             var bridge              = [network firstChildWithName:@"bridge"];
             var bridgeName          = [bridge valueForAttribute:@"name"];
             var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
-            var bridgeDelay         = [bridge valueForAttribute:@"delay"];
+            var bridgeDelay         = [bridge valueForAttribute:@"forwardDelay"];
             var forward             = [network firstChildWithName:@"forward"];
             var forwardMode         = [forward valueForAttribute:@"mode"];
             var forwardDev          = [forward valueForAttribute:@"dev"];
@@ -324,7 +375,7 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
         [windowProperties setTable:_tableViewNetworks];
         [windowProperties setHypervisor:[self entity]];
         [windowProperties center];
-        [windowProperties orderFront:nil];
+        [windowProperties makeKeyAndOrderFront:nil];
     }
 }
 
@@ -376,41 +427,44 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (IBAction)activateNetwork:(id)sender
 {
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    if (selectedIndex == -1)
-        return
-
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
-
-    if (![networkObject isNetworkEnabled])
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
+    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+    
+    for (var i = 0; i < [objects count]; i++)
     {
-        [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkCreate}];
-        [stanza addTextNode:[networkObject UUID]];
+        var networkObject   = [objects objectAtIndex:i];
+        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
 
-        [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
-        [_tableViewNetworks deselectAll];
+        if (![networkObject isNetworkEnabled])
+        {
+            [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkCreate}];
+            [stanza addTextNode:[networkObject UUID]];
+
+            [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+            [_tableViewNetworks deselectAll];
+        }
+        
     }
 }
 
 - (IBAction)deactivateNetwork:(id)sender
 {
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    if (selectedIndex == -1)
-        return
-
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
-
-    if ([networkObject isNetworkEnabled])
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
+    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+    
+    for (var i = 0; i < [objects count]; i++)
     {
-        [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDestroy}];
-        [stanza addTextNode:[networkObject UUID]];
+        var networkObject   = [objects objectAtIndex:i];
+        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}]
 
-        [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
-        [_tableViewNetworks deselectAll];
+        if ([networkObject isNetworkEnabled])
+        {
+            [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkDestroy}];
+            [stanza addTextNode:[networkObject UUID]];
+
+            [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
+            [_tableViewNetworks deselectAll];
+        }
     }
 }
 
@@ -432,48 +486,61 @@ TNArchipelTypeHypervisorNetworkDestroy     = @"destroy";
 
 - (IBAction)addNetwork:(id)sender
 {
-   var newNetwork = [TNNetwork networkWithName:@"New Network"
-                                            UUID:[CPString UUID]
-                                      bridgeName:@"virbr0"
+    var uuid            = [CPString UUID];
+    var ip              = generateIPForNewNetwork();
+    var ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2";
+    var ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254";
+    
+    var baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd];
+    
+    var newNetwork = [TNNetwork networkWithName:uuid
+                                            UUID:uuid
+                                      bridgeName:@"br" + Math.round((Math.random() * 42000))
                                      bridgeDelay:@"0"
-                               bridgeForwardMode:@"route"
+                               bridgeForwardMode:@"nat"
                              bridgeForwardDevice:@"eth0"
-                                        bridgeIP:@"10.0.0.1"
+                                        bridgeIP:ip
                                    bridgeNetmask:@"255.255.0.0"
-                               DHCPEntriesRanges:[CPArray array]
+                               DHCPEntriesRanges:[baseDHCPEntry]
                                 DHCPEntriesHosts:[CPArray array]
                                   networkEnabled:NO
                                       STPEnabled:NO
-                                     DHCPEnabled:NO];
+                                     DHCPEnabled:YES];
 
     [_datasourceNetworks addObject:newNetwork];
     [_tableViewNetworks reloadData];
     
-    var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Network" message:@"Network has been added"];
+    var index = [_datasourceNetworks indexOfObject:newNetwork];
+    [_tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+    
+    [self defineNetworkXML:sender];
+    [self editNetwork:nil];
+    
+    // var growl = [TNGrowlCenter defaultCenter];
+    // [growl pushNotificationWithTitle:@"Network" message:@"Network has been added"];
 }
 
 - (IBAction)delNetwork:(id)sender
 {
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    if (selectedIndex == -1)
-        return
-
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-
-    if ([networkObject isNetworkEnabled])
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
+    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+    
+    for (var i = 0; i < [objects count]; i++)
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
-        return
+        var networkObject   = [objects objectAtIndex:i];
+        if ([networkObject isNetworkEnabled])
+        {
+            [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+            return
+        }
+
+        var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorNetwork}];
+
+        [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}];
+        [deleteStanza addTextNode:[networkObject UUID]];
+
+        [self sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
     }
-
-    var deleteStanza    = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorNetwork}];
-
-    [deleteStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorNetworkUndefine}];
-    [deleteStanza addTextNode:[networkObject UUID]];
-
-    [self sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
 }
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza

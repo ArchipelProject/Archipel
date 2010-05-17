@@ -172,7 +172,6 @@
 */
 - (void)setObjectValue:(id)aContact
 {
-    console.log("BLLAAAAA");
     _contact = aContact;
     
     var mainBounds = [self bounds];

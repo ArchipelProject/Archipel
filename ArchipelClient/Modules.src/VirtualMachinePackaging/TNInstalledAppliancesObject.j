@@ -20,24 +20,30 @@
 
 TNArchipelApplianceInstalled            = 1;
 
+TNArchipelApplianceStatusInstalled  = @"installed";
+TNArchipelApplianceStatusInstalling = @"installing";
+TNArchipelApplianceStatusNone       = @"none";
+
 @implementation TNInstalledAppliance : CPObject
 {
     CPString    name            @accessors;
     CPString    path            @accessors;
     CPString    comment         @accessors;
     CPString    UUID            @accessors;
-    BOOL        _used           @accessors(getter=isUsed,setter=setUsed:);
+    CPString    _status         @accessors(setter=setStatus:, getter=statusString);
     
     CPImage     _usedIcon;
+    CPImage     _installingIcon;
+    CPImage     _noneIcon;
 }
 
-+ (TNInstalledAppliance)InstalledApplianceWithName:(CPString)aName UUID:(CPString)anUUID path:(CPString)aPath comment:(CPString)aComment used:(BOOL)inUse
++ (TNInstalledAppliance)InstalledApplianceWithName:(CPString)aName UUID:(CPString)anUUID path:(CPString)aPath comment:(CPString)aComment status:(CPString)aStatus
 {
     var appliance = [[TNInstalledAppliance alloc] init];
     [appliance setName:aName];
     [appliance setPath:aPath];
     [appliance setUUID:anUUID];
-    [appliance setUsed:inUse];
+    [appliance setStatus:aStatus];
     [appliance setComment:aComment];
     
     return appliance;
@@ -47,23 +53,23 @@ TNArchipelApplianceInstalled            = 1;
 {
     if (self = [super init])
     {
-        var bundle = [CPBundle bundleForClass:[self class]];
-        _usedIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"used.png"]];
+        var bundle      = [CPBundle mainBundle];
+        _usedIcon       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)];
+        _installingIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)];
+        _noneIcon       = nil;//[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)];
     }
     
     return self
 }
 
-- (CPImage)isUsed
+- (CPImage)status
 {
-    if (_used)
-    {
-        return _usedIcon
-    }
+    if (_status == TNArchipelApplianceStatusInstalled)
+        return _usedIcon;
+    else if (_status == TNArchipelApplianceStatusInstalling)
+        return _installingIcon;
     else
-    {
-        return [[CPImage alloc] init];
-    }
+        return _noneIcon;
 }
 
 - (CPString)description

@@ -44,22 +44,28 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     @outlet CPScrollView    scrollViewDisks;
     @outlet CPWindow        windowDiskProperties;
     @outlet CPTextField     fieldDiskNewName;
-    @outlet CPTextField     fieldPropertyPath;
-    @outlet CPTextField     fieldPropertyRealSize;
-    @outlet CPTextField     fieldPropertyVirtualSize;
     @outlet CPImageView     imageViewConverting;
     @outlet CPButton        buttonConvert;
     @outlet CPSearchField   fieldFilterDisk;
+    @outlet CPTextField     labelConversionDisabled;
+    @outlet CPButtonBar     buttonBarControl;
+    @outlet CPView          viewTableContainer;
+    @outlet CPWindow        windowNewDisk;
     
     CPTableView             _tableMedias;
     TNTableViewDataSource   _mediasDatasource;
     TNMedia                 _currentEditedDisk;
     id                      _registredDiskListeningId;
+    
+    BOOL                    _isActive;
 }
 
 - (void)awakeFromCib
 {
+    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    
     [buttonConvert setEnabled:NO];
+    [buttonFormatConvert setEnabled:NO];
     
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
@@ -83,13 +89,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [scrollViewDisks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewDisks setAutohidesScrollers:YES];
     [scrollViewDisks setDocumentView:_tableMedias];
-    [scrollViewDisks setBorderedWithHexColor:@"#9e9e9e"];
 
     [_tableMedias setUsesAlternatingRowBackgroundColors:YES];
     [_tableMedias setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableMedias setAllowsColumnReordering:YES];
     [_tableMedias setAllowsColumnResizing:YES];
     [_tableMedias setAllowsEmptySelection:YES];
+    [_tableMedias setAllowsMultipleSelection:YES];
 
     var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [mediaColumName setWidth:150];
@@ -123,7 +129,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [_tableMedias addTableColumn:mediaColumPath];
     
     [_tableMedias setTarget:self];
-    [_tableMedias setDoubleAction:@selector(tableViewAction:)];
+    [_tableMedias setDoubleAction:@selector(openRenamePanel:)];
     [_tableMedias setDelegate:self];
     
     [_mediasDatasource setTable:_tableMedias];
@@ -136,6 +142,26 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [fieldFilterDisk setTarget:_mediasDatasource];
     [fieldFilterDisk setAction:@selector(filterObjects:)];
+    
+    var menu = [[CPMenu alloc] init];
+    [menu addItemWithTitle:@"Rename" action:@selector(openRenamePanel:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Delete" action:@selector(removeDisk:) keyEquivalent:@""];
+    [_tableMedias setMenu:menu];
+    
+    var plusButton  = [CPButtonBar plusButton];
+    [plusButton setTarget:self];
+    [plusButton setAction:@selector(openNewDiskWindow:)];
+    
+    var minusButton  = [CPButtonBar minusButton];
+    [minusButton setTarget:self];
+    [minusButton setAction:@selector(removeDisk:)];
+    
+    var editButton  = [CPButtonBar plusButton];
+    [editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [editButton setTarget:self];
+    [editButton setAction:@selector(openRenamePanel:)];
+    
+    [buttonBarControl setButtons:[plusButton, minusButton, editButton]];
     
 }
 
@@ -152,6 +178,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willShow
@@ -161,6 +189,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
     
+    [self checkIfRunning];
     [self getDisksInfo];
 }
 
@@ -170,6 +199,14 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     if ([aNotification object] == _entity)
     {
        [fieldName setStringValue:[_entity nickname]]
+    }
+}
+
+- (void)didPresenceUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == _entity)
+    {
+        [self checkIfRunning];
     }
 }
 
@@ -186,6 +223,36 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [self getDisksInfo];
     
     return YES;
+}
+
+- (void)checkIfRunning
+{
+    var status = [_entity status];
+    
+    if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway))
+    {
+        _isActive = YES;
+        
+        [buttonConvert setEnabled:NO];
+        [buttonFormatConvert setEnabled:NO];
+        
+        [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running"];
+        
+        [_tableMedias deselectAll];
+    }
+    else
+    {
+        _isActive = NO;
+        
+        if ([_tableMedias numberOfSelectedRows] > 0)
+        {
+            [buttonFormatConvert setEnabled:YES];
+            [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running"];
+        }
+        else
+            [labelConversionDisabled setStringValue:@""];
+        
+    }
 }
 
 - (void)getDisksInfo
@@ -229,6 +296,12 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
+- (IBAction)openNewDiskWindow:(id)sender
+{
+    [windowNewDisk center];
+    [windowNewDisk makeKeyAndOrderFront:nil];
+}
+
 - (IBAction)convertFormatChange:(id)sender
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
@@ -239,29 +312,56 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
     var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
     
-    if ([diskObject format] == [buttonFormatConvert title])
+    if (_isActive || ([diskObject format] == [buttonFormatConvert title]))
+    {
         [buttonConvert setEnabled:NO];
+        [buttonFormatConvert setEnabled:NO];
+        
+        if (_isActive)
+            [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running."];
+        else
+            [labelConversionDisabled setStringValue:@"Please choose a different format"];
+    }
     else
+    {
+        [labelConversionDisabled setStringValue:@""];
         [buttonConvert setEnabled:YES];
+        [buttonFormatConvert setEnabled:YES];
+    }
+        
 }
 
-- (IBAction)tableViewAction:(id)sender
+- (IBAction)openRenamePanel:(id)sender
 {
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+    if (_isActive)
     {
-         return;
+        var growl   = [TNGrowlCenter defaultCenter];
+        
+        [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
     }
-    
-    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
-    var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
-    
-    [windowDiskProperties orderFront:nil];
-    [fieldDiskNewName setStringValue:[diskObject name]];
-    [fieldPropertyVirtualSize setStringValue:[diskObject virtualSize]];
-    [fieldPropertyRealSize setStringValue:[diskObject diskSize]];
-    [fieldPropertyPath setStringValue:[diskObject path]];
-    
-    _currentEditedDisk = diskObject;
+    else
+    {
+        if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+             return;
+             
+        if ([_tableMedias numberOfSelectedRows] > 1)
+        {
+            var growl   = [TNGrowlCenter defaultCenter];
+
+            [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit multiple disk" icon:TNGrowlIconError];
+            
+            return;
+        }
+        
+        var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
+        var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
+        
+        [windowDiskProperties center];
+        [windowDiskProperties makeKeyAndOrderFront:nil];
+        [fieldDiskNewName setStringValue:[diskObject name]];
+
+        _currentEditedDisk = diskObject;
+    }
 }
 
 - (IBAction)createDisk:(id)sender
@@ -294,8 +394,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             break;
     }
 
-    // TODO : control disk size.
-
+    
     var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
 
     [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskCreate}];
@@ -314,6 +413,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     [_entity sendStanza:diskStanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
 
+    [windowNewDisk orderOut:nil];
     [fieldNewDiskName setStringValue:@""];
     [fieldNewDiskSize setStringValue:@""];
 }
@@ -344,26 +444,36 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (IBAction)rename:(id)sender
 {
+    [windowDiskProperties orderOut:nil];
+    
+    if (_isActive)
+    {
+        var growl   = [TNGrowlCenter defaultCenter];
+        
+        [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
+        
+        return;
+    }
+    
     if ([fieldDiskNewName stringValue] != [_currentEditedDisk name])
     {
         [_currentEditedDisk setName:[fieldDiskNewName stringValue]];
         [self rename:_currentEditedDisk];
-    }
     
-    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
     
-    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskRename}];
-    [diskStanza addChildName:@"path"];
-    [diskStanza addTextNode:[_currentEditedDisk path]];
-    [diskStanza up];
-    [diskStanza addChildName:@"newname"];
-    [diskStanza addTextNode:[_currentEditedDisk name]];
-    [diskStanza up];
+        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskRename}];
+        [diskStanza addChildName:@"path"];
+        [diskStanza addTextNode:[_currentEditedDisk path]];
+        [diskStanza up];
+        [diskStanza addChildName:@"newname"];
+        [diskStanza addTextNode:[_currentEditedDisk name]];
+        [diskStanza up];
 
-    [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRename:) ofObject:self];
+        [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRename:) ofObject:self];
     
-    _currentEditedDisk = nil;
-    [windowDiskProperties orderOut:nil];
+        _currentEditedDisk = nil;
+    }
 }
 
 - (IBAction)removeDisk:(id)sender
@@ -374,15 +484,20 @@ TNArchipelPushNotificationDiskCreated    = @"created";
          return;
     }
 
-    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
-    var dName           = [_mediasDatasource objectAtIndex:selectedIndex];
-    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+    var selectedIndexes = [_tableMedias selectedRowIndexes];
+    var objects = [_mediasDatasource objectsAtIndexes:selectedIndexes];
+    
+    for (var i = 0; i < [objects count]; i++)
+    {
+        var dName           = [objects objectAtIndex:i];
+        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
 
-    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
-    [diskStanza addChildName:@"name"];
-    [diskStanza addTextNode:[dName path]];
+        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
+        [diskStanza addChildName:@"name"];
+        [diskStanza addTextNode:[dName path]];
 
-    [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
+        [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
+    }
 }
 
 
@@ -434,16 +549,26 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
     [buttonConvert setEnabled:NO];
+    [buttonFormatConvert setEnabled:NO];
     
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+    if ([_tableMedias numberOfSelectedRows] <= 0)
     {
          return;
     }
+    
+    if (!_isActive)
+    {
+        [buttonFormatConvert setEnabled:YES];
+    }
+        
     
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
     var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
     
     [buttonFormatConvert selectItemWithTitle:[diskObject format]];
+    
+    if (!_isActive)
+        [labelConversionDisabled setStringValue:@"Please choose a different format"];
 }
 
 @end

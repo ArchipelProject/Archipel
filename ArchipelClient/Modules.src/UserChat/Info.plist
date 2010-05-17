@@ -28,5 +28,8 @@
 		</array>		
         <key>CibName</key>
         <string>UserChat</string>
+        
+        <key>TNUserChatMaxMessageStore</key>
+        <integer>20</integer>
     </dict>
 </plist>

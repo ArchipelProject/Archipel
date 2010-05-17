@@ -38,6 +38,8 @@
 @import "TNViewLineable.j";
 @import "TNUserDefaults.j";
 @import "TNTableViewDataSource.j";
+@import "TNSearchField.j";
+
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -77,7 +79,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 {
     @outlet CPView              leftView                    @accessors;
     @outlet CPView              filterView                  @accessors;
-    @outlet CPSearchField       filterField                 @accessors;
+    @outlet TNSearchField       filterField                 @accessors;
     @outlet CPView              rightView                   @accessors;
     @outlet CPWebView           helpView                    @accessors;
     @outlet CPSplitView         leftSplitView               @accessors;
@@ -92,6 +94,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     @outlet TNWindowAddGroup    addGroupWindow              @accessors;
     @outlet TNWindowConnection  connectionWindow            @accessors;
     @outlet CPButtonBar         buttonBarLeft               @accessors;
+    @outlet CPView              viewLoadingModule           @accessors;
 
 
     TNModuleLoader              _moduleLoader;
@@ -113,6 +116,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPImage                     _imageLedNoData;
     CPTimer                     _ledInTimer;
     CPTimer                     _ledOutTimer;
+    CPTimer                     _moduleLoadingDelay;
+    
+    int                         _tempNumberOfReadyModules;
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -154,6 +160,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
+    [_rosterOutlineView setSearchField:filterField];
+    [filterField setOutlineView:_rosterOutlineView];
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
@@ -211,7 +219,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [windowModuleLoading setContentView:view];
     //[windowModuleLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
     [windowModuleLoading center]
-    [windowModuleLoading orderFront:nil];
+    [windowModuleLoading makeKeyAndOrderFront:nil];
     
     CPLog.trace(@"initializing _moduleLoader");
     _moduleLoader = [[TNModuleLoader alloc] init]
@@ -244,6 +252,9 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     
+    [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
+    
+    
     CPLog.info(@"AppController initialized");
     
     var growl = [TNGrowlCenter defaultCenter];
@@ -265,17 +276,6 @@ TNArchipelStatusBusyLabel       = @"Busy";
     // buttonBar
     [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
     
-    var plusButton  = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];//[CPButtonBar plusButton];
-    var plusMenu    = [[CPMenu alloc] init];
-    [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
-    [plusButton setBordered:NO];
-    [plusButton setImagePosition:CPImageOnly];
-    
-    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
-    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
-    [plusButton setMenu:plusMenu];
-    
     var bezelColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
     var leftBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)];
     var centerBezel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
@@ -289,7 +289,18 @@ TNArchipelStatusBusyLabel       = @"Busy";
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-        
+    
+    var plusButton  = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];//[CPButtonBar plusButton];
+    var plusMenu    = [[CPMenu alloc] init];
+    [plusButton setTarget:self];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
+    [plusButton setBordered:NO];
+    [plusButton setImagePosition:CPImageOnly];
+    
+    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
+    [plusButton setMenu:plusMenu];
+    
     var minusButton = [CPButtonBar minusButton];
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
@@ -297,8 +308,12 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     [buttonBarLeft setButtons:[plusButton, minusButton]];
     
+    
+    [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
+    
     // copyright;
     [self copyright];
+    
 }
 
 - (IBAction)didMinusBouttonClicked:(id)sender
@@ -393,6 +408,8 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     [CPApp setMainMenu:_mainMenu];
     [CPMenu setMenuBarVisible:NO];
+    
+    _tempNumberOfReadyModules = -1;
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
@@ -403,7 +420,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     CPLog.trace(@"positionnig the connectionWindow");
     [windowModuleLoading orderOut:nil];
     [connectionWindow center];
-    [connectionWindow orderFront:nil];
+    [connectionWindow makeKeyAndOrderFront:nil];
 }
 
 /*! delegate of TNModuleLoader sent when a module is loaded
@@ -430,7 +447,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)addContact:(id)sender
 {
     [addContactWindow setRoster:_mainRoster];
-    [addContactWindow orderFront:nil];
+    [addContactWindow makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)deleteContact:(id)sender
@@ -455,7 +472,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (IBAction)addGroup:(id)sender
 {
     [addGroupWindow setRoster:_mainRoster];
-    [addGroupWindow orderFront:nil];
+    [addGroupWindow makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)deleteGroup:(id)sender
@@ -645,7 +662,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
         var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
         
         [_helpWindow setPlatformWindow:_platformHelpWindow];
-        [_platformHelpWindow orderFront:nil];
+        [_platformHelpWindow makeKeyAndOrderFront:nil];
         
         [_helpWindow setDelegate:self];
         [helpView setFrame:[[scrollView contentView] bounds]];
@@ -719,7 +736,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)loginStrophe:(CPNotification)aNotification
 {
     [connectionWindow orderOut:nil];
-    [theWindow orderFront:nil];
+    [theWindow makeKeyAndOrderFront:nil];
 
     _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
     [_mainRoster setDelegate:self];
@@ -775,7 +792,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 - (void)logoutStrophe:(CPNotification)aNotification
 {
     [theWindow orderOut:nil];
-    [connectionWindow orderFront:nil];
+    [connectionWindow makeKeyAndOrderFront:nil];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -822,7 +839,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
     var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
     
     [anim setDuration:0.3];
-    [anim startAnimation];
+    // [anim startAnimation];
 }
 
 /*! Hide the helpView from the rightView
@@ -839,49 +856,60 @@ TNArchipelStatusBusyLabel       = @"Busy";
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    try
-    {
-        var index       = [_rosterOutlineView selectedRowIndexes];
-        
-        if ([index firstIndex] == -1)
-        {
-            [self showHelpView];
-            return;
-        }
-        
-        [self hideHelpView];
-        
-        var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
-        var defaults    = [TNUserDefaults standardUserDefaults];
-        
-        [_mainRoster setCurrentItem:item];
-        
-        if ([item class] == TNStropheGroup)
-        {
-            CPLog.info(@"setting the entity as " + item + " of type group");
-            [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
-            return;
-        }
-        else if ([item class] == TNStropheContact)
-        {
-            var vCard       = [item vCard];
-            var entityType  = [_moduleLoader analyseVCard:vCard];
+    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var item        = [_rosterOutlineView itemAtRow:index];
+    var loadDelay   = parseFloat([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"]);
+    
+    if (_moduleLoadingDelay)
+        [_moduleLoadingDelay invalidate];
+    
+    [viewLoadingModule setFrame:[rightView bounds]];
+    [rightView addSubview:viewLoadingModule];
+    
+    // [_mainRoster setCurrentItem:item];
+    [propertiesView setEntity:item];
+    [propertiesView reload];
+    
+    _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
+}
 
-            CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-            [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
-            
-        }
-    }
-    catch(ex)
+- (void)performModuleChange:(CPTimer)aTimer
+{
+    if ([_rosterOutlineView numberOfSelectedRows] == 0)
     {
-        CPLog.error(ex);
+        [self showHelpView];
+        [_mainRoster setCurrentItem:nil];
+        [propertiesView hide];
+        return;
     }
-    finally
+    
+    var item        = [aTimer userInfo];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    
+    // if (item == [_moduleLoader entity])
+    //     return;
+    
+    [_mainRoster setCurrentItem:item];
+    
+    [self hideHelpView];
+    
+    if ([item class] == TNStropheGroup)
     {
-        [propertiesView setEntity:item];
-        [propertiesView reload];
+        CPLog.info(@"setting the entity as " + item + " of type group");
+        [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
+        return;
+    }
+    else if ([item class] == TNStropheContact)
+    {
+        var vCard       = [item vCard];
+        var entityType  = [_moduleLoader analyseVCard:vCard];
+
+        CPLog.info(@"setting the entity as " + item + " of type " + entityType);
+        [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+        
     }
 }
+
 
 /*! Delegate of mainSplitView
 */
@@ -893,6 +921,12 @@ TNArchipelStatusBusyLabel       = @"Busy";
     
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
+}
+
+- (void)allModuleReady:(CPNotification)aNotification
+{
+    if ([viewLoadingModule superview])
+        [viewLoadingModule removeFromSuperview];
 }
 
 

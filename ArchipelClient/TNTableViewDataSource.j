@@ -91,9 +91,24 @@
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
 {
+    var indexes         = [aTableView selectedRowIndexes];
+    var selectedObjects = [_filteredContent objectsAtIndexes:indexes];
+    
     [_filteredContent sortUsingDescriptors:[aTableView sortDescriptors]];
-
+    [_content sortUsingDescriptors:[aTableView sortDescriptors]];
+    
     [_table reloadData];
+    
+    var indexesToSelect = [[CPIndexSet alloc] init];
+    
+    for (var i = 0; i < [selectedObjects count]; i++)
+    {
+        var object = [selectedObjects objectAtIndex:i];
+        [indexesToSelect addIndex:[_filteredContent indexOfObject:object]];
+    }
+    
+    [_table selectRowIndexes:indexesToSelect byExtendingSelection:NO];
+    
 }
 
 - (void)tableView:(CPTableView)aTableView setObjectValue:(id)aValue forTableColumn:(CPTableColumn)aCol row:(int)aRow
@@ -147,4 +162,30 @@
     _content = [aContent copy];
     _filteredContent = [aContent copy];
 }
+
+- (void)removeObjectsAtIndexes:(CPIndexSet)aSet
+{
+    try
+    {
+        var objects = [_filteredContent objectsAtIndexes:aSet];
+
+        [_filteredContent removeObjectsAtIndexes:aSet];
+        [_content removeObjectsInArray:objects];
+    }
+    catch(e)
+    {
+        CPLog.error(e);
+    }
+}
+
+- (CPArray)objectsAtIndexes:(CPIndexSet)aSet
+{
+    return [_filteredContent objectsAtIndexes:aSet];
+}
+
+-(void)indexOfObject:(id)anObject
+{
+    return [_filteredContent indexOfObject:anObject];
+}
+
 @end

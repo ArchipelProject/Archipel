@@ -111,8 +111,6 @@ function generateMacAddr()
 {
     @outlet CPTextField             fieldJID                @accessors;
     @outlet CPTextField             fieldName               @accessors;
-    @outlet CPScrollView            scrollViewForNics       @accessors;
-    @outlet CPScrollView            scrollViewForDrives     @accessors;
     @outlet CPTextField             fieldMemory             @accessors;
     @outlet CPPopUpButton           buttonNumberCPUs        @accessors;
     @outlet CPPopUpButton           buttonBoot              @accessors;
@@ -128,13 +126,26 @@ function generateMacAddr()
     @outlet CPCheckBox              checkboxPAE             @accessors;
     @outlet CPCheckBox              checkboxACPI            @accessors;
     @outlet CPCheckBox              checkboxAPIC            @accessors;
-    @outlet CPButtonBar             buttonBarLeft           @accessors;
+    @outlet CPButtonBar             buttonBar               @accessors;
+    @outlet CPButtonBar             buttonBarControl        @accessors;
     @outlet TNWindowNicEdition      windowNicEdition        @accessors;
     @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;
     @outlet CPView                  maskingView             @accessors;
-    @outlet CPSearchField           fieldFilterDrives;
-    @outlet CPSearchField           fieldFilterNics;
+    @outlet CPSearchField           fieldFilter;
+    @outlet CPView                  viewDevicesContainer;
+    @outlet CPView                  viewDeviceCurrentTable;
     
+    CPScrollView                    _scrollViewForNics       @accessors;
+    CPScrollView                    _scrollViewForDrives     @accessors;
+    CPScrollView                    _currentTableScrollView  @accessors;
+    CPColor                         _buttonBezelHighlighted;
+    CPColor                         _buttonBezelSelected;
+    CPColor                         _bezelColor;
+    CPString                        _lastFilterNics;
+    CPString                        _lastFilterDrives;
+    CPButton                        _plusButton;
+    CPButton                        _minusButton;
+    CPButton                        _editButton;
     CPTableView                     _tableNetworkCards   @accessors;
     TNTableViewDataSource           _nicsDatasource      @accessors;
     CPTableView                     _tableDrives         @accessors;
@@ -143,53 +154,95 @@ function generateMacAddr()
 
 - (void)awakeFromCib
 {
+    var bundle                  = [CPBundle mainBundle];
+    var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
+    var buttonBezel             = [CPColor colorWithPatternImage:centerBezel];
+    var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
+    var centerBezelSelected     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelSelected.png"] size:CGSizeMake(1, 26)];
+
+    _bezelColor                 = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
+    _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
+    _buttonBezelSelected        = [CPColor colorWithPatternImage:centerBezelSelected];
+    
+    [buttonBar setValue:_bezelColor forThemeAttribute:"bezel-color"];
+    [buttonBar setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
+    [buttonBar setValue:_buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
+    
+    [viewDevicesContainer setBorderedWithHexColor:@"#9e9e9e"];
+    
+    var diskButton = [[CPButton alloc] initWithFrame:CPRectMake(0,0,[buttonBar frame].size.width / 2 - 2,25)];
+    [diskButton setValue:_buttonBezelHighlighted forThemeAttribute:"bezel-color" inState:CPThemeStateSelected];
+    [diskButton setBordered:NO];
+    [diskButton setTarget:self];
+    [diskButton setAction:@selector(displayDrivesTable:)];
+    [diskButton setTitle:@"Virtual drives"];
+    
+    var nicsButton = [[CPButton alloc] initWithFrame:CPRectMake([buttonBar frame].size.width / 2 - 2,0,[buttonBar frame].size.width / 2,25)];
+    [nicsButton setValue:_buttonBezelHighlighted forThemeAttribute:"bezel-color" inState:CPThemeStateSelected];
+    [nicsButton setBordered:NO];
+    [nicsButton setTarget:self];
+    [nicsButton setAction:@selector(displayNicsTable:)];
+    [nicsButton setTitle:@"Virtual network interfaces"];
+    
+    [buttonBar setButtons:[diskButton, nicsButton]];
+    [buttonBar layoutSubviews];
+        
+    _plusButton = [CPButtonBar plusButton];
+    _minusButton = [CPButtonBar minusButton];
+    
+    _editButton = [CPButtonBar plusButton];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setTarget:self];
+    
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
+    
+    
+    
+    // masking view
     [maskingView setBackgroundColor:[CPColor whiteColor]];
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [maskingView setAlphaValue:0.9];
 
     [windowNicEdition setDelegate:self];
-    [windowDriveEdition setDelegate:self];
-
-    //drives
-    _drivesDatasource    = [[TNTableViewDataSource alloc] init];
-    _tableDrives         = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
+    [windowDriveEdition setDelegate:self];    
     
-    [scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewForDrives setAutohidesScrollers:YES];
-    [scrollViewForDrives setDocumentView:_tableDrives];
-    [scrollViewForDrives setBorderedWithHexColor:@"#9e9e9e"];
+    //drives
+    _scrollViewForDrives   = [[CPScrollView alloc] initWithFrame:[viewDeviceCurrentTable bounds]];
+    _drivesDatasource       = [[TNTableViewDataSource alloc] init];
+    _tableDrives            = [[CPTableView alloc] initWithFrame:[_scrollViewForDrives bounds]];
+    
+    [_scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_scrollViewForDrives setAutohidesScrollers:YES];
+    [_scrollViewForDrives setDocumentView:_tableDrives];
     
     [_tableDrives setUsesAlternatingRowBackgroundColors:YES];
     [_tableDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableDrives setAllowsColumnReordering:YES];
     [_tableDrives setAllowsColumnResizing:YES];
     [_tableDrives setAllowsEmptySelection:YES];
+    [_tableDrives setAllowsMultipleSelection:YES];
     [_tableDrives setTarget:self];
     [_tableDrives setDoubleAction:@selector(editDrive:)];
     
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    [driveColumnType setEditable:YES];
     [[driveColumnType headerView] setStringValue:@"Type"];
     [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
     
     var driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"];
-    [driveColumnDevice setEditable:YES];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
     [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
     
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
-    [driveColumnTarget setEditable:YES];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
     [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
     
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [driveColumnSource setWidth:300];
-    [driveColumnSource setEditable:YES];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
     
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
-    [driveColumnBus setEditable:YES];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
     
@@ -202,47 +255,42 @@ function generateMacAddr()
     [_drivesDatasource setTable:_tableDrives];
     [_drivesDatasource setSearchableKeyPaths:[@"type", @"device", @"target", @"source", @"bus"]];
     
-    [fieldFilterDrives setTarget:_drivesDatasource];
-    [fieldFilterDrives setAction:@selector(filterObjects:)];
-    
     [_tableDrives setDataSource:_drivesDatasource];
 
 
     // NICs
+    _scrollViewForNics = [[CPScrollView alloc] initWithFrame:[viewDeviceCurrentTable bounds]];
     _nicsDatasource      = [[TNTableViewDataSource alloc] init];
-    _tableNetworkCards   = [[CPTableView alloc] initWithFrame:[scrollViewForNics bounds]];
+    _tableNetworkCards   = [[CPTableView alloc] initWithFrame:[_scrollViewForNics bounds]];
 
-    [scrollViewForNics setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewForNics setDocumentView:_tableNetworkCards];
-    [scrollViewForNics setAutohidesScrollers:YES];
-    [scrollViewForNics setBorderedWithHexColor:@"#9e9e9e"];
+    [_scrollViewForNics setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_scrollViewForNics setDocumentView:_tableNetworkCards];
+    [_scrollViewForNics setAutohidesScrollers:YES];
 
     [_tableNetworkCards setUsesAlternatingRowBackgroundColors:YES];
     [_tableNetworkCards setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableNetworkCards setAllowsColumnReordering:YES];
     [_tableNetworkCards setAllowsColumnResizing:YES];
     [_tableNetworkCards setAllowsEmptySelection:YES];
+    [_tableNetworkCards setAllowsEmptySelection:YES];
+    [_tableNetworkCards setAllowsMultipleSelection:YES];
     [_tableNetworkCards setTarget:self];
     [_tableNetworkCards setDoubleAction:@selector(editNetworkCard:)];
 
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
-    [columnType setEditable:YES];
     [[columnType headerView] setStringValue:@"Type"];
     [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
     
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
-    [columnModel setEditable:YES];
     [[columnModel headerView] setStringValue:@"Model"];
     [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
 
     var columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
-    [columnMac setEditable:YES];
     [columnMac setWidth:150];
     [[columnMac headerView] setStringValue:@"MAC"];
     [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
-    [columnSource setEditable:YES];
     [[columnSource headerView] setStringValue:@"Source"];
     [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
@@ -253,9 +301,6 @@ function generateMacAddr()
 
     [_nicsDatasource setTable:_tableNetworkCards];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"mac", @"source"]];
-    
-    [fieldFilterNics setTarget:_nicsDatasource];
-    [fieldFilterNics setAction:@selector(filterObjects:)];
     
     [_tableNetworkCards setDataSource:_nicsDatasource];
 
@@ -284,7 +329,86 @@ function generateMacAddr()
     [checkboxPAE setState:CPOffState];
     [checkboxACPI setState:CPOffState];
     [checkboxAPIC setState:CPOffState];
+    
+    
+    var menuNet = [[CPMenu alloc] init];
+    [menuNet addItemWithTitle:@"Create new network interface" action:@selector(addNetworkCard:) keyEquivalent:@""];
+    [menuNet addItem:[CPMenuItem separatorItem]];
+    [menuNet addItemWithTitle:@"Edit" action:@selector(editNetworkCard:) keyEquivalent:@""];
+    [menuNet addItemWithTitle:@"Delete" action:@selector(deleteNetworkCard:) keyEquivalent:@""];
+    [_tableNetworkCards setMenu:menuNet];
+    
+    var menuDrive = [[CPMenu alloc] init];
+    [menuDrive addItemWithTitle:@"Create new drive" action:@selector(addDrive:) keyEquivalent:@""];
+    [menuDrive addItem:[CPMenuItem separatorItem]];
+    [menuDrive addItemWithTitle:@"Edit" action:@selector(editDrive:) keyEquivalent:@""];
+    [menuDrive addItemWithTitle:@"Delete" action:@selector(deleteDrive:) keyEquivalent:@""];
+    [_tableDrives setMenu:menuDrive];
 }
+
+- (IBAction)displayDrivesTable:(id)sender
+{
+    if (_currentTableScrollView != _scrollViewForDrives)
+    {
+        [_currentTableScrollView removeFromSuperview];
+        _currentTableScrollView = _scrollViewForDrives;
+        [_scrollViewForDrives setFrame:[viewDeviceCurrentTable bounds]];
+        [viewDeviceCurrentTable addSubview:_scrollViewForDrives];
+        
+        [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
+        [[[buttonBar buttons] objectAtIndex:1] setValue:_bezelColor forThemeAttribute:"bezel-color"];
+        
+        _lastFilterNics = [fieldFilter stringValue];
+        [fieldFilter setTarget:_drivesDatasource];
+        [fieldFilter setAction:@selector(filterObjects:)];
+        [fieldFilter setStringValue:_lastFilterDrives];
+        if (_lastFilterDrives && (_lastFilterDrives != @""))
+            [[fieldFilter cancelButton] setHidden:NO];
+        else
+            [[fieldFilter cancelButton] setHidden:YES];
+        [_drivesDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
+        
+        [_plusButton setTarget:self];
+        [_plusButton setAction:@selector(addDrive:)];
+        [_minusButton setTarget:self];
+        [_minusButton setAction:@selector(deleteDrive:)];
+        
+        [_editButton setAction:@selector(editDrive:)];
+    }
+}
+
+
+- (IBAction)displayNicsTable:(id)sender
+{
+    if (_currentTableScrollView != _scrollViewForNics)
+    {
+        [_currentTableScrollView removeFromSuperview];
+        _currentTableScrollView = _scrollViewForNics;
+        [_scrollViewForNics setFrame:[viewDeviceCurrentTable bounds]];
+        [viewDeviceCurrentTable addSubview:_scrollViewForNics];
+        
+        [[[buttonBar buttons] objectAtIndex:1] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
+        [[[buttonBar buttons] objectAtIndex:0] setValue:_bezelColor forThemeAttribute:"bezel-color"];
+        
+        _lastFilterDrives = [fieldFilter stringValue];
+        [fieldFilter setTarget:_nicsDatasource];
+        [fieldFilter setAction:@selector(filterObjects:)];
+        [fieldFilter setStringValue:_lastFilterNics];
+        if (_lastFilterNics && (_lastFilterNics != @""))
+            [[fieldFilter cancelButton] setHidden:NO];
+        else
+            [[fieldFilter cancelButton] setHidden:YES];
+        [_nicsDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
+        
+        [_plusButton setTarget:self];
+        [_plusButton setAction:@selector(addNetworkCard:)];
+        [_minusButton setTarget:self];
+        [_minusButton setAction:@selector(deleteNetworkCard:)];
+        
+        [_editButton setAction:@selector(editNetworkCard:)];
+    }
+}
+
 
 // TNModule impl.
 
@@ -297,11 +421,21 @@ function generateMacAddr()
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
     [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
+    
+    [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
+    _currentTableScrollView = _scrollViewForNics;
+    [self displayDrivesTable:nil];
+    
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
 }
 
 - (void)willShow
 {
     [super willShow];
+    
+    [[[buttonBar buttons] objectAtIndex:0] setFrame:CPRectMake(0,0,[buttonBar frame].size.width / 2 - 2,25)];
+    [[[buttonBar buttons] objectAtIndex:1] setFrame:CPRectMake([buttonBar frame].size.width / 2 - 2,0,[buttonBar frame].size.width / 2,25)];
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
@@ -560,8 +694,6 @@ function generateMacAddr()
     var boot        = [buttonBoot title];
     var nics        = [_nicsDatasource content];
     var drives      = [_drivesDatasource content];
-
-    CPLog.debug(drives);
     
     var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [_entity fullJID], "id": anUid}];
 
@@ -703,7 +835,7 @@ function generateMacAddr()
 // Actions Nics and drives
 - (IBAction)editNetworkCard:(id)sender
 {
-    var selectedIndex   = [[_tableNetworkCards selectedRowIndexes] firstIndex];
+    var selectedIndex = [[_tableNetworkCards selectedRowIndexes] firstIndex];
     var nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
     [windowNicEdition setNic:nicObject];
@@ -721,10 +853,11 @@ function generateMacAddr()
          return;
     }
 
-     var selectedIndex   = [[_tableNetworkCards selectedRowIndexes] firstIndex];
-
-     [_nicsDatasource removeObjectAtIndex:selectedIndex];
+     var selectedIndexes = [_tableNetworkCards selectedRowIndexes];
+     [_nicsDatasource removeObjectsAtIndexes:selectedIndexes];
+     
      [_tableNetworkCards reloadData];
+     [_tableNetworkCards deselectAll];
      [self defineXML:nil];
 }
 
@@ -761,10 +894,13 @@ function generateMacAddr()
         return;
     }
 
-     var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
+     var selectedIndexes = [_tableDrives selectedRowIndexes];
+     CPLog.debug(selectedIndexes);
+     
+     [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
 
-     [_drivesDatasource removeObjectAtIndex:selectedIndex];
      [_tableDrives reloadData];
+     [_tableDrives deselectAll];
      [self defineXML:nil];
 }
 

@@ -27,7 +27,8 @@
 */
 @implementation TNOutlineViewRoster: CPOutlineView
 {
-    CPTabView   _tabViewModules @accessors(setter=setModulesTabView:);
+    CPTabView       _tabViewModules     @accessors(setter=setModulesTabView:);
+    CPSearchField   _searchField        @accessors(setter=setSearchField:);
 }
 /*! init the class
     @param aFrame CPRect the frame of the view
@@ -140,4 +141,31 @@
             [_tabViewModules selectFirstTabViewItem:nil];
     }
 }
+
+- (void)moveDown:(id)sender
+{
+    var index = [[self selectedRowIndexes] firstIndex];
+    
+    if (index == [self numberOfRows] - 1)
+    {
+        [[self window] makeFirstResponder:_searchField];
+        [self deselectAll];
+    }
+    else
+        [super moveDown:sender];
+}
+
+- (void)moveUp:(id)sender
+{
+    var index = [[self selectedRowIndexes] firstIndex];
+    
+    if (index == 0)
+    {
+        [[self window] makeFirstResponder:_searchField];
+        [self deselectAll];
+    }
+    else
+        [super moveUp:sender];
+}
+
 @end

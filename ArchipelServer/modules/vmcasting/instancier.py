@@ -34,6 +34,9 @@ class TNArchipelPackageInstancier:
         self.temp_directory = temp_directory;
         self.database_connection = sqlite3.connect(database_path, check_same_thread = False)
         self.cursor = self.database_connection.cursor();
+        self.is_installing = False;
+        self.installing_media_uuid = None;
+        self.is_installed = False;
     
     def process_iq(self, conn, iq):
         """
@@ -60,6 +63,11 @@ class TNArchipelPackageInstancier:
             reply = self.__get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        if iqType == "dettach":
+            reply = self.__dettach(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     def __get_installed_appliances(self, iq):
@@ -82,17 +90,22 @@ class TNArchipelPackageInstancier:
                 description = values[2]
                 uuid = values[3]
                 
-                used = "false";
-                try:
-                    f = open(self.entity.vm_own_folder + "/current.package", "r");
-                    puuid = f.read()
-                    f.close()
-                    if puuid == uuid:
-                        used = "true"
-                except:
-                    pass
+                status = "none";
+                
+                if self.is_installing and (self.installing_media_uuid == uuid):
+                    status = "installing";
+                else:
+                    try:
+                        f = open(self.entity.vm_own_folder + "/current.package", "r");
+                        puuid = f.read()
+                        f.close()
+                        if puuid == uuid:
+                            status = "installed"
+                            self.is_installed = True;
+                    except:
+                        pass
 
-                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid, "used": used})
+                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid, "status": status})
                 nodes.append(node)
             reply.setQueryPayload(nodes)
         except Exception as ex:
@@ -109,6 +122,13 @@ class TNArchipelPackageInstancier:
         @return: a ready-to-send IQ containing the results
         """
         try:
+            if self.is_installing:
+                raise Exception("InstallationError", "Virtual machine is already installing a package");
+            
+            if (self.is_installed):
+                raise Exception("InstallationError", "You must dettach from already attached template");
+            
+            self.is_installing = True;
             uuid = iq.getTag("query").getTag("uuid").getCDATA();
             requester = iq.getFrom();
             
@@ -118,12 +138,45 @@ class TNArchipelPackageInstancier:
             
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions));
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path));
-            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.entity, uuid, requester);
+            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester);
             
+            self.is_installing = True
+            self.installing_media_uuid = uuid;
             appliance_packager.start();
+            
+            self.entity.push_change("vmcasting", "applianceinstalling");
             
             reply = iq.buildReply('success');
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
             
         return reply
+
+    def __dettach(self, iq):
+        """
+        detach an installed appliance from a virtualmachine 
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            if self.is_installing:
+                raise Exception("InstallationError", "Virtual machine is already installing a package");
+
+            os.unlink(self.entity.vm_own_folder + "/current.package");
+
+            self.is_installed = False;
+            self.entity.push_change("vmcasting", "appliancedettached");
+            
+            reply = iq.buildReply('success');
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+
+        return reply
+
+    def finish_installing(self):
+        self.is_installed = True;
+        self.is_installing = False;
+        self.installing_media_uuid = None;
+        

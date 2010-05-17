@@ -269,7 +269,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 // SETTERS
 - (void)setObject:(id)aValue forKey:(CPString)aKey
 {
-    CPLog.info("Setting default " + aKey + " = " + aValue);
+    //CPLog.trace("Setting default " + aKey + " = " + aValue);
     
     var currentDefault = [_defaults objectForKey:_user];
     

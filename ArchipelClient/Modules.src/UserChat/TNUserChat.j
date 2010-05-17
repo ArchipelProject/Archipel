@@ -98,25 +98,13 @@
     
     _messages = [CPArray array];
     
-    var defaults = [TNUserDefaults standardUserDefaults];
-    var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
-    
-    if (lastConversation)
-        _messages = lastConversation;
-
-    for (var j = 0; j < [lastConversation count]; j++)
-    {
-        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"];
-        var message = [[lastConversation objectAtIndex:j] objectForKey:@"message"];
-        var color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"];
-        var date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
-        
-        [_messageBoard addMessage:message from:author color:color date:date];
-    }
+    [self restore];
     
     var frame = [[messagesScrollView documentView] frame];
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageBoard scrollPoint:newScrollOrigin];
+    
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 /*! TNModule implementation
@@ -155,6 +143,43 @@
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+}
+
+- (void)save
+{
+    var defaults        = [TNUserDefaults standardUserDefaults];
+    var bundle          = [CPBundle bundleForClass:[self class]];
+    var max             = [_messages count];
+    var saveMax         = [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"];
+    var location        = ((max - saveMax) > 0) ? (max - saveMax) : 0;
+    var lenght          = (saveMax <= max) ? saveMax : max;
+
+    CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
+
+    var messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
+    
+    
+    
+    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+}
+
+- (void)restore
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
+    
+    if (lastConversation)
+        _messages = lastConversation;
+
+    for (var j = 0; j < [lastConversation count]; j++)
+    {
+        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"];
+        var message = [[lastConversation objectAtIndex:j] objectForKey:@"message"];
+        var color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"];
+        var date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
+        
+        [_messageBoard addMessage:message from:author color:color date:date];
+    }
 }
 
 /*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
@@ -216,8 +241,7 @@
     newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageBoard scrollPoint:newScrollOrigin];
     
-    var defaults = [TNUserDefaults standardUserDefaults];
-    [defaults setObject:_messages forKey:"communicationWith" + [_entity JID]];
+    [self save];
 }
 
 /*! performed when TNStropheContactMessageReceivedNotification is received from current entity.

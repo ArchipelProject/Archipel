@@ -39,6 +39,7 @@
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willUnload

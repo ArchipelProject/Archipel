@@ -68,10 +68,10 @@ TNArchipelTransportBarReboot    = 3;
 {
     var bundle = [CPBundle bundleForClass:[self class]];
     
-    var imagePlay   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"] size:CGSizeMake(20, 20)];
-    var imageStop   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_stop.png"] size:CGSizeMake(20, 20)];
-    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"] size:CGSizeMake(20, 20)];
-    var imageReboot = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_reboot.png"] size:CGSizeMake(20, 20)];
+    var imagePlay   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
+    var imageStop   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    var imageReboot = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CGSizeMake(16, 16)];
     
     [maskingView setBackgroundColor:[CPColor whiteColor]];
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -111,6 +111,7 @@ TNArchipelTransportBarReboot    = 3;
 
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willShow
@@ -290,7 +291,7 @@ TNArchipelTransportBarReboot    = 3;
             [self play];
             break;
         case TNArchipelTransportBarPause:
-            [self pause];
+            [self pause:sender];
             break;
         case TNArchipelTransportBarStop:
             [self stop];
@@ -311,7 +312,7 @@ TNArchipelTransportBarReboot    = 3;
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
-- (void)pause
+- (void)pause:(id)sender
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
     var selector;
@@ -319,13 +320,15 @@ TNArchipelTransportBarReboot    = 3;
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
         selector = @selector(didResume:)
-
+        
+        [self enableButtonsForRunning];
         [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlResume}];
     }
     else
     {
         selector = @selector(didPause:)
-
+        
+        [self enableButtonsForPaused];
         [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlSuspend}];
     }
 
@@ -462,6 +465,9 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
 }
 
 - (void)enableButtonsForPaused
@@ -474,6 +480,8 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
     
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-resume.png"] size:CGSizeMake(20, 20)];
+    [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
 }
 
 - (void)enableButtonsForShutdowned
@@ -486,6 +494,8 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
     
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
 }
 
 @end

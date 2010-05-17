@@ -133,7 +133,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
     else
+    {
+        currentItem = nil;
         [mainOutlineView deselectAll];
+    }
+       
 }
 
 

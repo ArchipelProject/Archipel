@@ -36,15 +36,19 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     @outlet CPButton        buttonDeleteVM              @accessors;
     @outlet CPScrollView    scrollViewListVM            @accessors;
     @outlet CPSearchField   fieldFilterVM;
+    @outlet CPButtonBar     buttonBarControl;
+    @outlet CPView          viewTableContainer;
     
     TNTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
-    
+
     TNStropheContact        _virtualMachinesForDeletion;
 }
 
 - (void)awakeFromCib
 {
+    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     _tableVirtualMachines        = [[TNTableView alloc] initWithFrame:[scrollViewListVM bounds]];
@@ -52,11 +56,10 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewListVM setAutohidesScrollers:YES];
     [scrollViewListVM setDocumentView:_tableVirtualMachines];
-    [scrollViewListVM setBorderedWithHexColor:@"#9e9e9e"];
+    
 
     [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
     [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableVirtualMachines setAllowsColumnReordering:YES];
     [_tableVirtualMachines setAllowsColumnResizing:YES];
     [_tableVirtualMachines setAllowsEmptySelection:YES];
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
@@ -67,7 +70,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [vmColumNickname setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
     
     var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
-    [vmColumJID setWidth:450];
+    [vmColumJID setWidth:320];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
     [vmColumJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"JID" ascending:YES]];
 
@@ -90,6 +93,19 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [fieldFilterVM setAction:@selector(filterObjects:)];
     
     [_tableVirtualMachines setDataSource:_virtualMachinesDatasource];
+    
+    var menu = [[CPMenu alloc] init];
+    [menu addItemWithTitle:@"Create new virtual machine" action:@selector(addVirtualMachine:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Delete" action:@selector(deleteVirtualMachine:) keyEquivalent:@""];
+    [_tableVirtualMachines setMenu:menu];
+    
+    var plusButton = [CPButtonBar plusButton];
+    [plusButton setTarget:self];
+    [plusButton setAction:@selector(addVirtualMachine:)];
+    var minusButton = [CPButtonBar minusButton];
+    [minusButton setTarget:self];
+    [minusButton setAction:@selector(deleteVirtualMachine:)];
+    [buttonBarControl setButtons:[plusButton, minusButton]];
 }
 
 - (void)willLoad
@@ -97,6 +113,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [super willLoad];
     
     [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:TNArchipelPushNotificationVirtualMachine];
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 - (void)willShow
@@ -255,23 +274,22 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 {
     if (returnCode == 0)
     {
-        var indexes         = _virtualMachinesForDeletion;
+        var indexes = _virtualMachinesForDeletion;
+        var objects = [_virtualMachinesDatasource objectsAtIndexes:indexes];
         
-        for (var i = 0; i < [_virtualMachinesDatasource count]; i++)
+        [_tableVirtualMachines deselectAll];
+        
+        for (var i = 0; i < [objects count]; i++)
         {                              
-            if ([indexes containsIndex:i])
-            {
-                var vm              = [_virtualMachinesDatasource objectAtIndex:i];
-                var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+            var vm              = [objects objectAtIndex:i];
+            var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
 
-                [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
-                [freeStanza addTextNode:[vm JID]];
+            [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
+            [freeStanza addTextNode:[vm JID]];
 
-                [_roster removeContact:vm];
+            [_roster removeContact:vm];
 
-                [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
-                
-            }            
+            [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
         }
     }
     else

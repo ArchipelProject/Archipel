@@ -238,6 +238,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         /* reload the charts view */
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
+        
+        var center = [CPNotificationCenter defaultCenter];
+        [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+        
     }
     else
     {

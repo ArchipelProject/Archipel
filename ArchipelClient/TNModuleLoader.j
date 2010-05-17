@@ -39,6 +39,9 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 */
 TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingCompleteNotification"
 
+TNArchipelModulesReadyNotification          = @"TNArchipelModulesReadyNotification";
+TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotification"; 
+
 /*! @ingroup archipelcore
     
     this is the Archipel Module loader.
@@ -61,6 +64,8 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     CPView                  mainRightView                   @accessors;
     CPMenu                  modulesMenu                     @accessors;
 
+    int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
+    int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
     id                      _modulesPList;
     CPArray                 _bundles;
     CPDictionary            _loadedTabModulesScrollViews;
@@ -79,28 +84,39 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 {
     if (self = [super init])
     {
+        var center = [CPNotificationCenter defaultCenter];
+        
         _loadedTabModulesScrollViews     = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
-        _numberOfModulesToLoad = 0;
-        _numberOfModulesLoaded = 0;
+        _numberOfModulesToLoad  = 0;
+        _numberOfModulesLoaded  = 0;
+        _numberOfActiveModules  = 0;
+        _numberOfReadyModules   = 0;
         _bundles = [CPArray array];
     }
 
     return self;
 }
 
+
+
 /*! set the XMPP information that will be gave to Tabs Modules.
     @param anEntity id can contains a TNStropheContact or a TNStropheGroup
     @param aType a type of entity. Can be virtualmachine, hypervisor, user or group
     @param aRoster TNStropheRoster the roster where the TNStropheContact besides
 */
-- (void)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
+- (YES)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
+    if (anEntity == entity)
+        return NO;
+    
+    _numberOfActiveModules = 0;
     [self rememberLastSelectedTabIndex];
     
     var center = [CPNotificationCenter defaultCenter];
     
     [self _removeAllTabsFromModulesTabView];
+    _numberOfReadyModules = 0;
     
     [self setEntity:anEntity];
     [self setRoster:aRoster];
@@ -109,6 +125,7 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:entity];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:entity];
+    [center addObserver:self selector:@selector(moduleReady:) name:TNArchipelModulesReadyNotification object:nil];
     
     if ([[self entity] class] == TNStropheContact)
     {
@@ -118,6 +135,8 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
     }
     else
         [self _populateModulesTabView];
+    
+    return YES;
 }
 
 /*! store in TNUserDefaults last selected tab index for entity
@@ -277,7 +296,11 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
                 return CPOrderedSame;
     }]
     
-    //@each(var module in [_modulesPList objectForKey:@"Modules"])
+    var modulesToLoad = [CPArray array];
+    
+    
+    // THE PIGGY WAY. I'LL REDO THAT LATER.
+    _numberOfActiveModules = 0; 
     for(var i = 0; i < [sortedValue count]; i++)
     {
         var module      = [[sortedValue objectAtIndex:i] documentView];
@@ -285,7 +308,20 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
         var moduleIndex = [module moduleTabIndex];
         var moduleLabel = [module moduleLabel];
         var moduleName  = [module moduleName];
+        
+        if ([moduleTypes containsObject:[self moduleType]])
+            _numberOfActiveModules++;
+    }
 
+    //@each(var module in [_modulesPList objectForKey:@"Modules"];
+    for(var i = 0; i < [sortedValue count]; i++)
+    {
+        var module      = [[sortedValue objectAtIndex:i] documentView];
+        var moduleTypes = [module moduleTypes];
+        var moduleIndex = [module moduleTabIndex];
+        var moduleLabel = [module moduleLabel];
+        var moduleName  = [module moduleName];
+        
         if ([moduleTypes containsObject:[self moduleType]])
         {
             [self _addItemToModulesTabViewWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
@@ -377,6 +413,19 @@ TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingComplet
 
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
+    }
+}
+
+- (void)moduleReady:(CPNotification)aNotification
+{
+    _numberOfReadyModules++;
+    
+    if (_numberOfReadyModules == _numberOfActiveModules)
+    {
+        var center = [CPNotificationCenter defaultCenter];
+        
+        CPLog.debug("sending all modules ready notification")
+        [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
     }
 }
 
