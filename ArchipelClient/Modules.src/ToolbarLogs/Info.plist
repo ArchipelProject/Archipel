@@ -13,7 +13,7 @@
         <key>CPBundleName</key>
         <string>ToolbarLogs</string>
         <key>CPPrincipalClass</key>
-        <string>TNToolbarLogs</string>
+        <string>TNToolbarLogsController</string>
         <key>PluginDisplayName</key>
         <string>Logs</string>
         <key>AlternativePluginDisplayName</key>

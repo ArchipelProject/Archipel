@@ -102,7 +102,6 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         [self setPosition:901 forToolbarItemIdentifier:TNToolBarItemHelp];
         [self setPosition:902 forToolbarItemIdentifier:TNToolBarItemLogout];
         
-        
         [self setDelegate:self];
     }
 
@@ -126,6 +125,11 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     [newItem setAction:anAction];
 
     [_toolbarItems setObject:newItem forKey:anIdentifier];
+}
+
+- (void)addItem:(CPToolbarItem)anItem withIdentifier:(CPString)anIdentifier
+{
+    [_toolbarItems setObject:anItem forKey:anIdentifier];
 }
 
 /*! add a new CPToolbarItem with a custom view

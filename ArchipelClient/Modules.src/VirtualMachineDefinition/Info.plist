@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNVirtualMachineDefinition</string>
+        <string>VirtualMachineDefinitionController</string>
         <key>PluginDisplayName</key>
         <string>Definition</string>
         <key>InsertionType</key>

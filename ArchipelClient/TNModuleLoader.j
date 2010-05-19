@@ -19,8 +19,21 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
-
 @import "TNCategoriesAndGlobalSubclasses.j";
+
+
+@implementation TNModuleTabViewItem : CPTabViewItem
+{
+    TNModule _module @accessors(property=module);
+}
+@end
+
+@implementation TNModuleToolbarItem : CPToolbarItem
+{
+    TNModule _module @accessors(property=module);
+}
+@end
+
 
 /*! @global
     @group TNArchipelModuleType
@@ -70,10 +83,12 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
     id                      _modulesPList;
     CPArray                 _bundles;
-    CPDictionary            _loadedTabModulesScrollViews;
-    CPDictionary            _loadedToolbarModulesScrollViews;
+    CPArray                 _loadedTabModules;
+    CPDictionary            _loadedToolbarModules;
+    // CPDictionary            _loadedTabModulesScrollViews;
+    // CPDictionary            _loadedToolbarModulesScrollViews;
     CPString                _previousStatus;
-    CPView                  _currentToolbarView;
+    CPView                  _currentToolbarModule;
     CPToolbarItem           _currentToolbarItem;
     int                     _numberOfModulesToLoad;
     int                     _numberOfModulesLoaded;
@@ -94,8 +109,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         _numberOfModulesLoaded  = 0;
         _numberOfActiveModules  = 0;
         _numberOfReadyModules   = 0;
-        _allModulesReady         = NO;
-        _bundles = [CPArray array];
+        _allModulesReady        = NO;
+        _bundles                = [CPArray array];
+        _loadedTabModules       = [CPArray array];
+        _loadedToolbarModules   = [CPDictionary dictionary];
     }
 
     return self;
@@ -227,12 +244,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)setRosterForToolbarItems:(TNStropheRoster)aRoster andConnection:(TNStropheConnection)aConnection
 {
-    var allValues = [_loadedToolbarModulesScrollViews allValues];
-
-    for(var i = 0; i < [allValues count]; i++)
+    for(var i = 0; i < [[_loadedToolbarModules allValues] count]; i++)
     {
-        var toolbarModule = [[allValues objectAtIndex:i] documentView];
-        [toolbarModule initializeWithEntity:nil connection:aConnection andRoster:aRoster];
+        var module = [[_loadedToolbarModules allValues] objectAtIndex:i];
+        [module initializeWithEntity:nil connection:aConnection andRoster:aRoster];
     }
 
 }
@@ -308,11 +323,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_populateModulesTabView
 {
-    var allValues = [_loadedTabModulesScrollViews allValues];
-
-    var sortedValue = [allValues sortedArrayUsingFunction:function(a, b, context){
-        var indexA = [[a documentView] moduleTabIndex];
-        var indexB = [[b documentView] moduleTabIndex];
+    var sortedValue = [_loadedTabModules sortedArrayUsingFunction:function(a, b, context){
+        var indexA = [a index];
+        var indexB = [b index];
         if (indexA < indexB)
                 return CPOrderedAscending;
             else if (indexA > indexB)
@@ -328,11 +341,11 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     _numberOfActiveModules = 0; 
     for(var i = 0; i < [sortedValue count]; i++)
     {
-        var module      = [[sortedValue objectAtIndex:i] documentView];
-        var moduleTypes = [module moduleTypes];
-        var moduleIndex = [module moduleTabIndex];
-        var moduleLabel = [module moduleLabel];
-        var moduleName  = [module moduleName];
+        var module      = [sortedValue objectAtIndex:i];
+        var moduleTypes = [module supportedEntityTypes];
+        var moduleIndex = [module index];
+        var moduleLabel = [module label];
+        var moduleName  = [module name];
         
         if ([moduleTypes containsObject:[self moduleType]])
             _numberOfActiveModules++;
@@ -341,15 +354,15 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     //@each(var module in [_modulesPList objectForKey:@"Modules"];
     for(var i = 0; i < [sortedValue count]; i++)
     {
-        var module      = [[sortedValue objectAtIndex:i] documentView];
-        var moduleTypes = [module moduleTypes];
-        var moduleIndex = [module moduleTabIndex];
-        var moduleLabel = [module moduleLabel];
-        var moduleName  = [module moduleName];
+        var module      = [sortedValue objectAtIndex:i];
+        var moduleTypes = [module supportedEntityTypes];
+        var moduleIndex = [module index];
+        var moduleLabel = [module label];
+        var moduleName  = [module name];
         
         if ([moduleTypes containsObject:[self moduleType]])
         {
-            [self _addItemToModulesTabViewWithLabel:moduleLabel moduleView:[sortedValue objectAtIndex:i] atIndex:moduleIndex];
+            [self _addItemToModulesTabView:module];
         }
     }    
     
@@ -371,7 +384,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     for(var i = 0; i < [arrayCpy count]; i++)
     {
         var aTabViewItem    = [arrayCpy objectAtIndex:i];
-        var theModule       = [[aTabViewItem view] documentView];
+        var theModule       = [aTabViewItem module];
 
         [theModule willUnload];
         [theModule setEntity:nil];
@@ -387,19 +400,19 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     @param aModuleScrollView CPScrollView containing the TNModule
     @param anIndex CPNumber representing the insertion index
 */
-- (void)_addItemToModulesTabViewWithLabel:(CPString)aLabel moduleView:(CPScrollView)aModuleScrollView atIndex:(CPNumber)anIndex
+- (void)_addItemToModulesTabView:(TNModule)aModule
 {
-    var newViewItem     = [[CPTabViewItem alloc] initWithIdentifier:aLabel];
+    var newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]];
     var theEntity       = [self entity];
     var theConnection   = [[self entity] connection];
     var theRoster       = [self roster];
-    var theModule       = [aModuleScrollView documentView];
     
-    [theModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
-    [theModule willLoad];
-
-    [newViewItem setLabel:aLabel];
-    [newViewItem setView:aModuleScrollView];
+    [aModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
+    [aModule willLoad];
+    
+    [newViewItem setModule:aModule];
+    [newViewItem setLabel:[aModule label]];
+    [newViewItem setView:[aModule view]];
 
     [mainTabView addTabViewItem:newViewItem];
 }
@@ -474,7 +487,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     @param aTabView the CPTabView that sent the message (mainTabView)
     @param anItem the new selected item
 */
-- (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(CPTabViewItem)anItem
+- (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
 {
     if ([aTabView numberOfTabViewItems] <= 0)
         return
@@ -486,11 +499,11 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     if (currentTabItem)
     {
-        var oldModule = [[currentTabItem view] documentView];
+        var oldModule = [currentTabItem module];
         [oldModule willHide];
     }
     
-    var newModule = [[anItem view] documentView];
+    var newModule = [anItem module];
     [newModule willShow];
 }
 
@@ -526,60 +539,63 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
     var moduleIdentifier    = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
 
-    var theViewController   = [[CPViewController alloc] initWithCibName:moduleCibName bundle:aBundle];
-    var scrollView          = [[CPScrollView alloc] initWithFrame:[[self mainRightView] bounds]];
-
-    [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [scrollView setAutohidesScrollers:YES];
-    [scrollView setBackgroundColor:[CPColor whiteColor]];
-
-    var frame = [[scrollView contentView] bounds];
+    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+    // var scrollView                  = [[CPScrollView alloc] initWithFrame:[mainRightView bounds]];
     
-    [[theViewController view] setAutoresizingMask: CPViewWidthSizable];
-    [[theViewController view] setModuleName:moduleName];
-    [[theViewController view] setModuleLabel:moduleLabel];
-    [[theViewController view] setModuleBundle:aBundle];
+    // [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    // [scrollView setAutohidesScrollers:YES];
+    // [scrollView setBackgroundColor:[CPColor whiteColor]];
+
+    var frame = [mainRightView bounds];
+    
+    [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
+    [currentModuleController setName:moduleName];
+    [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setBundle:aBundle];
 
     if (moduleInsertionType == TNArchipelModuleTypeTab)
     {
         var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
         var supportedTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-        var module              = [theViewController view];
-        
         var moduleItem          = [modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
-        [moduleItem setEnabled:NO];
-        [moduleItem setTarget:module];
+        var moduleRootMenu      = [[CPMenu alloc] init];
         
-        var moduleRootMenu  = [[CPMenu alloc] init];
+        [moduleItem setEnabled:NO];
+        [moduleItem setTarget:currentModuleController];
         [modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
         
-        [module setMenuItem:moduleItem];
-        [module setMenu:moduleRootMenu];
+        [currentModuleController setMenuItem:moduleItem];
+        [currentModuleController setMenu:moduleRootMenu];
+        [currentModuleController setSupportedEntityTypes:supportedTypes];
+        [currentModuleController setIndex:moduleTabIndex];
+        [currentModuleController menuReady];
         
-        [module setModuleTypes:supportedTypes];
-        [module setModuleTabIndex:moduleTabIndex];
-
-        [module menuReady];
-
-        [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];
-        frame.size.height = [[theViewController view] bounds].size.height;
+        [_loadedTabModules addObject:currentModuleController];
+        // [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];
+        // frame.size.height = [[currentModuleController view] bounds].size.height;
     }
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
     {
         var moduleToolbarIndex = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
-
-        [[self mainToolbar] addItemWithIdentifier:moduleName label:moduleLabel icon:[aBundle pathForResource:@"icon.png"] target:self action:@selector(didToolbarModuleClicked:)];
-        [[self mainToolbar] setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-
-        [[theViewController view] willLoad];
-
-        [[self mainToolbar] _reloadToolbarItems];
-
-        [_loadedToolbarModulesScrollViews setObject:scrollView forKey:moduleName];
+        
+        var moduleToolbarItem = [[TNModuleToolbarItem alloc] initWithItemIdentifier:moduleName];
+        [moduleToolbarItem setLabel:moduleLabel];
+        [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)]];
+        [moduleToolbarItem setTarget:self];
+        [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
+        [moduleToolbarItem setModule:currentModuleController];
+        
+        [mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
+        [mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
+        [mainToolbar _reloadToolbarItems];
+        
+        [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
+        
+        [currentModuleController willLoad];
     }
 
-    [[theViewController view] setFrame:frame];
-    [scrollView setDocumentView:[theViewController view]];
+    //[[currentModuleController view] setFrame:frame];
+    //[scrollView setDocumentView:[currentModuleController view]];
     
     
     if ([delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
@@ -600,44 +616,37 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (IBAction)didToolbarModuleClicked:(id)sender
 {
-    var oldView;
-
-    if (_currentToolbarView)
+    var oldModule;
+    if (_currentToolbarModule)
     {
-        var moduleBundle    = [[_currentToolbarView documentView] moduleBundle];
+        var moduleBundle    = [_currentToolbarModule bundle];
         var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"ToolbarIcon"]];
-
-        //[_currentToolbarItem setLabel:[moduleBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+        
+        oldModule = _currentToolbarModule;
         [_currentToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-
-        [[_currentToolbarView documentView] willHide];
-        [_currentToolbarView removeFromSuperview];
-
-        oldView = _currentToolbarView;
-
-        _currentToolbarView = nil;
-        _currentToolbarItem = nil;
+        
+        [_currentToolbarModule willHide];
+        [[_currentToolbarModule view] removeFromSuperview];
+        _currentToolbarModule   = nil;
+        _currentToolbarItem     = nil;
     }
-
-    var view            = [_loadedToolbarModulesScrollViews objectForKey:[sender itemIdentifier]];
-
-    if (oldView != view)
+    
+    var module  = [_loadedToolbarModules objectForKey:[sender itemIdentifier]]; 
+    if (module != oldModule)
     {
-        var bounds          = [[self mainRightView] bounds];
-        var moduleBundle    = [[view documentView] moduleBundle];
+        var bounds          = [mainRightView bounds];
+        var moduleBundle    = [module bundle];
         var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
-
-        //[sender setLabel:[moduleBundle objectForInfoDictionaryKey:@"AlternativePluginDisplayName"]];
+        
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-
-        [view setFrame:bounds];
-
-        [[view documentView] willShow];
-
-        [[self mainRightView] addSubview:view];
-
-        _currentToolbarView = view;
-        _currentToolbarItem = sender;
+        
+        [[module view] setFrame:bounds];
+        [module willShow];
+        
+        [mainRightView addSubview:[module view]];
+        
+        _currentToolbarModule   = module;
+        _currentToolbarItem     = sender;
     }
 }
 @end

@@ -36,7 +36,7 @@
             The main class of the module.
         -->
         <key>CPPrincipalClass</key>
-        <string>TNSampleTabModule</string>
+        <string>TNSampleTabModuleController</string>
         
         <!--
             The plugin display name. This will be display as name of

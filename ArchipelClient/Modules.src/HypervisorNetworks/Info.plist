@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNHypervisorNetworks</string>
+        <string>TNHypervisorNetworksController</string>
         <key>PluginDisplayName</key>
         <string>Networks</string>
         <key>InsertionType</key>

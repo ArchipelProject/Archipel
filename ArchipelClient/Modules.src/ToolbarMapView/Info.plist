@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNMapView</string>
+        <string>TNMapViewController</string>
         <key>PluginDisplayName</key>
         <string>Map View</string>        
         <key>InsertionType</key>

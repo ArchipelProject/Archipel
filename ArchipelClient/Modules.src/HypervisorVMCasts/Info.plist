@@ -2,29 +2,42 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
+        <!--
+            the bundle identifier. It MUST BE UNIQUE
+        -->
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.groupmanagement</string>
+        <string>org.archipelproject.HypervisorVMCasts</string>
+        
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
+        
         <key>CPBundlePackageType</key>
         <string>280N</string>
+        
         <key>CPBundleVersion</key>
         <string>1.0</string>
+
         <key>CPBundleName</key>
-        <string>GroupManagement</string>
+        <string>HypervisorVMCasts</string>
+
         <key>CPPrincipalClass</key>
-        <string>TNGroupManagementController</string>
+        <string>TNHypervisorVMCastsController</string>
+        
         <key>PluginDisplayName</key>
-        <string>Group</string>
-        <key>TabIndex</key>
-        <integer>0</integer>
+        <string>VMCasts</string>
+        
         <key>InsertionType</key>
         <string>tab</string>
+        
+        <key>TabIndex</key>
+        <string>4</string>
+        
         <key>SupportedEntityTypes</key>
         <array>
-            <string>group</string>
+            <string>hypervisor</string>
         </array>
+        
         <key>CibName</key>
-        <string>GroupManagement</string>
+        <string>HypervisorVMCasts</string>
     </dict>
 </plist>

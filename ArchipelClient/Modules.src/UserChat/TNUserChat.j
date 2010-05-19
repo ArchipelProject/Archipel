@@ -28,7 +28,7 @@
 /*! @ingroup userchat
     This is the main module view.
 */
-@implementation TNUserChat : TNModule
+@implementation TNUserChatController : TNModule
 {
     @outlet CPTextField     fieldJID                @accessors;
     @outlet CPTextField     fieldName               @accessors;

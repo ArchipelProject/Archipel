@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNHypervisorHealth</string>
+        <string>TNHypervisorHealthController</string>
         <key>PluginDisplayName</key>
         <string>Health</string>
         <key>InsertionType</key>

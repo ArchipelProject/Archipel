@@ -6,7 +6,7 @@
             the bundle identifier. It MUST BE UNIQUE
         -->
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.sampletabmodule</string>
+        <string>org.archipelproject.virtualmachinesnapshots</string>
         
         <!--
             Version of this plist file. Must be 1.0
@@ -30,26 +30,27 @@
             The name of the bundle
         -->
         <key>CPBundleName</key>
-        <string>SampleToolbarModule</string>
-
+        <string>VirtualMachineSnapshots</string>
+        
         <!--
             The main class of the module.
         -->
         <key>CPPrincipalClass</key>
-        <string>TNSampleToolbarModuleController</string>
+        <string>TNVirtualMachineSnapshotsController</string>
         
         <!--
             The plugin display name. This will be display as name of
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
-        <string>Show Sample</string>
+        <string>Snapshots</string>
         
         <!--
-            This value will be displayed when module is activate as the toolbat item title
+            The desired tabulation index. If two module have the same tabIndex,
+            they are displayed in the load order.
         -->
-        <key>AlternativePluginDisplayName</key>
-        <string>Hide Sample</string>
+        <key>TabIndex</key>
+        <integer>4</integer>
         
         <!--
             The type of the module. It can be
@@ -57,34 +58,26 @@
              - toolbar : for general module displayed in toolbar
         -->
         <key>InsertionType</key>
-        <string>toolbar</string>
+        <string>tab</string>
         
         <!--
-            The desired toolbar index. If two module have the same tabIndex,
-            they are displayed in the load order.
+            This defines on which entity type the module have to been displayed. It 
+            can be the following :
+             - virtualmachine
+             - hypervisor
+             - group
+             - user
         -->
-        <key>ToolbarIndex</key>
-        <string>0</string>
-        
-        <!--
-            This image will be displayed as toolbar item icon when module is unactivated.
-            It must be in Resources folder
-        -->
-        <key>ToolbarIcon</key>
-        <string>icon.png</string>
-        
-        <!--
-            This image will be displayed as toolbar item icon when module is activated. 
-            It must be in Resources folder
-        -->
-        <key>AlternativeToolbarIcon</key>
-        <string>icon-alt.png</string>
+        <key>SupportedEntityTypes</key>
+        <array>
+            <string>virtualmachine</string>
+        </array>
         
         <!--
             This indicate to the module loader which CIB to load.
             It must be the fileName without the .cib extension
         -->
         <key>CibName</key>
-        <string>SampleToolbarModule</string>
+        <string>VirtualMachineSnapshots</string>
     </dict>
 </plist>

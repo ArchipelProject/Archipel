@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNUserChat</string>
+        <string>TNUserChatController</string>
         <key>PluginDisplayName</key>
         <string>Chat</string>
         <key>InsertionType</key>

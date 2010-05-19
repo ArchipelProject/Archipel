@@ -54,23 +54,34 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     You can use SampleTabModule and SampleToolbarModule to get example of module implémentation.
 
 */
-@implementation TNModule : CPView
+@implementation TNModule : CPViewController
 {
-    TNStropheRoster         _roster             @accessors(getter=roster, setter=setRoster:);
-    TNStropheGroup          _group              @accessors(getter=group, setter=setGroup:);
-    id                      _entity             @accessors(getter=entity, setter=setEntity:);
-    TNStropheConnection     _connection         @accessors(getter=connection, setter=setConnection:);
-    int                     _moduleTabIndex     @accessors(getter=moduleTabIndex, setter=setModuleTabIndex:);
-    CPString                _moduleName         @accessors(getter=moduleName, setter=setModuleName:);
-    CPString                _moduleLabel        @accessors(getter=moduleLabel, setter=setModuleLabel:);
-    CPArray                 _moduleTypes        @accessors(getter=moduleTypes, setter=setModuleTypes:);
-    CPBundle                _moduleBundle       @accessors(getter=moduleBundle, setter=setModuleBundle:);
-    CPMenuItem              _menuItem           @accessors(getter=menuItem, setter=setMenuItem:);
-    CPMenu                  _menu               @accessors(getter=menu, setter=setMenu:);
-    
+    TNStropheRoster         _roster                 @accessors(property=roster);
+    TNStropheGroup          _group                  @accessors(property=group);
+    id                      _entity                 @accessors(property=entity);
+    TNStropheConnection     _connection             @accessors(property=connection);
+    int                     _index                  @accessors(property=index);
+    CPString                _name                   @accessors(property=name);
+    CPString                _label                  @accessors(property=label);
+    CPArray                 _supportedEntityTypes   @accessors(property=supportedEntityTypes);
+    CPBundle                _bundle                 @accessors(property=bundle);
+    CPMenuItem              _menuItem               @accessors(property=menuItem);
+    CPMenu                  _menu                   @accessors(property=menu);
+    BOOL                    _isActive               @accessors(property=isActive, readonly);
+    BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     CPArray                 _registredSelectors;
 }
 
+- (void)init
+{
+    if (self = [super init])
+    {
+        _isActive   = NO;
+        _isVisible  = NO;
+    }
+    
+    return;
+}
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
     YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleLoader will do the job for you.
 
@@ -112,6 +123,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _registredSelectors = [CPArray array];
     
     [_menuItem setEnabled:YES];
+    
+    _isActive = YES;
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -132,6 +145,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     // remove all notification observers
     var center  = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
+    
+    _isActive = NO;
 }
 
 /*! This message is sent when module will be displayed
@@ -143,6 +158,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     
     //[anim setDuration:0.3];
     //[anim startAnimation];
+    _isVisible = YES;
 }
 
 /*! this message is sent when user click on another module.
@@ -153,6 +169,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
 
     // [anim startAnimation];
+    _isVisible = NO;
 }
 
 - (void)menuReady

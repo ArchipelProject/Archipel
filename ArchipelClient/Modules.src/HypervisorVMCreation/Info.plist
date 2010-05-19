@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNHypervisorVMCreation</string>
+        <string>TNHypervisorVMCreationController</string>
         <key>PluginDisplayName</key>
         <string>Virtual Machines</string>
         <key>InsertionType</key>

@@ -42,15 +42,15 @@
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachineDiskCreation</string>
+                <string>VirtualMachineDrives</string>
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachinePackaging</string>
+                <string>VirtualMachineAppliances</string>
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachineSnapshoting</string>
+                <string>VirtualMachineSnapshots</string>
             </dict>
             <dict>
                 <key>folder</key>
@@ -58,7 +58,7 @@
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VMCasting</string>
+                <string>HypervisorVMCasts</string>
             </dict>
 
         </array>

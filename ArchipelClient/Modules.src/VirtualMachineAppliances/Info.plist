@@ -3,28 +3,38 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.groupmanagement</string>
+        <string>org.archipelproject.virtualmachineappliances</string>
+        
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
+        
         <key>CPBundlePackageType</key>
         <string>280N</string>
+        
         <key>CPBundleVersion</key>
         <string>1.0</string>
+        
         <key>CPBundleName</key>
-        <string>GroupManagement</string>
+        <string>VirtualMachineAppliances</string>
+        
         <key>CPPrincipalClass</key>
-        <string>TNGroupManagementController</string>
+        <string>TNVirtualMachineAppliancesController</string>
+        
         <key>PluginDisplayName</key>
-        <string>Group</string>
+        <string>Appliances</string>
+        
         <key>TabIndex</key>
-        <integer>0</integer>
+        <integer>2</integer>
+        
         <key>InsertionType</key>
         <string>tab</string>
+        
         <key>SupportedEntityTypes</key>
         <array>
-            <string>group</string>
+            <string>virtualmachine</string>
         </array>
+        
         <key>CibName</key>
-        <string>GroupManagement</string>
+        <string>VirtualMachineAppliances</string>
     </dict>
 </plist>

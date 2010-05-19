@@ -13,7 +13,7 @@
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNVirtualMachineVNC</string>
+        <string>TNVirtualMachineVNCController</string>
         <key>PluginDisplayName</key>
         <string>VNC Console</string>
         <key>InsertionType</key>
