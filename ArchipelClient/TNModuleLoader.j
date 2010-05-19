@@ -402,18 +402,28 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_addItemToModulesTabView:(TNModule)aModule
 {
+    var frame           = [mainRightView bounds];
     var newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]];
     var theEntity       = [self entity];
     var theConnection   = [[self entity] connection];
     var theRoster       = [self roster];
+    var scrollView      = [[CPScrollView alloc] initWithFrame:frame];
+    
+    [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [scrollView setAutohidesScrollers:YES];
+    [scrollView setBackgroundColor:[CPColor whiteColor]];
+    
+    frame.size.height = [[aModule view] bounds].size.height;
+    [[aModule view] setFrame:frame];
+        
+    [newViewItem setModule:aModule];
+    [newViewItem setLabel:[aModule label]];
+    [newViewItem setView:scrollView];
     
     [aModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
     [aModule willLoad];
     
-    [newViewItem setModule:aModule];
-    [newViewItem setLabel:[aModule label]];
-    [newViewItem setView:[aModule view]];
-
+    [scrollView setDocumentView:[aModule view]];    
     [mainTabView addTabViewItem:newViewItem];
 }
 
@@ -533,20 +543,13 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
     [_bundles addObject:aBundle];
 
-    var moduleName          = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
-    var moduleLabel         = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
-    var moduleIdentifier    = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-
+    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
+    var moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"];
+    var moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
+    var moduleInsertionType         = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
+    var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    var frame                       = [mainRightView bounds];
     var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-    // var scrollView                  = [[CPScrollView alloc] initWithFrame:[mainRightView bounds]];
-    
-    // [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    // [scrollView setAutohidesScrollers:YES];
-    // [scrollView setBackgroundColor:[CPColor whiteColor]];
-
-    var frame = [mainRightView bounds];
     
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
@@ -571,8 +574,6 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [currentModuleController menuReady];
         
         [_loadedTabModules addObject:currentModuleController];
-        // [_loadedTabModulesScrollViews setObject:scrollView forKey:moduleName];
-        // frame.size.height = [[currentModuleController view] bounds].size.height;
     }
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
     {
