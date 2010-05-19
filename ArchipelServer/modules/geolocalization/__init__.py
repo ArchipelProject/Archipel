@@ -12,7 +12,7 @@ def __module_init__geoloc(self):
     method  = self.configuration.get("GEOLOCALIZATION", "service_method")
     root_info_node = self.configuration.get("GEOLOCALIZATION", "service_response_root_node")
     
-    self.module_geolocalization = geoloc.TNHypervisorGeolocalization(service, request, method, root_info_node);
+    self.module_geolocalization = geoloc.TNHypervisorGeolocalization(service, request, method, root_info_node)
 
 
 def __module_register_stanza__geoloc(self):

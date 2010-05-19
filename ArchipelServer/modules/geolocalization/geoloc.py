@@ -25,10 +25,10 @@ import httplib
 
 class TNHypervisorGeolocalization:
     def __init__(self, service, request, method, root_info_node):
-        conn = httplib.HTTPConnection(service);
+        conn = httplib.HTTPConnection(service)
         conn.request(method, request)
 
-        node_loc = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom();
+        node_loc = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom()
         self.localization_information = node_loc
         
         
@@ -36,10 +36,10 @@ class TNHypervisorGeolocalization:
     def __module__get_geolocalization(self, iq):
         reply = iq.buildReply('success')
         try:
-            reply.setQueryPayload([self.localization_information]);
+            reply.setQueryPayload([self.localization_information])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
-        return reply;
+        return reply
     
 
     def process_iq(self, conn, iq):
@@ -56,7 +56,7 @@ class TNHypervisorGeolocalization:
         """
         log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
     
         if iqType == "get":
             reply = self.__module__get_geolocalization(iq)

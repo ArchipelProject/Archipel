@@ -26,14 +26,14 @@ import archipel
 try:
     import libvirt
 except ImportError:
-    pass;
+    pass
 
 
 
 class TNHypervisorNetworks:
     
     def __init__(self, entity):
-        self.entity = entity;
+        self.entity = entity
         
         if self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             self.libvirt_connection = libvirt.open(None)
@@ -48,9 +48,9 @@ class TNHypervisorNetworks:
         if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
-        log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur");
+        log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur")
         
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         if iqType == "define":
             reply = self.__module_network_define_network(iq)
@@ -82,9 +82,9 @@ class TNHypervisorNetworks:
         if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
             
-        log(self, LOG_LEVEL_INFO, "received network iq for virtual machine");
+        log(self, LOG_LEVEL_INFO, "received network iq for virtual machine")
         
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         if iqType == "list":
             reply = self.__module_network_name_list(iq)
@@ -107,7 +107,7 @@ class TNHypervisorNetworks:
             return
             
         try:
-            network_node = iq.getTag("query").getTag("network");
+            network_node = iq.getTag("query").getTag("network")
             
             reply = iq.buildReply('success')
             self.libvirt_connection.networkDefineXML(str(network_node))
@@ -133,9 +133,9 @@ class TNHypervisorNetworks:
             
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData();
+            network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
-            libvirt_network.undefine();
+            libvirt_network.undefine()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network XML is undefined")
             self.entity.push_change("network", "undefined")
@@ -159,13 +159,13 @@ class TNHypervisorNetworks:
             
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData();
+            network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.create()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network created")
             self.entity.push_change("network", "created")
-            self.entity.shout("disk", "Network %s has been started by %s." % (network_uuid, iq.getFrom()));
+            self.entity.shout("disk", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -186,13 +186,13 @@ class TNHypervisorNetworks:
             
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData();
+            network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.destroy()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual network destroyed")
             self.entity.push_change("network", "destroyed")
-            self.entity.shout("disk", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()));
+            self.entity.shout("disk", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -212,30 +212,30 @@ class TNHypervisorNetworks:
             return
             
         reply = iq.buildReply('success')
-        active_networks_nodes = []; 
-        not_active_networks_nodes = []; #xmpp.Node(tag="unactivedNetworks");
+        active_networks_nodes = [] 
+        not_active_networks_nodes = [] #xmpp.Node(tag="unactivedNetworks")
         
-        actives_networks_names = self.libvirt_connection.listNetworks();
-        not_active_networks_names = self.libvirt_connection.listDefinedNetworks();
+        actives_networks_names = self.libvirt_connection.listNetworks()
+        not_active_networks_names = self.libvirt_connection.listDefinedNetworks()
         
         
         for network_name in actives_networks_names:
-            network = self.libvirt_connection.networkLookupByName(network_name);
-            desc = network.XMLDesc(0);
-            n = xmpp.simplexml.NodeBuilder(data=desc).getDom();
+            network = self.libvirt_connection.networkLookupByName(network_name)
+            desc = network.XMLDesc(0)
+            n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
             active_networks_nodes.append(n)
         
         for network_name in not_active_networks_names:
-            network = self.libvirt_connection.networkLookupByName(network_name);
-            desc = network.XMLDesc(0);
-            n = xmpp.simplexml.NodeBuilder(data=desc).getDom();
+            network = self.libvirt_connection.networkLookupByName(network_name)
+            desc = network.XMLDesc(0)
+            n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
             not_active_networks_nodes.append(n)
         
-        active_networks_root_node = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes);
-        not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes);
+        active_networks_root_node = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes)
+        not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes)
         
         reply.setQueryPayload([active_networks_root_node, not_active_networks_root_node])
-        return reply;
+        return reply
     
 
     def __module_network_name_list(self, iq):
@@ -252,15 +252,15 @@ class TNHypervisorNetworks:
             return
             
         reply = iq.buildReply('success')
-        active_networks_nodes = []; 
+        active_networks_nodes = [] 
         
-        actives_networks_names = self.libvirt_connection.listNetworks();
+        actives_networks_names = self.libvirt_connection.listNetworks()
         
         for network_name in actives_networks_names:
             network = xmpp.Node(tag="network", attrs={"name": network_name})
             active_networks_nodes.append(network)
         
         reply.setQueryPayload(active_networks_nodes)
-        return reply;
+        return reply
     
 

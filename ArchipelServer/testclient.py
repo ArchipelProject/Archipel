@@ -37,8 +37,8 @@ class XMPPVirtualMachineController(TNArchipelBasicXMPPClient):
 
 iq = xmpp.Iq(typ=sys.argv[2], to=sys.argv[1])
 iq.addChild(name="query", attrs={"type": sys.argv[3]})
-iq.getTag("query").addChild(name="target", payload="vnet1");
-# iq.getTag("query").addChild(name="target", payload="vnet0");
+iq.getTag("query").addChild(name="target", payload="vnet1")
+# iq.getTag("query").addChild(name="target", payload="vnet0")
 
 vm = XMPPVirtualMachineController("controller@virt-hyperviseur", "password", None)
 vm.register_actions_to_perform_on_auth("send_iq", iq)

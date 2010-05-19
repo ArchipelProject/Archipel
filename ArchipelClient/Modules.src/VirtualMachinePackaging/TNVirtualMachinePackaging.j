@@ -48,6 +48,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     CPTableView                         _tableAppliances;
     TNTableViewDataSource               _appliancesDatasource;
+    
+    CPButton    _instanciateButton;
+    CPButton    _dettachButton;
 }
 
 - (void)awakeFromCib
@@ -71,6 +74,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances setTarget:self];
     [_tableAppliances setDoubleAction:@selector(instanciate:)];
     [_tableAppliances setAllowsEmptySelection:YES];
+    [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [columnName setWidth:200]
@@ -97,7 +101,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances addTableColumn:columnStatus];
     [_tableAppliances addTableColumn:columnName];
     [_tableAppliances addTableColumn:columnComment];
-    [_tableAppliances addTableColumn:columnUUID];
+    //[_tableAppliances addTableColumn:columnUUID];
 
     [_appliancesDatasource setTable:_tableAppliances];
     [_appliancesDatasource setSearchableKeyPaths:[@"name", @"path", @"comment"]]
@@ -111,17 +115,19 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [menu addItemWithTitle:@"Install" action:@selector(instanciate:) keyEquivalent:@""];
     [_tableAppliances setMenu:menu];
     
-    var instanciateButton  = [CPButtonBar plusButton];
-    [instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-combine.png"] size:CPSizeMake(16, 16)]];
-    [instanciateButton setTarget:self];
-    [instanciateButton setAction:@selector(instanciate:)];
+    _instanciateButton  = [CPButtonBar plusButton];
+    [_instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-combine.png"] size:CPSizeMake(16, 16)]];
+    [_instanciateButton setTarget:self];
+    [_instanciateButton setAction:@selector(instanciate:)];
     
-    var dettachButton  = [CPButtonBar plusButton];
-    [dettachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-decombine.png"] size:CPSizeMake(16, 16)]];
-    [dettachButton setTarget:self];
-    [dettachButton setAction:@selector(dettach:)];
+    _dettachButton  = [CPButtonBar plusButton];
+    [_dettachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-decombine.png"] size:CPSizeMake(16, 16)]];
+    [_dettachButton setTarget:self];
+    [_dettachButton setAction:@selector(dettach:)];
     
-    [buttonBarControl setButtons:[instanciateButton, dettachButton]];
+    [_instanciateButton setEnabled:NO];
+    [_dettachButton setEnabled:NO];
+    [buttonBarControl setButtons:[_instanciateButton, _dettachButton]];
 }
 
 - (void)willLoad
@@ -133,6 +139,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [self registerSelector:@selector(didDownloadPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    
+    [_tableAppliances setDelegate:nil];
+    [_tableAppliances setDelegate:self]; // hum....
 }
 
 - (void)willUnload
@@ -294,6 +303,25 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+
+- (void)tableViewSelectionDidChange:(CPTableView)aTableView
+{
+    [_instanciateButton setEnabled:NO];
+    [_dettachButton setEnabled:NO];
+    
+    if ([_tableAppliances numberOfSelectedRows] <= 0)
+        return;
+    
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
+    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
+    
+    if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
+        [_dettachButton setEnabled:YES];
+    else
+        [_instanciateButton setEnabled:YES];
+    
 }
 
 

@@ -55,20 +55,20 @@ class TNArchipelBasicXMPPClient(object):
         @type password: string
         @param password: the password of the JID account.
         """
-        self.xmppstatus = None;
-        self.xmppstatusshow = None;
-        self.xmppclient = None;
-        self.configuration = configuration;
+        self.xmppstatus = None
+        self.xmppstatusshow = None
+        self.xmppclient = None
+        self.configuration = configuration
         self.auto_register = auto_register
         self.password = password
-        self.vcard = None;
+        self.vcard = None
         self.jid = xmpp.protocol.JID(jid.lower())
         log(self, LOG_LEVEL_INFO, "jid defined as {0}".format(jid.lower()))
         self.ressource = socket.gethostname()
         log(self, LOG_LEVEL_INFO, "ressource defined as {0}".format(socket.gethostname()))
         self.roster = None
-        self.roster_retreived = False;
-        self.registered_actions_to_perform_on_connection = [];
+        self.roster_retreived = False
+        self.registered_actions_to_perform_on_connection = []
         
         self.ipaddr = self.configuration.get("GLOBAL", "machine_ip")
         
@@ -98,7 +98,7 @@ class TNArchipelBasicXMPPClient(object):
                 m = getattr(self, method)
                 m()
                 
-        self.register_handler();
+        self.register_handler()
     
             
     def _auth_xmpp(self):
@@ -125,7 +125,7 @@ class TNArchipelBasicXMPPClient(object):
         self.get_vcard()
         self.perform_all_registered_auth_actions()
         
-        self.loop();
+        self.loop()
     
     
     def _inband_registration(self):
@@ -133,7 +133,7 @@ class TNArchipelBasicXMPPClient(object):
         Do a in-band registration if auth fail
         """    
         if (not self.auto_register):    
-            return;
+            return
         
         log(self, LOG_LEVEL_DEBUG, "trying to register with {0}:{1} to {2}".format(self.jid.getNode(), self.password, self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
@@ -154,8 +154,8 @@ class TNArchipelBasicXMPPClient(object):
             
         elif resp_iq.getType() == "result":
             log(self, LOG_LEVEL_INFO, "the registration complete")
-            self.disconnect();
-            self.connect();
+            self.disconnect()
+            self.connect()
     
     
     def _inband_unregistration(self):
@@ -234,9 +234,9 @@ class TNArchipelBasicXMPPClient(object):
         
         if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and not msg.getType() == "error" and msg.getBody():
             log(self, LOG_LEVEL_DEBUG, "message received from %s (%s)" % (msg.getFrom(), msg.getType()))
-            reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!");
-            reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE);
-            conn.send(reply);
+            reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!")
+            reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
+            conn.send(reply)
         else:
             log(self, LOG_LEVEL_DEBUG, "message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
 
@@ -265,10 +265,10 @@ class TNArchipelBasicXMPPClient(object):
             if hasattr(self, action["name"]):
                 m = getattr(self, action["name"])
                 if action["args"] != None:
-                    m(action["args"]);
+                    m(action["args"])
                 else:
-                    m();
-        self.registered_actions_to_perform_on_connection = [];
+                    m()
+        self.registered_actions_to_perform_on_connection = []
     
     
     def perform_all_registered_roster_actions(self):
@@ -279,10 +279,10 @@ class TNArchipelBasicXMPPClient(object):
             if hasattr(self, action["name"]):
                 m = getattr(self, action["name"])
                 if action["args"] != None:
-                    m(action["args"]);
+                    m(action["args"])
                 else:
-                    m();
-        self.registered_actions_to_perform_on_roster_retrieved = [];
+                    m()
+        self.registered_actions_to_perform_on_roster_retrieved = []
     
     
     
@@ -291,7 +291,7 @@ class TNArchipelBasicXMPPClient(object):
             self.xmppstatus = presence_status
         if not presence_show == None:
             self.xmppstatusshow = presence_show
-        log(self, LOG_LEVEL_DEBUG, "status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow));
+        log(self, LOG_LEVEL_DEBUG, "status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         self.xmppclient.send(pres)
@@ -319,19 +319,19 @@ class TNArchipelBasicXMPPClient(object):
     
     
     def push_change(self, namespace, change):
-        ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace;
-        self.roster = self.xmppclient.getRoster();
+        ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
+        self.roster = self.xmppclient.getRoster()
         for item in self.roster.getItems():
-            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change}, xmlns=ARCHIPEL_NS_IQ_PUSH);
+            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change}, xmlns=ARCHIPEL_NS_IQ_PUSH)
             log(self, LOG_LEVEL_DEBUG, "pushing " + ns + " / " + change + " to item " + str(item))
             self.xmppclient.send(push_message)
     
     
     def shout(self, subject, message):
         """send a message to evrybody in roster"""
-        self.roster = self.xmppclient.getRoster();
+        self.roster = self.xmppclient.getRoster()
         for item in self.roster.getItems():
-            broadcast = xmpp.Message(to=str(item), subject=subject, body=message, typ=ARCHIPEL_NS_SERVICE_MESSAGE);
+            broadcast = xmpp.Message(to=str(item), subject=subject, body=message, typ=ARCHIPEL_NS_SERVICE_MESSAGE)
             log(self, LOG_LEVEL_DEBUG, "shouting message subject:%s message:%s" % (subject, message))
             self.xmppclient.send(broadcast)
     
@@ -352,7 +352,7 @@ class TNArchipelBasicXMPPClient(object):
         self.roster.Authorize(jid)
         self.roster.setItem(jid, groups=groups)
         
-        self.push_change("subscription", "added");
+        self.push_change("subscription", "added")
     
     
     def remove_jid(self, jid):
@@ -388,13 +388,13 @@ class TNArchipelBasicXMPPClient(object):
     
     def get_vcard(self):
         
-        log(self, LOG_LEVEL_INFO, "asking for own vCard");
-        node_iq = xmpp.Iq(typ='get', frm=self.jid);
+        log(self, LOG_LEVEL_INFO, "asking for own vCard")
+        node_iq = xmpp.Iq(typ='get', frm=self.jid)
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         
         resp = self.xmppclient.SendAndWaitForResponse(stanza=node_iq)
         self.vCard = resp.getTag("vCard")
-        log(self, LOG_LEVEL_INFO, "own vcard retrieved");
+        log(self, LOG_LEVEL_INFO, "own vcard retrieved")
     
     
     def set_vcard_entity_type(self, params):
@@ -404,33 +404,33 @@ class TNArchipelBasicXMPPClient(object):
         @type params: dict
         @param params: adict containing at least entity_type keys, and options avatar_file key
         """
-        log(self, LOG_LEVEL_DEBUG, "vcard making started");
+        log(self, LOG_LEVEL_DEBUG, "vcard making started")
 
         node_iq = xmpp.Iq(typ='set', xmlns=None)
         
-        type_node = xmpp.Node(tag="TYPE");
-        type_node.setData(params["entity_type"]);
+        type_node = xmpp.Node(tag="TYPE")
+        type_node.setData(params["entity_type"])
         
         
         if (self.configuration.get("GLOBAL", "use_avatar") == "yes"):
-            avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory");
+            avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
             try:
-                avatar_file = params["avatar_file"];
+                avatar_file = params["avatar_file"]
             except:
                 avatar_file = "default.png"
         
-            f = open(os.path.join(avatar_dir, avatar_file), "r");
-            photo_data = base64.b64encode(f.read());
+            f = open(os.path.join(avatar_dir, avatar_file), "r")
+            photo_data = base64.b64encode(f.read())
             f.close()
         
             node_photo_content_type = xmpp.Node(tag="TYPE")
-            node_photo_content_type.setData("image/png");
+            node_photo_content_type.setData("image/png")
                     
             node_photo_data = xmpp.Node(tag="BINVAL")
-            node_photo_data.setData(photo_data);
+            node_photo_data.setData(photo_data)
         
             if self.vCard and self.vCard.getTag("PHOTO"):
-                old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA();
+                old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
                 if old_photo_binval == photo_data:
                     log(self, LOG_LEVEL_INFO, "vCard photo hasn't change.")
                     self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
@@ -463,9 +463,9 @@ class TNArchipelBasicXMPPClient(object):
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
             node_photo_sha1.setData(photo_hash)
-            node_presence.addChild(name="x", namespace='vcard-temp:x:update', payload=[node_photo_sha1]);
+            node_presence.addChild(name="x", namespace='vcard-temp:x:update', payload=[node_photo_sha1])
         
-        self.xmppclient.send(node_presence);
+        self.xmppclient.send(node_presence)
         log(self, LOG_LEVEL_DEBUG, "vcard update presence sent") 
     
     
@@ -499,13 +499,13 @@ class TNArchipelBasicXMPPClient(object):
                     self.loop_status = LOOP_ON
                 elif self.loop_status == LOOP_OFF:
                     self.disconnect()
-                    break;
+                    break
             except KeyboardInterrupt:
                  log(self, LOG_LEVEL_INFO, "End of loop forced user action (now disconecting)")
-                 sys.exit(0);
+                 sys.exit(0)
             except Exception as ex:
                 log(self, LOG_LEVEL_INFO, "End of loop forced by exception (now disconecting) : " + str(ex))
-                break;
+                break
              
     
 

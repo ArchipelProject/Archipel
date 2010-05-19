@@ -49,7 +49,7 @@ def main():
     """
     # starting simple web server for Java VNC applet
     port = config.getint("WEBSERVER", "webserver_port")
-    httpd = TNThreadedWebServer(port);
+    httpd = TNThreadedWebServer(port)
     httpd.start()
 
     # initializing the hypervisor XMPP entity
@@ -66,17 +66,17 @@ def main():
 if __name__ == "__main__":
     opts, args = getopt.getopt(sys.argv[1:], "n", ["nofork", "config=", "help"])
     
-    configPath = None;
-    fork = True;
+    configPath = None
+    fork = True
     
     for o, a in opts:
         if o in ("--config"):
-            configPath = a;
+            configPath = a
         if o in ("-n", "--nofork"):
             fork = False
         if o in ("--help"):
-            print "usage: runarchipel.py [--nofork] [--config=</path/to/conf>]";
-            sys.exit(0);
+            print "usage: runarchipel.py [--nofork] [--config=</path/to/conf>]"
+            sys.exit(0)
     
     if fork:
         try:
@@ -86,9 +86,9 @@ if __name__ == "__main__":
         except OSError as e:
             os.exit(1)
     
-    config = utils.init_conf(configPath);
+    config = utils.init_conf(configPath)
     os.chdir(config.get("GLOBAL", "general_exec_dir"))
-    load_modules();
+    load_modules()
 
     if fork:
         os.setsid()

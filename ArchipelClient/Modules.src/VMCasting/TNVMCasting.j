@@ -58,6 +58,10 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     CPOutlineView               _mainOutlineView;
     TNVMCastDatasource          _castsDatasource;
+    CPButton                    _plusButton;
+    CPButton                    _minusButton;
+    CPButton                    _downloadButton;
+    CPButton                    _downloadQueueButton;
 }
 
 - (void)awakeFromCib
@@ -124,25 +128,28 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     
     // menuBar
-    var plusButton = [CPButtonBar plusButton];
-    [plusButton setTarget:self];
-    [plusButton setAction:@selector(openNewVMCastURLWindow:)];
+    _plusButton = [CPButtonBar plusButton];
+    [_plusButton setTarget:self];
+    [_plusButton setAction:@selector(openNewVMCastURLWindow:)];
     
-    var minusButton = [CPButtonBar minusButton];
-    [minusButton setTarget:self];
-    [minusButton setAction:@selector(removeVMCast:)];
+    _minusButton = [CPButtonBar minusButton];
+    [_minusButton setTarget:self];
+    [_minusButton setAction:@selector(removeVMCast:)];
     
-    var downloadButton = [CPButtonBar plusButton];
-    [downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-download.png"] size:CPSizeMake(16, 16)]];
-    [downloadButton setTarget:self];
-    [downloadButton setAction:@selector(download:)];
+    _downloadButton = [CPButtonBar plusButton];
+    [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-download.png"] size:CPSizeMake(16, 16)]];
+    [_downloadButton setTarget:self];
+    [_downloadButton setAction:@selector(download:)];
     
-    var downloadQueueButton = [CPButtonBar plusButton];
-    [downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-view.png"] size:CPSizeMake(16, 16)]];
-    [downloadQueueButton setTarget:self];
-    [downloadQueueButton setAction:@selector(showDownloadQueue:)];
-            
-    [buttonBarControl setButtons:[plusButton, minusButton, downloadButton, downloadQueueButton]];
+    _downloadQueueButton = [CPButtonBar plusButton];
+    [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-view.png"] size:CPSizeMake(16, 16)]];
+    [_downloadQueueButton setTarget:self];
+    [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
+    
+    [_minusButton setEnabled:NO];
+    [_downloadButton setEnabled:NO];
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
 }
 
 - (IBAction)fieldFilterDidChange:(id)sender
@@ -160,12 +167,19 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [_mainOutlineView setDelegate:nil];
+    [_mainOutlineView setDelegate:self];
 }
 
 - (void)willUnload
 {
     [super willUnload];
     
+    [windowDownloadQueue orderOut:nil];
+    [windowNewCastURL orderOut:nil];
+    
+    [_mainOutlineView deselectAll];
 }
 
 - (void)willShow
@@ -190,7 +204,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 - (IBAction)openNewVMCastURLWindow:(id)sender
 {
     [fieldNewURL setStringValue:@""];
-    [windowNewCastURL orderFront:nil];
+    [windowNewCastURL makeKeyAndOrderFront:nil];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -269,7 +283,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (IBAction)showDownloadQueue:(id)sender
 {
-    [[self windowDownloadQueue] orderFront:nil];
+    [[self windowDownloadQueue] makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)download:(id)sender
@@ -425,6 +439,30 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView reloadData];
     [_mainOutlineView expandAll];
 }
+
+- (void)outlineViewSelectionDidChange:(CPNotification)aNotification
+{
+    [_minusButton setEnabled:NO];
+    [_downloadButton setEnabled:NO];
+    
+    if ([_mainOutlineView numberOfSelectedRows] > 0)
+    {
+        var selectedIndexes = [_mainOutlineView selectedRowIndexes];
+        var object          = [_mainOutlineView itemAtRow:[selectedIndexes firstIndex]];
+        
+        if ([object class] == TNVMCast)
+        {
+            [_downloadButton setEnabled:(([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError))];
+            [_minusButton setEnabled:([object status] == TNArchipelApplianceInstalled)];
+        }
+        else if ([object class] == TNVMCastSource)
+        {
+            [_minusButton setEnabled:YES];
+            [_downloadButton setEnabled:NO];
+        } 
+    }
+}
+
 @end
 
 

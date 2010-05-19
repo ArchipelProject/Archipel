@@ -47,15 +47,17 @@ function generateIPForNewNetwork()
     @outlet CPTextField                 fieldName               @accessors;
     @outlet CPScrollView                scrollViewNetworks      @accessors;
     @outlet TNWindowNetworkProperties   windowProperties        @accessors;
-    @outlet CPButton                    buttonActivation;
-    @outlet CPButton                    buttonDeactivation;
-    @outlet CPButton                    buttonDelete;
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPView                      viewTableContainer;
     
     CPTableView             _tableViewNetworks;
     TNTableViewDataSource   _datasourceNetworks;
+    CPButton                _plusButton;
+    CPButton                _minusButton;
+    CPButton                _editButton;
+    CPButton                _activateButton;
+    CPButton                _deactivateButton;
 }
 
 - (void)awakeFromCib
@@ -77,6 +79,7 @@ function generateIPForNewNetwork()
     [_tableViewNetworks setAllowsEmptySelection:YES];
     [_tableViewNetworks setAllowsMultipleSelection:YES];
     [_tableViewNetworks setTarget:self];
+    [_tableViewNetworks setDelegate:self];
     [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
     
     var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"icon"];
@@ -134,11 +137,7 @@ function generateIPForNewNetwork()
     [_tableViewNetworks setDelegate:self];
     
     [windowProperties setDelegate:self];
-    
-    [buttonActivation setEnabled:NO];
-    [buttonDeactivation setEnabled:NO];
-    [buttonDelete setEnabled:NO];
-    
+        
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""];
     [menu addItem:[CPMenuItem separatorItem]];
@@ -149,29 +148,36 @@ function generateIPForNewNetwork()
     [menu addItemWithTitle:@"Delete" action:@selector(delNetwork:) keyEquivalent:@""];
     [_tableViewNetworks setMenu:menu];
     
-    var plusButton = [CPButtonBar plusButton];
-    [plusButton setTarget:self];
-    [plusButton setAction:@selector(addNetwork:)];
-    var minusButton = [CPButtonBar minusButton];
-    [minusButton setTarget:self];
-    [minusButton setAction:@selector(delNetwork:)];
+    _plusButton = [CPButtonBar plusButton];
+    [_plusButton setTarget:self];
+    [_plusButton setAction:@selector(addNetwork:)];
     
-    var activateButton = [CPButtonBar plusButton];
-    [activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)]];
-    [activateButton setTarget:self];
-    [activateButton setAction:@selector(activateNetwork:)];
+    _minusButton = [CPButtonBar minusButton];
+    [_minusButton setTarget:self];
+    [_minusButton setAction:@selector(delNetwork:)];
     
-    var deactivateButton = [CPButtonBar plusButton];
-    [deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)]];
-    [deactivateButton setTarget:self];
-    [deactivateButton setAction:@selector(deactivateNetwork:)];
+    _activateButton = [CPButtonBar plusButton];
+    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)]];
+    [_activateButton setTarget:self];
+    [_activateButton setAction:@selector(activateNetwork:)];
     
-    var editButton  = [CPButtonBar plusButton];
-    [editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
-    [editButton setTarget:self];
-    [editButton setAction:@selector(editNetwork:)];
+    _deactivateButton = [CPButtonBar plusButton];
+    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)]];
+    [_deactivateButton setTarget:self];
+    [_deactivateButton setAction:@selector(deactivateNetwork:)];
     
-    [buttonBarControl setButtons:[plusButton, minusButton, editButton, activateButton, deactivateButton]];
+    _editButton  = [CPButtonBar plusButton];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setTarget:self];
+    [_editButton setAction:@selector(editNetwork:)];
+    
+    [_minusButton setEnabled:NO];
+    [_activateButton setEnabled:NO];
+    [_deactivateButton setEnabled:NO];
+    [_editButton setEnabled:NO];
+    
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton]];
 
 }
 
@@ -184,6 +190,9 @@ function generateIPForNewNetwork()
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [_tableViewNetworks setDelegate:nil];
+    [_tableViewNetworks setDelegate:self]; // hum....
 }
 
 - (void)willShow
@@ -569,27 +578,25 @@ function generateIPForNewNetwork()
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
     
-    if (selectedIndex == -1)
-    {
-        [buttonActivation setEnabled:NO];
-        [buttonDeactivation setEnabled:NO];
-        [buttonDelete setEnabled:NO];
-        return YES;
-    }
+    [_minusButton setEnabled:NO];
+    [_editButton setEnabled:NO];
+    [_activateButton setEnabled:NO];
+    [_deactivateButton setEnabled:NO];
     
+    if ([_tableViewNetworks numberOfSelectedRows] == 0)
+        return;
+        
     var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
     
     if ([networkObject isNetworkEnabled])
     {
-        [buttonActivation setEnabled:NO];
-        [buttonDeactivation setEnabled:YES];
-        [buttonDelete setEnabled:NO];
+        [_deactivateButton setEnabled:YES];
     }
     else
     {
-        [buttonActivation setEnabled:YES];
-        [buttonDeactivation setEnabled:NO];
-        [buttonDelete setEnabled:YES];
+        [_minusButton setEnabled:YES];
+        [_editButton setEnabled:YES];
+        [_activateButton setEnabled:YES];
     }
     
     return YES;

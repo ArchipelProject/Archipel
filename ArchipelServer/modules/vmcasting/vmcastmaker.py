@@ -24,9 +24,9 @@ class VMCastMaker:
         self.baseserverurl  = baseserverurl
         self.basepath       = basepath
         self.title          = title
-        self.uuid           = uuid;
+        self.uuid           = uuid
         self.description    = description
-        self.language       = language;
+        self.language       = language
         
         self.items = []
         
@@ -70,12 +70,12 @@ class VMCastMaker:
         f.close()
         
     def parseDirectory(self, path="."):
-        self.init_feed();
+        self.init_feed()
         self.items = []
         xvm2_files = [x for x in os.listdir(path) if x.endswith('.xvm2')]
         for xvm2_file in xvm2_files:
             size = os.path.getsize(path + "/" + xvm2_file)
-            item_uuid = uuid.uuid3(uuid.NAMESPACE_URL, xvm2_file);
+            item_uuid = uuid.uuid3(uuid.NAMESPACE_URL, xvm2_file)
             self.add_item(xvm2_file.replace('.xvm2', ''), 
                             'Auto imported vmcast', 
                             self.baseserverurl, 

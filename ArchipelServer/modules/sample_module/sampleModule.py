@@ -29,7 +29,31 @@ class TNSampleModule:
         #internal module initialization
         pass
 
-    # this method is called according to the registration below
     def process_iq(self, conn, iq):
-    reply = iq.buildReply("success");
-    return reply
+        iqType = iq.getTag("query").getAttr("type")
+        log(self, LOG_LEVEL_DEBUG, " IQ received from {%s} with type {%s} : {%s}" % (iq.getFrom(), iq.getType(), iqType))
+        
+        if iqType == "do-something":
+            reply = self.__do_something(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+
+    def __do_something(self, iq):
+        """
+        Doing something.
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, "I did something!")
+            self.entity.push_change("sample", "I_DID_SOMETHING")
+            self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply

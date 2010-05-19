@@ -50,6 +50,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>VirtualMachineSnapshoting</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>VirtualMachineVNC</string>
             </dict>
             <dict>

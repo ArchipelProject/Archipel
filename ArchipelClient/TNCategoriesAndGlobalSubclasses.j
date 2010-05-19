@@ -291,6 +291,10 @@
     var theDate = new Date();
     return theDate.dateFormat(aFormat);
 }
+- (CPString)description
+{
+    return self.dateFormat(@"Y-m-d H:i:s");
+}
 @end
 
 @implementation CPWindow (fadeInWindow)

@@ -187,14 +187,15 @@ function generateMacAddr()
     [buttonBar setButtons:[diskButton, nicsButton]];
     [buttonBar layoutSubviews];
         
+    
     _plusButton = [CPButtonBar plusButton];
     _minusButton = [CPButtonBar minusButton];
-    
     _editButton = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     
-    
+    [_minusButton setEnabled:NO];
+    [_editButton setEnabled:NO];
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
     
     
@@ -223,6 +224,7 @@ function generateMacAddr()
     [_tableDrives setAllowsEmptySelection:YES];
     [_tableDrives setAllowsMultipleSelection:YES];
     [_tableDrives setTarget:self];
+    [_tableDrives setDelegate:self];
     [_tableDrives setDoubleAction:@selector(editDrive:)];
     
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
@@ -275,8 +277,10 @@ function generateMacAddr()
     [_tableNetworkCards setAllowsEmptySelection:YES];
     [_tableNetworkCards setAllowsMultipleSelection:YES];
     [_tableNetworkCards setTarget:self];
+    [_tableNetworkCards setDelegate:self];
     [_tableNetworkCards setDoubleAction:@selector(editNetworkCard:)];
-
+    [_tableNetworkCards setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [[columnType headerView] setStringValue:@"Type"];
     [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
@@ -374,6 +378,9 @@ function generateMacAddr()
         [_minusButton setAction:@selector(deleteDrive:)];
         
         [_editButton setAction:@selector(editDrive:)];
+        
+        var notif = [CPNotification notificationWithName:nil object:_tableDrives];
+        [self tableViewSelectionDidChange:notif];
     }
 }
 
@@ -406,6 +413,9 @@ function generateMacAddr()
         [_minusButton setAction:@selector(deleteNetworkCard:)];
         
         [_editButton setAction:@selector(editNetworkCard:)];
+        
+        var notif = [CPNotification notificationWithName:nil object:_tableNetworkCards];
+        [self tableViewSelectionDidChange:notif];
     }
 }
 
@@ -427,6 +437,12 @@ function generateMacAddr()
     [self displayDrivesTable:nil];
     
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [_tableDrives setDelegate:nil];
+    [_tableDrives setDelegate:self]; // hum....
+    
+    [_tableNetworkCards setDelegate:nil];
+    [_tableNetworkCards setDelegate:self]; // hum....
     
 }
 
@@ -792,6 +808,11 @@ function generateMacAddr()
         var drive = [drives objectAtIndex:i];
 
         [stanza addChildName:@"disk" withAttributes:{"device": [drive device], "type": [drive type]}];
+        if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! TODO!
+        {
+            [stanza addChildName:@"driver" withAttributes:{"type": "qcow2"}];
+            [stanza up];
+        }
         [stanza addChildName:@"source" withAttributes:{"file": [drive source]}];
         [stanza up];
         [stanza addChildName:@"target" withAttributes:{"bus": [drive bus], "dev": [drive target]}];
@@ -945,6 +966,19 @@ function generateMacAddr()
     [self defineXML:nil];
 
     return YES;
+}
+
+
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    [_minusButton setEnabled:NO];
+    [_editButton setEnabled:NO];
+    
+    if ([[aNotification object] numberOfSelectedRows] > 0)
+    {
+        [_minusButton setEnabled:YES];
+        [_editButton setEnabled:YES];
+    }
 }
 
 @end

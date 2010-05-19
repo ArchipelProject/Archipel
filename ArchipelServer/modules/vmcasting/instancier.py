@@ -29,14 +29,14 @@ ARCHIPEL_APPLIANCES_INSTALLED = 1
 class TNArchipelPackageInstancier:
     
     def __init__(self, database_path, temp_directory, disks_extensions, entity):
-        self.entity = entity;
+        self.entity = entity
         self.disks_extensions = disks_extensions.split(";")
-        self.temp_directory = temp_directory;
+        self.temp_directory = temp_directory
         self.database_connection = sqlite3.connect(database_path, check_same_thread = False)
-        self.cursor = self.database_connection.cursor();
-        self.is_installing = False;
-        self.installing_media_uuid = None;
-        self.is_installed = False;
+        self.cursor = self.database_connection.cursor()
+        self.is_installing = False
+        self.installing_media_uuid = None
+        self.is_installed = False
     
     def process_iq(self, conn, iq):
         """
@@ -50,7 +50,7 @@ class TNArchipelPackageInstancier:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
         
@@ -80,28 +80,28 @@ class TNArchipelPackageInstancier:
         @return: a ready-to-send IQ containing the results
         """
         try:
-            uuid = iq.getTag("query").getAttr("uuid");
-            nodes = [];
-            reply = iq.buildReply("success");
-            self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED));
+            uuid = iq.getTag("query").getAttr("uuid")
+            nodes = []
+            reply = iq.buildReply("success")
+            self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
             for values in self.cursor:
                 path = values[0]
                 name = values[1]
                 description = values[2]
                 uuid = values[3]
                 
-                status = "none";
+                status = "none"
                 
                 if self.is_installing and (self.installing_media_uuid == uuid):
-                    status = "installing";
+                    status = "installing"
                 else:
                     try:
-                        f = open(self.entity.vm_own_folder + "/current.package", "r");
+                        f = open(self.entity.vm_own_folder + "/current.package", "r")
                         puuid = f.read()
                         f.close()
                         if puuid == uuid:
                             status = "installed"
-                            self.is_installed = True;
+                            self.is_installed = True
                     except:
                         pass
 
@@ -123,30 +123,30 @@ class TNArchipelPackageInstancier:
         """
         try:
             if self.is_installing:
-                raise Exception("InstallationError", "Virtual machine is already installing a package");
+                raise Exception("InstallationError", "Virtual machine is already installing a package")
             
             if (self.is_installed):
-                raise Exception("InstallationError", "You must dettach from already attached template");
-            
-            self.is_installing = True;
-            uuid = iq.getTag("query").getTag("uuid").getCDATA();
-            requester = iq.getFrom();
-            
-            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid));
-            for values in self.cursor:
-                name, description, url, uuid, status, source, save_path = values;
-            
-            log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions));
-            log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path));
-            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester);
+                raise Exception("InstallationError", "You must dettach from already attached template")
             
             self.is_installing = True
-            self.installing_media_uuid = uuid;
-            appliance_packager.start();
+            uuid = iq.getTag("query").getTag("uuid").getCDATA()
+            requester = iq.getFrom()
             
-            self.entity.push_change("vmcasting", "applianceinstalling");
+            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid))
+            for values in self.cursor:
+                name, description, url, uuid, status, source, save_path = values
             
-            reply = iq.buildReply('success');
+            log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions))
+            log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path))
+            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester)
+            
+            self.is_installing = True
+            self.installing_media_uuid = uuid
+            appliance_packager.start()
+            
+            self.entity.push_change("vmcasting", "applianceinstalling")
+            
+            reply = iq.buildReply('success')
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
             
@@ -162,21 +162,21 @@ class TNArchipelPackageInstancier:
         """
         try:
             if self.is_installing:
-                raise Exception("InstallationError", "Virtual machine is already installing a package");
+                raise Exception("InstallationError", "Virtual machine is already installing a package")
 
-            os.unlink(self.entity.vm_own_folder + "/current.package");
+            os.unlink(self.entity.vm_own_folder + "/current.package")
 
-            self.is_installed = False;
-            self.entity.push_change("vmcasting", "appliancedettached");
+            self.is_installed = False
+            self.entity.push_change("vmcasting", "appliancedettached")
             
-            reply = iq.buildReply('success');
+            reply = iq.buildReply('success')
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
 
         return reply
 
     def finish_installing(self):
-        self.is_installed = True;
-        self.is_installing = False;
-        self.installing_media_uuid = None;
+        self.is_installed = True
+        self.is_installing = False
+        self.installing_media_uuid = None
         

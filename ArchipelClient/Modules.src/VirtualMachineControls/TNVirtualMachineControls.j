@@ -248,6 +248,8 @@ TNArchipelTransportBarReboot    = 3;
 
           _VMLibvirtStatus = libvirtState;
 
+          [self disableAllButtons];
+          
           switch ([libvirtState intValue])
           {
               case VIR_DOMAIN_NOSTATE:
@@ -494,6 +496,23 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
     
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
+}
+
+- (void)disableAllButtons
+{
+
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarReboot];
+    
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
     var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
     [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
 }

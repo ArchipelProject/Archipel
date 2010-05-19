@@ -120,6 +120,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     @outlet CPView              viewLoadingModule           @accessors;
 
 
+    CPTextField                 _rightViewTextField;
     TNModuleLoader              _moduleLoader;
     CPTabView                   _moduleTabView;
     
@@ -226,15 +227,15 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [rightView addSubview:_moduleTabView];
 
     /* message in _moduleTabView */
-    var message = [CPTextField labelWithTitle:@"Entity is currently offline. You can't interract with it."];
+    _rightViewTextField = [CPTextField labelWithTitle:@""];
     var bounds  = [_moduleTabView bounds];
 
-    [message setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
-    [message setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
-    [message setAlignment:CPCenterTextAlignment]
-    [message setFont:[CPFont boldSystemFontOfSize:18]];
-    [message setTextColor:[CPColor grayColor]];
-    [_moduleTabView addSubview:message];
+    [_rightViewTextField setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
+    [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
+    [_rightViewTextField setAlignment:CPCenterTextAlignment]
+    [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:18]];
+    [_rightViewTextField setTextColor:[CPColor grayColor]];
+    [_moduleTabView addSubview:_rightViewTextField];
     
     /* main menu */
     [self makeMainMenu];
@@ -254,6 +255,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [_moduleTabView setDelegate:_moduleLoader];
     [_moduleLoader setMainToolbar:_mainToolbar];
     [_moduleLoader setMainTabView:_moduleTabView];
+    [_moduleLoader setInfoTextField:_rightViewTextField];
     [_moduleLoader setModulesPath:@"Modules/"]
     [_moduleLoader setMainRightView:rightView];
     [_moduleLoader setModulesMenu:_modulesMenu];

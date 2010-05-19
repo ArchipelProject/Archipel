@@ -69,7 +69,7 @@ COLORING_MAPPING_LOG_LEVEL  = { LOG_LEVEL_INFO: COLOR_INFO,
                                 LOG_LEVEL_DEBUG: COLOR_DEBUG, 
                                 LOG_LEVEL_ERROR: COLOR_ERROR}
 
-NS_ARCHIPEL_USE_LIBVIRT_MODULE = True;
+NS_ARCHIPEL_USE_LIBVIRT_MODULE = True
 
 def init_conf(path):
     """
@@ -91,7 +91,7 @@ def init_conf(path):
     log_file = conf.get("LOGGING", "logging_file_path")
     globals()["LOG_WRITE_IN_FILE"] = log_file
     
-    return conf;
+    return conf
 
 
 def log(logger, level, message) :
@@ -108,7 +108,7 @@ def log(logger, level, message) :
     @param message: the message body to enter
     """
     if level < LOG_LEVEL:
-        return;
+        return
     
     class_name      = logger.__class__.__name__
     class_id        = str(id(logger))

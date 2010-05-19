@@ -35,14 +35,14 @@ from archipelVirtualMachine import *
 try:
     import libvirt
 except ImportError:
-    pass;
+    pass
 
 GROUP_VM = "virtualmachines"
 GROUP_HYPERVISOR = "hypervisors"
 
 NS_ARCHIPEL_HYPERVISOR_CONTROL = "archipel:hypervisor:control"
 
-NS_ARCHIPEL_STATUS_ONLINE       = "Online";
+NS_ARCHIPEL_STATUS_ONLINE       = "Online"
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -108,10 +108,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
-        self.virtualmachines = {};
-        self.xmppserveraddr = jid.split("/")[0].split("@")[1];
+        self.virtualmachines = {}
+        self.xmppserveraddr = jid.split("/")[0].split("@")[1]
         log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
-        self.database_file = database_file;
+        self.database_file = database_file
         self.__manage_persistance()
         
         if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
@@ -127,8 +127,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     def update_presence(self, params=None):
-        count = len(self.virtualmachines);
-        self.change_presence("", NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")");
+        count = len(self.virtualmachines)
+        self.change_presence("", NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")")
         
     
     
@@ -153,7 +153,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text)")
             
-        c = self.database.cursor();
+        c = self.database.cursor()
         c.execute("select * from virtualmachines")
         for vm in c:
             jid, password, date, comment = vm
@@ -174,7 +174,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration); #envoyer un bon mot de passe.
+        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration) #envoyer un bon mot de passe.
         vm.daemon = True
         vm.start()
         return vm    
@@ -207,12 +207,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         reply = iq.buildReply('success')
         
         try:
-            uuidnode    = iq.getTag("query").getTag("uuid");
+            uuidnode    = iq.getTag("query").getTag("uuid")
             
             if not uuidnode:
-                raise Exception('IncorrectUUID', "Missing or malformed UUID");
+                raise Exception('IncorrectUUID', "Missing or malformed UUID")
             
-            domain_uuid = uuidnode.getCDATA();
+            domain_uuid = uuidnode.getCDATA()
             vm_password = "password" #temp method
             vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
             
@@ -235,7 +235,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
-            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid));
+            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
             
@@ -256,8 +256,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         try:
             vm_jid      = str(iq.getQueryPayload()[0])
-            domain_uuid = vm_jid.split("@")[0];
-            vm          = self.virtualmachines[domain_uuid];
+            domain_uuid = vm_jid.split("@")[0]
+            vm          = self.virtualmachines[domain_uuid]
             
             if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
                 if (vm.get_instance().domain):
@@ -269,7 +269,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             self.remove_jid(vm_jid)
             
             log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
-            vm.get_instance().remove_own_folder();
+            vm.get_instance().remove_own_folder()
             
             log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
             self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))
@@ -282,9 +282,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             self.update_presence()
             
-            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})]);
+            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})])
             log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
-            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()));
+            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         
@@ -334,7 +334,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         if iqType == "alloc":
             reply = self.alloc_xmppvirtualmachine(iq)

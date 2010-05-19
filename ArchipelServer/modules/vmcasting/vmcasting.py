@@ -8,7 +8,7 @@
 # License, or (at your option) any later version.
 # 
 # This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# but WITHOUT ANY WARRANTY without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
 # 
@@ -61,7 +61,7 @@ class TNApplianceDownloader(Thread):
         self.name               = name
         self.finish_callback    = finish_callback
         self.save_path          = self.save_folder + "/" + uuid + ".xvm2"
-        self.progress           = 0.0;
+        self.progress           = 0.0
     
     
     def run(self):
@@ -100,7 +100,7 @@ class TNApplianceDownloader(Thread):
         """
         @return: the name of the download
         """
-        return self.name;
+        return self.name
     
     
     def stop(self):
@@ -121,12 +121,12 @@ class TNApplianceDownloader(Thread):
         @param total_size: the total size in bytes of the file downloaded
         
         """
-        percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100;
+        percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100
         #print "downloading: " + str(percentage) + "%"
         if percentage >= 100.0:
-            self.finish_callback(self.uuid, self.save_path);
-        self.total_size = total_size;
-        self.progress = percentage;
+            self.finish_callback(self.uuid, self.save_path)
+        self.total_size = total_size
+        self.progress = percentage
     
 
 
@@ -150,33 +150,33 @@ class TNHypervisorVMCasting:
         self.database_path = database_path
         self.repository_path = repository_path
         self.own_repo_params = own_repo_params
-        self.download_queue = {};
+        self.download_queue = {}
         
         self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"], self.own_repo_params["uuid"], 
                                                         self.own_repo_params["description"], self.own_repo_params["lang"], 
-                                                        self.own_repo_params["url"], self.own_repo_params["path"]);
+                                                        self.own_repo_params["url"], self.own_repo_params["path"])
         
         self.parse_own_repo(loop=False)
-        self.parse_timer = Thread(target=self.parse_own_repo);
+        self.parse_timer = Thread(target=self.parse_own_repo)
         self.parse_timer.start()
         
         self.database_connection = sqlite3.connect(database_path, check_same_thread = False)
-        self.cursor = self.database_connection.cursor();
+        self.cursor = self.database_connection.cursor()
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
         self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status int, source text not null, save_path text)")
         
-        log(self, LOG_LEVEL_INFO, "Database ready.");
+        log(self, LOG_LEVEL_INFO, "Database ready.")
     
     
     def parse_own_repo(self, loop=True):
         while True:
-            log(self, LOG_LEVEL_DEBUG, "begin to refresh own vmcast feed");
+            log(self, LOG_LEVEL_DEBUG, "begin to refresh own vmcast feed")
             self.own_vmcastmaker.parseDirectory(self.own_repo_params["path"])
-            self.own_vmcastmaker.writeFeed(self.own_repo_params["path"] + "/" + self.own_repo_params["filename"]);
-            log(self, LOG_LEVEL_DEBUG, "finish to refresh own vmcast feed");
+            self.own_vmcastmaker.writeFeed(self.own_repo_params["path"] + "/" + self.own_repo_params["filename"])
+            log(self, LOG_LEVEL_DEBUG, "finish to refresh own vmcast feed")
             if not loop:
-                break;
-            time.sleep(self.own_repo_params["refresh"]);
+                break
+            time.sleep(self.own_repo_params["refresh"])
         
     def on_download_complete(self, uuid, path):
           """
@@ -186,13 +186,13 @@ class TNHypervisorVMCasting:
           @type path: string
           @param path: the path of the downloaded file
           """
-          self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='%s' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLED, path, uuid));
+          self.cursor.execute("UPDATE vmcastappliances SET status=%d, save_path='%s' WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLED, path, uuid))
           
-          del self.download_queue[uuid];
+          del self.download_queue[uuid]
           self.database_connection.commit()
           self.entity.push_change("vmcasting", "download_complete")
-          self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid));
-          self.entity.change_status(self.old_entity_status);
+          self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid))
+          self.entity.change_status(self.old_entity_status)
     
     
     def process_iq(self, conn, iq):
@@ -212,7 +212,7 @@ class TNHypervisorVMCasting:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
         
@@ -270,7 +270,7 @@ class TNHypervisorVMCasting:
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results"""
-        reply = iq.buildReply("success");
+        reply = iq.buildReply("success")
         try:
             nodes = self.parseRSS()
             reply.setQueryPayload(nodes)
@@ -288,16 +288,16 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply       = iq.buildReply("success");
-        url         = iq.getTag("query").getAttr("url");
+        reply       = iq.buildReply("success")
+        url         = iq.getTag("query").getAttr("url")
         
         try:
             if not url or url=="":
                 raise Exception("IncorrectStanza", "Stanza must have url")
-            self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url);
-            self.database_connection.commit();
+            self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
+            self.database_connection.commit()
             self.entity.push_change("vmcasting", "register")
-            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()));
+            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -312,16 +312,16 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
+        reply = iq.buildReply("success")
         
-        uuid = iq.getTag("query").getAttr("uuid");
+        uuid = iq.getTag("query").getAttr("uuid")
         
         try:
-            self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid);
-            self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid);
+            self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid)
+            self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid)
             self.database_connection.commit()
             self.entity.push_change("vmcasting", "unregister")
-            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()));
+            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -336,24 +336,24 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
+        reply = iq.buildReply("success")
         
-        dl_uuid = iq.getTag("query").getAttr("uuid");
+        dl_uuid = iq.getTag("query").getAttr("uuid")
         
         try:
-            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid));
-            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
-            self.database_connection.commit();
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
+            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
+            self.database_connection.commit()
             
             self.entity.push_change("vmcasting", "download_start")
             
             for values in self.cursor:
-                name, description, url, uuid, status, source, path = values;
-                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete);
-                downloader.start();
-                self.download_queue[uuid] = downloader;
-            self.old_entity_status = self.entity.xmppstatus;
-            self.entity.change_status("Downloading appliance...");
+                name, description, url, uuid, status, source, path = values
+                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete)
+                downloader.start()
+                self.download_queue[uuid] = downloader
+            self.old_entity_status = self.entity.xmppstatus
+            self.entity.change_status("Downloading appliance...")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -368,18 +368,18 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success"); 
-        nodes = [];
+        reply = iq.buildReply("success") 
+        nodes = []
         
         try:
             for uuid, download in self.download_queue.items():
                 dl = xmpp.Node(tag="download", attrs={"uuid": download.get_uuid(), "name": download.get_name(), "percentage": download.get_progress(), "total": download.get_total_size()})
                 nodes.append(dl)
             
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
-        return reply;
+        return reply
     
     
     def __stop_download(self, iq):
@@ -391,9 +391,9 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
-        dl_uuid = iq.getTag("query").getAttr("uuid");
-        self.download_queue[dl_uuid].stop();
+        reply = iq.buildReply("success")
+        dl_uuid = iq.getTag("query").getAttr("uuid")
+        self.download_queue[dl_uuid].stop()
         return reply
     
     
@@ -406,11 +406,11 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
-        uuid = iq.getTag("query").getAttr("uuid");
+        reply = iq.buildReply("success")
+        uuid = iq.getTag("query").getAttr("uuid")
         
         try:
-            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid);
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
             for values in self.cursor:
                 path = values[0]
                 name = values[1]
@@ -432,11 +432,11 @@ class TNHypervisorVMCasting:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success");
-        uuid = iq.getTag("query").getAttr("uuid");
-        nodes = [];
+        reply = iq.buildReply("success")
+        uuid = iq.getTag("query").getAttr("uuid")
+        nodes = []
         try:
-            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED));
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
             for values in self.cursor:
                 path = values[0]
                 name = values[1]
@@ -461,19 +461,19 @@ class TNHypervisorVMCasting:
         """
         
         try:
-            reply = iq.buildReply("success");
-            uuid = iq.getTag("query").getAttr("uuid");
+            reply = iq.buildReply("success")
+            uuid = iq.getTag("query").getAttr("uuid")
             
-            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid);
+            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid)
             for values in self.cursor:
                 path = values[0]
                 
-            os.remove(path);
-            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid));
-            self.database_connection.commit();
+            os.remove(path)
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid))
+            self.database_connection.commit()
             
-            self.entity.push_change("vmcasting", "appliancedeleted");
-            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()));
+            self.entity.push_change("vmcasting", "appliancedeleted")
+            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()))
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)            
@@ -484,29 +484,29 @@ class TNHypervisorVMCasting:
         """
         parse the content of the database, update the feed, create the answer node.
         """
-        sources = self.cursor.execute("SELECT * FROM vmcastsources");
-        nodes = [];
+        sources = self.cursor.execute("SELECT * FROM vmcastsources")
+        nodes = []
         
-        tmp_cursor = self.database_connection.cursor();
+        tmp_cursor = self.database_connection.cursor()
         
         for values in sources:
             name, description, url, uuid = values
             
             log(self, LOG_LEVEL_DEBUG, "parsing feed with url %s" % url)
             
-            source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid});
-            content_nodes = [];
+            source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
+            content_nodes = []
             
             try:
-                f = urllib.urlopen(url);
+                f = urllib.urlopen(url)
             except Exception as ex:
-                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
+                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url)
                 self.database_connection.commit()
                 self.entity.push_change("vmcasting", "unregister")
                 raise Exception("404", "Feed is not reponding. removed from database.")
             
             try:
-                feed_content        = xmpp.simplexml.NodeBuilder(data=str(f.read())).getDom();
+                feed_content        = xmpp.simplexml.NodeBuilder(data=str(f.read())).getDom()
                 feed_uuid           = feed_content.getTag("channel").getTag("uuid").getCDATA()
                 feed_description    = feed_content.getTag("channel").getTag("description").getCDATA()
                 feed_name           = feed_content.getTag("channel").getTag("title").getCDATA()
@@ -515,41 +515,41 @@ class TNHypervisorVMCasting:
                 if not feed_uuid or not feed_name:
                     raise
             except:
-                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url);
-                self.database_connection.commit();
+                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url)
+                self.database_connection.commit()
                 raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed")
             
             try:
-                tmp_cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url));
-                self.database_connection.commit();
+                tmp_cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url))
+                self.database_connection.commit()
             except Exception as ex:
                 log(self, LOG_LEVEL_DEBUG, "unable to update source because: " + str(ex))
                 pass
             
             for item in items:
-                name            = str(item.getTag("title").getCDATA());
-                description     = str(item.getTag("description").getCDATA()).replace("\n", "").replace("\t", "");
-                url             = str(item.getTag("enclosure").getAttr("url"));
-                size            = str(item.getTag("enclosure").getAttr("length"));
-                pubdate         = str(item.getTag("pubDate").getCDATA());
-                uuid            = str(item.getTag("uuid").getCDATA());
-                status          = ARCHIPEL_APPLIANCES_NOT_INSTALLED;
+                name            = str(item.getTag("title").getCDATA())
+                description     = str(item.getTag("description").getCDATA()).replace("\n", "").replace("\t", "")
+                url             = str(item.getTag("enclosure").getAttr("url"))
+                size            = str(item.getTag("enclosure").getAttr("length"))
+                pubdate         = str(item.getTag("pubDate").getCDATA())
+                uuid            = str(item.getTag("uuid").getCDATA())
+                status          = ARCHIPEL_APPLIANCES_NOT_INSTALLED
                 
                 try:
-                    tmp_cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'));
-                    self.database_connection.commit();
+                    tmp_cursor.execute("INSERT INTO vmcastappliances VALUES (?,?,?,?,?,?,?)", (name, description, url, uuid, status, feed_uuid, '/dev/null'))
+                    self.database_connection.commit()
                 except Exception as ex:
-                    tmp_cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid);
+                    tmp_cursor.execute("SELECT status FROM vmcastappliances WHERE uuid='%s'" % uuid)
                     for values in tmp_cursor:
-                        status = values[0];
+                        status = values[0]
                     if status == ARCHIPEL_APPLIANCES_INSTALLING and not self.download_queue.has_key(uuid):
                         status = ARCHIPEL_APPLIANCES_INSTALLATION_ERROR
                     
                 new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": str(status)})
-                content_nodes.append(new_node);
+                content_nodes.append(new_node)
             
             source_node.setPayload(content_nodes)
-            nodes.append(source_node);
+            nodes.append(source_node)
             
-        return nodes;
+        return nodes
     

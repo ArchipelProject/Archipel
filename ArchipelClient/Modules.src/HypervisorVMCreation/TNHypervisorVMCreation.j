@@ -41,8 +41,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
-
     TNStropheContact        _virtualMachinesForDeletion;
+    CPButton                _plusButton;
+    CPButton                _minusButton;
 }
 
 - (void)awakeFromCib
@@ -63,6 +64,7 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [_tableVirtualMachines setAllowsColumnResizing:YES];
     [_tableVirtualMachines setAllowsEmptySelection:YES];
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
+    [_tableVirtualMachines setDelegate:self];
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
@@ -99,13 +101,17 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [menu addItemWithTitle:@"Delete" action:@selector(deleteVirtualMachine:) keyEquivalent:@""];
     [_tableVirtualMachines setMenu:menu];
     
-    var plusButton = [CPButtonBar plusButton];
-    [plusButton setTarget:self];
-    [plusButton setAction:@selector(addVirtualMachine:)];
-    var minusButton = [CPButtonBar minusButton];
-    [minusButton setTarget:self];
-    [minusButton setAction:@selector(deleteVirtualMachine:)];
-    [buttonBarControl setButtons:[plusButton, minusButton]];
+    _plusButton = [CPButtonBar plusButton];
+    [_plusButton setTarget:self];
+    [_plusButton setAction:@selector(addVirtualMachine:)];
+    
+    _minusButton = [CPButtonBar minusButton];
+    [_minusButton setTarget:self];
+    [_minusButton setAction:@selector(deleteVirtualMachine:)];
+    
+    [_minusButton setEnabled:NO];
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton]];
 }
 
 - (void)willLoad
@@ -116,6 +122,9 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [_tableVirtualMachines setDelegate:nil];
+    [_tableVirtualMachines setDelegate:self]; // hum....
 }
 
 - (void)willShow
@@ -315,6 +324,16 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     else
     {
         [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    [_minusButton setEnabled:NO];
+    
+    if ([[aNotification object] numberOfSelectedRows] > 0)
+    {
+        [_minusButton setEnabled:YES];
     }
 }
 

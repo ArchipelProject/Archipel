@@ -22,7 +22,7 @@ def __module_init__health_module(self):
     collection_interval     = self.configuration.getint("HEALTH", "health_collection_interval")
     max_rows_before_purge   = self.configuration.getint("HEALTH", "max_rows_before_purge")
     
-    self.module_health = health.TNHypervisorHealth(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port);
+    self.module_health = health.TNHypervisorHealth(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port)
 
 
 def __module_register_stanza__heatlh_module(self):

@@ -31,7 +31,7 @@ class TNThreadedWebServer(Thread):
         @type password: string
         @param password: the password associated to the JID
         """
-        self.httpd = SimpleWebServer(port);
+        self.httpd = SimpleWebServer(port)
         Thread.__init__(self)
     
     def run(self):
@@ -46,28 +46,28 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     server_root     = "./www/"
     
     def do_GET(self):
-        parameters  = [];
-        options     = {};
+        parameters  = []
+        options     = {}
         if self.path.find("?") != -1:
-            (self.path, request) = self.path.split("?");
-            parameters = request.split("&");
+            (self.path, request) = self.path.split("?")
+            parameters = request.split("&")
         
         for parameter in parameters:
-            p, v = parameter.split("=");
-            options[p] = v;
+            p, v = parameter.split("=")
+            options[p] = v
         
         if self.path == "/":
-            self.path = "index.html";
+            self.path = "index.html"
 
         try:
-            f = open(self.server_root + self.path);
-            data = f.read();
+            f = open(self.server_root + self.path)
+            data = f.read()
             if self.path == "index.html":
                 data = data.replace("::PORT::", options["port"])
-            self.wfile.write(data);
+            self.wfile.write(data)
             f.close()
         except:
-            pass;
+            pass
     
     
 class SimpleWebServer:
@@ -77,10 +77,10 @@ class SimpleWebServer:
         """
         init the web server.
         """
-        self.addr = ('', port);
+        self.addr = ('', port)
     
     def run(self):
-        self.http_server = BaseHTTPServer.HTTPServer(self.addr, SimpleHTTPHandler);
+        self.http_server = BaseHTTPServer.HTTPServer(self.addr, SimpleHTTPHandler)
         self.http_server.serve_forever()
 
         

@@ -41,16 +41,16 @@ from archipelBasicXMPPClient import *
 try:
     import libvirt
 except ImportError:
-    pass;
+    pass
 
 
-VIR_DOMAIN_NOSTATE	                        =	0;
-VIR_DOMAIN_RUNNING	                        =	1;
-VIR_DOMAIN_BLOCKED	                        =	2;
-VIR_DOMAIN_PAUSED	                        =	3;
-VIR_DOMAIN_SHUTDOWN	                        =	4;
-VIR_DOMAIN_SHUTOFF	                        =	5;
-VIR_DOMAIN_CRASHED	                        =	6;
+VIR_DOMAIN_NOSTATE	                        =	0
+VIR_DOMAIN_RUNNING	                        =	1
+VIR_DOMAIN_BLOCKED	                        =	2
+VIR_DOMAIN_PAUSED	                        =	3
+VIR_DOMAIN_SHUTDOWN	                        =	4
+VIR_DOMAIN_SHUTOFF	                        =	5
+VIR_DOMAIN_CRASHED	                        =	6
 
 NS_ARCHIPEL_STATUS_RUNNING      = "Running"
 NS_ARCHIPEL_STATUS_PAUSED       = "Paused"
@@ -75,18 +75,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         
         self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "disk_base_path") + "/"
-        self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode());
+        self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode())
         
         if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            self.libvirt_connection = None;
+            self.libvirt_connection = None
             self.register_actions_to_perform_on_auth("connect_libvirt", None)
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        # whooo... this technic is dirty. was I drunk ? TODO!
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
-        self.hypervisor = hypervisor;
+        self.hypervisor = hypervisor
         
         if not os.path.isdir(self.vm_own_folder):
-            os.mkdir(self.vm_own_folder);
+            os.mkdir(self.vm_own_folder)
     
     
     def register_handler(self):
@@ -117,7 +118,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         remove the folder of the virtual with all its contents
         """
-        os.system("rm -rf " + self.vm_own_folder);
+        os.system("rm -rf " + self.vm_own_folder)
     
     
     
@@ -137,10 +138,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
             return
         
-        self.push_change("virtualmachine", "initialized");
+        self.push_change("virtualmachine", "initialized")
         
-        self.domain = None;
-        self.libvirt_connection = None;
+        self.domain = None
+        self.libvirt_connection = None
         
         self.uuid = self.jid.getNode()
         self.libvirt_connection = libvirt.open(None)
@@ -154,22 +155,22 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_INFO, "sucessfully connect to domain uuid {0}".format(self.uuid))
             
             dominfo = self.domain.info()
-            log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0]);
+            log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == VIR_DOMAIN_RUNNING:
-                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             elif dominfo[0] == VIR_DOMAIN_PAUSED:
-                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED);
+                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
             elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
-                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED);
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
             
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.domain = None;
-                self.change_presence("dnd", NS_ARCHIPEL_STATUS_NOT_DEFINED);
+                self.domain = None
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
             else:
                 log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR);
+                self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR)
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "unexpected exception : " + str(ex))
             sys.exit(0)
@@ -195,7 +196,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             payload = xmpp.Node("domain", attrs={"id": str(self.domain.ID())})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
-            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
+            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             self.push_change("virtualmachine", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -220,7 +221,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.shutdown()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
-            self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED);
+            self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
             self.push_change("virtualmachine", "shutdowned")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -269,7 +270,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.suspend()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
-            self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED);
+            self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
             self.push_change("virtualmachine", "suspended")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -294,7 +295,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.resume()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
-            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING);
+            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             self.push_change("virtualmachine", "resumed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -343,9 +344,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             if not self.domain:
                 return iq.buildReply('ignore')
-            xmldesc = self.domain.XMLDesc(0);
-            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
-            graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics");
+            xmldesc = self.domain.XMLDesc(0)
+            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
+            graphicnode = xmldescnode.getTag(name="devices").getTag(name="graphics")
             payload = xmpp.Node("vncdisplay", attrs={"port": str(graphicnode.getAttr("port")), "host": self.ipaddr})
             reply.setQueryPayload([payload])
         except Exception as ex:
@@ -367,8 +368,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             if not self.domain:
                 return iq.buildReply('ignore')
-            xmldesc = self.domain.XMLDesc(0);
-            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
+            xmldesc = self.domain.XMLDesc(0)
+            xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
             reply.setQueryPayload([xmldescnode])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -395,7 +396,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        reply = None
        
        try :
-           domain_node = iq.getTag("query").getTag("domain");
+           domain_node = iq.getTag("query").getTag("domain")
            
            domain_uuid = domain_node.getTag("uuid").getData()
            if domain_uuid != self.jid.getNode():
@@ -468,7 +469,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         log(self, LOG_LEVEL_DEBUG, "Control IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         if iqType == "info":
             reply = self.info(iq)
@@ -535,7 +536,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
         
         if iqType == "define":
             reply = self.define(iq)

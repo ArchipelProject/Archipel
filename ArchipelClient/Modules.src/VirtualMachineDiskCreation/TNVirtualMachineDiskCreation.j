@@ -47,7 +47,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     @outlet CPImageView     imageViewConverting;
     @outlet CPButton        buttonConvert;
     @outlet CPSearchField   fieldFilterDisk;
-    @outlet CPTextField     labelConversionDisabled;
     @outlet CPButtonBar     buttonBarControl;
     @outlet CPView          viewTableContainer;
     @outlet CPWindow        windowNewDisk;
@@ -58,14 +57,15 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     id                      _registredDiskListeningId;
     
     BOOL                    _isActive;
+    
+    CPButton                _plusButton;
+    CPButton                _minusButton;
+    CPButton                _editButton;
 }
 
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
-    
-    [buttonConvert setEnabled:NO];
-    [buttonFormatConvert setEnabled:NO];
     
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
@@ -96,7 +96,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [_tableMedias setAllowsColumnResizing:YES];
     [_tableMedias setAllowsEmptySelection:YES];
     [_tableMedias setAllowsMultipleSelection:YES];
-
+    [_tableMedias setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    
     var mediaColumName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [mediaColumName setWidth:150];
     [[mediaColumName headerView] setStringValue:@"Name"];
@@ -148,20 +149,23 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [menu addItemWithTitle:@"Delete" action:@selector(removeDisk:) keyEquivalent:@""];
     [_tableMedias setMenu:menu];
     
-    var plusButton  = [CPButtonBar plusButton];
-    [plusButton setTarget:self];
-    [plusButton setAction:@selector(openNewDiskWindow:)];
+    _plusButton  = [CPButtonBar plusButton];
+    [_plusButton setTarget:self];
+    [_plusButton setAction:@selector(openNewDiskWindow:)];
     
-    var minusButton  = [CPButtonBar minusButton];
-    [minusButton setTarget:self];
-    [minusButton setAction:@selector(removeDisk:)];
+    _minusButton  = [CPButtonBar minusButton];
+    [_minusButton setTarget:self];
+    [_minusButton setAction:@selector(removeDisk:)];
     
-    var editButton  = [CPButtonBar plusButton];
-    [editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
-    [editButton setTarget:self];
-    [editButton setAction:@selector(openRenamePanel:)];
+    _editButton  = [CPButtonBar plusButton];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setTarget:self];
+    [_editButton setAction:@selector(openRenamePanel:)];
     
-    [buttonBarControl setButtons:[plusButton, minusButton, editButton]];
+    [_editButton setEnabled:NO];
+    [_minusButton setEnabled:NO];
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
     
 }
 
@@ -180,6 +184,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [_tableMedias setDelegate:nil];
+    [_tableMedias setDelegate:self]; // hum....
 }
 
 - (void)willShow
@@ -229,30 +236,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 {
     var status = [_entity status];
     
-    if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway))
-    {
-        _isActive = YES;
-        
-        [buttonConvert setEnabled:NO];
-        [buttonFormatConvert setEnabled:NO];
-        
-        [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running"];
-        
-        [_tableMedias deselectAll];
-    }
-    else
-    {
-        _isActive = NO;
-        
-        if ([_tableMedias numberOfSelectedRows] > 0)
-        {
-            [buttonFormatConvert setEnabled:YES];
-            [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running"];
-        }
-        else
-            [labelConversionDisabled setStringValue:@""];
-        
-    }
+    _isActive = ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway));
 }
 
 - (void)getDisksInfo
@@ -311,24 +295,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
     var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
-    
-    if (_isActive || ([diskObject format] == [buttonFormatConvert title]))
-    {
-        [buttonConvert setEnabled:NO];
-        [buttonFormatConvert setEnabled:NO];
-        
-        if (_isActive)
-            [labelConversionDisabled setStringValue:@"Conversion is disabled while virtual machine is running."];
-        else
-            [labelConversionDisabled setStringValue:@"Please choose a different format"];
-    }
-    else
-    {
-        [labelConversionDisabled setStringValue:@""];
-        [buttonConvert setEnabled:YES];
-        [buttonFormatConvert setEnabled:YES];
-    }
-        
 }
 
 - (IBAction)openRenamePanel:(id)sender
@@ -424,6 +390,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     {
          [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
          return;
+    }
+    
+    if (_currentEditedDisk && [_currentEditedDisk format] == [buttonFormatConvert title])
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You must choose a different format"];
+        return;
+        
     }
 
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
@@ -548,27 +521,20 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
-    [buttonConvert setEnabled:NO];
-    [buttonFormatConvert setEnabled:NO];
-    
     if ([_tableMedias numberOfSelectedRows] <= 0)
     {
-         return;
+        [_minusButton setEnabled:NO];
+        [_editButton setEnabled:NO];
+        return;
     }
-    
-    if (!_isActive)
-    {
-        [buttonFormatConvert setEnabled:YES];
-    }
-        
+            
+    [_minusButton setEnabled:YES];
+    [_editButton setEnabled:YES];
     
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
     var diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
     
     [buttonFormatConvert selectItemWithTitle:[diskObject format]];
-    
-    if (!_isActive)
-        [labelConversionDisabled setStringValue:@"Please choose a different format"];
 }
 
 @end

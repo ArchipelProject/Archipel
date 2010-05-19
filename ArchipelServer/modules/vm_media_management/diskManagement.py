@@ -26,7 +26,7 @@ import os, sys
 class TNMediaManagement:
     
     def __init__(self, shared_isos_folder, entity):
-        self.entity = entity;
+        self.entity = entity
         self.shared_isos_folder =  shared_isos_folder
 
 
@@ -46,7 +46,7 @@ class TNMediaManagement:
         """
         log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
     
         if iqType == "create":
             reply = self.__disk_create(iq)
@@ -90,25 +90,25 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query");
+            query_node = iq.getTag("query")
             disk_name = query_node.getTag("name").getData()
             disk_size = query_node.getTag("size").getData()
             disk_unit = query_node.getTag("unit").getData()
             format  = query_node.getTag("format").getData()
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
-                raise Exception("too big",  "You may be able to do it manually, but I won't try");
+                raise Exception("too big",  "You may be able to do it manually, but I won't try")
             if disk_unit == "G" and (int(disk_size) >= 10000):
-                raise Exception("too big", "You may be able to do this manually, but I won't try");
+                raise Exception("too big", "You may be able to do this manually, but I won't try")
             
-            ret = os.system("qemu-img create -f " + format + " " + self.entity.vm_own_folder + "/" + disk_name + "." + format + " " + disk_size + disk_unit);
+            ret = os.system("qemu-img create -f " + format + " " + self.entity.vm_own_folder + "/" + disk_name + "." + format + " " + disk_size + disk_unit)
             
             if not ret == 0:
-                raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret));
+                raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
          
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "disk created")
-            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit));
+            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
             self.entity.push_change("disk", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -126,20 +126,23 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query");
-            path = query_node.getTag("path").getData()
-            format = query_node.getTag("format").getData()
+            old_status  = self.entity.xmppstatus
+            old_show    = self.entity.xmppstatusshow
+            query_node  = iq.getTag("query")
+            path        = query_node.getTag("path").getData()
+            format      = query_node.getTag("format").getData()
             
-            ret = os.system("qemu-img convert " + path + " -O " + format + " " + path.replace(path.split(".")[-1], "") + format);
-            
+            self.entity.change_presence(presence_show="dnd", presence_status="Converting a disk...")
+            ret = os.system("qemu-img convert " + path + " -O " + format + " " + path.replace(path.split(".")[-1], "") + format)
             if not ret == 0:
-                raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret));
+                raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret))
             
-            os.unlink(path);
+            os.unlink(path)
                         
+            self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "convertion of  created")
-            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format));
+            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -156,19 +159,19 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query");
+            query_node = iq.getTag("query")
             path = query_node.getTag("path").getData()
             newname = query_node.getTag("newname").getData()
             
-            extension = path.split(".")[-1];
-            newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension));
+            extension = path.split(".")[-1]
+            newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
             
             print path + " -> " + newpath
-            os.rename(path, newpath);
+            os.rename(path, newpath)
             
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "renamed hard drive %s into  %s" % (path, newname))
-            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname));
+            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
             self.entity.push_change("disk", "renamed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -186,15 +189,15 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query");
-            disk_name = query_node.getTag("name").getData();
+            query_node = iq.getTag("query")
+            disk_name = query_node.getTag("name").getData()
         
-            os.system("rm -rf " + disk_name);
+            os.system("rm -rf " + disk_name)
         
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")
             self.entity.push_change("disk", "deleted")
-            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name));
+            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -215,20 +218,20 @@ class TNMediaManagement:
             nodes = []
         
             for disk in disks:
-                file_cmd_output = commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower();
+                file_cmd_output = commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower()
                 
-                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector;") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
-                    diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n");
+                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
+                    diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n")
                     node = xmpp.Node(tag="disk", attrs={ "name": disk.split('.')[0],
                         "path": self.entity.vm_own_folder + "/" + disk,
                         "format": diskinfo[1].split(": ")[1],
                         "virtualSize": diskinfo[2].split(": ")[1],
                         "diskSize": diskinfo[3].split(": ")[1],
                     })
-                    nodes.append(node);
+                    nodes.append(node)
         
             reply = iq.buildReply('success')
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
             log(self, LOG_LEVEL_INFO, "info about disks sent")
         
         except Exception as ex:
@@ -253,16 +256,16 @@ class TNMediaManagement:
             for iso in isos:
                 if commands.getoutput("file " + self.entity.vm_own_folder + "/" + iso).lower().find("iso 9660") > -1:
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.vm_own_folder + "/" + iso })
-                    nodes.append(node);
+                    nodes.append(node)
         
             sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 
             for iso in sharedisos:
                 if commands.getoutput("file " + self.shared_isos_folder + "/" + iso).lower().find("iso 9660") > -1:
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
-                    nodes.append(node);
+                    nodes.append(node)
         
             reply = iq.buildReply('success')
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
             log(self, LOG_LEVEL_INFO, "info about iso sent")
         
         except Exception as ex:
@@ -281,11 +284,11 @@ class TNMediaManagement:
     #     @return: a ready to send IQ containing the result of the action
     #     """
     #     try:
-    #         target_nodes = iq.getQueryPayload();
-    #         nodes = [];
+    #         target_nodes = iq.getQueryPayload()
+    #         nodes = []
     #     
     #         for target in target_nodes:
-    #             stats = self.domain.interfaceStats(target.getData());
+    #             stats = self.domain.interfaceStats(target.getData())
     #             node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
     #                 "rx_bytes":     stats[0],
     #                 "rx_packets":   stats[1],
@@ -296,11 +299,11 @@ class TNMediaManagement:
     #                 "tx_errs":      stats[6],
     #                 "tx_drops":     stats[7]
     #             })
-    #             nodes.append(node);
+    #             nodes.append(node)
     #     
     #         reply = iq.buildReply('success')
-    #         reply.setQueryPayload(nodes);
-    #         log(self, LOG_LEVEL_INFO, "info about network sent");
+    #         reply.setQueryPayload(nodes)
+    #         log(self, LOG_LEVEL_INFO, "info about network sent")
     #     
     #     except Exception as ex:
     #         reply = build_error_iq(self, ex, iq)

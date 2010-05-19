@@ -64,6 +64,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     CPView                  mainRightView                   @accessors;
     CPMenu                  modulesMenu                     @accessors;
 
+    CPTextField             infoTextField                   @accessors;
     int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
     BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
@@ -107,15 +108,19 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     @param aType a type of entity. Can be virtualmachine, hypervisor, user or group
     @param aRoster TNStropheRoster the roster where the TNStropheContact besides
 */
-- (YES)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
+- (BOOL)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
     if (anEntity == entity)
         return NO;
+        
+    var center = [CPNotificationCenter defaultCenter];
+    
+    [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:entity];
     
     _numberOfActiveModules = 0;
     // [self rememberLastSelectedTabIndex];
     
-    var center = [CPNotificationCenter defaultCenter];
+    
     
     [self _removeAllTabsFromModulesTabView];
     _numberOfReadyModules = 0;
@@ -128,16 +133,32 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:entity];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:entity];
-    [center addObserver:self selector:@selector(moduleReady:) name:TNArchipelModulesReadyNotification object:nil];
+    [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
     
     if ([[self entity] class] == TNStropheContact)
     {
         _previousStatus = [[self entity] status];
-        if (([[self entity] class] == TNStropheContact) && ([[self entity] status] != TNStropheContactStatusOffline))
+        
+        if ((_previousStatus != TNStropheContactStatusOffline) && (_previousStatus != TNStropheContactStatusDND))
             [self _populateModulesTabView];
+        else
+        {
+            var label;
+            if (_previousStatus == TNStropheContactStatusOffline)
+                label = @"Entity is offline";
+            else if (_previousStatus == TNStropheContactStatusDND)
+                label = @"Entity do not want to be disturbed";
+            
+            [infoTextField setStringValue:label];
+            var center = [CPNotificationCenter defaultCenter];
+            [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
+            
+        }
     }
     else
+    {
         [self _populateModulesTabView];
+    }
     
     return YES;
 }
@@ -391,17 +412,28 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     if ([[aNotification object] status] == TNStropheContactStatusOffline)
     {
+        _numberOfActiveModules = 0;
+        _allModulesReady = NO;
         [self _removeAllTabsFromModulesTabView];
         _previousStatus = TNStropheContactStatusOffline;
+        [infoTextField setStringValue:@"Entity is offline"];
     }
-    else if (([[aNotification object] status] == TNStropheContactStatusOnline) && (_previousStatus) && (_previousStatus == TNStropheContactStatusOffline))
+    else if ([[aNotification object] status] == TNStropheContactStatusDND)
+    {
+        _numberOfActiveModules = 0;
+        _allModulesReady = NO;
+        [self _removeAllTabsFromModulesTabView];
+        _previousStatus = TNStropheContactStatusDND;
+        [infoTextField setStringValue:@"Entity do not want to be disturbed"];
+    }
+    else if ((_previousStatus == TNStropheContactStatusOffline) || (_previousStatus == TNStropheContactStatusDND))
     {
         _previousStatus = nil;
-        
+        _numberOfActiveModules = 0;
+        _allModulesReady = NO;
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
-
 }
 
 /*! triggered on vCard reception
@@ -420,7 +452,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     }
 }
 
-- (void)moduleReady:(CPNotification)aNotification
+- (void)_didAllModulesReady:(CPNotification)aNotification
 {
     _numberOfReadyModules++;
     

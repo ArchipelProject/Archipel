@@ -27,9 +27,9 @@ from archipelStatsCollector import *
 
 class TNHypervisorHealth:
     def __init__(self, db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port):
-        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port);
-        self.collector.daemon = True;
-        self.collector.start();
+        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port)
+        self.collector.daemon = True
+        self.collector.start()
         
         
     def process_iq(self, conn, iq):
@@ -47,7 +47,7 @@ class TNHypervisorHealth:
         """
         log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
-        iqType = iq.getTag("query").getAttr("type");
+        iqType = iq.getTag("query").getAttr("type")
     
         if iqType == "history":
             reply = self.__healthinfo_history(iq)
@@ -75,19 +75,19 @@ class TNHypervisorHealth:
             log(self, LOG_LEVEL_DEBUG, "converting stats into XML node")
         
             limit = int(iq.getTag("query").getAttr("limit"))
-            nodes = [];
-            stats = self.collector.get_collected_stats(limit);
+            nodes = []
+            stats = self.collector.get_collected_stats(limit)
         
-            number_of_rows = limit;
+            number_of_rows = limit
             if number_of_rows > len(stats["memory"]):
                 number_of_rows = len(stats["memory"])
         
             for i in range(number_of_rows):
-                statNode = xmpp.Node("stat");
-                statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} );
-                statNode.addChild("cpu", attrs={"id": stats["cpu"][i]["id"]});
-                statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]});
-                nodes.append(statNode);
+                statNode = xmpp.Node("stat")
+                statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} )
+                statNode.addChild("cpu", attrs={"id": stats["cpu"][i]["id"]})
+                statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]})
+                nodes.append(statNode)
         
             reply = iq.buildReply('success')    
             reply.setQueryPayload(nodes)
@@ -111,24 +111,24 @@ class TNHypervisorHealth:
             reply = iq.buildReply('success') 
     
             nodes = []
-            stats = self.collector.get_collected_stats(1);
+            stats = self.collector.get_collected_stats(1)
     
-            mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} );
+            mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} )
             nodes.append(mem_free_node)
     
-            cpu_node = xmpp.Node("cpu", attrs={"id": stats["cpu"][0]["id"]});
+            cpu_node = xmpp.Node("cpu", attrs={"id": stats["cpu"][0]["id"]})
             nodes.append(cpu_node)
     
-            disk_free_node = xmpp.Node("disk", attrs={"total" : stats["disk"][0]["total"], "used":  stats["disk"][0]["used"], "free":  stats["disk"][0]["free"], "used-percentage":  stats["disk"][0]["free_percentage"]});
-            nodes.append(disk_free_node);
+            disk_free_node = xmpp.Node("disk", attrs={"total" : stats["disk"][0]["total"], "used":  stats["disk"][0]["used"], "free":  stats["disk"][0]["free"], "used-percentage":  stats["disk"][0]["free_percentage"]})
+            nodes.append(disk_free_node)
     
-            load_node = xmpp.Node("load", attrs={"one" : stats["load"][0]["one"], "five" : stats["load"][0]["five"], "fifteen" : stats["load"][0]["fifteen"]});
+            load_node = xmpp.Node("load", attrs={"one" : stats["load"][0]["one"], "five" : stats["load"][0]["five"], "fifteen" : stats["load"][0]["fifteen"]})
             nodes.append(load_node)
     
-            uptime_node = xmpp.Node("uptime", attrs={"up" : stats["uptime"]["up"]});
+            uptime_node = xmpp.Node("uptime", attrs={"up" : stats["uptime"]["up"]})
             nodes.append(uptime_node)
     
-            uname_node = xmpp.Node("uname", attrs={"krelease": stats["uname"]["krelease"] , "kname": stats["uname"]["kname"] , "machine":stats["uname"]["machine"], "os": stats["uname"]["os"]});
+            uname_node = xmpp.Node("uname", attrs={"krelease": stats["uname"]["krelease"] , "kname": stats["uname"]["kname"] , "machine":stats["uname"]["machine"], "os": stats["uname"]["os"]})
             nodes.append(uname_node)   
     
             reply.setQueryPayload(nodes)
