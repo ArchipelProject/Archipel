@@ -20,6 +20,8 @@
         <string>Hide Logs</string>
         <key>InsertionType</key>
         <string>toolbar</string>
+        <key>ToolbarItemOnly</key>
+        <integer>0</integer>
         <key>ToolbarIndex</key>
         <string>3</string>
         <key>ToolbarIcon</key>

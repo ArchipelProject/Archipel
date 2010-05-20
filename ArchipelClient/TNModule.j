@@ -67,12 +67,13 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     CPBundle                _bundle                 @accessors(property=bundle);
     CPMenuItem              _menuItem               @accessors(property=menuItem);
     CPMenu                  _menu                   @accessors(property=menu);
+    BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     CPArray                 _registredSelectors;
 }
 
-- (void)init
+- (id)init
 {
     if (self = [super init])
     {
@@ -80,7 +81,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         _isVisible  = NO;
     }
     
-    return;
+    return self;
 }
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
     YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleLoader will do the job for you.
@@ -210,6 +211,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     //[CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
     CPLog.error(msg);
+}
+
+- (IBAction)toolbarItemClicked:(id)sender
+{
+    
 }
 
 @end

@@ -18,6 +18,8 @@
         <string>Map View</string>        
         <key>InsertionType</key>
 		<string>toolbar</string>
+		<key>ToolbarItemOnly</key>
+        <integer>0</integer>
 		<key>ToolbarIndex</key>
 		<string>2</string>
         <key>AlternativePluginDisplayName</key>

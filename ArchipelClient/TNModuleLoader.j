@@ -28,12 +28,6 @@
 }
 @end
 
-@implementation TNModuleToolbarItem : CPToolbarItem
-{
-    TNModule _module @accessors(property=module);
-}
-@end
-
 
 /*! @global
     @group TNArchipelModuleType
@@ -539,65 +533,15 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
-    _numberOfModulesLoaded++;
-
+    var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
+    
     [_bundles addObject:aBundle];
-
-    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"];
-    var moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    var moduleInsertionType         = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
-    var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-    var frame                       = [mainRightView bounds];
-    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+    _numberOfModulesLoaded++;
     
-    [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
-    [currentModuleController setName:moduleName];
-    [currentModuleController setLabel:moduleLabel];
-    [currentModuleController setBundle:aBundle];
-
     if (moduleInsertionType == TNArchipelModuleTypeTab)
-    {
-        var moduleTabIndex      = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
-        var supportedTypes      = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-        var moduleItem          = [modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
-        var moduleRootMenu      = [[CPMenu alloc] init];
-        
-        [moduleItem setEnabled:NO];
-        [moduleItem setTarget:currentModuleController];
-        [modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
-        
-        [currentModuleController setMenuItem:moduleItem];
-        [currentModuleController setMenu:moduleRootMenu];
-        [currentModuleController setSupportedEntityTypes:supportedTypes];
-        [currentModuleController setIndex:moduleTabIndex];
-        [currentModuleController menuReady];
-        
-        [_loadedTabModules addObject:currentModuleController];
-    }
+        [self manageTabItemLoad:aBundle];
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
-    {
-        var moduleToolbarIndex = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
-        
-        var moduleToolbarItem = [[TNModuleToolbarItem alloc] initWithItemIdentifier:moduleName];
-        [moduleToolbarItem setLabel:moduleLabel];
-        [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)]];
-        [moduleToolbarItem setTarget:self];
-        [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
-        [moduleToolbarItem setModule:currentModuleController];
-        
-        [mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
-        [mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-        [mainToolbar _reloadToolbarItems];
-        
-        [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
-        
-        [currentModuleController willLoad];
-    }
-
-    //[[currentModuleController view] setFrame:frame];
-    //[scrollView setDocumentView:[currentModuleController view]];
-    
+        [self manageToolbarItemLoad:aBundle];
     
     if ([delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
         [delegate moduleLoader:self hasLoadBundle:aBundle];
@@ -605,6 +549,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     if (_numberOfModulesLoaded >= _numberOfModulesToLoad)
     {
         var center = [CPNotificationCenter defaultCenter];
+        
         [center postNotificationName:TNArchipelModulesLoadingCompleteNotification object:self];
         
         if ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
@@ -612,12 +557,94 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     }
 }
 
+
+- (void)manageTabItemLoad:(CPBundle)aBundle
+{
+    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
+    var moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"];
+    var moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
+    var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    var moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
+    var supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+    var moduleItem                  = [modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
+    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+    var moduleRootMenu              = [[CPMenu alloc] init];
+    var frame                       = [mainRightView bounds];
+    
+    
+    [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
+    [currentModuleController setName:moduleName];
+    [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setBundle:aBundle];
+
+    [moduleItem setEnabled:NO];
+    [moduleItem setTarget:currentModuleController];
+    [modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
+    
+    [currentModuleController setMenuItem:moduleItem];
+    [currentModuleController setMenu:moduleRootMenu];
+    [currentModuleController setSupportedEntityTypes:supportedTypes];
+    [currentModuleController setIndex:moduleTabIndex];
+    [currentModuleController menuReady];
+    
+    [_loadedTabModules addObject:currentModuleController];
+    
+}
+
+- (void)manageToolbarItemLoad:(CPBundle)aBundle
+{
+    var currentModuleController;
+    var moduleName              = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
+    var moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
+    var moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
+    var moduleTabIndex          = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
+    var supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+    var moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
+    var toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"];
+    var frame                   = [mainRightView bounds];
+    var moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
+    
+    [moduleToolbarItem setLabel:moduleLabel];
+    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)]];
+    
+    // if toolbar item only, no cib
+    if (toolbarOnly)
+    {
+        currentModuleController =  [[[aBundle principalClass] alloc] init];
+
+        [currentModuleController setToolbarItemOnly:YES];
+        [moduleToolbarItem setTarget:currentModuleController];
+        [moduleToolbarItem setAction:@selector(toolbarItemClicked:)];        
+    }
+    else
+    {
+        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
+        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+        
+        [currentModuleController setToolbarItemOnly:NO];
+        
+        [moduleToolbarItem setTarget:self];
+        [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
+    }
+
+    [mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
+    [mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
+    [mainToolbar _reloadToolbarItems];
+    
+    [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
+    
+    [currentModuleController willLoad];
+}
+
+
 /*! Action that respond on Toolbar TNModules to display the view of the module.
     @param sender the CPToolbarItem that sent the message
 */
 - (IBAction)didToolbarModuleClicked:(id)sender
 {
+    var module  = [_loadedToolbarModules objectForKey:[sender itemIdentifier]];
     var oldModule;
+
     if (_currentToolbarModule)
     {
         var moduleBundle    = [_currentToolbarModule bundle];
@@ -631,8 +658,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         _currentToolbarModule   = nil;
         _currentToolbarItem     = nil;
     }
-    
-    var module  = [_loadedToolbarModules objectForKey:[sender itemIdentifier]]; 
+        
     if (module != oldModule)
     {
         var bounds          = [mainRightView bounds];

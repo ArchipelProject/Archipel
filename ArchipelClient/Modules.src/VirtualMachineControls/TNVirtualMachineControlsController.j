@@ -20,6 +20,7 @@
 @import <AppKit/AppKit.j>
 
 TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
+
 TNArchipelControlNotification                   = @"TNArchipelControlNotification";
 TNArchipelControlPlay                           = @"TNArchipelControlPlay";
 TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
@@ -97,9 +98,6 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setTarget:self];
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
-    
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
 }
 
 /* TNModule implementation */
@@ -111,6 +109,7 @@ TNArchipelTransportBarReboot    = 3;
 
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationControl];
@@ -148,7 +147,7 @@ TNArchipelTransportBarReboot    = 3;
     
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
+    [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     
     [fieldInfoMem setStringValue:@"..."];
     [fieldInfoCPUs setStringValue:@"..."];
@@ -170,14 +169,14 @@ TNArchipelTransportBarReboot    = 3;
     return YES;
 }
 
-- (void)didReceiveControllNotification:(CPNotification)aNotification
+- (void)didReceiveControlNotification:(CPNotification)aNotification
 {
-    var params                  = [aNotification userInfo];
-    var currentEntityHandler    = _entity;
-    var commandTargetEntity     = [params objectForKey:@"entity"];
-    var command                 = [params objectForKey:@"command"];
+    var command                  = [aNotification userInfo];
+    // var currentEntityHandler    = _entity;
+    // var commandTargetEntity     = [params objectForKey:@"entity"];
+    // var command                 = [params objectForKey:@"command"];
     
-    _entity = commandTargetEntity; 
+    //_entity = commandTargetEntity; 
     
     switch(command)
     {
@@ -194,7 +193,7 @@ TNArchipelTransportBarReboot    = 3;
             break;
     }
     
-    _entity = currentEntityHandler;
+    //_entity = currentEntityHandler;
 }
 
 /* Notifications listener */

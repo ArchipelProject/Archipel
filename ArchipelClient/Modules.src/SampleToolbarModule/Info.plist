@@ -67,6 +67,12 @@
         <string>0</string>
         
         <!--
+            If set to 1, no view is needed. module is just a toolbar item
+        -->
+        <key>ToolbarItemOnly</key>
+        <integer>0</integer>
+        
+        <!--
             This image will be displayed as toolbar item icon when module is unactivated.
             It must be in Resources folder
         -->
