@@ -142,6 +142,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [_tableAppliances setDelegate:nil];
     [_tableAppliances setDelegate:self]; // hum....
+    
+    [self getInstalledAppliances];
 }
 
 - (void)willUnload
@@ -158,8 +160,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
-    [self getInstalledAppliances];
 }
 
 - (void)willHide

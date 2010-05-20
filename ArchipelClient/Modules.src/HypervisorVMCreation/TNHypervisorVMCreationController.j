@@ -24,8 +24,7 @@ TNArchipelTypeHypervisorControlAlloc        = @"alloc";
 TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
-TNArchipelPushNotificationVirtualMachine    = @"archipel:push:subcription";
-TNArchipelPushNotificationSubscriptionAdded = @"added";
+TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 @implementation TNHypervisorVMCreationController : TNModule 
 {
@@ -118,13 +117,15 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
 {
     [super willLoad];
     
-    [self registerSelector:@selector(didSubscriptionPushReceived:) forPushNotificationType:TNArchipelPushNotificationVirtualMachine];
+    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     
     var center = [CPNotificationCenter defaultCenter];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [_tableVirtualMachines setDelegate:nil];
     [_tableVirtualMachines setDelegate:self]; // hum....
+    
+    [self getHypervisorRoster];
 }
 
 - (void)willShow
@@ -137,8 +138,6 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-        
-    [self getHypervisorRoster];
 }
 
 - (void)willUnload
@@ -148,11 +147,10 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     [buttonCreateVM setEnabled:YES];
 }
 
-- (BOOL)didSubscriptionPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceived:(TNStropheStanza)aStanza
 {
-    CPLog.info("Receiving push notification of type TNArchipelPushNotificationVirtualMachine");
+    CPLog.info("Receiving push notification of type TNArchipelPushNotificationHypervisor");
     [self getHypervisorRoster];
-    
     return YES;
 }
 
@@ -315,7 +313,6 @@ TNArchipelPushNotificationSubscriptionAdded = @"added";
     
     if ([aStanza getType] == @"success")
     {
-        [self getHypervisorRoster];
         CPLog.info(@"sucessfully deallocating a virtual machine");
         
         var growl = [TNGrowlCenter defaultCenter];

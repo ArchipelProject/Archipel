@@ -19,6 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
 TNArchipelControlNotification                   = @"TNArchipelControlNotification";
 TNArchipelControlPlay                           = @"TNArchipelControlPlay";
 TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
@@ -59,7 +60,6 @@ TNArchipelTransportBarReboot    = 3;
     @outlet CPView                  maskingView;
     @outlet CPSegmentedControl      buttonBarTransport;
 
-    CPTimer     _timer;
     CPNumber    _VMLibvirtStatus;
 }
 
@@ -112,14 +112,9 @@ TNArchipelTransportBarReboot    = 3;
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-}
-
-- (void)willShow
-{
-    [super willShow];
-
-    [maskingView setFrame:[[self view] bounds]];
-
+    
+    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationControl];
+    
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
@@ -129,19 +124,32 @@ TNArchipelTransportBarReboot    = 3;
     [fieldJID setStringValue:[_entity JID]];
     [imageState setImage:[_entity statusIcon]];
     
-    [self checkIfRunning];
-    [self getVirtualMachineInfo:nil];
+    
+    [self getVirtualMachineInfo];
+}
 
-    _timer = [CPTimer scheduledTimerWithTimeInterval:5 target:self selector:@selector(getVirtualMachineInfo:) userInfo:nil repeats:YES];
+- (void)willShow
+{
+    [super willShow];
+
+    [maskingView setFrame:[[self view] bounds]];
+    
+    [self checkIfRunning];
 }
 
 - (void)willHide
 {
     [super willHide];
+}
 
-    if (_timer)
-        [_timer invalidate];
+- (void)willUnload
+{
+    [super willUnload];
+    
+    var center = [CPNotificationCenter defaultCenter];
 
+    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
+    
     [fieldInfoMem setStringValue:@"..."];
     [fieldInfoCPUs setStringValue:@"..."];
     [fieldInfoConsumedCPU setStringValue:@"..."];
@@ -155,13 +163,11 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 }
 
-- (void)willUnload
+- (BOOL)didPushReceived:(TNStropheStanza)aStanza
 {
-    [super willUnload];
-    
-    var center = [CPNotificationCenter defaultCenter];
-
-    [center addObserver:self selector:@selector(didReceiveControllNotification:) name:TNArchipelControlNotification object:nil];
+    CPLog.info("Push notification received with with ");
+    [self getVirtualMachineInfo];
+    return YES;
 }
 
 - (void)didReceiveControllNotification:(CPNotification)aNotification
@@ -217,18 +223,11 @@ TNArchipelTransportBarReboot    = 3;
 }
 
 /* population messages */
-- (void)getVirtualMachineInfo:(CPTimer)aTimer
+- (void)getVirtualMachineInfo
 {
-    // if (![[self view] superview])
-    // {
-    //     [_timer invalidate]; // ? I don't remember why this... I think I let that the way it is.
-    //     return;
-    // }
-
     var infoStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
 
     [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlInfo}];
-
     [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
@@ -361,17 +360,12 @@ TNArchipelTransportBarReboot    = 3;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    [self getVirtualMachineInfo:nil];
-
     if (responseType == @"success")
     {
         var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
-        // [[TNViewLog sharedLogger] log:@"virtual machine " + responseFrom + " started with ID : " + libvirtID];
         
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
-        
-        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -384,14 +378,10 @@ TNArchipelTransportBarReboot    = 3;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    [self getVirtualMachineInfo:nil];
-
     if (responseType == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
-        
-        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -404,14 +394,10 @@ TNArchipelTransportBarReboot    = 3;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    [self getVirtualMachineInfo:nil];
-
     if (responseType == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
-        
-        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -424,13 +410,10 @@ TNArchipelTransportBarReboot    = 3;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    [self getVirtualMachineInfo:nil];
-
     if (responseType == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped"];
-        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -443,13 +426,10 @@ TNArchipelTransportBarReboot    = 3;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    [self getVirtualMachineInfo:nil];
-
     if (responseType == @"success")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting"];
-        [self getVirtualMachineInfo:nil];
     }
     else
     {
@@ -502,7 +482,6 @@ TNArchipelTransportBarReboot    = 3;
 
 - (void)disableAllButtons
 {
-
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarStop];
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPause];

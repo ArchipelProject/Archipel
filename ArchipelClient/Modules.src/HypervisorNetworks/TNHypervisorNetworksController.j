@@ -24,6 +24,7 @@
 @import "TNDHCPEntryObject.j"
 @import "TNWindowNetworkProperties.j"
 
+TNArchipelPushNotificationNetworks          = @"archipel:push:network";
 TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
 TNArchipelTypeHypervisorNetworkList        = @"list";
 TNArchipelTypeHypervisorNetworkDefine      = @"define";
@@ -193,6 +194,9 @@ function generateIPForNewNetwork()
     
     [_tableViewNetworks setDelegate:nil];
     [_tableViewNetworks setDelegate:self]; // hum....
+    
+    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationNetworks];
+    [self getHypervisorNetworks];
 }
 
 - (void)willShow
@@ -201,8 +205,6 @@ function generateIPForNewNetwork()
 
     [fieldName setStringValue:[[self entity] nickname]];
     [fieldJID setStringValue:[[self entity] JID]];
-    
-    [self getHypervisorNetworks];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -212,6 +214,14 @@ function generateIPForNewNetwork()
        [fieldName setStringValue:[[self entity] nickname]]
     }
 }
+
+- (BOOL)didPushReceived:(TNStropheStanza)aStanza
+{
+    CPLog.info(@"Receiving push notification of type TNArchipelPushNotificationNetworks");
+    [self getHypervisorNetworks];
+    return YES;
+}
+
 
 - (void)getHypervisorNetworks
 {
@@ -423,8 +433,6 @@ function generateIPForNewNetwork()
 {
     if ([aStanza getType] == @"success")
     {
-        [self getHypervisorNetworks];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
     }
@@ -482,8 +490,6 @@ function generateIPForNewNetwork()
 {
     if ([aStanza getType] == @"success")
     {
-        [self getHypervisorNetworks];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
     }
@@ -556,8 +562,6 @@ function generateIPForNewNetwork()
 {
     if ([aStanza getType] == @"success")
     {
-        [self getHypervisorNetworks];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
     }

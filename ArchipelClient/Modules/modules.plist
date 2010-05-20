@@ -18,6 +18,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>HypervisorVMCasts</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>HypervisorVMCreation</string>
             </dict>
             <dict>
@@ -34,6 +38,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>VirtualMachineAppliances</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>VirtualMachineControls</string>
             </dict>
             <dict>
@@ -46,19 +54,11 @@
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachineAppliances</string>
-            </dict>
-            <dict>
-                <key>folder</key>
                 <string>VirtualMachineSnapshots</string>
             </dict>
             <dict>
                 <key>folder</key>
                 <string>VirtualMachineVNC</string>
-            </dict>
-            <dict>
-                <key>folder</key>
-                <string>HypervisorVMCasts</string>
             </dict>
 
         </array>

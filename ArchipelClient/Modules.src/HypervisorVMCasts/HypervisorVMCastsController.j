@@ -162,14 +162,18 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 - (void)willLoad
 {
     [super willLoad];
-    [[self windowDownloadQueue] setEntity:_entity];
-    [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
+    [windowDownloadQueue setEntity:_entity];
     [_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
+    
+    [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    
+    [self getVMCasts];
 }
 
 - (void)willUnload
@@ -188,11 +192,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    
-    [self getVMCasts];
 }
 
 - (void)willHide
@@ -283,7 +282,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (IBAction)showDownloadQueue:(id)sender
 {
-    [[self windowDownloadQueue] makeKeyAndOrderFront:nil];
+    [windowDownloadQueue makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)download:(id)sender
@@ -311,7 +310,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didDownload:(TNStropheStanza)aStanza
 {
-    // [[self windowDownloadQueue] orderFront:nil];
+    // [windowDownloadQueue orderFront:nil];
 }
 
 - (void)updateDownloadProgress:(CPTimer)aTimer

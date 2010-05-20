@@ -197,7 +197,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
             self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-            self.push_change("virtualmachine", "created")
+            self.push_change("virtualmachine:control", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -222,7 +222,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
             self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-            self.push_change("virtualmachine", "shutdowned")
+            self.push_change("virtualmachine:control", "shutdowned")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -246,7 +246,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.reboot(0) # flags not used in libvirt but required.
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine rebooted")
-            self.push_change("virtualmachine", "rebooted")
+            self.push_change("virtualmachine:control", "rebooted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -271,7 +271,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
             self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
-            self.push_change("virtualmachine", "suspended")
+            self.push_change("virtualmachine:control", "suspended")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -296,7 +296,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
             self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-            self.push_change("virtualmachine", "resumed")
+            self.push_change("virtualmachine:control", "resumed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

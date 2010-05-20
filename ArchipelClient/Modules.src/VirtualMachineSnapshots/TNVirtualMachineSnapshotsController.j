@@ -151,6 +151,9 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     [super willLoad];
     
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity JID]];
+    
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -161,32 +164,29 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [_outlineViewSnapshots setDelegate:nil];
     [_outlineViewSnapshots setDelegate:self];
+    
+    [self getSnapshots:nil];
 }
 
 - (void)willUnload
 {
     [super willUnload];
-}
-
-- (void)willShow
-{
-    [super willShow];
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-    
-    [self getSnapshots:nil];
-}
-
-- (void)willHide
-{
-    [super willHide];
     
     [_datasourceSnapshots removeAllObjects];
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots deselectAll];
     [_revertButton setEnabled:NO];
     [_minusButton setEnabled:NO];
+}
+
+- (void)willShow
+{
+    [super willShow];
+}
+
+- (void)willHide
+{
+    [super willHide];
 }
 
 

@@ -444,6 +444,9 @@ function generateMacAddr()
     [_tableNetworkCards setDelegate:nil];
     [_tableNetworkCards setDelegate:self]; // hum....
     
+    [self setDefaultValues];
+    
+    [self getXMLDesc];
 }
 
 - (void)willShow
@@ -456,22 +459,16 @@ function generateMacAddr()
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
     
-    [maskingView setFrame:[[self view] bounds]];
-    
-    [self setDefaultValues];
+    //[maskingView setFrame:[[self view] bounds]];
     
     [self checkIfRunning];
-    [self getXMLDesc];
 }
 
 - (void)willHide
 {
     [super willHide];
 
-    [_tableNetworkCards reloadData];
-    [_tableDrives reloadData];
-
-    [maskingView removeFromSuperview];
+    //[maskingView removeFromSuperview];
 }
 
 - (void)willUnload
@@ -480,7 +477,7 @@ function generateMacAddr()
     
     [self setDefaultValues];
     
-    [maskingView removeFromSuperview];
+    //[maskingView removeFromSuperview];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -539,18 +536,17 @@ function generateMacAddr()
     
     if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway) || (status == TNStropheContactStatusOffline))
     {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
+        // [maskingView setFrame:[[self view] bounds]];
+        // [[self view] addSubview:maskingView];
     }
     else
-        [maskingView removeFromSuperview];
+        ;//[maskingView removeFromSuperview];
 }
 
 - (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
 {
     CPLog.info("Push notification definition received");
     [self getXMLDesc];
-    
     return YES;
 }
 

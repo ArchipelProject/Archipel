@@ -192,6 +192,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [_tableMedias setDelegate:nil];
     [_tableMedias setDelegate:self]; // hum....
+    
+    [self getDisksInfo];
 }
 
 - (void)willShow
@@ -202,7 +204,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [fieldJID setStringValue:[_entity JID]];
     
     [self checkIfRunning];
-    [self getDisksInfo];
 }
 
 

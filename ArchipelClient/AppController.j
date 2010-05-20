@@ -902,7 +902,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
         [_moduleLoadingDelay invalidate];
     
     [viewLoadingModule setFrame:[rightView bounds]];
-    [rightView addSubview:viewLoadingModule];
+    //[rightView addSubview:viewLoadingModule];
     
     // [_mainRoster setCurrentItem:item];
     [propertiesView setEntity:item];
