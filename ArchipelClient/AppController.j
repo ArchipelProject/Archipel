@@ -107,7 +107,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     @outlet CPWebView           helpView                    @accessors;
     @outlet CPSplitView         leftSplitView               @accessors;
     @outlet CPWindow            theWindow                   @accessors;
-    @outlet CPWindow            windowModuleLoading         @accessors;
+    @outlet TNWhiteWindow       windowModuleLoading         @accessors;
     @outlet CPSplitView         mainHorizontalSplitView     @accessors;
     @outlet TNViewProperties    propertiesView              @accessors;
     @outlet CPImageView         ledOut                      @accessors;
@@ -183,12 +183,21 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
     [theWindow setToolbar:_mainToolbar];
 
+    /* properties view */
+    CPLog.trace(@"initializing the leftSplitView");
+    [leftSplitView setIsPaneSplitter:YES];
+    [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [[leftSplitView subviews][1] removeFromSuperview];
+    [leftSplitView addSubview:propertiesView];
+    [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
+
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
+    [_rosterOutlineView setEntityRenameField:[propertiesView entryName]];
     [filterField setOutlineView:_rosterOutlineView];
 
     /* init scroll view of the outline view */
@@ -206,15 +215,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     CPLog.trace(@"initializing rightView");
     [rightView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-
-    /* properties view */
-    CPLog.trace(@"initializing the leftSplitView");
-    [leftSplitView setIsPaneSplitter:YES];
-    [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [[leftSplitView subviews][1] removeFromSuperview];
-    [leftSplitView addSubview:propertiesView];
-    [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
-
+    
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
@@ -241,10 +242,8 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [self makeMainMenu];
     
     /* module Loader */
-    var view    = [windowModuleLoading contentView];
-    var frame   = [windowModuleLoading frame];
-    windowModuleLoading = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
-    [windowModuleLoading setContentView:view];
+    // var view    = [windowModuleLoading contentView];
+    // var frame   = [windowModuleLoading frame];
     [windowModuleLoading center]
     [windowModuleLoading makeKeyAndOrderFront:nil];
     
@@ -279,12 +278,13 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
     _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
     
-    // put the cool background. It a bad method, I know.
-    var view    = [connectionWindow contentView];
-    var frame   = [connectionWindow frame];
-    connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
-    [connectionWindow setContentView:view];
-    [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
+    //put the cool background. It a bad method, I know.
+    // var view    = [connectionWindow contentView];
+    // var frame   = [connectionWindow frame];
+    // [connectionWindow close];
+    // connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
+    // [connectionWindow setContentView:view];
+    // [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
     
     // buttonBar
     CPLog.trace(@"Initializing the roster button bar");
@@ -375,7 +375,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:@"Preferences" action:nil keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"q"];
+    [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"Q"];
     [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
     

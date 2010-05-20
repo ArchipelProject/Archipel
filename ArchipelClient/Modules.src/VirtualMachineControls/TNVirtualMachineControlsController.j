@@ -145,9 +145,9 @@ TNArchipelTransportBarReboot    = 3;
 {
     [super willUnload];
     
-    var center = [CPNotificationCenter defaultCenter];
-
-    [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
+    // var center = [CPNotificationCenter defaultCenter];
+    // 
+    // [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     
     [fieldInfoMem setStringValue:@"..."];
     [fieldInfoCPUs setStringValue:@"..."];
@@ -190,6 +190,10 @@ TNArchipelTransportBarReboot    = 3;
         
         case TNArchipelControlReboot:
             [self reboot];
+            break;
+            
+        case TNArchipelControlStop:
+            [self stop];
             break;
     }
     
@@ -291,7 +295,7 @@ TNArchipelTransportBarReboot    = 3;
             [self play];
             break;
         case TNArchipelTransportBarPause:
-            [self pause:sender];
+            [self pause];
             break;
         case TNArchipelTransportBarStop:
             [self stop];
@@ -312,7 +316,7 @@ TNArchipelTransportBarReboot    = 3;
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
-- (void)pause:(id)sender
+- (void)pause
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
     var selector;

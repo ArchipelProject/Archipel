@@ -34,7 +34,15 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>ToolbarPauseButton</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>ToolbarPlayButton</string>
+            </dict>
+            <dict>
+                <key>folder</key>
+                <string>ToolbarStopButton</string>
             </dict>
             <dict>
                 <key>folder</key>

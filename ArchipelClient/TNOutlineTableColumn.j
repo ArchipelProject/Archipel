@@ -108,16 +108,16 @@
         [events setTextColor:[CPColor whiteColor]];
 
         [name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
-        [name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
         
         [show setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
-        [show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
+        [show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         
-        [events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        [events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
         _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
@@ -281,7 +281,7 @@
     [show setThemeState:aState];
     [events setThemeState:aState];
     
-    if (aState == CPThemeStateSelected)
+    if (aState == CPThemeStateSelectedDataView )
     {
            [events setBackgroundColor:_selectedStateCartoucheColor];
     }
@@ -290,7 +290,7 @@
            [events setBackgroundColor:_normalStateCartoucheColor];
     }
        
-    if ((aState == CPThemeStateSelected) && ([_contact status] != TNStropheContactStatusOffline) && ([events isHidden] == YES))
+    if ((aState == CPThemeStateSelectedDataView) && ([_contact status] != TNStropheContactStatusOffline) && ([events isHidden] == YES))
         [_syncButton setHidden:NO];
     else
         [_syncButton setHidden:YES];
@@ -305,7 +305,7 @@
     [show unsetThemeState:aState];
     [events unsetThemeState:aState];
     
-    if (aState == CPThemeStateSelected)
+    if (aState == CPThemeStateSelectedDataView)
     {
         [_syncButton setHidden:YES];
         [events setBackgroundColor:_normalStateCartoucheColor];
@@ -400,14 +400,14 @@
         
         [_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
         [_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
-        [_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
-        [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
+        [_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
 
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
         [_dataViewForRoot setTextShadowOffset:CGSizeMake(0.0, 1.0)];
 
         [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelected];
+        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
 
         [_dataViewForRoot setVerticalAlignment:CPCenterVerticalTextAlignment];
 

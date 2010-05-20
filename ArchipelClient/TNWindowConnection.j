@@ -25,7 +25,7 @@
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
 */
-@implementation TNWindowConnection: CPWindow
+@implementation TNWindowConnection: TNWhiteWindow
 {
     @outlet CPImageView spinning            @accessors;
     @outlet CPTextField JID                 @accessors;

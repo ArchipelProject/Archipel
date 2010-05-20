@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <!--
+            the bundle identifier. It MUST BE UNIQUE
+        -->
+        <key>CPBundleIdentifier</key>
+        <string>org.archipelproject.ToolbarPlayButton</string>
+        
+        <!--
+            Version of this plist file. Must be 1.0
+        -->
+        <key>CPBundleInfoDictionaryVersion</key>
+        <string>1.0</string>
+        
+        <!--
+            The package type. Must be 280N
+        -->
+        <key>CPBundlePackageType</key>
+        <string>280N</string>
+        
+        <!--
+            The version of CPBundle. Must be 1.0
+        -->
+        <key>CPBundleVersion</key>
+        <string>1.0</string>
+        
+        <!--
+            The name of the bundle
+        -->
+        <key>CPBundleName</key>
+        <string>ToolbarPlayButton</string>
+
+        <!--
+            The main class of the module.
+        -->
+        <key>CPPrincipalClass</key>
+        <string>TNToolbarPlayButtonController</string>
+        
+        <!--
+            The plugin display name. This will be display as name of
+            the module in the GUI
+        -->
+        <key>PluginDisplayName</key>
+        <string>Run</string>
+        
+        <!--
+            This value will be displayed when module is activate as the toolbat item title
+        -->
+        <key>AlternativePluginDisplayName</key>
+        <string></string>
+        
+        <!--
+            The type of the module. It can be
+             - tab : for tabbed modules
+             - toolbar : for general module displayed in toolbar
+        -->
+        <key>InsertionType</key>
+        <string>toolbar</string>
+        
+        <!--
+            The desired toolbar index. If two module have the same tabIndex,
+            they are displayed in the load order.
+        -->
+        <key>ToolbarIndex</key>
+        <string>2</string>
+        
+        <!--
+            This image will be displayed as toolbar item icon when module is unactivated.
+            It must be in Resources folder
+        -->
+        <key>ToolbarIcon</key>
+        <string>icon.png</string>
+        
+        <key>ToolbarItemOnly</key>
+        <integer>1</integer>
+        
+        <!--
+            This image will be displayed as toolbar item icon when module is activated. 
+            It must be in Resources folder
+        -->
+        <key>AlternativeToolbarIcon</key>
+        <string>icon-alt.png</string>
+        
+        <!--
+            This indicate to the module loader which CIB to load.
+            It must be the fileName without the .cib extension
+        -->
+        <!-- <key>CibName</key>
+        <string>ToolbarPlayButton</string> -->
+    </dict>
+</plist>

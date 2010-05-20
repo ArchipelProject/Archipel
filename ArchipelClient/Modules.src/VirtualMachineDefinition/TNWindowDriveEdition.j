@@ -129,7 +129,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
        [self populateTargetButton];
     }
-    [drive setSource:[[buttonSource selectedItem] stringValue]];
+    if ([buttonSource selectedItem])
+        [drive setSource:[[buttonSource selectedItem] stringValue]];
+    else
+        [drive setSource:@"/tmp/nodisk"];
     [drive setType:[buttonType title]];
 
     var driveType = [[[self radioDriveType] selectedRadio] title];

@@ -73,6 +73,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     _mainOutlineView = [[CPOutlineView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainOutlineView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_mainOutlineView setAllowsColumnResizing:YES];
     [_mainOutlineView setDataSource:_castsDatasource];
     [_castsDatasource setTable:_mainOutlineView];
     

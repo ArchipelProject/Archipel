@@ -17,7 +17,8 @@
 
 
 import xmpp
-import packager
+import appliancedecompresser
+import appliancecompresser
 from utils import *
 import archipel
 import sqlite3
@@ -26,9 +27,9 @@ import os
 
 ARCHIPEL_APPLIANCES_INSTALLED = 1
 
-class TNArchipelPackageInstancier:
+class TNVMApplianceManager:
     
-    def __init__(self, database_path, temp_directory, disks_extensions, entity):
+    def __init__(self, database_path, temp_directory, disks_extensions, hypervisor_repo_path, entity):
         self.entity = entity
         self.disks_extensions = disks_extensions.split(";")
         self.temp_directory = temp_directory
@@ -37,6 +38,7 @@ class TNArchipelPackageInstancier:
         self.is_installing = False
         self.installing_media_uuid = None
         self.is_installed = False
+        self.hypervisor_repo_path = hypervisor_repo_path
     
     def process_iq(self, conn, iq):
         """
@@ -68,7 +70,11 @@ class TNArchipelPackageInstancier:
             reply = self.__dettach(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
+        
+        if iqType == "package":
+            reply = self.__package(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     def __get_installed_appliances(self, iq):
         """
@@ -128,7 +134,6 @@ class TNArchipelPackageInstancier:
             if (self.is_installed):
                 raise Exception("InstallationError", "You must dettach from already attached template")
             
-            self.is_installing = True
             uuid = iq.getTag("query").getTag("uuid").getCDATA()
             requester = iq.getFrom()
             
@@ -138,7 +143,7 @@ class TNArchipelPackageInstancier:
             
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions))
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = packager.TNArchipelPackage(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester)
+            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester)
             
             self.is_installing = True
             self.installing_media_uuid = uuid
@@ -164,11 +169,43 @@ class TNArchipelPackageInstancier:
             if self.is_installing:
                 raise Exception("InstallationError", "Virtual machine is already installing a package")
 
-            os.unlink(self.entity.vm_own_folder + "/current.package")
-
+            package_file_path = self.entity.vm_own_folder + "/current.package"
+            os.unlink(package_file_path)
             self.is_installed = False
             self.entity.push_change("vmcasting", "appliancedettached")
             
+            reply = iq.buildReply('success')
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+
+        return reply
+        
+    def __package(self, iq):
+        """
+        package the current virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            if self.is_installing:
+                raise Exception("InstallationError", "Virtual machine is already installing a package")
+            
+            disk_nodes = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
+            
+            paths = []
+            for disk_node in disk_nodes:
+                path = disk_node.getTag('source').getAttr('file')
+                paths.append(path)
+            
+            compressor = appliancecompresser.TNApplianceCompresser(self.entity.uuid, paths, self.entity.definition, "/tmp", "/tmp", self.entity.vm_own_folder, self.hypervisor_repo_path, self.finish_packaging)
+            
+            self.is_installing = True
+            compressor.start()
+            
+            self.entity.push_change("vmcasting", "packaging")
+
             reply = iq.buildReply('success')
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -179,4 +216,8 @@ class TNArchipelPackageInstancier:
         self.is_installed = True
         self.is_installing = False
         self.installing_media_uuid = None
+        
+    def finish_packaging(self):
+        self.is_installing = False
+        self.entity.push_change("vmcasting", "packaged")
         

@@ -185,22 +185,36 @@
 */
 @implementation TNEditableLabel: CPTextField
 {
-    CPColor _oldColor;
+    CPColor     _oldColor;
+    id          _previousResponder  @accessors(property=previousResponder);
 }
+
 - (void)mouseDown:(CPEvent)anEvent
 {
     [self setEditable:YES];
     [self selectAll:nil];
-
+    
     [super mouseDown:anEvent];
+}
+
+- (void)textDidFocus:(CPNotification)aNotification
+{
+    [super textDidFocus:aNotification];
+    [self setTextColor:[CPColor whiteColor]];
+    
+    
 }
 
 - (void)textDidBlur:(CPNotification)aNotification
 {
-    [self setEditable:NO];
-
     [super textDidBlur:aNotification];
+    [self setEditable:NO];
+    [self setSelectedRange:CPMakeRange(0, 0)];
+    [self setTextColor:[CPColor grayColor]];
+    
+    
 }
+
 @end
 
 
@@ -405,4 +419,25 @@
 
     [super keyDown:anEvent];
 }
+@end
+
+
+@implementation TNWhiteWindow: CPWindow
+
+- (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
+{
+    if (self = [super initWithContentRect:CPRectMake(0,0,478,261) styleMask:CPBorderlessWindowMask])
+    {
+        var bundle  = [CPBundle mainBundle];
+        var frame   = [[self contentView] frame];
+        var size    = CPSizeMake(frame.size.width -100, frame.size.height -100);
+                
+        var bgImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"] size:size];
+        
+        [self setBackgroundColor:[CPColor colorWithPatternImage:bgImage]];
+    }
+    
+    return self;
+}
+
 @end

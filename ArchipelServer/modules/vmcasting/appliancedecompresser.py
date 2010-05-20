@@ -25,14 +25,14 @@ from xml.dom import minidom
 import xmpp
 import shutil
 
-class TNArchipelPackage(Thread):
+class TNApplianceDecompresser(Thread):
     
     def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, finish_callback, entity, package_uuid, requester):
         """
-        initialize a TNArchipelPackage
+        initialize a TNApplianceDecompresser
         
         @type working_dir: string
-        @param working_dir: the base dir where TNArchipelPackage will works
+        @param working_dir: the base dir where TNApplianceDecompresser will works
         @type disk_exts: array
         @param disk_exts: contains all the extensions that should be considered as a disks with the initial dot (ie: .gz)
         """

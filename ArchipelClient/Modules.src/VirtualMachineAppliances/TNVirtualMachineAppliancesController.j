@@ -27,6 +27,7 @@ TNArchipelTypeVirtualMachineVMCasting                       = @"archipel:virtual
 TNArchipelTypeVirtualMachineVMCastingInstalledAppliances    = @"getinstalledappliances";
 TNArchipelTypeVirtualMachineVMCastingInstall                = @"install";
 TNArchipelTypeVirtualMachineVMCastingDettach                = @"dettach";
+TNArchipelTypeVirtualMachineVMCastingPackage                = @"package";
 
 TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcasting";
     
@@ -72,7 +73,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_tableAppliances setAllowsColumnReordering:YES];
     [_tableAppliances setAllowsColumnResizing:YES];
     [_tableAppliances setTarget:self];
-    [_tableAppliances setDoubleAction:@selector(instanciate:)];
+    [_tableAppliances setDoubleAction:@selector(tableDoubleClicked:)];
     [_tableAppliances setAllowsEmptySelection:YES];
     [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     
@@ -113,6 +114,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Install" action:@selector(instanciate:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Dettach" action:@selector(dettach:) keyEquivalent:@""];
     [_tableAppliances setMenu:menu];
     
     _instanciateButton  = [CPButtonBar plusButton];
@@ -197,6 +199,21 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     return YES;
 }
 
+- (IBAction)tableDoubleClicked:(id)sender
+{
+    if ([_tableAppliances numberOfSelectedRows] <= 0)
+        return;
+    
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
+    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
+    
+    if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
+        [self dettach:sender];
+    else
+        [self instanciate:sender];
+    
+}
+
 - (void)getInstalledAppliances
 {
     var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
@@ -252,7 +269,22 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [stanza addChildName:@"uuid"];
     [stanza addTextNode:[appliance UUID]];
 
+    [_instanciateButton setEnabled:NO];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didInstallAppliance:) ofObject:self];
+}
+
+- (void)didInstallAppliance:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {        
+        var growl   = [TNGrowlCenter defaultCenter];
+        var msg     = @"Instanciation has started";
+        [growl pushNotificationWithTitle:@"Appliance" message:msg];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
 }
 
 - (IBAction)dettach:(id)sender
@@ -273,22 +305,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingDettach}];
 
+    [_dettachButton setEnabled:NO];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDettachAppliance:) ofObject:self];
-}
-
-
-- (void)didInstallAppliance:(TNStropheStanza)aStanza
-{
-    if ([aStanza getType] == @"success")
-    {        
-        var growl   = [TNGrowlCenter defaultCenter];
-        var msg     = @"Instanciation has started";
-        [growl pushNotificationWithTitle:@"Appliance" message:msg];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
 }
 
 - (void)didDettachAppliance:(TNStropheStanza)aStanza
@@ -297,6 +315,37 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     {        
         var growl   = [TNGrowlCenter defaultCenter];
         var msg     = @"Appliance has been dettached";
+        [growl pushNotificationWithTitle:@"Appliance" message:msg];
+        
+        [_instanciateButton setEnabled:YES];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+- (IBAction)package:(id)sender
+{
+    if ([_entity status] != TNStropheContactStatusBusy)
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"Virtual machine must not be running to package it."];
+         return;
+    }
+    
+    var stanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
+
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingPackage}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didPackageAppliance:) ofObject:self];
+}
+
+- (void)didPackageAppliance:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {        
+        var growl   = [TNGrowlCenter defaultCenter];
+        var msg     = @"Virtual machine has been packaged";
         [growl pushNotificationWithTitle:@"Appliance" message:msg];
     }
     else

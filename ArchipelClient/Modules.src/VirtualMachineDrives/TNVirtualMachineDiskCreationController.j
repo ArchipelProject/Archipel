@@ -22,7 +22,6 @@
 @import "TNMediaObject.j";
 
 TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
-
 TNArchipelTypeVirtualMachineDiskCreate  = @"create";
 TNArchipelTypeVirtualMachineDiskDelete  = @"delete";
 TNArchipelTypeVirtualMachineDiskGet     = @"get";
@@ -30,6 +29,7 @@ TNArchipelTypeVirtualMachineDiskConvert = @"convert";
 TNArchipelTypeVirtualMachineDiskRename  = @"rename";
 
 TNArchipelPushNotificationDisk           = @"archipel:push:disk";
+TNArchipelPushNotificationAppliance      = @"archipel:push:vmcasting";
 TNArchipelPushNotificationDiskCreated    = @"created";
 
 @implementation TNVirtualMachineDrivesController : TNModule
@@ -183,7 +183,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     var params = [[CPDictionary alloc] init];
     
-    [self registerSelector:@selector(didReceivedDiskPushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
+    [self registerSelector:@selector(didReceivePushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
+    [self registerSelector:@selector(didReceivePushNotification:) forPushNotificationType:TNArchipelPushNotificationAppliance]
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -223,18 +224,26 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (BOOL)didReceivedDiskPushNotification:(TNStropheStanza)aStanza
+- (BOOL)didReceivePushNotification:(TNStropheStanza)aStanza
 {
     var growl   = [TNGrowlCenter defaultCenter];
+    var type    = [aStanza getType];
     var change  = [aStanza valueForAttribute:@"change"];
     
-    if (change == @"created")
-        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
-    else if (change == @"deleted")
-        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
     
-    [self getDisksInfo];
-    
+    if (type == TNArchipelPushNotificationDisk)
+    {
+        if (change == @"created")
+            [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
+        else if (change == @"deleted")
+            [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
+
+        [self getDisksInfo];
+    }
+    else if ((type == TNArchipelPushNotificationAppliance) && (change == @"applianceinstalled"))
+    {
+        [self getDisksInfo];
+    }
     return YES;
 }
 

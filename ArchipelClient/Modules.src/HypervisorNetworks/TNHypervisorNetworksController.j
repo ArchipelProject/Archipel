@@ -92,7 +92,7 @@ function generateIPForNewNetwork()
     
     var columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"];
     [[columNetworkName headerView] setStringValue:@"Name"];
-    [columNetworkName setWidth:200];
+    [columNetworkName setWidth:250];
     [columNetworkName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkName" ascending:YES]];
 
     var columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"];

@@ -44,13 +44,13 @@ except ImportError:
     pass
 
 
-VIR_DOMAIN_NOSTATE	                        =	0
-VIR_DOMAIN_RUNNING	                        =	1
-VIR_DOMAIN_BLOCKED	                        =	2
-VIR_DOMAIN_PAUSED	                        =	3
-VIR_DOMAIN_SHUTDOWN	                        =	4
-VIR_DOMAIN_SHUTOFF	                        =	5
-VIR_DOMAIN_CRASHED	                        =	6
+VIR_DOMAIN_NOSTATE	            = 0
+VIR_DOMAIN_RUNNING	            = 1
+VIR_DOMAIN_BLOCKED	            = 2
+VIR_DOMAIN_PAUSED	            = 3
+VIR_DOMAIN_SHUTDOWN	            = 4
+VIR_DOMAIN_SHUTOFF	            = 5
+VIR_DOMAIN_CRASHED	            = 6
 
 NS_ARCHIPEL_STATUS_RUNNING      = "Running"
 NS_ARCHIPEL_STATUS_PAUSED       = "Paused"
@@ -58,8 +58,8 @@ NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off"
 NS_ARCHIPEL_STATUS_ERROR        = "Error"
 NS_ARCHIPEL_STATUS_NOT_DEFINED  = "Not defined"
 
-NS_ARCHIPEL_VM_CONTROL      = "archipel:vm:control"
-NS_ARCHIPEL_VM_DEFINITION   = "archipel:vm:definition"
+NS_ARCHIPEL_VM_CONTROL          = "archipel:vm:control"
+NS_ARCHIPEL_VM_DEFINITION       = "archipel:vm:definition"
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     """
@@ -85,7 +85,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         # whooo... this technic is dirty. was I drunk ? TODO!
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         self.hypervisor = hypervisor
-        
+        self.definition = None;
         if not os.path.isdir(self.vm_own_folder):
             os.mkdir(self.vm_own_folder)
     
@@ -154,6 +154,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
             log(self, LOG_LEVEL_INFO, "sucessfully connect to domain uuid {0}".format(self.uuid))
             
+            if self.domain:
+                self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
+            
             dominfo = self.domain.info()
             log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == VIR_DOMAIN_RUNNING:
@@ -162,7 +165,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
             elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-            
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
@@ -406,7 +408,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
            
            # the dirty replace below is to avoid having this xmlns wrote by xmpp.Node automatically.
            # I've sepnd two hours, trying to remove it, I'm done.
-           self.libvirt_connection.defineXML(str(domain_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', ''))
+           definitionXML = str(domain_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+           self.libvirt_connection.defineXML(definitionXML)
+           self.definition = domain_node
            log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
            if not self.domain:
                self.connect_libvirt()
@@ -436,6 +440,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.undefine()
             log(self, LOG_LEVEL_INFO, "virtual machine is undefined")
             self.push_change("virtualmachine:definition", "undefined")
+            self.definition = None;
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

@@ -49,7 +49,8 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 @implementation TNToolbar  : CPToolbar
 {
     CPDictionary    _toolbarItems;
-    CPArray         _toolbarItemsOrder;
+    CPDictionary    _toolbarItemsOrder;
+    CPArray         _sortedToolbarItems;
 }
 
 /*! initialize the class with a target
@@ -62,7 +63,7 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     {
         var bundle          = [CPBundle bundleForClass:self];
         _toolbarItems       = [CPDictionary dictionary];
-        _toolbarItemsOrder  = [CPArray array];
+        _toolbarItemsOrder  = [CPDictionary dictionary];
 
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
@@ -95,12 +96,20 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         [avatarItem setMinSize:CGSizeMake(32.0, 32.0)];
         [avatarItem setMaxSize:CGSizeMake(32.0, 32.0)];
         
-        [self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
-        [self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:2 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [self setPosition:900 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        [self setPosition:901 forToolbarItemIdentifier:TNToolBarItemHelp];
-        [self setPosition:902 forToolbarItemIdentifier:TNToolBarItemLogout];
+        [_toolbarItemsOrder setObject:TNToolBarItemStatus forKey:0];
+        [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:1];
+
+        [_toolbarItemsOrder setObject:CPToolbarFlexibleSpaceItemIdentifier forKey:500];
+        [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:901];
+        [_toolbarItemsOrder setObject:TNToolBarItemHelp forKey:902];
+        [_toolbarItemsOrder setObject:TNToolBarItemLogout forKey:903];
+        
+        //[self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
+        //[self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        //[self setPosition:900 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        //[self setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        //[self setPosition:902 forToolbarItemIdentifier:TNToolBarItemHelp];
+        //[self setPosition:903 forToolbarItemIdentifier:TNToolBarItemLogout];
         
         [self setDelegate:self];
     }
@@ -132,6 +141,30 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     [_toolbarItems setObject:anItem forKey:anIdentifier];
 }
 
+- (void)_reloadToolbarItems
+{
+    var sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:function(a, b, context){
+        var indexA = a;
+        var indexB = b;
+        if (a < b)
+                return CPOrderedAscending;
+            else if (a > b)
+                return CPOrderedDescending;
+            else
+                return CPOrderedSame;
+    }];
+    
+    _sortedToolbarItems = [CPArray array];
+    for (var i = 0; i < [sortedKeys count]; i++)
+    {
+        var key = [sortedKeys objectAtIndex:i];
+        [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
+    }
+    
+    [super _reloadToolbarItems];
+}
+
+
 /*! add a new CPToolbarItem with a custom view
     @param anIdentifier CPString containing the identifier
     @param aLabel CPString containing the label
@@ -161,21 +194,22 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 */
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
-     [_toolbarItemsOrder insertObject:anIndentifier atIndex:aPosition];
+    
+    [_toolbarItemsOrder setObject:anIndentifier forKey:aPosition];
 }
 
 /*! CPToolbar Protocol
 */
 - (CPArray)toolbarAllowedItemIdentifiers:(CPToolbar)aToolbar
 {
-    return  _toolbarItemsOrder;
+    return  _sortedToolbarItems;
 }
 
 /*! CPToolbar Protocol
 */
 - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)aToolbar
 {
-    return  _toolbarItemsOrder;
+    return  _sortedToolbarItems;
 }
 
 /*! CPToolbar Protocol

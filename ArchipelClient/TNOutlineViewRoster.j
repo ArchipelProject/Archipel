@@ -27,8 +27,9 @@
 */
 @implementation TNOutlineViewRoster: CPOutlineView
 {
-    CPTabView       _tabViewModules     @accessors(setter=setModulesTabView:);
-    CPSearchField   _searchField        @accessors(setter=setSearchField:);
+    CPTabView       _tabViewModules     @accessors(property=modulesTabView);
+    CPSearchField   _searchField        @accessors(property=searchField);
+    CPTextField     _entityRenameField  @accessors(property=entityRenameField);
 }
 /*! init the class
     @param aFrame CPRect the frame of the view
@@ -177,6 +178,22 @@
         var center = [CPNotificationCenter defaultCenter];
         [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
     }
+    else if ([anEvent keyCode] == CPEscapeKeyCode)
+    {
+        [_searchField _searchFieldCancel:self];
+    }
+    else if ([anEvent keyCode] == CPReturnKeyCode)
+    {
+        [_entityRenameField setPreviousResponder:self];
+        [_entityRenameField mouseDown:nil];
+        [_entityRenameField _inputElement].focus();
+        [[self window] makeFirstResponder:_entityRenameField];
+        
+        return;
+    }
+    
+    
+    
     [super keyDown:anEvent];
 }
 

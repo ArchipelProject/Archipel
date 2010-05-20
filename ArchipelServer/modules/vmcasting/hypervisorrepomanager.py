@@ -130,7 +130,7 @@ class TNApplianceDownloader(Thread):
     
 
 
-class TNHypervisorVMCasting:
+class TNHypervisorRepoManager:
     """
     Implementation of the module
     """

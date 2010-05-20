@@ -83,7 +83,7 @@
     _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didLabelEntryNameBlur:) name:CPTextFieldDidBlurNotification object:entryName];
+    [center addObserver:self selector:@selector(changeNickNameNotificiation:) name:CPTextFieldDidBlurNotification object:entryName];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
@@ -167,40 +167,20 @@
     [self reload];
 }
 
-/*! message performed when the TNEditableLabel hase been changed
-    will call doChangeNickName
-    @param aNotification the blur notification
-*/
-- (void)_didLabelEntryNameBlur:(CPNotification)aNotification
+- (void)changeNickNameNotificiation:(CPNotification)aNotification
 {
-    if ([_entity class] == TNStropheContact)
-        [self doChangeNickName];
-    else if ([_entity class] == TNStropheGroup)
-        [self doChangeGroupName];
+    if (([_entity class] == TNStropheContact) && ([_entity nickname] != [entryName stringValue]))
+        [_roster changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
+    else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
+       [_entity changeName:[entryName stringValue]];
 }
-
 /*! action sent by the TNEditableLabel when ok. Will blur it
     @param sender the sender
 */
 - (IBAction)changeNickName:(id)sender
 {
-    [sender _inputElement].blur();
-}
-
-/*! it will update the name of the current TNStropheContact
-*/
-- (void)doChangeNickName
-{
-    var theJID = [_entity JID];
-    var theName = [entryName stringValue];
-
-    [_roster changeNickname:theName ofContactWithJID:theJID];
-    [entryName setStringValue:theName];
-}
-
-- (void)doChangeGroupName
-{
-    [_entity changeName:[entryName stringValue]];
+    //[entryName _inputElement].blur();
+    [[self window] makeFirstResponder:[entryName previousResponder]];
 }
 
 @end
