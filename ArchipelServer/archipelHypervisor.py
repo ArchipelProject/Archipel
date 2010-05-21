@@ -31,7 +31,9 @@ from threading import Thread
 from utils import *
 from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
-
+import string
+from random import choice
+ 
 try:
     import libvirt
 except ImportError:
@@ -213,7 +215,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 raise Exception('IncorrectUUID', "Missing or malformed UUID")
             
             domain_uuid = uuidnode.getCDATA()
-            vm_password = "password" #temp method
+            vm_password = ''.join([choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
+            
             vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
             
             log(self, LOG_LEVEL_INFO, "adding the xmpp vm ({0}) to my roster".format(vm_jid))

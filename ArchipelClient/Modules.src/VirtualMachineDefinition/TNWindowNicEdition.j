@@ -71,6 +71,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
         [buttonType selectItemWithTitle:[_nic type]];
         [buttonModel selectItemWithTitle:[_nic model]];
+        [buttonSource selectItemWithTitle:[_nic source]];
     }
     [super orderFront:sender];
 }
@@ -80,7 +81,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [_nic setMac:[fieldMac stringValue]];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
-
+    
     [_table reloadData];
 }
 

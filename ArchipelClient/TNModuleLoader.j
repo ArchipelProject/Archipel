@@ -371,21 +371,20 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         return;
         
     var arrayCpy        = [[mainTabView tabViewItems] copy];
-    // var selectedItem    = [mainTabView selectedTabViewItem];
-    // var theModule       = [[selectedItem view] documentView];
 
-    //@each(var aTabViewItem in [self tabViewItems])
     for(var i = 0; i < [arrayCpy count]; i++)
     {
-        var aTabViewItem    = [arrayCpy objectAtIndex:i];
-        var theModule       = [aTabViewItem module];
-
-        [theModule willUnload];
-        [theModule setEntity:nil];
-        [theModule setRoster:nil];
-
-        [[aTabViewItem view] removeFromSuperview];
-        [mainTabView removeTabViewItem:aTabViewItem];
+        var tabViewItem = [arrayCpy objectAtIndex:i];
+        var module      = [tabViewItem module];
+        
+        [module willUnload];
+        [module setEntity:nil];
+        [module setRoster:nil];
+        
+        [[module view] scrollPoint:CPMakePoint(0.0, 0.0)];
+        
+        [[tabViewItem view] removeFromSuperview];
+        [mainTabView removeTabViewItem:tabViewItem];
     }
 }
 
@@ -417,9 +416,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     [aModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
     [aModule willLoad];
     
-    [scrollView setDocumentView:[aModule view]];    
+    [scrollView setDocumentView:[aModule view]];   
+    
     [mainTabView addTabViewItem:newViewItem];
-}
+}   
 
 /*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
     to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to

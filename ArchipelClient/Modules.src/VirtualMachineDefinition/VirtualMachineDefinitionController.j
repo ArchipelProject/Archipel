@@ -219,7 +219,7 @@ function generateMacAddr()
     
     [_tableDrives setUsesAlternatingRowBackgroundColors:YES];
     [_tableDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableDrives setAllowsColumnReordering:YES];
+    [_tableDrives setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_tableDrives setAllowsColumnResizing:YES];
     [_tableDrives setAllowsEmptySelection:YES];
     [_tableDrives setAllowsMultipleSelection:YES];
@@ -271,7 +271,7 @@ function generateMacAddr()
 
     [_tableNetworkCards setUsesAlternatingRowBackgroundColors:YES];
     [_tableNetworkCards setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableNetworkCards setAllowsColumnReordering:YES];
+    [_tableNetworkCards setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_tableNetworkCards setAllowsColumnResizing:YES];
     [_tableNetworkCards setAllowsEmptySelection:YES];
     [_tableNetworkCards setAllowsEmptySelection:YES];
@@ -296,6 +296,7 @@ function generateMacAddr()
 
     var columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [[columnSource headerView] setStringValue:@"Source"];
+    [columnSource setWidth:250];
     [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
     [_tableNetworkCards addTableColumn:columnSource];
@@ -348,75 +349,6 @@ function generateMacAddr()
     [menuDrive addItemWithTitle:@"Edit" action:@selector(editDrive:) keyEquivalent:@""];
     [menuDrive addItemWithTitle:@"Delete" action:@selector(deleteDrive:) keyEquivalent:@""];
     [_tableDrives setMenu:menuDrive];
-}
-
-- (IBAction)displayDrivesTable:(id)sender
-{
-    if (_currentTableScrollView != _scrollViewForDrives)
-    {
-        [_currentTableScrollView removeFromSuperview];
-        _currentTableScrollView = _scrollViewForDrives;
-        [_scrollViewForDrives setFrame:[viewDeviceCurrentTable bounds]];
-        [viewDeviceCurrentTable addSubview:_scrollViewForDrives];
-        
-        [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-        [[[buttonBar buttons] objectAtIndex:1] setValue:_bezelColor forThemeAttribute:"bezel-color"];
-        
-        _lastFilterNics = [fieldFilter stringValue];
-        [fieldFilter setTarget:_drivesDatasource];
-        [fieldFilter setAction:@selector(filterObjects:)];
-        [fieldFilter setStringValue:_lastFilterDrives];
-        if (_lastFilterDrives && (_lastFilterDrives != @""))
-            [[fieldFilter cancelButton] setHidden:NO];
-        else
-            [[fieldFilter cancelButton] setHidden:YES];
-        [_drivesDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
-        
-        [_plusButton setTarget:self];
-        [_plusButton setAction:@selector(addDrive:)];
-        [_minusButton setTarget:self];
-        [_minusButton setAction:@selector(deleteDrive:)];
-        
-        [_editButton setAction:@selector(editDrive:)];
-        
-        var notif = [CPNotification notificationWithName:nil object:_tableDrives];
-        [self tableViewSelectionDidChange:notif];
-    }
-}
-
-
-- (IBAction)displayNicsTable:(id)sender
-{
-    if (_currentTableScrollView != _scrollViewForNics)
-    {
-        [_currentTableScrollView removeFromSuperview];
-        _currentTableScrollView = _scrollViewForNics;
-        [_scrollViewForNics setFrame:[viewDeviceCurrentTable bounds]];
-        [viewDeviceCurrentTable addSubview:_scrollViewForNics];
-        
-        [[[buttonBar buttons] objectAtIndex:1] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-        [[[buttonBar buttons] objectAtIndex:0] setValue:_bezelColor forThemeAttribute:"bezel-color"];
-        
-        _lastFilterDrives = [fieldFilter stringValue];
-        [fieldFilter setTarget:_nicsDatasource];
-        [fieldFilter setAction:@selector(filterObjects:)];
-        [fieldFilter setStringValue:_lastFilterNics];
-        if (_lastFilterNics && (_lastFilterNics != @""))
-            [[fieldFilter cancelButton] setHidden:NO];
-        else
-            [[fieldFilter cancelButton] setHidden:YES];
-        [_nicsDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
-        
-        [_plusButton setTarget:self];
-        [_plusButton setAction:@selector(addNetworkCard:)];
-        [_minusButton setTarget:self];
-        [_minusButton setAction:@selector(deleteNetworkCard:)];
-        
-        [_editButton setAction:@selector(editNetworkCard:)];
-        
-        var notif = [CPNotification notificationWithName:nil object:_tableNetworkCards];
-        [self tableViewSelectionDidChange:notif];
-    }
 }
 
 
@@ -480,12 +412,20 @@ function generateMacAddr()
     //[maskingView removeFromSuperview];
 }
 
+
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
        [fieldName setStringValue:[_entity nickname]]
     }
+}
+
+- (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
+{
+    CPLog.info("Push notification definition received");
+    [self getXMLDesc];
+    return YES;
 }
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
@@ -543,160 +483,6 @@ function generateMacAddr()
         ;//[maskingView removeFromSuperview];
 }
 
-- (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
-{
-    CPLog.info("Push notification definition received");
-    [self getXMLDesc];
-    return YES;
-}
-
-//  XML Desc
-- (void)getXMLDesc
-{
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
-
-    [xmldescStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlXMLDesc}];
-
-    [_entity sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
-}
-
-- (void)didReceiveXMLDesc:(id)aStanza
-{
-    if ([aStanza getType] == @"success")
-    {
-        var domain          = [aStanza firstChildWithName:@"domain"];
-        var hypervisor      = [domain valueForAttribute:@"type"];
-        var memory          = [[domain firstChildWithName:@"currentMemory"] text];
-        var arch            = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
-        var vcpu            = [[domain firstChildWithName:@"vcpu"] text];
-        var boot            = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
-        var interfaces      = [domain childrenWithName:@"interface"];
-        var disks           = [domain childrenWithName:@"disk"];
-        var graphics        = [domain childrenWithName:@"graphics"];
-        var onPowerOff      = [domain firstChildWithName:@"on_poweroff"];
-        var onReboot        = [domain firstChildWithName:@"on_reboot"];
-        var onCrash         = [domain firstChildWithName:@"on_crash"];
-        var features        = [domain firstChildWithName:@"features"];
-        var clock           = [domain firstChildWithName:@"clock"];
-
-        [_nicsDatasource removeAllObjects];
-        [_drivesDatasource removeAllObjects];
-    
-        [fieldMemory setStringValue:(parseInt(memory) / 1024)];
-        [buttonNumberCPUs selectItemWithTitle:vcpu];
-
-        for (var i = 0; i < [graphics count]; i++)
-        {
-            var graphic = [graphics objectAtIndex:i];
-            if ([graphic valueForAttribute:@"type"] == "vnc")
-            {
-                var keymap = [graphic valueForAttribute:@"keymap"];
-                if (keymap)
-                {
-                    [buttonVNCKeymap selectItemWithTitle:keymap];
-                    break;
-                }
-            }
-        }
-
-        if (boot == "cdrom")
-            [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
-        else
-            [buttonBoot selectItemWithTitle:TNXMLDescBootHardDrive];
-        
-        
-        //power 
-        if (onPowerOff)
-            [buttonOnPowerOff selectItemWithTitle:[onPowerOff text]];
-        else
-            [buttonOnPowerOff selectItemWithTitle:@"Default"];
-        
-        if (onReboot)
-            [buttonOnReboot selectItemWithTitle:[onReboot text]];
-        else
-            [buttonOnPowerOff selectItemWithTitle:@"Default"];
-                
-        if (onCrash)
-            [buttonOnCrash selectItemWithTitle:[onCrash text]];
-        else
-            [buttonOnPowerOff selectItemWithTitle:@"Default"];
-        
-        // features
-        [checkboxAPIC setState:CPOffState];
-        [checkboxACPI setState:CPOffState];
-        [checkboxPAE setState:CPOffState];
-        if (features)
-        {
-            if ([features firstChildWithName:TNXMLDescFeaturePAE])
-                [checkboxPAE setState:CPOnState];
-
-            if ([features firstChildWithName:TNXMLDescFeatureACPI])
-                [checkboxACPI setState:CPOnState];
-
-            if ([features firstChildWithName:TNXMLDescFeatureAPIC])
-                [checkboxAPIC setState:CPOnState];
-        }
-        
-        //clock
-        if ((hypervisor == TNXMLDescHypervisorKVM) || (hypervisor == TNXMLDescHypervisorQemu) || (hypervisor == TNXMLDescHypervisorKQemu))
-        {
-            [buttonClocks setEnabled:YES];
-            
-            if (clock)
-            {
-                [buttonClocks selectItemWithTitle:[clock valueForAttribute:@"offset"]];
-            }
-        }
-        else
-        {
-            [buttonClocks setEnabled:NO];
-        }
-        
-        // NICs
-        for (var i = 0; i < [interfaces count]; i++)
-        {
-            var currentInterface    = [interfaces objectAtIndex:i];
-            var iType               = [currentInterface valueForAttribute:@"type"];
-            var iModel              = "pcnet"; //interfaces.children[i].getElementsByTagName("model")[0]
-            var iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"];
-
-            if (iType == "bridge")
-                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
-            else if (iType == "network")
-                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"];
-
-
-            var iTarget = "";//interfaces[i].getElementsByTagName("target")[0].getAttribute("dev");
-
-            var newNic = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource]
-
-            [_nicsDatasource addObject:newNic];
-        }
-        [_tableNetworkCards reloadData];
-
-        //Drives
-        for (var i = 0; i < [disks count]; i++)
-        {
-            var currentDisk = [disks objectAtIndex:i];
-            var iType       = [currentDisk valueForAttribute:@"type"];
-            var iDevice     = [currentDisk valueForAttribute:@"device"];
-            var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
-            var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
-            var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
-
-            var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
-
-            [_drivesDatasource addObject:newDrive];
-        }
-        [_tableDrives reloadData];
-    }
-    else if ([aStanza getType] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-// generation of XML
 - (TNStropheStanza)generateXMLDescStanzaWithUniqueID:(CPNumber)anUid
 {
     var memory      = "" + [fieldMemory intValue] * 1024 + ""; //put it into kb and make a string like a pig
@@ -824,6 +610,10 @@ function generateMacAddr()
         [stanza addChildName:@"interface" withAttributes:{"type": nicType}];
         [stanza addChildName:@"mac" withAttributes:{"address": [nic mac]}];
         [stanza up];
+        
+        [stanza addChildName:@"model" withAttributes:{"type": [nic model]}];
+        [stanza up];
+        
         if (nicType == @"bridge")
             [stanza addChildName:@"source" withAttributes:{"bridge": [nic source]}];
         else
@@ -849,10 +639,267 @@ function generateMacAddr()
     return stanza;
 }
 
+
+//  XML Desc
+- (void)getXMLDesc
+{
+    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
+
+    [xmldescStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlXMLDesc}];
+
+    [_entity sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
+}
+
+- (void)didReceiveXMLDesc:(id)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        var domain          = [aStanza firstChildWithName:@"domain"];
+        var hypervisor      = [domain valueForAttribute:@"type"];
+        var memory          = [[domain firstChildWithName:@"currentMemory"] text];
+        var arch            = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
+        var vcpu            = [[domain firstChildWithName:@"vcpu"] text];
+        var boot            = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
+        var interfaces      = [domain childrenWithName:@"interface"];
+        var disks           = [domain childrenWithName:@"disk"];
+        var graphics        = [domain childrenWithName:@"graphics"];
+        var onPowerOff      = [domain firstChildWithName:@"on_poweroff"];
+        var onReboot        = [domain firstChildWithName:@"on_reboot"];
+        var onCrash         = [domain firstChildWithName:@"on_crash"];
+        var features        = [domain firstChildWithName:@"features"];
+        var clock           = [domain firstChildWithName:@"clock"];
+
+        [_nicsDatasource removeAllObjects];
+        [_drivesDatasource removeAllObjects];
+    
+        [fieldMemory setStringValue:(parseInt(memory) / 1024)];
+        [buttonNumberCPUs selectItemWithTitle:vcpu];
+
+        for (var i = 0; i < [graphics count]; i++)
+        {
+            var graphic = [graphics objectAtIndex:i];
+            if ([graphic valueForAttribute:@"type"] == "vnc")
+            {
+                var keymap = [graphic valueForAttribute:@"keymap"];
+                if (keymap)
+                {
+                    [buttonVNCKeymap selectItemWithTitle:keymap];
+                    break;
+                }
+            }
+        }
+
+        if (boot == "cdrom")
+            [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
+        else
+            [buttonBoot selectItemWithTitle:TNXMLDescBootHardDrive];
+        
+        
+        //power 
+        if (onPowerOff)
+            [buttonOnPowerOff selectItemWithTitle:[onPowerOff text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+        
+        if (onReboot)
+            [buttonOnReboot selectItemWithTitle:[onReboot text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+                
+        if (onCrash)
+            [buttonOnCrash selectItemWithTitle:[onCrash text]];
+        else
+            [buttonOnPowerOff selectItemWithTitle:@"Default"];
+        
+        // features
+        [checkboxAPIC setState:CPOffState];
+        [checkboxACPI setState:CPOffState];
+        [checkboxPAE setState:CPOffState];
+        if (features)
+        {
+            if ([features firstChildWithName:TNXMLDescFeaturePAE])
+                [checkboxPAE setState:CPOnState];
+
+            if ([features firstChildWithName:TNXMLDescFeatureACPI])
+                [checkboxACPI setState:CPOnState];
+
+            if ([features firstChildWithName:TNXMLDescFeatureAPIC])
+                [checkboxAPIC setState:CPOnState];
+        }
+        
+        //clock
+        if ((hypervisor == TNXMLDescHypervisorKVM) || (hypervisor == TNXMLDescHypervisorQemu) || (hypervisor == TNXMLDescHypervisorKQemu))
+        {
+            [buttonClocks setEnabled:YES];
+            
+            if (clock)
+            {
+                [buttonClocks selectItemWithTitle:[clock valueForAttribute:@"offset"]];
+            }
+        }
+        else
+        {
+            [buttonClocks setEnabled:NO];
+        }
+        
+        // NICs
+        for (var i = 0; i < [interfaces count]; i++)
+        {
+            var currentInterface    = [interfaces objectAtIndex:i];
+            var iType               = [currentInterface valueForAttribute:@"type"];
+            var iModel              = ([currentInterface firstChildWithName:@"model"]) ? [[currentInterface firstChildWithName:@"model"] valueForAttribute:@"type"] : @"pcnet";
+            var iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"];
+
+            if (iType == "bridge")
+                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"];
+            else if (iType == "network")
+                var iSource = [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"];
+
+
+            var iTarget = "";//interfaces[i].getElementsByTagName("target")[0].getAttribute("dev");
+
+            var newNic = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource]
+
+            [_nicsDatasource addObject:newNic];
+        }
+        [_tableNetworkCards reloadData];
+
+        //Drives
+        for (var i = 0; i < [disks count]; i++)
+        {
+            var currentDisk = [disks objectAtIndex:i];
+            var iType       = [currentDisk valueForAttribute:@"type"];
+            var iDevice     = [currentDisk valueForAttribute:@"device"];
+            var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
+            var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
+            var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
+
+            var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
+
+            [_drivesDatasource addObject:newDrive];
+        }
+        [_tableDrives reloadData];
+    }
+    else if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+- (IBAction)defineXML:(id)sender
+{
+    var uid             = [_connection getUniqueId];
+    var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
+
+    [windowNicEdition close];
+    [windowDriveEdition close];
+    [_entity sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
+}
+
+- (void)didDefineXML:(id)aStanza
+{
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
+
+    if (responseType == @"success")
+    {
+        var msg = @"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated"
+        CPLog.info(msg)
+    }
+    else if (responseType == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
 // Actions Nics and drives
+
+- (IBAction)displayDrivesTable:(id)sender
+{
+    if (_currentTableScrollView != _scrollViewForDrives)
+    {
+        [_currentTableScrollView removeFromSuperview];
+        _currentTableScrollView = _scrollViewForDrives;
+        [_scrollViewForDrives setFrame:[viewDeviceCurrentTable bounds]];
+        [viewDeviceCurrentTable addSubview:_scrollViewForDrives];
+        
+        [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
+        [[[buttonBar buttons] objectAtIndex:1] setValue:_bezelColor forThemeAttribute:"bezel-color"];
+        
+        _lastFilterNics = [fieldFilter stringValue];
+        [fieldFilter setTarget:_drivesDatasource];
+        [fieldFilter setAction:@selector(filterObjects:)];
+        [fieldFilter setStringValue:_lastFilterDrives];
+        if (_lastFilterDrives && (_lastFilterDrives != @""))
+            [[fieldFilter cancelButton] setHidden:NO];
+        else
+            [[fieldFilter cancelButton] setHidden:YES];
+        [_drivesDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
+        
+        [_plusButton setTarget:self];
+        [_plusButton setAction:@selector(addDrive:)];
+        [_minusButton setTarget:self];
+        [_minusButton setAction:@selector(deleteDrive:)];
+        
+        [_editButton setAction:@selector(editDrive:)];
+        
+        var notif = [CPNotification notificationWithName:nil object:_tableDrives];
+        [self tableViewSelectionDidChange:notif];
+    }
+}
+
+- (IBAction)displayNicsTable:(id)sender
+{
+    if (_currentTableScrollView != _scrollViewForNics)
+    {
+        [_currentTableScrollView removeFromSuperview];
+        _currentTableScrollView = _scrollViewForNics;
+        [_scrollViewForNics setFrame:[viewDeviceCurrentTable bounds]];
+        [viewDeviceCurrentTable addSubview:_scrollViewForNics];
+        
+        [[[buttonBar buttons] objectAtIndex:1] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
+        [[[buttonBar buttons] objectAtIndex:0] setValue:_bezelColor forThemeAttribute:"bezel-color"];
+        
+        _lastFilterDrives = [fieldFilter stringValue];
+        [fieldFilter setTarget:_nicsDatasource];
+        [fieldFilter setAction:@selector(filterObjects:)];
+        [fieldFilter setStringValue:_lastFilterNics];
+        if (_lastFilterNics && (_lastFilterNics != @""))
+            [[fieldFilter cancelButton] setHidden:NO];
+        else
+            [[fieldFilter cancelButton] setHidden:YES];
+        [_nicsDatasource filterObjects:fieldFilter]; // sender is someting use and it should be a CPTextField
+        
+        [_plusButton setTarget:self];
+        [_plusButton setAction:@selector(addNetworkCard:)];
+        [_minusButton setTarget:self];
+        [_minusButton setAction:@selector(deleteNetworkCard:)];
+        
+        [_editButton setAction:@selector(editNetworkCard:)];
+        
+        var notif = [CPNotification notificationWithName:nil object:_tableNetworkCards];
+        [self tableViewSelectionDidChange:notif];
+    }
+}
+
+- (IBAction)addNetworkCard:(id)sender
+{
+    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:generateMacAddr() source:@"virbr0"]
+
+    [_nicsDatasource addObject:defaultNic];
+    [_tableNetworkCards reloadData];
+    [self defineXML:nil];
+}
+
 - (IBAction)editNetworkCard:(id)sender
 {
-    var selectedIndex = [[_tableNetworkCards selectedRowIndexes] firstIndex];
+    if ([[_tableNetworkCards selectedRowIndexes] count] != 1)
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
+         return;
+    }
+    var selectedIndex   = [[_tableNetworkCards selectedRowIndexes] firstIndex];
     var nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
     [windowNicEdition setNic:nicObject];
@@ -878,29 +925,31 @@ function generateMacAddr()
      [self defineXML:nil];
 }
 
-- (IBAction)addNetworkCard:(id)sender
+- (IBAction)addDrive:(id)sender
 {
-    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:generateMacAddr() source:@"virbr0"]
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"]
 
-    [_nicsDatasource addObject:defaultNic];
-    [_tableNetworkCards reloadData];
+    [_drivesDatasource addObject:defaultDrive];
+    [_tableDrives reloadData];
     [self defineXML:nil];
 }
 
 - (IBAction)editDrive:(id)sender
 {
-    var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
-
-    if (selectedIndex != -1)
+    if ([[_tableDrives selectedRowIndexes] count] != 1)
     {
-        var driveObject = [_drivesDatasource objectAtIndex:selectedIndex];
-
-        [windowDriveEdition setDrive:driveObject];
-        [windowDriveEdition setTable:_tableDrives];
-        [windowDriveEdition setEntity:_entity];
-        [windowDriveEdition center];
-        [windowDriveEdition orderFront:nil];
+         [CPAlert alertWithTitle:@"Error" message:@"You must select one drive"];
+         return;
     }
+    var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
+    var driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
+
+    [windowDriveEdition setDrive:driveObject];
+    [windowDriveEdition setTable:_tableDrives];
+    [windowDriveEdition setEntity:_entity];
+    [windowDriveEdition center];
+    [windowDriveEdition orderFront:nil];
+
 }
 
 - (IBAction)deleteDrive:(id)sender
@@ -921,48 +970,6 @@ function generateMacAddr()
      [self defineXML:nil];
 }
 
-- (IBAction)addDrive:(id)sender
-{
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"]
-
-    [_drivesDatasource addObject:defaultDrive];
-    [_tableDrives reloadData];
-    [self defineXML:nil];
-}
-
-// action XML desc
-- (IBAction)defineXML:(id)sender
-{
-    var uid             = [_connection getUniqueId];
-    var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
-
-    [_entity sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
-}
-
-- (void)didDefineXML:(id)aStanza
-{
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
-
-    if (responseType == @"success")
-    {
-        var msg = @"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated"
-        CPLog.info(msg)
-    }
-    else if (responseType == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-
-// delegate for panels
-- (BOOL)windowShouldClose:(id)window
-{
-    [self defineXML:nil];
-
-    return YES;
-}
 
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification

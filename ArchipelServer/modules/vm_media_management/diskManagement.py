@@ -189,11 +189,30 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query")
-            disk_name = query_node.getTag("name").getData()
-        
-            os.system("rm -rf " + disk_name)
-        
+            query_node          = iq.getTag("query")
+            disk_name           = query_node.getTag("name").getData()
+            secure_disk_name    = disk_name.split("/")[-1]
+            secure_disk_path    = self.entity.vm_own_folder + "/" + secure_disk_name
+            
+            os.system("rm -rf " + secure_disk_path)
+
+            devices_node = self.entity.definition.getTag('devices')
+            disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
+            
+            have_undefined_at_least_on_disk = False
+            
+            for disk_node in disk_nodes:
+                path = disk_node.getTag('source').getAttr('file')
+                if path == secure_disk_path:
+                    devices_node.delChild(disk_node)
+                    have_undefined_at_least_on_disk = True;
+            
+            if have_undefined_at_least_on_disk:
+                xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+                print xml
+                self.entity.libvirt_connection.defineXML(xml)
+                self.entity.push_change("virtualmachine:definition", "defined")
+            
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")
             self.entity.push_change("disk", "deleted")

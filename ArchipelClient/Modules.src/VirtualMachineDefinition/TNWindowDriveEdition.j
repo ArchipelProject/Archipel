@@ -79,35 +79,22 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 {
     if (![self isVisible])
     {
-        for (var i = 0; i < [[radioDriveType radios] count]; i++)
-        {
-            var radio = [[radioDriveType radios] objectAtIndex:i];
-
-            if ([radio title] == [drive type])
-            {
-                [radio setState:CPOnState];
-                [self performRadioDriveTypeChanged:radioDriveType];
-                break;
-            }
-        }
-
         [buttonType selectItemWithTitle:[drive type]];
         [buttonTarget selectItemWithTitle:[drive target]];
         [buttonBus selectItemWithTitle:[drive bus]];
-
+        
         if ([drive device] == @"disk")
-            [[[[self radioDriveType] radios] objectAtIndex:0] setState:CPOnState];
+            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
         else if ([drive device] == @"cdrom")
-            [[[[self radioDriveType] radios] objectAtIndex:1] setState:CPOnState];
-
-        [self performRadioDriveTypeChanged:[self radioDriveType]];
-
+            [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
+        
+        [self performRadioDriveTypeChanged:radioDriveType];
+        
         [self populateTargetButton];
     }
 
     [super orderFront:sender];
 }
-
 
 - (void)populateTargetButton
 {
@@ -123,6 +110,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonTarget selectItemWithTitle:[drive target]];
 }
 
+
+
 - (IBAction)save:(id)sender
 {
     if (sender == buttonBus)
@@ -133,10 +122,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         [drive setSource:[[buttonSource selectedItem] stringValue]];
     else
         [drive setSource:@"/tmp/nodisk"];
+    
     [drive setType:[buttonType title]];
 
-    var driveType = [[[self radioDriveType] selectedRadio] title];
-
+    var driveType = [[radioDriveType selectedRadio] title];
+    
     if (driveType == @"Hard drive")
         [drive setDevice:@"disk"];
     else
@@ -151,8 +141,9 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (IBAction)performRadioDriveTypeChanged:(id)sender
 {
+    console.log("PERFORMING performRadioDriveTypeChanged");
     var driveType = [[sender selectedRadio] title];
-
+    
     if (driveType == @"Hard drive")
     {
         [self getDisksInfo];
@@ -170,6 +161,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             [buttonTarget selectItemWithTitle:@"sdc"];
     }
 }
+
+
 
 -(void)getDisksInfo
 {
@@ -209,6 +202,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 [buttonSource selectItem:item];
         }
     }
+    
     [self save:nil];
 }
 

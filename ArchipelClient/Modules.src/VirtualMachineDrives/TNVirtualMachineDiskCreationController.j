@@ -297,6 +297,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (IBAction)openNewDiskWindow:(id)sender
 {
+    [windowNewDisk makeFirstResponder:fieldNewDiskName];
     [windowNewDisk center];
     [windowNewDisk makeKeyAndOrderFront:nil];
 }

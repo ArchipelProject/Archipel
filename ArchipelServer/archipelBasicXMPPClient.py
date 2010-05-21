@@ -135,7 +135,7 @@ class TNArchipelBasicXMPPClient(object):
         if (not self.auto_register):    
             return
         
-        log(self, LOG_LEVEL_DEBUG, "trying to register with {0}:{1} to {2}".format(self.jid.getNode(), self.password, self.jid.getDomain()))
+        log(self, LOG_LEVEL_DEBUG, "trying to register with {0}to {1}".format(self.jid.getNode(), self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
         payload_username = xmpp.Node(tag="username")
         payload_username.addData(self.jid.getNode())

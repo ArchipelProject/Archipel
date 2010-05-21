@@ -74,18 +74,17 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     _mainOutlineView = [[CPOutlineView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainOutlineView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainOutlineView setAllowsColumnResizing:YES];
+    [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_mainOutlineView setDataSource:_castsDatasource];
     [_castsDatasource setTable:_mainOutlineView];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columnName headerView] setStringValue:@"VMCasts"];
-    [columnName setResizingMask:CPTableColumnAutoresizingMask];
     [columnName setWidth:200];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     
     var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
     [[columnDescription headerView] setStringValue:@"Comment"];
-    [columnDescription setResizingMask:CPTableColumnAutoresizingMask];
     [columnDescription setWidth:250];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
     
@@ -96,7 +95,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     var columnSize = [[CPTableColumn alloc] initWithIdentifier:@"size"];
     [[columnSize headerView] setStringValue:@"Size"];
-    [columnSize setResizingMask:CPTableColumnAutoresizingMask];
     [columnSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"size" ascending:YES]];
     
     var columnStatus        = [[CPTableColumn alloc] initWithIdentifier:@"status"];
@@ -110,9 +108,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView addTableColumn:columnSize];
     [_mainOutlineView addTableColumn:columnStatus];
     [_mainOutlineView addTableColumn:columnDescription];
-    //[_mainOutlineView addTableColumn:columnUrl];
-
-    [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    //[_mainOutlineView addTableColumn:columnUrl]
+    
 
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setDocumentView:_mainOutlineView];

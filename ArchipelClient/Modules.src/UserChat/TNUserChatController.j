@@ -101,7 +101,7 @@
     [self restore];
     
     var frame = [[messagesScrollView documentView] frame];
-    newScrollOrigin = CPMakePoint(0.0, frame.size.height);
+    var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageBoard scrollPoint:newScrollOrigin];
     
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -238,7 +238,7 @@
     [_messageBoard addMessage:aMessage from:aSender color:color date:date];
     
     // scroll to bottom;
-    newScrollOrigin = CPMakePoint(0.0, frame.size.height);
+    var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageBoard scrollPoint:newScrollOrigin];
     
     [self save];
