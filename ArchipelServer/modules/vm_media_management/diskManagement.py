@@ -165,8 +165,6 @@ class TNMediaManagement:
             
             extension = path.split(".")[-1]
             newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
-            
-            print path + " -> " + newpath
             os.rename(path, newpath)
             
             reply = iq.buildReply('success')
@@ -194,24 +192,29 @@ class TNMediaManagement:
             secure_disk_name    = disk_name.split("/")[-1]
             secure_disk_path    = self.entity.vm_own_folder + "/" + secure_disk_name
             
+            old_status  = self.entity.xmppstatus
+            old_show    = self.entity.xmppstatusshow
+            self.entity.change_presence(presence_show="dnd", presence_status="Deleting a drive...")
+            
             os.system("rm -rf " + secure_disk_path)
 
             devices_node = self.entity.definition.getTag('devices')
             disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
             
-            have_undefined_at_least_on_disk = False
+            if query_node.getTag("undefine"):
+                have_undefined_at_least_on_disk = False
+                for disk_node in disk_nodes:
+                    path = disk_node.getTag('source').getAttr('file')
+                    if path == secure_disk_path:
+                        devices_node.delChild(disk_node)
+                        have_undefined_at_least_on_disk = True;
             
-            for disk_node in disk_nodes:
-                path = disk_node.getTag('source').getAttr('file')
-                if path == secure_disk_path:
-                    devices_node.delChild(disk_node)
-                    have_undefined_at_least_on_disk = True;
+                if have_undefined_at_least_on_disk:
+                    xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+                    self.entity.libvirt_connection.defineXML(xml)
+                    self.entity.push_change("virtualmachine:definition", "defined")
             
-            if have_undefined_at_least_on_disk:
-                xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-                print xml
-                self.entity.libvirt_connection.defineXML(xml)
-                self.entity.push_change("virtualmachine:definition", "defined")
+            self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, " disk deleted")

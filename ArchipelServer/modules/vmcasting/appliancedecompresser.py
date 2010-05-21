@@ -27,7 +27,7 @@ import shutil
 
 class TNApplianceDecompresser(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, finish_callback, entity, package_uuid, requester):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, finish_callback, package_uuid, requester):
         """
         initialize a TNApplianceDecompresser
         
@@ -47,7 +47,6 @@ class TNApplianceDecompresser(Thread):
         self.install_path       = install_path
         self.define_callback    = define_callback
         self.finish_callback    = finish_callback
-        self.entity             = entity
         self.package_uuid       = package_uuid
         self.requester          = requester
         
@@ -55,21 +54,15 @@ class TNApplianceDecompresser(Thread):
     
     
     def run(self):
-        
-        old_status = self.entity.xmppstatus
-        self.entity.change_status("Deflatting appliance...")
         log(self, LOG_LEVEL_INFO, "unpacking to %s" % self.working_dir)
         self.unpack()
         
-        self.entity.change_status("Parsing xml...")
         log(self, LOG_LEVEL_INFO, "defining UUID in description file as %s" % self.uuid)
         self.update_description()
         
-        self.entity.change_status("Installing appliance...")
         log(self, LOG_LEVEL_INFO, "installing package in %s" % self.install_path)
         self.install()
         
-        self.entity.change_status("Cleaning...")
         log(self, LOG_LEVEL_INFO, "cleaning...")
         self.clean()
         
@@ -81,10 +74,6 @@ class TNApplianceDecompresser(Thread):
         self.define_callback(define_iq)
         self.finish_callback()
         
-        self.entity.push_change("vmcasting", "applianceinstalled")
-        self.entity.change_status(old_status)
-        self.entity.shout("appliance", "I've terminated to install applicance %s as %s asked me." % (self.xvm2_package_path, self.requester))
-    
     
     def unpack(self):
         """
@@ -98,8 +87,6 @@ class TNApplianceDecompresser(Thread):
         package             = tarfile.open(name=self.package_path)
         
         package.extractall(path=self.extract_path)
-        
-        self.entity.push_change("vmcasting", "applianceunpacking")
         
         try:
             for aFile in os.listdir(self.extract_path):
@@ -125,8 +112,6 @@ class TNApplianceDecompresser(Thread):
                     o = open(full_path, 'r')
                     self.description_file = o.read()
                     o.close()
-                    
-            self.entity.push_change("vmcasting", "applianceunpacked")
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, str(ex))
     
@@ -174,8 +159,6 @@ class TNApplianceDecompresser(Thread):
         if not self.description_file:
             return False
         
-        self.entity.push_change("vmcasting", "appliancecopying")
-        
         for key, path in self.disk_files.items():
             log(self, LOG_LEVEL_DEBUG, "moving %s to %s" % (path, self.install_path))
             try:
@@ -188,9 +171,6 @@ class TNApplianceDecompresser(Thread):
         f = open(self.install_path + "/current.package", "w")
         f.write(self.package_uuid)
         f.close()
-        
-        self.entity.push_change("vmcasting", "appliancecopied")
-        
         return True
     
     

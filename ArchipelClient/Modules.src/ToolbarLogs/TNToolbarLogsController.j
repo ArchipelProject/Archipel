@@ -84,7 +84,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     };
     
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [mainScrollView setBorderedWithHexColor:@"#9e9e9e"];
+    [mainScrollView setBorderedWithHexColor:@"#C0C7D2"];
     [mainScrollView setAutohidesScrollers:YES];
     
     var defaults = [TNUserDefaults standardUserDefaults];

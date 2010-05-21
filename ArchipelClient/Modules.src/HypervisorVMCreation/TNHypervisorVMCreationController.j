@@ -47,7 +47,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];

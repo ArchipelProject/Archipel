@@ -63,7 +63,7 @@ function generateIPForNewNetwork()
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
@@ -537,9 +537,22 @@ function generateIPForNewNetwork()
 
 - (IBAction)delNetwork:(id)sender
 {
+        [CPAlert alertWithTitle:@"Network deletion confirmation"
+                        message:@"Are you sure you want to destory this network ? Virtual machines that are in this network will loose connectivity."
+                          style:CPInformationalAlertStyle 
+                       delegate:self 
+                        buttons:[@"Delete and undefine", @"Delete", @"Cancel"]];
+}
+
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+{
+    if (returnCode == 2)
+        return;
+    
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
     var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
-    
+
     for (var i = 0; i < [objects count]; i++)
     {
         var networkObject   = [objects objectAtIndex:i];
@@ -556,6 +569,7 @@ function generateIPForNewNetwork()
 
         [self sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
     }
+
 }
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza

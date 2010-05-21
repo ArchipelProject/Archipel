@@ -48,6 +48,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     @outlet CPScrollView    scrollViewSnapshots;
     @outlet CPButtonBar     buttonBarControl;
     @outlet CPView          viewTableContainer;
+    @outlet CPView          maskingView;
     
     CPOutlineView           _outlineViewSnapshots;
     TNSnapshotsDatasource   _datasourceSnapshots;
@@ -61,7 +62,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
@@ -130,6 +131,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo.png"] size:CPSizeMake(16, 16)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
     
     _minusButton = [CPButtonBar minusButton];
@@ -156,6 +158,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
@@ -211,10 +214,31 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     return YES;
 }
 
+- (void)didPresenceUpdated:(CPNotification)aNotification
+{
+    [self checkIfRunning];
+}
+
+- (void)checkIfRunning
+{
+    if ([_entity status] == TNStropheContactStatusOnline || [_entity status] == TNStropheContactStatusAway)
+    {
+        [maskingView removeFromSuperview];
+    }
+    else
+    {
+        [maskingView setFrame:[[self view] bounds]];
+        [[self view] addSubview:maskingView];
+    }
+}
+
+
 - (IBAction)openWindowNewSnapshot:(id)sender
 {
+    [fieldNewSnapshotName setStringValue:@""];
+    [fieldNewSnapshotDescription setStringValue:@""];
     [windowNewSnapshot center];
-    [fieldNewSnapshotName becomeFirstResponder];
+    [windowNewSnapshot makeFirstResponder:fieldNewSnapshotName];
     [windowNewSnapshot makeKeyAndOrderFront:sender];
     
 }
@@ -346,12 +370,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (IBAction)deleteSnapshot:(id)sender
 {
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
-    var uuid            = [CPString UUID];
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
-    var object          = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
-    var name            = [object name];
-
+    
     if ([selectedIndexes count] > 1)
     {
         var growl = [TNGrowlCenter defaultCenter];
@@ -359,8 +379,27 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         return;
     }
     
+    [CPAlert alertWithTitle:@"Snapshot deletion confirmation"
+                    message:@"Are you sure you want to destory this snapshot ? this is not reversible."
+                      style:CPInformationalAlertStyle 
+                   delegate:self 
+                    buttons:[@"Delete", @"Cancel"]];
+}
+
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+{
+    if (returnCode == 1)
+        return;
+    var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
+    var uuid            = [CPString UUID];
+    var object          = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
+    var name            = [object name];
+    
     [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotDelete, "name": name}];    
     [self sendStanza:stanza andRegisterSelector:@selector(didDeleteSnapshot:)];
+
 }
 
 - (void)didDeleteSnapshot:(id)aStanza

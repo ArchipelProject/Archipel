@@ -217,52 +217,52 @@ class TNHypervisorRepoManager:
         log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
         
         if iqType == "get":
-            reply = self.__get(iq)
+            reply = self.get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         if iqType == "register":
-            reply = self.__register(iq)
+            reply = self.register(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         if iqType == "unregister":
-            reply = self.__unregister(iq)
+            reply = self.unregister(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         if iqType == "download":
-            reply = self.__download(iq)
+            reply = self.download(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         if iqType == "downloadqueue":
-            reply = self.__get_download_queue(iq)
+            reply = self.get_download_queue(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if iqType == "getappliance":
-            reply = self.__get_appliance(iq)
+            reply = self.get_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed   
         
         if iqType == "deleteappliance":
-            reply = self.__delete_appliance(iq)
+            reply = self.delete_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if iqType == "getinstalledappliances":
-            reply = self.__get_installed_appliances(iq)
+            reply = self.get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         # if iqType == "install":
-        #     reply = self.__install(iq)
+        #     reply = self.install(iq)
         #     conn.send(reply)
         #     raise xmpp.protocol.NodeProcessed
     
     
-    def __get(self, iq):
+    def get(self, iq):
         """
         get the sources and appliances. Replay parseRSS at each time to be up to date
         
@@ -279,7 +279,7 @@ class TNHypervisorRepoManager:
         return reply
     
         
-    def __register(self, iq):
+    def register(self, iq):
         """
         register to a new VMCast
         
@@ -303,7 +303,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __unregister(self, iq):
+    def unregister(self, iq):
         """
         unregister from a VMCasts and remove all its appliances (not the files)
         
@@ -327,7 +327,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __download(self, iq):
+    def download(self, iq):
         """
         start a download of appliance according to its uuid
         
@@ -359,7 +359,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __get_download_queue(self, iq):
+    def get_download_queue(self, iq):
         """
         get the state of the download queue.
         
@@ -382,7 +382,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __stop_download(self, iq):
+    def stop_download(self, iq):
         """
         stop a download according to its uuid
         
@@ -397,7 +397,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __get_appliance(self, iq):
+    def get_appliance(self, iq):
         """
         get the info about an appliances according to its uuid
         
@@ -423,7 +423,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __get_installed_appliances(self, iq):
+    def get_installed_appliances(self, iq):
         """
         get all installed appliances
         
@@ -450,7 +450,7 @@ class TNHypervisorRepoManager:
         return reply
     
     
-    def __delete_appliance(self, iq):
+    def delete_appliance(self, iq):
         """
         delete an appliance according to its uuid
         

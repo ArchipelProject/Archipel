@@ -76,7 +76,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [[self scrollViewOrigin] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewOrigin] setAutohidesScrollers:YES];
     [[self scrollViewOrigin] setDocumentView:[self tableOriginVMs]];
-    // [[self scrollViewOrigin] setBorderedWithHexColor:@"#9e9e9e"];
+    // [[self scrollViewOrigin] setBorderedWithHexColor:@"#C0C7D2"];
 
     [[self tableOriginVMs] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableOriginVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -113,7 +113,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [[self scrollViewDestination] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [[self scrollViewDestination] setAutohidesScrollers:YES];
     [[self scrollViewDestination] setDocumentView:[self tableDestinationVMs]];
-    // [[self scrollViewDestination] setBorderedWithHexColor:@"#9e9e9e"];
+    // [[self scrollViewDestination] setBorderedWithHexColor:@"#C0C7D2"];
 
     [[self tableDestinationVMs] setUsesAlternatingRowBackgroundColors:YES];
     [[self tableDestinationVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];

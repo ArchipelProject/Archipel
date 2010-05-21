@@ -122,7 +122,7 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 
     [mainScrollView setAutohidesScrollers:YES];
-    [mainScrollView setBorderedWithHexColor:@"#9e9e9e"]
+    [mainScrollView setBorderedWithHexColor:@"#C0C7D2"]
     [mainScrollView setDocumentView:_mainTableView];
     [_mainTableView reloadData];
 }

@@ -59,6 +59,7 @@ class TNApplianceCompresser(Thread):
         f.close()
             
         log(self, LOG_LEVEL_INFO, "creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
+        
         tar_file = self.working_dir + "/" + self.name + ".xvm2";
         tar = tarfile.open(tar_file, "w")
         tar.add(self.working_dir + "/description.xml", "/description.xml")

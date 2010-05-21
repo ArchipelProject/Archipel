@@ -129,10 +129,10 @@ class TNVMApplianceManager:
         """
         try:
             if self.is_installing:
-                raise Exception("InstallationError", "Virtual machine is already installing a package")
+                raise Exception("Virtual machine is already installing a package")
             
             if (self.is_installed):
-                raise Exception("InstallationError", "You must dettach from already attached template")
+                raise Exception("You must dettach from already attached template")
             
             uuid = iq.getTag("query").getTag("uuid").getCDATA()
             requester = iq.getFrom()
@@ -143,7 +143,11 @@ class TNVMApplianceManager:
             
             log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions))
             log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, self.entity, uuid, requester)
+            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, uuid, requester)
+            
+            self.old_status  = self.entity.xmppstatus
+            self.old_show    = self.entity.xmppstatusshow
+            self.entity.change_presence(presence_show="dnd", presence_status="Installing from appliance...")
             
             self.is_installing = True
             self.installing_media_uuid = uuid
@@ -167,7 +171,7 @@ class TNVMApplianceManager:
         """
         try:
             if self.is_installing:
-                raise Exception("InstallationError", "Virtual machine is already installing a package")
+                raise Exception("Virtual machine is already installing a package")
 
             package_file_path = self.entity.vm_own_folder + "/current.package"
             os.unlink(package_file_path)
@@ -190,22 +194,32 @@ class TNVMApplianceManager:
         """
         try:
             if self.is_installing:
-                raise Exception("InstallationError", "Virtual machine is already installing a package")
+                raise Exception("Virtual machine is already installing a package")
             
-            disk_nodes = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
+            if not self.entity.definition:
+                raise Exception("Virtual machine is not defined")
             
-            paths = []
+            disk_nodes      = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
+            package_name    = iq.getTag("query").getAttr("name")
+            paths           = []
+            
+            if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
+                log(self, LOG_LEVEL_ERROR, self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
+                raise Exception("Appliance with name %s is already in hypervisor repository" % package_name)
+            
+            self.old_status  = self.entity.xmppstatus
+            self.old_show    = self.entity.xmppstatusshow
+            self.entity.change_presence(presence_show="dnd", presence_status="Packaging myself...")
+            
             for disk_node in disk_nodes:
                 path = disk_node.getTag('source').getAttr('file')
                 paths.append(path)
             
-            compressor = appliancecompresser.TNApplianceCompresser(self.entity.uuid, paths, self.entity.definition, "/tmp", "/tmp", self.entity.vm_own_folder, self.hypervisor_repo_path, self.finish_packaging)
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, "/tmp", "/tmp", self.entity.vm_own_folder, self.hypervisor_repo_path, self.finish_packaging)
             
             self.is_installing = True
-            compressor.start()
-            
             self.entity.push_change("vmcasting", "packaging")
-
+            compressor.start()
             reply = iq.buildReply('success')
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -216,8 +230,16 @@ class TNVMApplianceManager:
         self.is_installed = True
         self.is_installing = False
         self.installing_media_uuid = None
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+        self.entity.push_change("vmcasting", "applianceinstalled")
+        self.entity.change_status("Off")
+        self.entity.shout("appliance", "I've terminated to install from applicance.")
+        
         
     def finish_packaging(self):
         self.is_installing = False
         self.entity.push_change("vmcasting", "packaged")
+        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False);
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+            
         

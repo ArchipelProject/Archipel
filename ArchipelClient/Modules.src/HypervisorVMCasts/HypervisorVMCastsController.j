@@ -66,7 +66,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     _castsDatasource = [[TNVMCastDatasource alloc] init];
@@ -80,7 +80,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columnName headerView] setStringValue:@"VMCasts"];
-    [columnName setWidth:200];
+    [columnName setWidth:300];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     
     var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
@@ -280,6 +280,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (IBAction)showDownloadQueue:(id)sender
 {
+    [windowNewCastURL setTitle:@"Download queue for " + [_entity nickname]];
     [windowDownloadQueue makeKeyAndOrderFront:nil];
 }
 

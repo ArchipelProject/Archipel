@@ -6,6 +6,7 @@ import sys
 import datetime
 import ConfigParser
 import xmpp
+import inspect
 
 LOG_LEVEL_DEBUG = 0
 """This level of log is the most verbose"""
@@ -147,7 +148,8 @@ def log(logger, level, message) :
 
 
 def build_error_iq(originclass, ex, iq):
-    log(originclass, LOG_LEVEL_ERROR, "exception raised is : {0}".format(ex))
+    caller = inspect.stack()[2][3];
+    log(originclass, LOG_LEVEL_ERROR, "%s: exception raised is : %s" % (caller, ex))
     reply = iq.buildReply('error')
     payload = xmpp.Node("error")
     payload.addData(str(ex))

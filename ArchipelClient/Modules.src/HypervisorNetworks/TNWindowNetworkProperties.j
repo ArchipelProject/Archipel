@@ -90,7 +90,7 @@
     _minusButton = [CPButtonBar minusButton];
     [buttonBarControl setButtons:[_plusButton, _minusButton]];
     
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     [buttonForwardMode removeAllItems];
     [buttonForwardMode addItemsWithTitles:["route", "nat"]];
@@ -108,7 +108,7 @@
     [_scrollViewDHCPRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_scrollViewDHCPRanges setAutohidesScrollers:YES];
     [_scrollViewDHCPRanges setDocumentView:_tableViewRanges];
-    // [_scrollViewDHCPRanges setBorderedWithHexColor:@"#9e9e9e"];
+    // [_scrollViewDHCPRanges setBorderedWithHexColor:@"#C0C7D2"];
 
     [_tableViewRanges setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -138,7 +138,7 @@
     [_scrollViewDHCPHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_scrollViewDHCPHosts setAutohidesScrollers:YES];
     [_scrollViewDHCPHosts setDocumentView:_tableViewHosts];
-    // [_scrollViewDHCPHosts setBorderedWithHexColor:@"#9e9e9e"];
+    // [_scrollViewDHCPHosts setBorderedWithHexColor:@"#C0C7D2"];
 
     [_tableViewHosts setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];

@@ -49,7 +49,7 @@
     CPLog.debug(messagesScrollView);
     _messages = [CPArray array];
      
-     [messagesScrollView setBorderedWithHexColor:@"#9e9e9e"];
+     [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];
      [messagesScrollView setAutoresizingMask:CPViewWidthSizable];
      [messagesScrollView setAutohidesScrollers:YES];
      

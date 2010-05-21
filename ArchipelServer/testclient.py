@@ -24,7 +24,6 @@ class XMPPVirtualMachineController(TNArchipelBasicXMPPClient):
         if  (sys.argv[2] == "archipel:hypervisor:network" and (sys.argv[3] == "undefine" or sys.argv[3] == "create" or sys.argv[3] == "destroy")):
             iq.setQueryPayload([sys.argv[4]])
         
-        print "sending iq : " + str(iq)
         self.xmppclient.send(iq)
 
 

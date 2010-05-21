@@ -59,7 +59,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
     _tableVirtualMachines   = [[CPTableView alloc] initWithFrame:[VMScrollView bounds]];

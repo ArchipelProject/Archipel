@@ -64,10 +64,6 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 */
 - (void)awakeFromCib
 {
-    [[self maskingView] setBackgroundColor:[CPColor whiteColor]];
-    [[self maskingView] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self maskingView] setAlphaValue:0.9];
-    
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
 
     _vncWebView = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
@@ -86,6 +82,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
     var viewBounds = [[self view] bounds];
     viewBounds.size.height = 1000;
@@ -98,21 +95,11 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 {
     [super willShow];
 
-    [[self maskingView] setFrame:[[self view] bounds]];
+    [maskingView setFrame:[[self view] bounds]];
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
-    if ([_entity status] == TNStropheContactStatusOnline)
-    {
-        [[self maskingView] removeFromSuperview];
-        [self getVirtualMachineVNCDisplay];
-    }
-    else
-    {
-        [[self maskingView] setFrame:[[self view] bounds]];
-        [[self view] addSubview:[self maskingView]];
-    }
+    [self checkIfRunning];
 }
 
 /*! TNModule implementation
@@ -132,8 +119,6 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 - (void)willUnload
 {
     [super willUnload];
-
-    [[self maskingView] removeFromSuperview];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -145,6 +130,27 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 }
 /*! send stanza to get the current virtual machine VNC display
 */
+
+- (void)didPresenceUpdated:(CPNotification)aNotification
+{
+    [self checkIfRunning];
+}
+
+- (void)checkIfRunning
+{
+    if ([_entity status] == TNStropheContactStatusOnline)
+    {
+        [maskingView removeFromSuperview];
+        [self getVirtualMachineVNCDisplay];
+    }
+    else
+    {
+        [maskingView setFrame:[[self view] bounds]];
+        [[self view] addSubview:maskingView];
+    }
+}
+
+
 - (void)getVirtualMachineVNCDisplay
 {
     var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];

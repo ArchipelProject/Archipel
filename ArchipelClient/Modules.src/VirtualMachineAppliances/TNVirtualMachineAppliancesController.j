@@ -46,17 +46,21 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPView                      viewTableContainer;
+    @outlet CPWindow                    windowNewAppliance;
+    @outlet CPTextField                 fieldNewApplianceName;
+    @outlet CPView                      maskingView;
     
     CPTableView                         _tableAppliances;
     TNTableViewDataSource               _appliancesDatasource;
     
+    CPButton    _packageButton;
     CPButton    _instanciateButton;
     CPButton    _dettachButton;
 }
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -117,6 +121,12 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [menu addItemWithTitle:@"Dettach" action:@selector(dettach:) keyEquivalent:@""];
     [_tableAppliances setMenu:menu];
     
+    _packageButton      = [CPButtonBar plusButton];
+    [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-package.png"] size:CPSizeMake(16, 16)]];
+    [_packageButton setTarget:self];
+    [_packageButton setAction:@selector(openNewApplianceWindow:)];
+    
+    
     _instanciateButton  = [CPButtonBar plusButton];
     [_instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-combine.png"] size:CPSizeMake(16, 16)]];
     [_instanciateButton setTarget:self];
@@ -129,7 +139,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [_instanciateButton setEnabled:NO];
     [_dettachButton setEnabled:NO];
-    [buttonBarControl setButtons:[_instanciateButton, _dettachButton]];
+    [buttonBarControl setButtons:[_instanciateButton, _dettachButton, _packageButton]];
 }
 
 - (void)willLoad
@@ -138,8 +148,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-    
+
     [self registerSelector:@selector(didDownloadPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
     
     [_tableAppliances setDelegate:nil];
@@ -162,11 +173,31 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+    
+    [self checkIfRunning];
 }
 
 - (void)willHide
 {
     [super willHide];
+}
+
+- (void)checkIfRunning
+{
+    if ([_entity status] == TNStropheContactStatusBusy)
+    {
+        [maskingView removeFromSuperview];
+    }
+    else
+    {
+        [maskingView setFrame:[[self view] bounds]];
+        [[self view] addSubview:maskingView];
+    }
+}
+
+- (void)didPresenceUpdated:(CPNotification)aNotification
+{
+    [self checkIfRunning];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -184,9 +215,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
     
-    // if (sender != [_entity JID])
-    //     return;
-    
     if (change == @"applianceinstalled")
     {
         var growl = [TNGrowlCenter defaultCenter];
@@ -197,6 +225,13 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
         [self getInstalledAppliances];
 
     return YES;
+}
+
+- (IBAction)openNewApplianceWindow:(id)sender
+{
+    [fieldNewApplianceName setStringValue:[CPString UUID]];
+    [windowNewAppliance makeFirstResponder:fieldNewApplianceName];
+    [windowNewAppliance makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)tableDoubleClicked:(id)sender
@@ -334,10 +369,13 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     }
     
     var stanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
-
-    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingPackage}];
+    var name    = [fieldNewApplianceName stringValue];
+    
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineVMCastingPackage, "name": name}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPackageAppliance:) ofObject:self];
+    
+    [windowNewAppliance close];
 }
 
 - (void)didPackageAppliance:(TNStropheStanza)aStanza
