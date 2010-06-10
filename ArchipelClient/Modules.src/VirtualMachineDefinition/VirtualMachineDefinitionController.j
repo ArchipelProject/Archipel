@@ -863,7 +863,6 @@ function generateMacAddr()
     [windowDriveEdition setEntity:_entity];
     [windowDriveEdition center];
     [windowDriveEdition orderFront:nil];
-
 }
 
 - (IBAction)deleteDrive:(id)sender
@@ -873,12 +872,12 @@ function generateMacAddr()
         [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
         return;
     }
-
+    
      var selectedIndexes = [_tableDrives selectedRowIndexes];
      CPLog.debug(selectedIndexes);
      
      [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
-
+     
      [_tableDrives reloadData];
      [_tableDrives deselectAll];
      [self defineXML:nil];

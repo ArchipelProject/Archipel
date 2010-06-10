@@ -42,7 +42,7 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_hypervisor(self, conn, iq):            
-        log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur")
+        log(self, LOG_LEVEL_DEBUG, "Network IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
         
@@ -70,6 +70,11 @@ class TNHypervisorNetworks:
             reply = self.__module_network_list(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        if iqType == "bridges":
+            reply = self.__module_network_bridges(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
@@ -79,6 +84,11 @@ class TNHypervisorNetworks:
         
         if iqType == "list":
             reply = self.__module_network_name_list(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if iqType == "bridges":
+            reply = self.__module_network_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -187,30 +197,31 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = iq.buildReply('success')
-        active_networks_nodes = [] 
-        not_active_networks_nodes = [] #xmpp.Node(tag="unactivedNetworks")
+        try:
+            reply = iq.buildReply('success')
+            active_networks_nodes = [] 
+            not_active_networks_nodes = [] #xmpp.Node(tag="unactivedNetworks")
         
-        actives_networks_names = self.libvirt_connection.listNetworks()
-        not_active_networks_names = self.libvirt_connection.listDefinedNetworks()
+            actives_networks_names = self.libvirt_connection.listNetworks()
+            not_active_networks_names = self.libvirt_connection.listDefinedNetworks()
         
         
-        for network_name in actives_networks_names:
-            network = self.libvirt_connection.networkLookupByName(network_name)
-            desc = network.XMLDesc(0)
-            n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
-            active_networks_nodes.append(n)
+            for network_name in actives_networks_names:
+                network = self.libvirt_connection.networkLookupByName(network_name)
+                desc = network.XMLDesc(0)
+                n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                active_networks_nodes.append(n)
         
-        for network_name in not_active_networks_names:
-            network = self.libvirt_connection.networkLookupByName(network_name)
-            desc = network.XMLDesc(0)
-            n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
-            not_active_networks_nodes.append(n)
-        
-        active_networks_root_node = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes)
-        not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes)
-        
-        reply.setQueryPayload([active_networks_root_node, not_active_networks_root_node])
+            for network_name in not_active_networks_names:
+                network = self.libvirt_connection.networkLookupByName(network_name)
+                desc = network.XMLDesc(0)
+                n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                not_active_networks_nodes.append(n)
+            active_networks_root_node = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes)
+            not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes)
+            reply.setQueryPayload([active_networks_root_node, not_active_networks_root_node])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 
@@ -224,16 +235,41 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = iq.buildReply('success')
-        active_networks_nodes = [] 
-        
-        actives_networks_names = self.libvirt_connection.listNetworks()
-        
-        for network_name in actives_networks_names:
-            network = xmpp.Node(tag="network", attrs={"name": network_name})
-            active_networks_nodes.append(network)
-        
-        reply.setQueryPayload(active_networks_nodes)
+        try:
+            reply = iq.buildReply('success')
+            active_networks_nodes = [] 
+            actives_networks_names = self.libvirt_connection.listNetworks()
+            for network_name in actives_networks_names:
+                network = xmpp.Node(tag="network", attrs={"name": network_name})
+                active_networks_nodes.append(network)
+            reply.setQueryPayload(active_networks_nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
 
+    def __module_network_bridges(self, iq):
+        """
+        list all virtual networks name
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply('success')
+            output = commands.getoutput("brctl show | grep -v -E '^[[:space:]]'")
+            lines = output.split("\n")[1:]
+            bridges_names = [] 
+            for line in lines:
+                bridge_name = line.split()[0];
+                bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
+                bridges_names.append(bridge_node)
+            reply.setQueryPayload(bridges_names)
+            print str(reply)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+        

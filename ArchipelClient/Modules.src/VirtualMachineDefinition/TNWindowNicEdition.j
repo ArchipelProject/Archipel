@@ -18,8 +18,9 @@
 
 @import "TNNetworkInterfaceObject.j"
 
-TNArchipelTypeHypervisorNetwork            = @"archipel:hypervisor:network";
-TNArchipelTypeHypervisorNetworkList        = @"list";
+TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
+TNArchipelTypeHypervisorNetworkList         = @"list";
+TNArchipelTypeHypervisorNetworkBridges      = @"bridges";
 
 TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
 TNArchipelNICTypes  = ["network", "bridge", "user"];
@@ -110,6 +111,33 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
 }
 
+- (void)getBridges
+{
+    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}];
+
+    [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkBridges}];
+
+    [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
+}
+
+- (void)didReceiveBridges:(id)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        var bridges = [aStanza childrenWithName:@"bridge"];
+        
+        [buttonSource removeAllItems];
+        for (var i = 0; i < [bridges count]; i++)
+        {
+            var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"];
+            [buttonSource addItemWithTitle:bridge];
+        }
+        [buttonSource selectItemWithTitle:[_nic source]];
+    }
+    else
+        CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
+}
+
 - (IBAction)performRadioNicTypeChanged:(id)sender
 {
     var nicType = [[sender selectedRadio] title];
@@ -123,12 +151,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     }
     else if(nicType == @"Bridge")
     {
-        var source = ["virbr0", "virbr1", "virbr2"];
-        
-        [_nic setType:@"bridge"];
-        
         [buttonSource removeAllItems];
-        [buttonSource addItemsWithTitles:source];
+        [_nic setType:@"bridge"];        
+        [self getBridges];
     }
     else if(nicType == @"User")
     {
