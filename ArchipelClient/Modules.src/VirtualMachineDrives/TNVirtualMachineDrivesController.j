@@ -438,6 +438,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [diskStanza addTextNode:[buttonEditDiskFormat title]];
     [diskStanza up];
     
+    [windowDiskProperties orderOut:nil];
+    
     [imageViewConverting setHidden:NO];
     [_entity sendStanza:diskStanza andRegisterSelector:@selector(didConvertDisk:) ofObject:self];
 }

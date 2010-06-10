@@ -297,7 +297,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
     
     [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gear.png"] size:CPSizeMake(20, 20)]];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"plus-menu.png"] size:CPSizeMake(20, 20)]];
     [plusButton setBordered:NO];
     [plusButton setImagePosition:CPImageOnly];
     
