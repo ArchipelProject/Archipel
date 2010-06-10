@@ -203,22 +203,28 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
-            log(self, LOG_LEVEL_INFO, "libvirt event received: %d from %s" % (event, dom.UUID()))
+            log(self, LOG_LEVEL_INFO, "libvirt event received: %d from %s with detail %s" % (event, dom.UUID(), detail))
+            
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
                 self.push_change("virtualmachine:control", "created")
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
                 self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
                 self.push_change("virtualmachine:control", "suspended")
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
                 self.push_change("virtualmachine:control", "resumed")
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned")
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
                 self.push_change("virtualmachine:definition", "defined")
