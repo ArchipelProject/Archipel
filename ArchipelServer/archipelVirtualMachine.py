@@ -214,7 +214,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
             log(self, LOG_LEVEL_INFO, "libvirt event received: %d from %s" % (event, dom.UUID()))
-            
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
