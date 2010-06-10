@@ -268,7 +268,6 @@ class TNHypervisorNetworks:
                 bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
                 bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)
-            print str(reply)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
