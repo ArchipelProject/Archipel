@@ -541,13 +541,13 @@ function generateIPForNewNetwork()
                         message:@"Are you sure you want to destory this network ? Virtual machines that are in this network will loose connectivity."
                           style:CPInformationalAlertStyle 
                        delegate:self 
-                        buttons:[@"Delete and undefine", @"Delete", @"Cancel"]];
+                        buttons:[@"Delete", @"Cancel"]];
 }
 
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
 {
-    if (returnCode == 2)
+    if (returnCode == 1)
         return;
     
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes];

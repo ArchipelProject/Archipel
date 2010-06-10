@@ -34,20 +34,14 @@ class TNHypervisorNetworks:
     
     def __init__(self, entity):
         self.entity = entity
-        
-        if self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            self.libvirt_connection = libvirt.open(None)
-            if self.libvirt_connection == None:
-                log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
-                sys.exit(0) 
-            log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        self.libvirt_connection = libvirt.open(None)
+        if self.libvirt_connection == None:
+            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+            sys.exit(0) 
+        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
     
     
-    def process_iq_for_hypervisor(self, conn, iq):
-        
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
+    def process_iq_for_hypervisor(self, conn, iq):            
         log(self, LOG_LEVEL_INFO, "received network iq for hyperviseur")
         
         iqType = iq.getTag("query").getAttr("type")
@@ -79,9 +73,6 @@ class TNHypervisorNetworks:
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         log(self, LOG_LEVEL_INFO, "received network iq for virtual machine")
         
         iqType = iq.getTag("query").getAttr("type")
@@ -103,9 +94,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         try:
             network_node = iq.getTag("query").getTag("network")
             
@@ -128,9 +116,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData()
@@ -154,9 +139,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData()
@@ -181,9 +163,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         reply = None
         try:
             network_uuid = iq.getTag("query").getData()
@@ -208,9 +187,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         reply = iq.buildReply('success')
         active_networks_nodes = [] 
         not_active_networks_nodes = [] #xmpp.Node(tag="unactivedNetworks")
@@ -248,9 +224,6 @@ class TNHypervisorNetworks:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.entity.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-            
         reply = iq.buildReply('success')
         active_networks_nodes = [] 
         

@@ -70,8 +70,6 @@ COLORING_MAPPING_LOG_LEVEL  = { LOG_LEVEL_INFO: COLOR_INFO,
                                 LOG_LEVEL_DEBUG: COLOR_DEBUG, 
                                 LOG_LEVEL_ERROR: COLOR_ERROR}
 
-NS_ARCHIPEL_USE_LIBVIRT_MODULE = True
-
 def init_conf(path):
     """
     this method intialize the configuration object (that will be passed to all 
@@ -91,8 +89,11 @@ def init_conf(path):
         globals()["LOG_LEVEL"] = LOG_LEVEL_ERROR
     log_file = conf.get("LOGGING", "logging_file_path")
     globals()["LOG_WRITE_IN_FILE"] = log_file
+    #globals()["ARCHIPEL_LOG_FILE"] = open(log_file, "a+")
     
     return conf
+
+
 
 
 def log(logger, level, message) :
@@ -143,8 +144,9 @@ def log(logger, level, message) :
         print entry
         
     if LOG_WRITE_IN_FILE:
-        f = open(LOG_WRITE_IN_FILE, "a+")
-        f.write(entry + "\n")
+        ARCHIPEL_LOG_FILE = open(LOG_WRITE_IN_FILE, "a+")
+        ARCHIPEL_LOG_FILE.write(entry + "\n")
+        ARCHIPEL_LOG_FILE.close();
 
 
 def build_error_iq(originclass, ex, iq):

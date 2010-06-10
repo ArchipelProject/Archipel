@@ -60,6 +60,30 @@ NS_ARCHIPEL_STATUS_NOT_DEFINED  = "Not defined"
 
 NS_ARCHIPEL_VM_CONTROL          = "archipel:vm:control"
 NS_ARCHIPEL_VM_DEFINITION       = "archipel:vm:definition"
+NS_ARCHIPEL_VM_DEPENDENCE       = "archipel:vm:dependence"
+
+NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE    = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE";
+NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD         = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD";
+
+class TNArchipelVirtualMachineRunningState:
+    
+    def __init__(self, vm, check_type=NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE, command=None, result=VIR_DOMAIN_RUNNING):
+        self.vm = vm
+        self.check_type = check_type
+        self.command = command
+        self.result = result
+    
+    def process_check(self):
+        if self.check_type == NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE:
+            if self.vm.info()[0] == self.result:
+                return True
+        
+        if self.check_type == NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD:
+            if command.getoutput(self.command) == self.result:
+                return True
+        
+        return False
+        
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     """
@@ -74,12 +98,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def __init__(self, jid, password, hypervisor, configuration):
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         
-        self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "disk_base_path") + "/"
+        self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_base_path") + "/"
         self.vm_own_folder      = self.vm_disk_base_path + str(self.jid.getNode())
         
-        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            self.libvirt_connection = None
-            self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        self.libvirt_connection = None
+        self.register_actions_to_perform_on_auth("connect_libvirt", None)
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         # whooo... this technic is dirty. was I drunk ? TODO!
@@ -109,9 +132,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         self.xmppclient.disconnect()
         
-        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            if self.libvirt_connection:
-                self.libvirt_connection.close() 
+        if self.libvirt_connection:
+            self.libvirt_connection.close() 
     
     
     def remove_own_folder(self):
@@ -135,8 +157,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         self.push_change("virtualmachine", "initialized")
         
@@ -188,8 +208,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -215,8 +233,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -240,8 +256,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -264,8 +278,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -289,8 +301,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -314,8 +324,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -392,8 +400,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        @rtype: xmpp.Protocol.Iq
        @return: a ready to send IQ containing the result of the action
        """
-       if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-           return
        
        reply = None
        
@@ -431,8 +437,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
         
         reply = None
         try:
@@ -446,6 +450,32 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
+    
+    # iq dependencies
+    def dep_define(self, iq):
+        reply = None;
+        try:
+            raise Exception("Not implemented")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+    
+    
+    def dep_add(self, iq):
+        reply = None;
+        try:
+            raise Exception("Not implemented")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+        
+    def dep_remove(self, iq):
+        reply = None;
+        try:
+            raise Exception("Not implemented")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
     
     ######################################################################################################
     ### XMPP Processing
@@ -468,9 +498,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-        
         
         log(self, LOG_LEVEL_DEBUG, "Control IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
@@ -536,9 +563,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        if not self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            return
-        
         log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
@@ -554,4 +578,37 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             raise xmpp.protocol.NodeProcessed        
     
     
+    def __process_iq_archipel_dependence(self, conn, iq):
+        """
+        Invoked when new archipel:dependence IQ is received.
+        
+        it understands IQ of type:
+            - add
+            - remove
+            - define
+            
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
 
+        log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+
+        iqType = iq.getTag("query").getAttr("type")
+
+        if iqType == "add":
+            reply = self.dep_add(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if iqType == "remove":
+            reply = self.dep_remove(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        if iqType == "define":
+            reply = self.dep_define(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    

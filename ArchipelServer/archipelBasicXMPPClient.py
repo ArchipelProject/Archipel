@@ -70,7 +70,12 @@ class TNArchipelBasicXMPPClient(object):
         self.roster_retreived = False
         self.registered_actions_to_perform_on_connection = []
         
-        self.ipaddr = self.configuration.get("GLOBAL", "machine_ip")
+        ip_conf = self.configuration.get("GLOBAL", "machine_ip")
+
+        if ip_conf == "auto":
+            self.ipaddr = socket.gethostbyname(socket.gethostname())
+        else:
+            self.ipaddr = ip_conf
         
         for method in self.__class__.__dict__:
             if not method.find("__module_init__") == -1:
@@ -312,13 +317,12 @@ class TNArchipelBasicXMPPClient(object):
     
    
     def disconnect(self):
-        """
-        Close the connections from XMPP server
-        """
+        """Close the connections from XMPP server"""
         self.xmppclient.disconnect()
     
     
     def push_change(self, namespace, change):
+        """push a change using archipel push system"""
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         self.roster = self.xmppclient.getRoster()
         for item in self.roster.getItems():
@@ -412,7 +416,7 @@ class TNArchipelBasicXMPPClient(object):
         type_node.setData(params["entity_type"])
         
         
-        if (self.configuration.get("GLOBAL", "use_avatar") == "yes"):
+        if (self.configuration.getboolean("GLOBAL", "use_avatar")):
             avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
             try:
                 avatar_file = params["avatar_file"]

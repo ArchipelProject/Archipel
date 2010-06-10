@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "Resources/DateFormat.js";
+@import "Resources/dateFormat.js";
 
 /*! @ingroup utils
     Categories that make CPTabView like iTunes' one

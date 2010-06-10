@@ -977,11 +977,11 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     copy.style.position = "absolute";
     copy.style.fontSize = "10px";
     copy.style.color = "#5a5a5a";
-    copy.style.width = "300px";
+    copy.style.width = "500px";
     copy.style.bottom = "8px";
     copy.style.left = "50%";
     copy.style.textAlign = "center";
-    copy.style.marginLeft = "-150px";
+    copy.style.marginLeft = "-250px";
     copy.style.textShadow = "0px 1px 0px white";
     copy.innerHTML =  [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] + @" - " + [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);

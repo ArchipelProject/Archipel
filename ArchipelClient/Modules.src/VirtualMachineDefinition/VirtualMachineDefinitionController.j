@@ -136,6 +136,7 @@ function generateMacAddr()
     @outlet CPView                  viewDrivesContainer;
     @outlet CPScrollView            scrollViewForNics;
     @outlet CPScrollView            scrollViewForDrives;
+    @outlet CPView                  maskingView;
 
     CPColor                         _buttonBezelHighlighted;
     CPColor                         _buttonBezelSelected;
@@ -146,10 +147,10 @@ function generateMacAddr()
     CPButton                        _plusButtonNics;
     CPButton                        _minusButtonNics;
     CPButton                        _editButtonNics;
-    CPTableView                     _tableNetworkNics   @accessors;
-    TNTableViewDataSource           _nicsDatasource      @accessors;
-    CPTableView                     _tableDrives         @accessors;
-    TNTableViewDataSource           _drivesDatasource    @accessors;
+    CPTableView                     _tableNetworkNics       @accessors; // ???
+    TNTableViewDataSource           _nicsDatasource         @accessors; // ??? why the fuck I used accessors here ?
+    CPTableView                     _tableDrives            @accessors; // ???
+    TNTableViewDataSource           _drivesDatasource       @accessors; // ???
 }
 
 - (void)awakeFromCib
@@ -379,6 +380,8 @@ function generateMacAddr()
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+    
+    [self checkIfRunning];
 }
 
 - (void)willHide
@@ -411,6 +414,7 @@ function generateMacAddr()
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
+    [self checkIfRunning];
 }
 
 - (void)setDefaultValues
@@ -447,18 +451,22 @@ function generateMacAddr()
     
 }
 
-// - (void)checkIfRunning
-// {
-//     var status = [_entity status];
-//     
-//     if ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway) || (status == TNStropheContactStatusOffline))
-//     {
-//         // [maskingView setFrame:[[self view] bounds]];
-//         // [[self view] addSubview:maskingView];
-//     }
-//     else
-//         ;//[maskingView removeFromSuperview];
-// }
+- (void)checkIfRunning
+{
+    var status = [_entity status];
+    
+    if (status != TNStropheContactStatusBusy)
+    {
+        if (![maskingView superview])
+        {
+            [maskingView setFrame:[[self view] bounds]];
+            [[self view] addSubview:maskingView];
+        }
+    }
+    else
+        [maskingView removeFromSuperview];
+}
+
 
 - (TNStropheStanza)generateXMLDescStanzaWithUniqueID:(CPNumber)anUid
 {

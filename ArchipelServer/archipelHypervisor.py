@@ -116,12 +116,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.database_file = database_file
         self.__manage_persistance()
         
-        if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-            self.libvirt_connection = libvirt.open(None)
-            if self.libvirt_connection == None:
-                log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
-                sys.exit(0) 
-            log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        self.libvirt_connection = libvirt.open(self.configuration.get("HYPERVISOR", "hypervisor_uri"))
+        if self.libvirt_connection == None:
+            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+            sys.exit(0) 
+        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
         
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "hypervisor", "avatar_file": default_avatar})
@@ -263,12 +262,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             domain_uuid = vm_jid.split("@")[0]
             vm          = self.virtualmachines[domain_uuid]
             
-            if self.configuration.get("GLOBAL", "use_libvirt") == "yes":
-                if (vm.get_instance().domain):
-                    if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
-                        vm.get_instance().domain.destroy()
-                    vm.get_instance().domain.undefine()
-            
+            if (vm.get_instance().domain):
+                if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
+                    vm.get_instance().domain.destroy()
+                vm.get_instance().domain.undefine()
+        
             log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
             self.remove_jid(vm_jid)
             

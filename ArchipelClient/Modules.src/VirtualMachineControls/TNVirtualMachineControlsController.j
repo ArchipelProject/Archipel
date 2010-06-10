@@ -19,6 +19,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+
+TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition";
 TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
 
 TNArchipelControlNotification                   = @"TNArchipelControlNotification";
@@ -113,6 +115,7 @@ TNArchipelTransportBarReboot    = 3;
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationControl];
+    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinition];
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];

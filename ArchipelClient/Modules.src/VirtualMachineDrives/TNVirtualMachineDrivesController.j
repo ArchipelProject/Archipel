@@ -48,10 +48,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     @outlet CPPopUpButton   buttonEditDiskFormat;
     @outlet CPImageView     imageViewConverting;
     @outlet CPButton        buttonConvert;
-    
+    @outlet CPView          maskingView;
     
     @outlet CPScrollView    scrollViewDisks;
-    
     
     @outlet CPSearchField   fieldFilter;
     @outlet CPButtonBar     buttonBarControl;
@@ -70,18 +69,17 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)awakeFromCib
 {
-    [viewTableContainer setBorderedWithHexColor:@"#9e9e9e"];
+    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     [buttonNewDiskSizeUnit removeAllItems];
     [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
-
+    
     var formats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
     [buttonNewDiskFormat removeAllItems];
     [buttonNewDiskFormat addItemsWithTitles:formats];
     
     [buttonEditDiskFormat removeAllItems];
     [buttonEditDiskFormat addItemsWithTitles:formats];
-    
     
     var bundle = [CPBundle mainBundle];
     [imageViewConverting setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"]]];
@@ -252,6 +250,16 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var status = [_entity status];
     
     _isActive = ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway));
+    
+    if (status == TNStropheContactStatusBusy)
+    {
+        [maskingView removeFromSuperview];
+    }
+    else
+    {
+        [maskingView setFrame:[[self view] bounds]];
+        [[self view] addSubview:maskingView];
+    }
 }
 
 - (void)getDisksInfo
@@ -297,6 +305,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (IBAction)openNewDiskWindow:(id)sender
 {
+    [fieldNewDiskName setStringValue:@""];
+    [fieldNewDiskSize setStringValue:@""];
+    [buttonNewDiskFormat selectItemWithTitle:@"qcow2"];
     [windowNewDisk makeFirstResponder:fieldNewDiskName];
     [windowNewDisk center];
     [windowNewDisk makeKeyAndOrderFront:nil];
@@ -472,10 +483,23 @@ TNArchipelPushNotificationDiskCreated    = @"created";
          [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
          return;
     }
+    
+    [CPAlert alertWithTitle:@"Drive deletion confirmation"
+                    message:@"Are you sure you want to destory this drive ? this is not reversible."
+                      style:CPInformationalAlertStyle 
+                   delegate:self 
+                    buttons:[@"Delete and undefine", @"Delete", @"Cancel"]];
+}
 
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+{
+    if (returnCode == 2)
+        return;
+    
     var selectedIndexes = [_tableMedias selectedRowIndexes];
     var objects = [_mediasDatasource objectsAtIndexes:selectedIndexes];
-    
+
     for (var i = 0; i < [objects count]; i++)
     {
         var dName           = [objects objectAtIndex:i];
@@ -484,6 +508,10 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
         [diskStanza addChildName:@"name"];
         [diskStanza addTextNode:[dName path]];
+        [diskStanza up];
+        
+        if (returnCode == 0)
+            [diskStanza addChildName:@"undefine"];
 
         [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
     }

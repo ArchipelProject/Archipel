@@ -168,6 +168,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setDelegate:nil];
     [_outlineViewSnapshots setDelegate:self];
     
+    [self checkIfRunning];
     [self getSnapshots:nil];
 }
 
@@ -185,6 +186,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)willShow
 {
     [super willShow];
+    [self checkIfRunning];
 }
 
 - (void)willHide
