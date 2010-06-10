@@ -33,18 +33,18 @@ from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 import string
 from random import choice
- 
+import libvirtEventLoop
+
 try:
     import libvirt
 except ImportError:
     pass
 
-GROUP_VM = "virtualmachines"
-GROUP_HYPERVISOR = "hypervisors"
-
-NS_ARCHIPEL_HYPERVISOR_CONTROL = "archipel:hypervisor:control"
-
+GROUP_VM                        = "virtualmachines"
+GROUP_HYPERVISOR                = "hypervisors"
+NS_ARCHIPEL_HYPERVISOR_CONTROL  = "archipel:hypervisor:control"
 NS_ARCHIPEL_STATUS_ONLINE       = "Online"
+
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -83,7 +83,6 @@ class TNThreadedVirtualMachine(Thread):
         except Exception as ex:
             log(self, LOG_LEVEL_ERROR, "vm has been stopped execption :" + str(ex))
     
-  
 
 
    
@@ -121,6 +120,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
             sys.exit(0) 
         log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        
+        ## start the run looop
+        libvirtEventLoop.virEventLoopPureStart()
         
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "hypervisor", "avatar_file": default_avatar})
@@ -190,7 +192,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             self.virtualmachines[uuid].get_instance().set_loop_status(LOOP_OFF)
         TNArchipelBasicXMPPClient.disconnect(self)
     
-    
+        
     ######################################################################################################
     ###  Hypervisor controls
     ######################################################################################################

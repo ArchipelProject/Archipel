@@ -176,6 +176,20 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             
             if self.domain:
                 self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
+
+            # register for libvirt handlers
+            # VIR_DOMAIN_EVENT_DEFINED = 0
+            #             VIR_DOMAIN_EVENT_UNDEFINED = 1
+            #             VIR_DOMAIN_EVENT_STARTED = 2
+            #             VIR_DOMAIN_EVENT_SUSPENDED = 3
+            #             VIR_DOMAIN_EVENT_RESUMED = 4
+            #             VIR_DOMAIN_EVENT_STOPPED = 5
+            #
+            
+            self.libvirt_connection.domainEventRegister(self.on_domain_event,None)
+            #self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, self.on_domain_event, None);
+            #self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, self.on_domain_event, None);
+            
             
             dominfo = self.domain.info()
             log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0])
@@ -197,6 +211,22 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log(self, LOG_LEVEL_ERROR, "unexpected exception : " + str(ex))
             sys.exit(0)
     
+    def on_domain_event(self, conn, dom, event, detail, opaque):
+        print "%s == %s" % (dom, self.domain)
+        if dom.UUID() == self.domain.UUID():
+            log(self, LOG_LEVEL_INFO, "I receive a libvirt event: %d from %s with detail %s" % (event, str(dom), detail))
+            
+            if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+            elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
+                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
+            elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+            elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
+            elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
+            
     
     def create(self, iq):
         """
@@ -216,7 +246,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             payload = xmpp.Node("domain", attrs={"id": str(self.domain.ID())})
             reply.setQueryPayload([payload])
             log(self, LOG_LEVEL_INFO, "virtual machine created")
-            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+            #self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             self.push_change("virtualmachine:control", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -236,11 +266,33 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         reply = None
         try:
-            self.domain.shutdown()
+            ret = self.domain.shutdown()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
-            self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-            self.push_change("virtualmachine:control", "shutdowned")
+            log(self, LOG_LEVEL_INFO, "virtual machine shutdowned with return code %i" % ret)
+            #self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
+            #self.push_change("virtualmachine:control", "shutdowned")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+        
+    def destroy(self, iq):
+        """
+        Destroy a domain using libvirt connection
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+
+        reply = None
+        try:
+            ret = self.domain.destroy()
+            reply = iq.buildReply('success')
+            log(self, LOG_LEVEL_INFO, "virtual machine destroyed with return code %i" % ret)
+            #self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
+            #self.push_change("virtualmachine:control", "destroyed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -284,7 +336,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.suspend()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine suspended")
-            self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
+            #self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
             self.push_change("virtualmachine:control", "suspended")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -307,7 +359,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain.resume()
             reply = iq.buildReply('success')
             log(self, LOG_LEVEL_INFO, "virtual machine resumed")
-            self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+            #self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             self.push_change("virtualmachine:control", "resumed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -489,6 +541,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             - info
             - create
             - shutdown
+            - destroy
             - reboot
             - suspend
             - resume
@@ -515,6 +568,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             
         if iqType == "shutdown":
             reply = self.shutdown(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if iqType == "destroy":
+            reply = self.destroy(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             

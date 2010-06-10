@@ -27,21 +27,21 @@
 */
 @implementation TNWindowConnection: TNWhiteWindow
 {
-    @outlet CPImageView spinning            @accessors;
-    @outlet CPTextField JID                 @accessors;
-    @outlet CPTextField message             @accessors;
-    @outlet CPTextField password            @accessors;
-    @outlet CPTextField boshService         @accessors;
-    @outlet CPCheckBox  credentialRemember  @accessors;
+    @outlet CPImageView spinning;
+    @outlet CPTextField JID;
+    @outlet CPTextField message;
+    @outlet CPTextField password;
+    @outlet CPTextField boshService;
+    @outlet CPCheckBox  credentialRemember;
 
-    TNStropheConnection JSStrophe           @accessors;
+    TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
 }
 
 /*! initialize the window when CIB is loaded
 */
 - (void) awakeFromCib
 {
-    [[self password] setSecure:YES];
+    [password setSecure:YES];
     [self setShowsResizeIndicator:NO];
     
     [self initCredentials];
@@ -59,16 +59,16 @@
    var lastRememberCred    = [defaults boolForKey:@"loginRememberCredentials"];
 
    if (lastBoshService)
-       [[self boshService] setStringValue:lastBoshService];
+       [boshService setStringValue:lastBoshService];
     
    if (lastRememberCred)
    {
-       [[self JID] setStringValue:lastJID];
-       [[self password] setStringValue:lastPassword];
-       [[self credentialRemember] setState:CPOnState];
+       [JID setStringValue:lastJID];
+       [password setStringValue:lastPassword];
+       [credentialRemember setState:CPOnState];
    }
    else
-       [[self credentialRemember] setState:CPOffState];
+       [credentialRemember setState:CPOffState];
 
    if (lastRememberCred)
        [self connect:nil];
@@ -79,9 +79,10 @@
 */
 - (IBAction)connect:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var bundle      = [CPBundle bundleForClass:[self class]];
     
-    if ([[self credentialRemember] state] == CPOnState)
+    if ([credentialRemember state] == CPOnState)
     {
         [defaults setObject:[JID stringValue] forKey:@"loginJID"];
         [defaults setObject:[password stringValue] forKey:@"loginPassword"];
@@ -95,9 +96,10 @@
         [defaults setBool:NO forKey:@"loginRememberCredentials"];
     }
     
-    [self setJSStrophe:[TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]]];
-    [[self JSStrophe] setDelegate:self];
-    [[self JSStrophe] connect];
+    _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]];
+    [_stropheConnection setDebugMode:[bundle objectForInfoDictionaryKey:@"TNStropheCappuccinoDebugMode"]];
+    [_stropheConnection setDelegate:self];
+    [_stropheConnection connect];
 }
 
 - (IBAction)rememberCredentials:(id)sender
@@ -115,8 +117,8 @@
 */
 - (void)onStropheConnecting:(TNStropheConnection)aStrophe
 {
-    [[self message] setStringValue:@"Connecting"];
-    [[self spinning] setHidden:NO];
+    [message setStringValue:@"Connecting"];
+    [spinning setHidden:NO];
 }
 
 /*! delegate of TNStropheConnection
@@ -124,10 +126,10 @@
 */
 - (void)onStropheConnected:(TNStropheConnection)aStrophe
 {
-    [[self message] setStringValue:@"Connected."];
-    [[self spinning] setHidden:YES];
+    [message setStringValue:@"Connected."];
+    [spinning setHidden:YES];
     
-    CPLog.info(@"Strophe is now connected using JID " + [[self JID] stringValue]);
+    CPLog.info(@"Strophe is now connected using JID " + [JID stringValue]);
 }
 
 /*! delegate of TNStropheConnection
@@ -135,8 +137,8 @@
 */
 - (void)onStropheConnectFail:(TNStropheConnection)aStrophe
 {
-    [[self spinning] setHidden:YES];
-    [[self message] setStringValue:@"Connection failed."];
+    [spinning setHidden:YES];
+    [message setStringValue:@"Connection failed."];
 
     CPLog.info("XMPP connection failed");
 }
@@ -146,7 +148,7 @@
 */
 - (void)onStropheAuthenticating:(TNStropheConnection)aStrophe
 {
-    [[self message] setStringValue:@"Authenticating..."];
+    [message setStringValue:@"Authenticating..."];
 
     CPLog.info("XMPP authenticating...");
 }
@@ -156,8 +158,8 @@
 */
 - (void)onStropheAuthFail:(TNStropheConnection)aStrophe
 {
-    [[self spinning] setHidden:YES];
-    [[self message] setStringValue:@"Authentication failed."];
+    [spinning setHidden:YES];
+    [message setStringValue:@"Authentication failed."];
 
     CPLog.info("XMPP auth failed");
 }
@@ -167,16 +169,16 @@
 */
 - (void)onStropheError:(TNStropheConnection)aStrophe
 {
-    [[self spinning] setHidden:YES];
-    [[self message] setStringValue:@"Unknown error."];
+    [spinning setHidden:YES];
+    [message setStringValue:@"Unknown error."];
 
     CPLog.info("XMPP unknown error");
 }
 
 -(void) onStropheDisconnecting:(TNStropheConnection)aStrophe
 {
-    //[[self spinning] setHidden:YES];
-    [[self message] setStringValue:@"Disconnecting."];
+    //[spinning setHidden:YES];
+    [message setStringValue:@"Disconnecting."];
 
    CPLog.info("XMPP is disconnecting");
 }
@@ -189,7 +191,7 @@
     var defaults = [TNUserDefaults standardUserDefaults];
     [self initCredentials];
     
-    [[self message] setStringValue:@"Disconnected."];
+    [message setStringValue:@"Disconnected."];
     
     CPLog.info("XMPP connection is now disconnected");
 }

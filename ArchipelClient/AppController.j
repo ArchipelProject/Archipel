@@ -123,7 +123,6 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     CPTextField                 _rightViewTextField;
     TNModuleLoader              _moduleLoader;
     CPTabView                   _moduleTabView;
-    
     TNDatasourceRoster          _mainRoster;
     TNOutlineViewRoster         _rosterOutlineView;
     TNToolbar                   _mainToolbar;
@@ -134,14 +133,12 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     CPPlatformWindow            _platformHelpWindow;
     CPMenu                      _mainMenu;
     CPMenu                      _modulesMenu;
-    
     CPImage                     _imageLedInData;
     CPImage                     _imageLedOutData;
     CPImage                     _imageLedNoData;
     CPTimer                     _ledInTimer;
     CPTimer                     _ledOutTimer;
     CPTimer                     _moduleLoadingDelay;
-    
     int                         _tempNumberOfReadyModules;
 }
 
@@ -278,14 +275,6 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
     _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
     
-    //put the cool background. It a bad method, I know.
-    // var view    = [connectionWindow contentView];
-    // var frame   = [connectionWindow frame];
-    // [connectionWindow close];
-    // connectionWindow = [[CPWindow alloc] initWithContentRect:frame styleMask:CPBorderlessWindowMask];
-    // [connectionWindow setContentView:view];
-    // [connectionWindow setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"]]]];
-    
     // buttonBar
     CPLog.trace(@"Initializing the roster button bar");
     [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
@@ -345,18 +334,6 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     
     CPLog.info(@"Initialization of AppController OK");
 }
-
-- (IBAction)didMinusBouttonClicked:(id)sender
-{
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item    = [_rosterOutlineView itemAtRow:index];
-    
-    if ([item class] == TNStropheContact)
-        [self deleteContact:sender];
-    else if ([item class] == TNStropheGroup)
-        [self deleteGroup:sender];
-}
-
 - (void)makeMainMenu
 {
     _mainMenu = [[CPMenu alloc] init];
@@ -460,6 +437,16 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     CPLog.info("Bundle loaded : " + aBundle);
 }
 
+- (IBAction)didMinusBouttonClicked:(id)sender
+{
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var item    = [_rosterOutlineView itemAtRow:index];
+    
+    if ([item class] == TNStropheContact)
+        [self deleteContact:sender];
+    else if ([item class] == TNStropheGroup)
+        [self deleteGroup:sender];
+}
 
 - (IBAction)logout:(id)sender
 {

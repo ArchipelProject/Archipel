@@ -18,6 +18,8 @@
 """
 This is the main package to import in order to use Archipel.
 """
+
+from libvirtEventLoop import *
 from archipelVirtualMachine import * 
 from archipelHypervisor import *
 from archipelModule import *

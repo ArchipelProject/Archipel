@@ -62,9 +62,9 @@ def main():
     
     
 if __name__ == "__main__":
-    opts, args = getopt.getopt(sys.argv[1:], "n", ["nofork", "config=", "help"])
+    opts, args = getopt.getopt(sys.argv[1:], "hn", ["nofork", "config=", "help"])
     
-    configPath = None
+    configPath = "/etc/archipel/archipel.conf"
     fork = True
     
     for o, a in opts:
@@ -72,8 +72,17 @@ if __name__ == "__main__":
             configPath = a
         if o in ("-n", "--nofork"):
             fork = False
-        if o in ("--help"):
-            print "usage: runarchipel.py [--nofork] [--config=</path/to/conf>]"
+        if o in ("-h", "--help"):
+            print """\
+Archipel Daemon (c) 2010 Antoine Mercadal
+
+usage: runarchipel.py [--nofork] [--config=</path/to/conf>]
+
+Options :
+    * --nofork : run archipel in the current process. Do not fork. This is for testing.
+    * --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
+"""
+            
             sys.exit(0)
     
     if fork:

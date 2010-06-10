@@ -13,6 +13,9 @@
     <key>CPBundleIconFile</key>
     <string>icon.png</string>
     
+    <!--
+        URL of crash reporting
+    -->
     <key>LPCrashReporterLoggingURL</key>
     <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
     
@@ -32,15 +35,29 @@
     <key>TNHelpWindowURL</key>
     <string>http://antoinemercadal.fr/archipelhelp/</string>
     
+    <!--
+        Time in second before starting to load modules when roster selection changes
+    -->
     <key>TNArchipelModuleLoadingDelay</key>
     <string>0.3</string>
     
-    
+    <!--
+        Displayed version of Archipel Client
+    -->
     <key>TNArchipelVersion</key>
     <string>Alpha-0.1 (Beethoven)</string>
     
+    <!--
+        Copyright message
+    -->
     <key>TNArchipelCopyright</key>
     <string>Archipel - Copyright © 2010 Antoine Mercadal - antoine.mercadal@inframonde.eu</string>
+    
+    <!--
+        If set to 1, StropheCappuccino will be in debug mode.
+    -->
+    <key>TNStropheCappuccinoDebugMode</key>
+    <integer>0</integer>
     
 </dict>
 </plist>

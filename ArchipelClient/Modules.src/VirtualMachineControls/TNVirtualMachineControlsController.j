@@ -30,13 +30,14 @@ TNArchipelControlResume                         = @"TNArchipelControlResume";
 TNArchipelControlStop                           = @"TNArchipelControlStop";
 TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 
-TNArchipelTypeVirtualMachineControl            = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineControlInfo        = @"info";
-TNArchipelTypeVirtualMachineControlCreate      = @"create";
-TNArchipelTypeVirtualMachineControlShutdown    = @"shutdown";
-TNArchipelTypeVirtualMachineControlReboot      = @"reboot";
-TNArchipelTypeVirtualMachineControlSuspend     = @"suspend";
-TNArchipelTypeVirtualMachineControlResume      = @"resume";
+TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineControlInfo         = @"info";
+TNArchipelTypeVirtualMachineControlCreate       = @"create";
+TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
+TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
+TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
+TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
+TNArchipelTypeVirtualMachineControlResume       = @"resume";
 
 VIR_DOMAIN_NOSTATE  = 0;
 VIR_DOMAIN_RUNNING  = 1;
@@ -49,7 +50,8 @@ VIR_DOMAIN_CRASHED  = 6;
 TNArchipelTransportBarPlay      = 0;
 TNArchipelTransportBarPause     = 1;
 TNArchipelTransportBarStop      = 2;
-TNArchipelTransportBarReboot    = 3;
+TNArchipelTransportBarDestroy   = 3
+TNArchipelTransportBarReboot    = 4;
 
 @implementation TNVirtualMachineControlsController : TNModule
 {
@@ -71,10 +73,11 @@ TNArchipelTransportBarReboot    = 3;
 {
     var bundle = [CPBundle bundleForClass:[self class]];
     
-    var imagePlay   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
-    var imageStop   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
-    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
-    var imageReboot = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CGSizeMake(16, 16)];
+    var imagePlay       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
+    var imageStop       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
+    var imageDestroy    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CGSizeMake(20, 20)];
+    var imagePause      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    var imageReboot     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CGSizeMake(16, 16)];
     
     [maskingView setBackgroundColor:[CPColor whiteColor]];
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -82,20 +85,23 @@ TNArchipelTransportBarReboot    = 3;
 
     [fieldJID setSelectable:YES];
     
-    [buttonBarTransport setSegmentCount:4];
+    [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:@"Play" forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setLabel:@"Stop" forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setLabel:@"Destroy" forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setLabel:@"Reboot" forSegment:TNArchipelTransportBarReboot];
     
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarReboot];
     
     [buttonBarTransport setImage:imagePlay forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setImage:imagePause forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:imageStop forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:imageDestroy forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setImage:imageReboot forSegment:TNArchipelTransportBarReboot];
     
     [buttonBarTransport setTarget:self];
@@ -119,6 +125,7 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 
@@ -161,6 +168,7 @@ TNArchipelTransportBarReboot    = 3;
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 }
@@ -218,6 +226,8 @@ TNArchipelTransportBarReboot    = 3;
 - (void)checkIfRunning
 {
     var status = [_entity status];
+    
+    [self getVirtualMachineInfo];
     
     if ((status == TNStropheContactStatusDND))
     {
@@ -303,6 +313,9 @@ TNArchipelTransportBarReboot    = 3;
         case TNArchipelTransportBarStop:
             [self stop];
             break;
+        case TNArchipelTransportBarDestroy:
+            [self destroy];
+            break;
         case TNArchipelTransportBarReboot:
             [self reboot];
             break;
@@ -349,6 +362,15 @@ TNArchipelTransportBarReboot    = 3;
     [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
 
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
+}
+
+- (void)destroy
+{
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlDestroy}];
+
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
 }
 
 - (void)reboot
@@ -427,6 +449,22 @@ TNArchipelTransportBarReboot    = 3;
     }
 }
 
+- (void)didDestroy:(id)aStanza
+{
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
+
+    if (responseType == @"success")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is destroyed"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
 - (void)didReboot:(id)aStanza
 {
     var responseType    = [aStanza getType];
@@ -450,6 +488,7 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
@@ -464,6 +503,7 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
@@ -478,6 +518,7 @@ TNArchipelTransportBarReboot    = 3;
     
     [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
@@ -490,11 +531,13 @@ TNArchipelTransportBarReboot    = 3;
 {
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarReboot];
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
