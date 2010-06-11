@@ -24,15 +24,17 @@
 
 TNArchipelTypeVirtualMachineControl  = @"archipel:vm:control";
 
-TNArchipelTypeVirtualMachineControlCreate      = @"create";
-TNArchipelTypeVirtualMachineControlShutdown    = @"shutdown";
-TNArchipelTypeVirtualMachineControlReboot      = @"reboot";
-TNArchipelTypeVirtualMachineControlSuspend     = @"suspend";
-TNArchipelTypeVirtualMachineControlResume      = @"resume";
+TNArchipelTypeVirtualMachineControlCreate       = @"create";
+TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
+TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
+TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
+TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
+TNArchipelTypeVirtualMachineControlResume       = @"resume";
 
 TNArchipelActionTypeCreate                      = @"Start";
 TNArchipelActionTypePause                       = @"Pause";
 TNArchipelActionTypeShutdown                    = @"Shutdown";
+TNArchipelActionTypeDestroy                     = @"Destroy";
 TNArchipelActionTypeResume                      = @"Resume";
 TNArchipelActionTypeReboot                      = @"Reboot";
 
@@ -101,32 +103,37 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID"]];
     [_tableVirtualMachines setDataSource:_datasourceGroupVM];            
 
-    var createButton  = [CPButtonBar plusButton];
+    var createButton = [CPButtonBar plusButton];
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
     
-    var shutdownButton  = [CPButtonBar plusButton];
+    var shutdownButton = [CPButtonBar plusButton];
     [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
     
-    var suspendButton  = [CPButtonBar plusButton];
+    var destroyButton = [CPButtonBar plusButton];
+    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CPSizeMake(16, 16)]];
+    [destroyButton setTarget:self];
+    [destroyButton setAction:@selector(destroy:)];
+    
+    var suspendButton = [CPButtonBar plusButton];
     [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
     
-    var resumeButton  = [CPButtonBar plusButton];
+    var resumeButton = [CPButtonBar plusButton];
     [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
     
-    var rebootButton  = [CPButtonBar plusButton];
+    var rebootButton = [CPButtonBar plusButton];
     [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
 
-    [buttonBarControl setButtons:[createButton, shutdownButton, suspendButton, resumeButton, rebootButton]];
+    [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton]];
     
     [filterField setTarget:_datasourceGroupVM];
     [filterField setAction:@selector(filterObjects:)];
@@ -199,6 +206,11 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [self applyAction:TNArchipelActionTypeShutdown];
 }
 
+- (IBAction)destroy:(id)sender
+{
+    [self applyAction:TNArchipelActionTypeDestroy];
+}
+
 - (IBAction)suspend:(id)sender
 {
     [self applyAction:TNArchipelActionTypePause];
@@ -223,11 +235,15 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         case TNArchipelActionTypeCreate:
             controlType = TNArchipelTypeVirtualMachineControlCreate;
             break;
-
+        
         case TNArchipelActionTypeShutdown:
             controlType = TNArchipelTypeVirtualMachineControlShutdown;
             break;
-            
+        
+        case TNArchipelActionTypeDestroy:
+            controlType = TNArchipelTypeVirtualMachineControlDestroy;
+            break;
+        
         case TNArchipelActionTypePause:
             controlType = TNArchipelTypeVirtualMachineControlSuspend;
             break;

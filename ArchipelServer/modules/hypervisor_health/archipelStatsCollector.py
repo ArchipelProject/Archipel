@@ -27,7 +27,6 @@ from utils import *
 
 
 class TNThreadedHealthCollector(Thread):
-    #from pysnmp.entity.rfc3413.oneliner import cmdgen
     """
     this class collects hypervisor stats regularly
     """
@@ -76,39 +75,42 @@ class TNThreadedHealthCollector(Thread):
         @return: the L{TNArchipelVirtualMachine} instance
         """        
         #log(self, LOG_LEVEL_DEBUG, "Retrieving last "+ str(limit) + " recorded stats data for sending")
+        try:
+            self.cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
+            cpu_stats = []
+            for values in self.cursor:
+                date, idle = values
+                cpu_stats.append({"date": date, "id": idle})
         
-        self.cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
-        cpu_stats = []
-        for values in self.cursor:
-            date, idle = values
-            cpu_stats.append({"date": date, "id": idle})
+            self.cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
+            memory_stats = []
+            for values in self.cursor:
+                date, free, used, total, swapped = values
+                memory_stats.append({"date": date, "free": free, "used" : used, "total": total, "swapped": swapped})
         
-        self.cursor.execute("select * from memory order by collection_date desc limit " + str(limit))
-        memory_stats = []
-        for values in self.cursor:
-            date, free, used, total, swapped = values
-            memory_stats.append({"date": date, "free": free, "used" : used, "total": total, "swapped": swapped})
+            self.cursor.execute("select * from disk order by collection_date desc limit " + str(limit))
+            disk_stats = []
+            for values in self.cursor:
+                date, total, used, free, free_percentage = values
+                disk_stats.append({"date": date, "total": total, "used": used, "free": free, "free_percentage": free_percentage})
         
-        self.cursor.execute("select * from disk order by collection_date desc limit " + str(limit))
-        disk_stats = []
-        for values in self.cursor:
-            date, total, used, free, free_percentage = values
-            disk_stats.append({"date": date, "total": total, "used": used, "free": free, "free_percentage": free_percentage})
+            self.cursor.execute("select * from load order by collection_date desc limit " + str(limit))
+            load_stats = []
+            for values in self.cursor:
+                date, one, five, fifteen = values
+                load_stats.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
         
-        self.cursor.execute("select * from load order by collection_date desc limit " + str(limit))
-        load_stats = []
-        for values in self.cursor:
-            date, one, five, fifteen = values
-            load_stats.append({"date": date, "one": one, "five": five, "fifteen": fifteen})
+            # uptime
+            # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,3,0))
+            # uptime = str(varBinds[0][1])
+            # uptime_stats = {"up" : uptime}
+            uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
+            uptime_stats = {"up" : uptime}
         
-        # uptime
-        # errorIndication, errorStatus, errorIndex, varBinds = cmdgen.CommandGenerator().getCmd(self.snmp_community, self.snmp_udptransport, (1,3,6,1,2,1,1,3,0))
-        # uptime = str(varBinds[0][1])
-        # uptime_stats = {"up" : uptime}
-        uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
-        uptime_stats = {"up" : uptime}
-        
-        return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats}
+            return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats}
+        except Exception as ex:
+            log(self, LOG_LEVEL_ERROR, "stat recuperation fails. Exception %s" % str(ex))
+            return None
     
     
     def get_memory_stats(self):
@@ -191,23 +193,26 @@ class TNThreadedHealthCollector(Thread):
         self.database_thread_connection = sqlite3.connect(self.database_file)
         
         while(1):
-            self.database_thread_connection.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
-            self.database_thread_connection.execute("insert into cpu values(?,?)", self.get_cpu_stats())
-            self.database_thread_connection.execute("insert into load values(?,?,?,?)", self.get_load_stats())
-            self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
+            try:
+                self.database_thread_connection.execute("insert into memory values(?,?,?,?,?)", self.get_memory_stats())
+                self.database_thread_connection.execute("insert into cpu values(?,?)", self.get_cpu_stats())
+                self.database_thread_connection.execute("insert into load values(?,?,?,?)", self.get_load_stats())
+                self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
             
-            if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
-                #log(self, LOG_LEVEL_DEBUG, "Purging the last entries.")
-                self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                self.database_thread_connection.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge:
+                    #log(self, LOG_LEVEL_DEBUG, "Purging the last entries.")
+                    self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                    self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                    self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
+                    self.database_thread_connection.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
         
-            self.database_thread_connection.commit()
+                self.database_thread_connection.commit()
             
-            #log(self, LOG_LEVEL_DEBUG, "Stats collected")
-            time.sleep(self.collection_interval)
-    
+                #log(self, LOG_LEVEL_DEBUG, "Stats collected")
+                time.sleep(self.collection_interval)
+            except Exception as ex:
+                log(self, LOG_LEVEL_ERROR, "stat collection fails. Exception %s" % str(ex))
+            
     def getTimeList(self):
         statFile = file("/proc/stat", "r")
         timeList = statFile.readline().split(" ")[2:6]
