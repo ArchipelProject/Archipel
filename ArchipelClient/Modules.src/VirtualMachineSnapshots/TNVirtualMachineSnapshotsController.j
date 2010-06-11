@@ -33,16 +33,18 @@ TNArchipelTypeHypervisorSnapshotCurrent     = @"current";
 TNArchipelTypeHypervisorSnapshotDelete      = @"delete";
 TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
+
+
 /*! @ingroup virtualmachinesnapshoting
 */
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
-    @outlet CPTextField     fieldJID                @accessors;
-    @outlet CPTextField     fieldName               @accessors;
-    @outlet CPTextField     fieldNewSnapshotName;
-    @outlet CPTextField     fieldInfo;
-    @outlet CPTextField     fieldNewSnapshotDescription;
-    @outlet CPWindow        windowNewSnapshot;
+    @outlet CPTextField                 fieldJID;
+    @outlet CPTextField                 fieldName;
+    @outlet CPTextField                 fieldNewSnapshotName;
+    @outlet CPTextField                 fieldInfo;
+    @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
+    @outlet CPWindow                    windowNewSnapshot;
     
     @outlet CPSearchField   fieldFilter;
     @outlet CPScrollView    scrollViewSnapshots;
@@ -78,23 +80,24 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setAllowsEmptySelection:YES];
     [_outlineViewSnapshots setAllowsMultipleSelection:NO];
     [_outlineViewSnapshots setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    // [_outlineViewSnapshots setRowHeight:50.0];
     
     var outlineColumn = [[CPTableColumn alloc] initWithIdentifier:@"outline"];
     [outlineColumn setWidth:16];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
-    [[columnName headerView] setStringValue:@"Name"];
-    [columnName setWidth:200];
+    [[columnName headerView] setStringValue:@"UUID"];
+    [columnName setWidth:100];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     
     var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"description"];
     [[columnDescription headerView] setStringValue:@"Description"];
-    [columnDescription setWidth:350];
+    [columnDescription setWidth:400];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
     
     var columnCreationTime = [[CPTableColumn alloc] initWithIdentifier:@"creationTime"];
     [[columnCreationTime headerView] setStringValue:@"Creation date"];
-    [columnCreationTime setWidth:150];
+    [columnCreationTime setWidth:130];
     [columnCreationTime setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"creationTime" ascending:YES]];
     
     var columnState     = [[CPTableColumn alloc] initWithIdentifier:@"isCurrent"];
@@ -107,10 +110,10 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     // [_outlineViewSnapshots addTableColumn:outlineColumn];
     [_outlineViewSnapshots addTableColumn:columnState];
-    [_outlineViewSnapshots addTableColumn:columnName];
-    [_outlineViewSnapshots addTableColumn:columnCreationTime];
     [_outlineViewSnapshots addTableColumn:columnDescription];
-    [_outlineViewSnapshots setOutlineTableColumn:columnName];
+    [_outlineViewSnapshots addTableColumn:columnCreationTime];
+    [_outlineViewSnapshots addTableColumn:columnName];
+    [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
     
     [_datasourceSnapshots setOutlineView:_outlineViewSnapshots];
@@ -131,11 +134,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo.png"] size:CPSizeMake(16, 16)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-add.png"] size:CPSizeMake(16, 16)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
     
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
+    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-remove.png"] size:CPSizeMake(16, 16)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
     
     _revertButton = [CPButtonBar minusButton];
@@ -240,7 +244,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [fieldNewSnapshotName setStringValue:@""];
     [fieldNewSnapshotDescription setStringValue:@""];
     [windowNewSnapshot center];
-    [windowNewSnapshot makeFirstResponder:fieldNewSnapshotName];
+    [windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
+    [fieldNewSnapshotName setStringValue:[CPString UUID]];
     [windowNewSnapshot makeKeyAndOrderFront:sender];
     
 }
@@ -347,7 +352,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [stanza up];
 
     [stanza addChildName:@"description"];
-    [stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
+    [stanza addTextNode:[[fieldNewSnapshotDescription stringValue] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
+    //[stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
     [stanza up];    
     
     [self sendStanza:stanza andRegisterSelector:@selector(didTakeSnapshot:)];
@@ -380,19 +386,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
         return;
     }
-    
-    [CPAlert alertWithTitle:@"Snapshot deletion confirmation"
-                    message:@"Are you sure you want to destory this snapshot ? this is not reversible."
-                      style:CPInformationalAlertStyle 
-                   delegate:self 
-                    buttons:[@"Delete", @"Cancel"]];
+                    
+    var alert = [TNAlert alertWithTitle:@"Delete to snapshot"
+                                message:@"Are you sure you want to destory this snapshot ? this is not reversible."
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteSnapshot:)], ["Cancel", nil]]];
+    [alert runModal];
 }
 
 
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+- (void)performDeleteSnapshot:(id)someUserInfo
 {
-    if (returnCode == 1)
-        return;
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
     var uuid            = [CPString UUID];
@@ -417,6 +421,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     }
 }
 
+
 - (IBAction)revertSnapshot:(id)sender
 {
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
@@ -426,6 +431,15 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         return;
     }
     
+    var alert = [TNAlert alertWithTitle:@"Revert to snapshot"
+                                message:@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost."
+                                delegate:self
+                                 actions:[["Revert", @selector(performRevertSnapshot:)], ["Cancel", nil]]];
+    [alert runModal];
+}
+
+- (void)performRevertSnapshot:(id)someUserInfo
+{
     var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
     var uuid            = [CPString UUID];
     var selectedIndexes   = [_outlineViewSnapshots selectedRowIndexes];
@@ -440,13 +454,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     var object  = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
     var name    = [object name];
-    
-    // if (object == _currentSnapshot)
-    // {
-    //     var growl = [TNGrowlCenter defaultCenter];
-    //     [growl pushNotificationWithTitle:@"Snapshot" message:@"You can't revert to the current snapshot" icon:TNGrowlIconError];
-    //     return;
-    // }
         
     [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotRevert, "name": name}];    
     [self sendStanza:stanza andRegisterSelector:@selector(didRevertSnapshot:)];
@@ -465,6 +472,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     }
 }
 
+
+
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {
     [_revertButton setEnabled:NO];
@@ -476,6 +485,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         [_revertButton setEnabled:YES];
     }
 }
+
+- (int)tableView:(CPTableView)aTableView heightOfRow:(int)aRow
+{
+    // FIXME : wait for Cappuccino to implement this.
+    return 10.0;
+}
+
 @end
 
 

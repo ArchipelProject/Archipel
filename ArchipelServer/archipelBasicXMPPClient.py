@@ -490,7 +490,7 @@ class TNArchipelBasicXMPPClient(object):
     def loop(self):
         """
         This is the main loop of the client
-        MUST HAVE to be change in future (because it's piggy)
+        FIXME : to be change in future (because it's piggy)
         """
         self.loop_status = LOOP_ON
         while True:
@@ -504,11 +504,9 @@ class TNArchipelBasicXMPPClient(object):
                 elif self.loop_status == LOOP_OFF:
                     self.disconnect()
                     break
-            except KeyboardInterrupt:
-                 log(self, LOG_LEVEL_INFO, "End of loop forced user action (now disconecting)")
-                 sys.exit(0)
             except Exception as ex:
-                log(self, LOG_LEVEL_INFO, "End of loop forced by exception (now disconecting) : " + str(ex))
+                log(self, LOG_LEVEL_INFO, "End of loop forced by exception : %s" % str(ex))
+                self.loop_status = LOOP_OFF
                 break
              
     

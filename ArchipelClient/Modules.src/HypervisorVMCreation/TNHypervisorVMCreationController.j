@@ -40,7 +40,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
-    TNStropheContact        _virtualMachinesForDeletion;
     CPButton                _plusButton;
     CPButton                _minusButton;
 }
@@ -52,18 +51,18 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     // VM table view
     _virtualMachinesDatasource   = [[TNTableViewDataSource alloc] init];
     _tableVirtualMachines        = [[CPTableView alloc] initWithFrame:[scrollViewListVM bounds]];
-
+    
     [scrollViewListVM setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewListVM setAutohidesScrollers:YES];
     [scrollViewListVM setDocumentView:_tableVirtualMachines];
     
-
     [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
     [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableVirtualMachines setAllowsColumnResizing:YES];
     [_tableVirtualMachines setAllowsEmptySelection:YES];
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
     [_tableVirtualMachines setDelegate:self];
+    [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
@@ -250,13 +249,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
          [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
          return;
     }
-    
-    _virtualMachinesForDeletion     = [_tableVirtualMachines selectedRowIndexes];
 
     var msg;
     var title;
     
-    if ([_virtualMachinesForDeletion count] < 2)
+    if ([[_tableVirtualMachines selectedRowIndexes] count] < 2)
     {   
         msg     = @"Are you sure you want to completely remove this virtual machine ?";
         title   = @"Destroying a Virtual Machine"; 
@@ -269,39 +266,36 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         
     
     [buttonDeleteVM setEnabled:NO];
-    
-    [CPAlert alertWithTitle:title
-                    message:msg
-                      style:CPInformationalAlertStyle 
-                   delegate:self 
-                    buttons:[@"Yes", @"No"]];
+
+    var alert = [TNAlert alertWithTitle:title
+                                message:msg
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteVirtualMachine:)], ["Cancel", nil]]];
+
+    [alert setUserInfo:[_tableVirtualMachines selectedRowIndexes]];
+
+    [alert runModal];
 }
 
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+- (void)performDeleteVirtualMachine:(id)someUserInfo
 {
-    if (returnCode == 0)
-    {
-        var indexes = _virtualMachinesForDeletion;
-        var objects = [_virtualMachinesDatasource objectsAtIndexes:indexes];
+    var indexes = someUserInfo
+    var objects = [_virtualMachinesDatasource objectsAtIndexes:indexes];
+    
+    [_tableVirtualMachines deselectAll];
+    
+    for (var i = 0; i < [objects count]; i++)
+    {                              
+        var vm              = [objects objectAtIndex:i];
+        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+
+        [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
+        [freeStanza addTextNode:[vm JID]];
+
+        [_roster removeContact:vm];
+
+        [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
         
-        [_tableVirtualMachines deselectAll];
-        
-        for (var i = 0; i < [objects count]; i++)
-        {                              
-            var vm              = [objects objectAtIndex:i];
-            var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
-
-            [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
-            [freeStanza addTextNode:[vm JID]];
-
-            [_roster removeContact:vm];
-
-            [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
-        }
-    }
-    else
-    {
-        _virtualMachinesForDeletion = Nil;
         [buttonDeleteVM setEnabled:YES];
     }
 }
@@ -309,7 +303,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (void)didFreeVirtualMachine:(id)aStanza
 {
     [buttonDeleteVM setEnabled:YES];
-    _virtualMachinesForDeletion = Nil;  
     
     if ([aStanza getType] == @"success")
     {

@@ -376,6 +376,7 @@ function generateIPForNewNetwork()
     return stanza;
 }
 
+
 - (IBAction)editNetwork:(id)sender
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
@@ -464,7 +465,18 @@ function generateIPForNewNetwork()
     }
 }
 
+
 - (IBAction)deactivateNetwork:(id)sender
+{
+    var alert = [TNAlert alertWithTitle:@"Deactivate Network"
+                                message:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
+                                delegate:self
+                                 actions:[["Deactivate", @selector(performDeactivateNetwork:)], ["Cancel", nil]]];
+
+    [alert runModal];
+}
+
+- (void)performDeactivateNetwork:(id)someUserInfo
 {
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
     var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
@@ -486,18 +498,6 @@ function generateIPForNewNetwork()
 }
 
 
-- (void)didNetworkStatusChange:(TNStropheStanza)aStanza
-{
-    if ([aStanza getType] == @"success")
-    {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
 
 - (IBAction)addNetwork:(id)sender
 {
@@ -530,26 +530,22 @@ function generateIPForNewNetwork()
     
     [self defineNetworkXML:sender];
     [self editNetwork:nil];
-    
-    // var growl = [TNGrowlCenter defaultCenter];
-    // [growl pushNotificationWithTitle:@"Network" message:@"Network has been added"];
 }
+
+
 
 - (IBAction)delNetwork:(id)sender
 {
-        [CPAlert alertWithTitle:@"Network deletion confirmation"
-                        message:@"Are you sure you want to destory this network ? Virtual machines that are in this network will loose connectivity."
-                          style:CPInformationalAlertStyle 
-                       delegate:self 
-                        buttons:[@"Delete", @"Cancel"]];
+    var alert = [TNAlert alertWithTitle:@"Delete Network"
+                                message:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
+                                delegate:self
+                                 actions:[["Delete", @selector(performDelNetwork:)], ["Cancel", nil]]];
+
+    [alert runModal];
 }
 
-
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
+- (void)performDelNetwork:(id)someUserInfo
 {
-    if (returnCode == 1)
-        return;
-    
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
     var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
 
@@ -569,7 +565,6 @@ function generateIPForNewNetwork()
 
         [self sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
     }
-
 }
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza
@@ -584,6 +579,22 @@ function generateIPForNewNetwork()
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
+
+- (void)didNetworkStatusChange:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"success")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
 
 -(BOOL)windowShouldClose:(id)window
 {

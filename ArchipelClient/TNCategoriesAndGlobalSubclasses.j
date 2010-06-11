@@ -245,7 +245,6 @@
     var alert = [[CPAlert alloc] init];
     [alert setTitle:aTitle];
     [alert setMessageText:aMessage];
-    //[alert setWindowStyle:CPHUDBackgroundWindowMask];
     [alert setAlertStyle:aStyle];
     [alert setDelegate:aDelegate];
 
@@ -253,6 +252,21 @@
         [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
 
     [alert runModal];
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle delegate:(id)aDelegate buttons:(CPArray)someButtons tag:(int)aTag
+{
+    var alert = [[CPAlert alloc] init];
+    [alert setTitle:aTitle];
+    [alert setMessageText:aMessage];
+    [alert setAlertStyle:aStyle];
+    [alert setDelegate:aDelegate];
+
+    for (var i = 0; i < [someButtons count]; i++)
+        [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
+
+    [alert runModal];
+    
 }
 
 // -(void)keyDown:(CPEvent)anEvent
@@ -266,6 +280,54 @@
 //     [super keyDown:anEvent];
 // }
 
+@end
+
+@implementation TNAlert : CPObject
+{
+    id      _delegate @accessors(property=delegate);
+    id      _userInfo @accessors(property=userInfo);
+    CPAlert _alert;
+    CPArray _actions;
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage delegate:(id)aDelegate actions:(CPArray)someActions
+{
+    var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage delegate:aDelegate actions:someActions];
+    return tnalert;
+}
+
+- (TNAlert)initWithTitle:(CPString)aTitle message:(CPString)aMessage delegate:(id)aDelegate actions:(CPArray)someActions
+{
+    if (self = [super init])
+    {
+        _alert      = [[CPAlert alloc] init];
+        _actions    = someActions;
+        _delegate   = aDelegate;
+        
+        [_alert setTitle:aTitle];
+        [_alert setMessageText:aMessage];
+        [_alert setDelegate:self];
+        
+        for (var i = 0; i < [_actions count]; i++)
+            [_alert addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
+    }
+    
+    return self;
+}
+
+- (void)runModal
+{
+    [_alert runModal];
+}
+
+- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
+{
+    CPLog.debug("BNODEL");
+    var selector = [[_actions objectAtIndex:returnCode] objectAtIndex:1];
+    CPLog.debug(selector);
+    if ([_delegate respondsToSelector:selector])
+        [_delegate performSelector:selector withObject:_userInfo];
+}
 @end
 
 @implementation CPOutlineView (expandAll)

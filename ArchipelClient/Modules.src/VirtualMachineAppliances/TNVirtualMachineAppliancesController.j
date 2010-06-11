@@ -128,12 +128,12 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     
     _instanciateButton  = [CPButtonBar plusButton];
-    [_instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-combine.png"] size:CPSizeMake(16, 16)]];
+    [_instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-lock.png"] size:CPSizeMake(16, 16)]];
     [_instanciateButton setTarget:self];
     [_instanciateButton setAction:@selector(instanciate:)];
     
     _dettachButton  = [CPButtonBar plusButton];
-    [_dettachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-decombine.png"] size:CPSizeMake(16, 16)]];
+    [_dettachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unlock.png"] size:CPSizeMake(16, 16)]];
     [_dettachButton setTarget:self];
     [_dettachButton setAction:@selector(dettach:)];
     
@@ -288,6 +288,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     }
 }
 
+
+
 - (IBAction)instanciate:(id)sender
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
@@ -295,7 +297,17 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
          [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
          return;
     }
+    
+    var alert = [TNAlert alertWithTitle:@"Instanciate appliance"
+                                message:@"Are you sure you want to instanciate this appliance? This will reset all your virtual machine."
+                                delegate:self
+                                 actions:[["Instanciate", @selector(performInstanciate:)], ["Cancel", nil]]];
+    [alert runModal];
+    
+}
 
+- (void)performInstanciate:(id)someUserInfo
+{
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineVMCasting}];
@@ -305,10 +317,10 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [stanza addTextNode:[appliance UUID]];
 
     [_instanciateButton setEnabled:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didInstallAppliance:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didInstanciate:) ofObject:self];
 }
 
-- (void)didInstallAppliance:(TNStropheStanza)aStanza
+- (void)didInstanciate:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"success")
     {        
@@ -322,6 +334,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     }
 }
 
+
 - (IBAction)dettach:(id)sender
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
@@ -329,7 +342,16 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
          [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
          return;
     }
+    
+    var alert = [TNAlert alertWithTitle:@"Detach from appliance"
+                                message:@"Are you sure you want to detach virtual machine from this appliance?"
+                                delegate:self
+                                 actions:[["Detach", @selector(performDettach:)], ["Cancel", nil]]];
+    [alert runModal];
+}
 
+- (void)performDettach:(id)someUserInfo
+{
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     
@@ -359,6 +381,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 
 - (IBAction)package:(id)sender
 {

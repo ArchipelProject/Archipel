@@ -23,6 +23,7 @@
 @import <GrowlCappuccino/GrowlCappuccino.j>
 //@import <LPKit/LPCrashReporter.j>
 
+@import "LPMultiLineTextField.j";
 @import "TNCategoriesAndGlobalSubclasses.j";
 @import "TNAlertPresenceSubscription.j";
 @import "TNAlertRemoveContact.j";

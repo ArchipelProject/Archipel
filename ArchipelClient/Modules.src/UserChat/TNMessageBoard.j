@@ -34,17 +34,16 @@
         _messageViews   = [CPArray array];
         _messageDicts   = [CPArray array];
         
-        // var center = [CPNotificationCenter defaultCenter];
-        // [center addObserver:self selector:@selector(subviewDidResize:) name:CPViewFrameDidChangeNotification object:self];
+        var center = [CPNotificationCenter defaultCenter];
+        [center addObserver:self selector:@selector(didResize:) name:CPViewFrameDidChangeNotification object:self];
     }
     
     return self;
 }
 
-- (void)subviewDidResize:(CPNotification)aNotification
+- (void)didResize:(CPNotification)aNotification
 {
-    CPLog.debug("bal");
-    // [self reload];
+    //[self reload];
 }
 
 - (void)reload
@@ -103,7 +102,7 @@
     [self addSubview:messageView];
     
     var boardFrame = [self frame];
-    boardFrame.size.height = boardFrame.size.height + [messageView frame].size.height; 
+    boardFrame.size.height += [messageView frame].size.height; 
     
     [self setFrame:boardFrame];
     

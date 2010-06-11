@@ -183,32 +183,22 @@ TNArchipelTransportBarReboot    = 4;
 - (void)didReceiveControlNotification:(CPNotification)aNotification
 {
     var command                  = [aNotification userInfo];
-    // var currentEntityHandler    = _entity;
-    // var commandTargetEntity     = [params objectForKey:@"entity"];
-    // var command                 = [params objectForKey:@"command"];
-    
-    //_entity = commandTargetEntity; 
     
     switch(command)
     {
         case TNArchipelControlPlay:
             [self play];
             break;
-        
         case (TNArchipelControlSuspend || TNArchipelControlResume):
             [self pause];
             break;
-        
         case TNArchipelControlReboot:
             [self reboot];
             break;
-            
         case TNArchipelControlStop:
             [self stop];
             break;
     }
-    
-    //_entity = currentEntityHandler;
 }
 
 /* Notifications listener */
@@ -265,37 +255,10 @@ TNArchipelTransportBarReboot    = 4;
 
           [self disableAllButtons];
           
-          switch ([libvirtState intValue])
-          {
-              case VIR_DOMAIN_NOSTATE:
-                    humanState = @"No status";
-                    break;
-              case VIR_DOMAIN_RUNNING:
-                    [self enableButtonsForRunning];
-                    humanState = @"Running";
-                    break;
-              case VIR_DOMAIN_BLOCKED:
-                    humanState = @"Blocked";
-                    break;
-              case VIR_DOMAIN_PAUSED:
-                    [self enableButtonsForPaused]
-                    humanState = @"Paused";
-                    break;
-              case VIR_DOMAIN_SHUTDOWN:
-                    [self enableButtonsForShutdowned]
-                    humanState = @"Shutdown";
-                    break;
-              case VIR_DOMAIN_SHUTOFF:
-                    [self enableButtonsForShutdowned]
-                    humanState = @"Shutdown";
-                    break;
-              case VIR_DOMAIN_CRASHED:
-                    humanState = @"Crashed";
-                    break;
-          }
-          [fieldInfoState setStringValue:humanState];
+          [self layoutButtons:libvirtState]
       }
 }
+
 
 /* IBAction */
 - (IBAction)segmentedControlClicked:(id)sender
@@ -332,6 +295,25 @@ TNArchipelTransportBarReboot    = 4;
     [_entity sendStanza:controlStanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
+- (void)didPlay:(id)aStanza
+{
+    var responseType    = [aStanza getType];
+    var responseFrom    = [aStanza getFrom];
+
+    if (responseType == @"success")
+    {
+        var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
 - (void)pause
 {
     var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
@@ -353,52 +335,6 @@ TNArchipelTransportBarReboot    = 4;
     }
 
     [_entity sendStanza:controlStanza andRegisterSelector:selector ofObject:self];
-}
-
-- (void)stop
-{
-    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
-
-    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
-
-    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
-}
-
-- (void)destroy
-{
-    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
-
-    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlDestroy}];
-
-    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
-}
-
-- (void)reboot
-{
-    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
-
-    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
-
-    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
-}
-
-/* did Actions done selectors */
-- (void)didPlay:(id)aStanza
-{
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
-
-    if (responseType == @"success")
-    {
-        var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
-        
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
 }
 
 - (void)didPause:(id)aStanza
@@ -433,6 +369,16 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
+
+- (void)stop
+{
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlShutdown}];
+
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didStop:) ofObject:self];
+}
+
 - (void)didStop:(id)aStanza
 {
     var responseType    = [aStanza getType];
@@ -447,6 +393,31 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+
+- (void)destroy
+{
+    var alert = [TNAlert alertWithTitle:@"Unplug Virtual Machine"
+                                message:@"Destroying virtual machine is dangerous. It is equivalent to remove power plug of a real computer"
+                                delegate:self
+                                 actions:[["Unplug", @selector(performDestroy:)], ["Cancel", @selector(doNotPerformDestroy:)]]];
+
+    [alert runModal];
+}
+
+- (void)performDestroy:(id)someUserInfo
+{
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlDestroy}];
+
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
+}
+
+- (void)doNotPerformDestroy:(id)someUserInfo
+{
+    [self layoutButtons:_VMLibvirtStatus];
 }
 
 - (void)didDestroy:(id)aStanza
@@ -465,6 +436,16 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
+
+- (void)reboot
+{
+    var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
+
+    [controlStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineControlReboot}];
+
+    [_entity sendStanza:controlStanza andRegisterSelector:@selector(didReboot:) ofObject:self];
+}
+
 - (void)didReboot:(id)aStanza
 {
     var responseType    = [aStanza getType];
@@ -481,7 +462,42 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
+
 /* button management */
+
+- (void)layoutButtons:(id)libvirtState
+{
+    switch ([libvirtState intValue])
+    {
+        case VIR_DOMAIN_NOSTATE:
+            humanState = @"No status";
+            break;
+        case VIR_DOMAIN_RUNNING:
+            [self enableButtonsForRunning];
+            humanState = @"Running";
+            break;
+        case VIR_DOMAIN_BLOCKED:
+            humanState = @"Blocked";
+            break;
+        case VIR_DOMAIN_PAUSED:
+            [self enableButtonsForPaused]
+            humanState = @"Paused";
+            break;
+        case VIR_DOMAIN_SHUTDOWN:
+            [self enableButtonsForShutdowned]
+            humanState = @"Shutdown";
+            break;
+        case VIR_DOMAIN_SHUTOFF:
+            [self enableButtonsForShutdowned]
+            humanState = @"Shutdown";
+            break;
+        case VIR_DOMAIN_CRASHED:
+            humanState = @"Crashed";
+            break;
+  }
+  [fieldInfoState setStringValue:humanState];
+}
+
 - (void)enableButtonsForRunning
 {
     [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPlay];

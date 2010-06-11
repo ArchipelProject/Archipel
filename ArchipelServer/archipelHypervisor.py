@@ -121,7 +121,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             sys.exit(0) 
         log(self, LOG_LEVEL_INFO, "connected to  libvirt")
         
-        ## start the run looop
+        ## start the run loop
         libvirtEventLoop.virEventLoopPureStart()
         
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")

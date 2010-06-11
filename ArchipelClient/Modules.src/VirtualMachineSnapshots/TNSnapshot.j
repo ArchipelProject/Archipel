@@ -38,7 +38,7 @@
     if(self = [super init]) 
     {
         var bundle      = [CPBundle mainBundle];
-        _currentIcon    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-arrow-right.png"] size:CPSizeMake(16, 16)];
+        _currentIcon    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)];
     }
     
     return self;

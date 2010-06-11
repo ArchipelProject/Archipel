@@ -303,6 +303,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
+
 - (IBAction)openNewDiskWindow:(id)sender
 {
     [fieldNewDiskName setStringValue:@""];
@@ -356,6 +357,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         _currentEditedDisk = diskObject;
     }
 }
+
 
 - (IBAction)createDisk:(id)sender
 {
@@ -411,6 +413,15 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [fieldNewDiskSize setStringValue:@""];
 }
 
+- (void)didCreateDisk:(id)aStanza
+{
+    if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
 - (IBAction)convert:(id)sender
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
@@ -443,6 +454,22 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [imageViewConverting setHidden:NO];
     [_entity sendStanza:diskStanza andRegisterSelector:@selector(didConvertDisk:) ofObject:self];
 }
+
+- (void)didConvertDisk:(id)aStanza
+{
+    [imageViewConverting setHidden:YES];
+    
+    if ([aStanza getType] == @"success")
+    {
+        var growl   = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been converted"];
+    }
+    else if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
 
 - (IBAction)rename:(id)sender
 {
@@ -478,71 +505,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (IBAction)removeDisk:(id)sender
-{
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
-    {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
-         return;
-    }
-    
-    [CPAlert alertWithTitle:@"Drive deletion confirmation"
-                    message:@"Are you sure you want to destory this drive ? this is not reversible."
-                      style:CPInformationalAlertStyle 
-                   delegate:self 
-                    buttons:[@"Delete and undefine", @"Delete", @"Cancel"]];
-}
-
-
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode 
-{
-    if (returnCode == 2)
-        return;
-    
-    var selectedIndexes = [_tableMedias selectedRowIndexes];
-    var objects = [_mediasDatasource objectsAtIndexes:selectedIndexes];
-
-    for (var i = 0; i < [objects count]; i++)
-    {
-        var dName           = [objects objectAtIndex:i];
-        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-
-        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
-        [diskStanza addChildName:@"name"];
-        [diskStanza addTextNode:[dName path]];
-        [diskStanza up];
-        
-        if (returnCode == 0)
-            [diskStanza addChildName:@"undefine"];
-
-        [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
-    }
-}
-
-
-- (void)didCreateDisk:(id)aStanza
-{
-    if ([aStanza getType] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-- (void)didConvertDisk:(id)aStanza
-{
-    [imageViewConverting setHidden:YES];
-    
-    if ([aStanza getType] == @"success")
-    {
-        var growl   = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been converted"];
-    }
-    else if ([aStanza getType] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
 - (void)didRename:(id)aStanza
 {
     if ([aStanza getType] == @"success")
@@ -556,6 +518,42 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
+
+- (IBAction)removeDisk:(id)sender
+{
+    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
+         return;
+    }
+    
+    var alert = [TNAlert alertWithTitle:@"Delete to drive"
+                                message:@"Are you sure you want to destory this drive ? this is not reversible."
+                                delegate:self
+                                 actions:[["Delete", @selector(performRemoveDisk:)], ["Cancel", nil]]];
+    [alert runModal];
+}
+
+- (void)performRemoveDisk:(id)someUserInfo
+{
+    var selectedIndexes = [_tableMedias selectedRowIndexes];
+    var objects         = [_mediasDatasource objectsAtIndexes:selectedIndexes];
+    
+    for (var i = 0; i < [objects count]; i++)
+    {
+        var dName           = [objects objectAtIndex:i];
+        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+        
+        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
+        [diskStanza addChildName:@"name"];
+        [diskStanza addTextNode:[dName path]];
+        [diskStanza up];
+        [diskStanza addChildName:@"undefine"];
+        
+        [_entity sendStanza:diskStanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
+    }
+}
+
 - (void)didRemoveDisk:(id)aStanza
 {
     if ([aStanza getType] == @"error")
@@ -563,6 +561,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView

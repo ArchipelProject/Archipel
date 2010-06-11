@@ -141,9 +141,8 @@
     
     if (identifier == @"outline")
         return nil;
-        
-    return [item valueForKey:identifier];
     
+    return [item valueForKey:identifier];
 }
 
 - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors

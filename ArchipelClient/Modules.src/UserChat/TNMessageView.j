@@ -21,9 +21,9 @@
  
 @implementation TNMessageView : CPView
 {
-    CPTextField _fieldAuthor;
-    CPTextField _fieldTimestamp;
-    CPTextField _fieldMessage;
+    CPTextField             _fieldAuthor;
+    CPTextField             _fieldTimestamp;
+    LPMultiLineTextField    _fieldMessage;
     
     CPString    _author;
     CPString    _subject;
@@ -39,8 +39,7 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        
-        //[self setAutoresizingMask:CPViewWidthSizable|CPViewHeightSizable];
+        [self setAutoresizingMask:CPViewWidthSizable];
         
         _fieldAuthor = [[CPTextField alloc] initWithFrame:CGRectMake(10,10, CGRectGetWidth(aFrame) - 10, 20)];
         [_fieldAuthor setFont:[CPFont boldSystemFontOfSize:12]];
@@ -51,6 +50,7 @@
         [_fieldMessage setAutoresizingMask:CPViewWidthSizable|CPViewHeightSizable];
         [_fieldMessage setLineBreakMode:CPLineBreakByWordWrapping];
         [_fieldMessage setAlignment:CPJustifiedTextAlignment];
+        // [_fieldMessage setBackgroundColor:[CPColor blueColor]];
         
         _fieldTimestamp = [[CPTextField alloc] initWithFrame:CGRectMake(CGRectGetWidth(aFrame) - 200, 10, 190, 20)];
         [_fieldTimestamp setAutoresizingMask:CPViewMinXMargin];
@@ -80,11 +80,10 @@
         var messageHeight   = [_message sizeWithFont:[_fieldMessage font] inWidth:CGRectGetWidth(aFrame)].height;
         var messageFrame    = [_fieldMessage frame];
 
-        messageFrame.size.height = messageHeight + 30;    
-        aFrame.size.height =  messageFrame.size.height + 10;
+        messageFrame.size.height = messageHeight + 30;
+        aFrame.size.height =  messageFrame.size.height + 20;
         
-        [self setFrame:aFrame]; 
-           
+        [self setFrame:aFrame];            
         [_fieldMessage setFrame:messageFrame];
     }
     

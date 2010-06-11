@@ -132,7 +132,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
-    [_minusButton setAction:@selector(removeVMCast:)];
+    [_minusButton setAction:@selector(remove:)];
     
     _downloadButton = [CPButtonBar plusButton];
     [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-download.png"] size:CPSizeMake(16, 16)]];
@@ -149,13 +149,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
 }
-
-- (IBAction)fieldFilterDidChange:(id)sender
-{
-    [_castsDatasource setFilter:[sender stringValue]];
-    [_mainOutlineView reloadData];
-}
-
 
 - (void)willLoad
 {
@@ -198,6 +191,14 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     // message sent when the tab is changed
 }
 
+
+
+- (IBAction)fieldFilterDidChange:(id)sender
+{
+    [_castsDatasource setFilter:[sender stringValue]];
+    [_mainOutlineView reloadData];
+}
+
 - (IBAction)openNewVMCastURLWindow:(id)sender
 {
     [fieldNewURL setStringValue:@""];
@@ -221,6 +222,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
     return YES;
 }
+
 
 - (void)getVMCasts
 {
@@ -278,39 +280,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
 }
 
-- (IBAction)showDownloadQueue:(id)sender
-{
-    [windowNewCastURL setTitle:@"Download queue for " + [_entity nickname]];
-    [windowDownloadQueue makeKeyAndOrderFront:nil];
-}
 
-- (IBAction)download:(id)sender
-{
-    var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
-    var item            = [_mainOutlineView itemAtRow:selectedIndex];
-    var uuid            = [item UUID];
-    
-    if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
-    {
-        [CPAlert alertWithTitle:@"Error" message:@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module."];
-        return;
-        
-    }
-    else
-    {
-        var stanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
-        
-        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
-
-        [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
-        
-    }
-}
-
-- (void)didDownload:(TNStropheStanza)aStanza
-{
-    // [windowDownloadQueue orderFront:nil];
-}
 
 - (void)updateDownloadProgress:(CPTimer)aTimer
 {
@@ -326,6 +296,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 }
 
+
+
 - (IBAction)addNewVMCast:(id)sender
 {
     [windowNewCastURL orderOut:nil];
@@ -337,15 +309,13 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingRegister, "url": url}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didRegistred:)]
+    [self sendStanza:stanza andRegisterSelector:@selector(didAddNewVMCast:)]
 }
 
-- (void)didRegistred:(TNStropheStanza)aStanza
+- (void)didAddNewVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"success")
     {
-        [self getVMCasts];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred"];
     }
@@ -355,11 +325,14 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     }
 }
 
-- (IBAction)removeVMCast:(id)sender
+
+- (IBAction)remove:(id)sender
 {
     if (([_mainOutlineView numberOfRows] == 0) || ([_mainOutlineView numberOfSelectedRows] <= 0))
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must select a VMCast or an Appliance"];
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"You must select a VMCast or an Appliance" icon:TNGrowlIconError];
+        
         return;
     }
     
@@ -367,43 +340,38 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
     
     if ([currentVMCast class] == TNVMCast)
-    {
-        var msg = @"Are you sure you want to remove this appliance? It will be removed from the hypervisor. This doesn't affect virtual machine"
-            + @" that have been instanciated from this template.";
-        [CPAlert alertWithTitle:@"Appliance deletion" message:msg style:CPInformationalAlertStyle delegate:self buttons:[@"OK", @"Cancel"]];
-    }
+        [self removeAppliance:sender];
     else if ([currentVMCast class] == TNVMCastSource)
-    {
-        var uuid            = [currentVMCast UUID];
-        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
-
-        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
-
-        [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
-    }
+        [self removeVMCast:sender];
 }
 
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
+
+- (IBAction)removeAppliance:(id)sender
 {
-    if (returnCode == 0)
-    {
-        var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
-        var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
-        var uuid            = [currentVMCast UUID];
-        var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    var alert = [TNAlert alertWithTitle:@"Delete appliance"
+                                message:@"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template."
+                                delegate:self
+                                 actions:[["Delete", @selector(performRemoveAppliance:)], ["Cancel", nil]]];
 
-        [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDeleteAppliance, "uuid": uuid}];
+    [alert runModal];
+}
 
-        [self sendStanza:stanza andRegisterSelector:@selector(didDeleteAppliance:)]
-    }
+- (void)performRemoveAppliance:(id)someUserInfo
+{
+    var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
+    var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
+    var uuid            = [currentVMCast UUID];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDeleteAppliance, "uuid": uuid}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didDeleteAppliance:)]
 }
 
 - (void)didDeleteAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"success")
     {
-        [self getVMCasts];
-        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled"];
     }
@@ -411,6 +379,29 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+
+- (IBAction)removeVMCast:(id)someUserInfo
+{
+    var alert = [TNAlert alertWithTitle:@"Delete VMCast"
+                                message:@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted."
+                                delegate:self
+                                 actions:[["Unregister", @selector(performRemoveVMCast:)], ["Cancel", nil]]];
+
+    [alert runModal];
+}
+
+- (void)performRemoveVMCast:(id)someUserInfo
+{
+    var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex];
+    var currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
+    var uuid            = [currentVMCast UUID];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingUnregister, "uuid": uuid}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didUnregistred:)]
 }
 
 - (void)didUnregistred:(TNStropheStanza)aStanza
@@ -427,6 +418,59 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 }
 
 
+- (IBAction)download:(id)sender
+{
+    var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
+    var item            = [_mainOutlineView itemAtRow:selectedIndex];
+    
+    if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"VMCast" message:@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module." icon:TNGrowlIconError];
+        
+        return;
+    }
+    
+    var alert = [TNAlert alertWithTitle:@"Download"
+                                message:@"Are you sure you want to download this appliance?"
+                                delegate:self
+                                 actions:[["Download", @selector(performDownload:)], ["Cancel", nil]]];
+
+    [alert runModal];
+}
+
+- (void)performDownload:(id)someUserInfo
+{
+    var selectedIndex   = [[ _mainOutlineView selectedRowIndexes] firstIndex];
+    var item            = [_mainOutlineView itemAtRow:selectedIndex];
+    var uuid            = [item UUID];
+    
+    var stanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorVMCasting}];
+    
+    [stanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorVMCastingDownload, "uuid": uuid}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didDownload:)]
+}
+
+- (void)didDownload:(TNStropheStanza)aStanza
+{
+    [windowDownloadQueue orderFront:nil];
+}
+
+
+- (IBAction)showDownloadQueue:(id)sender
+{
+    [windowNewCastURL setTitle:@"Download queue for " + [_entity nickname]];
+    [windowDownloadQueue makeKeyAndOrderFront:nil];
+}
+
+
+- (IBAction)fieldFilterDidChange:(id)sender
+{
+    [_castsDatasource setFilter:[sender stringValue]];
+    [_mainOutlineView reloadData];
+}
+
 - (IBAction)clickOnFilterCheckBox:(id)sender
 {
     if ([sender state] == CPOnState)
@@ -437,6 +481,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView reloadData];
     [_mainOutlineView expandAll];
 }
+
+
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {
