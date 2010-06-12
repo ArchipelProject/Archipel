@@ -77,8 +77,6 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     var ret;
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
     
-    CPLog.debug("Recovering from storage");
-    
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         CPLog.debug(@"Recovering from HTML5 storage");
@@ -114,6 +112,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     {
         throw new Error("Unknown storage type: " + _defaultStorageType + " storage type is unknown");
     }
+    
+    if (!ret)
+        ret = [_appDefaults objectForKey:aKey];
     
     return ret;
 }

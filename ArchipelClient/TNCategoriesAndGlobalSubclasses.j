@@ -322,7 +322,6 @@
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
 {
-    CPLog.debug("BNODEL");
     var selector = [[_actions objectAtIndex:returnCode] objectAtIndex:1];
     CPLog.debug(selector);
     if ([_delegate respondsToSelector:selector])

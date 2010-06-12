@@ -101,26 +101,28 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
 */
 @implementation AppController : CPObject
 {
-    @outlet CPView              leftView                    @accessors;
-    @outlet CPView              filterView                  @accessors;
-    @outlet TNSearchField       filterField                 @accessors;
-    @outlet CPView              rightView                   @accessors;
-    @outlet CPWebView           helpView                    @accessors;
-    @outlet CPSplitView         leftSplitView               @accessors;
-    @outlet CPWindow            theWindow                   @accessors;
-    @outlet TNWhiteWindow       windowModuleLoading         @accessors;
-    @outlet CPSplitView         mainHorizontalSplitView     @accessors;
-    @outlet TNViewProperties    propertiesView              @accessors;
-    @outlet CPImageView         ledOut                      @accessors;
-    @outlet CPImageView         ledIn                       @accessors;
-    @outlet CPView              statusBar                   @accessors;
-    @outlet TNWindowAddContact  addContactWindow            @accessors;
-    @outlet TNWindowAddGroup    addGroupWindow              @accessors;
-    @outlet TNWindowConnection  connectionWindow            @accessors;
-    @outlet CPButtonBar         buttonBarLeft               @accessors;
-    @outlet CPView              viewLoadingModule           @accessors;
-
-
+    @outlet CPView              leftView;
+    @outlet CPView              filterView;
+    @outlet TNSearchField       filterField;
+    @outlet CPView              rightView;
+    @outlet CPWebView           helpView;
+    @outlet CPSplitView         leftSplitView;
+    @outlet CPWindow            theWindow;
+    @outlet TNWhiteWindow       windowModuleLoading;
+    @outlet CPSplitView         mainHorizontalSplitView;
+    @outlet TNViewProperties    propertiesView;
+    @outlet CPImageView         ledOut;
+    @outlet CPImageView         ledIn;
+    @outlet CPView              statusBar;
+    @outlet TNWindowAddContact  addContactWindow;
+    @outlet TNWindowAddGroup    addGroupWindow;
+    @outlet TNWindowConnection  connectionWindow;
+    @outlet CPButtonBar         buttonBarLeft;
+    @outlet CPView              viewLoadingModule;
+    @outlet CPWindow            windowAboutArchipel;
+    @outlet CPTextField         textFieldAboutVersion;
+    @outlet CPWebView           webViewAboutCredits;
+    
     CPTextField                 _rightViewTextField;
     TNModuleLoader              _moduleLoader;
     CPTabView                   _moduleTabView;
@@ -155,6 +157,17 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     
     var bundle      = [CPBundle mainBundle];
     var defaults    = [TNUserDefaults standardUserDefaults];
+    
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
+            [bundle objectForInfoDictionaryKey:@"TNStropheCappuccinoDebugMode"], @"TNStropheCappuccinoDebugMode",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource"
+    ]];
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
@@ -315,6 +328,11 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     // copyright;
     [self copyright];
     
+    // about window
+    [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
+    [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
+    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
+    
     /* notifications */
     var center = [CPNotificationCenter defaultCenter];
 
@@ -349,7 +367,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     
     // Archipel
     var archipelMenu = [[CPMenu alloc] init];
-    [archipelMenu addItemWithTitle:@"About Archipel" action:nil keyEquivalent:@""];
+    [archipelMenu addItemWithTitle:@"About Archipel" action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:@"Preferences" action:nil keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
@@ -429,6 +447,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     [windowModuleLoading orderOut:nil];
     [connectionWindow center];
     [connectionWindow makeKeyAndOrderFront:nil];
+    [connectionWindow initCredentials];
 }
 
 /*! delegate of TNModuleLoader sent when a module is loaded
@@ -684,10 +703,11 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
         
         [_helpWindow setDelegate:self];
         
-        var newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
         var bundle          = [CPBundle mainBundle];
-        var url             = [bundle objectForInfoDictionaryKey:@"TNHelpWindowURL"];
-        var version         = [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"];
+        var defaults        = [TNUserDefaults standardUserDefaults];
+        var newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
+        var url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"];
+        var version         = [defaults objectForKey:@"TNArchipelVersion"];
         
         if (!url || (url == @"local"))
             url = @"help/index.html";
@@ -847,9 +867,10 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
 {
     if (![helpView mainFrameURL])
     {
-        var bundle  = [CPBundle mainBundle];
-        var url     = [bundle objectForInfoDictionaryKey:@"TNHelpWindowURL"];
-        var version = [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"];
+        var bundle      = [CPBundle mainBundle];
+        var defaults    = [TNUserDefaults standardUserDefaults];
+        var url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"];
+        var version     = [defaults objectForKey:@"TNArchipelVersion"];
         
         if (!url || (url == @"local"))
             url = @"help/index.html";
@@ -882,17 +903,16 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
+    var defaults    = [TNUserDefaults standardUserDefaults];
     var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
     var item        = [_rosterOutlineView itemAtRow:index];
-    var loadDelay   = parseFloat([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"]);
+    var loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
     
     if (_moduleLoadingDelay)
         [_moduleLoadingDelay invalidate];
     
     [viewLoadingModule setFrame:[rightView bounds]];
-    //[rightView addSubview:viewLoadingModule];
     
-    // [_mainRoster setCurrentItem:item];
     [propertiesView setEntity:item];
     [propertiesView reload];
     
@@ -957,9 +977,14 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
 }
 
 
+- (@action)showAboutWindow:(id)sender
+{
+    [windowAboutArchipel makeKeyAndOrderFront:sender];
+}
+
 - (void)copyright
 {
-    var bundle = [CPBundle bundleForClass:[self class]];
+    var defaults    = [TNUserDefaults standardUserDefaults];
     
     var copy = document.createElement("div");
     copy.style.position = "absolute";
@@ -971,7 +996,7 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
     copy.style.textAlign = "center";
     copy.style.marginLeft = "-250px";
     copy.style.textShadow = "0px 1px 0px white";
-    copy.innerHTML =  [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] + @" - " + [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"];
+    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);
     
 }

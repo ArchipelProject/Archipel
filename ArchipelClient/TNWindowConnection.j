@@ -43,8 +43,6 @@
 {
     [password setSecure:YES];
     [self setShowsResizeIndicator:NO];
-    
-    [self initCredentials];
 }
 
 /*! Initialize credentials informations according to the Application Defaults
@@ -53,25 +51,25 @@
 {
     var defaults            = [TNUserDefaults standardUserDefaults];
 
-   var lastBoshService     = [defaults stringForKey:@"loginService"];
-   var lastJID             = [defaults stringForKey:@"loginJID"];
-   var lastPassword        = [defaults stringForKey:@"loginPassword"];
-   var lastRememberCred    = [defaults boolForKey:@"loginRememberCredentials"];
+    var lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"];
+    var lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"];
+    var lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"];
+    var lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
 
-   if (lastBoshService)
-       [boshService setStringValue:lastBoshService];
+    if (lastBoshService)
+        [boshService setStringValue:lastBoshService];
     
-   if (lastRememberCred)
-   {
-       [JID setStringValue:lastJID];
-       [password setStringValue:lastPassword];
-       [credentialRemember setState:CPOnState];
-   }
-   else
-       [credentialRemember setState:CPOffState];
+    if (lastRememberCred)
+    {
+        [JID setStringValue:lastJID];
+        [password setStringValue:lastPassword];
+        [credentialRemember setState:CPOnState];
+    }
+    else
+        [credentialRemember setState:CPOffState];
 
-   if (lastRememberCred)
-       [self connect:nil];
+    if (lastRememberCred)
+        [self connect:nil];
 }
 
 /*! connection action
@@ -80,24 +78,24 @@
 - (IBAction)connect:(id)sender
 {
     var defaults    = [TNUserDefaults standardUserDefaults];
-    var bundle      = [CPBundle bundleForClass:[self class]];
     
     if ([credentialRemember state] == CPOnState)
     {
-        [defaults setObject:[JID stringValue] forKey:@"loginJID"];
-        [defaults setObject:[password stringValue] forKey:@"loginPassword"];
-        [defaults setObject:[boshService stringValue] forKey:@"loginService"];
-        [defaults setBool:YES forKey:@"loginRememberCredentials"];
+        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
+        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
+        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
 
         CPLog.info("logging information saved");
     }
     else
     {
-        [defaults setBool:NO forKey:@"loginRememberCredentials"];
+        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
     
     _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]];
-    [_stropheConnection setDebugMode:[bundle objectForInfoDictionaryKey:@"TNStropheCappuccinoDebugMode"]];
+    [_stropheConnection setDebugMode:[defaults objectForKey:@"TNStropheCappuccinoDebugMode"]];
+    [_stropheConnection setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [_stropheConnection setDelegate:self];
     [_stropheConnection connect];
 }
@@ -107,9 +105,9 @@
     var defaults = [TNUserDefaults standardUserDefaults];
     
     if ([sender state] == CPOnState)
-        [defaults setBool:YES forKey:@"loginRememberCredentials"];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     else
-        [defaults setBool:NO forKey:@"loginRememberCredentials"];
+        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
 }
 
 /*! delegate of TNStropheConnection

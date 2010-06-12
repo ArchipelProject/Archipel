@@ -67,18 +67,21 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     CPBundle                _bundle                 @accessors(property=bundle);
     CPMenuItem              _menuItem               @accessors(property=menuItem);
     CPMenu                  _menu                   @accessors(property=menu);
+    BOOL                    _useAnimations          @accessors(getter=isUseAnimations, setter=setUseAnimations:);
+    int                     _animationDuration      @accessors(property=animationDuration);
     BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     CPArray                 _registredSelectors;
+    
 }
 
 - (id)init
 {
     if (self = [super init])
     {
-        _isActive   = NO;
-        _isVisible  = NO;
+        _isActive       = NO;
+        _isVisible      = NO;
     }
     
     return self;
@@ -121,11 +124,12 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willLoad
 {
+    _useAnimations      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"]; // if I put this in init, it won't work.
+    _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _registredSelectors = [CPArray array];
+    _isActive           = YES;
     
     [_menuItem setEnabled:YES];
-    
-    _isActive = YES;
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -154,11 +158,14 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willShow
 {
-    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
-    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-    
-    //[anim setDuration:0.3];
-    //[anim startAnimation];
+    if (_useAnimations == 1)
+    {
+        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self view], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
+        var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+
+        [anim setDuration:_animationDuration];
+        [anim startAnimation];
+    }
     _isVisible = YES;
 }
 
@@ -166,10 +173,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willHide
 {
-    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:self, CPViewAnimationTargetKey, CPViewAnimationFadeOutEffect, CPViewAnimationEffectKey];
-    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-
-    // [anim startAnimation];
     _isVisible = NO;
 }
 
@@ -208,7 +211,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var growl   = [TNGrowlCenter defaultCenter];
     var msg     = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
     
-    //[CPAlert alertWithTitle:@"Error" message:@"Error: " + msg style:CPCriticalAlertStyle];
     [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
     CPLog.error(msg);
 }

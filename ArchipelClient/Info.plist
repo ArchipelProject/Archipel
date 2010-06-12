@@ -13,6 +13,14 @@
     <key>CPBundleIconFile</key>
     <string>icon.png</string>
     
+    
+    <key>TNArchipelBOSHService</key>
+    <string>http://virt-hyperviseur:5280/http-bind</string>
+
+    <key>TNArchipelBOSHResource</key>
+    <string>ArchipelController</string>
+    
+    
     <!--
         URL of crash reporting
     -->
@@ -32,26 +40,38 @@
         Url of the welcome page. It can be any URL (online) or "local" to 
         display the defaut welcome page (offline)
     -->
-    <key>TNHelpWindowURL</key>
+    <key>TNArchipelHelpWindowURL</key>
     <string>http://antoinemercadal.fr/archipelhelp/</string>
     
     <!--
         Time in second before starting to load modules when roster selection changes
     -->
     <key>TNArchipelModuleLoadingDelay</key>
-    <string>0.3</string>
+    <real>0.3</real>
     
     <!--
-        Displayed version of Archipel Client
+        Use animations
     -->
-    <key>TNArchipelVersion</key>
-    <string>Alpha-0.1 (Beethoven)</string>
+    <key>TNArchipelUseAnimations</key>
+    <integer>1</integer>
+    
+    <!--
+        if TNArchipelUseAnimations is 1, set the animation duration
+    -->
+    <key>TNArchipelAnimationsDuration</key>
+    <real>0.3</real>
     
     <!--
         Copyright message
     -->
     <key>TNArchipelCopyright</key>
     <string>Archipel - Copyright © 2010 Antoine Mercadal - antoine.mercadal@inframonde.eu</string>
+    
+    <!--
+        Displayed version of Archipel Client
+    -->
+    <key>TNArchipelVersion</key>
+    <string>Alpha-0.2 (Symphonia)</string>
     
     <!--
         If set to 1, StropheCappuccino will be in debug mode.

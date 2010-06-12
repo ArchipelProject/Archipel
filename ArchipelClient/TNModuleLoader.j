@@ -228,7 +228,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     if ([self entity] && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
     {
         CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
-        [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+        if (oldSelectedIndex)
+            [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
     }
 }
 
