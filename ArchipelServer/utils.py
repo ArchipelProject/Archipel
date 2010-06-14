@@ -7,68 +7,10 @@ import datetime
 import ConfigParser
 import xmpp
 import inspect
+import logging
+import logging.handlers
 
-LOG_LEVEL_DEBUG = 0
-"""This level of log is the most verbose"""
-
-LOG_LEVEL_INFO = 1
-"""This should be the standard log level"""
-
-LOG_LEVEL_ERROR = 2
-"""This level prints only errors. should be use for production"""
-
-LOG_LEVEL = LOG_LEVEL_INFO
-"""this allows to set the log level"""
-
-LOG_WRITE_IN_FILE = None
-"""If not None, all the logs are writting in this file path."""
-
-LOG_WRITE_IN_STDOUT = False
-"""If True, all the logs are writting in stdout."""
-
-LOG_DICT = ["DEBUG", "INFO", "ERROR"]
-"""
-this list gives the name of log level
-    >>> print LOG_DICT[LOG_LEVEL_INFO]
-    INFO
-"""
-
-
-COLOR_WHITE = u'\033[0m'
-"""
-terminal white color
-"""
-COLOR_ERROR = u'\033[31m'
-"""
-terminal color for error logs
-"""
-COLOR_INFO  = u'\033[33m'
-"""
-terminal color for info logs
-"""
-COLOR_DEBUG = u'\033[36m'
-"""
-terminal color for debug logs
-"""
-
-
-COLOR_CLASS_HYPERVISOR      = u'\033[32m'
-"""
-color for logs written by TNArchipelHypervisor
-"""
-COLOR_CLASS_VIRTUALMACHINE  = u'\033[34m'
-"""
-color for logs written by TNArchipelVirtualMachine
-"""
-
-COLORING_MAPPING_CLASS      = { "TNArchipelVirtualMachine": COLOR_CLASS_VIRTUALMACHINE, 
-                                "TNArchipelHypervisor": COLOR_CLASS_HYPERVISOR , 
-                                "TNArchipelHypervisor": COLOR_CLASS_HYPERVISOR}
-
-
-COLORING_MAPPING_LOG_LEVEL  = { LOG_LEVEL_INFO: COLOR_INFO, 
-                                LOG_LEVEL_DEBUG: COLOR_DEBUG, 
-                                LOG_LEVEL_ERROR: COLOR_ERROR}
+log = logging.getLogger('archipel')
 
 def init_conf(path):
     """
@@ -82,71 +24,33 @@ def init_conf(path):
     conf.readfp(open(path))
     logging_level = conf.get("LOGGING", "logging_level")
     if logging_level == "debug":
-        globals()["LOG_LEVEL"] = LOG_LEVEL_DEBUG
+        level = logging.DEBUG
     elif logging_level == "info":
-        globals()["LOG_LEVEL"] = LOG_LEVEL_INFO
+        level = logging.INFO
+    elif logging_level == "warning":
+        level = logging.WARNING
     elif logging_level == "error":
-        globals()["LOG_LEVEL"] = LOG_LEVEL_ERROR
+        level = logging.ERROR
+    elif logging_level == "critical":
+        level = logging.CRITICAL
     log_file = conf.get("LOGGING", "logging_file_path")
-    globals()["LOG_WRITE_IN_FILE"] = log_file
-    #globals()["ARCHIPEL_LOG_FILE"] = open(log_file, "a+")
     
+    logger          = globals()["log"];
+    max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
+    backup_count    = conf.getint("LOGGING", "logging_backup_count")
+    handler         = logging.handlers.RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+    log_format      = logging.Formatter(conf.get("LOGGING", "logging_formatter", raw=True), conf.get("LOGGING", "logging_date_format", raw=True))
+    
+    handler.setFormatter(log_format)
+    logger.addHandler(handler)
+    logger.setLevel(level)
+    
+    # logging.basicConfig(level=level,
+    #                     datefmt=conf.get("LOGGING", "logging_date_format", raw=True),
+    #                     format=conf.get("LOGGING", "logging_formatter", raw=True),
+    #                     filename=log_file)
     return conf
 
-
-
-
-def log(logger, level, message) :
-    """
-    this method is used to handle logging event.
-    
-    example :
-        >>> log(self, LOG_LEVEL_INFO, "ressource defined as virt-hyperviseur")
-        [INFO ] 2010-02-01 21:29:12.258505 TNArchipelHypervisor.__init__[12447696] : ressource defined as virt-hyperviseur
-    
-    @type level: string
-    @param level: the log level according to the value of L{LOG_DICT}
-    @type message: string
-    @param message: the message body to enter
-    """
-    if level < LOG_LEVEL:
-        return
-    
-    class_name      = logger.__class__.__name__
-    class_id        = str(id(logger))
-    function_name   = sys._getframe(1).f_code.co_name
-    current_date    = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    color_class     = COLOR_WHITE
-    
-    for match, color in COLORING_MAPPING_LOG_LEVEL.items():
-        if match == level:
-            color_head = color
-            break
-    
-    for match, color in COLORING_MAPPING_CLASS.items():
-        if class_name == match:
-            color_class = color
-            break
-            
-    # TODO : add a some system to handle colouring management by modules.
-    
-    
-    entry = "{6}[{0}]{7}\t{1} [{4}] {8}{2}.{3}{7}: {5}".format( LOG_DICT[level], 
-                                                                current_date, 
-                                                                class_name,
-                                                                function_name,
-                                                                class_id, 
-                                                                message.lower(),
-                                                                color_head,
-                                                                COLOR_WHITE,
-                                                                color_class)
-    if LOG_WRITE_IN_STDOUT:
-        print entry
-        
-    if LOG_WRITE_IN_FILE:
-        ARCHIPEL_LOG_FILE = open(LOG_WRITE_IN_FILE, "a+")
-        ARCHIPEL_LOG_FILE.write(entry + "\n")
-        ARCHIPEL_LOG_FILE.close();
 
 
 def build_error_iq(originclass, ex, iq):

@@ -54,7 +54,7 @@ class TNVMApplianceManager:
         """
         iqType = iq.getTag("query").getAttr("type")
         
-        log(self, LOG_LEVEL_DEBUG, "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
+        log.debug( "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
         
         if iqType == "install":
             reply = self.__install(iq)
@@ -141,8 +141,8 @@ class TNVMApplianceManager:
             for values in self.cursor:
                 name, description, url, uuid, status, source, save_path = values
             
-            log(self, LOG_LEVEL_DEBUG, "Supported extensions : %s " % str(self.disks_extensions))
-            log(self, LOG_LEVEL_INFO, "will install appliance with uuid %s at path %s"  % (uuid, save_path))
+            log.debug( "Supported extensions : %s " % str(self.disks_extensions))
+            log.info( "will install appliance with uuid %s at path %s"  % (uuid, save_path))
             appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, uuid, requester)
             
             self.old_status  = self.entity.xmppstatus
@@ -204,7 +204,7 @@ class TNVMApplianceManager:
             paths           = []
             
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
-                log(self, LOG_LEVEL_ERROR, self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
+                log.error( self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
                 raise Exception("Appliance with name %s is already in hypervisor repository" % package_name)
             
             self.old_status  = self.entity.xmppstatus

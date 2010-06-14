@@ -81,7 +81,7 @@ class TNThreadedVirtualMachine(Thread):
         try:
             self.xmppvm.connect()
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "vm has been stopped execption :" + str(ex))
+            log.error( "vm has been stopped execption :" + str(ex))
     
 
 
@@ -111,15 +111,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         self.virtualmachines = {}
         self.xmppserveraddr = jid.split("/")[0].split("@")[1]
-        log(self, LOG_LEVEL_INFO, "server address defined as {0}".format(self.xmppserveraddr))
+        log.info( "server address defined as {0}".format(self.xmppserveraddr))
         self.database_file = database_file
         self.__manage_persistance()
         
         self.libvirt_connection = libvirt.open(self.configuration.get("HYPERVISOR", "hypervisor_uri"))
         if self.libvirt_connection == None:
-            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+            log.error( "unable to connect libvirt")
             sys.exit(0) 
-        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        log.info( "connected to  libvirt")
         
         ## start the run loop
         libvirtEventLoop.virEventLoopPureStart()
@@ -149,10 +149,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a 
         blank database file.
         """
-        log(self, LOG_LEVEL_INFO, "opening database file {0}".format(self.database_file))
+        log.info( "opening database file {0}".format(self.database_file))
         self.database = sqlite3.connect(self.database_file)
         
-        log(self, LOG_LEVEL_INFO, "populating database if not exists")
+        log.info( "populating database if not exists")
         
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text)")
             
@@ -220,16 +220,16 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
             
-            log(self, LOG_LEVEL_INFO, "adding the xmpp vm ({0}) to my roster".format(vm_jid))
+            log.info( "adding the xmpp vm ({0}) to my roster".format(vm_jid))
             self.add_jid(vm_jid, [GROUP_VM])
             
             vm = self.__create_threaded_vm(vm_jid, vm_password)
-            log(self, LOG_LEVEL_INFO, "XMPP VM thread started")
+            log.info( "XMPP VM thread started")
             
-            log(self, LOG_LEVEL_INFO, "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
+            log.info( "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
             vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
             
-            log(self, LOG_LEVEL_INFO, "registering the new VM in hypervisor's memory")
+            log.info( "registering the new VM in hypervisor's memory")
             self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid,vm_password, datetime.datetime.now(), 'no comment'))
             self.database.commit()
             self.virtualmachines[domain_uuid] = vm
@@ -238,7 +238,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
             reply.setQueryPayload([payload])
-            log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully initialized")
+            log.info( "XMPP Virtual Machine instance sucessfully initialized")
             self.push_change("hypervisor", "alloc");
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid))
         except Exception as ex:
@@ -269,25 +269,25 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                     vm.get_instance().domain.destroy()
                 vm.get_instance().domain.undefine()
         
-            log(self, LOG_LEVEL_INFO, "removing the xmpp vm ({0}) from my roster".format(vm_jid))
+            log.info( "removing the xmpp vm ({0}) from my roster".format(vm_jid))
             self.remove_jid(vm_jid)
             
-            log(self, LOG_LEVEL_INFO, "removing the vm drive directory")
+            log.info( "removing the vm drive directory")
             vm.get_instance().remove_own_folder()
             
-            log(self, LOG_LEVEL_INFO, "unregistering the VM from hypervisor's database")
+            log.info( "unregistering the VM from hypervisor's database")
             self.database.execute("delete from virtualmachines where jid='{0}'".format(vm_jid))
             self.database.commit()
             
             del self.virtualmachines[domain_uuid]
             
-            log(self, LOG_LEVEL_INFO, "unregistering vm from jabber server ".format(vm_jid))
+            log.info( "unregistering vm from jabber server ".format(vm_jid))
             vm.get_instance()._inband_unregistration()
             
             self.update_presence()
             
             reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})])
-            log(self, LOG_LEVEL_INFO, "XMPP Virtual Machine instance sucessfully destroyed")
+            log.info( "XMPP Virtual Machine instance sucessfully destroyed")
             self.push_change("hypervisor", "free");
             self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()))
         except Exception as ex:
@@ -337,7 +337,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
         

@@ -31,7 +31,7 @@ class TNSnapshoting:
     
     def process_iq(self, conn, iq):
         iqType = iq.getTag("query").getAttr("type")
-        log(self, LOG_LEVEL_DEBUG, "IQ received from %s with type %s : %s" % (iq.getFrom(), iq.getType(), iqType))
+        log.debug( "IQ received from %s with type %s : %s" % (iq.getFrom(), iq.getType(), iqType))
         
         if not self.entity.domain:
             return
@@ -78,13 +78,13 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
                         
-            log(self, LOG_LEVEL_INFO, "creating snapshot with name %s desc :%s" % (name, xmlDesc))
+            log.info( "creating snapshot with name %s desc :%s" % (name, xmlDesc))
             
             self.entity.change_presence(presence_show="dnd", presence_status="Snapshoting...")
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            log(self, LOG_LEVEL_INFO, "snapshot with name %s created" % name);
+            log.info( "snapshot with name %s created" % name);
             self.entity.push_change("snapshoting", "taken")
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except Exception as ex:
@@ -161,14 +161,14 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
 
-            log(self, LOG_LEVEL_INFO, "deleting snapshot with name %s" % name)
+            log.info( "deleting snapshot with name %s" % name)
 
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
 
-            log(self, LOG_LEVEL_INFO, "snapshot with name %s deleted" % name);
+            log.info( "snapshot with name %s deleted" % name);
             self.entity.push_change("snapshoting", "deleted")
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except Exception as ex:
@@ -195,14 +195,14 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
 
-            log(self, LOG_LEVEL_INFO, "restoring snapshot with name %s" % name)
+            log.info( "restoring snapshot with name %s" % name)
 
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.revertToSnapshot(0);
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
 
-            log(self, LOG_LEVEL_INFO, "reverted to snapshot with name %s " % name);
+            log.info( "reverted to snapshot with name %s " % name);
             self.entity.push_change("snapshoting", "restored")
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except Exception as ex:

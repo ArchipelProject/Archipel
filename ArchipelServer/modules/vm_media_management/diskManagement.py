@@ -44,7 +44,7 @@ class TNMediaManagement:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log(self, LOG_LEVEL_DEBUG, "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
         iqType = iq.getTag("query").getAttr("type")
     
@@ -107,7 +107,7 @@ class TNMediaManagement:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
          
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "disk created")
+            log.info( "disk created")
             self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
             self.entity.push_change("disk", "created")
         except Exception as ex:
@@ -141,7 +141,7 @@ class TNMediaManagement:
                         
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "convertion of  created")
+            log.info( "convertion of  created")
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
         except Exception as ex:
@@ -168,7 +168,7 @@ class TNMediaManagement:
             os.rename(path, newpath)
             
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "renamed hard drive %s into  %s" % (path, newname))
+            log.info( "renamed hard drive %s into  %s" % (path, newname))
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
             self.entity.push_change("disk", "renamed")
         except Exception as ex:
@@ -217,7 +217,7 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, " disk deleted")
+            log.info( " disk deleted")
             self.entity.push_change("disk", "deleted")
             self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
         except Exception as ex:
@@ -254,7 +254,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply('success')
             reply.setQueryPayload(nodes)
-            log(self, LOG_LEVEL_INFO, "info about disks sent")
+            log.info( "info about disks sent")
         
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -288,7 +288,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply('success')
             reply.setQueryPayload(nodes)
-            log(self, LOG_LEVEL_INFO, "info about iso sent")
+            log.info( "info about iso sent")
         
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -325,7 +325,7 @@ class TNMediaManagement:
     #     
     #         reply = iq.buildReply('success')
     #         reply.setQueryPayload(nodes)
-    #         log(self, LOG_LEVEL_INFO, "info about network sent")
+    #         log.info( "info about network sent")
     #     
     #     except Exception as ex:
     #         reply = build_error_iq(self, ex, iq)

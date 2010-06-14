@@ -6,9 +6,6 @@ import archipel
 
 NS_ARCHIPEL_HYPERVISOR_HEALTH = "archipel:hypervisor:health"
 
-# adding a new color log for class TNThreadedHealthCollector
-globals()["COLORING_MAPPING_CLASS"].update({"TNThreadedHealthCollector": u'\033[35m'})
-
 ######################################################################################################
 ### Registring of the stanza
 ######################################################################################################

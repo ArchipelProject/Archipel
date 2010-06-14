@@ -7,7 +7,7 @@ NS_ARCHIPEL_SAMPLE = "a:type:that:doesnt:exists"
 
 # this method will be call at loading
 def __module_init__sample_module(self):
-    log(self, LOG_LEVEL_INFO, "hello from sample module")
+    log.info( "hello from sample module")
     self.module_sample = sampleModule.TNSampleModule()
 
 # this method will be called at registration of handlers for XMPP

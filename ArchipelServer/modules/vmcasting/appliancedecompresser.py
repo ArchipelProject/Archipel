@@ -54,16 +54,16 @@ class TNApplianceDecompresser(Thread):
     
     
     def run(self):
-        log(self, LOG_LEVEL_INFO, "unpacking to %s" % self.working_dir)
+        log.info( "unpacking to %s" % self.working_dir)
         self.unpack()
         
-        log(self, LOG_LEVEL_INFO, "defining UUID in description file as %s" % self.uuid)
+        log.info( "defining UUID in description file as %s" % self.uuid)
         self.update_description()
         
-        log(self, LOG_LEVEL_INFO, "installing package in %s" % self.install_path)
+        log.info( "installing package in %s" % self.install_path)
         self.install()
         
-        log(self, LOG_LEVEL_INFO, "cleaning...")
+        log.info( "cleaning...")
         self.clean()
         
         desc_node = self.get_description_node()
@@ -91,29 +91,29 @@ class TNApplianceDecompresser(Thread):
         try:
             for aFile in os.listdir(self.extract_path):
                 full_path = os.path.join(self.extract_path, aFile)
-                log(self, LOG_LEVEL_DEBUG, "parsing file %s" % full_path)
+                log.debug( "parsing file %s" % full_path)
                 
                 if os.path.splitext(full_path)[-1] == ".gz":
-                    log(self, LOG_LEVEL_INFO, "found one gziped disk : %s" % full_path)
+                    log.info( "found one gziped disk : %s" % full_path)
                     i = open(full_path, 'rb')
                     o = open(full_path.replace(".gz", ""), 'w')
                     self._gunzip(i, o)
                     i.close()
                     o.close()
-                    log(self, LOG_LEVEL_INFO, "file unziped at : %s" % full_path.replace(".gz", ""))
+                    log.info( "file unziped at : %s" % full_path.replace(".gz", ""))
                     self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "")
                     
                 if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                    log(self, LOG_LEVEL_DEBUG, "found one disk : %s" % full_path)
+                    log.debug( "found one disk : %s" % full_path)
                     self.disk_files[aFile] = full_path
                     
                 if aFile == "description.xml":
-                    log(self, LOG_LEVEL_DEBUG, "found description.xml file : %s" % full_path)
+                    log.debug( "found description.xml file : %s" % full_path)
                     o = open(full_path, 'r')
                     self.description_file = o.read()
                     o.close()
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, str(ex))
+            log.error( str(ex))
     
     
     def update_description(self):
@@ -160,7 +160,7 @@ class TNApplianceDecompresser(Thread):
             return False
         
         for key, path in self.disk_files.items():
-            log(self, LOG_LEVEL_DEBUG, "moving %s to %s" % (path, self.install_path))
+            log.debug( "moving %s to %s" % (path, self.install_path))
             try:
                 shutil.move(path, self.install_path)
             except:

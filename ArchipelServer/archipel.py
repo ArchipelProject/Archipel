@@ -19,6 +19,7 @@
 This is the main package to import in order to use Archipel.
 """
 
+import logging
 from libvirtEventLoop import *
 from archipelVirtualMachine import * 
 from archipelHypervisor import *

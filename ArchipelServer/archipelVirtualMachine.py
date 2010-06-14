@@ -166,13 +166,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.uuid = self.jid.getNode()
         self.libvirt_connection = libvirt.open(None)
         if self.libvirt_connection == None:
-            log(self, LOG_LEVEL_ERROR, "unable to connect hypervisor")
+            log.error( "unable to connect hypervisor")
             sys.exit(0) 
-        log(self, LOG_LEVEL_INFO, "connected to hypervisor using libvirt")
+        log.info( "connected to hypervisor using libvirt")
         
         try:
             self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
-            log(self, LOG_LEVEL_INFO, "sucessfully connect to domain uuid {0}".format(self.uuid))
+            log.info( "sucessfully connect to domain uuid {0}".format(self.uuid))
             
             if self.domain:
                 self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
@@ -181,7 +181,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.libvirt_connection.domainEventRegister(self.on_domain_event,None)
             
             dominfo = self.domain.info()
-            log(self, LOG_LEVEL_INFO, "virtual machine state is %d" %  dominfo[0])
+            log.info( "virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == VIR_DOMAIN_RUNNING:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
             elif dominfo[0] == VIR_DOMAIN_PAUSED:
@@ -190,20 +190,20 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
-                log(self, LOG_LEVEL_INFO, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                log.info( "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
             else:
-                log(self, LOG_LEVEL_ERROR, "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                log.error( "Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR)
         except Exception as ex:
-            log(self, LOG_LEVEL_ERROR, "unexpected exception : " + str(ex))
+            log.error( "unexpected exception : " + str(ex))
             sys.exit(0)
     
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
-            log(self, LOG_LEVEL_INFO, "libvirt event received: %d from %s with detail %s" % (event, dom.UUID(), detail))
+            log.info( "libvirt event received: %d from %s with detail %s" % (event, dom.UUID(), detail))
             
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
@@ -247,7 +247,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply('success')
             payload = xmpp.Node("domain", attrs={"id": str(self.domain.ID())})
             reply.setQueryPayload([payload])
-            log(self, LOG_LEVEL_INFO, "virtual machine created")
+            log.info( "virtual machine created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -268,7 +268,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             self.domain.shutdown()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine shutdowned")
+            log.info( "virtual machine shutdowned")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -288,7 +288,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             ret = self.domain.destroy()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine destroyed")
+            log.info( "virtual machine destroyed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -309,7 +309,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             self.domain.reboot(0) # flags not used in libvirt but required.
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine rebooted")
+            log.info( "virtual machine rebooted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -329,7 +329,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             self.domain.suspend()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine suspended")
+            log.info( "virtual machine suspended")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -350,7 +350,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             self.domain.resume()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual machine resumed")
+            log.info( "virtual machine resumed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -374,7 +374,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 dominfo = self.domain.info()
                 response = xmpp.Node(tag="info", attrs={"state": dominfo[0], "maxMem": dominfo[1], "memory": dominfo[2], "nrVirtCpu": dominfo[3], "cpuTime": dominfo[4], "hypervisor": self.hypervisor.jid})
                 reply.setQueryPayload([response])
-                log(self, LOG_LEVEL_DEBUG, "virtual machine info sent")
+                log.debug( "virtual machine info sent")
             else:
                 reply = iq.buildReply('ignore')  
         except Exception as ex:
@@ -459,7 +459,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
            definitionXML = str(domain_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
            self.libvirt_connection.defineXML(definitionXML)
            self.definition = domain_node
-           log(self, LOG_LEVEL_INFO, "virtual machine XML is defined")
+           log.info( "virtual machine XML is defined")
            if not self.domain:
                self.connect_libvirt()
        except Exception as ex:
@@ -483,7 +483,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             reply = iq.buildReply('success')
             self.domain.undefine()
-            log(self, LOG_LEVEL_INFO, "virtual machine is undefined")
+            log.info( "virtual machine is undefined")
             self.definition = None;
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -540,7 +540,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        log(self, LOG_LEVEL_DEBUG, "Control IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "Control IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
         
@@ -609,7 +609,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
         
@@ -639,7 +639,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
 
-        log(self, LOG_LEVEL_DEBUG, "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "Definition IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
 
         iqType = iq.getTag("query").getAttr("type")
 

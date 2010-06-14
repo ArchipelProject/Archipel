@@ -45,7 +45,7 @@ class TNHypervisorHealth:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log(self, LOG_LEVEL_DEBUG, "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
     
         iqType = iq.getTag("query").getAttr("type")
     
@@ -72,7 +72,7 @@ class TNHypervisorHealth:
         """
         try:
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_DEBUG, "converting stats into XML node")
+            log.debug( "converting stats into XML node")
             
             limit = int(iq.getTag("query").getAttr("limit"))
             nodes = []

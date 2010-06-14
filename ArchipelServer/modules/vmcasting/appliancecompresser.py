@@ -41,31 +41,31 @@ class TNApplianceCompresser(Thread):
     
     
     def run(self):
-        log(self, LOG_LEVEL_INFO, "packaging appliance %s" % self.name)
+        log.info( "packaging appliance %s" % self.name)
         
         definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '');
         
         zipped_file_paths = [];
         for path in self.paths:
-            log(self, LOG_LEVEL_INFO, "zipping file %s" % path)
+            log.info( "zipping file %s" % path)
             zipped_file_path = self.compress_disk(path)
             definitionXML = definitionXML.replace(path, zipped_file_path.split('/')[-1])
             zipped_file_paths.append(zipped_file_path)
-            log(self, LOG_LEVEL_INFO, "file zipped %s" % zipped_file_path)
+            log.info( "file zipped %s" % zipped_file_path)
         
-        log(self, LOG_LEVEL_INFO, "writing definion at path  %s/description.xml" % self.working_dir)
+        log.info( "writing definion at path  %s/description.xml" % self.working_dir)
         f = open(self.working_dir + "/description.xml", 'w')
         f.write(definitionXML)
         f.close()
             
-        log(self, LOG_LEVEL_INFO, "creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
+        log.info( "creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
         
         tar_file = self.working_dir + "/" + self.name + ".xvm2";
         tar = tarfile.open(tar_file, "w")
         tar.add(self.working_dir + "/description.xml", "/description.xml")
         os.unlink(self.working_dir + "/description.xml");
         for zipped_file_path in zipped_file_paths:
-            log(self, LOG_LEVEL_INFO, "adding to tar file %s" % zipped_file_path)
+            log.info( "adding to tar file %s" % zipped_file_path)
             tar.add(zipped_file_path, "/" + zipped_file_path.split("/")[-1])
             os.unlink(zipped_file_path);
         

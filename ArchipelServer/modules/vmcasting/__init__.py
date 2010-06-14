@@ -8,7 +8,6 @@ import archipel
 NS_ARCHIPEL_HYPERVISOR_VMCASTING        = "archipel:hypervisor:vmcasting"
 NS_ARCHIPEL_VIRTUALMACHINE_VMCASTING    = "archipel:virtualmachine:vmcasting"
 
-globals()["COLORING_MAPPING_CLASS"].update({"TNHypervisorRepoManager": u'\033[36m', "TNVMApplianceManager": u'\033[37m'})
 
 def __module_init__vmcasting_module_for_hypervisor(self):
     db_path     = self.configuration.get("VMCASTING", "vmcasting_database_path")

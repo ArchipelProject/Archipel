@@ -36,13 +36,13 @@ class TNHypervisorNetworks:
         self.entity = entity
         self.libvirt_connection = libvirt.open(None)
         if self.libvirt_connection == None:
-            log(self, LOG_LEVEL_ERROR, "unable to connect libvirt")
+            log.error( "unable to connect libvirt")
             sys.exit(0) 
-        log(self, LOG_LEVEL_INFO, "connected to  libvirt")
+        log.info( "connected to  libvirt")
     
     
     def process_iq_for_hypervisor(self, conn, iq):            
-        log(self, LOG_LEVEL_DEBUG, "Network IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        log.debug( "Network IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
         
@@ -78,7 +78,7 @@ class TNHypervisorNetworks:
     
 
     def process_iq_for_virtualmachine(self, conn, iq):
-        log(self, LOG_LEVEL_INFO, "received network iq for virtual machine")
+        log.info( "received network iq for virtual machine")
         
         iqType = iq.getTag("query").getAttr("type")
         
@@ -109,7 +109,7 @@ class TNHypervisorNetworks:
             
             reply = iq.buildReply('success')
             self.libvirt_connection.networkDefineXML(str(network_node))
-            log(self, LOG_LEVEL_INFO, "virtual network XML is defined")
+            log.info( "virtual network XML is defined")
             self.entity.push_change("network", "defined")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -132,7 +132,7 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.undefine()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual network XML is undefined")
+            log.info( "virtual network XML is undefined")
             self.entity.push_change("network", "undefined")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -155,7 +155,7 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.create()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual network created")
+            log.info( "virtual network created")
             self.entity.push_change("network", "created")
             self.entity.shout("disk", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
         except Exception as ex:
@@ -179,7 +179,7 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.destroy()
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "virtual network destroyed")
+            log.info( "virtual network destroyed")
             self.entity.push_change("network", "destroyed")
             self.entity.shout("disk", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
         except Exception as ex:

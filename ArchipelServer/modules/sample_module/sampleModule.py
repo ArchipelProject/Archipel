@@ -31,7 +31,7 @@ class TNSampleModule:
 
     def process_iq(self, conn, iq):
         iqType = iq.getTag("query").getAttr("type")
-        log(self, LOG_LEVEL_DEBUG, " IQ received from {%s} with type {%s} : {%s}" % (iq.getFrom(), iq.getType(), iqType))
+        log.debug( " IQ received from {%s} with type {%s} : {%s}" % (iq.getFrom(), iq.getType(), iqType))
         
         if iqType == "do-something":
             reply = self.__do_something(iq)
@@ -51,7 +51,7 @@ class TNSampleModule:
         """
         try:
             reply = iq.buildReply('success')
-            log(self, LOG_LEVEL_INFO, "I did something!")
+            log.info( "I did something!")
             self.entity.push_change("sample", "I_DID_SOMETHING")
             self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")
         except Exception as ex:
