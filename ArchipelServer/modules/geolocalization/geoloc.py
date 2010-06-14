@@ -24,15 +24,24 @@ import httplib
 
 
 class TNHypervisorGeolocalization:
-    def __init__(self, service, request, method, root_info_node):
-        conn = httplib.HTTPConnection(service)
-        conn.request(method, request)
-
-        node_loc = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom()
-        self.localization_information = node_loc
+    def __init__(self, conf):
+        mode = conf.get("GEOLOCALIZATION", "localization_mode");
         
-        
-        
+        if mode == "auto": 
+            service         = conf.get("GEOLOCALIZATION", "localization_service_url")
+            request         = conf.get("GEOLOCALIZATION", "localization_service_request")
+            method          = conf.get("GEOLOCALIZATION", "localization_service_method")
+            root_info_node  = conf.get("GEOLOCALIZATION", "localization_service_response_root_node")
+            conn = httplib.HTTPConnection(service)
+            conn.request(method, request)
+            self.localization_information = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom()
+        else:
+            lat = conf.getfloat("GEOLOCALIZATION", "localization_latitude")
+            lon = conf.getfloat("GEOLOCALIZATION", "localization_longitude")
+            string = "<gelocalization><Latitude>"+str(lat)+"</Latitude>\n<Longitude>"+str(lon)+"</Longitude></gelocalization>"
+            self.localization_information = xmpp.simplexml.NodeBuilder(data=string).getDom()
+    
+    
     def __module__get_geolocalization(self, iq):
         reply = iq.buildReply('success')
         try:
