@@ -478,9 +478,14 @@ function generateMacAddr()
     var nics        = [_nicsDatasource content];
     var drives      = [_drivesDatasource content];
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDefinition, "to": [_entity fullJID], "id": anUid}];
-
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeVirtualMachineDefinitionDefine}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid}];
+    
+    [stanza addChildName:@"query" withAttributes:{
+        "xmlns":TNArchipelTypeVirtualMachineDefinition,
+        "type": "set",
+        "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+        
+        
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
     [stanza addChildName:@"name"];
@@ -628,9 +633,12 @@ function generateMacAddr()
 //  XML Desc
 - (void)getXMLDesc
 {
-    var xmldescStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
+    var xmldescStanza   = [TNStropheStanza iq];
 
-    [xmldescStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlXMLDesc}];
+    [xmldescStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "type": "get", 
+        "action" : TNArchipelTypeVirtualMachineControlXMLDesc}];
 
     [_entity sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }

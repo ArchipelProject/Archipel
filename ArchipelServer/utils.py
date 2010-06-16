@@ -55,11 +55,14 @@ def init_conf(path):
 
 def build_error_iq(originclass, ex, iq):
     caller = inspect.stack()[2][3];
-    log(originclass, LOG_LEVEL_ERROR, "%s: exception raised is : %s" % (caller, ex))
+    log.error("%s: exception raised is : %s" % (caller, ex))
     reply = iq.buildReply('error')
     payload = xmpp.Node("error")
     payload.addData(str(ex))
     reply.setQueryPayload([payload])
     return reply
             
-        
+def build_error_message(originclass, ex):
+    caller = inspect.stack()[2][3];
+    log.error("%s: exception raised is : %s" % (caller, ex))
+    return str(ex)

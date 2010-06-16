@@ -7,7 +7,7 @@ NS_ARCHIPEL_HYPERVISOR_GEOLOC = "archipel:hypervisor:geolocalization"
 
 # this method will be call at loading
 def __module_init__geoloc(self):
-    self.module_geolocalization = geoloc.TNHypervisorGeolocalization(self.configuration)
+    self.module_geolocalization = geoloc.TNHypervisorGeolocalization(conf=self.configuration, entity=self)
 
 
 def __module_register_stanza__geoloc(self):

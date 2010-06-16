@@ -41,7 +41,7 @@ class TNHypervisorNetworks:
         log.info( "connected to  libvirt")
     
     
-    def process_iq_for_hypervisor(self, conn, iq):            
+    def process_iq_for_hypervisor(self, conn, iq):
         log.debug( "Network IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
         iqType = iq.getTag("query").getAttr("type")
@@ -75,8 +75,9 @@ class TNHypervisorNetworks:
             reply = self.__module_network_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
     
-
+    
     def process_iq_for_virtualmachine(self, conn, iq):
         log.info( "received network iq for virtual machine")
         
@@ -271,4 +272,4 @@ class TNHypervisorNetworks:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
-        
+    

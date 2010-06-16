@@ -112,8 +112,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         var params = [[CPDictionary alloc] init];
 
         [params setValue:@"message" forKey:@"name"];
+        [params setValue:@"headline" forKey:@"type"];
+        
+        //<message to="oto@server/resource" xmlns="archipel:push:disk" type="headline" id="55" change="created" />
         if (aPushType)
-            [params setValue:aPushType forKey:@"type"];
+          [params setValue:aPushType forKey:@"namespace"];
 
         [_registredSelectors addObject:[_connection registerSelector:aSelector ofObject:self withDict:params]];
     }

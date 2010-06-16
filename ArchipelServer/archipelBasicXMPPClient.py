@@ -40,7 +40,19 @@ LOOP_RESTART = 2
 
 
 ARCHIPEL_NS_IQ_PUSH = "archipel:push"
-ARCHIPEL_NS_SERVICE_MESSAGE = "archipel:service:usermessage"
+ARCHIPEL_NS_SERVICE_MESSAGE = "headline"
+
+ARCHIPEL_MESSAGING_HELP_MESSAGE = """
+You can communicate with me using text commands, just like if you were chatting with your friends. \
+I try to understand you as much as I can, but you have to be nice with me.\
+Note that you can use more complex sentence than describe into the following list. For example, if you see \
+in the command ["how are you"], I'll understand any sentence containing "how are you". Parameters (if any) are separated with spaces.
+
+For example, you can send command using the following form:
+command param1 param2 param3
+
+"""
+
 
 class TNArchipelBasicXMPPClient(object):
     """
@@ -69,9 +81,10 @@ class TNArchipelBasicXMPPClient(object):
         self.roster = None
         self.roster_retreived = False
         self.registered_actions_to_perform_on_connection = []
+        self.messages_registrar = []
         
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
-
+        
         if ip_conf == "auto":
             self.ipaddr = socket.gethostbyname(socket.gethostname())
         else:
@@ -81,7 +94,6 @@ class TNArchipelBasicXMPPClient(object):
             if not method.find("__module_init__") == -1:
                 m = getattr(self, method)
                 m()
-    
     
     
     def _connect_xmpp(self):
@@ -94,7 +106,7 @@ class TNArchipelBasicXMPPClient(object):
         log.info("client instance initialized")
         
         if self.xmppclient.connect() == "":
-            loggin.error("unable to connect to XMPP server")
+            log.error("unable to connect to XMPP server")
             sys.exit(0)
         log.info("sucessfully connected")
         
@@ -159,7 +171,6 @@ class TNArchipelBasicXMPPClient(object):
             
         elif resp_iq.getType() == "result":
             log.info("the registration complete")
-            logg
             self.disconnect()
             self.connect()
     
@@ -188,7 +199,7 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
-        self.xmppclient.RegisterHandler('message', self.__process_message)
+        self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         
         for method in self.__class__.__dict__:
             if not method.find("__module_register_stanza__") == -1:
@@ -226,25 +237,6 @@ class TNArchipelBasicXMPPClient(object):
         self.remove_jid(presence.getFrom())
         
         raise xmpp.NodeProcessed
-        
-        
-    def __process_message(self, conn, msg):
-        """
-        Handler for incoming message. this method is had to be overidden to treat message.
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type msg: xmpp.Protocol.Message
-        @param msg: the received message 
-        """
-        
-        if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and not msg.getType() == "error" and msg.getBody():
-            log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
-            reply = msg.buildReply("Hello. At this time, I do not handle any direct interaction. Have a nice day, Human!")
-            reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
-            conn.send(reply)
-        else:
-            log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
 
     ######################################################################################################
     ### Public method
@@ -277,6 +269,7 @@ class TNArchipelBasicXMPPClient(object):
         self.registered_actions_to_perform_on_connection = []
     
     
+    
     def perform_all_registered_roster_actions(self):
         """
         Parse the all the registered actions for roster, and execute them
@@ -291,15 +284,14 @@ class TNArchipelBasicXMPPClient(object):
         self.registered_actions_to_perform_on_roster_retrieved = []
     
     
-    
     def change_presence(self, presence_show=None, presence_status=None):
-        if not presence_status == None:
-            self.xmppstatus = presence_status
-        if not presence_show == None:
-            self.xmppstatusshow = presence_show
+        self.xmppstatus     = presence_status
+        self.xmppstatusshow = presence_show
+        
         log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        print str(pres)
         self.xmppclient.send(pres)
     
     
@@ -326,19 +318,24 @@ class TNArchipelBasicXMPPClient(object):
         """push a change using archipel push system"""
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         self.roster = self.xmppclient.getRoster()
-        for item in self.roster.getItems():
-            push_message = xmpp.Message(typ=ns, to=str(item), attrs={"change": change}, xmlns=ARCHIPEL_NS_IQ_PUSH)
-            log.info("pushing " + ns + " / " + change + " to item " + str(item))
-            self.xmppclient.send(push_message)
+        
+        for item, info in self.roster.getRawRoster().iteritems():
+            for resource, res_info in info["resources"].iteritems():
+                send_to = item + "/" + resource
+                push_message = xmpp.Message(typ="headline", to=send_to, attrs={"change": change, "xmlns": ns})
+                log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
+                self.xmppclient.send(push_message)
     
     
     def shout(self, subject, message):
         """send a message to evrybody in roster"""
         self.roster = self.xmppclient.getRoster()
-        for item in self.roster.getItems():
-            broadcast = xmpp.Message(to=str(item), subject=subject, body=message, typ=ARCHIPEL_NS_SERVICE_MESSAGE)
-            log.info("shouting message subject:%s message:%s" % (subject, message))
-            self.xmppclient.send(broadcast)
+        for item, info in self.roster.getRawRoster().iteritems():
+            for resource, res_info in info["resources"].iteritems():
+                send_to = item + "/" + resource
+                broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
+                log.info("shouting message message to %s: %s" % (send_to, message))
+                self.xmppclient.send(broadcast)
     
 
     def add_jid(self, jid, groups=[]):
@@ -494,20 +491,146 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.loop_status = LOOP_ON
         while True:
-            try:
-                if self.loop_status == LOOP_ON:
-                    self.xmppclient.Process(1)
-                elif self.loop_status == LOOP_RESTART:
-                    self.disconnect()
-                    self.connect()
-                    self.loop_status = LOOP_ON
-                elif self.loop_status == LOOP_OFF:
-                    self.disconnect()
-                    break
-            except Exception as ex:
-                log.info("End of loop forced by exception : %s" % str(ex))
-                self.loop_status = LOOP_OFF
+            # try:
+            if self.loop_status == LOOP_ON:
+                self.xmppclient.Process(30)
+            elif self.loop_status == LOOP_RESTART:
+                self.disconnect()
+                self.connect()
+                self.loop_status = LOOP_ON
+            elif self.loop_status == LOOP_OFF:
+                self.disconnect()
                 break
+            # except Exception as ex:
+            #     log.info("End of loop forced by exception : %s" % str(ex))
+            #     self.loop_status = LOOP_OFF
+            #     break
              
     
+
+
+    #########################################################################
+    def add_message_registrar_item(self, item):
+        """
+        Register a method described in item
+        the item use the following form:
+        
+        {  "commands" :     ["command trigger 1", "command trigger 2"], 
+            "parameters":   [
+                                {"name": "param1", "description": "the description of the first param"}, 
+                                {"name": "param2", "description": "the description of the second param"}
+                            ], 
+            "method":       self.a_method_to_launch
+            "description":  "A general description of the command"
+        }
+        
+        The "method" key take any method with type (string)aMethod(raw_command_message). The return string
+        will be sent to the requester
+        
+        @type item: dictionnary
+        @param item: the dictionnary describing the registrar item
+        """
+        log.info("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
+        self.messages_registrar.append(item)
+    
+    
+    def add_message_registrar_items(self, items):
+        """
+        register an array of item see @add_message_registrar_item
+        
+        @type item: array
+        @param item: an array of messages_registrar items
+        """
+        for item in items:
+            self.add_message_registrar_item(item)
+    
+    
+    def __process_message(self, conn, msg):
+        """
+        Handler for incoming message.
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message 
+        """
+        log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
+
+        reply_stanza = msg.buildReply("not prepared")
+        me = reply_stanza.getFrom()
+        me.setResource(self.ressource)
+        reply_stanza.setType("chat")
+        # reply_stanza = self.__filter_message(msg)
+        if reply_stanza:
+            conn.send(self.__build_reply(reply_stanza, msg))
+    
+    
+    def __filter_message(self, msg):
+        """
+        this method filter archipel push messages and archipel service messages
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message
+        """
+        if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and not msg.getType() == "error" and msg.getBody():
+            log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
+            reply = msg.buildReply("not prepared")
+            me = reply.getFrom()
+            me.setResource(self.entity.ressource)
+            reply.setType("chat")
+            #reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
+            return reply
+        else:
+            log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
+            return False
+    
+    
+    def __build_reply(self, reply_stanza, msg):
+        """
+        parse the registrar and execute commands if necessary
+        """
+        
+        body = "%s" % msg.getBody().lower()
+        reply_stanza.setBody("not understood")
+        
+        if body.find("help") >= 0:
+            reply_stanza.setBody(self.__build_help())
+        else: 
+            for registrar_item in self.messages_registrar:
+                for cmd in registrar_item["commands"]:
+                    if body.find(cmd) >= 0:
+                        m = registrar_item["method"]
+                        resp = m(body)
+                        reply_stanza.setBody(resp)
+        
+        return reply_stanza;
+    
+    
+    def __build_help(self):
+        """
+        build the help message according to the current registrar
+        
+        @return the string containing the help message
+        """
+        resp = ARCHIPEL_MESSAGING_HELP_MESSAGE
+        for registrar_item in self.messages_registrar:
+            cmds = str(registrar_item["commands"])
+            desc = registrar_item["description"]
+            params = registrar_item["parameters"]
+            params_string = ""
+            for p in params:
+                params_string += "%s: %s\n" % (p["name"], p["description"])
+                
+            if params_string == "":
+                params_string = "No parameters"
+            else:
+                params_string = params_string[:-1]
+                
+            resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
+        
+        return resp
+    
+
 

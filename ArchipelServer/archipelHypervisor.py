@@ -81,7 +81,7 @@ class TNThreadedVirtualMachine(Thread):
         try:
             self.xmppvm.connect()
         except Exception as ex:
-            log.error( "vm has been stopped execption :" + str(ex))
+            log.error( "vm has been stopped exception :" + str(ex))
     
 
 
@@ -178,7 +178,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
         vm = TNThreadedVirtualMachine(jid, password, self, self.configuration) #envoyer un bon mot de passe.
-        vm.daemon = True
+        #vm.daemon = True
         vm.start()
         return vm    
     

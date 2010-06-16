@@ -228,6 +228,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var type    = [aStanza getType];
     var change  = [aStanza valueForAttribute:@"change"];
     
+    CPLog.debug("Push notification recieved of type " + type)
+    
+    [self getDisksInfo];
     
     if (type == TNArchipelPushNotificationDisk)
     {
@@ -235,13 +238,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
         else if (change == @"deleted")
             [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
-
-        [self getDisksInfo];
     }
-    else if ((type == TNArchipelPushNotificationAppliance) && (change == @"applianceinstalled"))
-    {
-        [self getDisksInfo];
-    }
+    
     return YES;
 }
 
