@@ -71,8 +71,9 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)awakeFromCib
 {
-    var bundle = [CPBundle bundleForClass:[self class]];
+    [fieldJID setSelectable:YES];
     
+    var bundle          = [CPBundle bundleForClass:[self class]];
     var imagePlay       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
     var imageStop       = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
     var imageDestroy    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CGSizeMake(20, 20)];

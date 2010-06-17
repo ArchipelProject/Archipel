@@ -66,6 +66,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];

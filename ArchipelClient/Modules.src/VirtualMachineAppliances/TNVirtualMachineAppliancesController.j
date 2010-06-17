@@ -61,6 +61,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [fieldJID setSelectable:YES];
     
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];

@@ -69,6 +69,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     [buttonNewDiskSizeUnit removeAllItems];

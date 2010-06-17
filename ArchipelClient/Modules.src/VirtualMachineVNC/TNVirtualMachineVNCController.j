@@ -64,6 +64,8 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 */
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
 
     _vncWebView = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];

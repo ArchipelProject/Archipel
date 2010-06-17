@@ -63,6 +63,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     var bundle  = [CPBundle bundleForClass:[self class]];
     var spinner = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]];
 

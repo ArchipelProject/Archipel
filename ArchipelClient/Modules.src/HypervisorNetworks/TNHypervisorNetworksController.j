@@ -63,6 +63,8 @@ function generateIPForNewNetwork()
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     
     /* VM table view */

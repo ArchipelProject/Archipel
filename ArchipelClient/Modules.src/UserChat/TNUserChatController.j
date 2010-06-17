@@ -46,7 +46,8 @@
 */
 - (void)awakeFromCib
 {
-    CPLog.debug(messagesScrollView);
+    [fieldJID setSelectable:YES];
+    
     _messages = [CPArray array];
      
      [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];

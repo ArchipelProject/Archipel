@@ -155,6 +155,8 @@ function generateMacAddr()
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+    
     var bundle                  = [CPBundle mainBundle];
     var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
     var buttonBezel             = [CPColor colorWithPatternImage:centerBezel];
