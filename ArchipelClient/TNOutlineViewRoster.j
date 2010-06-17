@@ -177,10 +177,14 @@
     {
         var center = [CPNotificationCenter defaultCenter];
         [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
+        
+        return
     }
     else if ([anEvent keyCode] == CPEscapeKeyCode)
     {
         [_searchField _searchFieldCancel:self];
+        
+        return
     }
     else if ([anEvent keyCode] == CPReturnKeyCode)
     {
@@ -191,8 +195,6 @@
         
         return;
     }
-    
-    
     
     [super keyDown:anEvent];
 }
