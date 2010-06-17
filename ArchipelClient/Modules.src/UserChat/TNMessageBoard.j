@@ -23,8 +23,8 @@
 
 @implementation TNMessageBoard : CPView 
 {
-    CPArray     _messageViews;
     CPArray     _messageDicts;
+    CPArray     _messageViews;
 }
 
 - (id)initWithFrame:(CPRect)aFrame

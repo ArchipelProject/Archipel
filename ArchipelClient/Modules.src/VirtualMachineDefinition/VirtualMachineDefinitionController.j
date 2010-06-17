@@ -109,48 +109,48 @@ function generateMacAddr()
 
 @implementation VirtualMachineDefinitionController : TNModule
 {
-    @outlet CPTextField             fieldJID                @accessors;
-    @outlet CPTextField             fieldName               @accessors;
-    @outlet CPTextField             fieldMemory             @accessors;
-    @outlet CPPopUpButton           buttonNumberCPUs        @accessors;
-    @outlet CPPopUpButton           buttonBoot              @accessors;
-    @outlet CPPopUpButton           buttonVNCKeymap         @accessors;
-    @outlet CPButton                buttonAddNic            @accessors;
-    @outlet CPButton                buttonDelNic            @accessors;
-    @outlet CPButton                buttonArchitecture      @accessors;
-    @outlet CPButton                buttonHypervisor        @accessors;
-    @outlet CPButton                buttonOnPowerOff        @accessors;
-    @outlet CPButton                buttonOnReboot          @accessors;
-    @outlet CPButton                buttonOnCrash           @accessors;
-    @outlet CPButton                buttonClocks            @accessors;
-    @outlet CPCheckBox              checkboxPAE             @accessors;
-    @outlet CPCheckBox              checkboxACPI            @accessors;
-    @outlet CPCheckBox              checkboxAPIC            @accessors;
-    @outlet CPButtonBar             buttonBarControlDrives  @accessors;
-    @outlet CPButtonBar             buttonBarControlNics    @accessors;
-    @outlet TNWindowNicEdition      windowNicEdition        @accessors;
-    @outlet TNWindowDriveEdition    windowDriveEdition      @accessors;
+    @outlet CPButton                buttonAddNic;
+    @outlet CPButton                buttonArchitecture;
+    @outlet CPButton                buttonClocks;
+    @outlet CPButton                buttonDelNic;
+    @outlet CPButton                buttonHypervisor;
+    @outlet CPButton                buttonOnCrash;
+    @outlet CPButton                buttonOnPowerOff;
+    @outlet CPButton                buttonOnReboot;
+    @outlet CPButtonBar             buttonBarControlDrives;
+    @outlet CPButtonBar             buttonBarControlNics;
+    @outlet CPCheckBox              checkboxACPI;
+    @outlet CPCheckBox              checkboxAPIC;
+    @outlet CPCheckBox              checkboxPAE;
+    @outlet CPPopUpButton           buttonBoot;
+    @outlet CPPopUpButton           buttonNumberCPUs;
+    @outlet CPPopUpButton           buttonVNCKeymap;
+    @outlet CPScrollView            scrollViewForDrives;
+    @outlet CPScrollView            scrollViewForNics;
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
-    @outlet CPView                  viewNicsContainer;
-    @outlet CPView                  viewDrivesContainer;
-    @outlet CPScrollView            scrollViewForNics;
-    @outlet CPScrollView            scrollViewForDrives;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldMemory;
+    @outlet CPTextField             fieldName;
     @outlet CPView                  maskingView;
+    @outlet CPView                  viewDrivesContainer;
+    @outlet CPView                  viewNicsContainer;
+    @outlet TNWindowDriveEdition    windowDriveEdition;
+    @outlet TNWindowNicEdition      windowNicEdition;
 
+    CPButton                        _editButtonDrives;
+    CPButton                        _editButtonNics;
+    CPButton                        _minusButtonDrives;
+    CPButton                        _minusButtonNics;
+    CPButton                        _plusButtonDrives;
+    CPButton                        _plusButtonNics;
+    CPColor                         _bezelColor;
     CPColor                         _buttonBezelHighlighted;
     CPColor                         _buttonBezelSelected;
-    CPColor                         _bezelColor;
-    CPButton                        _plusButtonDrives;
-    CPButton                        _minusButtonDrives;
-    CPButton                        _editButtonDrives;
-    CPButton                        _plusButtonNics;
-    CPButton                        _minusButtonNics;
-    CPButton                        _editButtonNics;
-    CPTableView                     _tableNetworkNics       @accessors; // ???
-    TNTableViewDataSource           _nicsDatasource         @accessors; // ??? why the fuck I used accessors here ?
-    CPTableView                     _tableDrives            @accessors; // ???
-    TNTableViewDataSource           _drivesDatasource       @accessors; // ???
+    CPTableView                     _tableDrives;
+    CPTableView                     _tableNetworkNics;
+    TNTableViewDataSource           _drivesDatasource;
+    TNTableViewDataSource           _nicsDatasource;
 }
 
 - (void)awakeFromCib

@@ -21,36 +21,35 @@
 
 @implementation TNWindowNetworkProperties : CPWindow
 {
-    @outlet CPTextField     fieldNetworkName            @accessors;
-    @outlet CPTextField     fieldBridgeName             @accessors;
-    @outlet CPTextField     fieldBridgeDelay            @accessors;
-    @outlet CPPopUpButton   buttonForwardMode           @accessors;
-    @outlet CPPopUpButton   buttonForwardDevice         @accessors;
-    @outlet CPTextField     fieldBridgeIP               @accessors;
-    @outlet CPTextField     fieldBridgeNetmask          @accessors;
-    @outlet CPCheckBox      checkBoxSTPEnabled          @accessors;
-    @outlet CPCheckBox      checkBoxDHCPEnabled         @accessors;
-    @outlet CPView          viewTableContainer;
-    @outlet CPView          viewCurrentTable;
     @outlet CPButtonBar     buttonBar;
     @outlet CPButtonBar     buttonBarControl;
-    @outlet CPScrollView    _scrollViewDHCPRanges;
+    @outlet CPCheckBox      checkBoxDHCPEnabled;
+    @outlet CPCheckBox      checkBoxSTPEnabled;
+    @outlet CPPopUpButton   buttonForwardDevice;
+    @outlet CPPopUpButton   buttonForwardMode;
     @outlet CPScrollView    _scrollViewDHCPHosts;
+    @outlet CPScrollView    _scrollViewDHCPRanges;
+    @outlet CPTextField     fieldBridgeDelay;
+    @outlet CPTextField     fieldBridgeIP;
+    @outlet CPTextField     fieldBridgeName;
+    @outlet CPTextField     fieldBridgeNetmask;
+    @outlet CPTextField     fieldNetworkName;
+    @outlet CPView          viewCurrentTable;
+    @outlet CPView          viewTableContainer;
 
-    TNNetwork               network                     @accessors;
-    TNStropheContact        hypervisor                  @accessors;
-    CPTableView             table                       @accessors;
-
-    CPButton                _plusButton;
+    CPTableView             _externalTable              @accessors(property=tableNetwork);
+    TNNetwork               _network                    @accessors(property=network);
+    
     CPButton                _minusButton;
-    TNTableViewDataSource   _datasourceDHCPRanges;
-    TNTableViewDataSource   _datasourceDHCPHosts;
-    CPTableView             _tableViewRanges;
-    CPTableView             _tableViewHosts;
-    CPScrollView            _currentTableScrollView;
+    CPButton                _plusButton;
+    CPColor                 _bezelColor;
     CPColor                 _buttonBezelHighlighted;
     CPColor                 _buttonBezelSelected;
-    CPColor                 _bezelColor;
+    CPScrollView            _currentTableScrollView;
+    CPTableView             _tableViewHosts;
+    CPTableView             _tableViewRanges;
+    TNTableViewDataSource   _datasourceDHCPHosts;
+    TNTableViewDataSource   _datasourceDHCPRanges;
 }
 
 - (void)awakeFromCib
@@ -108,7 +107,6 @@
     [_scrollViewDHCPRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_scrollViewDHCPRanges setAutohidesScrollers:YES];
     [_scrollViewDHCPRanges setDocumentView:_tableViewRanges];
-    // [_scrollViewDHCPRanges setBorderedWithHexColor:@"#C0C7D2"];
 
     [_tableViewRanges setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewRanges setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -195,20 +193,20 @@
 {
     if (![self isVisible])
     {
-        [fieldNetworkName setStringValue:[network networkName]];
-        [fieldBridgeName setStringValue:[network bridgeName]];
-        [fieldBridgeDelay setStringValue:([network bridgeDelay] != @"") ? [network bridgeDelay] : @"0"];
-        [fieldBridgeIP setStringValue:[network bridgeIP]];
-        [fieldBridgeNetmask setStringValue:[network bridgeNetmask]];
+        [fieldNetworkName setStringValue:[_network networkName]];
+        [fieldBridgeName setStringValue:[_network bridgeName]];
+        [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
+        [fieldBridgeIP setStringValue:[_network bridgeIP]];
+        [fieldBridgeNetmask setStringValue:[_network bridgeNetmask]];
 
-        [buttonForwardMode selectItemWithTitle:[network bridgeForwardMode]];
-        [buttonForwardDevice selectItemWithTitle:[network bridgeForwardDevice]];
+        [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
+        [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
 
-        [checkBoxSTPEnabled setState:([network isSTPEnabled]) ? CPOnState : CPOffState];
-        [checkBoxDHCPEnabled setState:([network isDHCPEnabled]) ? CPOnState : CPOffState];
+        [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
+        [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
 
-        [_datasourceDHCPRanges setContent:[network DHCPEntriesRanges]];
-        [_datasourceDHCPHosts setContent:[network DHCPEntriesHosts]];
+        [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
+        [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
 
         [_tableViewRanges reloadData];
         [_tableViewHosts reloadData];
@@ -268,19 +266,19 @@
 
 - (IBAction)save:(id)sender
 {
-    [network setNetworkName:[fieldNetworkName stringValue]];
-    [network setBridgeName:[fieldBridgeName stringValue]];
-    [network setBridgeDelay:[fieldBridgeDelay stringValue]];
-    [network setBridgeForwardMode:[buttonForwardMode title]];
-    [network setBridgeForwardDevice:[buttonForwardDevice title]];
-    [network setBridgeIP:[fieldBridgeIP stringValue]];
-    [network setBridgeNetmask:[fieldBridgeNetmask stringValue]];
-    [network setDHCPEntriesRanges:[_datasourceDHCPRanges content]];
-    [network setDHCPEntriesHosts:[_datasourceDHCPHosts content]];
-    [network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
-    [network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
+    [_network setNetworkName:[fieldNetworkName stringValue]];
+    [_network setBridgeName:[fieldBridgeName stringValue]];
+    [_network setBridgeDelay:[fieldBridgeDelay stringValue]];
+    [_network setBridgeForwardMode:[buttonForwardMode title]];
+    [_network setBridgeForwardDevice:[buttonForwardDevice title]];
+    [_network setBridgeIP:[fieldBridgeIP stringValue]];
+    [_network setBridgeNetmask:[fieldBridgeNetmask stringValue]];
+    [_network setDHCPEntriesRanges:[_datasourceDHCPRanges content]];
+    [_network setDHCPEntriesHosts:[_datasourceDHCPHosts content]];
+    [_network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
+    [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
-    [[self table] reloadData];
+    [_externalTable reloadData];
 }
 
 - (IBAction)addDHCPRange:(id)sender

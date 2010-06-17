@@ -28,20 +28,20 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 @implementation TNHypervisorVMCreationController : TNModule 
 {
-    @outlet CPTextField     fieldJID                    @accessors;
-    @outlet CPTextField     fieldName                   @accessors;
-    @outlet CPButton        buttonCreateVM              @accessors;
-    @outlet CPPopUpButton   popupDeleteMachine          @accessors;
-    @outlet CPButton        buttonDeleteVM              @accessors;
-    @outlet CPScrollView    scrollViewListVM            @accessors;
-    @outlet CPSearchField   fieldFilterVM;
+    @outlet CPButton        buttonCreateVM;
+    @outlet CPButton        buttonDeleteVM;
     @outlet CPButtonBar     buttonBarControl;
+    @outlet CPPopUpButton   popupDeleteMachine;
+    @outlet CPScrollView    scrollViewListVM;
+    @outlet CPSearchField   fieldFilterVM;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldName;
     @outlet CPView          viewTableContainer;
     
+    CPButton                _minusButton;
+    CPButton                _plusButton;
     CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
-    CPButton                _plusButton;
-    CPButton                _minusButton;
 }
 
 - (void)awakeFromCib

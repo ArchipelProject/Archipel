@@ -30,16 +30,16 @@
 */
 @implementation TNUserChatController : TNModule
 {
-    @outlet CPTextField     fieldJID                @accessors;
-    @outlet CPTextField     fieldName               @accessors;
-    @outlet CPTextField     fieldUserJID            @accessors;
-    @outlet CPTextField     fieldMessage            @accessors;
-    @outlet CPScrollView    messagesScrollView      @accessors;
-    @outlet CPImageView     imageSpinnerWriting     @accessors;
+    @outlet CPImageView     imageSpinnerWriting;
+    @outlet CPScrollView    messagesScrollView;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldMessage;
+    @outlet CPTextField     fieldName;
+    @outlet CPTextField     fieldUserJID;
 
-    TNMessageBoard          _messageBoard;
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
+    TNMessageBoard          _messageBoard;
 }
 
 /*! initialize some stuffs at CIB awakening

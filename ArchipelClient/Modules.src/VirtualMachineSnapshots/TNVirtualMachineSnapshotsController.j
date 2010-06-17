@@ -39,27 +39,24 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 */
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
+    @outlet CPButtonBar                 buttonBarControl;
+    @outlet CPScrollView                scrollViewSnapshots;
+    @outlet CPSearchField               fieldFilter;
+    @outlet CPTextField                 fieldInfo;
     @outlet CPTextField                 fieldJID;
     @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldNewSnapshotName;
-    @outlet CPTextField                 fieldInfo;
-    @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
+    @outlet CPView                      maskingView;
+    @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewSnapshot;
+    @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
     
-    @outlet CPSearchField   fieldFilter;
-    @outlet CPScrollView    scrollViewSnapshots;
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPView          viewTableContainer;
-    @outlet CPView          maskingView;
-    
-    CPOutlineView           _outlineViewSnapshots;
-    TNSnapshotsDatasource   _datasourceSnapshots;
-    
-    TNSnapshot              _currentSnapshot;
-    CPButton                _plusButton;
-    CPButton                _minusButton;
-    CPButton                _revertButton;
-    
+    CPButton                            _minusButton;
+    CPButton                            _plusButton;
+    CPButton                            _revertButton;
+    CPOutlineView                       _outlineViewSnapshots;
+    TNSnapshot                          _currentSnapshot;
+    TNSnapshotsDatasource               _datasourceSnapshots;
 }
 
 - (void)awakeFromCib
@@ -117,7 +114,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
     
-    [_datasourceSnapshots setOutlineView:_outlineViewSnapshots];
     [_datasourceSnapshots setParentKeyPath:@"parent"];
     [_datasourceSnapshots setChildCompKeyPath:@"name"];
     [_datasourceSnapshots setSearchableKeyPaths:[@"name", @"description", @"creationTime"]];

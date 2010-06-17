@@ -21,16 +21,16 @@
 
 @implementation TNSnapshot : CPObject 
 {
-    CPString    name           @accessors;
-    CPString    description    @accessors;
-    CPString    creationTime   @accessors;
-    CPString    _state         @accessors(setter=setState:);
-    CPString    parent         @accessors;
-    CPString    domain         @accessors;
-    CPString    UUID           @accessors;
-    BOOL        _isCurrent     @accessors(setter=setCurrent:);
+    BOOL        _isCurrent      @accessors(getter=isCurrent, setter=setCurrent:);
+    CPString    _creationTime   @accessors(property=creationTime);
+    CPString    _description    @accessors(property=description);
+    CPString    _domain         @accessors(property=domain);
+    CPString    _name           @accessors(property=name);
+    CPString    _parent         @accessors(property=parent);
+    CPString    _state          @accessors(property=state);
+    CPString    _UUID           @accessors(property=UUID);
     
-    CPImage _currentIcon;
+    CPImage     _currentIcon;
 }
 
 - (id)init

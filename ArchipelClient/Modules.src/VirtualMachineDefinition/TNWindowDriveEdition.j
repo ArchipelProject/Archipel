@@ -51,15 +51,15 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 @implementation TNWindowDriveEdition : CPWindow
 {
-    @outlet CPPopUpButton   buttonSource    @accessors;
-    @outlet CPPopUpButton   buttonType      @accessors;
-    @outlet CPPopUpButton   buttonTarget    @accessors;
-    @outlet CPPopUpButton   buttonBus       @accessors;
-    @outlet CPRadioGroup    radioDriveType  @accessors;
+    @outlet CPPopUpButton   buttonBus;
+    @outlet CPPopUpButton   buttonSource;
+    @outlet CPPopUpButton   buttonTarget;
+    @outlet CPPopUpButton   buttonType;
+    @outlet CPRadioGroup    radioDriveType;
 
-    TNNetworkDrive          drive           @accessors;
-    CPTableView             table           @accessors;
-    TNStropheContact        entity          @accessors;
+    CPTableView             _table          @accessors(property=table);
+    TNNetworkDrive          _drive          @accessors(property=drive);
+    TNStropheContact        _entity         @accessors(property=entity);
 }
 
 
@@ -79,13 +79,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 {
     if (![self isVisible])
     {
-        [buttonType selectItemWithTitle:[drive type]];
-        [buttonTarget selectItemWithTitle:[drive target]];
-        [buttonBus selectItemWithTitle:[drive bus]];
+        [buttonType selectItemWithTitle:[_drive type]];
+        [buttonTarget selectItemWithTitle:[_drive target]];
+        [buttonBus selectItemWithTitle:[_drive bus]];
         
-        if ([drive device] == @"disk")
+        if ([_drive device] == @"disk")
             [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
-        else if ([drive device] == @"cdrom")
+        else if ([_drive device] == @"cdrom")
             [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
         
         [self performRadioDriveTypeChanged:radioDriveType];
@@ -107,7 +107,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
         [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsSCSI];
     }
-    [buttonTarget selectItemWithTitle:[drive target]];
+    [buttonTarget selectItemWithTitle:[_drive target]];
 }
 
 
@@ -119,24 +119,24 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
        [self populateTargetButton];
     }
     if ([buttonSource selectedItem])
-        [drive setSource:[[buttonSource selectedItem] stringValue]];
+        [_drive setSource:[[buttonSource selectedItem] stringValue]];
     else
-        [drive setSource:@"/tmp/nodisk"];
+        [_drive setSource:@"/tmp/nodisk"];
     
-    [drive setType:[buttonType title]];
+    [_drive setType:[buttonType title]];
 
     var driveType = [[radioDriveType selectedRadio] title];
     
     if (driveType == @"Hard drive")
-        [drive setDevice:@"disk"];
+        [_drive setDevice:@"disk"];
     else
-        [drive setDevice:@"cdrom"];
+        [_drive setDevice:@"cdrom"];
 
 
-    [drive setTarget:[buttonTarget title]];
-    [drive setBus:[buttonBus title]];
+    [_drive setTarget:[buttonTarget title]];
+    [_drive setBus:[buttonBus title]];
 
-    [[self table] reloadData];
+    [_table reloadData];
 }
 
 - (IBAction)performRadioDriveTypeChanged:(id)sender
@@ -173,7 +173,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeVirtualMachineDiskGet}];
 
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza
@@ -201,7 +201,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         {
             var item  = [[buttonSource itemArray] objectAtIndex:i];
 
-            if ([item stringValue] == [drive source])
+            if ([item stringValue] == [_drive source])
                 [buttonSource selectItem:item];
         }
     }
@@ -218,7 +218,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeVirtualMachineISOGet}];
         
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
 - (void)didReceiveISOsInfo:(id)aStanza
@@ -245,7 +245,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         {
             var item  = [[buttonSource itemArray] objectAtIndex:i];
             
-            if ([item stringValue] == [drive source])
+            if ([item stringValue] == [_drive source])
                 [buttonSource selectItem:item];
         }
     }

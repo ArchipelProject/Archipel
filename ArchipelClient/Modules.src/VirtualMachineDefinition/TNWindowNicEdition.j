@@ -27,15 +27,15 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 @implementation TNWindowNicEdition : CPWindow
 {
-    @outlet CPTextField     fieldMac            @accessors;
-    @outlet CPPopUpButton   buttonType          @accessors;
-    @outlet CPPopUpButton   buttonModel         @accessors;
-    @outlet CPPopUpButton   buttonSource        @accessors;
-    @outlet CPRadioGroup    radioNetworkType    @accessors;
+    @outlet CPPopUpButton   buttonModel;
+    @outlet CPPopUpButton   buttonSource;
+    @outlet CPPopUpButton   buttonType;
+    @outlet CPRadioGroup    radioNetworkType;
+    @outlet CPTextField     fieldMac;
 
-    TNStropheContact        _entity      @accessors(getter=entity, setter=setEntity:);
-    TNNetworkInterface      _nic         @accessors(getter=nic, setter=setNic:);
-    CPTableView             _table       @accessors(getter=table, setter=setTable:);
+    CPTableView             _table       @accessors(property=table);
+    TNNetworkInterface      _nic         @accessors(property=nic);
+    TNStropheContact        _entity      @accessors(property=entity);
 }
 
 - (void)awakeFromCib

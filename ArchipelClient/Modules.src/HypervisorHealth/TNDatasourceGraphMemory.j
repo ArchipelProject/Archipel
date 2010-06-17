@@ -19,8 +19,8 @@
 
 @implementation TNDatasourceGraphMemory : CPObject
 {
-    CPArray   _datasMemUsed;
     CPArray   _datasMemSwapped;
+    CPArray   _datasMemUsed;
 }
 
 - (void)init

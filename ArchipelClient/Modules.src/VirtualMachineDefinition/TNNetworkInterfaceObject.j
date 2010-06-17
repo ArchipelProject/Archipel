@@ -21,10 +21,10 @@
 
 @implementation TNNetworkInterface : CPObject
 {
-    CPString type   @accessors;
-    CPString model  @accessors;
-    CPString mac    @accessors;
-    CPString source @accessors;
+    CPString _mac    @accessors(property=mac);
+    CPString _model  @accessors(property=model);
+    CPString _source @accessors(property=source);
+    CPString _type   @accessors(property=type);
 }
 
 + (TNNetworkInterface)networkInterfaceWithType:(CPString)aType model:(CPString)aModel mac:(CPString)aMac source:(CPString)aSource

@@ -34,37 +34,32 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 @implementation TNVirtualMachineDrivesController : TNModule
 {
+    @outlet CPButton        buttonConvert;
+    @outlet CPButtonBar     buttonBarControl;
+    @outlet CPImageView     imageViewConverting;
+    @outlet CPPopUpButton   buttonEditDiskFormat;
+    @outlet CPPopUpButton   buttonNewDiskFormat;
+    @outlet CPPopUpButton   buttonNewDiskSizeUnit;
+    @outlet CPScrollView    scrollViewDisks;
+    @outlet CPSearchField   fieldFilter;
+    @outlet CPTextField     fieldEditDiskName;
     @outlet CPTextField     fieldJID;
     @outlet CPTextField     fieldName;
-    
-    @outlet CPWindow        windowNewDisk;
     @outlet CPTextField     fieldNewDiskName;
     @outlet CPTextField     fieldNewDiskSize;
-    @outlet CPPopUpButton   buttonNewDiskSizeUnit;
-    @outlet CPPopUpButton   buttonNewDiskFormat;
-    
-    @outlet CPWindow        windowDiskProperties;
-    @outlet CPTextField     fieldEditDiskName;
-    @outlet CPPopUpButton   buttonEditDiskFormat;
-    @outlet CPImageView     imageViewConverting;
-    @outlet CPButton        buttonConvert;
     @outlet CPView          maskingView;
-    
-    @outlet CPScrollView    scrollViewDisks;
-    
-    @outlet CPSearchField   fieldFilter;
-    @outlet CPButtonBar     buttonBarControl;
     @outlet CPView          viewTableContainer;
+    @outlet CPWindow        windowDiskProperties;
+    @outlet CPWindow        windowNewDisk;
     
-    
-    CPTableView             _tableMedias;
-    TNTableViewDataSource   _mediasDatasource;
-    TNMedia                 _currentEditedDisk;
-    id                      _registredDiskListeningId;
     BOOL                    _isActive;
-    CPButton                _plusButton;
-    CPButton                _minusButton;
     CPButton                _editButton;
+    CPButton                _minusButton;
+    CPButton                _plusButton;
+    CPTableView             _tableMedias;
+    id                      _registredDiskListeningId;
+    TNMedia                 _currentEditedDisk;
+    TNTableViewDataSource   _mediasDatasource;
 }
 
 - (void)awakeFromCib

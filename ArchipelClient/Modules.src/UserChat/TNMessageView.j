@@ -25,11 +25,11 @@
     CPTextField             _fieldTimestamp;
     LPMultiLineTextField    _fieldMessage;
     
-    CPString    _author;
-    CPString    _subject;
-    CPString    _message;
-    CPString    _timestamp;
-    CPColor     _bgColor;
+    CPColor                 _bgColor;
+    CPString                _author;
+    CPString                _message;
+    CPString                _subject;
+    CPString                _timestamp;
 }
 
 /*! CPCollectionView protocol impl.

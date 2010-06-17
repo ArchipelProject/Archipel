@@ -21,11 +21,11 @@
 
 @implementation TNDrive : CPObject
 {
-    CPString type      @accessors;
-    CPString device    @accessors;
-    CPString source    @accessors;
-    CPString target    @accessors;
-    CPString bus       @accessors;
+    CPString _bus       @accessors(property=bus);
+    CPString _device    @accessors(property=device);
+    CPString _source    @accessors(property=source);
+    CPString _target    @accessors(property=target);
+    CPString _type      @accessors(property=type);
 }
 
 + (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus

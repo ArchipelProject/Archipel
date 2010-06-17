@@ -21,13 +21,11 @@
  
 @implementation TNSnapshotsDatasource : CPObject
 {
-    CPArray         _contents           @accessors(getter=contents);
     BOOL            filterInstalled     @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
-    CPArray         _searchableKeyPaths @accessors(getter=searchableKeyPaths, setter=setSearchableKeyPaths:);
-    CPString        filter              @accessors;
-    CPString        parentKeyPath       @accessors;
-    CPString        childCompKeyPath    @accessors;
-    CPOutlineView   outlineView         @accessors; 
+    CPArray         _contents           @accessors(property=contents);
+    CPArray         _searchableKeyPaths @accessors(property=searchableKeyPaths);
+    CPString        _childCompKeyPath   @accessors(property=childCompKeyPath);
+    CPString        _parentKeyPath      @accessors(property=parentKeyPath);
 }
 
 /*! Initialization of the class
@@ -81,7 +79,7 @@
     {
         var object = [_contents objectAtIndex:i];
         
-        if ([object valueForKeyPath:parentKeyPath] == nil)
+        if ([object valueForKeyPath:_parentKeyPath] == nil)
             [array addObject:object];
     }
     
@@ -95,7 +93,7 @@
     for(var i = 0; i < [_contents count]; i++)
     {
         var object = [_contents objectAtIndex:i];
-        if ([object valueForKey:parentKeyPath] == [anObject valueForKey:childCompKeyPath])
+        if ([object valueForKey:_parentKeyPath] == [anObject valueForKey:_childCompKeyPath])
             [array addObject:object];
     }
     
@@ -149,7 +147,7 @@
 {
     [_contents sortUsingDescriptors:[aTableView sortDescriptors]];
 
-    [outlineView reloadData];
+    [aTableView reloadData];
 }
 
 @end

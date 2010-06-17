@@ -44,21 +44,21 @@ function generateIPForNewNetwork()
 
 @implementation TNHypervisorNetworksController : TNModule
 {
-    @outlet CPTextField                 fieldJID                @accessors;
-    @outlet CPTextField                 fieldName               @accessors;
-    @outlet CPScrollView                scrollViewNetworks      @accessors;
-    @outlet TNWindowNetworkProperties   windowProperties        @accessors;
-    @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPButtonBar                 buttonBarControl;
+    @outlet CPScrollView                scrollViewNetworks;
+    @outlet CPSearchField               fieldFilterNetworks;
+    @outlet CPTextField                 fieldJID;
+    @outlet CPTextField                 fieldName;
     @outlet CPView                      viewTableContainer;
+    @outlet TNWindowNetworkProperties   windowProperties;
     
-    CPTableView             _tableViewNetworks;
-    TNTableViewDataSource   _datasourceNetworks;
-    CPButton                _plusButton;
-    CPButton                _minusButton;
-    CPButton                _editButton;
-    CPButton                _activateButton;
-    CPButton                _deactivateButton;
+    CPButton                            _activateButton;
+    CPButton                            _deactivateButton;
+    CPButton                            _editButton;
+    CPButton                            _minusButton;
+    CPButton                            _plusButton;
+    CPTableView                         _tableViewNetworks;
+    TNTableViewDataSource               _datasourceNetworks;
 }
 
 - (void)awakeFromCib
@@ -400,8 +400,8 @@ function generateIPForNewNetwork()
         }
 
         [windowProperties setNetwork:networkObject];
-        [windowProperties setTable:_tableViewNetworks];
-        [windowProperties setHypervisor:[self entity]];
+        [windowProperties setTableNetwork:_tableViewNetworks];
+        
         [windowProperties center];
         [windowProperties makeKeyAndOrderFront:nil];
     }

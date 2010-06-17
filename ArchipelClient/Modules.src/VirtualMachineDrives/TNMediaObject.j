@@ -23,11 +23,11 @@
 
 @implementation TNMedia : CPObject
 {
-    CPString    path            @accessors;
-    CPString    name            @accessors;
-    CPString    format          @accessors;
-    CPString    virtualSize     @accessors;
-    CPString    diskSize        @accessors;
+    CPString    _diskSize        @accessors(property=diskSize);
+    CPString    _format          @accessors(property=format);
+    CPString    _name            @accessors(property=name);
+    CPString    _path            @accessors(property=path);
+    CPString    _virtualSize     @accessors(property=virtualSize);
 }
 
 + (TNMedia)mediaWithPath:(CPString)aPath name:(CPString)aName format:(CPString)aFormat virtualSize:(CPString)vSize diskSize:(CPString)dSize

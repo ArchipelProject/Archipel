@@ -46,18 +46,17 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 */
 @implementation TNVirtualMachineVNCController : TNModule
 {
-    @outlet CPTextField     fieldJID        @accessors;
-    @outlet CPTextField     fieldName       @accessors;
     @outlet CPScrollView    mainScrollView;
-    @outlet CPView          maskingView     @accessors;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldName;
+    @outlet CPView          maskingView;
 
-    CPString    _VMHost;
-    CPString    _vncDisplay;
-    CPString    _webServerPort;
-    
-    CPWebView           _vncWebView;
-    CPWebView           _vncWebViewForWindow;
-    CPString            _url;
+    CPString                _url;
+    CPString                _VMHost;
+    CPString                _vncDisplay;
+    CPString                _webServerPort;
+    CPWebView               _vncWebView;
+    CPWebView               _vncWebViewForWindow;
 }
 
 /*! initialize some value at CIB awakening

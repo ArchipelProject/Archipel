@@ -21,23 +21,22 @@
 
 @implementation TNNetwork : CPObject
 {
-    CPString    networkName             @accessors;
-    CPString    UUID                    @accessors;
-    CPString    bridgeName              @accessors;
-    CPString    bridgeDelay             @accessors;
-    CPString    bridgeForwardMode       @accessors;
-    CPString    bridgeForwardDevice     @accessors;
-    CPString    bridgeIP                @accessors;
-    CPString    bridgeNetmask           @accessors;
-    CPArray     DHCPEntriesRanges       @accessors;
-    CPArray     DHCPEntriesHosts        @accessors;
-    BOOL        isNetworkEnabled        @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);
-    BOOL        isSTPEnabled            @accessors(getter=isSTPEnabled, setter=setSTPEnabled:);
-    BOOL        isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
-    CPImage     icon                    @accessors;
-    
-    CPImage     imageNetworkActive      @accessors;
-    CPImage     imageNetworkUnactive    @accessors;
+    BOOL        _isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
+    BOOL        _isNetworkEnabled        @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);
+    BOOL        _isSTPEnabled            @accessors(getter=isSTPEnabled, setter=setSTPEnabled:);
+    CPArray     _DHCPEntriesHosts        @accessors(property=DHCPEntriesHosts);
+    CPArray     _DHCPEntriesRanges       @accessors(property=DHCPEntriesRanges);
+    CPImage     _icon                    @accessors(property=icon);
+    CPImage     _imageNetworkActive      @accessors(property=imageNetworkActive);
+    CPImage     _imageNetworkUnactive    @accessors(property=imageNetworkUnactive);
+    CPString    _bridgeDelay             @accessors(property=bridgeDelay);
+    CPString    _bridgeForwardDevice     @accessors(property=bridgeForwardDevice);
+    CPString    _bridgeForwardMode       @accessors(property=bridgeForwardMode);
+    CPString    _bridgeIP                @accessors(property=bridgeIP);
+    CPString    _bridgeName              @accessors(property=bridgeName);
+    CPString    _bridgeNetmask           @accessors(property=bridgeNetmask);
+    CPString    _networkName             @accessors(property=networkName);
+    CPString    _UUID                    @accessors(property=UUID);
 }
 
 - (id)init
@@ -45,8 +44,8 @@
     if (self = [super init])
     {
         var bundle = [CPBundle bundleForClass:[self class]];
-        imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
-        imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
+        _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
+        _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
     }
     
     return self;

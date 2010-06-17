@@ -40,22 +40,21 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 */
 @implementation TNVirtualMachineAppliancesController : TNModule
 {
-    @outlet CPTextField                 fieldJID                    @accessors;
-    @outlet CPTextField                 fieldName                   @accessors;
+    @outlet CPButtonBar                 buttonBarControl;
     @outlet CPScrollView                mainScrollView;
     @outlet CPSearchField               fieldFilterAppliance;
-    @outlet CPButtonBar                 buttonBarControl;
-    @outlet CPView                      viewTableContainer;
-    @outlet CPWindow                    windowNewAppliance;
+    @outlet CPTextField                 fieldJID;
+    @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldNewApplianceName;
     @outlet CPView                      maskingView;
+    @outlet CPView                      viewTableContainer;
+    @outlet CPWindow                    windowNewAppliance;
     
+    CPButton                            _dettachButton;
+    CPButton                            _instanciateButton;
+    CPButton                            _packageButton;
     CPTableView                         _tableAppliances;
     TNTableViewDataSource               _appliancesDatasource;
-    
-    CPButton    _packageButton;
-    CPButton    _instanciateButton;
-    CPButton    _dettachButton;
 }
 
 - (void)awakeFromCib

@@ -24,12 +24,12 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 
 @implementation TNDHCPEntry : CPObject
 {
-    CPString    type    @accessors;
-    CPString    start   @accessors;
-    CPString    end     @accessors;
-    CPString    mac     @accessors;
-    CPString    name    @accessors;
-    CPString    IP      @accessors;
+    CPString    -name    @accessors(property=name);
+    CPString    _end     @accessors(property=end);
+    CPString    _IP      @accessors(property=IP);
+    CPString    _mac     @accessors(property=mac);
+    CPString    _start   @accessors(property=start);
+    CPString    _type    @accessors(property=type);
 }
 
 + (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress
@@ -55,43 +55,3 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     return entry;
 }
 @end
-
-
-@implementation TNDatasourceDHCPEntries : CPObject
-{
-    CPArray entries @accessors;
-}
-
-- (id)init
-{
-    if (self = [super init])
-    {
-        entries = [[CPArray alloc] init];
-    }
-    return self;
-}
-
-- (void)addEntry:(TNDHCPEntry)anEntry
-{
-    [[self entries] addObject:anEntry];
-}
-
-/* Datasource impl. */
-- (int)numberOfRowsInTableView:(CPTableView)aTable
-{
-    return [[self entries] count];
-}
-
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(id)aCol row:(int)aRow
-{
-    var identifier = [aCol identifier];
-
-    return [[[self entries] objectAtIndex:aRow] valueForKey:identifier];
-}
-
-- (void)tableView:(CPTableView)aTableCiew setObjectValue:(id)aValue forTableColumn:(CPTableColumn)aCol row:(int)aRow
-{
-    var identifier = [aCol identifier];
-
-    [[entries objectAtIndex:aRow] setValue:aValue forKey:identifier];
-}

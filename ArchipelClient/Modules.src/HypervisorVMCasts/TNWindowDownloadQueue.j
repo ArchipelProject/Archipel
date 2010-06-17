@@ -22,66 +22,6 @@ TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmca
 TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 
-@implementation TNDownload : CPObject
-{
-    CPString    identifier  @accessors;
-    CPString    name        @accessors;
-    float       totalSize   @accessors;
-    float       percentage  @accessors(setter=setPercentage:);
-}
-
-+ (TNDownload)downloadWithIdentifier:(CPString)anIdentifier name:(CPString)aName totalSize:(float)aSize percentage:(float)aPercentage
-{
-    var dl = [[TNDownload alloc] init];
-    [dl setIdentifier:anIdentifier];
-    [dl setTotalSize:aSize];
-    [dl setName:aName];
-    [dl setPercentage:aPercentage];
-    
-    return dl;
-}
-
-- (CPString)percentage
-{
-    return @"" + percentage + @"%";
-}
-
-@end
-
-@implementation TNDownloadDatasource : CPObject
-{
-    CPArray downloads @accessors;
-}
-
-- (id)init
-{
-    if (self = [super init])
-    {
-       downloads = [CPArray array];
-    }
-    return self;
-}
-
-- (void)addDownload:(TNDownload)aDownload
-{
-    [downloads addObject:aDownload];
-}
-
-// Datasource impl.
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
-{
-    return [downloads count];
-}
-
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPNumber)aCol row:(CPNumber)aRow
-{
-    var identifier = [aCol identifier];
-    
-    return [[downloads objectAtIndex:aRow] valueForKey:identifier];
-}
-
-@end
-
 @implementation TNWindowDownloadQueue : CPWindow 
 {
     @outlet CPScrollView            mainScrollView;
@@ -89,28 +29,23 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     TNStropheContact                entity  @accessors;
     
     CPTableView                     _mainTableView;
-    TNDownloadDatasource            _dlDatasource;
+    TNTableViewDataSource           _dlDatasource;
     
     CPTimer                         _timer;
 }
 
 - (void)awakeFromCib
 {
-    _dlDatasource = [[TNDownloadDatasource alloc] init];
+    _dlDatasource = [[TNTableViewDataSource alloc] init];
 
     _mainTableView = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainTableView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_mainTableView setDataSource:_dlDatasource];
 
     var columnIdentifier = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columnIdentifier headerView] setStringValue:@"Name"];
 
     var columnSize = [[CPTableColumn alloc] initWithIdentifier:@"totalSize"];
-    [[columnSize headerView] setStringValue:@"Total Size"];
-
-    //var progressBar = [CPProgressIndicator initialize];
-    //[progressBar setMinValue:0.0];
-    //[progressBar setMaxValue:100.0];
+    [[columnSize headerView] setStringValue:@"Total Size"];    
      
     var columnPercentage = [[CPTableColumn alloc] initWithIdentifier:@"percentage"];
     [[columnPercentage headerView] setStringValue:@"Percentage"];
@@ -120,7 +55,11 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [_mainTableView addTableColumn:columnSize];
     [_mainTableView addTableColumn:columnPercentage];
 
-
+    [_dlDatasource setTable:_mainTableView];
+    [_dlDatasource setSearchableKeyPaths:[@"name", @"totalSize", @"percentage"]];
+    
+    [_mainTableView setDataSource:_dlDatasource];
+    
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setBorderedWithHexColor:@"#C0C7D2"]
     [mainScrollView setDocumentView:_mainTableView];
@@ -161,7 +100,7 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     {
         var downloads = [aStanza childrenWithName:@"download"];
         
-        [[_dlDatasource downloads] removeAllObjects];
+        [_dlDatasource removeAllObjects];
         
         for (var i = 0; i < [downloads count]; i++)
         {
@@ -173,7 +112,7 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
             
             var dl = [TNDownload downloadWithIdentifier:identifier name:name totalSize:totalSize percentage:percentage];
             
-            [_dlDatasource addDownload:dl];
+            [_dlDatasource addObject:dl];
         }
         
         [_mainTableView reloadData];

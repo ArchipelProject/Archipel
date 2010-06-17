@@ -35,14 +35,14 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 @implementation TNToolbarLogsController: TNModule
 {
-    @outlet CPScrollView    mainScrollView;
     @outlet CPPopUpButton   buttonLogLevel;
+    @outlet CPScrollView    mainScrollView;
     @outlet CPSearchField   fieldFilter;
     
     CPArray         _logs;
+    CPString        _filter;
     CPTableView     _tableViewLogging;
     id              _logFunction;
-    CPString        _filter;
 }
 
 - (void)willLoad

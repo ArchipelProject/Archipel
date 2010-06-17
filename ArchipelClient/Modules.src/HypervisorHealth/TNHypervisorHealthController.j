@@ -31,34 +31,30 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 @implementation TNHypervisorHealthController : TNModule
 {
-    @outlet CPTextField     fieldJID            @accessors;
-    @outlet CPTextField     fieldName           @accessors;
-    @outlet CPTextField     healthCPUUsage      @accessors;
-    @outlet CPTextField     healthDiskUsage     @accessors;
-    @outlet CPTextField     healthMemUsage      @accessors;
-    @outlet CPTextField     healthMemSwapped    @accessors;
-    @outlet CPTextField     healthLoad          @accessors;
-    @outlet CPTextField     healthUptime        @accessors;
-    @outlet CPTextField     healthInfo          @accessors;
-    @outlet CPTextField     fieldTotalMemory    @accessors;
-    @outlet CPTextField     fieldHalfMemory     @accessors;
-
-    @outlet CPImageView     imageMemoryLoading  @accessors;
-    @outlet CPImageView     imageCPULoading     @accessors;
-
-    @outlet CPView          viewGraphCPU        @accessors;
-    @outlet CPView          viewGraphMemory     @accessors;
-
+    @outlet CPImageView         imageCPULoading;
+    @outlet CPImageView         imageMemoryLoading;
+    @outlet CPTextField         fieldHalfMemory;
+    @outlet CPTextField         fieldJID;
+    @outlet CPTextField         fieldName;
+    @outlet CPTextField         fieldTotalMemory;
+    @outlet CPTextField         healthCPUUsage;
+    @outlet CPTextField         healthDiskUsage;
+    @outlet CPTextField         healthInfo;
+    @outlet CPTextField         healthLoad;
+    @outlet CPTextField         healthMemSwapped;
+    @outlet CPTextField         healthMemUsage;
+    @outlet CPTextField         healthUptime;
+    @outlet CPView              viewGraphCPU;
+    @outlet CPView              viewGraphMemory;
+    
+    CPNumber                    _statsHistoryCollectionSize;
+    CPTimer                     _timer;
+    float                       _timerInterval;
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewMemory;
     LPPieChartView              _chartViewDisk;
-
     TNDatasourceGraphCPU        _cpuDatasource;
     TNDatasourceGraphMemory     _memoryDatasource;
-
-    CPTimer                     _timer;
-    float                       _timerInterval;
-    CPNumber                    _statsHistoryCollectionSize;
 }
 
 - (void)awakeFromCib
@@ -68,10 +64,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     var bundle  = [CPBundle bundleForClass:[self class]];
     var spinner = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]];
 
-    [[self imageCPULoading] setImage:spinner];
-    [[self imageMemoryLoading] setImage:spinner];
-    [[self imageCPULoading] setHidden:YES];
-    [[self imageMemoryLoading] setHidden:YES];
+    [imageCPULoading setImage:spinner];
+    [imageMemoryLoading setImage:spinner];
+    [imageCPULoading setHidden:YES];
+    [imageMemoryLoading setHidden:YES];
 
 
     var cpuViewFrame = [viewGraphCPU bounds];
@@ -159,24 +155,24 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         var memNode = [aStanza firstChildWithName:@"memory"];
         var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024)
         var swapped = Math.round(parseInt([memNode valueForAttribute:@"swapped"]) / 1024);
-        [[self healthMemUsage] setStringValue:freeMem + " Mo"];
-        [[self healthMemSwapped] setStringValue:swapped + " Mo"];
+        [healthMemUsage setStringValue:freeMem + " Mo"];
+        [healthMemSwapped setStringValue:swapped + " Mo"];
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
-        [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+        [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
 
         var loadNode = [aStanza firstChildWithName:@"load"];
-        [[self healthLoad] setStringValue:[loadNode valueForAttribute:@"five"]];
+        [healthLoad setStringValue:[loadNode valueForAttribute:@"five"]];
 
         var uptimeNode = [aStanza firstChildWithName:@"uptime"];
-        [[self healthUptime] setStringValue:[uptimeNode valueForAttribute:@"up"]];
+        [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
 
         var cpuNode = [aStanza firstChildWithName:@"cpu"];
         var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
-        [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
+        [healthCPUUsage setStringValue:cpuFree + @"%"];
 
         var infoNode = [aStanza firstChildWithName:@"uname"];
-        [[self healthInfo] setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
+        [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
 
         [_cpuDatasource pushData:parseInt(cpuFree)];
         [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
@@ -203,8 +199,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         "limit": _statsHistoryCollectionSize}];
     
 
-    [[self imageCPULoading] setHidden:NO];
-    [[self imageMemoryLoading] setHidden:NO];
+    [imageCPULoading setHidden:NO];
+    [imageMemoryLoading setHidden:NO];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
 }
@@ -224,13 +220,13 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
             var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024);
             var swapped = Math.round(parseInt([memNode valueForAttribute:@"swapped"]) / 1024);
 
-            [[self healthMemUsage] setStringValue:freeMem + " Mo"];
-            [[self healthMemSwapped] setStringValue:swapped + " Mo"];
+            [healthMemUsage setStringValue:freeMem + " Mo"];
+            [healthMemSwapped setStringValue:swapped + " Mo"];
 
             var cpuNode = [currentNode firstChildWithName:@"cpu"];
             var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
 
-            [[self healthCPUUsage] setStringValue:cpuFree + @"%"];
+            [healthCPUUsage setStringValue:cpuFree + @"%"];
 
             [_cpuDatasource pushData:parseInt(cpuFree)];
             [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
@@ -238,12 +234,12 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
         var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )
 
-        [[self fieldTotalMemory] setStringValue: maxMem + "G"];
-        [[self fieldHalfMemory] setStringValue: Math.round(maxMem / 2) + "G"];
+        [fieldTotalMemory setStringValue: maxMem + "G"];
+        [fieldHalfMemory setStringValue: Math.round(maxMem / 2) + "G"];
         [_chartViewMemory setUserDefinedMaxValue: parseInt([memNode valueForAttribute:@"total"])];
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
-        [[self healthDiskUsage] setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+        [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
 
         /* reload the charts view */
         [_chartViewMemory reloadData];
@@ -254,8 +250,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [self handleIqErrorFromStanza:aStanza];
     }
 
-    [[self imageCPULoading] setHidden:YES];
-    [[self imageMemoryLoading] setHidden:YES];
+    [imageCPULoading setHidden:YES];
+    [imageMemoryLoading setHidden:YES];
 
     [self getHypervisorHealth:nil];
 

@@ -27,11 +27,11 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 @implementation TNVMCastSource : CPObject
 {
-    CPString    name            @accessors;
-    CPURL       URL             @accessors;
-    CPString    comment         @accessors;
-    CPString    UUID            @accessors;
-    CPArray     content         @accessors;
+    CPArray     _content         @accessors(property=content);
+    CPString    _comment         @accessors(property=comment);
+    CPString    _name            @accessors(property=name);
+    CPString    _UUID            @accessors(property=UUID);
+    CPURL       _URL             @accessors(property=URL);
 }
 
 + (TNVMCastSource)VMCastSourceWithName:(CPString)aName UUID:(CPString)anUUID URL:(CPURL)anURL comment:(CPString)aComment
@@ -49,7 +49,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     if (self = [super init])
     {
-        content = [CPArray array];
+        _content = [CPArray array];
     }
     
     return self;
@@ -62,20 +62,21 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 - (CPString)description
 {
-    return [self name];
+    return _name;
 }
 
 @end
 
 @implementation TNVMCast : CPObject
 {
-    CPString    name            @accessors;
-    CPURL       URL             @accessors;
-    CPString    comment         @accessors;
-    CPString    size            @accessors;
-    CPString    pubDate         @accessors;
-    CPString    UUID            @accessors;
-    int         status          @accessors;
+    CPString    _comment         @accessors(property=comment);
+    CPString    _name            @accessors(property=name);
+    CPString    _pubDate         @accessors(property=pubDate);
+    CPString    _size            @accessors(property=size);
+    CPString    _UUID            @accessors(property=UUID);
+    CPURL       _URL             @accessors(property=URL);
+    int         _status          @accessors(property=status);
+
 }
 
 + (TNVMCast)VMCastWithName:(CPString)aName URL:(CPURL)anURL comment:(CPString)aComment size:(CPString)aSize pubDate:(CPString)aDate UUID:(CPString)anUUID status:(int)aStatus
@@ -94,22 +95,21 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 - (CPString)description
 {
-    return [self name];
+    return _name;
 }
 
 - (CPString)size
 {
-    return @"" + Math.round(parseInt(size) / 1024 / 1024) + @" Mo";
+    return @"" + Math.round(parseInt(_size) / 1024 / 1024) + @" Mo";
 }
 @end
 
 
 @implementation TNVMCastDatasource : CPObject
 {
-    CPArray     _contents       @accessors(getter=contents);
-    BOOL        filterInstalled @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
-    CPString    filter          @accessors;
-    CPTableView table           @accessors;
+    BOOL        _filterInstalled    @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);
+    CPArray     _contents           @accessors(property=contents);
+    CPString    _filter             @accessors(property=filter);
 }
 
 /*! Initialization of the class
@@ -119,8 +119,8 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     if (self = [super init])
     {
-        _contents = [CPArray array];
-        filterInstalled = NO;
+        _contents           = [CPArray array];
+        _filterInstalled    = NO;
     }
     
     return self;
@@ -144,7 +144,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 - (CPArray)filterOnlyInstalled:(CPArray)anArray
 {
-    if (filterInstalled)
+    if (_filterInstalled)
     {
         var array = [CPArray array];
         for (var i = 0; i < [anArray count]; i++)
@@ -160,15 +160,15 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 - (CPArray)filterOnlyMatching:(CPArray)anArray
 {
-    if (filter && filter != @"")
+    if (_filter && _filter != @"")
     {
         var array = [CPArray array];
         for (var i = 0; i < [anArray count]; i++)
         {
             var object = [anArray objectAtIndex:i];
             
-            if (([[object name] uppercaseString].indexOf([filter uppercaseString]) != -1) 
-                || ([[object comment] uppercaseString].indexOf([filter uppercaseString]) != -1))
+            if (([[object name] uppercaseString].indexOf([_filter uppercaseString]) != -1) 
+                || ([[object comment] uppercaseString].indexOf([_filter uppercaseString]) != -1))
                 [array addObject:object];
         }
         return array;
@@ -233,7 +233,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     [_contents sortUsingDescriptors:[aTableView sortDescriptors]];
 
-    [table reloadData];
+    [aTableView reloadData];
 }
 
 @end

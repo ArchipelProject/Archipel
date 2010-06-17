@@ -55,15 +55,15 @@ TNArchipelTransportBarReboot    = 4;
 
 @implementation TNVirtualMachineControlsController : TNModule
 {
+    @outlet CPImageView             imageState;
+    @outlet CPSegmentedControl      buttonBarTransport;
+    @outlet CPTextField             fieldInfoConsumedCPU;
+    @outlet CPTextField             fieldInfoCPUs;
+    @outlet CPTextField             fieldInfoMem;
+    @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldName;
-    @outlet CPTextField             fieldInfoState;
-    @outlet CPTextField             fieldInfoMem;
-    @outlet CPTextField             fieldInfoCPUs;
-    @outlet CPTextField             fieldInfoConsumedCPU;
-    @outlet CPImageView             imageState;
     @outlet CPView                  maskingView;
-    @outlet CPSegmentedControl      buttonBarTransport;
 
     CPNumber    _VMLibvirtStatus;
 }

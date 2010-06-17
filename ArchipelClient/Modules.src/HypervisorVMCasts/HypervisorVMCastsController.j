@@ -21,6 +21,7 @@
 
 @import "TNVMCastDatasource.j";
 @import "TNCellApplianceStatus.j";
+@import "TNDownoadObject.j";
 
 TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
 TNArchipelTypeHypervisorVMCastingGet                = @"get";
@@ -43,16 +44,15 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 */
 @implementation TNHypervisorVMCastsController : TNModule
 {
-    @outlet CPTextField         fieldJID                @accessors;
-    @outlet CPTextField         fieldName               @accessors;
-    @outlet CPTextField         fieldNewURL             @accessors;
-    @outlet CPCheckBox          checkBoxOnlyInstalled   @accessors;
-    @outlet CPSearchField       fieldFilter             @accessors;
-    
-    @outlet CPScrollView        mainScrollView          @accessors;
-    @outlet CPProgressIndicator downloadIndicator       @accessors;
-    @outlet CPWindow            windowDownloadQueue     @accessors;
-    @outlet CPWindow            windowNewCastURL        @accessors;
+    @outlet CPTextField         fieldJID;
+    @outlet CPTextField         fieldName;
+    @outlet CPTextField         fieldNewURL;
+    @outlet CPCheckBox          checkBoxOnlyInstalled;
+    @outlet CPSearchField       fieldFilter;
+    @outlet CPScrollView        mainScrollView;
+    @outlet CPProgressIndicator downloadIndicator;
+    @outlet CPWindow            windowDownloadQueue;
+    @outlet CPWindow            windowNewCastURL;
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPView              viewTableContainer;
     
@@ -78,7 +78,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView setAllowsColumnResizing:YES];
     [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_mainOutlineView setDataSource:_castsDatasource];
-    [_castsDatasource setTable:_mainOutlineView];
     
     var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columnName headerView] setStringValue:@"VMCasts"];

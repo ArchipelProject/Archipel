@@ -26,15 +26,15 @@ TNArchipelApplianceStatusNone       = @"none";
 
 @implementation TNInstalledAppliance : CPObject
 {
-    CPString    name            @accessors;
-    CPString    path            @accessors;
-    CPString    comment         @accessors;
-    CPString    UUID            @accessors;
+    CPString    _comment        @accessors(property=comment);
+    CPString    _name           @accessors(property=name);
+    CPString    _path           @accessors(property=path);
     CPString    _status         @accessors(setter=setStatus:, getter=statusString);
+    CPString    _UUID           @accessors(property=UUID);
     
-    CPImage     _usedIcon;
     CPImage     _installingIcon;
     CPImage     _noneIcon;
+    CPImage     _usedIcon;
 }
 
 + (TNInstalledAppliance)InstalledApplianceWithName:(CPString)aName UUID:(CPString)anUUID path:(CPString)aPath comment:(CPString)aComment status:(CPString)aStatus
@@ -56,7 +56,7 @@ TNArchipelApplianceStatusNone       = @"none";
         var bundle      = [CPBundle mainBundle];
         _usedIcon       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)];
         _installingIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)];
-        _noneIcon       = nil;//[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)];
+        _noneIcon       = nil;
     }
     
     return self
@@ -74,7 +74,7 @@ TNArchipelApplianceStatusNone       = @"none";
 
 - (CPString)description
 {
-    return [self name];
+    return _name;
 }
 
 @end
