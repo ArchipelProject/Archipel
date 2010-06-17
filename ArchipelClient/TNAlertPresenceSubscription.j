@@ -25,8 +25,8 @@
 */
 @implementation TNAlertPresenceSubscription: CPAlert
 {
-    id              _stanza @accessors(getter=stanza, setter=setStanza:);
-    TNStropheRoster _roster @accessors(getter=roster, setter=setRoster:);
+    id              _stanza @accessors(property=stanza);
+    TNStropheRoster _roster @accessors(property=roster);
 }
 
 /*! This method have to be use for the initialization.

@@ -158,7 +158,6 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlVNCDisplay}];
                 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];

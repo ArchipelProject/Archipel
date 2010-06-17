@@ -48,9 +48,9 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 */
 @implementation TNToolbar  : CPToolbar
 {
+    CPArray         _sortedToolbarItems;
     CPDictionary    _toolbarItems;
     CPDictionary    _toolbarItemsOrder;
-    CPArray         _sortedToolbarItems;
 }
 
 /*! initialize the class with a target

@@ -268,7 +268,7 @@ TNArchipelXMPPNamespace = "http://archipelproject.org";
     [_moduleLoader setMainTabView:_moduleTabView];
     [_moduleLoader setInfoTextField:_rightViewTextField];
     [_moduleLoader setModulesPath:@"Modules/"]
-    [_moduleLoader setMainRightView:rightView];
+    [_moduleLoader setMainModuleView:rightView];
     [_moduleLoader setModulesMenu:_modulesMenu];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 

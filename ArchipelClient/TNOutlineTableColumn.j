@@ -25,11 +25,11 @@
 */
 @implementation TNViewOutlineViewContact : CPView
 {
-    CPImageView statusIcon  @accessors;
-    CPTextField events      @accessors;
-    CPTextField name        @accessors;
-    CPTextField show        @accessors;
-    CPImageView avatar      @accessors;
+    CPImageView _avatar      @accessors(property=avatar);
+    CPImageView _statusIcon  @accessors(property=statusIcon);
+    CPTextField _events      @accessors(property=events);
+    CPTextField _name        @accessors(property=name);
+    CPTextField _show        @accessors(property=show);
 
     CPImage     _unknownUserImage;
     CPImage     _syncImage;
@@ -55,11 +55,11 @@
     {
         var bundle = [CPBundle mainBundle];
         
-        statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
-        name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
-        show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
-        events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
-        avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
+        _statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
+        _name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
+        _show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
+        _events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
+        _avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         
         _syncImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sync.png"] size:CGSizeMake(16, 16)];
         _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
@@ -91,37 +91,37 @@
         [_playButton setHidden:YES];
         
         
-        [self addSubview:statusIcon];
-        [self addSubview:name];
-        [self addSubview:events];
-        [self addSubview:show];
-        [self addSubview:avatar];
+        [self addSubview:_statusIcon];
+        [self addSubview:_name];
+        [self addSubview:_events];
+        [self addSubview:_show];
+        [self addSubview:_avatar];
         [self addSubview:_syncButton];
         [self addSubview:_playButton];
         [self addSubview:_pauseButton];
 
         
-        [events setBackgroundColor:_normalStateCartoucheColor];
-        [events setAlignment:CPCenterTextAlignment];
-        [events setVerticalAlignment:CPCenterVerticalTextAlignment];
-        [events setFont:[CPFont boldSystemFontOfSize:11]];
-        [events setTextColor:[CPColor whiteColor]];
+        [_events setBackgroundColor:_normalStateCartoucheColor];
+        [_events setAlignment:CPCenterTextAlignment];
+        [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
+        [_events setFont:[CPFont boldSystemFontOfSize:11]];
+        [_events setTextColor:[CPColor whiteColor]];
 
-        [name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
+        [_name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
         
-        [show setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
-        [show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
-        [show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_show setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
+        [_show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
+        [_show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         
-        [events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
+        [_events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
         _unknownUserImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         
-        [events setHidden:YES];
+        [_events setHidden:YES];
     }
     return self;
 }
@@ -176,10 +176,10 @@
     
     var mainBounds = [self bounds];
     
-    var boundsEvents        = [events frame];
+    var boundsEvents        = [_events frame];
     boundsEvents.origin.x   = mainBounds.size.width - 25;
-    [events setFrame:boundsEvents];
-    [events setAutoresizingMask:CPViewMinXMargin];
+    [_events setFrame:boundsEvents];
+    [_events setAutoresizingMask:CPViewMinXMargin];
     
     var boundsSync          = [_syncButton frame];
     boundsSync.origin.x     = mainBounds.size.width - 20;
@@ -205,35 +205,35 @@
     
     
     
-    [name setStringValue:[aContact nickname]];
-    [name sizeToFit];
+    [_name setStringValue:[aContact nickname]];
+    [_name sizeToFit];
     
-    [show setStringValue:[aContact show]];
-    [show sizeToFit];
+    [_show setStringValue:[aContact show]];
+    [_show sizeToFit];
     
-    [[self statusIcon] setImage:[aContact statusIcon]];
+    [_statusIcon setImage:[aContact statusIcon]];
     
     if ([aContact avatar]) 
-        [[self avatar] setImage:[aContact avatar]];
+        [_avatar setImage:[aContact avatar]];
     else
-        [[self avatar] setImage:_unknownUserImage];
+        [_avatar setImage:_unknownUserImage];
     
-    var boundsName = [name frame];
+    var boundsName = [_name frame];
     boundsName.size.width += 10;
-    [name setFrame:boundsName];
+    [_name setFrame:boundsName];
     
-    var boundsShow = [show frame];
+    var boundsShow = [_show frame];
     boundsShow.size.width += 10;
-    [show setFrame:boundsShow];
+    [_show setFrame:boundsShow];
     
     if ([aContact numberOfEvents] > 0)
     {
-        [[self events] setHidden:NO];
-        [[self events] setStringValue:[aContact numberOfEvents]];
+        [_events setHidden:NO];
+        [_events setStringValue:[aContact numberOfEvents]];
     }
     else
     {
-        [[self events] setHidden:YES];
+        [_events setHidden:YES];
         [_syncButton setHidden:YES];
     }
 }
@@ -277,20 +277,17 @@
 - (void)setThemeState:(id)aState
 {
     [super setThemeState:aState];
-    [name setThemeState:aState];
-    [show setThemeState:aState];
-    [events setThemeState:aState];
+    
+    [_name setThemeState:aState];
+    [_show setThemeState:aState];
+    [_events setThemeState:aState];
     
     if (aState == CPThemeStateSelectedDataView )
-    {
-           [events setBackgroundColor:_selectedStateCartoucheColor];
-    }
+           [_events setBackgroundColor:_selectedStateCartoucheColor];
     if (aState == CPThemeStateNormal)
-    {
-           [events setBackgroundColor:_normalStateCartoucheColor];
-    }
+           [_events setBackgroundColor:_normalStateCartoucheColor];
        
-    if ((aState == CPThemeStateSelectedDataView) && ([_contact status] != TNStropheContactStatusOffline) && ([events isHidden] == YES))
+    if ((aState == CPThemeStateSelectedDataView) && ([_contact status] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
         [_syncButton setHidden:NO];
     else
         [_syncButton setHidden:YES];
@@ -301,19 +298,20 @@
 - (void)unsetThemeState:(id)aState
 {
     [super unsetThemeState:aState];
-    [name unsetThemeState:aState];
-    [show unsetThemeState:aState];
-    [events unsetThemeState:aState];
+    
+    [_name unsetThemeState:aState];
+    [_show unsetThemeState:aState];
+    [_events unsetThemeState:aState];
     
     if (aState == CPThemeStateSelectedDataView)
     {
         [_syncButton setHidden:YES];
-        [events setBackgroundColor:_normalStateCartoucheColor];
+        [_events setBackgroundColor:_normalStateCartoucheColor];
     }
     else
     {
         [_syncButton setHidden:NO];
-        [events setBackgroundColor:_selectedStateCartoucheColor];
+        [_events setBackgroundColor:_selectedStateCartoucheColor];
     }
         
 }
@@ -338,11 +336,11 @@
         _playImage          = [aCoder decodeObjectForKey:@"_playImage"];
         _pauseImage         = [aCoder decodeObjectForKey:@"_pauseImage"];
         _syncingImage       = [aCoder decodeObjectForKey:@"_syncingImage"];
-        name                = [aCoder decodeObjectForKey:@"name"];
-        show                = [aCoder decodeObjectForKey:@"show"];
-        statusIcon          = [aCoder decodeObjectForKey:@"statusIcon"];
-        events              = [aCoder decodeObjectForKey:@"events"];
-        avatar              = [aCoder decodeObjectForKey:@"avatar"];
+        _name               = [aCoder decodeObjectForKey:@"_name"];
+        _show               = [aCoder decodeObjectForKey:@"_show"];
+        _statusIcon         = [aCoder decodeObjectForKey:@"_statusIcon"];
+        _events             = [aCoder decodeObjectForKey:@"_events"];
+        _avatar             = [aCoder decodeObjectForKey:@"_avatar"];
     }
 
     return self;
@@ -363,12 +361,11 @@
     [aCoder encodeObject:_playImage forKey:@"_playImage"];
     [aCoder encodeObject:_syncingImage forKey:@"_syncingImage"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
-    [aCoder encodeObject:name forKey:@"name"];
-    [aCoder encodeObject:show forKey:@"show"];
-    [aCoder encodeObject:statusIcon forKey:@"statusIcon"];
-    [aCoder encodeObject:events forKey:@"events"];
-    [aCoder encodeObject:avatar forKey:@"avatar"];
-    
+    [aCoder encodeObject:_name forKey:@"_name"];
+    [aCoder encodeObject:_show forKey:@"_show"];
+    [aCoder encodeObject:_statusIcon forKey:@"_statusIcon"];
+    [aCoder encodeObject:_events forKey:@"_events"];
+    [aCoder encodeObject:_avatar forKey:@"_avatar"];
     [aCoder encodeObject:_normalStateCartoucheColor forKey:@"_normalStateCartoucheColor"];
     [aCoder encodeObject:_selectedStateCartoucheColor forKey:@"_selectedStateCartoucheColor"];
 }

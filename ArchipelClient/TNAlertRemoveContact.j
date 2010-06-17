@@ -25,8 +25,9 @@
 */
 @implementation TNAlertRemoveContact: CPAlert
 {
-    CPString        _JID        @accessors(getter=JID, setter=setJID:);
-    TNStropheRoster _roster      @accessors(getter=roster, setter=setRoster:);
+    CPString        _JID        @accessors(property=JID);
+    TNStropheRoster _roster      @accessors(property=roster);
+
 }
 
 /*! init the class with the JID to remove and the roster to remove contact from

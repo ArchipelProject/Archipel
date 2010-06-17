@@ -24,8 +24,8 @@ TNQuickEditViewPadding = 20.0;
 @implementation TNQuickEditView : CPWindow
 {
     CPImageView     _cursorView;
-    id              _object         @accessors(getter=object);
     CPView          _propertyView;
+    id              _object         @accessors(getter=object);
 }
 
 - (void)initWithObjectFrame:(CGRect)aFrame size:(CGSize)aSize view:(id)aView

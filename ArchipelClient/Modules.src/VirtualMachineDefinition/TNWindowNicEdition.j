@@ -92,7 +92,6 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeHypervisorNetworkList}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
@@ -120,7 +119,6 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorNetwork, 
         "action": TNArchipelTypeHypervisorNetworkBridges}];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
 }

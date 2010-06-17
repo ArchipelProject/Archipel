@@ -27,22 +27,21 @@
 */
 @implementation TNViewProperties: CPView
 {
+    @outlet CPImageView     entryAvatar;
+    @outlet CPImageView     entryStatusIcon;
+    @outlet CPTextField     entryDomain;
+    @outlet CPTextField     entryResource;
+    @outlet CPTextField     entryShow;
+    @outlet CPTextField     labelDomain;
+    @outlet CPTextField     labelResource;
+    @outlet CPTextField     labelStatus;
+    @outlet CPTextField     newNickName;
     @outlet TNEditableLabel entryName       @accessors;
-    @outlet CPImageView     entryStatusIcon @accessors;
-    @outlet CPImageView     entryAvatar     @accessors;
-    @outlet CPTextField     entryDomain     @accessors;
-    @outlet CPTextField     entryResource   @accessors;
-    @outlet CPTextField     entryShow       @accessors;
-    @outlet CPTextField     newNickName     @accessors;
+
+    TNStropheContact        _entity         @accessors(property=entity);
+    TNStropheRoster         _roster         @accessors(property=roster);
     
-    @outlet CPTextField     labelResource   @accessors;
-    @outlet CPTextField     labelDomain     @accessors;
-    @outlet CPTextField     labelStatus     @accessors;
-
-    TNStropheRoster         _roster         @accessors(getter=roster, setter=setRoster:);
-    TNStropheContact        _entity         @accessors(getter=_entity, setter=setEntity:);
     CPImage                 _unknownUserImage;
-
     CPNumber                _height;
 }
 
@@ -66,6 +65,7 @@
     //[self setAutoresizingMask: CPViewNotSizable];
 
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
 

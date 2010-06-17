@@ -60,32 +60,29 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 @implementation TNModuleLoader: CPObject
 {
-    TNToolbar               mainToolbar                     @accessors;
-    CPTabView               mainTabView                     @accessors;
-    id                      delegate                        @accessors;
-    
-    TNStropheRoster         roster                          @accessors;
-    id                      entity                          @accessors;
-    CPString                moduleType                      @accessors;
-    CPString                modulesPath                     @accessors;
-    CPView                  mainRightView                   @accessors;
-    CPMenu                  modulesMenu                     @accessors;
-
-    CPTextField             infoTextField                   @accessors;
+    BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
+    CPMenu                  _modulesMenu                    @accessors(property=modulesMenu);
+    CPString                _modulesPath                    @accessors(property=modulesPath);
+    CPString                _moduleType                     @accessors(property=moduleType);
+    CPTabView               _mainTabView                    @accessors(property=mainTabView);
+    CPTextField             _infoTextField                  @accessors(property=infoTextField);
+    CPView                  _mainModuleView                 @accessors(property=mainModuleView);
+    id                      _delegate                       @accessors(property=delegate);
+    id                      _entity                         @accessors(property=entity);
     int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
-    BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
-    id                      _modulesPList;
+    TNStropheRoster         _roster                         @accessors(property=roster);
+    TNToolbar               _mainToolbar                    @accessors(property=mainToolbar);
+
     CPArray                 _bundles;
     CPArray                 _loadedTabModules;
     CPDictionary            _loadedToolbarModules;
-    // CPDictionary            _loadedTabModulesScrollViews;
-    // CPDictionary            _loadedToolbarModulesScrollViews;
     CPString                _previousStatus;
-    CPView                  _currentToolbarModule;
     CPToolbarItem           _currentToolbarItem;
-    int                     _numberOfModulesToLoad;
+    CPView                  _currentToolbarModule;
+    id                      _modulesPList;
     int                     _numberOfModulesLoaded;
+    int                     _numberOfModulesToLoad;
 }
 
 /*! initialize the module loader
@@ -121,12 +118,12 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (BOOL)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
 {
-    if (anEntity == entity)
+    if (anEntity == _entity)
         return NO;
         
     var center = [CPNotificationCenter defaultCenter];
     
-    [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:entity];
+    [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
     _numberOfActiveModules = 0;
     // [self rememberLastSelectedTabIndex];
@@ -137,18 +134,18 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     _numberOfReadyModules = 0;
     _allModulesReady = NO;
     
-    [self setEntity:anEntity];
-    [self setRoster:aRoster];
-    [self setModuleType:aType];
+    _entity     = anEntity;
+    _roster     = aRoster;
+    _moduleType = aType;
 
     [center removeObserver:self];
-    [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:entity];
-    [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:entity];
+    [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
     
-    if ([[self entity] class] == TNStropheContact)
+    if ([_entity class] == TNStropheContact)
     {
-        _previousStatus = [[self entity] status];
+        _previousStatus = [_entity status];
         
         if ((_previousStatus != TNStropheContactStatusOffline) && (_previousStatus != TNStropheContactStatusDND))
             [self _populateModulesTabView];
@@ -160,7 +157,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
             else if (_previousStatus == TNStropheContactStatusDND)
                 label = @"Entity do not want to be disturbed";
             
-            [infoTextField setStringValue:label];
+            [_infoTextField setStringValue:label];
+            
             var center = [CPNotificationCenter defaultCenter];
             [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
             
@@ -178,9 +176,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)rememberLastSelectedTabIndex
 {
-    if ([self entity] && ([[self mainTabView] numberOfTabViewItems] > 0))
+    if (_entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
-        var currentItem = [[self mainTabView] selectedTabViewItem];
+        var currentItem = [_mainTabView selectedTabViewItem];
         
         [self rememberSelectedIndexOfItem:currentItem];
     }
@@ -192,17 +190,17 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
     CPLog.debug(@"rememberSelectedIndexOfItem: with item " + anItem);
-    if (anItem && [self entity] && ([mainTabView numberOfTabViewItems] > 0))
+    if (anItem && _entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
         var identifier;
         var memid;
         var defaults                = [TNUserDefaults standardUserDefaults];
-        var currentSelectedIndex    = [mainTabView indexOfTabViewItem:anItem];
+        var currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem];
         
-        if ([[self entity] class] == TNStropheContact)
-            identifier = [[self entity] JID];
+        if ([_entity class] == TNStropheContact)
+            identifier = [_entity JID];
         else
-            identifier = [[self entity] name];
+            identifier = [_entity name];
 
         memid = @"selectedTabIndexFor" + identifier;
         
@@ -215,21 +213,21 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)recoverFromLastSelectedIndex
 {
     var identifier;
-    if ([[self entity] class] == TNStropheContact)
-        identifier = [[self entity] JID];
+    if ([_entity class] == TNStropheContact)
+        identifier = [_entity JID];
     else
-        identifier = [[self entity] name];
+        identifier = [_entity name];
     
     var defaults            = [TNUserDefaults standardUserDefaults];
     var memid               = @"selectedTabIndexFor" + identifier;
     var oldSelectedIndex    = [defaults integerForKey:memid];
-    var numberOfTabItems    = [[self mainTabView] numberOfTabViewItems];
+    var numberOfTabItems    = [_mainTabView numberOfTabViewItems];
     
-    if ([self entity] && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
+    if (_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
     {
         CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
         if (oldSelectedIndex)
-            [[self mainTabView] selectTabViewItemAtIndex:oldSelectedIndex];
+            [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
     }
 }
 
@@ -298,19 +296,19 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         CPLog.debug("parsing " + [CPBundle bundleWithPath:path]);
         
         var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
-        var path    = [self modulesPath] + [module objectForKey:@"folder"];
+        var path    = _modulesPath + [module objectForKey:@"folder"];
         var bundle  = [CPBundle bundleWithPath:path];
         
         _numberOfModulesToLoad++;    
             
-        if ([delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
-            [delegate moduleLoader:self willLoadBundle:bundle];
+        if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
+            [_delegate moduleLoader:self willLoadBundle:bundle];
                        
         [bundle loadWithDelegate:self];
     }
     
-    if ((_numberOfModulesToLoad == 0) && ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
-        [delegate moduleLoaderLoadingComplete:self];
+    if ((_numberOfModulesToLoad == 0) && ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
+        [_delegate moduleLoaderLoadingComplete:self];
 }
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -342,7 +340,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         var moduleLabel = [module label];
         var moduleName  = [module name];
         
-        if ([moduleTypes containsObject:[self moduleType]])
+        if ([moduleTypes containsObject:_moduleType])
             _numberOfActiveModules++;
     }
 
@@ -355,7 +353,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         var moduleLabel = [module label];
         var moduleName  = [module name];
         
-        if ([moduleTypes containsObject:[self moduleType]])
+        if ([moduleTypes containsObject:_moduleType])
         {
             [self _addItemToModulesTabView:module];
         }
@@ -368,10 +366,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_removeAllTabsFromModulesTabView
 {
-    if ([mainTabView numberOfTabViewItems] <= 0)
+    if ([_mainTabView numberOfTabViewItems] <= 0)
         return;
         
-    var arrayCpy        = [[mainTabView tabViewItems] copy];
+    var arrayCpy        = [[_mainTabView tabViewItems] copy];
 
     for(var i = 0; i < [arrayCpy count]; i++)
     {
@@ -385,7 +383,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [[module view] scrollPoint:CPMakePoint(0.0, 0.0)];
         
         [[tabViewItem view] removeFromSuperview];
-        [mainTabView removeTabViewItem:tabViewItem];
+        [_mainTabView removeTabViewItem:tabViewItem];
     }
 }
 
@@ -396,11 +394,11 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_addItemToModulesTabView:(TNModule)aModule
 {
-    var frame           = [mainRightView bounds];
+    var frame           = [_mainModuleView bounds];
     var newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]];
-    var theEntity       = [self entity];
-    var theConnection   = [[self entity] connection];
-    var theRoster       = [self roster];
+    var theEntity       = _entity;
+    var theConnection   = [_entity connection];
+    var theRoster       = _roster;
     var scrollView      = [[CPScrollView alloc] initWithFrame:frame];
     
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -419,7 +417,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     [scrollView setDocumentView:[aModule view]];   
     
-    [mainTabView addTabViewItem:newViewItem];
+    [_mainTabView addTabViewItem:newViewItem];
 }   
 
 /*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
@@ -434,21 +432,22 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         _allModulesReady = NO;
         [self _removeAllTabsFromModulesTabView];
         _previousStatus = TNStropheContactStatusOffline;
-        [infoTextField setStringValue:@"Entity is offline"];
+        [_infoTextField setStringValue:@"Entity is offline"];
     }
     else if ([[aNotification object] status] == TNStropheContactStatusDND)
     {
-        _numberOfActiveModules = 0;
-        _allModulesReady = NO;
+        _numberOfActiveModules  = 0;
+        _allModulesReady        = NO;
+        
         [self _removeAllTabsFromModulesTabView];
         _previousStatus = TNStropheContactStatusDND;
-        [infoTextField setStringValue:@"Entity do not want to be disturbed"];
+        [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
     }
     else if ((_previousStatus == TNStropheContactStatusOffline) || (_previousStatus == TNStropheContactStatusDND))
     {
-        _previousStatus = nil;
-        _numberOfActiveModules = 0;
-        _allModulesReady = NO;
+        _previousStatus         = nil;
+        _numberOfActiveModules  = 0;
+        _allModulesReady        = NO;
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
@@ -461,9 +460,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     var vCard   = [[aNotification object] vCard];
     
-    if ([vCard text] != [[entity vCard] text])
+    if ([vCard text] != [[_entity vCard] text])
     {
-        [self setModuleType:[self analyseVCard:vCard]];
+        _moduleType = [self analyseVCard:vCard];
 
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
@@ -489,7 +488,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 /// DELEGATES
 
 /*! CPTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
-    @param aTabView the CPTabView that sent the message (mainTabView)
+    @param aTabView the CPTabView that sent the message (_mainTabView)
     @param anItem the new selected item
 */
 - (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
@@ -544,8 +543,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
         [self manageToolbarItemLoad:aBundle];
     
-    if ([delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
-        [delegate moduleLoader:self hasLoadBundle:aBundle];
+    if ([_delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
+        [_delegate moduleLoader:self hasLoadBundle:aBundle];
         
     if (_numberOfModulesLoaded >= _numberOfModulesToLoad)
     {
@@ -553,8 +552,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         
         [center postNotificationName:TNArchipelModulesLoadingCompleteNotification object:self];
         
-        if ([delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
-            [delegate moduleLoaderLoadingComplete:self];
+        if ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
+            [_delegate moduleLoaderLoadingComplete:self];
     }
 }
 
@@ -567,10 +566,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
     var moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
     var supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-    var moduleItem                  = [modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
+    var moduleItem                  = [_modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
     var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
     var moduleRootMenu              = [[CPMenu alloc] init];
-    var frame                       = [mainRightView bounds];
+    var frame                       = [_mainModuleView bounds];
     
     
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
@@ -580,7 +579,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
     [moduleItem setEnabled:NO];
     [moduleItem setTarget:currentModuleController];
-    [modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
+    [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
     
     [currentModuleController setMenuItem:moduleItem];
     [currentModuleController setMenu:moduleRootMenu];
@@ -602,7 +601,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
     var moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
     var toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"];
-    var frame                   = [mainRightView bounds];
+    var frame                   = [_mainModuleView bounds];
     var moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
     
     [moduleToolbarItem setLabel:moduleLabel];
@@ -628,9 +627,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
 
-    [mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
-    [mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-    [mainToolbar _reloadToolbarItems];
+    [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
+    [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
+    [_mainToolbar _reloadToolbarItems];
     
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
     
@@ -662,7 +661,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         
     if (module != oldModule)
     {
-        var bounds          = [mainRightView bounds];
+        var bounds          = [_mainModuleView bounds];
         var moduleBundle    = [module bundle];
         var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
         
@@ -671,7 +670,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [[module view] setFrame:bounds];
         [module willShow];
         
-        [mainRightView addSubview:[module view]];
+        [_mainModuleView addSubview:[module view]];
         
         _currentToolbarModule   = module;
         _currentToolbarItem     = sender;

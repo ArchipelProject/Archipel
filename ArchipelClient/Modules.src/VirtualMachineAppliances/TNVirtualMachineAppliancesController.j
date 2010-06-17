@@ -255,7 +255,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineVMCasting, 
         "action": TNArchipelTypeVirtualMachineVMCastingInstalledAppliances}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
@@ -315,7 +314,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineVMCasting, 
         "action": TNArchipelTypeVirtualMachineVMCastingInstall,
         "uuid": [appliance UUID]}];
 
@@ -365,7 +363,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineVMCasting, 
         "action": TNArchipelTypeVirtualMachineVMCastingDettach}];    
 
     [_dettachButton setEnabled:NO];
@@ -402,7 +399,6 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineVMCasting, 
         "action": TNArchipelTypeVirtualMachineVMCastingPackage,
         "name": name}];
 

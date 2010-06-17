@@ -21,7 +21,7 @@
 
 @implementation TNSearchField : CPSearchField
 {
-    CPOutlineView   outlineView @accessors;
+    CPOutlineView   _outlineView @accessors(property=outlineView);
 }
 
 -(void)keyDown:(CPEvent)anEvent
@@ -34,13 +34,13 @@
         if ([anEvent keyCode] == CPDownArrowKeyCode)
             indexToSelect = [CPIndexSet indexSetWithIndex:0];
         else if ([anEvent keyCode] == CPUpArrowKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:([outlineView numberOfRows] - 1)];
+            indexToSelect = [CPIndexSet indexSetWithIndex:([_outlineView numberOfRows] - 1)];
         else if ([anEvent keyCode] == CPReturnKeyCode)
             indexToSelect = [CPIndexSet indexSetWithIndex:1];            
             
-        [outlineView selectRowIndexes:indexToSelect byExtendingSelection:NO];
+        [_outlineView selectRowIndexes:indexToSelect byExtendingSelection:NO];
 
-        [[outlineView window] makeFirstResponder:outlineView];
+        [[_outlineView window] makeFirstResponder:_outlineView];
         return;
     }
     [super keyDown:anEvent];

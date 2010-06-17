@@ -31,10 +31,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 @implementation TNDatasourceRoster  : TNStropheRoster
 {
-    CPOutlineView   mainOutlineView @accessors;
-    CPString        filter          @accessors;
-    CPSearchField   filterField     @accessors;
-    id              currentItem     @accessors;
+    CPOutlineView   _mainOutlineView @accessors(property=mainOutlineView);
+    CPSearchField   _filterField     @accessors(property=filterField);
+    CPString        _filter          @accessors(property=filter);
+    id              _currentItem     @accessors(property=currentItem);
     
     id              _draggedItem;
 }
@@ -47,7 +47,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (self = [super initWithConnection:aConnection])
     {
-        [self setFilter:nil];
+        _filter = nil;
         
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
@@ -79,7 +79,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     var customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]];
     var currentContact  = [aNotification object];
     
-    if ([mainOutlineView selectedRow] != [mainOutlineView rowForItem:currentContact])
+    if ([_mainOutlineView selectedRow] != [_mainOutlineView rowForItem:currentContact])
     {
             [growl pushNotificationWithTitle:user message:message customIcon:customIcon target:self action:@selector(growlNotification:clickedWithUser:) actionParameters:currentContact];
     }
@@ -89,10 +89,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 - (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
 {
-    var row     = [mainOutlineView rowForItem:aContact];
+    var row     = [_mainOutlineView rowForItem:aContact];
     var indexes = [CPIndexSet indexSetWithIndex:row];
     
-    [mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+    [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
 /*! allow to define a CPSearchField to filter entries
@@ -100,11 +100,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (void)setFilterField:(CPSearchField)aField
 {
-    filterField = aField;
+    _filterField = aField;
 
-    [[self filterField] setSendsSearchStringImmediately:YES]
-    [[self filterField] setTarget:self];
-    [[self filterField] setAction:@selector(filterFieldDidChange:)];
+    [_filterField setSendsSearchStringImmediately:YES]
+    [_filterField setTarget:self];
+    [_filterField setAction:@selector(filterFieldDidChange:)];
 }
 
 /*! Action that will be plugged to the CPSearchField in order to catch
@@ -112,7 +112,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (IBAction)filterFieldDidChange:(id)sender
 {
-    [self setFilter:[sender stringValue]];
+    _filter = [sender stringValue];
     [self updateOutlineView:nil];
 }
 
@@ -123,20 +123,20 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (void)updateOutlineView:(CPNotification)aNotification
 {
-    var index   = -1;//[[self mainOutlineView] rowForItem:[aNotification object]];
+    var index   = -1;//[[self _mainOutlineView] rowForItem:[aNotification object]];
     
-    [[self mainOutlineView] reloadData];
+    [_mainOutlineView reloadData];
     
-    if ((currentItem) && ([mainOutlineView rowForItem:currentItem] != -1))
+    if ((_currentItem) && ([_mainOutlineView rowForItem:_currentItem] != -1))
     {
-        var index = [mainOutlineView rowForItem:currentItem];
-        [mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
+        var index = [_mainOutlineView rowForItem:_currentItem];
+        [_mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
     }
     else
     {
-        currentItem = nil;
-        if ([mainOutlineView numberOfSelectedRows] > 0)
-            [mainOutlineView deselectAll];
+        _currentItem = nil;
+        if ([_mainOutlineView numberOfSelectedRows] > 0)
+            [_mainOutlineView deselectAll];
     }
        
 }
@@ -236,11 +236,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (!item)
     {
-	    return [[self _getGroupContainingEntriesMatching:[self filter]] count];
+	    return [[self _getGroupContainingEntriesMatching:_filter] count];
 	}
 	else
 	{
-	    return [[self _getEntriesMatching:[self filter] inGroup:item] count];
+	    return [[self _getEntriesMatching:_filter inGroup:item] count];
 	}
 }
 
@@ -257,11 +257,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (!item)
     {
-        return [[self _getGroupContainingEntriesMatching:[self filter]].sort() objectAtIndex:index];
+        return [[self _getGroupContainingEntriesMatching:_filter].sort() objectAtIndex:index];
     }
     else
     {
-        return [[self _getEntriesMatching:[self filter] inGroup:item].sort() objectAtIndex:index];
+        return [[self _getEntriesMatching:_filter inGroup:item].sort() objectAtIndex:index];
     }
 }
 
@@ -294,7 +294,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
     [self changeGroup:theItem ofContact:_draggedItem];
-    [[self mainOutlineView] reloadData];
+    [anOutlineView reloadData];
 
     return YES;
 }

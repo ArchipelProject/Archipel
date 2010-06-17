@@ -169,7 +169,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorControl, 
         "action": TNArchipelTypeHypervisorControlRosterVM}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
@@ -221,7 +220,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorControl, 
         "action": TNArchipelTypeHypervisorControlAlloc,
         "uuid": uuid}];
     

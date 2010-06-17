@@ -56,24 +56,24 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 @implementation TNModule : CPViewController
 {
-    TNStropheRoster         _roster                 @accessors(property=roster);
-    TNStropheGroup          _group                  @accessors(property=group);
-    id                      _entity                 @accessors(property=entity);
-    TNStropheConnection     _connection             @accessors(property=connection);
-    int                     _index                  @accessors(property=index);
-    CPString                _name                   @accessors(property=name);
-    CPString                _label                  @accessors(property=label);
-    CPArray                 _supportedEntityTypes   @accessors(property=supportedEntityTypes);
-    CPBundle                _bundle                 @accessors(property=bundle);
-    CPMenuItem              _menuItem               @accessors(property=menuItem);
-    CPMenu                  _menu                   @accessors(property=menu);
-    BOOL                    _useAnimations          @accessors(getter=isUseAnimations, setter=setUseAnimations:);
-    int                     _animationDuration      @accessors(property=animationDuration);
-    BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
+    BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
+    BOOL                    _useAnimations          @accessors(getter=isUseAnimations, setter=setUseAnimations:);
+    CPArray                 _supportedEntityTypes   @accessors(property=supportedEntityTypes);
+    CPBundle                _bundle                 @accessors(property=bundle);
+    CPMenu                  _menu                   @accessors(property=menu);
+    CPMenuItem              _menuItem               @accessors(property=menuItem);
+    CPString                _label                  @accessors(property=label);
+    CPString                _name                   @accessors(property=name);
+    id                      _entity                 @accessors(property=entity);
+    int                     _animationDuration      @accessors(property=animationDuration);
+    int                     _index                  @accessors(property=index);
+    TNStropheConnection     _connection             @accessors(property=connection);
+    TNStropheGroup          _group                  @accessors(property=group);
+    TNStropheRoster         _roster                 @accessors(property=roster);
+
     CPArray                 _registredSelectors;
-    
 }
 
 - (id)init

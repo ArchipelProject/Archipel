@@ -263,7 +263,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeVirtualMachineDiskGet}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
@@ -392,7 +391,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeVirtualMachineDiskCreate,
         "name": dName,
         "size": dSize,
@@ -436,7 +434,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineDisk, 
         "action": TNArchipelTypeVirtualMachineDiskConvert,
         "path": [dName path],
         "format": [buttonEditDiskFormat title]}];

@@ -172,6 +172,9 @@ def build(paths, config, ignorepaths):
     for path in paths:
         if path in ignorepaths:
             continue
+            
+        if path.lower().find("sample") > -1:
+            continue
         
         print "# moving to " + path 
         os.chdir(path);
@@ -196,6 +199,10 @@ def copy_modules(modules_paths, config, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
+            
+        if path.lower().find("sample") > -1:
+            continue
+            
         
         module_name         = path.split("/")[-1]
         module_dest_path   = GLOBAL_MODULES_BUILD_PATH + module_name;
@@ -212,6 +219,10 @@ def remove_modules(modules_paths, config, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
+            
+        if path.lower().find("sample") > -1:
+            continue
+        
             
         module_name         = path.split("/")[-1]
         module_dest_path   = GLOBAL_MODULES_BUILD_PATH + module_name;
@@ -238,6 +249,10 @@ def generate_modules_plist(modules_paths, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
+
+        if path.lower().find("sample") > -1:
+            continue
+    
         module_name         = path.split("/")[-1]
         module_cell = "            <dict>\n                <key>folder</key>\n                <string>" + module_name + "</string>\n            </dict>\n"
         plist += module_cell;

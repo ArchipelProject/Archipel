@@ -27,8 +27,8 @@
 */
 @implementation TNOutlineViewRoster: CPOutlineView
 {
-    CPTabView       _tabViewModules     @accessors(property=modulesTabView);
     CPSearchField   _searchField        @accessors(property=searchField);
+    CPTabView       _tabViewModules     @accessors(property=modulesTabView);
     CPTextField     _entityRenameField  @accessors(property=entityRenameField);
 }
 /*! init the class

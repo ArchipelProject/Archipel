@@ -233,7 +233,6 @@ TNArchipelTransportBarReboot    = 4;
             
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlInfo}];
     
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
@@ -296,7 +295,6 @@ TNArchipelTransportBarReboot    = 4;
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlCreate}];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
@@ -396,7 +394,6 @@ TNArchipelTransportBarReboot    = 4;
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlShutdown}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didStop:) ofObject:self];
@@ -437,7 +434,6 @@ TNArchipelTransportBarReboot    = 4;
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlDestroy}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
@@ -473,7 +469,6 @@ TNArchipelTransportBarReboot    = 4;
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlReboot}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReboot:) ofObject:self];

@@ -231,7 +231,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingGet}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didReceivedVMCasts:)];
@@ -292,7 +291,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingDownloadProgress}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDownloadProgress:) ofObject:self];
@@ -316,7 +314,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingRegister,
         "url": url}];
 
@@ -376,7 +373,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingDeleteAppliance,
         "uuid": uuid}];
 
@@ -416,7 +412,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingUnregister,
         "uuid": uuid}];
 
@@ -469,7 +464,6 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingDownload,
         "uuid": uuid}];
 

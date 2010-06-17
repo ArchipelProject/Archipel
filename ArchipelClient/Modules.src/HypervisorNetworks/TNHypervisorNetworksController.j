@@ -231,7 +231,6 @@ function generateIPForNewNetwork()
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorNetwork, 
         "action": TNArchipelTypeHypervisorNetworkList}];
     
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
@@ -333,7 +332,6 @@ function generateIPForNewNetwork()
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorNetwork, 
         "action": TNArchipelTypeHypervisorNetworkDefine}];
 
     [stanza addChildName:@"network"];
@@ -426,7 +424,6 @@ function generateIPForNewNetwork()
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorNetwork, 
         "action": TNArchipelTypeHypervisorNetworkUndefine, 
         "uuid": [networkObject UUID]}];
 

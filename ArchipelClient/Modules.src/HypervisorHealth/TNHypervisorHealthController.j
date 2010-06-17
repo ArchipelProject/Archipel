@@ -194,7 +194,6 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorHealth, 
         "action": TNArchipelTypeHypervisorHealthHistory,
         "limit": _statsHistoryCollectionSize}];
     

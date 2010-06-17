@@ -87,7 +87,6 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorVMCasting, 
         "action": TNArchipelTypeHypervisorVMCastingDownloadQueue}];
 
     

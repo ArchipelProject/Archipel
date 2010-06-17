@@ -203,7 +203,6 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorGeolocalization}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorGeolocalization, 
         "action": TNArchipelTypeHypervisorGeolocalizationGet}];
 
     [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
@@ -241,7 +240,6 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorControl, 
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     if (anHypervisor == [self originHypervisor])

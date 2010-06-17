@@ -19,12 +19,13 @@
 
 @implementation TNTableViewDataSource: CPObject
 {
-    CPArray         _content                @accessors(getter=content);
-    CPTableView     _table                  @accessors(setter=setTable:);
-    CPArray         _searchableKeyPaths     @accessors(getter=searchableKeyPaths, setter=setSearchableKeyPaths:);
-    CPString        _filter;
+    CPArray         _content                @accessors(property=content);
+    CPArray         _searchableKeyPaths     @accessors(property=searchableKeyPaths);
+    CPTableView     _table                  @accessors(property=table);
+    
     CPArray         _filteredContent;
     CPSearchField   _searchField;
+    CPString        _filter;
 }
 
 - (id)init

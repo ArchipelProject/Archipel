@@ -253,7 +253,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorSnapshot, 
         "action": TNArchipelTypeHypervisorSnapshotGet}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didGetSnapshots:)];
@@ -301,7 +300,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorSnapshot, 
         "action": TNArchipelTypeHypervisorSnapshotCurrent}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didGetCurrentSnapshot:)];
@@ -351,7 +349,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorSnapshot, 
         "action": TNArchipelTypeHypervisorSnapshotTake}];
 
     [stanza addChildName:@"domainsnapshot"];
@@ -414,7 +411,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorSnapshot, 
         "action": TNArchipelTypeHypervisorSnapshotDelete,
         "name": name}];
 
@@ -469,7 +465,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorSnapshot, 
         "action": TNArchipelTypeHypervisorSnapshotRevert,
         "name": name}];
            

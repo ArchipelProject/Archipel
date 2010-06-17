@@ -484,7 +484,6 @@ function generateMacAddr()
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineDefinition, 
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
         
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
@@ -638,7 +637,6 @@ function generateMacAddr()
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "xmlns": TNArchipelTypeVirtualMachineControl, 
         "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
