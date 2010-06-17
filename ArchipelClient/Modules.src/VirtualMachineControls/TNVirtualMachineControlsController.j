@@ -353,7 +353,7 @@ TNArchipelTransportBarReboot    = 4;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"result")
+    if (responseType == @"result") 
     {
         [self enableButtonsForPaused];
         _VMLibvirtStatus = VIR_DOMAIN_PAUSED;
