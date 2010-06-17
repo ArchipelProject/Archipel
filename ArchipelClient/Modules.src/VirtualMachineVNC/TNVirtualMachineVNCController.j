@@ -168,7 +168,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 */
 - (void)_didReceiveVNCDisplay:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
         _vncDisplay     = [displayNode valueForAttribute:@"port"];

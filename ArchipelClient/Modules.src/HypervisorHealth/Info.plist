@@ -26,9 +26,9 @@
 		</array>		
         <key>CibName</key>
         <string>HypervisorHealth</string>
-        <key>RefreshStatsInterval</key>
-        <integer>5</integer>
-        <key>StatsHistoryCollectionSize</key>
+        <key>TNArchipelHealthRefreshStatsInterval</key>
+        <real>5.0</real>
+        <key>TNArchipelHealthStatsHistoryCollectionSize</key>
         <integer>100</integer>
     </dict>
 </plist>

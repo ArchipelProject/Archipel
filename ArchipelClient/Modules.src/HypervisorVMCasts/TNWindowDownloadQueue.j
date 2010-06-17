@@ -156,7 +156,7 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 - (void)didReceiveDownloadQueue:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var downloads = [aStanza childrenWithName:@"download"];
         

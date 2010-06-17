@@ -88,7 +88,7 @@ class TNVMApplianceManager:
         try:
             uuid = iq.getTag("query").getAttr("uuid")
             nodes = []
-            reply = iq.buildReply("success")
+            reply = iq.buildReply("result")
             self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
             for values in self.cursor:
                 path = values[0]
@@ -155,7 +155,7 @@ class TNVMApplianceManager:
             
             self.entity.push_change("vmcasting", "applianceinstalling")
             
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
             
@@ -178,7 +178,7 @@ class TNVMApplianceManager:
             self.is_installed = False
             self.entity.push_change("vmcasting", "appliancedettached")
             
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
 
@@ -220,7 +220,7 @@ class TNVMApplianceManager:
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging")
             compressor.start()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
 

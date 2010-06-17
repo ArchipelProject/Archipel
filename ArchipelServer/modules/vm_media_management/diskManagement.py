@@ -105,7 +105,7 @@ class TNMediaManagement:
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
          
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "disk created")
             self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
             self.entity.push_change("disk", "created")
@@ -139,7 +139,7 @@ class TNMediaManagement:
             os.unlink(path)
                         
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "convertion of  created")
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
@@ -166,7 +166,7 @@ class TNMediaManagement:
             newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
             os.rename(path, newpath)
             
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "renamed hard drive %s into  %s" % (path, newname))
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
             self.entity.push_change("disk", "renamed")
@@ -215,7 +215,7 @@ class TNMediaManagement:
             
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( " disk deleted")
             self.entity.push_change("disk", "deleted")
             self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
@@ -251,7 +251,7 @@ class TNMediaManagement:
                     })
                     nodes.append(node)
         
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
             log.info( "info about disks sent")
         
@@ -285,7 +285,7 @@ class TNMediaManagement:
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso })
                     nodes.append(node)
         
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
             log.info( "info about iso sent")
         
@@ -322,7 +322,7 @@ class TNMediaManagement:
     #             })
     #             nodes.append(node)
     #     
-    #         reply = iq.buildReply('success')
+    #         reply = iq.buildReply("result")
     #         reply.setQueryPayload(nodes)
     #         log.info( "info about network sent")
     #     

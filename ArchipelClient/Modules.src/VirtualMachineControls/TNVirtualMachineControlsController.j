@@ -132,9 +132,6 @@ TNArchipelTransportBarReboot    = 4;
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
     [imageState setImage:[_entity statusIcon]];
-    
-    
-    [self getVirtualMachineInfo];
 }
 
 - (void)willShow
@@ -176,7 +173,7 @@ TNArchipelTransportBarReboot    = 4;
 - (BOOL)didPushReceived:(TNStropheStanza)aStanza
 {
     CPLog.info("Push notification received with with ");
-    [self getVirtualMachineInfo];
+    // [self getVirtualMachineInfo];
     return YES;
 }
 
@@ -237,13 +234,12 @@ TNArchipelTransportBarReboot    = 4;
             "xmlns": TNArchipelTypeVirtualMachineControl, 
             "type": "get", 
             "action" : TNArchipelTypeVirtualMachineControlInfo}];
-            
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
-- (void)didReceiveVirtualMachineInfo:(id)aStanza
+- (BOOL)didReceiveVirtualMachineInfo:(id)aStanza
 {
-      if ([aStanza getType] == @"success")
+      if ([aStanza getType] == @"result")
       {
           var infoNode      = [aStanza firstChildWithName:@"info"];
           var libvirtState  = [infoNode valueForAttribute:@"state"];
@@ -261,6 +257,8 @@ TNArchipelTransportBarReboot    = 4;
           
           [self layoutButtons:libvirtState]
       }
+      
+      return NO;
 }
 
 
@@ -302,12 +300,12 @@ TNArchipelTransportBarReboot    = 4;
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
-- (void)didPlay:(id)aStanza
+- (BOOL)didPlay:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
         
@@ -318,6 +316,8 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
 
@@ -351,12 +351,12 @@ TNArchipelTransportBarReboot    = 4;
     [_entity sendStanza:stanza andRegisterSelector:selector ofObject:self];
 }
 
-- (void)didPause:(id)aStanza
+- (BOOL)didPause:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
@@ -365,14 +365,16 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
-- (void)didResume:(id)aStanza
+- (BOOL)didResume:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
@@ -381,6 +383,8 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
 
@@ -396,12 +400,12 @@ TNArchipelTransportBarReboot    = 4;
     [_entity sendStanza:stanza andRegisterSelector:@selector(didStop:) ofObject:self];
 }
 
-- (void)didStop:(id)aStanza
+- (BOOL)didStop:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped"];
@@ -410,6 +414,8 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
 
@@ -440,12 +446,12 @@ TNArchipelTransportBarReboot    = 4;
     [self layoutButtons:_VMLibvirtStatus];
 }
 
-- (void)didDestroy:(id)aStanza
+- (BOOL)didDestroy:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is destroyed"];
@@ -454,6 +460,8 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
 
@@ -469,12 +477,12 @@ TNArchipelTransportBarReboot    = 4;
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }
 
-- (void)didReboot:(id)aStanza
+- (BOOL)didReboot:(id)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting"];
@@ -483,6 +491,8 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    return NO;
 }
 
 

@@ -181,7 +181,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var disks = [aStanza childrenWithName:@"disk"];
         [buttonSource removeAllItems];
@@ -226,7 +226,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var isos = [aStanza childrenWithName:@"iso"];
         [buttonSource removeAllItems];

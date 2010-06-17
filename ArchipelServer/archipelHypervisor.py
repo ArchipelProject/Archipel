@@ -207,7 +207,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         
         try:
             uuidnode    = iq.getTag("query").getTag("uuid")
@@ -257,7 +257,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         
         try:
             vm_jid      = str(iq.getQueryPayload()[0])
@@ -306,7 +306,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @return: a ready-to-send IQ containing the results
         """
         # TODO : add some ACL here later
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         nodes = []
         try:
             for item in self.roster.getItems():

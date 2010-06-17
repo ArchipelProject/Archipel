@@ -70,7 +70,7 @@ class TNHypervisorHealth:
         @return: a ready-to-send IQ containing the results        
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.debug( "converting stats into XML node")
             
             limit = int(iq.getTag("query").getAttr("limit"))
@@ -106,7 +106,7 @@ class TNHypervisorHealth:
         """
         # TODO : add some ACL here later
         try:
-            reply = iq.buildReply('success') 
+            reply = iq.buildReply("result") 
     
             nodes = []
             stats = self.collector.get_collected_stats(1)

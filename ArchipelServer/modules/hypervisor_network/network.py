@@ -106,7 +106,7 @@ class TNHypervisorNetworks:
         try:
             network_node = iq.getTag("query").getTag("network")
             
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             self.libvirt_connection.networkDefineXML(str(network_node))
             log.info( "virtual network XML is defined")
             self.entity.push_change("network", "defined")
@@ -130,7 +130,7 @@ class TNHypervisorNetworks:
             network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.undefine()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "virtual network XML is undefined")
             self.entity.push_change("network", "undefined")
         except Exception as ex:
@@ -153,7 +153,7 @@ class TNHypervisorNetworks:
             network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.create()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "virtual network created")
             self.entity.push_change("network", "created")
             self.entity.shout("disk", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
@@ -177,7 +177,7 @@ class TNHypervisorNetworks:
             network_uuid = iq.getTag("query").getData()
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.destroy()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "virtual network destroyed")
             self.entity.push_change("network", "destroyed")
             self.entity.shout("disk", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
@@ -197,7 +197,7 @@ class TNHypervisorNetworks:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             active_networks_nodes = [] 
             not_active_networks_nodes = [] #xmpp.Node(tag="unactivedNetworks")
         
@@ -235,7 +235,7 @@ class TNHypervisorNetworks:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             active_networks_nodes = [] 
             actives_networks_names = self.libvirt_connection.listNetworks()
             for network_name in actives_networks_names:
@@ -258,7 +258,7 @@ class TNHypervisorNetworks:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             output = commands.getoutput("brctl show | grep -v -E '^[[:space:]]'")
             lines = output.split("\n")[1:]
             bridges_names = [] 

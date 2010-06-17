@@ -277,7 +277,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         [_mediasDatasource removeAllObjects];
 
@@ -468,7 +468,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 {
     [imageViewConverting setHidden:YES];
     
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var growl   = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been converted"];
@@ -520,7 +520,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)didRename:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var growl   = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been renamed"];

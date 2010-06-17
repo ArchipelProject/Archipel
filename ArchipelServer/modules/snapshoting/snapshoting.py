@@ -72,7 +72,7 @@ class TNSnapshoting:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             xmlDesc = iq.getTag('query').getTag('domainsnapshot')
             name = xmlDesc.getTag('name').getData();
             old_status  = self.entity.xmppstatus
@@ -104,7 +104,7 @@ class TNSnapshoting:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             nodes = []
             snapshot_names = self.entity.domain.snapshotListNames(0)
             for snapshot_name in snapshot_names:
@@ -128,7 +128,7 @@ class TNSnapshoting:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             snapshotObject = self.entity.domain.snapshotCurrent(0)
             desc = snapshotObject.getXMLDesc(0)
             n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
@@ -154,7 +154,7 @@ class TNSnapshoting:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getAttr('name')
         
@@ -188,7 +188,7 @@ class TNSnapshoting:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getAttr('name')
 

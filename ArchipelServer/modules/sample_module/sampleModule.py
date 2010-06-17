@@ -50,7 +50,7 @@ class TNSampleModule:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info( "I did something!")
             self.entity.push_change("sample", "I_DID_SOMETHING")
             self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")

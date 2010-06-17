@@ -265,7 +265,7 @@ class TNHypervisorRepoManager:
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results"""
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         try:
             nodes = self.parseRSS()
             reply.setQueryPayload(nodes)
@@ -283,7 +283,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply       = iq.buildReply("success")
+        reply       = iq.buildReply("result")
         url         = iq.getTag("query").getAttr("url")
         
         try:
@@ -307,7 +307,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         
         uuid = iq.getTag("query").getAttr("uuid")
         
@@ -331,7 +331,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         
         dl_uuid = iq.getTag("query").getAttr("uuid")
         
@@ -363,7 +363,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success") 
+        reply = iq.buildReply("result") 
         nodes = []
         
         try:
@@ -386,7 +386,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         dl_uuid = iq.getTag("query").getAttr("uuid")
         self.download_queue[dl_uuid].stop()
         return reply
@@ -401,7 +401,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         uuid = iq.getTag("query").getAttr("uuid")
         
         try:
@@ -427,7 +427,7 @@ class TNHypervisorRepoManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        reply = iq.buildReply("success")
+        reply = iq.buildReply("result")
         uuid = iq.getTag("query").getAttr("uuid")
         nodes = []
         try:
@@ -456,7 +456,7 @@ class TNHypervisorRepoManager:
         """
         
         try:
-            reply = iq.buildReply("success")
+            reply = iq.buildReply("result")
             uuid = iq.getTag("query").getAttr("uuid")
             
             self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid)

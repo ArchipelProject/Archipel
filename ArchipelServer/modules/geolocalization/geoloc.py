@@ -55,7 +55,7 @@ class TNHypervisorGeolocalization:
     
     
     def _module__get_geolocalization(self, iq):
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         try:
             reply.setQueryPayload([self.localization_information])
         except Exception as ex:

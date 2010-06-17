@@ -102,7 +102,7 @@ class TNArchipelBasicXMPPClient(object):
         
         exit on any error.
         """
-        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[])
+        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #['dispatcher', 'nodebuilder']
         log.info("client instance initialized")
         
         if self.xmppclient.connect() == "":
@@ -291,7 +291,6 @@ class TNArchipelBasicXMPPClient(object):
         log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        print str(pres)
         self.xmppclient.send(pres)
     
     
@@ -317,27 +316,30 @@ class TNArchipelBasicXMPPClient(object):
     def push_change(self, namespace, change):
         """push a change using archipel push system"""
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
-        self.roster = self.xmppclient.getRoster()
+        #self.roster = self.xmppclient.getRoster()
         
         for item, info in self.roster.getRawRoster().iteritems():
             for resource, res_info in info["resources"].iteritems():
                 send_to = item + "/" + resource
-                push_message = xmpp.Message(typ="headline", to=send_to)
-                push_message.addChild(name="push", namespace=ns, attrs={"change": change})
-                log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
-                self.xmppclient.send(push_message)
-                log.debug(str(push_message))
+                if not item == self.jid.getStripped():
+                    push_message = xmpp.Message(typ="headline", to=send_to)
+                    push_message.addChild(name="push", namespace=ns, attrs={"change": change})
+                    log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
+                    self.xmppclient.send(push_message)
+                    log.debug(str(push_message))
     
     
     def shout(self, subject, message):
         """send a message to evrybody in roster"""
-        self.roster = self.xmppclient.getRoster()
+        #self.roster = self.xmppclient.getRoster()
+        
         for item, info in self.roster.getRawRoster().iteritems():
             for resource, res_info in info["resources"].iteritems():
-                send_to = item + "/" + resource
-                broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
-                log.info("shouting message message to %s: %s" % (send_to, message))
-                self.xmppclient.send(broadcast)
+                if not item == self.jid.getStripped():
+                    send_to = item + "/" + resource
+                    broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
+                    log.info("shouting message message to %s: %s" % (send_to, message))
+                    self.xmppclient.send(broadcast)
     
 
     def add_jid(self, jid, groups=[]):

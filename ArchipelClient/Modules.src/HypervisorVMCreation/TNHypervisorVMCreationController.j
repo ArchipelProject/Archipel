@@ -176,7 +176,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
@@ -235,7 +235,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     [buttonCreateVM setEnabled:YES];
     
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
         CPLog.info(@"sucessfully create a virtual machine");
@@ -315,7 +315,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     [buttonDeleteVM setEnabled:YES];
     
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         CPLog.info(@"sucessfully deallocating a virtual machine");
         

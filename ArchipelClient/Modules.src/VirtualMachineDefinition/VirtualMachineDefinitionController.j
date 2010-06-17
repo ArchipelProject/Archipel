@@ -645,7 +645,7 @@ function generateMacAddr()
 
 - (void)didReceiveXMLDesc:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var domain          = [aStanza firstChildWithName:@"domain"];
         var hypervisor      = [domain valueForAttribute:@"type"];
@@ -794,7 +794,7 @@ function generateMacAddr()
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
-    if (responseType == @"success")
+    if (responseType == @"result")
     {
         var msg = @"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated"
         CPLog.info(msg)

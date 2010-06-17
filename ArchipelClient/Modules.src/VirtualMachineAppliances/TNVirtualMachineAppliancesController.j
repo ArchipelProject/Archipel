@@ -263,7 +263,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)didReceiveInstalledAppliances:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         [_appliancesDatasource removeAllObjects];
 
@@ -327,7 +327,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)didInstanciate:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl   = [TNGrowlCenter defaultCenter];
         var msg     = @"Instanciation has started";
@@ -376,7 +376,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)didDettachAppliance:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl   = [TNGrowlCenter defaultCenter];
         var msg     = @"Appliance has been dettached";
@@ -415,7 +415,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)didPackageAppliance:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl   = [TNGrowlCenter defaultCenter];
         var msg     = @"Virtual machine has been packaged";

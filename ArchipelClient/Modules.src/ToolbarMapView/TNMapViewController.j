@@ -211,7 +211,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceivedGeolocalization:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
         var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
@@ -252,7 +252,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceiveOriginHypervisorRoster:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
@@ -283,7 +283,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceiveDestinationHypervisorRoster:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];

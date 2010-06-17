@@ -301,7 +301,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             domid = self.create()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             payload = xmpp.Node("domain", attrs={"id": domid})
             reply.setQueryPayload([payload])
         except Exception as ex:
@@ -338,7 +338,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             self.shutdown()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -371,7 +371,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             self.destroy()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             log.info("virtual machine destroyed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -406,7 +406,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             self.reboot()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -439,7 +439,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             self.suspend()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -473,7 +473,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             self.resume()
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -506,7 +506,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         reply = None
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             if self.domain:
                 infos = self.info()
                 response = xmpp.Node(tag="info", attrs=infos)
@@ -545,7 +545,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         try:
             if not self.domain:
                 return iq.buildReply('ignore')
@@ -581,7 +581,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = iq.buildReply('success')
+        reply = iq.buildReply("result")
         try:
             if not self.domain:
                 return iq.buildReply('ignore')
@@ -619,7 +619,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
            if domain_uuid != self.jid.getNode():
                raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
            
-           reply = iq.buildReply('success')
+           reply = iq.buildReply("result")
            
            # the dirty replace below is to avoid having this xmlns wrote by xmpp.Node automatically.
            # I've sepnd two hours, trying to remove it, I'm done.
@@ -648,7 +648,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         reply = None
         try:
-            reply = iq.buildReply('success')
+            reply = iq.buildReply("result")
             self.domain.undefine()
             log.info("virtual machine is undefined")
             self.definition = None;

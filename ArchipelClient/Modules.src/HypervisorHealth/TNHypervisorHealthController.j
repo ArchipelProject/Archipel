@@ -57,7 +57,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     TNDatasourceGraphMemory     _memoryDatasource;
 
     CPTimer                     _timer;
-    CPNumber                    _timerInterval;
+    float                       _timerInterval;
     CPNumber                    _statsHistoryCollectionSize;
 }
 
@@ -88,8 +88,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     [viewGraphMemory addSubview:_chartViewMemory];
 
     var moduleBundle = [CPBundle bundleForClass:[self class]]
-    _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"RefreshStatsInterval"];
-    _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"StatsHistoryCollectionSize"];
+    _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"];
+    _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
 }
 
 
@@ -154,7 +154,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var memNode = [aStanza firstChildWithName:@"memory"];
         var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024)
@@ -211,7 +211,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();

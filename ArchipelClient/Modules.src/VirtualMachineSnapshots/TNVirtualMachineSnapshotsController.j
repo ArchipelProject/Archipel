@@ -264,7 +264,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didGetSnapshots:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var snapshots = [aStanza childrenWithName:@"domainsnapshot"];
         
@@ -314,7 +314,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (IBAction)didGetCurrentSnapshot:(TNStropheStanza)aStanza
 {
     [fieldInfo setStringValue:@""];
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {
         var snapshots   = [aStanza firstChildWithName:@"domainsnapshot"];
         var name        = [[snapshots firstChildWithName:@"name"] text];
@@ -377,7 +377,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didTakeSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
@@ -426,7 +426,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didDeleteSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot deleted"];
@@ -480,7 +480,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didRevertSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"success")
+    if ([aStanza getType] == @"result")
     {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot sucessfully reverted"];
