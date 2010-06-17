@@ -210,12 +210,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         reply = iq.buildReply("result")
         
         try:
-            uuidnode    = iq.getTag("query").getTag("uuid")
-            
-            if not uuidnode:
-                raise Exception('IncorrectUUID', "Missing or malformed UUID")
-            
-            domain_uuid = uuidnode.getCDATA()
+            domain_uuid    = iq.getTag("query").getTag("archipel").getAttr("uuid")
+
             vm_password = ''.join([choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
             
             vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
@@ -260,7 +256,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         reply = iq.buildReply("result")
         
         try:
-            vm_jid      = str(iq.getQueryPayload()[0])
+            vm_jid      = iq.getTag("query").getTag("archipel").getAttr("jid")
             domain_uuid = vm_jid.split("@")[0]
             vm          = self.virtualmachines[domain_uuid]
             
@@ -338,7 +334,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
 
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "Control IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "alloc":

@@ -88,14 +88,14 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)getHypervisorNetworks
 {
-    var networksStanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [networksStanza addChildName:@"query" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorNetwork, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorNetworkList}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineDisk, 
+        "action": TNArchipelTypeHypervisorNetworkList}];
 
-    [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
@@ -116,14 +116,13 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)getBridges
 {
-    var networksStanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [networksStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorNetwork, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorNetworkBridges}];
-
-    [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
+        "action": TNArchipelTypeHypervisorNetworkBridges}];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
 }
 
 - (void)didReceiveBridges:(id)aStanza

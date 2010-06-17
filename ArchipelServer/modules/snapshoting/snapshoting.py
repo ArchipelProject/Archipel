@@ -30,7 +30,7 @@ class TNSnapshoting:
         
     
     def process_iq(self, conn, iq):
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "Snapshoting IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if not self.entity.domain:
@@ -73,7 +73,7 @@ class TNSnapshoting:
         """
         try:
             reply = iq.buildReply("result")
-            xmlDesc = iq.getTag('query').getTag('domainsnapshot')
+            xmlDesc = iq.getTag('query').getTag("archipel").getTag('domainsnapshot')
             name = xmlDesc.getTag('name').getData();
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
@@ -156,7 +156,7 @@ class TNSnapshoting:
         try:
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
-            name = iq.getTag('query').getAttr('name')
+            name = iq.getTag('query').getTag("archipel").getAttr('name')
         
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
@@ -190,7 +190,7 @@ class TNSnapshoting:
         try:
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
-            name = iq.getTag('query').getAttr('name')
+            name = iq.getTag('query').getTag("archipel").getAttr('name')
 
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow

@@ -80,7 +80,7 @@ class TNHypervisorGeolocalization:
         @param iq: the received IQ
         """
         
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "get":

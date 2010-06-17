@@ -45,7 +45,7 @@ class TNHypervisorHealth:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "history":
@@ -73,7 +73,7 @@ class TNHypervisorHealth:
             reply = iq.buildReply("result")
             log.debug( "converting stats into XML node")
             
-            limit = int(iq.getTag("query").getAttr("limit"))
+            limit = int(iq.getTag("query").getTag("archipel").getAttr("limit"))
             nodes = []
             stats = self.collector.get_collected_stats(limit)
             

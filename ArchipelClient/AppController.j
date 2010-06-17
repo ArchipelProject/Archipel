@@ -93,6 +93,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 */
 TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
 
+TNArchipelXMPPNamespace = "http://archipelproject.org";
 
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.

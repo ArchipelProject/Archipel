@@ -228,12 +228,13 @@ TNArchipelTransportBarReboot    = 4;
 /* population messages */
 - (void)getVirtualMachineInfo
 {
-    var stanza  = [TNStropheStanza iq];
-
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
-            "type": "get", 
-            "action" : TNArchipelTypeVirtualMachineControlInfo}];
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+            
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlInfo}];
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
 }
 
@@ -290,13 +291,12 @@ TNArchipelTransportBarReboot    = 4;
 /* vm controls */
 - (void)play
 {
-    var stanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
-            "type": "set", 
-            "action" : TNArchipelTypeVirtualMachineControlCreate}];
-
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlCreate}];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
@@ -323,26 +323,26 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)pause
 {
-    var stanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
     var selector;
 
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
         selector = @selector(didResume:)
         
-        [stanza addChildName:@"query" withAttributes:{
-                "xmlns": TNArchipelTypeVirtualMachineControl, 
-                "type": "set", 
-                "action" : TNArchipelTypeVirtualMachineControlResume}];
+        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+        [stanza addChildName:@"archipel" withAttributes:{
+            "xmlns": TNArchipelTypeVirtualMachineControl, 
+            "action": TNArchipelTypeVirtualMachineControlResume}];
     }
     else
     {
         selector = @selector(didPause:)
         
-        [stanza addChildName:@"query" withAttributes:{
-                "xmlns": TNArchipelTypeVirtualMachineControl, 
-                "type": "set", 
-                "action" : TNArchipelTypeVirtualMachineControlSuspend}];
+        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+        [stanza addChildName:@"archipel" withAttributes:{
+            "xmlns": TNArchipelTypeVirtualMachineControl, 
+            "action": TNArchipelTypeVirtualMachineControlSuspend}];
     }
 
     [_entity sendStanza:stanza andRegisterSelector:selector ofObject:self];
@@ -391,12 +391,12 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)stop
 {
-    var stanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
-            "type": "set", 
-            "action" : TNArchipelTypeVirtualMachineControlShutdown}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlShutdown}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didStop:) ofObject:self];
 }
@@ -432,12 +432,12 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)performDestroy:(id)someUserInfo
 {
-    var stanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
-            "type": "set", 
-            "action" : TNArchipelTypeVirtualMachineControlDestroy}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlDestroy}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
 }
@@ -468,12 +468,12 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)reboot
 {
-    var stanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
 
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
-            "type": "set", 
-            "action" : TNArchipelTypeVirtualMachineControlReboot}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlReboot}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReboot:) ofObject:self];
 }

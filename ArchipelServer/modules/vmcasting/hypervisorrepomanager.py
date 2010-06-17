@@ -212,7 +212,7 @@ class TNHypervisorRepoManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         
         log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
         
@@ -284,7 +284,7 @@ class TNHypervisorRepoManager:
         @return: a ready-to-send IQ containing the results
         """
         reply       = iq.buildReply("result")
-        url         = iq.getTag("query").getAttr("url")
+        url         = iq.getTag("query").getTag("archipel").getAttr("url")
         
         try:
             if not url or url=="":
@@ -309,7 +309,7 @@ class TNHypervisorRepoManager:
         """
         reply = iq.buildReply("result")
         
-        uuid = iq.getTag("query").getAttr("uuid")
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         
         try:
             self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid)
@@ -333,7 +333,7 @@ class TNHypervisorRepoManager:
         """
         reply = iq.buildReply("result")
         
-        dl_uuid = iq.getTag("query").getAttr("uuid")
+        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         
         try:
             self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
@@ -387,7 +387,7 @@ class TNHypervisorRepoManager:
         @return: a ready-to-send IQ containing the results
         """
         reply = iq.buildReply("result")
-        dl_uuid = iq.getTag("query").getAttr("uuid")
+        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         self.download_queue[dl_uuid].stop()
         return reply
     
@@ -402,7 +402,7 @@ class TNHypervisorRepoManager:
         @return: a ready-to-send IQ containing the results
         """
         reply = iq.buildReply("result")
-        uuid = iq.getTag("query").getAttr("uuid")
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         
         try:
             self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
@@ -428,7 +428,7 @@ class TNHypervisorRepoManager:
         @return: a ready-to-send IQ containing the results
         """
         reply = iq.buildReply("result")
-        uuid = iq.getTag("query").getAttr("uuid")
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
         nodes = []
         try:
             self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
@@ -457,7 +457,7 @@ class TNHypervisorRepoManager:
         
         try:
             reply = iq.buildReply("result")
-            uuid = iq.getTag("query").getAttr("uuid")
+            uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             
             self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid)
             for values in self.cursor:

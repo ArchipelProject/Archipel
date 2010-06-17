@@ -69,7 +69,7 @@ class TNApplianceDecompresser(Thread):
         desc_node = self.get_description_node()
         
         define_iq = xmpp.Iq()
-        define_iq.setQueryPayload([desc_node])
+        define_iq.addChild(name='query').addChild(name="archipel", payload=[desc_node])
         
         self.define_callback(define_iq)
         self.finish_callback()

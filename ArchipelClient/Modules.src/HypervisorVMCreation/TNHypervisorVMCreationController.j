@@ -164,14 +164,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)getHypervisorRoster
 {
-    var rosterStanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorControl, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorControlRosterVM}];
-
-    [_entity sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
+        "action": TNArchipelTypeHypervisorControlRosterVM}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
 }
 
 - (void)didReceiveHypervisorRoster:(id)aStanza 
@@ -215,18 +215,16 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 //actions
 - (IBAction)addVirtualMachine:(id)sender
 {
-    var creationStanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
     var uuid            = [CPString UUID];
     
-    [creationStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorControl, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorControlAlloc}];
-        
-    [creationStanza addChildName:@"uuid"];
-    [creationStanza addTextNode:uuid];
+        "action": TNArchipelTypeHypervisorControlAlloc,
+        "uuid": uuid}];
     
-    [self sendStanza:creationStanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
     
     [buttonCreateVM setEnabled:NO];
 }
@@ -294,18 +292,17 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     for (var i = 0; i < [objects count]; i++)
     {                              
         var vm              = [objects objectAtIndex:i];
-        var freeStanza      = [TNStropheStanza iq];
-
-        [freeStanza addChildName:@"query" withAttributes:{
+        var stanza          = [TNStropheStanza iqWithType:@"set"];
+        
+        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+        [stanza addChildName:@"archipel" withAttributes:{
             "xmlns": TNArchipelTypeHypervisorControl, 
-            "type": "get", 
-            "action" : TNArchipelTypeHypervisorControlFree}];
-
-        [freeStanza addTextNode:[vm JID]];
+            "action": TNArchipelTypeHypervisorControlFree,
+            "jid": [vm JID]}];
 
         [_roster removeContact:vm];
 
-        [_entity sendStanza:freeStanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
+        [_entity sendStanza:stanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
         
         [buttonDeleteVM setEnabled:YES];
     }

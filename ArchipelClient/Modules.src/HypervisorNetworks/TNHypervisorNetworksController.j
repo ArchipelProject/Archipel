@@ -225,14 +225,14 @@ function generateIPForNewNetwork()
 
 - (void)getHypervisorNetworks
 {
-    var networksStanza  = [TNStropheStanza iq];
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [networksStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorNetwork, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorNetworkList}];
-
-    [self sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
+        "action": TNArchipelTypeHypervisorNetworkList}];
+    
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
 }
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
@@ -327,12 +327,12 @@ function generateIPForNewNetwork()
         return
 
     var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"id": anUid}];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
     
-    [stanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorNetwork, 
-        "type": "set", 
-        "action" : TNArchipelTypeHypervisorNetworkDefine}];
+        "action": TNArchipelTypeHypervisorNetworkDefine}];
 
     [stanza addChildName:@"network"];
 
@@ -420,16 +420,15 @@ function generateIPForNewNetwork()
         return
     }
 
-    var deleteStanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
 
-    [deleteStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorNetwork, 
-        "type": "set", 
-        "action" : TNArchipelTypeHypervisorNetworkUndefine}];
-    
-    [deleteStanza addTextNode:[networkObject UUID]];
+        "action": TNArchipelTypeHypervisorNetworkUndefine, 
+        "uuid": [networkObject UUID]}];
 
-    [self sendStanza:deleteStanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
 }
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
@@ -461,16 +460,15 @@ function generateIPForNewNetwork()
     for (var i = 0; i < [objects count]; i++)
     {
         var networkObject   = [objects objectAtIndex:i];
-        var stanza          = [TNStropheStanza iq];
+        var stanza          = [TNStropheStanza iqWithType:@"set"];
 
         if (![networkObject isNetworkEnabled])
         {
-            [stanza addChildName:@"query" withAttributes:{
+            [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildName:@"archipel" withAttributes:{
                 "xmlns": TNArchipelTypeHypervisorNetwork, 
-                "type": "set", 
-                "action" : TNArchipelTypeHypervisorNetworkCreate}];
-            
-            [stanza addTextNode:[networkObject UUID]];
+                "action": TNArchipelTypeHypervisorNetworkCreate, 
+                "uuid": [networkObject UUID]}];
             
             [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
             [_tableViewNetworks deselectAll];
@@ -497,16 +495,15 @@ function generateIPForNewNetwork()
     for (var i = 0; i < [objects count]; i++)
     {
         var networkObject   = [objects objectAtIndex:i];
-        var stanza          = [TNStropheStanza iq]
+        var stanza          = [TNStropheStanza iqWithType:@"set"];
 
         if ([networkObject isNetworkEnabled])
         {
-            [stanza addChildName:@"query" withAttributes:{
+            [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildName:@"archipel" withAttributes:{
                 "xmlns": TNArchipelTypeHypervisorNetwork, 
-                "type": "set", 
-                "action" : TNArchipelTypeHypervisorNetworkDestroy}];
-            
-            [stanza addTextNode:[networkObject UUID]];
+                "action": TNArchipelTypeHypervisorNetworkDestroy,
+                "uuid" : [networkObject UUID]}];
 
             [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
             [_tableViewNetworks deselectAll];
@@ -575,16 +572,15 @@ function generateIPForNewNetwork()
             return
         }
 
-        var deleteStanza    = [TNStropheStanza iq];
+        var stanza    = [TNStropheStanza iqWithType:@"get"];
         
-        [deleteStanza addChildName:@"query" withAttributes:{
+        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+        [stanza addChildName:@"archipel" withAttributes:{
             "xmlns": TNArchipelTypeHypervisorNetwork, 
-            "type": "get", 
-            "action" : TNArchipelTypeHypervisorNetworkUndefine}];
-            
-        [deleteStanza addTextNode:[networkObject UUID]];
-
-        [self sendStanza:deleteStanza andRegisterSelector:@selector(didDelNetwork:)];
+            "action": TNArchipelTypeHypervisorNetworkUndefine,
+            "uuid": [networkObject UUID]}];
+        
+        [self sendStanza:stanza andRegisterSelector:@selector(didDelNetwork:)];
     }
 }
 

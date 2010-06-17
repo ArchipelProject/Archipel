@@ -52,7 +52,7 @@ class TNVMApplianceManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         
         log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
         
@@ -86,7 +86,7 @@ class TNVMApplianceManager:
         @return: a ready-to-send IQ containing the results
         """
         try:
-            uuid = iq.getTag("query").getAttr("uuid")
+            #uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             nodes = []
             reply = iq.buildReply("result")
             self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
@@ -134,7 +134,7 @@ class TNVMApplianceManager:
             if (self.is_installed):
                 raise Exception("You must dettach from already attached template")
             
-            uuid = iq.getTag("query").getTag("uuid").getCDATA()
+            uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             requester = iq.getFrom()
             
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid))
@@ -200,7 +200,7 @@ class TNVMApplianceManager:
                 raise Exception("Virtual machine is not defined")
             
             disk_nodes      = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
-            package_name    = iq.getTag("query").getAttr("name")
+            package_name    = iq.getTag("query").getTag("archipel").getAttr("name")
             paths           = []
             
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):

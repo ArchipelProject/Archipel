@@ -480,11 +480,10 @@ function generateMacAddr()
     
     var stanza      = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid}];
     
-    [stanza addChildName:@"query" withAttributes:{
-        "xmlns":TNArchipelTypeVirtualMachineDefinition,
-        "type": "set",
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineDefinition, 
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-        
         
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
 
@@ -633,14 +632,14 @@ function generateMacAddr()
 //  XML Desc
 - (void)getXMLDesc
 {
-    var xmldescStanza   = [TNStropheStanza iq];
+    var stanza   = [TNStropheStanza iqWithType:@"get"];
 
-    [xmldescStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeVirtualMachineControl, 
-        "type": "get", 
-        "action" : TNArchipelTypeVirtualMachineControlXMLDesc}];
-
-    [_entity sendStanza:xmldescStanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
+        "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
 
 - (void)didReceiveXMLDesc:(id)aStanza

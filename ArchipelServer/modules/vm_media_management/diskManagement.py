@@ -44,7 +44,7 @@ class TNMediaManagement:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "Disk IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "create":
@@ -90,10 +90,10 @@ class TNMediaManagement:
         """
         try:
             query_node = iq.getTag("query")
-            disk_name = query_node.getTag("name").getData()
-            disk_size = query_node.getTag("size").getData()
-            disk_unit = query_node.getTag("unit").getData()
-            format  = query_node.getTag("format").getData()
+            disk_name = query_node.getTag("archipel").getAttr("name")
+            disk_size = query_node.getTag("archipel").getAttr("size")
+            disk_unit = query_node.getTag("archipel").getAttr("unit")
+            format  = query_node.getTag("archipel").getAttr("format")
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try")
@@ -128,8 +128,8 @@ class TNMediaManagement:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             query_node  = iq.getTag("query")
-            path        = query_node.getTag("path").getData()
-            format      = query_node.getTag("format").getData()
+            path        = query_node.getTag("archipel").getAttr("path")
+            format      = query_node.getTag("archipel").getAttr("format")
             
             self.entity.change_presence(presence_show="dnd", presence_status="Converting a disk...")
             ret = os.system("qemu-img convert " + path + " -O " + format + " " + path.replace(path.split(".")[-1], "") + format)
@@ -159,8 +159,8 @@ class TNMediaManagement:
         """
         try:
             query_node = iq.getTag("query")
-            path = query_node.getTag("path").getData()
-            newname = query_node.getTag("newname").getData()
+            path = query_node.getTag("archipel").getAttr("path")
+            newname = query_node.getTag("archipel").getAttr("newname")
             
             extension = path.split(".")[-1]
             newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
@@ -187,7 +187,7 @@ class TNMediaManagement:
         """
         try:
             query_node          = iq.getTag("query")
-            disk_name           = query_node.getTag("name").getData()
+            disk_name           = query_node.getTag("archipel").getAttr("name")
             secure_disk_name    = disk_name.split("/")[-1]
             secure_disk_path    = self.entity.vm_own_folder + "/" + secure_disk_name
             
@@ -200,7 +200,7 @@ class TNMediaManagement:
             devices_node = self.entity.definition.getTag('devices')
             disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
             
-            if query_node.getTag("undefine"):
+            if query_node.getTag("archipel").getAttr("undefine") ==  "yes":
                 have_undefined_at_least_on_disk = False
                 for disk_node in disk_nodes:
                     path = disk_node.getTag('source').getAttr('file')

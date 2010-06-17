@@ -153,14 +153,14 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
 - (void)getVirtualMachineVNCDisplay
 {
-    var vncStanza   = [TNStropheStanza iq];
+    var stanza   = [TNStropheStanza iqWithType:@"get"];
     
-    [vncStanza addChildName:@"query" withAttributes:{
-                            "xmlns": TNArchipelTypeVirtualMachineControl, 
-                            "type": "set", 
-                            "action" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
-
-    [_entity sendStanza:vncStanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineControl, 
+        "action": TNArchipelTypeVirtualMachineControlVNCDisplay}];
+                
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }
 
 /*! message sent when VNC display info is received

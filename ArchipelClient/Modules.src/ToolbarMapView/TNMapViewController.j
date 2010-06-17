@@ -199,14 +199,14 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 // Archipel
 - (void)locationOfHypervisor:(TNStropheContact)anHypervisor
 {
-    var geolocStanza = [TNStropheStanza iq];
-    
-    [geolocStanza addChildName:@"query" withAttributes:{
-                            "xmlns": TNArchipelTypeHypervisorGeolocalization, 
-                            "type": "get", 
-                            "action" : TNArchipelTypeHypervisorGeolocalizationGet}];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
 
-    [anHypervisor sendStanza:geolocStanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorGeolocalization}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorGeolocalization, 
+        "action": TNArchipelTypeHypervisorGeolocalizationGet}];
+
+    [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
 }
 
 - (void)didReceivedGeolocalization:(id)aStanza
@@ -237,17 +237,17 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
 {
-    var rosterStanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{
-                            "xmlns": TNArchipelTypeHypervisorControl, 
-                            "type": "get", 
-                            "action" : TNArchipelTypeHypervisorControlRosterVM}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorControl, 
+        "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     if (anHypervisor == [self originHypervisor])
-        [anHypervisor sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
+        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
     else
-        [anHypervisor sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
+        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
 }
 
 - (void)didReceiveOriginHypervisorRoster:(id)aStanza

@@ -42,7 +42,7 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_hypervisor(self, conn, iq):
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug( "Network IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "define":
@@ -78,7 +78,7 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_virtualmachine(self, conn, iq):
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug("Network IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "list":
@@ -104,7 +104,7 @@ class TNHypervisorNetworks:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            network_node = iq.getTag("query").getTag("network")
+            network_node = iq.getTag("query").getTag("archipel").getTag("network")
             
             reply = iq.buildReply("result")
             self.libvirt_connection.networkDefineXML(str(network_node))
@@ -127,7 +127,7 @@ class TNHypervisorNetworks:
         """
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData()
+            network_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.undefine()
             reply = iq.buildReply("result")
@@ -150,7 +150,7 @@ class TNHypervisorNetworks:
         """
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData()
+            network_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.create()
             reply = iq.buildReply("result")
@@ -174,7 +174,7 @@ class TNHypervisorNetworks:
         """
         reply = None
         try:
-            network_uuid = iq.getTag("query").getData()
+            network_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.destroy()
             reply = iq.buildReply("result")

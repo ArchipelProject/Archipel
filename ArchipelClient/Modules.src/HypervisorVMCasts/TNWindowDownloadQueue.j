@@ -144,12 +144,13 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 - (void)getDownloadQueue:(CPTimer)aTimer
 {
-    var stanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{
-            "xmlns": TNArchipelTypeHypervisorVMCasting, 
-            "type": "get", 
-            "action" : TNArchipelTypeHypervisorVMCastingDownloadQueue}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorVMCasting, 
+        "action": TNArchipelTypeHypervisorVMCastingDownloadQueue}];
+
     
     [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveDownloadQueue:) ofObject:self];
 }

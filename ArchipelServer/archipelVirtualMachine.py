@@ -266,6 +266,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
             log.info("libvirt event received: %d with detail %s" % (event, detail))
+            self.unlock()
             try:
                 if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                     self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
@@ -285,7 +286,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                     self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
                     self.push_change("virtualmachine:definition", "defined")
-                self.unlock()
             except Exception as ex:
                 log.error("Unable to push state change : %s" % str(ex))
     
@@ -642,7 +642,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
        reply = None
        
        try :
-           domain_node = iq.getTag("query").getTag("domain")
+           domain_node = iq.getTag("query").getTag("archipel").getTag("domain")
            
            domain_uuid = domain_node.getTag("uuid").getData()
            if domain_uuid != self.jid.getNode():
@@ -739,7 +739,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         
         log.debug("Control IQ received from %s with type %s" % (iq.getFrom(), action))
         
@@ -811,7 +811,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        action = iq.getTag("query").getAttr("action")
+        action = iq.getTag("query").getTag("archipel").getAttr("action")
         log.debug("Definition IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if action == "define":

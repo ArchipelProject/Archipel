@@ -166,14 +166,14 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 -(void)getDisksInfo
 {
-    var infoStanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [infoStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeVirtualMachineDisk, 
-        "type": "get", 
-        "action" : TNArchipelTypeVirtualMachineDiskGet}];
+        "action": TNArchipelTypeVirtualMachineDiskGet}];
 
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
 
 - (void)didReceiveDisksInfo:(id)aStanza
@@ -211,14 +211,14 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 -(void)getISOsInfo
 {
-    var infoStanza = [TNStropheStanza iq];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [infoStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeVirtualMachineDisk, 
-        "type": "get", 
-        "action" : TNArchipelTypeVirtualMachineISOGet}];
-
-    [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
+        "action": TNArchipelTypeVirtualMachineISOGet}];
+        
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
 - (void)didReceiveISOsInfo:(id)aStanza

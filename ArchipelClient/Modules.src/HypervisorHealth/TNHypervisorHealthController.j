@@ -142,14 +142,12 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    var rosterStanza    = [TNStropheStanza iq];
+    var stanza    = [TNStropheStanza iqWithType:@"get"];
 
-    [rosterStanza addChildName:@"query" withAttributes:{
-        "xmlns": TNArchipelTypeHypervisorHealth, 
-        "type": "get", 
-        "action" : TNArchipelTypeHypervisorHealthInfo}];
-
-    [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildName:@"archipel" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth, "action": TNArchipelTypeHypervisorHealthInfo}];
+    
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
 }
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza
@@ -194,19 +192,19 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)getHypervisorHealthHistory
 {
-    var rosterStanza    = [TNStropheStanza iq];
+    var stanza    = [TNStropheStanza iqWithType:@"get"];
     
-    [rosterStanza addChildName:@"query" withAttributes:{
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildName:@"archipel" withAttributes:{
         "xmlns": TNArchipelTypeHypervisorHealth, 
-        "type": "get",
-        "limit": _statsHistoryCollectionSize,
-        "action" : TNArchipelTypeHypervisorHealthHistory}];
-
+        "action": TNArchipelTypeHypervisorHealthHistory,
+        "limit": _statsHistoryCollectionSize}];
+    
 
     [[self imageCPULoading] setHidden:NO];
     [[self imageMemoryLoading] setHidden:NO];
 
-    [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
 }
 
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza
