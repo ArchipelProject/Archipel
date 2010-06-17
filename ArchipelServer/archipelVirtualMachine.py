@@ -37,6 +37,7 @@ import os
 import commands
 from utils import *
 from archipelBasicXMPPClient import *
+from threading import Timer
 
 try:
     import libvirt
@@ -105,6 +106,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         self.libvirt_connection = None
         self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        self.locked = False;
+        self.lock_timer = None;
+        self.maximum_lock_time = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         # whooo... this technic is dirty. was I drunk ? TODO! FIXME!
@@ -115,6 +119,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             os.mkdir(self.vm_own_folder)
             
         self.register_for_messages()
+    
+    def lock(self):
+        log.info("acquiring lock")
+        self.locked = True;
+        self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
+        self.lock_timer.start()
+    
+    def unlock(self):
+        log.info("releasing lock")
+        self.locked = False;
+        if self.lock_timer:
+            self.lock_timer.cancel()
+    
     
     
     def register_for_messages(self):
@@ -249,7 +266,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
             log.info("libvirt event received: %d with detail %s" % (event, detail))
-            
             try:
                 if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                     self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
@@ -269,6 +285,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                     self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
                     self.push_change("virtualmachine:definition", "defined")
+                self.unlock()
             except Exception as ex:
                 log.error("Unable to push state change : %s" % str(ex))
     
@@ -282,6 +299,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     # iq control
     
     def create(self):
+        self.lock()
         self.domain.create()
         log.info("virtual machine created")
         return str(self.domain.ID())
@@ -320,6 +338,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def shutdown(self):
+        self.lock()
         self.domain.shutdown()
         log.info("virtual machine shutdowned")
     
@@ -354,6 +373,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def destroy(self):
+        self.lock()
         self.domain.destroy()
     
     
@@ -388,6 +408,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def reboot(self):
+        self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
         log.info("virtual machine rebooted")
     
@@ -422,6 +443,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def suspend(self):
+        self.lock()
         self.domain.suspend()
         log.info("virtual machine suspended")
     
@@ -455,6 +477,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def resume(self):
+        self.lock()
         self.domain.resume()
         log.info("virtual machine resumed")
     
@@ -489,7 +512,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def info(self):
+        self.lock()
         dominfo = self.domain.info()
+        self.unlock()
         return {"state": dominfo[0], "maxMem": dominfo[1], "memory": dominfo[2], "nrVirtCpu": dominfo[3], "cpuTime": dominfo[4], "hypervisor": self.hypervisor.jid}
     
     
@@ -529,7 +554,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def vncdisplay(self):
+        self.lock()
         xmldesc = self.domain.XMLDesc(0)
+        self.unlock()
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         return xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port")
         
@@ -567,7 +594,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def xmldesc(self):
+        self.lock()
         xmldesc = self.domain.XMLDesc(0)
+        self.unlock()
         return xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
     
         
@@ -714,6 +743,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         log.debug("Control IQ received from %s with type %s" % (iq.getFrom(), action))
         
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            reply = build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+            
         if action == "info":
             reply = self.iq_info(iq)
             conn.send(reply)

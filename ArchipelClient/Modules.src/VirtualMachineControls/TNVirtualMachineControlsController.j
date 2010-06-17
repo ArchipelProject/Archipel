@@ -324,14 +324,12 @@ TNArchipelTransportBarReboot    = 4;
 - (void)pause
 {
     var stanza  = [TNStropheStanza iq];
-
     var selector;
 
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
         selector = @selector(didResume:)
         
-        [self enableButtonsForRunning];
         [stanza addChildName:@"query" withAttributes:{
                 "xmlns": TNArchipelTypeVirtualMachineControl, 
                 "type": "set", 
@@ -341,7 +339,6 @@ TNArchipelTransportBarReboot    = 4;
     {
         selector = @selector(didPause:)
         
-        [self enableButtonsForPaused];
         [stanza addChildName:@"query" withAttributes:{
                 "xmlns": TNArchipelTypeVirtualMachineControl, 
                 "type": "set", 
@@ -358,6 +355,8 @@ TNArchipelTransportBarReboot    = 4;
 
     if (responseType == @"result")
     {
+        [self enableButtonsForPaused];
+        _VMLibvirtStatus = VIR_DOMAIN_PAUSED;
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
     }
@@ -376,6 +375,8 @@ TNArchipelTransportBarReboot    = 4;
 
     if (responseType == @"result")
     {
+        [self enableButtonsForRunning];
+        _VMLibvirtStatus = VIR_DOMAIN_RESUMED;
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
     }

@@ -387,5 +387,5 @@ def virEventLoopPureStart():
     global eventLoopThread
     virEventLoopPureRegister()
     eventLoopThread = threading.Thread(target=virEventLoopPureRun, name="libvirtEventLoop")
-    eventLoopThread.setDaemon(True)
+    #eventLoopThread.setDaemon(True)
     eventLoopThread.start()

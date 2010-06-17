@@ -601,13 +601,18 @@ class TNArchipelBasicXMPPClient(object):
         
         if body.find("help") >= 0:
             reply_stanza.setBody(self.__build_help())
-        else: 
+        else:
+            loop = True;
             for registrar_item in self.messages_registrar:
                 for cmd in registrar_item["commands"]:
                     if body.find(cmd) >= 0:
                         m = registrar_item["method"]
                         resp = m(body)
                         reply_stanza.setBody(resp)
+                        loop = False
+                        break
+                if not loop:
+                    break
         
         return reply_stanza;
     
