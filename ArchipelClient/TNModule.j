@@ -110,14 +110,16 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     {
         CPLog.info([self class] + " is registring for push notification of type : " + aPushType);
         var params = [[CPDictionary alloc] init];
-
+        
         [params setValue:@"message" forKey:@"name"];
         [params setValue:@"headline" forKey:@"type"];
-        
-        //<message to="oto@server/resource" xmlns="archipel:push:disk" type="headline" id="55" change="created" />
+        [params setValue:{matchBare: true} forKey:"options"]
+        //<message xmlns="jabber:client" from="hypervisor@virt-hyperviseur/virt-hyperviseur" to="controller@virt-hyperviseur/ArchipelController" type="headline" id="67">​
+        // <push xmlns="archipel:push:hypervisor" change="alloc"></push>​
+        //</message>​
         if (aPushType)
           [params setValue:aPushType forKey:@"namespace"];
-
+        
         [_registredSelectors addObject:[_connection registerSelector:aSelector ofObject:self withDict:params]];
     }
 }

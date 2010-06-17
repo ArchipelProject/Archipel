@@ -42,36 +42,35 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_hypervisor(self, conn, iq):
-        log.debug( "Network IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "Network IQ received from %s with type %s" % (iq.getFrom(), action))
         
-        iqType = iq.getTag("query").getAttr("type")
-        
-        if iqType == "define":
+        if action == "define":
             reply = self.__module_network_define_network(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "undefine":
+        if action == "undefine":
             reply = self.__module_network_undefine_network(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "create":
+        if action == "create":
             reply = self.__module_network_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "destroy":
+        if action == "destroy":
             reply = self.__module_network_destroy(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "list":
+        if action == "list":
             reply = self.__module_network_list(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "bridges":
+        if action == "bridges":
             reply = self.__module_network_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -79,16 +78,15 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_virtualmachine(self, conn, iq):
-        log.info( "received network iq for virtual machine")
+        action = iq.getTag("query").getAttr("action")
+        log.debug("Network IQ received from %s with type %s" % (iq.getFrom(), action))
         
-        iqType = iq.getTag("query").getAttr("type")
-        
-        if iqType == "list":
+        if action == "list":
             reply = self.__module_network_name_list(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if iqType == "bridges":
+        if action == "bridges":
             reply = self.__module_network_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

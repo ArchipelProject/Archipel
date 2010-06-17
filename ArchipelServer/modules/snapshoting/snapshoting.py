@@ -30,33 +30,33 @@ class TNSnapshoting:
         
     
     def process_iq(self, conn, iq):
-        iqType = iq.getTag("query").getAttr("type")
-        log.debug( "IQ received from %s with type %s : %s" % (iq.getFrom(), iq.getType(), iqType))
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "Snapshoting IQ received from %s with type %s" % (iq.getFrom(), action))
         
         if not self.entity.domain:
             return
         
-        if iqType == "take":
+        if action == "take":
             reply = self.__take_snapshot(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "delete":
+        if action == "delete":
             reply = self.__delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "get":
+        if action == "get":
             reply = self.__get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "current":
+        if action == "current":
             reply = self.__getcurrent(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "revert":
+        if action == "revert":
             reply = self.__revert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

@@ -142,9 +142,12 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorHealth}];
+    var rosterStanza    = [TNStropheStanza iq];
 
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthInfo}];
+    [rosterStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorHealth, 
+        "type": "get", 
+        "action" : TNArchipelTypeHypervisorHealthInfo}];
 
     [self sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
 }
@@ -191,9 +194,14 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)getHypervisorHealthHistory
 {
-    var rosterStanza    = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorHealth}];
+    var rosterStanza    = [TNStropheStanza iq];
+    
+    [rosterStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorHealth, 
+        "type": "get",
+        "limit": _statsHistoryCollectionSize,
+        "action" : TNArchipelTypeHypervisorHealthHistory}];
 
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorHealthHistory, "limit": _statsHistoryCollectionSize}];
 
     [[self imageCPULoading] setHidden:NO];
     [[self imageMemoryLoading] setHidden:NO];

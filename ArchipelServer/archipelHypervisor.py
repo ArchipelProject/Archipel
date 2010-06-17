@@ -337,21 +337,21 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log.debug( "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
+
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "Control IQ received from %s with type %s" % (iq.getFrom(), action))
         
-        iqType = iq.getTag("query").getAttr("type")
-        
-        if iqType == "alloc":
+        if action == "alloc":
             reply = self.alloc_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "free":
+        if action == "free":
             reply = self.free_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "rostervm":
+        if action == "rostervm":
             reply = self.send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

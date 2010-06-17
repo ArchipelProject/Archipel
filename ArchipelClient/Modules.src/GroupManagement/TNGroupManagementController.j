@@ -147,6 +147,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
@@ -262,9 +263,12 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     for (var i = 0; i < [objects count]; i++)
     {
         var vm = [objects objectAtIndex:i];
-        var controlStanza = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeVirtualMachineControl}];
-
-        [controlStanza addChildName:@"query" withAttributes:{"type": controlType}];
+        var controlStanza = [TNStropheStanza iq];
+        
+        [controlStanza addChildName:@"query" withAttributes:{
+            "xmlns": TNArchipelTypeVirtualMachineControl, 
+            "type": "set", 
+            "action" : controlType}];
 
         [vm sendStanza:controlStanza andRegisterSelector:@selector(didSentAction:) ofObject:self];
         }

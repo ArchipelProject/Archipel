@@ -119,6 +119,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     
     var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheRosterAddedContactNotification object:nil];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [_tableVirtualMachines setDelegate:nil];
@@ -130,11 +133,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (void)willShow
 {
     [super willShow];
-    
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didContactAdded:) name:TNStropheRosterAddedContactNotification object:nil];
-    
+        
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
 }
@@ -153,7 +152,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     return YES;
 }
 
-- (void)didContactAdded:(CPNotification)aNotification
+- (void)reload:(CPNotification)aNotification
 {
     [self getHypervisorRoster];
 }
@@ -165,9 +164,13 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)getHypervisorRoster
 {
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
-        
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
+    var rosterStanza = [TNStropheStanza iq];
+    
+    [rosterStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorControl, 
+        "type": "get", 
+        "action" : TNArchipelTypeHypervisorControlRosterVM}];
+
     [_entity sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
 }
 
@@ -212,10 +215,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 //actions
 - (IBAction)addVirtualMachine:(id)sender
 {
-    var creationStanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorControl}];
+    var creationStanza  = [TNStropheStanza iq];
     var uuid            = [CPString UUID];
     
-    [creationStanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorControlAlloc}];
+    [creationStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorControl, 
+        "type": "get", 
+        "action" : TNArchipelTypeHypervisorControlAlloc}];
+        
     [creationStanza addChildName:@"uuid"];
     [creationStanza addTextNode:uuid];
     
@@ -287,9 +294,13 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     for (var i = 0; i < [objects count]; i++)
     {                              
         var vm              = [objects objectAtIndex:i];
-        var freeStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
+        var freeStanza      = [TNStropheStanza iq];
 
-        [freeStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlFree}];
+        [freeStanza addChildName:@"query" withAttributes:{
+            "xmlns": TNArchipelTypeHypervisorControl, 
+            "type": "get", 
+            "action" : TNArchipelTypeHypervisorControlFree}];
+
         [freeStanza addTextNode:[vm JID]];
 
         [_roster removeContact:vm];

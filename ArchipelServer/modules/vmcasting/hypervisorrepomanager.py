@@ -212,54 +212,49 @@ class TNHypervisorRepoManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        iqType = iq.getTag("query").getAttr("type")
+        action = iq.getTag("query").getAttr("action")
         
-        log.debug( "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
+        log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
         
-        if iqType == "get":
+        if action == "get":
             reply = self.get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "register":
+        if action == "register":
             reply = self.register(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "unregister":
+        if action == "unregister":
             reply = self.unregister(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "download":
+        if action == "download":
             reply = self.download(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "downloadqueue":
+        if action == "downloadqueue":
             reply = self.get_download_queue(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "getappliance":
+        if action == "getappliance":
             reply = self.get_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed   
         
-        if iqType == "deleteappliance":
+        if action == "deleteappliance":
             reply = self.delete_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "getinstalledappliances":
+        if action == "getinstalledappliances":
             reply = self.get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
-        # if iqType == "install":
-        #     reply = self.install(iq)
-        #     conn.send(reply)
-        #     raise xmpp.protocol.NodeProcessed
     
     
     def get(self, iq):

@@ -35,26 +35,25 @@ class TNHypervisorHealth:
     def process_iq(self, conn, iq):
         """
         this method is invoked when a NS_ARCHIPEL_HYPERVISOR_HEALTH IQ is received.
-    
+        
         it understands IQ of type:
             - alloc
             - free
-    
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log.debug( "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-    
-        iqType = iq.getTag("query").getAttr("type")
-    
-        if iqType == "history":
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
+        
+        if action == "history":
             reply = self.__healthinfo_history(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "info":
+        if action == "info":
             reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

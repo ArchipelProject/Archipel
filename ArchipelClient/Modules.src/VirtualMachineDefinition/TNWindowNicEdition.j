@@ -88,9 +88,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)getHypervisorNetworks
 {
-    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}];
-
-    [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkList}];
+    var networksStanza  = [TNStropheStanza iq];
+    
+    [networksStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorNetwork, 
+        "type": "get", 
+        "action" : TNArchipelTypeHypervisorNetworkList}];
 
     [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
@@ -113,9 +116,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)getBridges
 {
-    var networksStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorNetwork}];
-
-    [networksStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorNetworkBridges}];
+    var networksStanza  = [TNStropheStanza iq];
+    
+    [networksStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorNetwork, 
+        "type": "get", 
+        "action" : TNArchipelTypeHypervisorNetworkBridges}];
 
     [_entity sendStanza:networksStanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
 }

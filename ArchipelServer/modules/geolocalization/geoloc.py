@@ -79,11 +79,11 @@ class TNHypervisorGeolocalization:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log.debug( "iq received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
         
-        iqType = iq.getTag("query").getAttr("type")
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
         
-        if iqType == "get":
+        if action == "get":
             reply = self._module__get_geolocalization(iq)
             conn.send(reply)
             log.debug( "geolocalization information sent. Node processed")

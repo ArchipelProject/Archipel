@@ -322,9 +322,11 @@ class TNArchipelBasicXMPPClient(object):
         for item, info in self.roster.getRawRoster().iteritems():
             for resource, res_info in info["resources"].iteritems():
                 send_to = item + "/" + resource
-                push_message = xmpp.Message(typ="headline", to=send_to, attrs={"change": change, "xmlns": ns})
+                push_message = xmpp.Message(typ="headline", to=send_to)
+                push_message.addChild(name="push", namespace=ns, attrs={"change": change})
                 log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
                 self.xmppclient.send(push_message)
+                log.debug(str(push_message))
     
     
     def shout(self, subject, message):
@@ -556,11 +558,11 @@ class TNArchipelBasicXMPPClient(object):
         """
         log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
 
-        reply_stanza = msg.buildReply("not prepared")
-        me = reply_stanza.getFrom()
-        me.setResource(self.ressource)
-        reply_stanza.setType("chat")
-        # reply_stanza = self.__filter_message(msg)
+        # reply_stanza = msg.buildReply("not prepared")
+        # me = reply_stanza.getFrom()
+        # me.setResource(self.ressource)
+        # reply_stanza.setType("chat")
+        reply_stanza = self.__filter_message(msg)
         if reply_stanza:
             conn.send(self.__build_reply(reply_stanza, msg))
     
@@ -578,7 +580,7 @@ class TNArchipelBasicXMPPClient(object):
             log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
             reply = msg.buildReply("not prepared")
             me = reply.getFrom()
-            me.setResource(self.entity.ressource)
+            me.setResource(self.ressource)
             reply.setType("chat")
             #reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
             return reply

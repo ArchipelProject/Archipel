@@ -262,9 +262,12 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)getDisksInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-
-    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
+    var infoStanza = [TNStropheStanza iq];
+    
+    [infoStanza addChildName:@"query" withAttributes:{
+                "xmlns": TNArchipelTypeVirtualMachineDisk, 
+                "type": "get", 
+                "action" : TNArchipelTypeVirtualMachineDiskGet}];
 
     [_entity sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
@@ -388,9 +391,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 
     
-    var diskStanza  = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+    var diskStanza  = [TNStropheStanza iq];
+    
+    [diskStanza addChildName:@"query" withAttributes:{
+                "xmlns": TNArchipelTypeVirtualMachineDisk, 
+                "type": "set", 
+                "action" : TNArchipelTypeVirtualMachineDiskCreate}];
 
-    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskCreate}];
     [diskStanza addChildName:@"name"];
     [diskStanza addTextNode:dName];
     [diskStanza up];
@@ -437,9 +444,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex];
     var dName           = [_mediasDatasource objectAtIndex:selectedIndex];   
-    var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+    var diskStanza      = [TNStropheStanza iq];
     
-    [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskConvert}];
+    [diskStanza addChildName:@"query" withAttributes:{
+                "xmlns": TNArchipelTypeVirtualMachineDisk, 
+                "type": "set", 
+                "action" : TNArchipelTypeVirtualMachineDiskConvert}];
+    
     [diskStanza addChildName:@"path"];
     [diskStanza addTextNode:[dName path]];
     [diskStanza up];
@@ -487,9 +498,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         [_currentEditedDisk setName:[fieldEditDiskName stringValue]];
         [self rename:_currentEditedDisk];
     
-        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-    
-        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskRename}];
+        var diskStanza      = [TNStropheStanza iq];
+        
+        [diskStanza addChildName:@"query" withAttributes:{
+                    "xmlns": TNArchipelTypeVirtualMachineDisk, 
+                    "type": "set", 
+                    "action" : TNArchipelTypeVirtualMachineDiskRename}];
+        
         [diskStanza addChildName:@"path"];
         [diskStanza addTextNode:[_currentEditedDisk path]];
         [diskStanza up];
@@ -540,9 +555,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     for (var i = 0; i < [objects count]; i++)
     {
         var dName           = [objects objectAtIndex:i];
-        var diskStanza      = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
+        var diskStanza      = [TNStropheStanza iq];
         
-        [diskStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskDelete}];
+        [diskStanza addChildName:@"query" withAttributes:{
+                    "xmlns": TNArchipelTypeVirtualMachineDisk, 
+                    "type": "set", 
+                    "action" : TNArchipelTypeVirtualMachineDiskDelete}];
+        
         [diskStanza addChildName:@"name"];
         [diskStanza addTextNode:[dName path]];
         [diskStanza up];

@@ -252,9 +252,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (IBAction)getSnapshots:(id)sender
 {
-    var stanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
+    var stanza  = [TNStropheStanza iq];
     
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotGet}];
+    [stanza addChildName:@"query" withAttributes:{
+                        "xmlns": TNArchipelTypeHypervisorSnapshot, 
+                        "type": "get", 
+                        "action" : TNArchipelTypeHypervisorSnapshotGet}];
+    
     [self sendStanza:stanza andRegisterSelector:@selector(didGetSnapshots:)];
 }
 
@@ -296,9 +300,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (IBAction)getCurrentSnapshot:(id)sender
 {
-    var stanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
+    var stanza  = [TNStropheStanza iq];
     
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotCurrent}];
+    [stanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeHypervisorSnapshot, 
+                            "type": "get", 
+                            "action" : TNArchipelTypeHypervisorSnapshotCurrent}];
+    
     [self sendStanza:stanza andRegisterSelector:@selector(didGetCurrentSnapshot:)];
 }
 
@@ -341,10 +349,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 //actions
 - (IBAction)takeSnapshot:(id)sender
 {
-    var stanza  = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
+    var stanza  = [TNStropheStanza iq];
     var uuid    = [CPString UUID];
     
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotTake}];
+    [stanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeHypervisorSnapshot, 
+                            "type": "set", 
+                            "action" : TNArchipelTypeHypervisorSnapshotTake}];
+    
     [stanza addChildName:@"domainsnapshot"];
 
     [stanza addChildName:@"name"];
@@ -398,12 +410,16 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)performDeleteSnapshot:(id)someUserInfo
 {
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
-    var uuid            = [CPString UUID];
+    var stanza          = [TNStropheStanza iq];
     var object          = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
     var name            = [object name];
     
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotDelete, "name": name}];    
+    [stanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeHypervisorSnapshot, 
+                            "type": "set", 
+                            "action" : TNArchipelTypeHypervisorSnapshotDelete,
+                            "name": name}];
+    
     [self sendStanza:stanza andRegisterSelector:@selector(didDeleteSnapshot:)];
 
 }
@@ -440,10 +456,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)performRevertSnapshot:(id)someUserInfo
 {
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type": TNArchipelTypeHypervisorSnapshot}];
-    var uuid            = [CPString UUID];
+    var stanza          = [TNStropheStanza iq];
     var selectedIndexes   = [_outlineViewSnapshots selectedRowIndexes];
-
     
     if ([selectedIndexes count] > 1)
     {
@@ -454,8 +468,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     
     var object  = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
     var name    = [object name];
-        
-    [stanza addChildName:@"query" withAttributes:{"type": TNArchipelTypeHypervisorSnapshotRevert, "name": name}];    
+    
+    [stanza addChildName:@"query" withAttributes:{
+                        "xmlns": TNArchipelTypeHypervisorSnapshot, 
+                        "type": "set", 
+                        "action" : TNArchipelTypeHypervisorSnapshotRevert,
+                        "name": name}];
+                        
     [self sendStanza:stanza andRegisterSelector:@selector(didRevertSnapshot:)];
 }
 

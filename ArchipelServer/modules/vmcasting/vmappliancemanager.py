@@ -52,26 +52,26 @@ class TNVMApplianceManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        iqType = iq.getTag("query").getAttr("type")
+        action = iq.getTag("query").getAttr("action")
         
-        log.debug( "VMCasting IQ received from {0} with type {1} / {2}".format(iq.getFrom(), iq.getType(), iqType))
+        log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
         
-        if iqType == "install":
+        if action == "install":
             reply = self.__install(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "getinstalledappliances":
+        if action == "getinstalledappliances":
             reply = self.__get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "dettach":
+        if action == "dettach":
             reply = self.__dettach(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "package":
+        if action == "package":
             reply = self.__package(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

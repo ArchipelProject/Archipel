@@ -166,9 +166,12 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 -(void)getDisksInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-
-    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineDiskGet}];
+    var infoStanza = [TNStropheStanza iq];
+    
+    [infoStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineDisk, 
+        "type": "get", 
+        "action" : TNArchipelTypeVirtualMachineDiskGet}];
 
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
 }
@@ -208,9 +211,12 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 -(void)getISOsInfo
 {
-    var infoStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineDisk}];
-
-    [infoStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineISOGet}];
+    var infoStanza = [TNStropheStanza iq];
+    
+    [infoStanza addChildName:@"query" withAttributes:{
+        "xmlns": TNArchipelTypeVirtualMachineDisk, 
+        "type": "get", 
+        "action" : TNArchipelTypeVirtualMachineISOGet}];
 
     [[self entity] sendStanza:infoStanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }

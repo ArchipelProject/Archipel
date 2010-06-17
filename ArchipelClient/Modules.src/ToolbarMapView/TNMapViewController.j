@@ -199,9 +199,12 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 // Archipel
 - (void)locationOfHypervisor:(TNStropheContact)anHypervisor
 {
-    var geolocStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorGeolocalization}];
-
-    [geolocStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorGeolocalizationGet}];
+    var geolocStanza = [TNStropheStanza iq];
+    
+    [geolocStanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeHypervisorGeolocalization, 
+                            "type": "get", 
+                            "action" : TNArchipelTypeHypervisorGeolocalizationGet}];
 
     [anHypervisor sendStanza:geolocStanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
 }
@@ -234,9 +237,12 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
 {
-    var rosterStanza = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeHypervisorControl}];
-
-    [rosterStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeHypervisorControlRosterVM}];
+    var rosterStanza = [TNStropheStanza iq];
+    
+    [rosterStanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeHypervisorControl, 
+                            "type": "get", 
+                            "action" : TNArchipelTypeHypervisorControlRosterVM}];
 
     if (anHypervisor == [self originHypervisor])
         [anHypervisor sendStanza:rosterStanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];

@@ -33,47 +33,46 @@ class TNMediaManagement:
     def process_iq(self, conn, iq):
         """
         Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
-    
+        
         it understands IQ of type:
         - create
         - delete
         - get
-    
+        
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        log.debug( "Disk IQ received from {0} with type {1}".format(iq.getFrom(), iq.getType()))
-    
-        iqType = iq.getTag("query").getAttr("type")
-    
-        if iqType == "create":
+        action = iq.getTag("query").getAttr("action")
+        log.debug( "Disk IQ received from %s with type %s" % (iq.getFrom(), action))
+        
+        if action == "create":
             reply = self.__disk_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "delete":
+        if action == "delete":
             reply = self.__disk_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "get":
+        if action == "get":
             reply = self.__disk_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "getiso":
+        if action == "getiso":
             reply = self.__isos_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "convert":
+        if action == "convert":
             reply = self.__disk_convert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if iqType == "rename":
+        if action == "rename":
             reply = self.__disk_rename(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

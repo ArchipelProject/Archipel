@@ -153,9 +153,12 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
 - (void)getVirtualMachineVNCDisplay
 {
-    var vncStanza   = [TNStropheStanza iqWithAttributes:{"type" : TNArchipelTypeVirtualMachineControl}];
-
-    [vncStanza addChildName:@"query" withAttributes:{"type" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
+    var vncStanza   = [TNStropheStanza iq];
+    
+    [vncStanza addChildName:@"query" withAttributes:{
+                            "xmlns": TNArchipelTypeVirtualMachineControl, 
+                            "type": "set", 
+                            "action" : TNArchipelTypeVirtualMachineControlVNCDisplay}];
 
     [_entity sendStanza:vncStanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }
