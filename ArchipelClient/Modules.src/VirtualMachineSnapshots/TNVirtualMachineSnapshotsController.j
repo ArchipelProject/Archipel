@@ -22,6 +22,9 @@
 @import "TNSnapshot.j";
 @import "TNSnapshotsDatasource.j";
 
+
+TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_";
+
 /*! @defgroup  virtualmachinesnapshoting Module VirtualMachineSnapshoting
     @desc Module to handle Virtual Machine snapshoting
 */
@@ -338,7 +341,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     }
     
     [_outlineViewSnapshots reloadData];
-    [_outlineViewSnapshots expandAll];
+    [_outlineViewSnapshots recoverExpandedWithBaseKey:TNArchipelSnapshotsOpenedSnapshots itemKeyPath:@"name"];
+
 }
 
 
@@ -503,6 +507,24 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     // FIXME : wait for Cappuccino to implement this.
     return 10.0;
+}
+
+- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
+
+    [defaults setObject:"expanded" forKey:key];
+}
+
+- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
+
+    [defaults setObject:"collapsed" forKey:key];
 }
 
 @end

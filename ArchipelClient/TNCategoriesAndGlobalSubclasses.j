@@ -346,6 +346,24 @@
     }
 }
 
+- (void)recoverExpandedWithBaseKey:(CPString)aBaseKey itemKeyPath:(CPString)aKeyPath
+{
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    
+    for (var count = 0; [self itemAtRow:count]; count++)
+    {
+        var item = [self itemAtRow:count];
+        
+        if ([self isExpandable:item])
+        {
+            var key =  aBaseKey + [item valueForKey:aKeyPath];
+            if ([defaults objectForKey:key] == "expanded")
+                [self expandItem:item];
+        }
+    }
+}
+
+
 - (void)collapseAll
 {
     for (var count = 0; [self itemAtRow:count]; count++)

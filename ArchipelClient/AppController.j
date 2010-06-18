@@ -95,6 +95,8 @@ TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemov
 
 TNArchipelXMPPNamespace = "http://archipelproject.org";
 
+TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
+
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
     Anyone that is interessted in the way of Archipel is working should begin
@@ -919,6 +921,28 @@ TNArchipelXMPPNamespace = "http://archipelproject.org";
     
     _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
+
+- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"expanded" forKey:key];
+}
+
+- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"collapsed" forKey:key];
+    
+    return YES;
+}
+
+
 
 - (void)performModuleChange:(CPTimer)aTimer
 {

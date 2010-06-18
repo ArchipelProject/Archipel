@@ -23,6 +23,7 @@
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 
+TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_";
 TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
 TNArchipelTypeHypervisorVMCastingGet                = @"get";
 TNArchipelTypeHypervisorVMCastingRegister           = @"register";
@@ -115,7 +116,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setDocumentView:_mainOutlineView];
     [_mainOutlineView reloadData];
-    [_mainOutlineView expandAll];
+    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
     
     [_mainOutlineView setTarget:self];
     [_mainOutlineView setDoubleAction:@selector(download:)];
@@ -158,7 +159,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var center = [CPNotificationCenter defaultCenter];
     
     [windowDownloadQueue setEntity:_entity];
-    [_mainOutlineView setDelegate:nil];
+    //[_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
     
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
@@ -279,7 +280,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
             [_castsDatasource addSource:newSource];
         }
         [_mainOutlineView reloadData];
-        [_mainOutlineView expandAll];
+        [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
     }
     else if ([aStanza getType] == @"error")
     {
@@ -501,7 +502,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         [_castsDatasource setFilterInstalled:NO];
         
     [_mainOutlineView reloadData];
-    [_mainOutlineView expandAll];
+    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
 }
 
 
@@ -527,6 +528,25 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
             [_downloadButton setEnabled:NO];
         } 
     }
+}
+
+
+- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelVMCastsOpenedVMCasts + [item name];
+
+    [defaults setObject:"expanded" forKey:key];
+}
+
+- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelVMCastsOpenedVMCasts + [item name];
+
+    [defaults setObject:"collapsed" forKey:key];
 }
 
 @end

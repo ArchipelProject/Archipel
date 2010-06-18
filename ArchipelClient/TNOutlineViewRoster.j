@@ -90,10 +90,8 @@
 
     [self setDataSource:roster];
     [roster setMainOutlineView:self];
-    [self expandAll];
+    [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
-
-
 
 - (void)moveLeft:(id)sender
 {
@@ -144,6 +142,7 @@
             [_tabViewModules selectFirstTabViewItem:nil];
     }
 }
+
 
 - (void)moveDown:(id)sender
 {
