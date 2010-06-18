@@ -172,7 +172,14 @@
     if (([_entity class] == TNStropheContact) && ([_entity nickname] != [entryName stringValue]))
         [_roster changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
     else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
-       [_entity changeName:[entryName stringValue]];
+    {
+        var defaults    = [TNUserDefaults standardUserDefaults];
+        var oldKey      = TNArchipelRememberOpenedGroup + [item name];
+        
+        [_entity changeName:[entryName stringValue]];
+        
+        [defaults removeObjectForKey:oldKey];
+    }
 }
 /*! action sent by the TNEditableLabel when ok. Will blur it
     @param sender the sender

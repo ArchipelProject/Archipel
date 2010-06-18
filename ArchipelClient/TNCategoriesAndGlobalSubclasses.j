@@ -357,7 +357,7 @@
         if ([self isExpandable:item])
         {
             var key =  aBaseKey + [item valueForKey:aKeyPath];
-            if ([defaults objectForKey:key] == "expanded")
+            if (([defaults objectForKey:key] == "expanded") || ([defaults objectForKey:key] == nil))
                 [self expandItem:item];
         }
     }

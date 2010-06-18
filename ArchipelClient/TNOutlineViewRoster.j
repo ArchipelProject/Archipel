@@ -132,7 +132,6 @@
     else
     {
         //mouarf... crappy mode on..
-        // I should patch capp..
         var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]];
         var numberOfItems   = [_tabViewModules numberOfTabViewItems];
         

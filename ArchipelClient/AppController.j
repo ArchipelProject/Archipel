@@ -519,16 +519,24 @@ TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
 {
     var growl = [TNGrowlCenter defaultCenter];
     
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item    = [_rosterOutlineView itemAtRow:index];
+    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
+    var item        = [_rosterOutlineView itemAtRow:index];
+    var defaults    = [TNUserDefaults standardUserDefaults];
     
     if ([item class] == TNStropheGroup)
     {
         if ([[item contacts] count] == 0)
         {
+            var key = TNArchipelRememberOpenedGroup + [item name];
+            
             [_mainRoster removeGroup:item];
             [_rosterOutlineView reloadData];
             [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
+            
+            [defaults removeObjectForKey:key];
+            
+            [propertiesView hide];
+            [_rosterOutlineView deselectAll];
         }
         else
         {

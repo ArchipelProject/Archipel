@@ -138,7 +138,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
         if ([_mainOutlineView numberOfSelectedRows] > 0)
             [_mainOutlineView deselectAll];
     }
-       
+    
+    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
 
@@ -212,24 +213,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return filteredGroup;
 }
 
-
-/*! CPOutlineView Delegate
-*/
-- (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
-{
-    var draggedItem = [theItems objectAtIndex:0];
-    
-    if ([draggedItem class] == TNStropheGroup)
-        return NO;
-
-    _draggedItem = [theItems objectAtIndex:0];
-
-    [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
-    [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
-
-    return YES;
-}
-
 /*! CPOutlineView Delegate
 */
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
@@ -277,26 +260,71 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
+
+/*! CPOutlineView Delegate
+*/
+- (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
+{
+    var draggedItem = [theItems objectAtIndex:0];
+    
+    // if ([draggedItem class] == TNStropheGroup)
+    //     return NO;
+
+    _draggedItem = [theItems objectAtIndex:0];
+
+    [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
+    [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
+
+    return YES;
+}
+
+
 /*! CPOutlineView Delegate
 */
 - (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
-    if ([theItem class] != TNStropheGroup)
-         return CPDragOperationNone;
-
-    [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
-
-    return CPDragOperationEvery;
+    if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
+    {
+        [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
+        return CPDragOperationEvery;
+    }
+    else if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup))
+    {
+        [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
+        return CPDragOperationEvery;
+    }
+    
+    return CPDragOperationNone;
 }
 
 /*! CPOutlineView Delegate
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
-    [self changeGroup:theItem ofContact:_draggedItem];
-    [anOutlineView reloadData];
-
-    return YES;
+    if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup) && (theItem  != _draggedItem))
+    {
+        var contactsToMove = [[_draggedItem contacts] copy]; 
+        for (var i = 0; i < [contactsToMove count]; i++)
+        {
+            var contact = [contactsToMove objectAtIndex:i];
+            
+            [self changeGroup:theItem ofContact:contact];
+        }
+        
+        [self removeGroup:_draggedItem];
+        [anOutlineView reloadData];
+        
+        return YES;
+    }
+    else if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
+    {
+        [self changeGroup:theItem ofContact:_draggedItem];
+        [anOutlineView reloadData];
+        
+        return YES;
+    }
+    
+    return NO;
 }
 
 @end

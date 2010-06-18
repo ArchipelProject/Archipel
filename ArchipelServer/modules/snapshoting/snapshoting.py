@@ -223,11 +223,11 @@ class TNSnapshoting:
             self.entity.push_change("snapshoting", "deleted")
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirtError as ex:
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
-        finally:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
         return reply
         
         
@@ -259,11 +259,11 @@ class TNSnapshoting:
             self.entity.push_change("snapshoting", "restored")
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirtError as ex:
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT)
-        finally:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT)
         return reply
     
     
