@@ -27,12 +27,12 @@
 */
 @implementation TNWindowConnection: TNWhiteWindow
 {
+    @outlet CPCheckBox  credentialRemember;
     @outlet CPImageView spinning;
+    @outlet CPTextField boshService;
     @outlet CPTextField JID;
     @outlet CPTextField message;
     @outlet CPTextField password;
-    @outlet CPTextField boshService;
-    @outlet CPCheckBox  credentialRemember;
 
     TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
 }

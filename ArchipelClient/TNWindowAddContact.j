@@ -26,11 +26,11 @@
 */
 @implementation TNWindowAddContact: CPWindow
 {
-    @outlet CPPopUpButton   newContactGroup     @accessors;
-    @outlet CPTextField     newContactJID       @accessors;
-    @outlet CPTextField     newContactName      @accessors;
+    @outlet CPPopUpButton   newContactGroup;
+    @outlet CPTextField     newContactJID;
+    @outlet CPTextField     newContactName;
 
-    TNStropheRoster         _roster             @accessors(getter=roster, setter=setRoster:);
+    TNStropheRoster         _roster         @accessors(property=roster);
 }
 
 /*! overide of the orderFront
@@ -44,7 +44,7 @@
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
     [newContactGroup removeAllItems];
-    [self makeFirstResponder:newContactJID];
+    //[self makeFirstResponder:newContactJID];
 
     if (![_roster containsGroup:@"General"])
     {

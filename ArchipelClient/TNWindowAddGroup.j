@@ -37,7 +37,7 @@
 - (void)orderFront:(id)sender
 {
     [newGroupName setStringValue:@""];
-    [self makeFirstResponder:newGroupName];
+    //[self makeFirstResponder:newGroupName];
     
     [self center];
     [super orderFront:sender];
