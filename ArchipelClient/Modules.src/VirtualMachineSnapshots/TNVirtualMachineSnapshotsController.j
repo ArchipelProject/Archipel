@@ -372,11 +372,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)didTakeSnapshot:(id)aStanza
 {
     if ([aStanza getType] == @"result")
-    {        
+    {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
     }
-    else if ([aStanza getType] == @"error")
+    else
     {
         [self handleIqErrorFromStanza:aStanza];
     }

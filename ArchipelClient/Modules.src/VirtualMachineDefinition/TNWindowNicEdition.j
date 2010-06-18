@@ -19,7 +19,7 @@
 @import "TNNetworkInterfaceObject.j"
 
 TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
-TNArchipelTypeHypervisorNetworkList         = @"list";
+TNArchipelTypeHypervisorNetworkGetNames     = @"getnames";
 TNArchipelTypeHypervisorNetworkBridges      = @"bridges";
 
 TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
@@ -92,7 +92,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkList}];
+        "action": TNArchipelTypeHypervisorNetworkGetNames}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
 }
@@ -108,6 +108,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
             [buttonSource addItemWithTitle:name];
         }
         [buttonSource selectItemWithTitle:[_nic source]];
+
+        if (![buttonSource selectedItem])
+        {
+            [buttonSource selectItemAtIndex:0];
+            [self save:nil];
+        }
     }
     else
         CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
@@ -136,6 +142,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
             [buttonSource addItemWithTitle:bridge];
         }
         [buttonSource selectItemWithTitle:[_nic source]];
+
+        if (![buttonSource selectedItem])
+        {
+            [buttonSource selectItemAtIndex:0];
+            [self save:nil];
+        }
     }
     else
         CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
@@ -147,6 +159,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
     if (nicType == @"Network")
     {
+        [buttonSource setEnabled:YES];
         [buttonSource removeAllItems];
         [_nic setType:@"network"];
         
@@ -154,6 +167,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     }
     else if(nicType == @"Bridge")
     {
+        [buttonSource setEnabled:YES];
         [buttonSource removeAllItems];
         [_nic setType:@"bridge"];        
         [self getBridges];
@@ -162,6 +176,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     {
         [_nic setType:@"user"];
         [buttonSource removeAllItems];
+        [buttonSource setEnabled:NO];
     }
 }
 

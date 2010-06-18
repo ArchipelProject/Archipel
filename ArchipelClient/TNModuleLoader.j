@@ -155,7 +155,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
             if (_previousStatus == TNStropheContactStatusOffline)
                 label = @"Entity is offline";
             else if (_previousStatus == TNStropheContactStatusDND)
+            {
+                [self rememberLastSelectedTabIndex];
                 label = @"Entity do not want to be disturbed";
+            }
             
             [_infoTextField setStringValue:label];
             
@@ -189,7 +192,6 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
-    CPLog.debug(@"rememberSelectedIndexOfItem: with item " + anItem);
     if (anItem && _entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
         var identifier;

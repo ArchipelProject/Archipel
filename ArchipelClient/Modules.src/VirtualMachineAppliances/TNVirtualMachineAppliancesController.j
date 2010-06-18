@@ -24,15 +24,15 @@
 
 TNArchipelTypeVirtualMachineVMCasting                       = @"archipel:virtualmachine:vmcasting";
 
-TNArchipelTypeVirtualMachineVMCastingInstalledAppliances    = @"getinstalledappliances";
-TNArchipelTypeVirtualMachineVMCastingInstall                = @"install";
-TNArchipelTypeVirtualMachineVMCastingDettach                = @"dettach";
+TNArchipelTypeVirtualMachineVMCastingGet                    = @"get";
+TNArchipelTypeVirtualMachineVMCastingAttach                 = @"attach";
+TNArchipelTypeVirtualMachineVMCastingDetach                 = @"detach";
 TNArchipelTypeVirtualMachineVMCastingPackage                = @"package";
 
-TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcasting";
+TNArchipelPushNotificationVMCasting                         = @"archipel:push:vmcasting";
     
 /*! @defgroup  virtualmachinepackaging Module VirtualMachinePackaging
-    @desc Allow to instanciate virtual machine from installed appliances
+    @desc Allow to attach virtual machine from installed appliances
 */
 
 /*! @ingroup virtualmachinepackaging
@@ -50,8 +50,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
     
-    CPButton                            _dettachButton;
-    CPButton                            _instanciateButton;
+    CPButton                            _detachButton;
+    CPButton                            _attachButton;
     CPButton                            _packageButton;
     CPTableView                         _tableAppliances;
     TNTableViewDataSource               _appliancesDatasource;
@@ -117,8 +117,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [fieldFilterAppliance setAction:@selector(filterObjects:)];
     
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Install" action:@selector(instanciate:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Dettach" action:@selector(dettach:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Install" action:@selector(attach:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Detach" action:@selector(detach:) keyEquivalent:@""];
     [_tableAppliances setMenu:menu];
     
     _packageButton      = [CPButtonBar plusButton];
@@ -127,19 +127,19 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     [_packageButton setAction:@selector(openNewApplianceWindow:)];
     
     
-    _instanciateButton  = [CPButtonBar plusButton];
-    [_instanciateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-lock.png"] size:CPSizeMake(16, 16)]];
-    [_instanciateButton setTarget:self];
-    [_instanciateButton setAction:@selector(instanciate:)];
+    _attachButton  = [CPButtonBar plusButton];
+    [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-lock.png"] size:CPSizeMake(16, 16)]];
+    [_attachButton setTarget:self];
+    [_attachButton setAction:@selector(attach:)];
     
-    _dettachButton  = [CPButtonBar plusButton];
-    [_dettachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unlock.png"] size:CPSizeMake(16, 16)]];
-    [_dettachButton setTarget:self];
-    [_dettachButton setAction:@selector(dettach:)];
+    _detachButton  = [CPButtonBar plusButton];
+    [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unlock.png"] size:CPSizeMake(16, 16)]];
+    [_detachButton setTarget:self];
+    [_detachButton setAction:@selector(detach:)];
     
-    [_instanciateButton setEnabled:NO];
-    [_dettachButton setEnabled:NO];
-    [buttonBarControl setButtons:[_instanciateButton, _dettachButton, _packageButton]];
+    [_attachButton setEnabled:NO];
+    [_detachButton setEnabled:NO];
+    [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
 }
 
 - (void)willLoad
@@ -243,9 +243,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
-        [self dettach:sender];
+        [self detach:sender];
     else
-        [self instanciate:sender];
+        [self attach:sender];
     
 }
 
@@ -255,7 +255,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMCastingInstalledAppliances}];
+        "action": TNArchipelTypeVirtualMachineVMCastingGet}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
 }
@@ -290,7 +290,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 
 
-- (IBAction)instanciate:(id)sender
+- (IBAction)attach:(id)sender
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
@@ -298,15 +298,15 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
          return;
     }
     
-    var alert = [TNAlert alertWithTitle:@"Instanciate appliance"
-                                message:@"Are you sure you want to instanciate this appliance? This will reset all your virtual machine."
+    var alert = [TNAlert alertWithTitle:@"Attach appliance"
+                                message:@"Are you sure you want to attach this appliance? This will reset all your virtual machine."
                                 delegate:self
-                                 actions:[["Instanciate", @selector(performInstanciate:)], ["Cancel", nil]]];
+                                 actions:[["Attach", @selector(performAttach:)], ["Cancel", nil]]];
     [alert runModal];
     
 }
 
-- (void)performInstanciate:(id)someUserInfo
+- (void)performAttach:(id)someUserInfo
 {
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
@@ -314,14 +314,14 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMCastingInstall,
+        "action": TNArchipelTypeVirtualMachineVMCastingAttach,
         "uuid": [appliance UUID]}];
 
-    [_instanciateButton setEnabled:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didInstanciate:) ofObject:self];
+    [_attachButton setEnabled:NO];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didAttach:) ofObject:self];
 }
 
-- (void)didInstanciate:(TNStropheStanza)aStanza
+- (void)didAttach:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"result")
     {        
@@ -336,7 +336,7 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 }
 
 
-- (IBAction)dettach:(id)sender
+- (IBAction)detach:(id)sender
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
@@ -347,11 +347,11 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     var alert = [TNAlert alertWithTitle:@"Detach from appliance"
                                 message:@"Are you sure you want to detach virtual machine from this appliance?"
                                 delegate:self
-                                 actions:[["Detach", @selector(performDettach:)], ["Cancel", nil]]];
+                                 actions:[["Detach", @selector(performDetach:)], ["Cancel", nil]]];
     [alert runModal];
 }
 
-- (void)performDettach:(id)someUserInfo
+- (void)performDetach:(id)someUserInfo
 {
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
@@ -363,21 +363,21 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMCastingDettach}];    
+        "action": TNArchipelTypeVirtualMachineVMCastingDetach}];    
 
-    [_dettachButton setEnabled:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didDettachAppliance:) ofObject:self];
+    [_detachButton setEnabled:NO];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didDetach:) ofObject:self];
 }
 
-- (void)didDettachAppliance:(TNStropheStanza)aStanza
+- (void)didDetach:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"result")
     {        
         var growl   = [TNGrowlCenter defaultCenter];
-        var msg     = @"Appliance has been dettached";
+        var msg     = @"Appliance has been detached";
         [growl pushNotificationWithTitle:@"Appliance" message:msg];
         
-        [_instanciateButton setEnabled:YES];
+        [_attachButton setEnabled:YES];
     }
     else
     {
@@ -424,8 +424,8 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
-    [_instanciateButton setEnabled:NO];
-    [_dettachButton setEnabled:NO];
+    [_attachButton setEnabled:NO];
+    [_detachButton setEnabled:NO];
     
     if ([_tableAppliances numberOfSelectedRows] <= 0)
         return;
@@ -434,9 +434,9 @@ TNArchipelPushNotificationVMCasting                     = @"archipel:push:vmcast
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
-        [_dettachButton setEnabled:YES];
+        [_detachButton setEnabled:YES];
     else
-        [_instanciateButton setEnabled:YES];
+        [_attachButton setEnabled:YES];
     
 }
 

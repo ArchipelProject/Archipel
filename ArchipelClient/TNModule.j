@@ -213,9 +213,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
     var growl   = [TNGrowlCenter defaultCenter];
-    var msg     = [self class] + ": " + [[aStanza firstChildWithName:@"error"] text];
+    var code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"];
+    var msg     = [[aStanza firstChildWithName:@"text"] text]
     
-    [growl pushNotificationWithTitle:@"Error" message:msg icon:TNGrowlIconError];
+    [growl pushNotificationWithTitle:@"Error (" + code + ")" message:msg icon:TNGrowlIconError];
     CPLog.error(msg);
 }
 

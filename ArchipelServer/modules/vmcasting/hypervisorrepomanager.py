@@ -36,6 +36,16 @@ ARCHIPEL_APPLIANCES_INSTALLING          = 2
 ARCHIPEL_APPLIANCES_NOT_INSTALLED       = 3
 ARCHIPEL_APPLIANCES_INSTALLATION_ERROR  = 4
 
+ARCHIPEL_ERROR_CODE_VMCASTS_GET                 = -6001
+ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER            = -6002
+ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER          = -6003
+ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE   = -6004
+ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADQUEUE       = -6005
+ARCHIPEL_ERROR_CODE_VMCASTS_GETAPPLIANCES       = -6006
+ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE     = -6007
+ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED        = -6008
+
+
 class TNApplianceDownloader(Thread):
     """
     implementation of a downloader. This run in a separate thread.
@@ -202,9 +212,9 @@ class TNHypervisorRepoManager:
             - get
             - register
             - unregister
-            - download
+            - downloadappliance
             - downloadqueue
-            - getappliance
+            - getappliances
             - deleteappliance
         
         @type conn: xmpp.Dispatcher
@@ -212,46 +222,50 @@ class TNHypervisorRepoManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        
-        log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
         if action == "get":
             reply = self.get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "register":
+        elif action == "register":
             reply = self.register(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "unregister":
+        elif action == "unregister":
             reply = self.unregister(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "download":
+        elif action == "downloadappliance":
             reply = self.download(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "downloadqueue":
+        elif action == "downloadqueue":
             reply = self.get_download_queue(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "getappliance":
+        elif action == "getappliances":
             reply = self.get_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed   
         
-        if action == "deleteappliance":
+        elif action == "deleteappliance":
             reply = self.delete_appliance(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "getinstalledappliances":
+        elif action == "getinstalledappliances":
             reply = self.get_installed_appliances(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -270,7 +284,7 @@ class TNHypervisorRepoManager:
             nodes = self.parseRSS()
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GET)
         return reply
     
         
@@ -294,7 +308,7 @@ class TNHypervisorRepoManager:
             self.entity.push_change("vmcasting", "register")
             self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER)
         return reply
     
     
@@ -318,7 +332,7 @@ class TNHypervisorRepoManager:
             self.entity.push_change("vmcasting", "unregister")
             self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER)
         return reply
     
     
@@ -350,7 +364,7 @@ class TNHypervisorRepoManager:
             self.old_entity_status = self.entity.xmppstatus
             self.entity.change_status("Downloading appliance...")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE)
         return reply
     
     
@@ -373,7 +387,7 @@ class TNHypervisorRepoManager:
             
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADQUEUE)
         return reply
     
     
@@ -414,7 +428,7 @@ class TNHypervisorRepoManager:
             node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
             reply.setQueryPayload([node])
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETAPPLIANCES)
         return reply
     
     
@@ -441,7 +455,7 @@ class TNHypervisorRepoManager:
             
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED)
         return reply
     
     
@@ -471,7 +485,7 @@ class TNHypervisorRepoManager:
             self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()))
             
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)            
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE)
         return reply
     
     

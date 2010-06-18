@@ -26,7 +26,7 @@
 
 TNArchipelPushNotificationNetworks          = @"archipel:push:network";
 TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
-TNArchipelTypeHypervisorNetworkList         = @"list";
+TNArchipelTypeHypervisorNetworkGet          = @"get";
 TNArchipelTypeHypervisorNetworkDefine       = @"define";
 TNArchipelTypeHypervisorNetworkUndefine     = @"undefine";
 TNArchipelTypeHypervisorNetworkCreate       = @"create";
@@ -231,7 +231,7 @@ function generateIPForNewNetwork()
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkList}];
+        "action": TNArchipelTypeHypervisorNetworkGet}];
     
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
 }

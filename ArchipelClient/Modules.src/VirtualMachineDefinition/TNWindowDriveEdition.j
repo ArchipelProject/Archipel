@@ -79,22 +79,24 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 {
     if (![self isVisible])
     {
+        if ([_drive device] == @"disk")
+        {
+            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
+            [self getDisksInfo];
+        }
+        else if ([_drive device] == @"cdrom")
+        {
+            [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
+            [self getISOsInfo];
+        }
+        
         [buttonType selectItemWithTitle:[_drive type]];
         [buttonTarget selectItemWithTitle:[_drive target]];
         [buttonBus selectItemWithTitle:[_drive bus]];
-        
-        if ([_drive device] == @"disk")
-            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
-        else if ([_drive device] == @"cdrom")
-            [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
-        
-        [self performRadioDriveTypeChanged:radioDriveType];
-        
-        [self populateTargetButton];
     }
-
     [super orderFront:sender];
 }
+
 
 - (void)populateTargetButton
 {
@@ -118,6 +120,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
        [self populateTargetButton];
     }
+    
     if ([buttonSource selectedItem])
         [_drive setSource:[[buttonSource selectedItem] stringValue]];
     else
@@ -141,8 +144,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (IBAction)performRadioDriveTypeChanged:(id)sender
 {
-    console.log("PERFORMING performRadioDriveTypeChanged");
-    var driveType = [[sender selectedRadio] title];
+    var driveType = [[radioDriveType selectedRadio] title];
     
     if (driveType == @"Hard drive")
     {
@@ -249,4 +251,6 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
     [self save:nil];
 }
+
+
 @end

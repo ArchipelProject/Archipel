@@ -30,8 +30,24 @@ class TNSampleModule:
         pass
 
     def process_iq(self, conn, iq):
-        iqType = iq.getTag("query").getAttr("type")
-        log.debug( " IQ received from {%s} with type {%s} : {%s}" % (iq.getFrom(), iq.getType(), iqType))
+        """
+        this method is invoked when a NS_ARCHIPEL_SAMPLE IQ is received.
+        
+        it understands IQ of type:
+            - do-something
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
         if iqType == "do-something":
             reply = self.__do_something(iq)
@@ -41,7 +57,7 @@ class TNSampleModule:
 
     def __do_something(self, iq):
         """
-        Doing something.
+        Do something.
 
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ

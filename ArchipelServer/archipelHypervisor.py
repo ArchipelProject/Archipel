@@ -46,6 +46,10 @@ NS_ARCHIPEL_HYPERVISOR_CONTROL  = "archipel:hypervisor:control"
 NS_ARCHIPEL_STATUS_ONLINE       = "Online"
 
 
+ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC    = -9001
+ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE     = -9002
+ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER   = -9003
+
 class TNThreadedVirtualMachine(Thread):
     """
     this class is used to run L{ArchipelVirtualMachine} main loop
@@ -237,8 +241,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log.info( "XMPP Virtual Machine instance sucessfully initialized")
             self.push_change("hypervisor", "alloc");
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid))
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC)
             
         return reply
     
@@ -286,8 +292,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log.info( "XMPP Virtual Machine instance sucessfully destroyed")
             self.push_change("hypervisor", "free");
             self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()))
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE)
         
         return reply
     
@@ -311,8 +319,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 nodes.append(n)
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-            
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
         return reply
     
     
@@ -333,21 +340,25 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug( "Control IQ received from %s with type %s" % (iq.getFrom(), action))
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
         if action == "alloc":
             reply = self.alloc_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "free":
+        elif action == "free":
             reply = self.free_xmppvirtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "rostervm":
+        elif action == "rostervm":
             reply = self.send_roster_virtualmachine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

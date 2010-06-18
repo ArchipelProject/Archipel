@@ -181,7 +181,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
-    else
+    else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -244,7 +244,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
-    else
+    else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

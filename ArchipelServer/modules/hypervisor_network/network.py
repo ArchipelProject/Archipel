@@ -28,7 +28,13 @@ try:
 except ImportError:
     pass
 
-
+ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE     = -7001
+ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE   = -7002
+ARCHIPEL_ERROR_CODE_NETWORKS_CREATE     = -7003
+ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY    = -7004
+ARCHIPEL_ERROR_CODE_NETWORKS_GET        = -7005
+ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES    = -7006
+ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES   = -7007
 
 class TNHypervisorNetworks:
     
@@ -42,57 +48,100 @@ class TNHypervisorNetworks:
     
     
     def process_iq_for_hypervisor(self, conn, iq):
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug( "Network IQ received from %s with type %s" % (iq.getFrom(), action))
+        """
+        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_NETWORK IQ is received.
+        
+        it understands IQ of type:
+            - define
+            - undefine
+            - create
+            - destroy
+            - get
+            - bridges
+            - getnames
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
         if action == "define":
-            reply = self.__module_network_define_network(iq)
+            reply = self.__define(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "undefine":
-            reply = self.__module_network_undefine_network(iq)
+        elif action == "undefine":
+            reply = self.__undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "create":
-            reply = self.__module_network_create(iq)
+        elif action == "create":
+            reply = self.__create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "destroy":
-            reply = self.__module_network_destroy(iq)
+        elif action == "destroy":
+            reply = self.__destroy(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "list":
-            reply = self.__module_network_list(iq)
+        elif action == "get":
+            reply = self.__get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "bridges":
-            reply = self.__module_network_bridges(iq)
+        elif action == "bridges":
+            reply = self.__bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
+        elif action == "getnames":
+            reply = self.__get_names(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     def process_iq_for_virtualmachine(self, conn, iq):
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug("Network IQ received from %s with type %s" % (iq.getFrom(), action))
+        """
+        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_NETWORK IQ is received.
         
-        if action == "list":
-            reply = self.__module_network_name_list(iq)
+        it understands IQ of type:
+            - bridges
+            - getnames
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "getnames":
+            reply = self.__get_names(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if action == "bridges":
-            reply = self.__module_network_bridges(iq)
+        elif action == "bridges":
+            reply = self.__bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
 
-    def __module_network_define_network(self, iq):
+    def __define(self, iq):
         """
         Define a virtual network in the libvirt according to the XML data
         network passed in argument
@@ -110,12 +159,14 @@ class TNHypervisorNetworks:
             self.libvirt_connection.networkDefineXML(str(network_node))
             log.info( "virtual network XML is defined")
             self.entity.push_change("network", "defined")
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE)
         return reply
     
 
-    def __module_network_undefine_network(self, iq):
+    def __undefine(self, iq):
         """
         undefine a virtual network in the libvirt according to name passed in argument
         
@@ -133,12 +184,14 @@ class TNHypervisorNetworks:
             reply = iq.buildReply("result")
             log.info( "virtual network XML is undefined")
             self.entity.push_change("network", "undefined")
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE)
         return reply
     
 
-    def __module_network_create(self, iq):
+    def __create(self, iq):
         """
         Create a network using libvirt connection
         
@@ -156,13 +209,15 @@ class TNHypervisorNetworks:
             reply = iq.buildReply("result")
             log.info( "virtual network created")
             self.entity.push_change("network", "created")
-            self.entity.shout("disk", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
+            self.entity.shout("network", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_CREATE)
         return reply
     
 
-    def __module_network_destroy(self, iq):
+    def __destroy(self, iq):
         """
         Destroy a network using libvirt connection
         
@@ -180,13 +235,15 @@ class TNHypervisorNetworks:
             reply = iq.buildReply("result")
             log.info( "virtual network destroyed")
             self.entity.push_change("network", "destroyed")
-            self.entity.shout("disk", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
+            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY)
         return reply
     
 
-    def __module_network_list(self, iq):
+    def __get(self, iq):
         """
         list all virtual networks
         
@@ -219,12 +276,14 @@ class TNHypervisorNetworks:
             active_networks_root_node = xmpp.Node(tag="activedNetworks", payload=active_networks_nodes)
             not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes)
             reply.setQueryPayload([active_networks_root_node, not_active_networks_root_node])
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GET)
         return reply
     
 
-    def __module_network_name_list(self, iq):
+    def __get_names(self, iq):
         """
         list all virtual networks name
         
@@ -242,12 +301,14 @@ class TNHypervisorNetworks:
                 network = xmpp.Node(tag="network", attrs={"name": network_name})
                 active_networks_nodes.append(network)
             reply.setQueryPayload(active_networks_nodes)
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES)
         return reply
     
 
-    def __module_network_bridges(self, iq):
+    def __bridges(self, iq):
         """
         list all virtual networks name
         
@@ -267,7 +328,9 @@ class TNHypervisorNetworks:
                 bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
                 bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES)
         return reply
     

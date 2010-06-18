@@ -27,6 +27,12 @@ import os
 
 ARCHIPEL_APPLIANCES_INSTALLED = 1
 
+ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL    = -4001
+ARCHIPEL_ERROR_CODE_VMAPPLIANCES_GET        = -4002
+ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH     = -4003
+ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE    = -4004
+
+
 class TNVMApplianceManager:
     
     def __init__(self, database_path, temp_directory, disks_extensions, hypervisor_repo_path, entity):
@@ -44,39 +50,45 @@ class TNVMApplianceManager:
         """
         process incoming IQ of type NS_ARCHIPEL_HYPERVISOR_VMCASTING.
         it understands IQ of type:
-            - install
-            - getinstalledappliances
+            - get
+            - attach
+            - detach
+            - package
         
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        
-        log.debug( "VMCasting IQ received from %s with type %s" % (iq.getFrom(), action))
-        
-        if action == "install":
-            reply = self.__install(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        if action == "getinstalledappliances":
-            reply = self.__get_installed_appliances(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        if action == "dettach":
-            reply = self.__dettach(iq)
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "package":
+        if action == "get":
+            reply = self.__get(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "attach":
+            reply = self.__attach(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+                
+        elif action == "detach":
+            reply = self.__detach(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "package":
             reply = self.__package(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-    def __get_installed_appliances(self, iq):
+    def __get(self, iq):
         """
         get all installed appliances
         
@@ -115,11 +127,11 @@ class TNVMApplianceManager:
                 nodes.append(node)
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_GET)
         return reply
     
     
-    def __install(self, iq):
+    def __attach(self, iq):
         """
         instanciate a new virtualmachine from an installed appliance
         @type iq: xmpp.Protocol.Iq
@@ -127,12 +139,13 @@ class TNVMApplianceManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
+        reply = iq.buildReply("result")
         try:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
             
             if (self.is_installed):
-                raise Exception("You must dettach from already attached template")
+                raise Exception("You must detach from already attached template")
             
             uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             requester = iq.getFrom()
@@ -154,14 +167,12 @@ class TNVMApplianceManager:
             appliance_packager.start()
             
             self.entity.push_change("vmcasting", "applianceinstalling")
-            
-            reply = iq.buildReply("result")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
             
         return reply
 
-    def __dettach(self, iq):
+    def __detach(self, iq):
         """
         detach an installed appliance from a virtualmachine 
         @type iq: xmpp.Protocol.Iq
@@ -169,6 +180,7 @@ class TNVMApplianceManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
+        reply = iq.buildReply("result")
         try:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
@@ -176,12 +188,9 @@ class TNVMApplianceManager:
             package_file_path = self.entity.vm_own_folder + "/current.package"
             os.unlink(package_file_path)
             self.is_installed = False
-            self.entity.push_change("vmcasting", "appliancedettached")
-            
-            reply = iq.buildReply("result")
+            self.entity.push_change("vmcasting", "appliancedetached")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
         
     def __package(self, iq):
@@ -192,6 +201,7 @@ class TNVMApplianceManager:
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
+        reply = iq.buildReply("result")
         try:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
@@ -220,10 +230,8 @@ class TNVMApplianceManager:
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging")
             compressor.start()
-            reply = iq.buildReply("result")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)
         return reply
 
     def finish_installing(self):

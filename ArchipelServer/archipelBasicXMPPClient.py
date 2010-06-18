@@ -28,6 +28,8 @@ import uuid
 import os
 import base64
 import hashlib
+import time
+import threading
 
 LOOP_OFF = 0
 """indicates loop off status"""
@@ -53,12 +55,32 @@ command param1 param2 param3
 
 """
 
+class TNArchipelMassStanzasSender(threading.Thread):
+    
+    def __init__(self, conn, stanzas, delay=0.1):
+        threading.Thread.__init__(self)
+        self.stanzas = stanzas;
+        self.delay = delay
+        self.connection = conn;
+    
+    def run(self):
+        while True:
+            while len(self.stanzas):
+                stanza = self.stanzas.pop(0)
+                log.debug("mass sending stanza")
+                self.connection.send(stanza)
+                time.sleep(self.delay)
+            time.sleep(0.5)
+                
+            
+    
+    
 
 class TNArchipelBasicXMPPClient(object):
     """
     this class represent a basic XMPP Client
     """
-    def __init__(self, jid, password, configuration, auto_register=True):
+    def __init__(self, jid, password, configuration, auto_register=True, auto_reconnect=True):
         """
         The constructor of the class.
         
@@ -72,6 +94,8 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient = None
         self.configuration = configuration
         self.auto_register = auto_register
+        self.auto_reconnect = auto_reconnect
+        self.user_has_been_removed = False
         self.password = password
         self.vcard = None
         self.jid = xmpp.protocol.JID(jid.lower())
@@ -107,7 +131,11 @@ class TNArchipelBasicXMPPClient(object):
         
         if self.xmppclient.connect() == "":
             log.error("unable to connect to XMPP server")
-            sys.exit(0)
+            if not self.auto_reconnect:
+                sys.exit(-1)
+            self.xmppclient = None;
+            return False
+        
         log.info("sucessfully connected")
         
         for method in self.__class__.__dict__:
@@ -115,7 +143,12 @@ class TNArchipelBasicXMPPClient(object):
                 m = getattr(self, method)
                 m()
                 
+        #d = self.configuration.getfloat("GLOBAL", "mass_stanza_send_delay")
+        #self.mass_sender = TNArchipelMassStanzasSender(conn=self.xmppclient, delay=d, stanzas=[])
+        #self.mass_sender.start()
         self.register_handler()
+        
+        return True
     
             
     def _auth_xmpp(self):
@@ -141,15 +174,15 @@ class TNArchipelBasicXMPPClient(object):
         
         self.get_vcard()
         self.perform_all_registered_auth_actions()
-        
-        self.loop()
+        self.loop_status = LOOP_ON
+        #self.loop()
     
     
     def _inband_registration(self):
         """
         Do a in-band registration if auth fail
         """    
-        if (not self.auto_register):    
+        if (not self.auto_register) or (self.user_has_been_removed == True):    
             return
         
         log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
@@ -291,12 +324,14 @@ class TNArchipelBasicXMPPClient(object):
         log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        #self.mass_sender.stanzas.append(pres)
         self.xmppclient.send(pres)
     
     
     def change_status(self, presence_status):
         self.xmppstatus = presence_status
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
+        #self.mass_sender.stanzas.append(pres)
         self.xmppclient.send(pres)
     
 
@@ -304,20 +339,22 @@ class TNArchipelBasicXMPPClient(object):
         """
         Connect and auth to XMPP Server
         """
-        self._connect_xmpp()
-        self._auth_xmpp()
+        if self._connect_xmpp():
+            self._auth_xmpp()
+        self.loop()
     
    
     def disconnect(self):
         """Close the connections from XMPP server"""
-        self.xmppclient.disconnect()
+        if self.xmppclient and self.xmppclient.isConnected():
+            self.xmppclient.disconnect()
     
     
     def push_change(self, namespace, change):
         """push a change using archipel push system"""
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         #self.roster = self.xmppclient.getRoster()
-        
+        stanzas = []
         for item, info in self.roster.getRawRoster().iteritems():
             for resource, res_info in info["resources"].iteritems():
                 send_to = item + "/" + resource
@@ -325,8 +362,9 @@ class TNArchipelBasicXMPPClient(object):
                     push_message = xmpp.Message(typ="headline", to=send_to)
                     push_message.addChild(name="push", namespace=ns, attrs={"change": change})
                     log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
+                    #self.mass_sender.stanzas.append(push_message)
                     self.xmppclient.send(push_message)
-                    log.debug(str(push_message))
+
     
     
     def shout(self, subject, message):
@@ -339,6 +377,7 @@ class TNArchipelBasicXMPPClient(object):
                     send_to = item + "/" + resource
                     broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
                     log.info("shouting message message to %s: %s" % (send_to, message))
+                    #self.mass_sender.stanzas.append(broadcast)
                     self.xmppclient.send(broadcast)
     
 
@@ -487,7 +526,7 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.loop_status = status
     
-
+    # FIXME: I really don't like the way I handle this.
     def loop(self):
         """
         This is the main loop of the client
@@ -495,20 +534,37 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.loop_status = LOOP_ON
         while True:
-            # try:
-            if self.loop_status == LOOP_ON:
-                self.xmppclient.Process(30)
-            elif self.loop_status == LOOP_RESTART:
-                self.disconnect()
-                self.connect()
-                self.loop_status = LOOP_ON
-            elif self.loop_status == LOOP_OFF:
-                self.disconnect()
-                break
-            # except Exception as ex:
-            #     log.info("End of loop forced by exception : %s" % str(ex))
-            #     self.loop_status = LOOP_OFF
-            #     break
+            try:
+                #log.debug("LOOP for JID : " + str(self.jid))
+                if self.loop_status == LOOP_ON:
+                    if self.xmppclient and self.xmppclient.isConnected():
+                        self.xmppclient.Process(30)
+                    elif self.auto_reconnect:
+                        raise Exception('not connected')
+                elif self.loop_status == LOOP_RESTART:
+                    if self.xmppclient and self.xmppclient.isConnected():
+                        self.disconnect()
+                    self.connect()
+                    #self.loop_status = LOOP_ON
+                elif self.loop_status == LOOP_OFF:
+                    self.disconnect()
+                    break
+            except Exception as ex:
+                log.info("GREPME: Loop exception : %s" % ex)
+                if str(ex).find('User removed') > -1: # ok, there is something I haven't understood with exception...
+                    log.info("GREPME : Account has been removed from server")
+                    self.loop_status = LOOP_OFF
+                    self.user_has_been_removed = True
+                    return
+                
+                if self.auto_reconnect:
+                    log.info("GREPME : Disconnected from server. Trying to reconnect in 5 five seconds")
+                    self.loop_status = LOOP_RESTART
+                    time.sleep(5.0)
+                else:
+                    log.error("GREPME : End of loop forced by exception : %s" % str(ex))
+                    self.loop_status = LOOP_OFF
+                    break
              
     
 

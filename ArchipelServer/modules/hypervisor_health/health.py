@@ -25,10 +25,13 @@ import os
 import traceback
 from archipelStatsCollector import *
 
+ARCHIPEL_ERROR_CODE_HEALTH_HISTORY  = -8001
+ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
+
 class TNHypervisorHealth:
     def __init__(self, db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port):
         self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port)
-        self.collector.daemon = True
+        # self.collector.daemon = True
         self.collector.start()
         
         
@@ -45,18 +48,24 @@ class TNHypervisorHealth:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
-        
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
         if action == "history":
             reply = self.__healthinfo_history(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "info":
+        elif action == "info":
             reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
         
 
 
@@ -90,8 +99,7 @@ class TNHypervisorHealth:
             
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-        
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_HISTORY)
         return reply
 
 
@@ -134,5 +142,5 @@ class TNHypervisorHealth:
                 
                 reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)
         return reply

@@ -117,7 +117,7 @@ TNArchipelTransportBarReboot    = 4;
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    //[center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
@@ -174,7 +174,7 @@ TNArchipelTransportBarReboot    = 4;
 - (BOOL)didPushReceived:(TNStropheStanza)aStanza
 {
     CPLog.info("Push notification received with with ");
-    // [self getVirtualMachineInfo];
+    [self checkIfRunning];
     return YES;
 }
 
@@ -207,8 +207,9 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
-    [imageState setImage:[_entity statusIcon]];
-    [self checkIfRunning];
+    // [imageState setImage:[_entity statusIcon]];
+    // 
+    // [self checkIfRunning];
 }
 
 - (void)checkIfRunning
@@ -352,11 +353,11 @@ TNArchipelTransportBarReboot    = 4;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
+    [self layoutButtons:_VMLibvirtStatus];
+    
     if (responseType == @"result") 
     {
         [self enableButtonsForPaused];
-        _VMLibvirtStatus = VIR_DOMAIN_PAUSED;
-        var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
     }
     else
@@ -372,10 +373,10 @@ TNArchipelTransportBarReboot    = 4;
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
 
+    [self layoutButtons:_VMLibvirtStatus];
+    
     if (responseType == @"result")
     {
-        [self enableButtonsForRunning];
-        _VMLibvirtStatus = VIR_DOMAIN_RESUMED;
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
     }
@@ -526,6 +527,7 @@ TNArchipelTransportBarReboot    = 4;
             break;
   }
   [fieldInfoState setStringValue:humanState];
+  [imageState setImage:[_entity statusIcon]];
 }
 
 - (void)enableButtonsForRunning

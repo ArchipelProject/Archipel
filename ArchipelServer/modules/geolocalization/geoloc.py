@@ -22,6 +22,7 @@ from utils import *
 import archipel
 import httplib
 
+ARCHIPEL_ERROR_CODE_LOCALIZATION_GET  = -9001
 
 class TNHypervisorGeolocalization:
     def __init__(self, conf, entity):
@@ -48,21 +49,21 @@ class TNHypervisorGeolocalization:
         
         registrar_item = {  "commands" : ["where are you", "localize"], 
                             "parameters": {}, 
-                            "method": self._module__get_geolocalization_string,
+                            "method": self.__get_string,
                             "description": "give my the latitude and longitude." }
         
         self.entity.add_message_registrar_item(registrar_item)
     
     
-    def _module__get_geolocalization(self, iq):
+    def __get(self, iq):
         reply = iq.buildReply("result")
         try:
             reply.setQueryPayload([self.localization_information])
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LOCALIZATION_GET)
         return reply
     
-    def _module__get_geolocalization_string(self, msg):
+    def __get_string(self, msg):
         lat = self.localization_information.getTagData("Latitude")
         lon = self.localization_information.getTagData("Longitude")
         return "I'm localized at longitude: %s latitude: %s" % (lon, lat)
@@ -79,12 +80,16 @@ class TNHypervisorGeolocalization:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug( "iq received from %s with type %s" % (iq.getFrom(), action))
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
         
         if action == "get":
-            reply = self._module__get_geolocalization(iq)
+            reply = self.__get(iq)
             conn.send(reply)
             log.debug( "geolocalization information sent. Node processed")
             raise xmpp.protocol.NodeProcessed

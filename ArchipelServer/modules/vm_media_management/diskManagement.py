@@ -23,13 +23,21 @@ import archipel
 import commands
 import os, sys
 
+
+ARCHIPEL_ERROR_CODE_DRIVES_CREATE       = -3001
+ARCHIPEL_ERROR_CODE_DRIVES_DELETE       = -3002
+ARCHIPEL_ERROR_CODE_DRIVES_GET          = -3003
+ARCHIPEL_ERROR_CODE_DRIVES_GETISO       = -3004
+ARCHIPEL_ERROR_CODE_DRIVES_CONVERT      = -3005
+ARCHIPEL_ERROR_CODE_DRIVES_RENAME       = -3006
+
 class TNMediaManagement:
     
     def __init__(self, shared_isos_folder, entity):
         self.entity = entity
         self.shared_isos_folder =  shared_isos_folder
-
-
+    
+    
     def process_iq(self, conn, iq):
         """
         Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
@@ -38,41 +46,50 @@ class TNMediaManagement:
         - create
         - delete
         - get
+        - getiso
+        - convert
+        - rename
         
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug( "Disk IQ received from %s with type %s" % (iq.getFrom(), action))
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
         
         if action == "create":
             reply = self.__disk_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "delete":
+        elif action == "delete":
             reply = self.__disk_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "get":
+        elif action == "get":
             reply = self.__disk_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "getiso":
+        elif action == "getiso":
             reply = self.__isos_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "convert":
+        elif action == "convert":
             reply = self.__disk_convert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "rename":
+        elif action == "rename":
             reply = self.__disk_rename(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -110,7 +127,7 @@ class TNMediaManagement:
             self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
             self.entity.push_change("disk", "created")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CREATE)
         return reply
     
     
@@ -144,7 +161,8 @@ class TNMediaManagement:
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.entity.change_presence(presence_show=old_show, presence_status=old_status)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CONVERT)
         return reply
         
     def __disk_rename(self, iq):
@@ -171,7 +189,7 @@ class TNMediaManagement:
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
             self.entity.push_change("disk", "renamed")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_RENAME)
         return reply
     
     
@@ -220,7 +238,7 @@ class TNMediaManagement:
             self.entity.push_change("disk", "deleted")
             self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_DELETE)
         return reply
 
 
@@ -256,7 +274,7 @@ class TNMediaManagement:
             log.info( "info about disks sent")
         
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply
 
 
@@ -288,9 +306,8 @@ class TNMediaManagement:
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
             log.info( "info about iso sent")
-        
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
         return reply    
 
 

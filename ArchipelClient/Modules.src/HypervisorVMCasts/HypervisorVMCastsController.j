@@ -27,7 +27,7 @@ TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmca
 TNArchipelTypeHypervisorVMCastingGet                = @"get";
 TNArchipelTypeHypervisorVMCastingRegister           = @"register";
 TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
-TNArchipelTypeHypervisorVMCastingDownload           = @"download";
+TNArchipelTypeHypervisorVMCastingDownload           = @"downloadappliance";
 TNArchipelTypeHypervisorVMCastingDeleteAppliance    = @"deleteappliance";
 
 TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";

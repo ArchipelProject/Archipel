@@ -54,24 +54,21 @@ class TNApplianceDecompresser(Thread):
     
     
     def run(self):
-        log.info( "unpacking to %s" % self.working_dir)
+        log.info("unpacking to %s" % self.working_dir)
         self.unpack()
         
-        log.info( "defining UUID in description file as %s" % self.uuid)
+        log.info("defining UUID in description file as %s" % self.uuid)
         self.update_description()
         
-        log.info( "installing package in %s" % self.install_path)
+        log.info("installing package in %s" % self.install_path)
         self.install()
         
-        log.info( "cleaning...")
+        log.info("cleaning...")
         self.clean()
         
-        desc_node = self.get_description_node()
+        log.info("Defining the virtual machine")
+        self.define_callback(self.description_node)
         
-        define_iq = xmpp.Iq()
-        define_iq.addChild(name='query').addChild(name="archipel", payload=[desc_node])
-        
-        self.define_callback(define_iq)
         self.finish_callback()
         
     
@@ -91,24 +88,24 @@ class TNApplianceDecompresser(Thread):
         try:
             for aFile in os.listdir(self.extract_path):
                 full_path = os.path.join(self.extract_path, aFile)
-                log.debug( "parsing file %s" % full_path)
+                log.debug("parsing file %s" % full_path)
                 
                 if os.path.splitext(full_path)[-1] == ".gz":
-                    log.info( "found one gziped disk : %s" % full_path)
+                    log.info("found one gziped disk : %s" % full_path)
                     i = open(full_path, 'rb')
                     o = open(full_path.replace(".gz", ""), 'w')
                     self._gunzip(i, o)
                     i.close()
                     o.close()
-                    log.info( "file unziped at : %s" % full_path.replace(".gz", ""))
+                    log.info("file unziped at : %s" % full_path.replace(".gz", ""))
                     self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "")
                     
                 if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                    log.debug( "found one disk : %s" % full_path)
+                    log.debug("found one disk : %s" % full_path)
                     self.disk_files[aFile] = full_path
                     
                 if aFile == "description.xml":
-                    log.debug( "found description.xml file : %s" % full_path)
+                    log.debug("found description.xml file : %s" % full_path)
                     o = open(full_path, 'r')
                     self.description_file = o.read()
                     o.close()
@@ -145,10 +142,6 @@ class TNApplianceDecompresser(Thread):
         return True
     
     
-    def get_description_node(self):
-        return self.description_node
-    
-    
     def install(self):
         """
         install a untared and uuid defined package
@@ -160,7 +153,7 @@ class TNApplianceDecompresser(Thread):
             return False
         
         for key, path in self.disk_files.items():
-            log.debug( "moving %s to %s" % (path, self.install_path))
+            log.debug("moving %s to %s" % (path, self.install_path))
             try:
                 shutil.move(path, self.install_path)
             except:

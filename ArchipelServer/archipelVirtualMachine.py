@@ -53,6 +53,8 @@ VIR_DOMAIN_SHUTDOWN	            = 4
 VIR_DOMAIN_SHUTOFF	            = 5
 VIR_DOMAIN_CRASHED	            = 6
 
+
+
 NS_ARCHIPEL_STATUS_RUNNING      = "Running"
 NS_ARCHIPEL_STATUS_PAUSED       = "Paused"
 NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off"
@@ -65,6 +67,21 @@ NS_ARCHIPEL_VM_DEPENDENCE       = "archipel:vm:dependence"
 
 NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE    = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE";
 NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD         = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD";
+
+
+ARCHIPEL_ERROR_CODE_VM_CREATE       = -1001
+ARCHIPEL_ERROR_CODE_VM_SUSPEND      = -1002
+ARCHIPEL_ERROR_CODE_VM_RESUME       = -1003
+ARCHIPEL_ERROR_CODE_VM_DESTROY      = -1004
+ARCHIPEL_ERROR_CODE_VM_SHUTDOWN     = -1005
+ARCHIPEL_ERROR_CODE_VM_REBOOT       = -1006
+ARCHIPEL_ERROR_CODE_VM_DEFINE       = -1007
+ARCHIPEL_ERROR_CODE_VM_UNDEFINE     = -1008
+ARCHIPEL_ERROR_CODE_VM_INFO         = -1009
+ARCHIPEL_ERROR_CODE_VM_VNC          = -1010
+ARCHIPEL_ERROR_CODE_VM_XMLDESC      = -1011
+ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
+
 
 class TNArchipelVirtualMachineRunningState:
     
@@ -120,11 +137,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             
         self.register_for_messages()
     
+    
     def lock(self):
         log.info("acquiring lock")
         self.locked = True;
         self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
         self.lock_timer.start()
+    
     
     def unlock(self):
         log.info("releasing lock")
@@ -216,32 +235,32 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         Initialize the connection to the libvirt first, and
         then to the domain by looking the uuid used as JID Node
-
+        
         exit on any error.
         """
-
+        
         self.push_change("virtualmachine", "initialized")
-
+        
         self.domain = None
         self.libvirt_connection = None
-
+        
         self.uuid = self.jid.getNode()
         self.libvirt_connection = libvirt.open(None)
         if self.libvirt_connection == None:
             log.error("unable to connect hypervisor")
             sys.exit(0) 
         log.info("connected to hypervisor using libvirt")
-
+        
         try:
             self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
             log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
-
+            
             if self.domain:
                 self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-
+                
             # register for libvirt handlers            
             self.libvirt_connection.domainEventRegister(self.on_domain_event,None)
-
+            
             dominfo = self.domain.info()
             log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == VIR_DOMAIN_RUNNING:
@@ -262,7 +281,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log.error("unexpected exception : " + str(ex))
             sys.exit(0)
     
-
+    
     def on_domain_event(self, conn, dom, event, detail, opaque):
         if dom.UUID() == self.domain.UUID():
             log.info("libvirt event received: %d with detail %s" % (event, detail))
@@ -289,7 +308,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             except Exception as ex:
                 log.error("Unable to push state change : %s" % str(ex))
     
-
     
     
     ######################################################################################################
@@ -315,15 +333,21 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-
-        reply = None
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
+        
         try:
             domid = self.create()
             reply = iq.buildReply("result")
             payload = xmpp.Node("domain", attrs={"id": domid})
             reply.setQueryPayload([payload])
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_CREATE)
         return reply
 
     
@@ -353,13 +377,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
-        reply = None
         try:
             self.shutdown()
             reply = iq.buildReply("result")
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SHUTDOWN)
         return reply
     
     
@@ -375,6 +405,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def destroy(self):
         self.lock()
         self.domain.destroy()
+        log.info("virtual machine destroyed")
     
     
     def iq_destroy(self, iq):
@@ -387,14 +418,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-
-        reply = None
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
+        
         try:
             self.destroy()
             reply = iq.buildReply("result")
-            log.info("virtual machine destroyed")
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_DESTROY)
         return reply
     
     
@@ -424,12 +460,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         
-        reply = None
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
+        
         try:
             self.reboot()
             reply = iq.buildReply("result")
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code())
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_REBOOT)
         return reply
     
     
@@ -458,12 +501,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        reply = None
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
+        
         try:
             self.suspend()
             reply = iq.buildReply("result")
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SUSPEND)
         return reply
     
     
@@ -492,13 +542,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
+        if self.locked:
+            log.error("Virtual machine is locked, can't do anything")
+            return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
-        reply = None
-        try:
+        try:    
             self.resume()
             reply = iq.buildReply("result")
+        except libvirt.libvirtError as ex:
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            self.unlock()
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_RESUME)
         return reply
     
     
@@ -512,9 +568,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def info(self):
-        self.lock()
         dominfo = self.domain.info()
-        self.unlock()
+        log.debug("virtual machine info sent")
         return {"state": dominfo[0], "maxMem": dominfo[1], "memory": dominfo[2], "nrVirtCpu": dominfo[3], "cpuTime": dominfo[4], "hypervisor": self.hypervisor.jid}
     
     
@@ -528,19 +583,18 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        
-        reply = None
         try:
             reply = iq.buildReply("result")
             if self.domain:
                 infos = self.info()
                 response = xmpp.Node(tag="info", attrs=infos)
                 reply.setQueryPayload([response])
-                log.debug("virtual machine info sent")
             else:
-                reply = iq.buildReply('ignore')  
+                reply = iq.buildReply('ignore')
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_INFO)
         return reply
     
     
@@ -554,9 +608,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def vncdisplay(self):
-        self.lock()
         xmldesc = self.domain.XMLDesc(0)
-        self.unlock()
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         return xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port")
         
@@ -579,8 +631,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             port = self.vncdisplay()
             payload = xmpp.Node("vncdisplay", attrs={"port": str(port), "host": self.ipaddr})
             reply.setQueryPayload([payload])
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_VNC)
         return reply
     
     
@@ -594,9 +648,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def xmldesc(self):
-        self.lock()
         xmldesc = self.domain.XMLDesc(0)
-        self.unlock()
         return xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
     
         
@@ -616,8 +668,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 return iq.buildReply('ignore')
             xmldescnode = self.xmldesc()
             reply.setQueryPayload([xmldescnode])
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_XMLDESC)
         return reply
     
     
@@ -626,44 +680,50 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     
+    
     # iq definition
-    def define(self, iq):
-       """
-       Define a virtual machine in the libvirt according to the XML data
-       domain passed in argument
-       
-       @type iq: xmpp.Protocol.Iq
-       @param iq: the received IQ
-       
-       @rtype: xmpp.Protocol.Iq
-       @return: a ready to send IQ containing the result of the action
-       """
-       
-       reply = None
-       
-       try :
-           domain_node = iq.getTag("query").getTag("archipel").getTag("domain")
-           
-           domain_uuid = domain_node.getTag("uuid").getData()
-           if domain_uuid != self.jid.getNode():
-               raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
-           
-           reply = iq.buildReply("result")
-           
-           # the dirty replace below is to avoid having this xmlns wrote by xmpp.Node automatically.
-           # I've sepnd two hours, trying to remove it, I'm done.
-           definitionXML = str(domain_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-           self.libvirt_connection.defineXML(definitionXML)
-           self.definition = domain_node
-           log.info("virtual machine XML is defined")
-           if not self.domain:
+    
+    def define(self, xmldesc):
+        definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+        self.libvirt_connection.defineXML(definitionXML)
+        if not self.domain:
                self.connect_libvirt()
-       except Exception as ex:
-           reply = build_error_iq(self, ex, iq)
-       return reply
+        return xmldesc
+    
+    def iq_define(self, iq):
+        """
+        Define a virtual machine in the libvirt according to the XML data
+        domain passed in argument
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        reply = iq.buildReply("result")
+       
+        try :
+            domain_node = iq.getTag("query").getTag("archipel").getTag("domain")
+            domain_uuid = domain_node.getTag("uuid").getData()
+            
+            if domain_uuid != self.jid.getNode():
+                raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
+            
+            self.definition = self.define(domain_node)
+            log.info("virtual machine XML is defined")
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_DEFINE)
+        return reply
     
     
-    def undefine(self, iq):
+    def undefine(self):
+        self.domain.undefine()
+        self.definition = None;
+        
+    def iq_undefine(self, iq):
         """
         Undefine a virtual machine in the libvirt according to the XML data
         domain passed in argument
@@ -678,40 +738,41 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = None
         try:
             reply = iq.buildReply("result")
-            self.domain.undefine()
+            self.undefine()
             log.info("virtual machine is undefined")
-            self.definition = None;
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_DESTROY)
         return reply
     
     
     
     # iq dependencies
-    def dep_define(self, iq):
-        reply = None;
-        try:
-            raise Exception("Not implemented")
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-        return reply
-    
-    
-    def dep_add(self, iq):
-        reply = None;
-        try:
-            raise Exception("Not implemented")
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-        return reply
-        
-    def dep_remove(self, iq):
-        reply = None;
-        try:
-            raise Exception("Not implemented")
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
-        return reply
+    # def dep_define(self, iq):
+    #     reply = None;
+    #     try:
+    #         raise Exception("Not implemented")
+    #     except Exception as ex:
+    #         reply = build_error_iq(self, ex, iq)
+    #     return reply
+    # 
+    # 
+    # def dep_add(self, iq):
+    #     reply = None;
+    #     try:
+    #         raise Exception("Not implemented")
+    #     except Exception as ex:
+    #         reply = build_error_iq(self, ex, iq)
+    #     return reply
+    #     
+    # def dep_remove(self, iq):
+    #     reply = None;
+    #     try:
+    #         raise Exception("Not implemented")
+    #     except Exception as ex:
+    #         reply = build_error_iq(self, ex, iq)
+    #     return reply
     
     ######################################################################################################
     ### XMPP Processing
@@ -739,58 +800,55 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @param iq: the received IQ
         """
         
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        
-        log.debug("Control IQ received from %s with type %s" % (iq.getFrom(), action))
-        
-        if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
-            reply = build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq)
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
-            
+        
         if action == "info":
             reply = self.iq_info(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "create":
+        elif action == "create":
             reply = self.iq_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "shutdown":
+        elif action == "shutdown":
             reply = self.iq_shutdown(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-        if action == "destroy":
+        elif action == "destroy":
             reply = self.iq_destroy(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "reboot":
+        elif action == "reboot":
             reply = self.iq_reboot(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "suspend":
+        elif action == "suspend":
             reply = self.iq_suspend(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "resume":
+        elif action == "resume":
             reply = self.iq_resume(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "vncdisplay":
+        elif action == "vncdisplay":
             reply = self.iq_vncdisplay(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        if action == "xmldesc":
+        elif action == "xmldesc":
             reply = self.iq_xmldesc(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -810,50 +868,54 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        
-        action = iq.getTag("query").getTag("archipel").getAttr("action")
-        log.debug("Definition IQ received from %s with type %s" % (iq.getFrom(), action))
-        
-        if action == "define":
-            reply = self.define(iq)
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "undefine":
-            reply = self.undefine(iq)
+        if action == "define":
+            reply = self.iq_define(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "undefine":
+            reply = self.iq_undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed        
     
     
-    def __process_iq_archipel_dependence(self, conn, iq):
-        """
-        Invoked when new archipel:dependence IQ is received.
-        
-        it understands IQ of type:
-            - add
-            - remove
-            - define
-            
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        action = iq.getTag("query").getAttr("action")
-        log.debug("Dependence IQ received from %s with type %s" % (iq.getFrom(), action))
-        
-        if action == "add":
-            reply = self.dep_add(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        if action == "remove":
-            reply = self.dep_remove(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        if action == "define":
-            reply = self.dep_define(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+    # def __process_iq_archipel_dependence(self, conn, iq):
+    #     """
+    #     Invoked when new archipel:dependence IQ is received.
+    #     
+    #     it understands IQ of type:
+    #         - add
+    #         - remove
+    #         - define
+    #         
+    #     @type conn: xmpp.Dispatcher
+    #     @param conn: ths instance of the current connection that send the message
+    #     @type iq: xmpp.Protocol.Iq
+    #     @param iq: the received IQ
+    #     """
+    #     action = iq.getTag("query").getAttr("action")
+    #     log.debug("Dependence IQ received from %s with type %s" % (iq.getFrom(), action))
+    #     
+    #     if action == "add":
+    #         reply = self.dep_add(iq)
+    #         conn.send(reply)
+    #         raise xmpp.protocol.NodeProcessed
+    #         
+    #     if action == "remove":
+    #         reply = self.dep_remove(iq)
+    #         conn.send(reply)
+    #         raise xmpp.protocol.NodeProcessed
+    #         
+    #     if action == "define":
+    #         reply = self.dep_define(iq)
+    #         conn.send(reply)
+    #         raise xmpp.protocol.NodeProcessed
     
