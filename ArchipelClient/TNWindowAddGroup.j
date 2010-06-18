@@ -26,7 +26,7 @@
 */
 @implementation TNWindowAddGroup: CPWindow
 {
-    @outlet CPTextField newGroupName    @accessors;
+    @outlet CPTextField newGroupName;
 
     TNStropheRoster     roster          @accessors;
 }
@@ -36,9 +36,10 @@
 */
 - (void)orderFront:(id)sender
 {
-    [[self newGroupName] setStringValue:@""];
+    [newGroupName setStringValue:@""];
+    [self makeFirstResponder:newGroupName];
+    
     [self center];
-    [self makeFirstResponder:[self newGroupName]];
     [super orderFront:sender];
 }
 
@@ -47,16 +48,16 @@
 */
 - (IBAction)addGroup:(id)sender
 {
-    if ([[self newGroupName] stringValue] == "")
+    if ([newGroupName stringValue] == "")
     {
         [CPAlert alertWithTitle:@"Group addition error" message:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
     }
     else
     {
-        var groupName = [[self newGroupName] stringValue];
+        var groupName = [newGroupName stringValue];
         
         [[self roster] addGroupWithName:groupName];
-        [[self newGroupName] setStringValue:@""];
+        [newGroupName setStringValue:@""];
         CPLog.info(@"new group " + groupName + " added.");
         
         var growl = [TNGrowlCenter defaultCenter];

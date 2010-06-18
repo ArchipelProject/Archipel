@@ -243,11 +243,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)checkIfRunning
 {
-    var status = [_entity status];
+    var XMPPShow = [_entity XMPPShow];
     
-    _isActive = ((status == TNStropheContactStatusOnline) || (status == TNStropheContactStatusAway));
+    _isActive = ((XMPPShow == TNStropheContactStatusOnline) || (XMPPShow == TNStropheContactStatusAway));
     
-    if (status == TNStropheContactStatusBusy)
+    if (XMPPShow == TNStropheContactStatusBusy)
     {
         [maskingView removeFromSuperview];
     }

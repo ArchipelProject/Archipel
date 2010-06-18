@@ -85,6 +85,11 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
         [statusSelector addItem:busyItem];
         
+        var DNDItem = [[CPMenuItem alloc] init];
+        [DNDItem setTitle:TNArchipelStatusDNDLabel];
+        [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"DND.png"]]];
+        [statusSelector addItem:DNDItem];
+        
         var statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
         [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
         [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];

@@ -29,7 +29,7 @@
     CPImageView _statusIcon  @accessors(property=statusIcon);
     CPTextField _events      @accessors(property=events);
     CPTextField _name        @accessors(property=name);
-    CPTextField _show        @accessors(property=show);
+    CPTextField _status      @accessors(property=status);
 
     CPImage     _unknownUserImage;
     CPImage     _syncImage;
@@ -57,7 +57,7 @@
         
         _statusIcon  = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
         _name        = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
-        _show        = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
+        _status      = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
         _events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
         _avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         
@@ -65,7 +65,7 @@
         _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
         _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
         _playButton     = [[CPButton alloc] initWithFrame:CGRectMake(150, 8, 16, 16)];
-        _pauseButton     = [[CPButton alloc] initWithFrame:CGRectMake(130, 8, 16, 16)];
+        _pauseButton    = [[CPButton alloc] initWithFrame:CGRectMake(130, 8, 16, 16)];
 
         _normalStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
@@ -90,32 +90,29 @@
         [_playButton setAction:@selector(sendPlayCommand:)];
         [_playButton setHidden:YES];
         
-        
         [self addSubview:_statusIcon];
         [self addSubview:_name];
         [self addSubview:_events];
-        [self addSubview:_show];
+        [self addSubview:_status];
         [self addSubview:_avatar];
         [self addSubview:_syncButton];
         [self addSubview:_playButton];
         [self addSubview:_pauseButton];
-
         
         [_events setBackgroundColor:_normalStateCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
         [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
         [_events setFont:[CPFont boldSystemFontOfSize:11]];
         [_events setTextColor:[CPColor whiteColor]];
-
+        
         [_name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [_name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
-        
-        [_show setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [_show setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
-        [_show setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
-        [_show setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_status setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_status setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
+        [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
+        [_status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         
         [_events setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
         
@@ -196,7 +193,7 @@
     [_pauseButton setFrame:boundsPause];
     [_pauseButton setAutoresizingMask:CPViewMinXMargin];
     
-    if ([aContact status] == TNStropheContactStatusOffline)
+    if ([aContact XMPPShow] == TNStropheContactStatusOffline)
     {
         [_syncButton setHidden:YES];
         [_playButton setHidden:YES];
@@ -208,8 +205,8 @@
     [_name setStringValue:[aContact nickname]];
     [_name sizeToFit];
     
-    [_show setStringValue:[aContact show]];
-    [_show sizeToFit];
+    [_status setStringValue:[aContact XMPPStatus]];
+    [_status sizeToFit];
     
     [_statusIcon setImage:[aContact statusIcon]];
     
@@ -222,9 +219,9 @@
     boundsName.size.width += 10;
     [_name setFrame:boundsName];
     
-    var boundsShow = [_show frame];
+    var boundsShow = [_status frame];
     boundsShow.size.width += 10;
-    [_show setFrame:boundsShow];
+    [_status setFrame:boundsShow];
     
     if ([aContact numberOfEvents] > 0)
     {
@@ -279,7 +276,7 @@
     [super setThemeState:aState];
     
     [_name setThemeState:aState];
-    [_show setThemeState:aState];
+    [_status setThemeState:aState];
     [_events setThemeState:aState];
     
     if (aState == CPThemeStateSelectedDataView )
@@ -287,7 +284,7 @@
     if (aState == CPThemeStateNormal)
            [_events setBackgroundColor:_normalStateCartoucheColor];
        
-    if ((aState == CPThemeStateSelectedDataView) && ([_contact status] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
+    if ((aState == CPThemeStateSelectedDataView) && ([_contact XMPPShow] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
         [_syncButton setHidden:NO];
     else
         [_syncButton setHidden:YES];
@@ -300,7 +297,7 @@
     [super unsetThemeState:aState];
     
     [_name unsetThemeState:aState];
-    [_show unsetThemeState:aState];
+    [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
     
     if (aState == CPThemeStateSelectedDataView)
@@ -337,7 +334,7 @@
         _pauseImage         = [aCoder decodeObjectForKey:@"_pauseImage"];
         _syncingImage       = [aCoder decodeObjectForKey:@"_syncingImage"];
         _name               = [aCoder decodeObjectForKey:@"_name"];
-        _show               = [aCoder decodeObjectForKey:@"_show"];
+        _status               = [aCoder decodeObjectForKey:@"_status"];
         _statusIcon         = [aCoder decodeObjectForKey:@"_statusIcon"];
         _events             = [aCoder decodeObjectForKey:@"_events"];
         _avatar             = [aCoder decodeObjectForKey:@"_avatar"];
@@ -362,7 +359,7 @@
     [aCoder encodeObject:_syncingImage forKey:@"_syncingImage"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:_name forKey:@"_name"];
-    [aCoder encodeObject:_show forKey:@"_show"];
+    [aCoder encodeObject:_status forKey:@"_status"];
     [aCoder encodeObject:_statusIcon forKey:@"_statusIcon"];
     [aCoder encodeObject:_events forKey:@"_events"];
     [aCoder encodeObject:_avatar forKey:@"_avatar"];

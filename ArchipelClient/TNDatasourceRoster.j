@@ -303,7 +303,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup) && (theItem  != _draggedItem))
     {
-        var contactsToMove = [[_draggedItem contacts] copy]; 
+        var center          = [CPNotificationCenter defaultCenter];
+        var contactsToMove  = [[_draggedItem contacts] copy]; 
+        
         for (var i = 0; i < [contactsToMove count]; i++)
         {
             var contact = [contactsToMove objectAtIndex:i];

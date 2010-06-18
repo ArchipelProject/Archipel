@@ -219,11 +219,11 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)checkIfRunning
 {
-    var status = [_entity status];
+    var XMPPShow = [_entity XMPPShow];
     
     [self getVirtualMachineInfo];
     
-    if ((status == TNStropheContactStatusDND))
+    if ((XMPPShow == TNStropheContactStatusDND))
     {
         [maskingView setFrame:[[self view] bounds]];
         [[self view] addSubview:maskingView];

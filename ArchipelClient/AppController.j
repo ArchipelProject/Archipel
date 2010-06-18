@@ -85,6 +85,12 @@ TNArchipelStatusAwayLabel       = @"Away";
 */
 TNArchipelStatusBusyLabel       = @"Busy";
 
+/*! @global
+    @group TNArchipelStatus
+    This string represent a status DND
+*/
+TNArchipelStatusDNDLabel       = @"Do not disturb";
+
 
 
 /*! @global
@@ -97,6 +103,7 @@ TNArchipelXMPPNamespace = "http://archipelproject.org";
 
 TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
 
+TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
     Anyone that is interessted in the way of Archipel is working should begin
@@ -104,48 +111,49 @@ TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
 */
 @implementation AppController : CPObject
 {
-    @outlet CPView              leftView;
-    @outlet CPView              filterView;
-    @outlet TNSearchField       filterField;
-    @outlet CPView              rightView;
-    @outlet CPWebView           helpView;
-    @outlet CPSplitView         leftSplitView;
-    @outlet CPWindow            theWindow;
-    @outlet TNWhiteWindow       windowModuleLoading;
-    @outlet CPSplitView         mainHorizontalSplitView;
-    @outlet TNViewProperties    propertiesView;
-    @outlet CPImageView         ledOut;
+    @outlet CPButtonBar         buttonBarLeft;
     @outlet CPImageView         ledIn;
+    @outlet CPImageView         ledOut;
+    @outlet CPSplitView         leftSplitView;
+    @outlet CPSplitView         mainHorizontalSplitView;
+    @outlet CPTextField         textFieldAboutVersion;
+    @outlet CPView              filterView;
+    @outlet CPView              leftView;
+    @outlet CPView              rightView;
     @outlet CPView              statusBar;
+    @outlet CPView              viewLoadingModule;
+    @outlet CPWebView           helpView;
+    @outlet CPWebView           webViewAboutCredits;
+    @outlet CPWindow            theWindow;
+    @outlet CPWindow            windowAboutArchipel;
+    @outlet TNSearchField       filterField;
+    @outlet TNViewProperties    propertiesView;
+    @outlet TNWhiteWindow       windowModuleLoading;
     @outlet TNWindowAddContact  addContactWindow;
     @outlet TNWindowAddGroup    addGroupWindow;
     @outlet TNWindowConnection  connectionWindow;
-    @outlet CPButtonBar         buttonBarLeft;
-    @outlet CPView              viewLoadingModule;
-    @outlet CPWindow            windowAboutArchipel;
-    @outlet CPTextField         textFieldAboutVersion;
-    @outlet CPWebView           webViewAboutCredits;
-    
-    CPTextField                 _rightViewTextField;
-    TNModuleLoader              _moduleLoader;
-    CPTabView                   _moduleTabView;
-    TNDatasourceRoster          _mainRoster;
-    TNOutlineViewRoster         _rosterOutlineView;
-    TNToolbar                   _mainToolbar;
-    TNViewHypervisorControl     _currentRightViewContent;
-    CPScrollView                _outlineScrollView;
+
     BOOL                        _shouldShowHelpView;
-    CPWindow                    _helpWindow;
-    CPPlatformWindow            _platformHelpWindow;
+    CPImage                     _imageLedInData;
+    CPImage                     _imageLedNoData;
+    CPImage                     _imageLedOutData;
     CPMenu                      _mainMenu;
     CPMenu                      _modulesMenu;
-    CPImage                     _imageLedInData;
-    CPImage                     _imageLedOutData;
-    CPImage                     _imageLedNoData;
+    CPPlatformWindow            _platformHelpWindow;
+    CPScrollView                _outlineScrollView;
+    CPTabView                   _moduleTabView;
+    CPTextField                 _rightViewTextField;
     CPTimer                     _ledInTimer;
     CPTimer                     _ledOutTimer;
     CPTimer                     _moduleLoadingDelay;
+    CPWindow                    _helpWindow;
     int                         _tempNumberOfReadyModules;
+    TNDatasourceRoster          _mainRoster;
+    TNModuleLoader              _moduleLoader;
+    TNOutlineViewRoster         _rosterOutlineView;
+    TNToolbar                   _mainToolbar;
+    TNViewHypervisorControl     _currentRightViewContent;
+
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -747,19 +755,22 @@ TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
 */
 - (IBAction)toolbarItemPresenceStatusClick:(id)sender
 {
-    var xmppStatus;
+    var XMPPShow;
     var statusLabel = [sender title];
     
     switch (statusLabel)
     {
         case TNArchipelStatusAvailableLabel:
-            xmppStatus = TNStropheContactStatusOnline
+            XMPPShow = TNStropheContactStatusOnline
             break;
         case TNArchipelStatusAwayLabel:
-            xmppStatus = TNStropheContactStatusAway
+            XMPPShow = TNStropheContactStatusAway
             break;
         case TNArchipelStatusBusyLabel:
-            xmppStatus = TNStropheContactStatusBusy
+            XMPPShow = TNStropheContactStatusBusy
+            break;
+        case TNArchipelStatusDNDLabel:
+            XMPPShow = TNStropheContactStatusDND
             break;
     }
     
@@ -768,8 +779,8 @@ TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
     [presence addTextNode:statusLabel];
     [presence up]
     [presence addChildName:@"show"];
-    [presence addTextNode:xmppStatus];
-    CPLog.info("Changing presence to " + statusLabel + ":" + xmppStatus);
+    [presence addTextNode:XMPPShow];
+    CPLog.info("Changing presence to " + statusLabel + ":" + XMPPShow);
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];

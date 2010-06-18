@@ -460,9 +460,9 @@ function generateMacAddr()
 
 - (void)checkIfRunning
 {
-    var status = [_entity status];
+    var XMPPShow = [_entity XMPPShow];
     
-    if (status != TNStropheContactStatusBusy)
+    if (XMPPShow != TNStropheContactStatusBusy)
     {
         if (![maskingView superview])
         {

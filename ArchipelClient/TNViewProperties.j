@@ -31,7 +31,7 @@
     @outlet CPImageView     entryStatusIcon;
     @outlet CPTextField     entryDomain;
     @outlet CPTextField     entryResource;
-    @outlet CPTextField     entryShow;
+    @outlet CPTextField     entryStatus;
     @outlet CPTextField     labelDomain;
     @outlet CPTextField     labelResource;
     @outlet CPTextField     labelStatus;
@@ -83,10 +83,12 @@
     _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
     
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(changeNickNameNotificiation:) name:CPTextFieldDidBlurNotification object:entryName];
-    [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(_didContactUpdatePresence:) name:TNStropheContactVCardReceivedNotification object:nil];
+    [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
+
+
 
 /*! hide the panel
 */
@@ -109,6 +111,15 @@
 
     [self setHidden:NO];
     [splitView setPosition:([splitView bounds].size.height - _height) ofDividerAtIndex:0];
+}
+
+
+
+/*! message performed when contact update its presence in order to update information
+*/
+- (void)reload:(CPNotification)aNotification
+{
+    [self reload];
 }
 
 /*! reload the panel
@@ -140,7 +151,7 @@
         else
             [entryAvatar setImage:_unknownUserImage];
 
-        [entryShow setStringValue:[_entity show]];
+        [entryStatus setStringValue:[_entity XMPPStatus]];
     }
     else if ([_entity class] == TNStropheGroup)
     {
@@ -155,32 +166,30 @@
         [entryName setStringValue:[_entity name]];
         [entryDomain setStringValue:@""];
         [entryResource setStringValue:population];
-        [entryShow setStringValue:@""];
+        [entryStatus setStringValue:@""];
     }
 
 }
 
-/*! message performed when contact update its presence in order to update information
-*/
-- (void)_didContactUpdatePresence:(CPNotification)aNotification
-{
-    [self reload];
-}
 
-- (void)changeNickNameNotificiation:(CPNotification)aNotification
+/*! Re
+*/
+
+- (void)changeNickNameNotification:(CPNotification)aNotification
 {
     if (([_entity class] == TNStropheContact) && ([_entity nickname] != [entryName stringValue]))
         [_roster changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
     else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
     {
         var defaults    = [TNUserDefaults standardUserDefaults];
-        var oldKey      = TNArchipelRememberOpenedGroup + [item name];
+        var oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
         
         [_entity changeName:[entryName stringValue]];
         
         [defaults removeObjectForKey:oldKey];
     }
 }
+
 /*! action sent by the TNEditableLabel when ok. Will blur it
     @param sender the sender
 */

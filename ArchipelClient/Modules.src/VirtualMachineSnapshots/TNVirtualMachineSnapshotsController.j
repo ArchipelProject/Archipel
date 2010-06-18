@@ -228,7 +228,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)checkIfRunning
 {
-    if ([_entity status] == TNStropheContactStatusOnline || [_entity status] == TNStropheContactStatusAway)
+    if ([_entity XMPPShow] == TNStropheContactStatusOnline || [_entity XMPPShow] == TNStropheContactStatusAway)
     {
         [maskingView removeFromSuperview];
     }

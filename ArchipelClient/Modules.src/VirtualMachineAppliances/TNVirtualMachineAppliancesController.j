@@ -184,7 +184,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
 - (void)checkIfRunning
 {
-    if ([_entity status] == TNStropheContactStatusBusy)
+    if ([_entity XMPPShow] == TNStropheContactStatusBusy)
     {
         [maskingView removeFromSuperview];
     }
@@ -389,7 +389,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
 - (IBAction)package:(id)sender
 {
-    if ([_entity status] != TNStropheContactStatusBusy)
+    if ([_entity XMPPShow] != TNStropheContactStatusBusy)
     {
          [CPAlert alertWithTitle:@"Error" message:@"Virtual machine must not be running to package it."];
          return;

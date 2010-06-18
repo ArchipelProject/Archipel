@@ -77,7 +77,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     CPArray                 _bundles;
     CPArray                 _loadedTabModules;
     CPDictionary            _loadedToolbarModules;
-    CPString                _previousStatus;
+    CPString                _previousXMPPShow;
     CPToolbarItem           _currentToolbarItem;
     CPView                  _currentToolbarModule;
     id                      _modulesPList;
@@ -145,16 +145,16 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     if ([_entity class] == TNStropheContact)
     {
-        _previousStatus = [_entity status];
+        _previousXMPPShow = [_entity XMPPShow];
         
-        if ((_previousStatus != TNStropheContactStatusOffline) && (_previousStatus != TNStropheContactStatusDND))
+        if ((_previousXMPPShow != TNStropheContactStatusOffline) && (_previousXMPPShow != TNStropheContactStatusDND))
             [self _populateModulesTabView];
         else
         {
             var label;
-            if (_previousStatus == TNStropheContactStatusOffline)
+            if (_previousXMPPShow == TNStropheContactStatusOffline)
                 label = @"Entity is offline";
-            else if (_previousStatus == TNStropheContactStatusDND)
+            else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberLastSelectedTabIndex];
                 label = @"Entity do not want to be disturbed";
@@ -430,26 +430,26 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_didPresenceUpdate:(CPNotification)aNotification
 {
-    if ([[aNotification object] status] == TNStropheContactStatusOffline)
+    if ([[aNotification object] XMPPShow] == TNStropheContactStatusOffline)
     {
         _numberOfActiveModules = 0;
         _allModulesReady = NO;
         [self _removeAllTabsFromModulesTabView];
-        _previousStatus = TNStropheContactStatusOffline;
+        _previousXMPPShow = TNStropheContactStatusOffline;
         [_infoTextField setStringValue:@"Entity is offline"];
     }
-    else if ([[aNotification object] status] == TNStropheContactStatusDND)
+    else if ([[aNotification object] XMPPShow] == TNStropheContactStatusDND)
     {
         _numberOfActiveModules  = 0;
         _allModulesReady        = NO;
         
         [self _removeAllTabsFromModulesTabView];
-        _previousStatus = TNStropheContactStatusDND;
+        _previousXMPPShow = TNStropheContactStatusDND;
         [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
     }
-    else if ((_previousStatus == TNStropheContactStatusOffline) || (_previousStatus == TNStropheContactStatusDND))
+    else if ((_previousXMPPShow == TNStropheContactStatusOffline) || (_previousXMPPShow == TNStropheContactStatusDND))
     {
-        _previousStatus         = nil;
+        _previousXMPPShow         = nil;
         _numberOfActiveModules  = 0;
         _allModulesReady        = NO;
         [self _removeAllTabsFromModulesTabView];

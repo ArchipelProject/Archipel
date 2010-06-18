@@ -139,7 +139,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
 - (void)checkIfRunning
 {
-    if ([_entity status] == TNStropheContactStatusOnline)
+    if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         [maskingView removeFromSuperview];
         [self getVirtualMachineVNCDisplay];
