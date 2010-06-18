@@ -68,5 +68,5 @@ def build_error_iq(originclass, ex, iq, code=-1, ns="archipel:error:generic"):
             
 def build_error_message(originclass, ex):
     caller = inspect.stack()[2][3];
-    log.error("%s: exception raised is : %s" % (caller, ex))
+    log.error("%s: exception raised is : %s" % (caller, str(ex)))
     return str(ex)

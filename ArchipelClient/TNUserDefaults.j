@@ -125,8 +125,6 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
     var string      = [datas rawString];
     
-    CPLog.debug("Storage synchronized");
-    
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         try

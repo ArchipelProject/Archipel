@@ -65,37 +65,37 @@ class TNMediaManagement:
         
         
         if action == "create":
-            reply = self.__disk_create(iq)
+            reply = self.__create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "delete":
-            reply = self.__disk_delete(iq)
+            reply = self.__delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "get":
-            reply = self.__disk_get(iq)
+            reply = self.__get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "getiso":
-            reply = self.__isos_get(iq)
+            reply = self.__getisos(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "convert":
-            reply = self.__disk_convert(iq)
+            reply = self.__convert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "rename":
-            reply = self.__disk_rename(iq)
+            reply = self.__rename(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
 
-    def __disk_create(self, iq):
+    def __create(self, iq):
         """
         Create a disk in given format
     
@@ -106,18 +106,22 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            query_node = iq.getTag("query")
-            disk_name = query_node.getTag("archipel").getAttr("name")
-            disk_size = query_node.getTag("archipel").getAttr("size")
-            disk_unit = query_node.getTag("archipel").getAttr("unit")
-            format  = query_node.getTag("archipel").getAttr("format")
+            query_node  = iq.getTag("query")
+            disk_name   = query_node.getTag("archipel").getAttr("name")
+            disk_size   = query_node.getTag("archipel").getAttr("size")
+            disk_unit   = query_node.getTag("archipel").getAttr("unit")
+            format      = query_node.getTag("archipel").getAttr("format")
+            disk_path   = self.entity.vm_own_folder + "/" + disk_name + "." + format;
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try")
-            if disk_unit == "G" and (int(disk_size) >= 10000):
+            elif disk_unit == "G" and (int(disk_size) >= 10000):
                 raise Exception("too big", "You may be able to do this manually, but I won't try")
             
-            ret = os.system("qemu-img create -f " + format + " " + self.entity.vm_own_folder + "/" + disk_name + "." + format + " " + disk_size + disk_unit)
+            if os.path.exists(disk_path):
+                raise Exception("The disk with name %s already exists." % disk_name)
+            
+            ret = os.system("qemu-img create -f " + format + " " + disk_path + " " + disk_size + disk_unit)
             
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
@@ -131,7 +135,7 @@ class TNMediaManagement:
         return reply
     
     
-    def __disk_convert(self, iq):
+    def __convert(self, iq):
         """
         Convert a disk from a format to another
 
@@ -147,9 +151,13 @@ class TNMediaManagement:
             query_node  = iq.getTag("query")
             path        = query_node.getTag("archipel").getAttr("path")
             format      = query_node.getTag("archipel").getAttr("format")
+            disk_path   = path.replace(path.split(".")[-1], "") + format;
             
+            if os.path.exists(disk_path):
+                raise Exception("The disk with same name and extension already exists.")
+                
             self.entity.change_presence(presence_show="dnd", presence_status="Converting a disk...")
-            ret = os.system("qemu-img convert " + path + " -O " + format + " " + path.replace(path.split(".")[-1], "") + format)
+            ret = os.system("qemu-img convert " + path + " -O " + format + " " + disk_path)
             if not ret == 0:
                 raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret))
             
@@ -165,7 +173,7 @@ class TNMediaManagement:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CONVERT)
         return reply
         
-    def __disk_rename(self, iq):
+    def __rename(self, iq):
         """
         Rename a disk
 
@@ -182,6 +190,10 @@ class TNMediaManagement:
             
             extension = path.split(".")[-1]
             newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
+            
+            if os.path.exists(newpath):
+                raise Exception("The disk with name %s already exists." % newname)
+            
             os.rename(path, newpath)
             
             reply = iq.buildReply("result")
@@ -193,7 +205,7 @@ class TNMediaManagement:
         return reply
     
     
-    def __disk_delete(self, iq):
+    def __delete(self, iq):
         """
         delete a virtual hard drive
         
@@ -242,7 +254,7 @@ class TNMediaManagement:
         return reply
 
 
-    def __disk_get(self, iq):
+    def __get(self, iq):
         """
         Get the virtual hatd drives of the virtual machine
     
@@ -278,7 +290,7 @@ class TNMediaManagement:
         return reply
 
 
-    def __isos_get(self, iq):
+    def __getisos(self, iq):
         """
         Get the virtual cdrom ISO of the virtual machine
     

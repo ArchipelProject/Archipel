@@ -121,8 +121,8 @@ TNArchipelTransportBarReboot    = 4;
     [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
-    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationControl];
-    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinition];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationControl];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDefinition];
     
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
@@ -171,9 +171,14 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 }
 
-- (BOOL)didPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    CPLog.info("Push notification received with with ");
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
+    
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    
     [self checkIfRunning];
     return YES;
 }

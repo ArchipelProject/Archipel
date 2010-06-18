@@ -162,7 +162,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
-    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
     
     _currentSnapshot = nil;
     
@@ -205,13 +205,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-- (BOOL)didPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    var sender = [aStanza getFromNode].split("/")[0];
-    var change = [aStanza valueForAttribute:@"change"];
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
     
-    CPLog.info("receiving push notification TNArchipelPushNotificationSnapshoting with change " + change);
-    
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+        
     [self getSnapshots:nil];
     
     return YES;

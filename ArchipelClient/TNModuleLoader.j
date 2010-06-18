@@ -206,6 +206,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
         memid = @"selectedTabIndexFor" + identifier;
         
+        CPLog.debug("remembered last selected tabindex " + currentSelectedIndex)
+        
         [defaults setInteger:currentSelectedIndex forKey:memid];
     }
 }

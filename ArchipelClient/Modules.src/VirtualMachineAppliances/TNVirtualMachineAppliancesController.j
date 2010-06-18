@@ -151,7 +151,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [self registerSelector:@selector(didDownloadPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
     
     [_tableAppliances setDelegate:nil];
     [_tableAppliances setDelegate:self]; // hum....
@@ -208,12 +208,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     }
 }
 
-- (BOOL)didDownloadPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    var sender = [aStanza getFromNode].split("/")[0];
-    var change = [aStanza valueForAttribute:@"change"];
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
     
-    CPLog.info("receiving push notification TNArchipelPushNotificationVMCast with change " + change);
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     
     if (change == @"applianceinstalled")
     {

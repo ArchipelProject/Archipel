@@ -161,7 +161,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
     
-    [self registerSelector:@selector(didVMCastingPushReceived:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
@@ -211,12 +211,16 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [fieldName setStringValue:[_entity nickname]] 
 }
 
-- (BOOL)didVMCastingPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    CPLog.info(@"Receiving push notification of type TNArchipelPushNotificationVMCasting");
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    
     [self getVMCasts];
     
-    if ([aStanza valueForAttribute:@"change"] == @"download_complete")
+    if (change == @"download_complete")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:@"Download complete"];

@@ -361,7 +361,7 @@ function generateMacAddr()
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
-    [self registerSelector:@selector(didDefinitionPushReceived:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
     
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
@@ -407,9 +407,14 @@ function generateMacAddr()
     }
 }
 
-- (BOOL)didDefinitionPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    CPLog.info("Push notification definition received");
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
+    
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    
     [self getXMLDesc];
     return YES;
 }

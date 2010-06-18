@@ -360,7 +360,7 @@ class TNArchipelBasicXMPPClient(object):
                 send_to = item + "/" + resource
                 if not item == self.jid.getStripped():
                     push_message = xmpp.Message(typ="headline", to=send_to)
-                    push_message.addChild(name="push", namespace=ns, attrs={"change": change})
+                    push_message.addChild(name="x", namespace=ns, attrs={"change": change})
                     log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
                     #self.mass_sender.stanzas.append(push_message)
                     self.xmppclient.send(push_message)

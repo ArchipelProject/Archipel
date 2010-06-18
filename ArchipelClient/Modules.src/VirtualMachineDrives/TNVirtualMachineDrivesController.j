@@ -178,8 +178,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     var params = [[CPDictionary alloc] init];
     
-    [self registerSelector:@selector(didReceivePushNotification:) forPushNotificationType:TNArchipelPushNotificationDisk]
-    [self registerSelector:@selector(didReceivePushNotification:) forPushNotificationType:TNArchipelPushNotificationAppliance]
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDisk]
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationAppliance]
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -219,14 +219,15 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (BOOL)didReceivePushNotification:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
     var growl   = [TNGrowlCenter defaultCenter];
-    var type    = [aStanza getType];
-    var change  = [aStanza valueForAttribute:@"change"];
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
     
-    CPLog.debug("Push notification recieved of type " + type)
-    
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+        
     [self getDisksInfo];
     
     if (type == TNArchipelPushNotificationDisk)

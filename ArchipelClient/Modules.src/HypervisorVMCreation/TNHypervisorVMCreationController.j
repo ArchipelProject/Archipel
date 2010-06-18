@@ -117,7 +117,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     [super willLoad];
     
-    [self registerSelector:@selector(didPushReceived:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
+    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
     
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -146,9 +146,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [buttonCreateVM setEnabled:YES];
 }
 
-- (BOOL)didPushReceived:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
-    CPLog.info("Receiving push notification of type TNArchipelPushNotificationHypervisor");
+    var sender  = [aStanza getFromNode];
+    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
+    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
+    
+    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    
     [self getHypervisorRoster];
     return YES;
 }
