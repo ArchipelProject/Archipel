@@ -59,6 +59,7 @@ def main():
     
     hyp = archipel.TNArchipelHypervisor(jid, password, config, database)
     hyp.connect()
+    hyp.loop()
     
     
 if __name__ == "__main__":

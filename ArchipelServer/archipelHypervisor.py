@@ -59,7 +59,7 @@ class TNThreadedVirtualMachine(Thread):
         """
         the contructor of the class
         @type jid: string
-        @param jid: the jid of the L{ArchipelVirtualMachine} 
+        @param jid: the jid of the L{TNArchipelVirtualMachine} 
         @type password: string
         @param password: the password associated to the JID
         """
@@ -71,7 +71,7 @@ class TNThreadedVirtualMachine(Thread):
     
     def get_instance(self):
         """
-        this method return the current L{ArchipelVirtualMachine} instance
+        this method return the current L{TNArchipelVirtualMachine} instance
         @rtype: ArchipelVirtualMachine
         @return: the L{ArchipelVirtualMachine} instance
         """
@@ -80,12 +80,13 @@ class TNThreadedVirtualMachine(Thread):
     
     def run(self):
         """
-        overiddes sur super class method. do the L{ArchipelVirtualMachine} main loop
+        overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
         try:
             self.xmppvm.connect()
+            self.xmppvm.loop()
         except Exception as ex:
-            log.error( "vm has been stopped exception :" + str(ex))
+            log.error("thread loop exception: %s" % str(ex))
     
 
 
@@ -96,10 +97,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
     active XMPP VM, and remember which have been created.
     """       
-    
-    ######################################################################################################
-    ###  Super methods overrided
-    ######################################################################################################
     
     def __init__(self, jid, password, configuration, database_file="./database.sqlite3"):
         """
@@ -117,7 +114,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.xmppserveraddr = jid.split("/")[0].split("@")[1]
         log.info( "server address defined as {0}".format(self.xmppserveraddr))
         self.database_file = database_file
-        self.__manage_persistance()
+        self.manage_persistance()
         
         self.libvirt_connection = libvirt.open(self.configuration.get("HYPERVISOR", "hypervisor_uri"))
         if self.libvirt_connection == None:
@@ -143,11 +140,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
+        self.xmppclient.RegisterHandler('iq', self.process_iq, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
         TNArchipelBasicXMPPClient.register_handler(self)
     
  
-    def __manage_persistance(self):
+    def manage_persistance(self):
         """
         if the database_file parameter contain a valid populated sqlite3 database,
         this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a 
@@ -164,14 +161,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         c.execute("select * from virtualmachines")
         for vm in c:
             jid, password, date, comment = vm
-            vm = self.__create_threaded_vm(jid, password)
+            vm = self.create_threaded_vm(jid, password)
             # add hypervisor in the VM roster. This allow to manually add vm into the database
             # and during restart, being able to delete it from the GUI
             vm.get_instance().register_actions_to_perform_on_auth("add_jid", self.jid.getStripped())
             self.virtualmachines[jid.split("@")[0]] = vm
     
         
-    def __create_threaded_vm(self, jid, password):
+    def create_threaded_vm(self, jid, password):
         """
         this method creates a threaded L{TNArchipelVirtualMachine}, start it and return the Thread instance
         @type jid: string
@@ -187,14 +184,53 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return vm    
     
     
-    def disconnect(self):
+
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
+
+    def process_iq(self, conn, iq):
         """
-        this method overrides the super class method in order to 
-        disconnect all active threads
+        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
+
+        it understands IQ of type:
+            - alloc
+            - free
+
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
         """
-        for uuid in self.virtualmachines:
-            self.virtualmachines[uuid].get_instance().set_loop_status(LOOP_OFF)
-        TNArchipelBasicXMPPClient.disconnect(self)
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if action == "alloc":
+            reply = self.alloc_xmppvirtualmachine(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        elif action == "free":
+            reply = self.free(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        elif action == "rostervm":
+            reply = self.get_roster(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        elif action == "clone":
+            reply = self.clone(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+    
     
         
     ######################################################################################################
@@ -209,7 +245,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.add_jid(vm_jid, [GROUP_VM])
         
         log.info("starting xmpp threaded virtual machine")
-        vm = self.__create_threaded_vm(vm_jid, vm_password)
+        vm = self.create_threaded_vm(vm_jid, vm_password)
         
         log.info( "adding the requesting controller ({0}) to the VM's roster".format(requester))
         vm.get_instance().register_actions_to_perform_on_auth("add_jid", requester.getStripped())
@@ -257,7 +293,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     
-    def free_xmppvirtualmachine(self, iq):
+    def free(self, iq):
         """
         this method destroy a threaded L{TNArchipelVirtualMachine} with UUID given 
         as paylood in IQ and remove it from the hypervisor roster
@@ -334,7 +370,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return reply
     
     
-    def send_roster_virtualmachine(self, iq):
+    def get_roster(self, iq):
         """
         send the hypervisor roster content
         
@@ -356,51 +392,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
         return reply
     
-    
-    ######################################################################################################
-    ### XMPP Processing
-    ######################################################################################################
-    
-    def __process_iq_archipel_control(self, conn, iq):
-        """
-        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
-        
-        it understands IQ of type:
-            - alloc
-            - free
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        if action == "alloc":
-            reply = self.alloc_xmppvirtualmachine(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "free":
-            reply = self.free_xmppvirtualmachine(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "rostervm":
-            reply = self.send_roster_virtualmachine(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "clone":
-            reply = self.clone(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
     
   
 
