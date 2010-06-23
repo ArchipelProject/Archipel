@@ -23,6 +23,8 @@ TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
 TNArchipelTypeHypervisorControlAlloc        = @"alloc";
 TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
+TNArchipelTypeHypervisorControlClone        = @"clone";
+
 
 TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
@@ -40,6 +42,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     CPButton                _minusButton;
     CPButton                _plusButton;
+    CPButton                _cloneButton;
     CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
 }
@@ -110,7 +113,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     [_minusButton setEnabled:NO];
     
-    [buttonBarControl setButtons:[_plusButton, _minusButton]];
+    _cloneButton = [CPButtonBar minusButton];
+    [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-branch.png"] size:CPSizeMake(16, 16)]];
+    [_cloneButton setTarget:self];
+    [_cloneButton setAction:@selector(cloneVirtualMachine:)];
+    
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton]];
 }
 
 - (void)willLoad
@@ -221,7 +229,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (IBAction)addVirtualMachine:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
-    var uuid            = [CPString UUID];
+    var uuid    = [CPString UUID];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildName:@"archipel" withAttributes:{
@@ -328,6 +336,61 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
+
+- (IBAction)cloneVirtualMachine:(id)sender
+{
+    if (([_tableVirtualMachines numberOfRows] == 0) 
+        || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
+        || ([_tableVirtualMachines numberOfSelectedRows] > 1))
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select one (and only one) virtual machine"];
+         return;
+    }
+
+    var alert = [TNAlert alertWithTitle:@"Are you sure you want to clone this virtual machine ?"
+                                message:@"Cloning a Virtual Machine"
+                                delegate:self
+                                 actions:[["Clone", @selector(performCloneVirtualMachine:)], ["Cancel", nil]]];
+    [alert runModal];
+}
+
+- (void)performCloneVirtualMachine:(id)someUserInfo
+{
+    var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex];
+    var vm      = [_virtualMachinesDatasource objectAtIndex:index];
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
+    
+    [_tableVirtualMachines deselectAll];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildName:@"archipel" withAttributes:{ 
+        "action": TNArchipelTypeHypervisorControlClone,
+        "jid": [vm JID]}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didCloneVirtualMachine:) ofObject:self];          
+}
+
+- (void)didCloneVirtualMachine:(id)aStanza
+{
+    [buttonDeleteVM setEnabled:YES];
+    
+    if ([aStanza getType] == @"result")
+    {
+        CPLog.info(@"sucessfully cloning a virtual machine");
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been cloned"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+
+
+
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {

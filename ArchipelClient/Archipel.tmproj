@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/VirtualMachineControls/TNVirtualMachineControlsController.j</string>
+	<string>Modules.src/VirtualMachineVNC/TNVirtualMachineVNCController.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,14 +40,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>37</integer>
 				<key>line</key>
-				<integer>134</integer>
+				<integer>727</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>493</integer>
+			<integer>706</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>31</integer>
+				<key>line</key>
+				<integer>727</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>37</integer>
+				<key>line</key>
+				<integer>727</integer>
+			</dict>
 		</dict>
 		<key>Archipel.doxygen</key>
 		<dict>
@@ -1412,14 +1428,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>43</integer>
+				<integer>120</integer>
 				<key>line</key>
-				<integer>428</integer>
+				<integer>76</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>407</integer>
+			<integer>47</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>107</integer>
+				<key>line</key>
+				<integer>76</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>120</integer>
+				<key>line</key>
+				<integer>76</integer>
+			</dict>
 		</dict>
 		<key>Modules.src/VirtualMachineDefinition/Info.plist</key>
 		<dict>
@@ -1738,14 +1770,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>171</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>70</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>135</integer>
+			<integer>47</integer>
 		</dict>
 		<key>Modules/modules.plist</key>
 		<dict>
@@ -2523,6 +2555,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{24, 55}, {1126, 823}}</string>
+	<string>{{317, 21}, {1126, 823}}</string>
 </dict>
 </plist>

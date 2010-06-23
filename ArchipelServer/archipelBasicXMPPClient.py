@@ -175,14 +175,16 @@ class TNArchipelBasicXMPPClient(object):
         self.get_vcard()
         self.perform_all_registered_auth_actions()
         self.loop_status = LOOP_ON
-        #self.loop()
     
     
     def _inband_registration(self):
         """
         Do a in-band registration if auth fail
         """    
-        if (not self.auto_register) or (self.user_has_been_removed == True):    
+        if not self.auto_register:    
+            return
+        
+        if self.user_has_been_removed:
             return
         
         log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
@@ -285,7 +287,12 @@ class TNArchipelBasicXMPPClient(object):
         @type args: Array
         @param args: an array containing the arguments to pass to the method
         """
-        self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args})    
+        # if self.xmppclient and self.xmppclient.isConnected():
+        #     if hasattr(self, method_name):
+        #         m = getattr(self, method_name)
+        #         m(args)
+        # else:
+        self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args})
     
 
     def perform_all_registered_auth_actions(self):
@@ -526,13 +533,12 @@ class TNArchipelBasicXMPPClient(object):
         """
         self.loop_status = status
     
-    # FIXME: I really don't like the way I handle this.
+    # FIXME: I REALLY really don't like the way I handle this.
     def loop(self):
         """
         This is the main loop of the client
         FIXME : to be change in future (because it's piggy)
         """
-        self.loop_status = LOOP_ON
         while True:
             try:
                 #log.debug("LOOP for JID : " + str(self.jid))
@@ -545,9 +551,9 @@ class TNArchipelBasicXMPPClient(object):
                     if self.xmppclient and self.xmppclient.isConnected():
                         self.disconnect()
                     self.connect()
-                    #self.loop_status = LOOP_ON
                 elif self.loop_status == LOOP_OFF:
-                    self.disconnect()
+                    if self.xmppclient and self.xmppclient.isConnected():
+                        self.disconnect()
                     break
             except Exception as ex:
                 log.info("GREPME: Loop exception : %s" % ex)

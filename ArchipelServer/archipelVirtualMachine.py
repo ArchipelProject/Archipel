@@ -128,14 +128,16 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.maximum_lock_time = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
-        # whooo... this technic is dirty. was I drunk ? TODO! FIXME!
+        
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         self.hypervisor = hypervisor
         self.definition = None;
+        
         if not os.path.isdir(self.vm_own_folder):
             os.mkdir(self.vm_own_folder)
             
         self.register_for_messages()
+    
     
     
     def lock(self):
@@ -238,7 +240,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
-        
         self.push_change("virtualmachine", "initialized")
         
         self.domain = None
@@ -308,6 +309,28 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             except Exception as ex:
                 log.error("Unable to push state change : %s" % str(ex))
     
+    
+    def clone(self, info):
+        """
+        clone a vm from another
+        info is a dict that contains following keys
+            - definition : the xml object containing the libvirt definition
+            - path : the vm path to clone (will clone * in it)
+            - baseuuid : the base uuid of cloned vm, in order to replace it
+        """
+        xml         = info["definition"]
+        path        = info["path"]
+        baseuuid    = info["baseuuid"]
+        xmlstring   = str(xml)
+        xmlstring   = xmlstring.replace(baseuuid, self.uuid)
+        newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+        
+        log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
+        self.change_presence(presence_show="dnd", presence_status="Cloning...")
+        log.info("copying base virtual repository")
+        os.system("cp -a %s/* %s" % (path, self.vm_own_folder))
+        log.info("defining the cloned virtual machine")
+        self.define(newxml)
     
     
     ######################################################################################################
@@ -687,8 +710,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.libvirt_connection.defineXML(definitionXML)
         if not self.domain:
-               self.connect_libvirt()
+            self.connect_libvirt()
+        self.definition = xmldesc
         return xmldesc
+    
     
     def iq_define(self, iq):
         """
@@ -710,7 +735,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             if domain_uuid != self.jid.getNode():
                 raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
             
-            self.definition = self.define(domain_node)
+            self.define(domain_node)
             log.info("virtual machine XML is defined")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
@@ -719,10 +744,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
+    
     def undefine(self):
         self.domain.undefine()
         self.definition = None;
-        
+    
+    
     def iq_undefine(self, iq):
         """
         Undefine a virtual machine in the libvirt according to the XML data
@@ -747,40 +774,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
+     
     
-    # iq dependencies
-    # def dep_define(self, iq):
-    #     reply = None;
-    #     try:
-    #         raise Exception("Not implemented")
-    #     except Exception as ex:
-    #         reply = build_error_iq(self, ex, iq)
-    #     return reply
-    # 
-    # 
-    # def dep_add(self, iq):
-    #     reply = None;
-    #     try:
-    #         raise Exception("Not implemented")
-    #     except Exception as ex:
-    #         reply = build_error_iq(self, ex, iq)
-    #     return reply
-    #     
-    # def dep_remove(self, iq):
-    #     reply = None;
-    #     try:
-    #         raise Exception("Not implemented")
-    #     except Exception as ex:
-    #         reply = build_error_iq(self, ex, iq)
-    #     return reply
-    
-    ######################################################################################################
-    ### XMPP Processing
-    ######################################################################################################
-    
-    
-
-
     def __process_iq_archipel_control(self, conn, iq):
         """
         Invoked when new archipel:vm:control IQ is received. 
@@ -884,38 +879,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         elif action == "undefine":
             reply = self.iq_undefine(iq)
             conn.send(reply)
-            raise xmpp.protocol.NodeProcessed        
+            raise xmpp.protocol.NodeProcessed
+                      
     
     
-    # def __process_iq_archipel_dependence(self, conn, iq):
-    #     """
-    #     Invoked when new archipel:dependence IQ is received.
-    #     
-    #     it understands IQ of type:
-    #         - add
-    #         - remove
-    #         - define
-    #         
-    #     @type conn: xmpp.Dispatcher
-    #     @param conn: ths instance of the current connection that send the message
-    #     @type iq: xmpp.Protocol.Iq
-    #     @param iq: the received IQ
-    #     """
-    #     action = iq.getTag("query").getAttr("action")
-    #     log.debug("Dependence IQ received from %s with type %s" % (iq.getFrom(), action))
-    #     
-    #     if action == "add":
-    #         reply = self.dep_add(iq)
-    #         conn.send(reply)
-    #         raise xmpp.protocol.NodeProcessed
-    #         
-    #     if action == "remove":
-    #         reply = self.dep_remove(iq)
-    #         conn.send(reply)
-    #         raise xmpp.protocol.NodeProcessed
-    #         
-    #     if action == "define":
-    #         reply = self.dep_define(iq)
-    #         conn.send(reply)
-    #         raise xmpp.protocol.NodeProcessed
-    
+  

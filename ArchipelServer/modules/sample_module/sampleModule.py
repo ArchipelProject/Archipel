@@ -49,7 +49,7 @@ class TNSampleModule:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if iqType == "do-something":
+        if action == "do-something":
             reply = self.__do_something(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed

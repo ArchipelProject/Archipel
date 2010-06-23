@@ -201,6 +201,31 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
+    def alloc(self, uuid, requester):
+        vm_password = ''.join([choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
+        vm_jid      = "{0}@{1}".format(uuid, self.xmppserveraddr)
+        
+        log.info( "adding the xmpp vm ({0}) to my roster".format(vm_jid))
+        self.add_jid(vm_jid, [GROUP_VM])
+        
+        log.info("starting xmpp threaded virtual machine")
+        vm = self.__create_threaded_vm(vm_jid, vm_password)
+        
+        log.info( "adding the requesting controller ({0}) to the VM's roster".format(requester))
+        vm.get_instance().register_actions_to_perform_on_auth("add_jid", requester.getStripped())
+        
+        log.info( "registering the new VM in hypervisor's memory")
+        self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid, vm_password, datetime.datetime.now(), 'no comment'))
+        self.database.commit()
+        self.virtualmachines[uuid] = vm
+        
+        self.update_presence()
+        log.info( "XMPP Virtual Machine instance sucessfully initialized")
+        
+        return vm.get_instance()
+        
+        
+        
     def alloc_xmppvirtualmachine(self, iq):
         """
         this method creates a threaded L{TNArchipelVirtualMachine} with UUID given 
@@ -214,31 +239,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         reply = iq.buildReply("result")
         
         try:
-            domain_uuid    = iq.getTag("query").getTag("archipel").getAttr("uuid")
-
-            vm_password = ''.join([choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
+            domain_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+            requester   = iq.getFrom();
             
-            vm_jid      = "{0}@{1}".format(domain_uuid, self.xmppserveraddr)
+            vm = self.alloc(domain_uuid, requester);
             
-            log.info( "adding the xmpp vm ({0}) to my roster".format(vm_jid))
-            self.add_jid(vm_jid, [GROUP_VM])
-            
-            vm = self.__create_threaded_vm(vm_jid, vm_password)
-            log.info( "XMPP VM thread started")
-            
-            log.info( "adding the requesting controller ({0}) to the VM's roster".format(iq.getFrom()))
-            vm.get_instance().register_actions_to_perform_on_auth("add_jid", iq.getFrom().getStripped())
-            
-            log.info( "registering the new VM in hypervisor's memory")
-            self.database.execute("insert into virtualmachines values(?,?,?,?)", (vm_jid,vm_password, datetime.datetime.now(), 'no comment'))
-            self.database.commit()
-            self.virtualmachines[domain_uuid] = vm
-            
-            self.update_presence()
-            
-            payload = xmpp.Node("virtualmachine", attrs={"jid": vm_jid})
+            payload = xmpp.Node("virtualmachine", attrs={"jid": vm.jid})
             reply.setQueryPayload([payload])
-            log.info( "XMPP Virtual Machine instance sucessfully initialized")
             self.push_change("hypervisor", "alloc");
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), domain_uuid))
         except libvirt.libvirtError as ex:
@@ -247,6 +254,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC)
             
         return reply
+    
     
     
     def free_xmppvirtualmachine(self, iq):
@@ -300,6 +308,32 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return reply
     
    
+    def clone(self, iq):
+        """
+        alloc a virtual as a clone of another
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply       = iq.buildReply("result")
+            vmjid       = xmpp.JID(jid=iq.getTag("query").getTag("archipel").getAttr("jid"))
+            vmuuid      = vmjid.getNode();
+            xmppvm      = self.virtualmachines[vmuuid].get_instance();
+            xmldesc     = xmppvm.definition;
+            requester   = iq.getFrom();
+            newuuid     = str(uuid.uuid1())
+
+            newvm = self.alloc(newuuid, requester);
+            newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.vm_own_folder, "baseuuid": vmuuid})
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
+    
+    
     def send_roster_virtualmachine(self, iq):
         """
         send the hypervisor roster content
@@ -360,6 +394,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         elif action == "rostervm":
             reply = self.send_roster_virtualmachine(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "clone":
+            reply = self.clone(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
