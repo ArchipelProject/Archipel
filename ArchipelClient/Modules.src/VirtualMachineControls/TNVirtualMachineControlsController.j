@@ -294,27 +294,26 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
-/* vm controls */
 - (void)play
 {
-    var stanza  = [TNStropheStanza iqWithType:@"set"];
+    var stanza = [TNStropheStanza iqWithType:@"set"];
 
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlCreate}];
+    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineControlCreate}];
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPlay:) ofObject:self];
 }
 
 - (BOOL)didPlay:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType = [aStanza getType];
+    var responseFrom = [aStanza getFrom];
 
     if (responseType == @"result")
     {
-        var libvirtID = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
+        var libvirtID   = [[aStanza firstChildWithName:@"domain"] valueForAttribute:@"id"];
+        var growl       = [TNGrowlCenter defaultCenter];
         
-        var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
     }
     else
@@ -427,7 +426,8 @@ TNArchipelTransportBarReboot    = 4;
 - (void)destroy
 {
     var alert = [TNAlert alertWithTitle:@"Unplug Virtual Machine"
-                                message:@"Destroying virtual machine is dangerous. It is equivalent to remove power plug of a real computer"
+                                message:@"Unplug this virtual machine ?"
+                                informativeMessage:@"Destroying virtual machine is dangerous. It is equivalent to remove power plug of a real computer"
                                 delegate:self
                                  actions:[["Unplug", @selector(performDestroy:)], ["Cancel", @selector(doNotPerformDestroy:)]]];
 

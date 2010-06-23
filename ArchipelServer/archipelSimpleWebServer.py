@@ -64,6 +64,10 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             data = f.read()
             if self.path == "index.html":
                 data = data.replace("::PORT::", options["port"])
+                if options.has_key("scaling"):
+                    data = data.replace("::SCALE::", options["scaling"])
+                else:
+                    data = data.replace("::SCALE::", "100")
             self.wfile.write(data)
             f.close()
         except:

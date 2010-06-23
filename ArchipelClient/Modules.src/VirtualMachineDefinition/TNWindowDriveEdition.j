@@ -80,15 +80,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     if (![self isVisible])
     {
         if ([_drive device] == @"disk")
-        {
-            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
-            [self getDisksInfo];
-        }
-        else if ([_drive device] == @"cdrom")
-        {
             [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
-            [self getISOsInfo];
-        }
+        else if ([_drive device] == @"cdrom")
+            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
+        
+        [self performRadioDriveTypeChanged:nil];
         
         [buttonType selectItemWithTitle:[_drive type]];
         [buttonTarget selectItemWithTitle:[_drive target]];
@@ -111,8 +107,6 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
     [buttonTarget selectItemWithTitle:[_drive target]];
 }
-
-
 
 - (IBAction)save:(id)sender
 {
@@ -148,20 +142,24 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     
     if (driveType == @"Hard drive")
     {
-        [self getDisksInfo];
         if ([buttonBus title] == TNXMLDescDiskBusIDE)
             [buttonTarget selectItemWithTitle:@"hda"];
         else
             [buttonTarget selectItemWithTitle:@"sda"];
+            
+        [self getDisksInfo];
     }
     else
     {
-        [self getISOsInfo];
         if ([buttonBus title] == TNXMLDescDiskBusIDE)
             [buttonTarget selectItemWithTitle:@"hdc"];
         else
             [buttonTarget selectItemWithTitle:@"sdc"];
+            
+        [self getISOsInfo];
     }
+    
+    [self save:nil];
 }
 
 
@@ -205,19 +203,20 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             if ([item stringValue] == [_drive source])
                 [buttonSource selectItem:item];
         }
+        
+        [self save:nil];
     }
-    
-    [self save:nil];
 }
+
+
 
 -(void)getISOsInfo
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
-    [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineISOGet}];
-        
+    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineISOGet}];
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
@@ -225,22 +224,22 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
-
+    
     if (responseType == @"result")
     {
         var isos = [aStanza childrenWithName:@"iso"];
         [buttonSource removeAllItems];
-
+        
         for (var i = 0; i < [isos count]; i++)
         {
             var iso     = [isos objectAtIndex:i];
             var label   = [iso valueForAttribute:@"name"];
             var item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
-
+            
             [item setStringValue:[iso valueForAttribute:@"path"]];
             [buttonSource addItem:item];
         }
-
+        
         for (var i = 0; i < [[buttonSource itemArray] count]; i++)
         {
             var item  = [[buttonSource itemArray] objectAtIndex:i];
@@ -248,8 +247,9 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             if ([item stringValue] == [_drive source])
                 [buttonSource selectItem:item];
         }
+        
+        [self save:nil];
     }
-    [self save:nil];
 }
 
 

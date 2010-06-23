@@ -11,11 +11,15 @@
      variable.
 -->
 
-<HTML>
-<BODY>
-<APPLET CODE=VncViewer.class ARCHIVE=VncViewer.jar WIDTH=800 HEIGHT=600>
-<param name=PORT value=::PORT::>
-<param name="Show controls" value="no">
-</APPLET>
-</BODY>
-</HTML>
+<html>
+    <head>
+        
+    </head>
+    <body style="margin: 0px; padding: 0px">
+        <applet code=VncViewer.class archive=VncViewer.jar width=100% height=100% style="backgroud-color: black">
+            <param name=PORT value=::PORT::>
+            <param name="Show controls" value="no">
+            <param name="Scaling factor" value="::SCALE::">
+        </applet>
+    </body>
+</html>

@@ -284,15 +284,23 @@
 
 @implementation TNAlert : CPObject
 {
-    id      _delegate @accessors(property=delegate);
-    id      _userInfo @accessors(property=userInfo);
-    CPAlert _alert;
+    id      _delegate   @accessors(property=delegate);
+    id      _userInfo   @accessors(property=userInfo);
+    CPAlert _alert      @accessors(getter=alert);
     CPArray _actions;
 }
 
 + (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage delegate:(id)aDelegate actions:(CPArray)someActions
 {
     var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage delegate:aDelegate actions:someActions];
+    
+    return tnalert;
+}
+
++ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage informativeMessage:(CPString)anInfo delegate:(id)aDelegate actions:(CPArray)someActions
+{
+    var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage informativeMessage:anInfo delegate:aDelegate actions:someActions];
+    
     return tnalert;
 }
 
@@ -310,6 +318,16 @@
         
         for (var i = 0; i < [_actions count]; i++)
             [_alert addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
+    }
+    
+    return self;
+}
+
+- (TNAlert)initWithTitle:(CPString)aTitle message:(CPString)aMessage informativeMessage:(CPString)anInfo delegate:(id)aDelegate actions:(CPArray)someActions
+{
+    if (self = [self initWithTitle:aTitle message:aMessage delegate:aDelegate actions:someActions])
+    {
+        [_alert setInformativeText:anInfo];
     }
     
     return self;

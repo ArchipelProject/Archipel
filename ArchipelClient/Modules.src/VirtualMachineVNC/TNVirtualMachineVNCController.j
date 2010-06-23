@@ -39,6 +39,7 @@ TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
 */
 TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
+TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 
 /*! @ingroup virtualmachinevnc
@@ -50,6 +51,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     @outlet CPTextField     fieldJID;
     @outlet CPTextField     fieldName;
     @outlet CPView          maskingView;
+    @outlet CPSlider        sliderScaling;
 
     CPString                _url;
     CPString                _VMHost;
@@ -72,6 +74,7 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     
     [mainScrollView setDocumentView:_vncWebView];
     [mainScrollView setAutohidesScrollers:YES];
+    [sliderScaling setContinuous:NO];
 }
 
 /*! TNModule implementation
@@ -171,10 +174,22 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
     if ([aStanza getType] == @"result")
     {
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
+        var defaults    = [TNUserDefaults standardUserDefaults];
+        var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
+        var lastScale   = [defaults objectForKey:key];
         _vncDisplay     = [displayNode valueForAttribute:@"port"];
         _VMHost         = [displayNode valueForAttribute:@"host"];
         
-        _url            = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        
+        _url = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
+        
+        if (lastScale)
+        {
+            [sliderScaling setValue:lastScale];
+            _url += @"&scaling=" + lastScale;
+        }
+        else
+            [sliderScaling setValue:100];
         
         [_vncWebView setMainFrameURL:_url];
     }
@@ -211,6 +226,20 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
     [VNCWindow orderFront:nil];
     [platformVNCWindow orderFront:nil];
+}
+
+- (IBAction)changeScale:(id)sender
+{
+    if (_url)
+    {
+        var defaults = [TNUserDefaults standardUserDefaults];
+        
+        _url = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay + @"&scaling=" + [sliderScaling intValue];
+        
+        var key = TNArchipelVNCScaleFactor + [[self entity] JID];
+        [defaults setObject:[sliderScaling intValue] forKey:key];
+        [_vncWebView setMainFrameURL:_url];
+    }
 }
 
 @end

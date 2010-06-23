@@ -199,6 +199,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     [_castsDatasource setFilter:[sender stringValue]];
     [_mainOutlineView reloadData];
+    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
 }
 
 - (IBAction)openNewVMCastURLWindow:(id)sender
@@ -492,6 +493,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     [_castsDatasource setFilter:[sender stringValue]];
     [_mainOutlineView reloadData];
+    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
 }
 
 - (IBAction)clickOnFilterCheckBox:(id)sender
