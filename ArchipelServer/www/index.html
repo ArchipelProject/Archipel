@@ -16,10 +16,12 @@
         
     </head>
     <body style="margin: 0px; padding: 0px">
-        <applet code=VncViewer.class archive=VncViewer.jar width=100% height=100% style="backgroud-color: black">
-            <param name=PORT value=::PORT::>
-            <param name="Show controls" value="no">
-            <param name="Scaling factor" value="::SCALE::">
-        </applet>
+        <div style="cursor: none;">
+            <applet code=VncViewer.class archive=VncViewer.jar width="100%" height="100%">
+                <param name=PORT value=::PORT::>
+                <param name="Show controls" value="no">
+                <param name="Scaling factor" value="::SCALE::">
+            </applet>
+        </div>
     </body>
 </html>

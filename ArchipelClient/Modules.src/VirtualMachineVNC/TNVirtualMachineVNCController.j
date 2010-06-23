@@ -52,6 +52,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPTextField     fieldName;
     @outlet CPView          maskingView;
     @outlet CPSlider        sliderScaling;
+    @outlet CPButton        buttonFullscreen;
 
     CPString                _url;
     CPString                _VMHost;
@@ -67,6 +68,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [fieldJID setSelectable:YES];
     
+    var imageFullscreen = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-fullscreen.png"] size:CPSizeMake(16, 16)]
+    [buttonFullscreen setImage:imageFullscreen];
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
 
     _vncWebView = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
@@ -212,7 +215,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var vncWebViewForWindow = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
     
     [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [vncWebViewForWindow setMainFrameURL:_url];
+    [vncWebViewForWindow setMainFrameURL:@"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay];
     //[scrollView setDocumentView:vncWebViewForWindow];
     //[scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     
