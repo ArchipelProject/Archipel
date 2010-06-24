@@ -22,11 +22,7 @@ import commands
 import xmpp
 import os
 import archipel
-
-try:
-    import libvirt
-except ImportError:
-    pass
+import libvirt
 
 ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE     = -7001
 ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE   = -7002
@@ -40,7 +36,7 @@ class TNHypervisorNetworks:
     
     def __init__(self, entity):
         self.entity = entity
-        self.libvirt_connection = libvirt.open(None)
+        self.libvirt_connection = libvirt.open(self.entity.configuration.get("GLOBAL", "libvirt_uri"))
         if self.libvirt_connection == None:
             log.error( "unable to connect libvirt")
             sys.exit(0) 

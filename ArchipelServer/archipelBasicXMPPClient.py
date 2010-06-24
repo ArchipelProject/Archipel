@@ -76,7 +76,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient             = None
         self.vcard                  = None
         self.password               = password
-        self.jid                    = xmpp.protocol.JID(jid.lower())
+        self.jid                    = jid
         self.ressource              = socket.gethostname()
         self.roster                 = None
         self.roster_retreived       = False
@@ -84,6 +84,7 @@ class TNArchipelBasicXMPPClient(object):
         self.auto_register          = auto_register
         self.auto_reconnect         = auto_reconnect
         self.messages_registrar     = []
+        self.isAuth                 = False;
         self.loop_status            = LOOP_OFF
         
         log.info("jid defined as %s/%s" % (str(self.jid), self.ressource))
@@ -132,6 +133,7 @@ class TNArchipelBasicXMPPClient(object):
         """
         log.info("trying to authentify the client")
         if self.xmppclient.auth(self.jid.getNode(), self.password, self.ressource) == None:
+            self.isAuth = False;
             if (self.auto_register):
                 log.info("starting registration, according to propertie auto_register")
                 self._inband_registration()
@@ -145,8 +147,10 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.sendInitPresence()
         self.roster = self.xmppclient.getRoster()
         self.get_vcard()
+        self.isAuth = True;
         self.perform_all_registered_auth_actions()
         self.loop_status = LOOP_ON
+        
     
     
     def connect(self):
@@ -166,6 +170,7 @@ class TNArchipelBasicXMPPClient(object):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
             self.loop_status = LOOP_OFF
+            self.isAuth = False;
             self.xmppclient.disconnect()
     
     
@@ -200,8 +205,6 @@ class TNArchipelBasicXMPPClient(object):
         elif resp_iq.getType() == "result":
             log.info("the registration complete")
             self.loop_status = LOOP_RESTART
-            # self.disconnect()
-            # self.connect()
     
     
     def _inband_unregistration(self):
@@ -234,10 +237,13 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         
+        log.info("handlers registred")
+        
         for method in self.__class__.__dict__:
             if not method.find("__module_register_stanza__") == -1:
                 m = getattr(self, method)
                 m()
+    
     
     
     def __process_presence_subscribe(self, conn, presence):
@@ -250,9 +256,7 @@ class TNArchipelBasicXMPPClient(object):
         @param presence: the received IQ
         """        
         log.info("Subscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
-        #conn.send(xmpp.Presence(to=presence.getFrom(), typ="subscribed"))
         self.add_jid(presence.getFrom())
-        
         raise xmpp.NodeProcessed
     
     
@@ -268,7 +272,6 @@ class TNArchipelBasicXMPPClient(object):
         log.info("Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
         #conn.send(xmpp.Presence(to=presence.getFrom(), typ="unsubscribed"))
         self.remove_jid(presence.getFrom())
-        
         raise xmpp.NodeProcessed
     
     
@@ -276,7 +279,7 @@ class TNArchipelBasicXMPPClient(object):
     ### Public method
     ######################################################################################################
         
-    def register_actions_to_perform_on_auth(self, method_name, args=[]):
+    def register_actions_to_perform_on_auth(self, method_name, args=[], oneshot=False):
         """
         Allows object to register actions (method of this class) to perform
         when the XMPP Client will be online.
@@ -286,41 +289,39 @@ class TNArchipelBasicXMPPClient(object):
         @type args: Array
         @param args: an array containing the arguments to pass to the method
         """
-        # if self.xmppclient and self.xmppclient.isConnected():
-        #     if hasattr(self, method_name):
-        #         m = getattr(self, method_name)
-        #         m(args)
-        # else:
-        self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args})
+        if self.isAuth:
+            if not oneshot:
+                self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args, "oneshot": oneshot})
+            if hasattr(self, method_name):
+                m = getattr(self, method_name)
+                if args:
+                    m(args)
+                else:
+                    m()
+        else:
+            self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args, "oneshot": oneshot})
     
     
     def perform_all_registered_auth_actions(self):
         """
         Parse the all the registered actions for connection, and execute them
         """
-        for action in self.registered_actions_to_perform_on_connection:
-            if hasattr(self, action["name"]):
-                m = getattr(self, action["name"])
-                if action["args"] != None:
-                    m(action["args"])
-                else:
-                    m()
-    
-    
-    def perform_all_registered_roster_actions(self):
-        """
-        Parse the all the registered actions for roster, and execute them
-        """
-        for action in self.registered_actions_to_perform_on_roster_retrieved:
-            if hasattr(self, action["name"]):
-                m = getattr(self, action["name"])
-                if action["args"] != None:
-                    m(action["args"])
-                else:
-                    m()
-        self.registered_actions_to_perform_on_roster_retrieved = []   
-    
+        if not self.isAuth:
+            return
         
+        for action in self.registered_actions_to_perform_on_connection:
+            print "performing action %s" % str(action)
+            if hasattr(self, action["name"]):
+                m = getattr(self, action["name"])
+                if action["args"] != None:
+                    m(action["args"])
+                else:
+                    m()
+            if action["oneshot"]:
+                log.info("performed action %s is oneshot. removing" % str(action))
+                self.registered_actions_to_perform_on_connection.remove(action)
+    
+    
     def change_presence(self, presence_show=None, presence_status=None):
         self.xmppstatus     = presence_status
         self.xmppstatusshow = presence_show
@@ -361,35 +362,48 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.send(pres)
     
     
-    def push_change(self, namespace, change):
+    def push_change(self, namespace, change, excludedgroups=None):
         """push a change using archipel push system"""
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
-        #self.roster = self.xmppclient.getRoster()
-        stanzas = []
-        for item, info in self.roster.getRawRoster().iteritems():
-            for resource, res_info in info["resources"].iteritems():
-                send_to = item + "/" + resource
-                if not item == self.jid.getStripped():
-                    push_message = xmpp.Message(typ="headline", to=send_to)
-                    push_message.addChild(name="x", namespace=ns, attrs={"change": change})
-                    log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
-                    #self.mass_sender.stanzas.append(push_message)
-                    self.xmppclient.send(push_message)
-
-    
-    
-    def shout(self, subject, message):
-        """send a message to evrybody in roster"""
-        #self.roster = self.xmppclient.getRoster()
         
         for item, info in self.roster.getRawRoster().iteritems():
-            for resource, res_info in info["resources"].iteritems():
-                if not item == self.jid.getStripped():
+            excluded = False;
+            
+            if excludedgroups:
+                for excludedgroup in excludedgroups:
+                    if info["groups"] and excludedgroup in info["groups"]:
+                        excluded = True
+                        break;
+            
+            if not excluded:
+                for resource, res_info in info["resources"].iteritems():
                     send_to = item + "/" + resource
-                    broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
-                    log.info("shouting message message to %s: %s" % (send_to, message))
-                    #self.mass_sender.stanzas.append(broadcast)
-                    self.xmppclient.send(broadcast)
+                    if not item == self.jid.getStripped():
+                        push_message = xmpp.Message(typ="headline", to=send_to)
+                        push_message.addChild(name="x", namespace=ns, attrs={"change": change})
+                        log.info("pushing " + ns + " / " + change + " to item " + str(send_to))
+                        self.xmppclient.send(push_message)
+    
+    
+    
+    def shout(self, subject, message, excludedgroups=None):
+        """send a message to evrybody in roster"""
+        for item, info in self.roster.getRawRoster().iteritems():
+            excluded = False;
+            
+            if excludedgroups:
+                for excludedgroup in excludedgroups:
+                    if info["groups"] and excludedgroup in info["groups"]:
+                        excluded = True
+                        break;
+            
+            if not excluded:
+                for resource, res_info in info["resources"].iteritems():
+                    if not item == self.jid.getStripped():
+                        send_to = item + "/" + resource
+                        broadcast = xmpp.Message(to=send_to, body=message, typ="headline")
+                        log.info("shouting message message to %s: %s" % (send_to, message))
+                        self.xmppclient.send(broadcast)
     
     
     def add_jid(self, jid, groups=[]):
@@ -399,14 +413,14 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to add
         """
-        log.info("adding JID {0} to roster instance {1}".format(jid, str(id(self))))
+        log.info("adding JID %s to roster instance %s" % (str(jid), str(self.jid)))
         
         if not self.roster:
             self.roster = self.xmppclient.getRoster()
         
-        self.roster.Subscribe(jid)
-        self.roster.Authorize(jid)
         self.roster.setItem(jid, groups=groups)
+        self.roster.Authorize(jid)
+        self.roster.Subscribe(jid)
         
         self.push_change("subscription", "added")
     
@@ -418,6 +432,7 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to remove
         """
+        log.info("removed jid %s" % jid)
         self.roster.Unsubscribe(jid)
         self.roster.Unauthorize(jid)
         self.roster.delItem(jid)

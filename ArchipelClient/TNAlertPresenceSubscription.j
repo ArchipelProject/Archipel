@@ -40,7 +40,7 @@
     if (self = [super init])
     {
         var contactName = [aStanza getFrom];
-        var msg         = contactName + " want ask you subscription. Do you want to add it ?";
+        var msg         = contactName + " is asking you subscription. Do you want to add it ?";
 
         _stanza = aStanza;
         _roster = aRoster;
@@ -48,7 +48,7 @@
         [self setDelegate:self];
         [self setTitle:@"Presence Subscription"];
         [self setMessageText:msg];
-        [self addButtonWithTitle:@"Yes"];
+        [self addButtonWithTitle:@"Authorize"];
         [self addButtonWithTitle:@"No"];
     }
 

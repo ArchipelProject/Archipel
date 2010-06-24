@@ -38,11 +38,8 @@ import commands
 from utils import *
 from archipelBasicXMPPClient import *
 from threading import Timer
-
-try:
-    import libvirt
-except ImportError:
-    pass
+from libvirtEventLoop import *
+import libvirt
 
 
 VIR_DOMAIN_NOSTATE	            = 0
@@ -53,8 +50,6 @@ VIR_DOMAIN_SHUTDOWN	            = 4
 VIR_DOMAIN_SHUTOFF	            = 5
 VIR_DOMAIN_CRASHED	            = 6
 
-
-
 NS_ARCHIPEL_STATUS_RUNNING      = "Running"
 NS_ARCHIPEL_STATUS_PAUSED       = "Paused"
 NS_ARCHIPEL_STATUS_SHUTDOWNED   = "Off"
@@ -64,10 +59,6 @@ NS_ARCHIPEL_STATUS_NOT_DEFINED  = "Not defined"
 NS_ARCHIPEL_VM_CONTROL          = "archipel:vm:control"
 NS_ARCHIPEL_VM_DEFINITION       = "archipel:vm:definition"
 NS_ARCHIPEL_VM_DEPENDENCE       = "archipel:vm:dependence"
-
-NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE    = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE";
-NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD         = "NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD";
-
 
 ARCHIPEL_ERROR_CODE_VM_CREATE       = -1001
 ARCHIPEL_ERROR_CODE_VM_SUSPEND      = -1002
@@ -81,27 +72,6 @@ ARCHIPEL_ERROR_CODE_VM_INFO         = -1009
 ARCHIPEL_ERROR_CODE_VM_VNC          = -1010
 ARCHIPEL_ERROR_CODE_VM_XMLDESC      = -1011
 ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
-
-
-class TNArchipelVirtualMachineRunningState:
-    
-    def __init__(self, vm, check_type=NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE, command=None, result=VIR_DOMAIN_RUNNING):
-        self.vm = vm
-        self.check_type = check_type
-        self.command = command
-        self.result = result
-    
-    def process_check(self):
-        if self.check_type == NS_ARCHIPEL_VM_DEPENDENCE_TYPE_LIBVIRT_STATE:
-            if self.vm.info()[0] == self.result:
-                return True
-        
-        if self.check_type == NS_ARCHIPEL_VM_DEPENDENCE_TYPE_UNIX_CMD:
-            if command.getoutput(self.command) == self.result:
-                return True
-        
-        return False
-        
 
 
 
@@ -118,7 +88,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
         
         self.hypervisor         = hypervisor
-        self.libvirt_connection = libvirt.open(self.configuration.get("HYPERVISOR", "hypervisor_uri"))
+        self.libvirt_connection = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
         self.domain             = None
         self.definition         = None
         self.uuid               = self.jid.getNode()
@@ -212,17 +182,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.register_handler(self)
     
     
-    def disconnect(self):
-        """
-        Close the connections to libvirt and XMPP server. it overrides the super class 
-        method in order to connect also from libvirt
-        """
-        if self.libvirt_connection:
-            self.libvirt_connection.close()
-        
-        TNArchipelBasicXMPPClient.disconnect(self)
-    
-    
     def remove_own_folder(self):
         """
         remove the folder of the virtual with all its contents
@@ -255,74 +214,43 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
-        self.push_change("virtualmachine", "initialized")
-        
-        self.domain = None
-        self.libvirt_connection = None
-        
-        self.uuid = self.jid.getNode()
-        self.libvirt_connection = libvirt.open(None)
-        if self.libvirt_connection == None:
-            log.error("unable to connect hypervisor")
-            sys.exit(0) 
-        log.info("connected to hypervisor using libvirt")
-        
         try:
-            self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
+            self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
+            self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
             log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
-            
-            if self.domain:
-                self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-            
-            # register for libvirt handlers            
-            self.libvirt_connection.domainEventRegister(self.on_domain_event,None)
-            
-            dominfo = self.domain.info()
-            log.info("virtual machine state is %d" %  dominfo[0])
-            if dominfo[0] == VIR_DOMAIN_RUNNING:
-                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-            elif dominfo[0] == VIR_DOMAIN_PAUSED:
-                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
-            elif dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN:
-                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-        except libvirt.libvirtError as ex:
-            if ex.get_error_code() == 42:
-                log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.domain = None
-                self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
-            else:
-                log.error("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
-                self.change_presence("dnd", NS_ARCHIPEL_STATUS_ERROR)
+            self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
+            self.set_presence_according_to_libvirt_info()
         except Exception as ex:
-            log.error("unexpected exception : " + str(ex))
-            sys.exit(0)
+            log.error("can't connect to libvirt : " + str(ex))
+            self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
+            
     
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
-        if dom.UUID() == self.domain.UUID():
-            log.info("libvirt event received: %d with detail %s" % (event, detail))
+        log.info("libvirt event received: %d with detail %s" % (event, detail))
+        try:
+            if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+                self.push_change("virtualmachine:control", "created")
+            elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
+                self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
+                self.push_change("virtualmachine:control", "suspended")
+            elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
+                self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
+                self.push_change("virtualmachine:control", "resumed")
+            elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
+                self.push_change("virtualmachine:control", "shutdowned")
+            elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
+                self.push_change("virtualmachine:definition", "undefined")
+            elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
+                self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
+                self.push_change("virtualmachine:definition", "defined")
+        except Exception as ex:
+            log.error("Unable to push state change : %s" % str(ex))
+        finally:
             self.unlock()
-            try:
-                if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
-                    self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-                    self.push_change("virtualmachine:control", "created")
-                elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
-                    self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
-                    self.push_change("virtualmachine:control", "suspended")
-                elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
-                    self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-                    self.push_change("virtualmachine:control", "resumed")
-                elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
-                    self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-                    self.push_change("virtualmachine:control", "shutdowned")
-                elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
-                    self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
-                    self.push_change("virtualmachine:definition", "undefined")
-                elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
-                    self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-                    self.push_change("virtualmachine:definition", "defined")
-            except Exception as ex:
-                log.error("Unable to push state change : %s" % str(ex))
     
     
     def clone(self, info):

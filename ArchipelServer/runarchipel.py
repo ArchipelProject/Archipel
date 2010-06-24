@@ -20,6 +20,7 @@ import os, sys, commands
 import new
 import getopt
 import archipel
+import xmpp
 import utils
 from archipelSimpleWebServer import *
 
@@ -53,7 +54,7 @@ def main():
     httpd.start()
 
     # initializing the hypervisor XMPP entity
-    jid         = config.get("HYPERVISOR", "hypervisor_xmpp_jid")
+    jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
     
