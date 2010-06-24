@@ -226,9 +226,11 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show="dnd", presence_status="Deleting a drive...")
             
             os.system("rm -rf " + secure_disk_path)
-
-            devices_node = self.entity.definition.getTag('devices')
-            disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
+            
+            disk_nodes = []
+            if self.entity.definition:
+                devices_node = self.entity.definition.getTag('devices')
+                disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
             
             if query_node.getTag("archipel").getAttr("undefine") ==  "yes":
                 have_undefined_at_least_on_disk = False
@@ -246,7 +248,7 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
             reply = iq.buildReply("result")
-            log.info( " disk deleted")
+            log.info("disk %s deleted" % secure_disk_path)
             self.entity.push_change("disk", "deleted")
             self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
         except Exception as ex:

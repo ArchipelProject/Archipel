@@ -102,7 +102,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             os.mkdir(self.vm_own_folder)
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
-        self.register_actions_to_perform_on_auth("connect_libvirt", None)
+        self.register_actions_to_perform_on_auth("connect_domain", None)
         self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         
         self.register_for_messages()
@@ -191,6 +191,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def set_presence_according_to_libvirt_info(self):
         try:
+            self.push_change("virtualmachine:definition", "defined")
+            
             dominfo = self.domain.info()
             log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == VIR_DOMAIN_RUNNING:
@@ -207,7 +209,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
     
     
-    def connect_libvirt(self):
+    def connect_domain(self):
         """
         Initialize the connection to the libvirt first, and
         then to the domain by looking the uuid used as JID Node
@@ -449,7 +451,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.libvirt_connection.defineXML(definitionXML)
         if not self.domain:
-            self.connect_libvirt()
+            self.connect_domain()
         self.definition = xmldesc
         return xmldesc
     

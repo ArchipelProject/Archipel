@@ -214,9 +214,15 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 {
     var growl   = [TNGrowlCenter defaultCenter];
     var code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"];
-    var msg     = [[aStanza firstChildWithName:@"text"] text]
+    var type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"];
     
-    [growl pushNotificationWithTitle:@"Error (" + code + ")" message:msg icon:TNGrowlIconError];
+    var msg;
+    if ([aStanza firstChildWithName:@"text"])
+        msg     = [[aStanza firstChildWithName:@"text"] text]
+    else
+        msg     = "No message provided"
+        
+    [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
     CPLog.error(msg);
 }
 

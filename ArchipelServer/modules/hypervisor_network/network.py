@@ -154,7 +154,7 @@ class TNHypervisorNetworks:
             reply = iq.buildReply("result")
             self.libvirt_connection.networkDefineXML(str(network_node))
             log.info( "virtual network XML is defined")
-            self.entity.push_change("network", "defined")
+            self.entity.push_change("network", "defined", excludedgroups=['virtualmachines'])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -179,7 +179,7 @@ class TNHypervisorNetworks:
             libvirt_network.undefine()
             reply = iq.buildReply("result")
             log.info( "virtual network XML is undefined")
-            self.entity.push_change("network", "undefined")
+            self.entity.push_change("network", "undefined", excludedgroups=['virtualmachines'])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -204,8 +204,8 @@ class TNHypervisorNetworks:
             libvirt_network.create()
             reply = iq.buildReply("result")
             log.info( "virtual network created")
-            self.entity.push_change("network", "created")
-            self.entity.shout("network", "Network %s has been started by %s." % (network_uuid, iq.getFrom()))
+            self.entity.push_change("network", "created", excludedgroups=['virtualmachines'])
+            self.entity.shout("network", "Network %s has been started by %s." % (network_uuid, iq.getFrom()), excludedgroups=['virtualmachines'])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -230,8 +230,8 @@ class TNHypervisorNetworks:
             libvirt_network.destroy()
             reply = iq.buildReply("result")
             log.info( "virtual network destroyed")
-            self.entity.push_change("network", "destroyed")
-            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
+            self.entity.push_change("network", "destroyed", excludedgroups=['virtualmachines'])
+            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()), excludedgroups=['virtualmachines'])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:

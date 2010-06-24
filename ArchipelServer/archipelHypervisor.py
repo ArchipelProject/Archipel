@@ -45,6 +45,7 @@ NS_ARCHIPEL_STATUS_ONLINE       = "Online"
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC    = -9001
 ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE     = -9002
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER   = -9003
+ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE    = -9904
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -118,7 +119,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.libvirt_connection = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
         if self.libvirt_connection == None:
             log.error( "unable to connect libvirt")
-            sys.exit(0) 
+            sys.exit(-42) 
         log.info( "connected to  libvirt")
         
         ## start the run loop
@@ -250,13 +251,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower())
         
         log.info( "adding the xmpp vm %s to my roster" % (str(vm_jid)))
-        self.add_jid(vm_jid, [GROUP_VM])
+        self.roster.Subscribe(vm_jid)#add_jid(vm_jid, [GROUP_VM])
         
         log.info("starting xmpp threaded virtual machine")
         vm = self.create_threaded_vm(vm_jid, vm_password)
         
         log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
-        vm.get_instance().register_actions_to_perform_on_auth("add_jid", requester, oneshot=True)
+        vm.get_instance().register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
         log.info( "registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?)", (str(vm_jid), vm_password, datetime.datetime.now(), 'no comment'))
@@ -360,9 +361,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     def clone(self, uuid, requester):
         xmppvm      = self.virtualmachines[uuid].get_instance();
         xmldesc     = xmppvm.definition;
-
+        
+        if not xmldesc:
+            raise Exception('The mother vm has to be defined to be cloned')
         newvm = self.alloc(requester);
-        newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.vm_own_folder, "baseuuid": uuid})
+        newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.vm_own_folder, "baseuuid": uuid}, persistant=False)
         
     
     
@@ -384,10 +387,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             self.clone(vmuuid, iq.getFrom())
             
             self.push_change("hypervisor", "clone", excludedgroups=[GROUP_VM]);
-            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[GROUP_VM])
+            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (vmuuid, iq.getFrom()), excludedgroups=[GROUP_VM])
             
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE)
         return reply
     
     
@@ -400,10 +403,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        # TODO : add some ACL here later
-        reply = iq.buildReply("result")
-        nodes = []
         try:
+            reply = iq.buildReply("result")
+            nodes = []
             for item in self.roster.getItems():
                 n = xmpp.Node("item")
                 n.addData(item)

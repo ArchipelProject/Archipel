@@ -130,7 +130,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheRosterAddedContactNotification object:nil];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [_tableVirtualMachines setDelegate:nil];
@@ -348,8 +348,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
          return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Are you sure you want to clone this virtual machine ?"
-                                message:@"Cloning a Virtual Machine"
+    var alert = [TNAlert alertWithTitle:@"Cloning a Virtual Machine"
+                                message:@"Are you sure you want to clone this virtual machine ?"
                                 delegate:self
                                  actions:[["Clone", @selector(performCloneVirtualMachine:)], ["Cancel", nil]]];
     [alert runModal];
