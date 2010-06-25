@@ -21,7 +21,7 @@ import os, sys, commands, shutil, getopt
 GLOBAL_LAUNCH_PATH          = commands.getoutput("pwd");
 GLOBAL_BASE_PATH            = sys.path[0]
 GLOBAL_MODULES_SRC_PATH     = GLOBAL_BASE_PATH + "/Modules.src/"
-GLOBAL_MODULES_BUILD_PATH   = GLOBAL_BASE_PATH + "/Modules/"
+GLOBAL_MODULES_BUILD_PATH   = GLOBAL_BASE_PATH + "/Modules"
 GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_SRC_PATH + "modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
 GLOBAL_BUILD_NUMBER         = int(commands.getoutput("head -1 %s/.build-number" % (GLOBAL_BASE_PATH)))
@@ -189,10 +189,9 @@ def build(paths, config, ignorepaths):
         print "# Build success."
         print "# get back to " + GLOBAL_BASE_PATH
         os.chdir(GLOBAL_BASE_PATH);
-
+    
     print "# Build #%d success." % (GLOBAL_BUILD_NUMBER)
     f = os.system("echo '%d' > ./.build-number" % ((bd + 1)))
-    
 
 
 def copy_modules(modules_paths, config, ignorepaths):
@@ -205,14 +204,14 @@ def copy_modules(modules_paths, config, ignorepaths):
             
         
         module_name         = path.split("/")[-1]
-        module_dest_path   = GLOBAL_MODULES_BUILD_PATH + module_name;
+        module_dest_path   = GLOBAL_MODULES_BUILD_PATH + "/";
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
         
         remove_modules([path], config, ignorepaths);
         
         print "# copying module : " + module_name 
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
-        os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
+        os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", ""));
 
 
 def remove_modules(modules_paths, config, ignorepaths):
@@ -225,7 +224,7 @@ def remove_modules(modules_paths, config, ignorepaths):
         
             
         module_name         = path.split("/")[-1]
-        module_dest_path   = GLOBAL_MODULES_BUILD_PATH + module_name;
+        module_dest_path   = GLOBAL_MODULES_BUILD_PATH + "/" + module_name;
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
         
         if os.system("rm -rf " + module_dest_path) == 0:
@@ -249,7 +248,7 @@ def generate_modules_plist(modules_paths, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
-
+            
         if path.lower().find("sample") > -1:
             continue
     
@@ -345,6 +344,8 @@ def export_archipel(path, config):
     #os.system("mkdir -p " + path);
     #os.system("cp -a " + build_dir + " " + path + "/");
     #os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + path + "/Modules/");
-    
+
+
+
 if __name__ == "__main__":
     main();

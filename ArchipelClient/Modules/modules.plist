@@ -10,6 +10,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>HypervisorHealth</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>HypervisorNetworks</string>
             </dict>
             <dict>
