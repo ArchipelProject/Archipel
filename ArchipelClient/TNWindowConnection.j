@@ -27,12 +27,14 @@
 */
 @implementation TNWindowConnection: TNWhiteWindow
 {
+    @outlet CPButton    connectButton;
     @outlet CPCheckBox  credentialRemember;
     @outlet CPImageView spinning;
     @outlet CPTextField boshService;
     @outlet CPTextField JID;
     @outlet CPTextField message;
     @outlet CPTextField password;
+
 
     TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
 }
@@ -103,7 +105,7 @@
 - (IBAction)rememberCredentials:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+    console.log("LALAAA")
     if ([sender state] == CPOnState)
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     else
@@ -136,6 +138,7 @@
 - (void)onStropheConnectFail:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
+    [connectButton setEnabled:NO];
     [message setStringValue:@"Connection failed."];
 
     CPLog.info("XMPP connection failed");
@@ -157,6 +160,7 @@
 - (void)onStropheAuthFail:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
+    [connectButton setEnabled:NO];
     [message setStringValue:@"Authentication failed."];
 
     CPLog.info("XMPP auth failed");
@@ -168,6 +172,7 @@
 - (void)onStropheError:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
+    [connectButton setEnabled:NO];
     [message setStringValue:@"Unknown error."];
 
     CPLog.info("XMPP unknown error");
@@ -175,7 +180,8 @@
 
 -(void) onStropheDisconnecting:(TNStropheConnection)aStrophe
 {
-    //[spinning setHidden:YES];
+    [spinning setHidden:NO];
+    [connectButton setEnabled:NO];
     [message setStringValue:@"Disconnecting."];
 
    CPLog.info("XMPP is disconnecting");
@@ -186,9 +192,10 @@
 */
 - (void)onStropheDisconnected:(id)sStrophe
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
     [self initCredentials];
-    
+    [spinning setHidden:YES];
+    [connectButton setEnabled:YES];
+    [but]
     [message setStringValue:@"Disconnected."];
     
     CPLog.info("XMPP connection is now disconnected");

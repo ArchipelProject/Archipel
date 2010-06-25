@@ -158,7 +158,7 @@ def clean(paths, config, ignorepaths):
         build_path = path + "/Build/"
         print "# removing " + build_path
         shutil.rmtree(build_path, ignore_errors=True);
-        remove_modules([path], config, ignorepaths)
+        remove_modules([path], config, ignorepaths)    
 
 
 def build(paths, config, ignorepaths):
@@ -261,7 +261,7 @@ def generate_modules_plist(modules_paths, ignorepaths):
     </dict>
 </plist>"""
     
-    f = open(GLOBAL_MODULES_BUILD_PATH + "modules.plist", "w");
+    f = open(GLOBAL_MODULES_BUILD_PATH + "/modules.plist", "w");
     f.write(plist);
     f.close();
 

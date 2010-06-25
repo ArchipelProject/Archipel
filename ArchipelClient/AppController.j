@@ -483,8 +483,9 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 {
     var defaults = [TNUserDefaults standardUserDefaults];
     
-    [defaults removeObjectForKey:@"loginPassword"];
-    [defaults setBool:NO forKey:@"loginRememberCredentials"];
+    [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
+    [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
+    [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
     
     CPLog.info(@"starting to disconnect");
     [_mainRoster disconnect];
