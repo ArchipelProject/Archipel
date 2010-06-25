@@ -30,15 +30,18 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 @implementation TNHypervisorVMCreationController : TNModule 
 {
-    @outlet CPButton        buttonCreateVM;
-    @outlet CPButton        buttonDeleteVM;
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPPopUpButton   popupDeleteMachine;
-    @outlet CPScrollView    scrollViewListVM;
-    @outlet CPSearchField   fieldFilterVM;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldName;
-    @outlet CPView          viewTableContainer;
+    @outlet CPButtonBar             buttonBarControl;
+    @outlet CPPopUpButton           popupDeleteMachine;
+    @outlet CPScrollView            scrollViewListVM;
+    @outlet CPSearchField           fieldFilterVM;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldNewVMRequestedName;
+    // @outlet LPMultiLineTextField    fieldNewVMRequestedDescription;
+    // @outlet CPTextField             fieldNewVMRequestedTags;
+    @outlet CPView                  viewTableContainer;
+    @outlet CPWindow                windowNewVirtualMachine;
+    @outlet CPButton                buttonAlloc;
     
     CPButton                _minusButton;
     CPButton                _plusButton;
@@ -119,6 +122,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_cloneButton setAction:@selector(cloneVirtualMachine:)];
     
     [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton]];
+    
+    // [fieldNewVMRequestedTags setPlaceholderString:@"Coma separated tags (not implemented)"];
+    // [fieldNewVMRequestedTags setEnabled:NO];
+    // [fieldNewVMRequestedDescription setPlaceholderString:@"Description (not implemented)"];
+    // [fieldNewVMRequestedDescription setEnabled:NO];
+    [buttonAlloc setDefaultButton:YES];
 }
 
 - (void)willLoad
@@ -150,8 +159,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (void)willUnload
 {
     [super willUnload];
-    
-    [buttonCreateVM setEnabled:YES];
 }
 
 - (BOOL)didPushReceive:(TNStropheStanza)aStanza
@@ -228,23 +235,30 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 //actions
 - (IBAction)addVirtualMachine:(id)sender
 {
+    [fieldNewVMRequestedName setStringValue:@""];
+    // [fieldNewVMRequestedTags setStringValue:@""];
+    // [fieldNewVMRequestedDescription setStringValue:@""];
+    
+    [windowNewVirtualMachine center];
+    [windowNewVirtualMachine makeKeyAndOrderFront:nil];
+}
+
+- (IBAction)alloc:(id)sender
+{
     var stanza  = [TNStropheStanza iqWithType:@"set"];
-    var uuid    = [CPString UUID];
+    
+    [windowNewVirtualMachine orderOut:nil];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeHypervisorControlAlloc,
-        "uuid": uuid}];
+        "name": [fieldNewVMRequestedName stringValue]}];
     
     [self sendStanza:stanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
-    
-    [buttonCreateVM setEnabled:NO];
 }
 
 - (void)didAllocVirtualMachine:(id)aStanza
 {
-    [buttonCreateVM setEnabled:YES];
-    
     if ([aStanza getType] == @"result")
     {
         var vmJID   = [[[aStanza firstChildWithName:@"query"] firstChildWithName:@"virtualmachine"] valueForAttribute:@"jid"];
@@ -280,10 +294,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         title   = @"Destroying some Virtual Machines"; 
         msg     = @"Are you sure you want to completely remove theses virtual machines ?";
     }
-        
     
-    [buttonDeleteVM setEnabled:NO];
-
+    
     var alert = [TNAlert alertWithTitle:title
                                 message:msg
                                 delegate:self
@@ -315,15 +327,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         [_roster removeContact:vm];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
-        
-        [buttonDeleteVM setEnabled:YES];
     }
 }
 
 - (void)didFreeVirtualMachine:(id)aStanza
 {
-    [buttonDeleteVM setEnabled:YES];
-    
     if ([aStanza getType] == @"result")
     {
         CPLog.info(@"sucessfully deallocating a virtual machine");
@@ -373,8 +381,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)didCloneVirtualMachine:(id)aStanza
 {
-    [buttonDeleteVM setEnabled:YES];
-    
     if ([aStanza getType] == @"result")
     {
         CPLog.info(@"sucessfully cloning a virtual machine");

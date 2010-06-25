@@ -57,8 +57,9 @@ def main():
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
+    name        = config.get("HYPERVISOR", "hypervisor_name")
     
-    hyp = archipel.TNArchipelHypervisor(jid, password, config, database)
+    hyp = archipel.TNArchipelHypervisor(jid, password, config, name, database)
     hyp.connect()
     hyp.loop()
     

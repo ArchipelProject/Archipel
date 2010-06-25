@@ -277,14 +277,14 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
     var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
-        
-    //[connection cancel];
+    
+    [connection cancel];
     [connection start];
 }
 
 - (void)unloadAllModules
 {
-
+    _numberOfModulesToLoad = 0;
 }
 
 /// PRIVATES
@@ -295,6 +295,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     CPLog.debug("going to parse the PList");
     
+    _numberOfModulesToLoad = [[_modulesPList objectForKey:@"Modules"] count];
+    
     for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
         CPLog.debug("parsing " + [CPBundle bundleWithPath:path]);
@@ -303,7 +305,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         var path    = _modulesPath + [module objectForKey:@"folder"];
         var bundle  = [CPBundle bundleWithPath:path];
         
-        _numberOfModulesToLoad++;    
+        // _numberOfModulesToLoad++;    
             
         if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
             [_delegate moduleLoader:self willLoadBundle:bundle];
@@ -311,8 +313,8 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [bundle loadWithDelegate:self];
     }
     
-    if ((_numberOfModulesToLoad == 0) && ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
-        [_delegate moduleLoaderLoadingComplete:self];
+    // if ((_numberOfModulesToLoad == 0) && ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
+    //     [_delegate moduleLoaderLoadingComplete:self];
 }
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -463,7 +465,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
     var vCard   = [[aNotification object] vCard];
-    
+    // console.log("----------------------------------------------------")
+    // console.log(vCard);
+    // console.log("----------------------------------------------------")
     if ([vCard text] != [[_entity vCard] text])
     {
         _moduleType = [self analyseVCard:vCard];
@@ -540,7 +544,6 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
     
     [_bundles addObject:aBundle];
-    _numberOfModulesLoaded++;
     
     if (moduleInsertionType == TNArchipelModuleTypeTab)
         [self manageTabItemLoad:aBundle];
@@ -549,8 +552,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     if ([_delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
         [_delegate moduleLoader:self hasLoadBundle:aBundle];
-        
-    if (_numberOfModulesLoaded >= _numberOfModulesToLoad)
+    
+    _numberOfModulesLoaded++;
+    CPLog.debug("Loaded " + _numberOfModulesLoaded + " module(s) of " + _numberOfModulesToLoad)
+    if (_numberOfModulesLoaded == _numberOfModulesToLoad)
     {
         var center = [CPNotificationCenter defaultCenter];
         

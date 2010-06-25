@@ -81,11 +81,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     this class need to already have 
     """
     
-    def __init__(self, jid, password, hypervisor, configuration):
+    def __init__(self, jid, password, hypervisor, configuration, name):
         """
         contructor of the class
         """
-        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
+        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration, name)
         
         self.hypervisor         = hypervisor
         self.libvirt_connection = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
@@ -103,7 +103,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.register_actions_to_perform_on_auth("connect_domain", None)
-        self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
+        self.register_actions_to_perform_on_auth("set_vcard", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         
         self.register_for_messages()
     

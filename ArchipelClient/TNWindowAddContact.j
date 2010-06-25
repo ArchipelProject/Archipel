@@ -75,6 +75,9 @@
     var name    = [newContactName stringValue];
     var growl   = [TNGrowlCenter defaultCenter];
     
+    if (name == "")
+        name = [[JID componentsSeparatedByString:@"@"] objectAtIndex:0];
+    
     [_roster addContact:JID withName:name inGroupWithName:group];
     [_roster askAuthorizationTo:JID];
     [_roster authorizeJID:JID];

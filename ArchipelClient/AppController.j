@@ -115,6 +115,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     @outlet CPSplitView         leftSplitView;
     @outlet CPSplitView         mainHorizontalSplitView;
     @outlet CPTextField         textFieldAboutVersion;
+    @outlet CPTextField         textFieldLoadedBundle;
     @outlet CPView              filterView;
     @outlet CPView              leftView;
     @outlet CPView              rightView;
@@ -160,7 +161,6 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 - (void)awakeFromCib
 {
     [connectionWindow orderOut:nil];
-    
     // register logs
     CPLogRegister(CPLogConsole);
     
@@ -464,6 +464,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 - (void)moduleLoader:(TNModuleLoader)aLoader hasLoadBundle:(CPBundle)aBundle
 {
     CPLog.info("Bundle loaded : " + aBundle);
+    [textFieldLoadedBundle setStringValue:@"Sucessfully loaded " + [aBundle objectForInfoDictionaryKey:@"CPBundleName"]];
 }
 
 - (IBAction)didMinusBouttonClicked:(id)sender
@@ -527,6 +528,8 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     CPLog.info(@"contact " + [contact JID] + "removed");
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
     
+    [propertiesView hide];
+    [_rosterOutlineView deselectAll];
 }
 
 
@@ -898,8 +901,15 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 */
 - (void)didReceiveSubscriptionRequest:(id)requestStanza
 {
+    var nick;
+    
+    if ([requestStanza firstChildWithName:@"nick"])
+        nick = [[requestStanza firstChildWithName:@"nick"] text];
+    else
+        nick = [requestStanza getFrom];
+    
     var alert = [TNAlert alertWithTitle:@"Subscription request"
-                                message:[requestStanza getFrom] + " is asking you subscription. Do you want to add it ?"
+                                message:nick + " is asking you subscription. Do you want to add it ?"
                                 delegate:self
                                  actions:[["Accept", @selector(performSubscribe:)], 
                                             ["Decline", @selector(performUnsubscribe:)]]];

@@ -32,7 +32,7 @@ from utils import *
 from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 import string
-from random import choice
+import random
 import libvirtEventLoop
 import libvirt
 
@@ -52,7 +52,7 @@ class TNThreadedVirtualMachine(Thread):
     this class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
     """
-    def __init__(self, jid, password, hypervisor, configuration):
+    def __init__(self, jid, password, hypervisor, configuration, name):
         """
         the contructor of the class
         @type jid: string
@@ -63,7 +63,7 @@ class TNThreadedVirtualMachine(Thread):
         Thread.__init__(self)
         self.jid = jid
         self.password = password
-        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration)
+        self.xmppvm = TNArchipelVirtualMachine(self.jid, self.password, hypervisor, configuration, name)
         
     
     
@@ -96,7 +96,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     active XMPP VM, and remember which have been created.
     """       
     
-    def __init__(self, jid, password, configuration, database_file="./database.sqlite3"):
+    def __init__(self, jid, password, configuration, name, database_file="./database.sqlite3"):
         """
         this is the constructor of the class.
         
@@ -107,11 +107,16 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type database_file: string
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
-        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration)
+        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration, name)
         
         self.virtualmachines    = {}
-        self.xmppserveraddr     = self.jid.getDomain()
         self.database_file      = database_file
+        self.xmppserveraddr     = self.jid.getDomain()
+        
+        names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
+        self.generated_names = names_file.readlines();
+        names_file.close();
+        self.number_of_names = len(self.generated_names) - 1
         
         log.info( "server address defined as {0}".format(self.xmppserveraddr))
         
@@ -130,7 +135,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         # action on auth
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
-        self.register_actions_to_perform_on_auth("set_vcard_entity_type", {"entity_type": "hypervisor", "avatar_file": default_avatar})
+        self.register_actions_to_perform_on_auth("set_vcard", {"entity_type": "hypervisor", "avatar_file": default_avatar})
         self.register_actions_to_perform_on_auth("update_presence")
         
     
@@ -160,20 +165,20 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         log.info( "populating database if not exists")
         
-        self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text)")
+        self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text, name text)")
             
         c = self.database.cursor()
         c.execute("select * from virtualmachines")
         for vm in c:
-            jid, password, date, comment = vm
-            vm = self.create_threaded_vm(xmpp.JID(jid), password)
+            jid, password, date, comment, name = vm
+            vm = self.create_threaded_vm(xmpp.JID(jid), password, name)
             # add hypervisor in the VM roster. This allow to manually add vm into the database
             # and during restart, being able to delete it from the GUI
             # vm.register_actions_to_perform_on_auth("add_jid", self.jid.getStripped(), oneshot=True)
-            self.virtualmachines[jid.split("@")[0]] = vm
+            self.virtualmachines[vm.jid.getNode()] = vm.get_instance()
     
         
-    def create_threaded_vm(self, jid, password):
+    def create_threaded_vm(self, jid, password, name):
         """
         this method creates a threaded L{TNArchipelVirtualMachine}, start it and return the Thread instance
         @type jid: string
@@ -183,10 +188,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration)
+        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration, name)
         #vm.daemon = True
         vm.start()
         return vm    
+    
+    
+    def generate_name(self):
+        return self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
     
     
     
@@ -197,11 +206,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     def process_iq(self, conn, iq):
         """
         this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
-
+        
         it understands IQ of type:
             - alloc
             - free
-
+            
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -214,27 +223,27 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         if action == "alloc":
             reply = self.iq_alloc(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         elif action == "free":
             reply = self.iq_free(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         elif action == "rostervm":
             reply = self.get_roster(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
         elif action == "clone":
             reply = self.iq_clone(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+            
     
     
     
@@ -242,25 +251,30 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
-    def alloc(self, requester):
+    def alloc(self, requester, requested_name=None, description=""):
         """
         Alloc a new XMPP entity
         """
         vmuuid      = str(uuid.uuid1())
-        vm_password = ''.join([choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
+        vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower())
         
         log.info( "adding the xmpp vm %s to my roster" % (str(vm_jid)))
-        self.roster.Subscribe(vm_jid)#add_jid(vm_jid, [GROUP_VM])
+        self.add_jid(vm_jid, [GROUP_VM])
+        
+        if not requested_name:
+            name = self.generate_name()
+        else:
+            name = requested_name
         
         log.info("starting xmpp threaded virtual machine")
-        vm = self.create_threaded_vm(vm_jid, vm_password).get_instance()
+        vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
         
         log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
         vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
         log.info( "registering the new VM in hypervisor's memory")
-        self.database.execute("insert into virtualmachines values(?,?,?,?)", (str(vm_jid), vm_password, datetime.datetime.now(), 'no comment'))
+        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid), vm_password, datetime.datetime.now(), description, name))
         self.database.commit()
         self.virtualmachines[vmuuid] = vm
         
@@ -282,7 +296,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @return: a ready-to-send IQ containing the results
         """
         try:
-            vm = self.alloc(iq.getFrom());
+            try:
+                requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            except:
+                requested_name = None
+            
+            vm = self.alloc(iq.getFrom(), requested_name);
             
             reply   = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid)})
@@ -303,11 +322,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
         
-        if (vm.domain):
-            if (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
-                vm.domain.destroy()
+        if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
+            vm.domain.destroy()
             vm.domain.undefine()
-    
+        
         log.info( "removing the xmpp vm %s from my roster" % (str(jid)))
         self.remove_jid(jid)
         
@@ -364,7 +382,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         if not xmldesc:
             raise Exception('The mother vm has to be defined to be cloned')
-        newvm = self.alloc(requester);
+        
+        dominfo = xmppvm.domain.info();
+        if not (dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN):
+            raise Exception('The mother vm has to be stopped to be cloned')
+        
+        name = "%s (clone)" % xmppvm.name;
+        newvm = self.alloc(requester, requested_name=name);
         newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
         
     

@@ -60,7 +60,7 @@ class TNArchipelBasicXMPPClient(object):
     """
     this class represent a basic XMPP Client
     """
-    def __init__(self, jid, password, configuration, auto_register=True, auto_reconnect=True):
+    def __init__(self, jid, password, configuration, name, auto_register=True, auto_reconnect=True):
         """
         The constructor of the class.
         
@@ -70,7 +70,7 @@ class TNArchipelBasicXMPPClient(object):
         @param password: the password of the JID account.
         """
         self.registered_actions_to_perform_on_connection = []
-        
+        self.name                   = name
         self.xmppstatus             = None
         self.xmppstatusshow         = None
         self.xmppclient             = None
@@ -86,6 +86,9 @@ class TNArchipelBasicXMPPClient(object):
         self.messages_registrar     = []
         self.isAuth                 = False;
         self.loop_status            = LOOP_OFF
+        
+        if self.name == "auto":
+            self.name = self.ressource
         
         log.info("jid defined as %s/%s" % (str(self.jid), self.ressource))
         
@@ -245,6 +248,13 @@ class TNArchipelBasicXMPPClient(object):
                 m()
     
     
+    def subscribe(self, jid):
+        presence = xmpp.Presence(to=jid, typ='subscribe')
+        if self.name:
+            presence.addChild(name="nick", namespace="http://jabber.org/protocol/nick", payload=self.name)
+        self.xmppclient.send(presence)
+        
+    
     
     def __process_presence_subscribe(self, conn, presence):
         """
@@ -263,7 +273,8 @@ class TNArchipelBasicXMPPClient(object):
         self.roster.Authorize(barejid)
         
         if not barejid  in self.roster.getItems():
-            self.roster.Subscribe(barejid)
+            self.subscribe(barejid)
+            #self.roster.Subscribe(barejid)
         
         raise xmpp.NodeProcessed
     
@@ -447,7 +458,8 @@ class TNArchipelBasicXMPPClient(object):
         self.roster = self.xmppclient.getRoster()
         
         self.roster.setItem(jid.getStripped(), groups)
-        self.roster.Subscribe(jid.getStripped())
+        #self.roster.Subscribe(jid.getStripped())
+        self.subscribe(jid.getStripped())
         
         self.push_change("subscription", "added")
     
@@ -491,10 +503,14 @@ class TNArchipelBasicXMPPClient(object):
         
         resp = self.xmppclient.SendAndWaitForResponse(stanza=node_iq)
         self.vCard = resp.getTag("vCard")
+        
+        # if self.vCard.getTag("NAME") and not self.vCard.getTag("NAME").getCDATA() == "":
+        #     self.name = self.vCard.getTag("NAME").getCDATA()
+            
         log.info("own vcard retrieved")
     
-    
-    def set_vcard_entity_type(self, params):
+        
+    def set_vcard(self, params):
         """
         allows to define a vCard type for the entry
         
@@ -508,6 +524,10 @@ class TNArchipelBasicXMPPClient(object):
         type_node = xmpp.Node(tag="TYPE")
         type_node.setData(params["entity_type"])
         
+        name_node = None
+        if self.name:
+            name_node = xmpp.Node(tag="NAME")
+            name_node.setData(self.name)
         
         if (self.configuration.getboolean("GLOBAL", "use_avatar")):
             avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
@@ -533,10 +553,10 @@ class TNArchipelBasicXMPPClient(object):
                     self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
             
             node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
-            node_iq.addChild(name="vCard", payload=[type_node, node_photo], namespace="vcard-temp")
+            node_iq.addChild(name="vCard", payload=[type_node, node_photo, name_node], namespace="vcard-temp")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard, args={"photo_hash": hashlib.sha224(photo_data).hexdigest()})
         else:
-            node_iq.addChild(name="vCard", payload=[type_node], namespace="vcard-temp")
+            node_iq.addChild(name="vCard", payload=[type_node, name_node], namespace="vcard-temp")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
         
         log.info("vcard information sent with type: {0}".format(params["entity_type"]))        
