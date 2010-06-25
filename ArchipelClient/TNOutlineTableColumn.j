@@ -35,10 +35,10 @@
     CPImage     _syncImage;
     CPImage     _playImage;
     CPImage     _pauseImage;
-    CPImage     _syncingImage;
+    // CPImage     _syncingImage;
     CPImage     _normalStateCartoucheColor;
     CPImage     _selectedStateCartoucheColor;
-    CPButton    _syncButton;
+    // CPButton    _syncButton;
     CPButton    _playButton;
     CPButton    _pauseButton;
     CPString    _entityType;
@@ -62,19 +62,19 @@
         _avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         
         _syncImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sync.png"] size:CGSizeMake(16, 16)];
-        _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
-        _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
+        // _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
+        // _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
         _playButton     = [[CPButton alloc] initWithFrame:CGRectMake(150, 8, 16, 16)];
         _pauseButton    = [[CPButton alloc] initWithFrame:CGRectMake(130, 8, 16, 16)];
 
         _normalStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
         
-        [_syncButton setImage:_syncImage];
-        [_syncButton setBordered:NO];
-        [_syncButton setHidden:YES];
-        [_syncButton setTarget:self];
-        [_syncButton setAction:@selector(askVCardToEntity:)];
+        // [_syncButton setImage:_syncImage];
+        // [_syncButton setBordered:NO];
+        // [_syncButton setHidden:YES];
+        // [_syncButton setTarget:self];
+        // [_syncButton setAction:@selector(askVCardToEntity:)];
 
         _pauseImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"] size:CGSizeMake(16, 16)];
         [_pauseButton setImage:_pauseImage];
@@ -95,7 +95,7 @@
         [self addSubview:_events];
         [self addSubview:_status];
         [self addSubview:_avatar];
-        [self addSubview:_syncButton];
+        // [self addSubview:_syncButton];
         [self addSubview:_playButton];
         [self addSubview:_pauseButton];
         
@@ -178,10 +178,10 @@
     [_events setFrame:boundsEvents];
     [_events setAutoresizingMask:CPViewMinXMargin];
     
-    var boundsSync          = [_syncButton frame];
-    boundsSync.origin.x     = mainBounds.size.width - 20;
-    [_syncButton setFrame:boundsSync];
-    [_syncButton setAutoresizingMask:CPViewMinXMargin];
+    // var boundsSync          = [_syncButton frame];
+    // boundsSync.origin.x     = mainBounds.size.width - 20;
+    // [_syncButton setFrame:boundsSync];
+    // [_syncButton setAutoresizingMask:CPViewMinXMargin];
 
     var boundsPlay          = [_playButton frame];
     boundsPlay.origin.x     = mainBounds.size.width - 20;
@@ -195,7 +195,7 @@
     
     if ([aContact XMPPShow] == TNStropheContactStatusOffline)
     {
-        [_syncButton setHidden:YES];
+        // [_syncButton setHidden:YES];
         [_playButton setHidden:YES];
         [_pauseButton setHidden:YES];
     }
@@ -231,14 +231,14 @@
     else
     {
         [_events setHidden:YES];
-        [_syncButton setHidden:YES];
+        // [_syncButton setHidden:YES];
     }
 }
 
 - (IBAction)askVCardToEntity:(id)sender
 {
     var center  = [CPNotificationCenter defaultCenter];
-    [_syncButton setImage:_syncingImage];
+    // [_syncButton setImage:_syncingImage];
     [_contact getVCard];
     [center addObserver:self selector:@selector(didReceivedVCard:) name:TNStropheContactVCardReceivedNotification object:_contact];
 }
@@ -248,7 +248,7 @@
     var bundle  = [CPBundle mainBundle];
     var center  = [CPNotificationCenter defaultCenter];
     
-    [_syncButton setImage:_syncImage];
+    // [_syncButton setImage:_syncImage];
     [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:_contact];
     
     // _entityType = [self analyseEntity:_contact];
@@ -284,10 +284,10 @@
     if (aState == CPThemeStateNormal)
            [_events setBackgroundColor:_normalStateCartoucheColor];
        
-    if ((aState == CPThemeStateSelectedDataView) && ([_contact XMPPShow] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
-        [_syncButton setHidden:NO];
-    else
-        [_syncButton setHidden:YES];
+    // if ((aState == CPThemeStateSelectedDataView) && ([_contact XMPPShow] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
+    //     [_syncButton setHidden:NO];
+    // else
+    //     [_syncButton setHidden:YES];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -302,12 +302,12 @@
     
     if (aState == CPThemeStateSelectedDataView)
     {
-        [_syncButton setHidden:YES];
+        // [_syncButton setHidden:YES];
         [_events setBackgroundColor:_normalStateCartoucheColor];
     }
     else
     {
-        [_syncButton setHidden:NO];
+        // [_syncButton setHidden:NO];
         [_events setBackgroundColor:_selectedStateCartoucheColor];
     }
         
@@ -326,13 +326,13 @@
         
         _contact            = [aCoder decodeObjectForKey:@"_contact"];
         _unknownUserImage   = [aCoder decodeObjectForKey:@"_unknownUserImage"];
-        _syncButton         = [aCoder decodeObjectForKey:@"_syncButton"];
+        // _syncButton         = [aCoder decodeObjectForKey:@"_syncButton"];
         _pauseButton        = [aCoder decodeObjectForKey:@"_pauseButton"];
         _playButton         = [aCoder decodeObjectForKey:@"_playButton"];
         _syncImage          = [aCoder decodeObjectForKey:@"_syncImage"];
         _playImage          = [aCoder decodeObjectForKey:@"_playImage"];
         _pauseImage         = [aCoder decodeObjectForKey:@"_pauseImage"];
-        _syncingImage       = [aCoder decodeObjectForKey:@"_syncingImage"];
+        // _syncingImage       = [aCoder decodeObjectForKey:@"_syncingImage"];
         _name               = [aCoder decodeObjectForKey:@"_name"];
         _status               = [aCoder decodeObjectForKey:@"_status"];
         _statusIcon         = [aCoder decodeObjectForKey:@"_statusIcon"];
@@ -352,11 +352,11 @@
     [aCoder encodeObject:_contact forKey:@"_contact"];
     [aCoder encodeObject:_pauseButton forKey:@"_pauseButton"];
     [aCoder encodeObject:_playButton forKey:@"_playButton"];
-    [aCoder encodeObject:_syncButton forKey:@"_syncButton"];
+    // [aCoder encodeObject:_syncButton forKey:@"_syncButton"];
     [aCoder encodeObject:_syncImage forKey:@"_syncImage"];
     [aCoder encodeObject:_pauseImage forKey:@"_pauseImage"];
     [aCoder encodeObject:_playImage forKey:@"_playImage"];
-    [aCoder encodeObject:_syncingImage forKey:@"_syncingImage"];
+    // [aCoder encodeObject:_syncingImage forKey:@"_syncingImage"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:_name forKey:@"_name"];
     [aCoder encodeObject:_status forKey:@"_status"];
