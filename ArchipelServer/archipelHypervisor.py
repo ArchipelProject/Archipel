@@ -169,7 +169,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             vm = self.create_threaded_vm(xmpp.JID(jid), password)
             # add hypervisor in the VM roster. This allow to manually add vm into the database
             # and during restart, being able to delete it from the GUI
-            # vm.get_instance().register_actions_to_perform_on_auth("add_jid", self.jid.getStripped(), oneshot=True)
+            # vm.register_actions_to_perform_on_auth("add_jid", self.jid.getStripped(), oneshot=True)
             self.virtualmachines[jid.split("@")[0]] = vm
     
         
@@ -254,10 +254,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.roster.Subscribe(vm_jid)#add_jid(vm_jid, [GROUP_VM])
         
         log.info("starting xmpp threaded virtual machine")
-        vm = self.create_threaded_vm(vm_jid, vm_password)
+        vm = self.create_threaded_vm(vm_jid, vm_password).get_instance()
         
         log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
-        vm.get_instance().register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+        vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
         log.info( "registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?)", (str(vm_jid), vm_password, datetime.datetime.now(), 'no comment'))
@@ -267,7 +267,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.update_presence()
         log.info( "XMPP Virtual Machine instance sucessfully initialized")
         
-        return vm.get_instance()
+        return vm
         
     
     
@@ -303,16 +303,16 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
         
-        if (vm.get_instance().domain):
-            if (vm.get_instance().domain.info()[0] == 1 or vm.get_instance().domain.info()[0] == 2 or vm.get_instance().domain.info()[0] == 3):
-                vm.get_instance().domain.destroy()
-            vm.get_instance().domain.undefine()
+        if (vm.domain):
+            if (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
+                vm.domain.destroy()
+            vm.domain.undefine()
     
         log.info( "removing the xmpp vm %s from my roster" % (str(jid)))
         self.remove_jid(jid)
         
         log.info( "removing the vm drive directory")
-        vm.get_instance().remove_own_folder()
+        vm.remove_folder()
         
         log.info( "unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='{0}'".format(jid))
@@ -321,7 +321,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         del self.virtualmachines[uuid]
         
         log.info( "unregistering vm from jabber server ".format(jid))
-        vm.get_instance()._inband_unregistration()
+        vm._inband_unregistration()
         
         self.update_presence()
         
@@ -359,13 +359,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     def clone(self, uuid, requester):
-        xmppvm      = self.virtualmachines[uuid].get_instance();
+        xmppvm      = self.virtualmachines[uuid]
         xmldesc     = xmppvm.definition;
         
         if not xmldesc:
             raise Exception('The mother vm has to be defined to be cloned')
         newvm = self.alloc(requester);
-        newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.vm_own_folder, "baseuuid": uuid}, persistant=False)
+        newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
         
     
     

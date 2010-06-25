@@ -193,7 +193,7 @@ function generateMacAddr()
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
-    [_editButtonNics setAction:@selector(editNics:)];    
+    [_editButtonNics setAction:@selector(editNetworkCard:)];    
     [_minusButtonNics setEnabled:NO];
     [_editButtonNics setEnabled:NO];
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];

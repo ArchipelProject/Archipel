@@ -30,7 +30,7 @@ class TNThreadedHealthCollector(Thread):
     """
     this class collects hypervisor stats regularly
     """
-    def __init__(self, database_file, collection_interval, max_rows_before_purge, snmp_agent, snmp_community, snmp_version, snmp_port):
+    def __init__(self, database_file, collection_interval, max_rows_before_purge): #, snmp_agent, snmp_community, snmp_version, snmp_port):
         """
         the contructor of the class
         """

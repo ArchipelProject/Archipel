@@ -111,7 +111,7 @@ class TNMediaManagement:
             disk_size   = query_node.getTag("archipel").getAttr("size")
             disk_unit   = query_node.getTag("archipel").getAttr("unit")
             format      = query_node.getTag("archipel").getAttr("format")
-            disk_path   = self.entity.vm_own_folder + "/" + disk_name + "." + format;
+            disk_path   = self.entity.folder + "/" + disk_name + "." + format;
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try")
@@ -189,7 +189,7 @@ class TNMediaManagement:
             newname = query_node.getTag("archipel").getAttr("newname")
             
             extension = path.split(".")[-1]
-            newpath = os.path.join(self.entity.vm_own_folder,  "%s.%s" % (newname, extension))
+            newpath = os.path.join(self.entity.folder,  "%s.%s" % (newname, extension))
             
             if os.path.exists(newpath):
                 raise Exception("The disk with name %s already exists." % newname)
@@ -219,7 +219,7 @@ class TNMediaManagement:
             query_node          = iq.getTag("query")
             disk_name           = query_node.getTag("archipel").getAttr("name")
             secure_disk_name    = disk_name.split("/")[-1]
-            secure_disk_path    = self.entity.vm_own_folder + "/" + secure_disk_name
+            secure_disk_path    = self.entity.folder + "/" + secure_disk_name
             
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
@@ -267,16 +267,16 @@ class TNMediaManagement:
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            disks = commands.getoutput("ls " + self.entity.vm_own_folder).split()
+            disks = commands.getoutput("ls " + self.entity.folder).split()
             nodes = []
         
             for disk in disks:
-                file_cmd_output = commands.getoutput("file " + self.entity.vm_own_folder + "/" + disk).lower()
+                file_cmd_output = commands.getoutput("file " + self.entity.folder + "/" + disk).lower()
                 
                 if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
-                    diskinfo = commands.getoutput("qemu-img info " + self.entity.vm_own_folder + "/" + disk).split("\n")
+                    diskinfo = commands.getoutput("qemu-img info " + self.entity.folder + "/" + disk).split("\n")
                     node = xmpp.Node(tag="disk", attrs={ "name": disk.split('.')[0],
-                        "path": self.entity.vm_own_folder + "/" + disk,
+                        "path": self.entity.folder + "/" + disk,
                         "format": diskinfo[1].split(": ")[1],
                         "virtualSize": diskinfo[2].split(": ")[1],
                         "diskSize": diskinfo[3].split(": ")[1],
@@ -305,10 +305,10 @@ class TNMediaManagement:
         try:
             nodes = []
         
-            isos = commands.getoutput("ls " + self.entity.vm_own_folder).split()
+            isos = commands.getoutput("ls " + self.entity.folder).split()
             for iso in isos:
-                if commands.getoutput("file " + self.entity.vm_own_folder + "/" + iso).lower().find("iso 9660") > -1:
-                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.vm_own_folder + "/" + iso })
+                if commands.getoutput("file " + self.entity.folder + "/" + iso).lower().find("iso 9660") > -1:
+                    node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.folder + "/" + iso })
                     nodes.append(node)
         
             sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split() 

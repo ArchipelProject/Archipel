@@ -12,10 +12,10 @@
 . /etc/rc.d/init.d/functions
 
 
-archipel="/root/ArchipelServer/runarchipel.py"
+archipel="/usr/bin/ArchipelServer/runarchipel.py"
 prog=$(basename $archipel)
 
-ARCHIPEL_CONF_FILE="/root/ArchipelServer/conf/archipel.conf"
+ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
 
 
 lockfile=/var/lock/subsys/archipel

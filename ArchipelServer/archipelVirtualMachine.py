@@ -93,13 +93,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.definition         = None
         self.uuid               = self.jid.getNode()
         self.vm_disk_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_base_path") + "/"
-        self.vm_own_folder      = self.vm_disk_base_path + self.uuid
+        self.folder             = self.vm_disk_base_path + self.uuid
         self.locked             = False
         self.lock_timer         = None
         self.maximum_lock_time  = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         
-        if not os.path.isdir(self.vm_own_folder):
-            os.mkdir(self.vm_own_folder)
+        if not os.path.isdir(self.folder):
+            os.mkdir(self.folder)
         
         default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.register_actions_to_perform_on_auth("connect_domain", None)
@@ -182,11 +182,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.register_handler(self)
     
     
-    def remove_own_folder(self):
+    def remove_folder(self):
         """
         remove the folder of the virtual with all its contents
         """
-        os.system("rm -rf " + self.vm_own_folder)
+        os.system("rm -rf " + self.folder)
     
     
     def set_presence_according_to_libvirt_info(self):
@@ -273,7 +273,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
         log.info("copying base virtual repository")
-        os.system("cp -a %s/* %s" % (path, self.vm_own_folder))
+        os.system("cp -a %s/* %s" % (path, self.folder))
         log.info("defining the cloned virtual machine")
         self.define(newxml)
     

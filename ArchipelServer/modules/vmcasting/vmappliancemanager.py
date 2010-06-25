@@ -114,7 +114,7 @@ class TNVMApplianceManager:
                     status = "installing"
                 else:
                     try:
-                        f = open(self.entity.vm_own_folder + "/current.package", "r")
+                        f = open(self.entity.folder + "/current.package", "r")
                         puuid = f.read()
                         f.close()
                         if puuid == uuid:
@@ -156,7 +156,7 @@ class TNVMApplianceManager:
             
             log.debug( "Supported extensions : %s " % str(self.disks_extensions))
             log.info( "will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.vm_own_folder, self.entity.define, self.finish_installing, uuid, requester)
+            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.folder, self.entity.define, self.finish_installing, uuid, requester)
             
             self.old_status  = self.entity.xmppstatus
             self.old_show    = self.entity.xmppstatusshow
@@ -185,7 +185,7 @@ class TNVMApplianceManager:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
 
-            package_file_path = self.entity.vm_own_folder + "/current.package"
+            package_file_path = self.entity.folder + "/current.package"
             os.unlink(package_file_path)
             self.is_installed = False
             self.entity.push_change("vmcasting", "appliancedetached")
@@ -225,7 +225,7 @@ class TNVMApplianceManager:
                 path = disk_node.getTag('source').getAttr('file')
                 paths.append(path)
             
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, "/tmp", "/tmp", self.entity.vm_own_folder, self.hypervisor_repo_path, self.finish_packaging)
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, "/tmp", "/tmp", self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
             
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging")
