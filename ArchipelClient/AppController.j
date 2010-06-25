@@ -25,8 +25,6 @@
 
 @import "LPMultiLineTextField.j";
 @import "TNCategoriesAndGlobalSubclasses.j";
-@import "TNAlertPresenceSubscription.j";
-@import "TNAlertRemoveContact.j";
 @import "TNDatasourceRoster.j";
 @import "TNOutlineViewRoster.j";
 @import "TNToolbar.j";
@@ -511,12 +509,26 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
         return;
     }
     
-    var alert   = [[TNAlertRemoveContact alloc] initWithJID:[item JID] roster:_mainRoster];
-    if (alert)
-    {
-        [alert runModal];
-    }
+    var alert = [TNAlert alertWithTitle:@"Delet contact"
+                                message:@"Are you sure you want to delete this contact?"
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
+    [alert setUserInfo:item]
+    [alert runModal];
 }
+
+- (void)performDeleteContact:(id)userInfo
+{
+    var growl   = [TNGrowlCenter defaultCenter];
+    var contact = userInfo;
+    
+    [_mainRoster removeContactWithJID:[contact JID]];
+    
+    CPLog.info(@"contact " + [contact JID] + "removed");
+    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
+    
+}
+
 
 - (IBAction)addGroup:(id)sender
 {
@@ -526,36 +538,44 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 
 - (IBAction)deleteGroup:(id)sender
 {
-    var growl = [TNGrowlCenter defaultCenter];
-    
+    var growl       = [TNGrowlCenter defaultCenter];
     var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
     var item        = [_rosterOutlineView itemAtRow:index];
     var defaults    = [TNUserDefaults standardUserDefaults];
     
-    if ([item class] == TNStropheGroup)
+    if ([item class] != TNStropheGroup)
     {
-        if ([[item contacts] count] == 0)
-        {
-            var key = TNArchipelRememberOpenedGroup + [item name];
-            
-            [_mainRoster removeGroup:item];
-            [_rosterOutlineView reloadData];
-            [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
-            
-            [defaults removeObjectForKey:key];
-            
-            [propertiesView hide];
-            [_rosterOutlineView deselectAll];
-        }
-        else
-        {
-            [growl pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
-        }
+        [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError]; 
+        return;
     }
-    else
+    
+    if ([[item contacts] count] != 0)
     {
-       [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError]; 
+        [growl pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
+        return;
     }
+    
+    var alert = [TNAlert alertWithTitle:@"Delete group"
+                                message:@"Are you sure you want to delete this group?"
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
+    [alert setUserInfo:item]
+    [alert runModal];
+}
+
+- (void)performDeleteGroup:(id)userInfo
+{
+    var group   = userInfo;
+    var key     = TNArchipelRememberOpenedGroup + [group name];
+    
+    [_mainRoster removeGroup:group];
+    [_rosterOutlineView reloadData];
+    [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
+    
+    [defaults removeObjectForKey:key];
+    
+    [propertiesView hide];
+    [_rosterOutlineView deselectAll];
 }
 
 - (IBAction)selectNextEntity:(id)sender
@@ -878,9 +898,26 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 */
 - (void)didReceiveSubscriptionRequest:(id)requestStanza
 {
-    var presenceAlert = [[TNAlertPresenceSubscription alloc] initWithStanza:requestStanza roster:_mainRoster];
-    
-    [presenceAlert runModal];
+    var alert = [TNAlert alertWithTitle:@"Subscription request"
+                                message:[requestStanza getFrom] + " is asking you subscription. Do you want to add it ?"
+                                delegate:self
+                                 actions:[["Accept", @selector(performSubscribe:)], 
+                                            ["Decline", @selector(performUnsubscribe:)]]];
+
+    [alert setUserInfo:requestStanza]
+    [alert runModal];
+}
+
+- (void)performSubscribe:(id)userInfo
+{
+    var stanza = userInfo;
+    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
+}
+
+- (void)performUnsubscribe:(id)userInfo
+{
+    var stanza = userInfo;
+    [_mainRoster answerAuthorizationRequest:stanza answer:NO];
 }
 
 
