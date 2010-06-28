@@ -61,6 +61,8 @@
         _events      = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
         _avatar      = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         
+        //[_name setBackgroundColor:[CPColor whiteColor]];
+        
         _syncImage      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sync.png"] size:CGSizeMake(16, 16)];
         // _syncingImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"syncing.gif"] size:CGSizeMake(14, 14)];
         // _syncButton     = [[CPButton alloc] initWithFrame:CGRectMake(170, 8, 16, 16)];
