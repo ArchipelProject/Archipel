@@ -138,7 +138,7 @@
 - (void)onStropheConnectFail:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
-    [connectButton setEnabled:NO];
+    [connectButton setEnabled:YES];
     [message setStringValue:@"Connection failed."];
 
     CPLog.info("XMPP connection failed");
@@ -160,7 +160,7 @@
 - (void)onStropheAuthFail:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
-    [connectButton setEnabled:NO];
+    [connectButton setEnabled:YES];
     [message setStringValue:@"Authentication failed."];
 
     CPLog.info("XMPP auth failed");
@@ -172,7 +172,7 @@
 - (void)onStropheError:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:YES];
-    [connectButton setEnabled:NO];
+    [connectButton setEnabled:YES];
     [message setStringValue:@"Unknown error."];
 
     CPLog.info("XMPP unknown error");
@@ -195,7 +195,6 @@
     [self initCredentials];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [but]
     [message setStringValue:@"Disconnected."];
     
     CPLog.info("XMPP connection is now disconnected");

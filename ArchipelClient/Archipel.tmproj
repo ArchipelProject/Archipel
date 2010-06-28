@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>TNAlertPresenceSubscription.j</string>
+	<string>Modules.src/HypervisorVMCreation/TNHypervisorVMCreationController.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -134,20 +134,6 @@
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>9</integer>
-		</dict>
-		<key>Jakefile - copie</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>59</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>31</integer>
 		</dict>
 		<key>LICENSE</key>
 		<dict>
@@ -626,30 +612,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>54</integer>
+				<integer>5</integer>
 				<key>line</key>
-				<integer>235</integer>
+				<integer>221</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>228</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>18</integer>
-				<key>line</key>
-				<integer>235</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>54</integer>
-				<key>line</key>
-				<integer>235</integer>
-			</dict>
+			<integer>216</integer>
 		</dict>
 		<key>Modules.src/SampleTabModule/Info.plist</key>
 		<dict>
@@ -1716,14 +1686,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>21</integer>
 				<key>line</key>
-				<integer>0</integer>
+				<integer>54</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>209</integer>
+			<integer>33</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>12</integer>
+				<key>line</key>
+				<integer>54</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>32</integer>
+				<key>line</key>
+				<integer>54</integer>
+			</dict>
 		</dict>
 		<key>Modules.src/VirtualMachineVNC/Info.plist</key>
 		<dict>
@@ -2047,50 +2033,6 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>0</integer>
-		</dict>
-		<key>TNAlertPresenceSubscription.j</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>24</integer>
-				<key>line</key>
-				<integer>64</integer>
-			</dict>
-			<key>columnSelection</key>
-			<false/>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>32</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>17</integer>
-				<key>line</key>
-				<integer>64</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>43</integer>
-				<key>line</key>
-				<integer>64</integer>
-			</dict>
-		</dict>
-		<key>TNAlertRemoveContact.j</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>79</integer>
-				<key>line</key>
-				<integer>32</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -2523,8 +2465,6 @@
 		<string>Modules.src/GroupManagement/Resources/icon.png</string>
 		<string>TNOutlineTableColumn.j</string>
 		<string>TNQuickEditView.j</string>
-		<string>TNAlertPresenceSubscription.j</string>
-		<string>TNAlertRemoveContact.j</string>
 		<string>TNOutlineViewRoster.j</string>
 		<string>TNUserDefaults.j</string>
 		<string>TNModuleLoader.j</string>
@@ -2533,7 +2473,6 @@
 		<string>Resources/spinner.gif</string>
 		<string>Resources/add.png</string>
 		<string>index-debug.html</string>
-		<string>Jakefile - copie</string>
 		<string>Modules.src/ToolbarLogs/Info.plist</string>
 		<string>buildArchipel</string>
 		<string>Info.plist</string>
@@ -2619,6 +2558,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{314, 55}, {1126, 823}}</string>
+	<string>{{283, 55}, {1126, 823}}</string>
 </dict>
 </plist>
