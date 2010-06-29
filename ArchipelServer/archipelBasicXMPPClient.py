@@ -457,8 +457,7 @@ class TNArchipelBasicXMPPClient(object):
         
         self.roster = self.xmppclient.getRoster()
         
-        self.roster.setItem(jid.getStripped(), groups)
-        #self.roster.Subscribe(jid.getStripped())
+        self.roster.setItem(jid=jid.getStripped(), groups=groups)
         self.subscribe(jid.getStripped())
         
         self.push_change("subscription", "added")

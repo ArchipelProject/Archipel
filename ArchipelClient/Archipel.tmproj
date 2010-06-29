@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/HypervisorVMCreation/TNHypervisorVMCreationController.j</string>
+	<string>Modules/modules.plist</string>
 	<key>documents</key>
 	<array>
 		<dict>

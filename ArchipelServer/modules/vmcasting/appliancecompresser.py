@@ -30,7 +30,7 @@ class TNApplianceCompresser(Thread):
         initialize a TNApplianceCompresser
         """
         Thread.__init__(self)
-        self.name = name
+        self.name = name.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
         self.paths = paths
         self.install_path = install_path
         self.callback = callback
@@ -71,7 +71,9 @@ class TNApplianceCompresser(Thread):
         
         tar.close()
         
+        log.info("moving the tar file %s to repo %s" % (tar_file, self.hypervisor_repo_path))
         os.system("mv %s %s" % (tar_file, self.hypervisor_repo_path));
+        log.info("cleaning the working temp dir")
         os.system("rm -rf %s" % self.working_dir)
         self.callback()
 

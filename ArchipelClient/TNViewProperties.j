@@ -144,7 +144,7 @@
         [entryName setStringValue:[_entity nickname]];
         
         [entryDomain setStringValue:[_entity domain]];
-        [entryResource setStringValue:[_entity resource]];
+        [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatusIcon setImage:[_entity statusIcon]];
         if ([_entity avatar])
             [entryAvatar setImage:[_entity avatar]];

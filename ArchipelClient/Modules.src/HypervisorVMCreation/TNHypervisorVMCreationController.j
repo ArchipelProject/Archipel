@@ -158,6 +158,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)willUnload
 {
+    [_virtualMachinesDatasource removeAllObjects];
+    [_tableVirtualMachines reloadData];
+    
     [super willUnload];
 }
 
@@ -175,7 +178,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 - (void)reload:(CPNotification)aNotification
 {
-    [self getHypervisorRoster];
+    if ([_entity XMPPShow] != TNStropheContactStatusOffline)
+        [self getHypervisorRoster];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -215,6 +219,18 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
                    [_virtualMachinesDatasource addObject:entry];
                    [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];   
                }
+            }
+            else
+            {
+                var contact = [[TNStropheContact alloc] initWithConnection:nil];
+                [contact setJID:JID];
+                [contact setGroupName:@"nogroup"];
+                [contact setNodeName:JID.split('@')[0]];
+                [contact setNickname:JID.split('@')[0]];
+                [[contact resources] addObject:JID.split('/')[1]];
+                [contact setDomain: JID.split('/')[0].split('@')[1]];
+                
+                [_virtualMachinesDatasource addObject:contact];
             }
         }
     
@@ -324,7 +340,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             "action": TNArchipelTypeHypervisorControlFree,
             "jid": [vm JID]}];
 
-        [_roster removeContact:vm];
+        // [_roster removeContact:vm];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
     }
