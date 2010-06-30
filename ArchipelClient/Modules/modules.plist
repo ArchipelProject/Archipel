@@ -34,6 +34,10 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>ToolbarMigration</string>
+            </dict>
+            <dict>
+                <key>folder</key>
                 <string>ToolbarPauseButton</string>
             </dict>
             <dict>

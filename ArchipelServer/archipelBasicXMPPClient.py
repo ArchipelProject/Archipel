@@ -76,8 +76,8 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient             = None
         self.vcard                  = None
         self.password               = password
-        self.jid                    = jid
         self.ressource              = socket.gethostname()
+        self.jid                    = jid
         self.roster                 = None
         self.roster_retreived       = False
         self.configuration          = configuration
@@ -86,6 +86,8 @@ class TNArchipelBasicXMPPClient(object):
         self.messages_registrar     = []
         self.isAuth                 = False;
         self.loop_status            = LOOP_OFF
+        
+        self.jid.setResource(self.ressource)
         
         if self.name == "auto":
             self.name = self.ressource
@@ -333,12 +335,12 @@ class TNArchipelBasicXMPPClient(object):
         if not self.isAuth:
             return
         
-        log.info("going to perform action to perform on auth: %s" % str(self.registered_actions_to_perform_on_connection))
+        log.debug("going to perform action to perform on auth: %s" % str(self.registered_actions_to_perform_on_connection))
         
         actions_to_purge = []
         
         for action in self.registered_actions_to_perform_on_connection:
-            log.info("performing action %s" % str(action))
+            log.debug("performing action %s" % str(action))
             if hasattr(self, action["name"]):
                 m = getattr(self, action["name"])
                 if action["args"] != None:
@@ -349,10 +351,10 @@ class TNArchipelBasicXMPPClient(object):
                 actions_to_purge.append(action)
         
         for oneshot_action in actions_to_purge:
-            log.info("purging non persistant action %s" % str(oneshot_action))
+            log.debug("purging non persistant action %s" % str(oneshot_action))
             self.registered_actions_to_perform_on_connection.remove(oneshot_action)
         
-        log.info("keeped persistant actions are: %s" % str(self.registered_actions_to_perform_on_connection))
+        log.debug("keeped persistant actions are: %s" % str(self.registered_actions_to_perform_on_connection))
     
     
     def change_presence(self, presence_show=None, presence_status=None):
@@ -403,27 +405,22 @@ class TNArchipelBasicXMPPClient(object):
         self.roster = self.xmppclient.getRoster()
         
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace 
-        print "=================================================="
-        print "I'm %s" % str(self.jid)
-        print "My roster is %s" % str(self.roster.getItems())
         
         for barejid in self.roster.getItems():
             excluded = False;
-            
             if excludedgroups:
                 for excludedgroup in excludedgroups:
                     groups = self.roster.getGroups(barejid)
                     if groups and excludedgroup in groups:
                         excluded = True
                         break;
-            print "current jid is %s and is excluded ? %d " % (barejid, excluded)
             if not excluded:
-                #if barejid.find("/") > -1: # as we say in french : mouais.. bof
-                    push_message = xmpp.Message(typ="headline", to=barejid)
+                resources = self.roster.getResources(barejid);
+                for resource in resources:
+                    push_message = xmpp.Message(typ="headline", to=barejid + "/" + resource)
                     push_message.addChild(name="x", namespace=ns, attrs={"change": change})
-                    log.info("PUSH : pushing %s->%s to %s" % (ns, change, str(push_message)))
+                    log.info("PUSH : pushing %s->%s to %s" % (ns, change, barejid + "/" + resource))
                     self.xmppclient.send(push_message)
-        print "=================================================="
     
     
     def shout(self, subject, message, excludedgroups=None):
@@ -431,7 +428,6 @@ class TNArchipelBasicXMPPClient(object):
         
         for barejid in self.roster.getItems():
             excluded = False;
-            
             if excludedgroups:
                 for excludedgroup in excludedgroups:
                     groups = self.roster.getGroups(barejid)
@@ -440,8 +436,9 @@ class TNArchipelBasicXMPPClient(object):
                         break;
             
             if not excluded:
-                if barejid.find("/") > -1: # as we say in french : mouais.. bof
-                    broadcast = xmpp.Message(to=barejid, body=message, typ="headline")
+                resources = self.roster.getResources(barejid);
+                for resource in resources:
+                    broadcast = xmpp.Message(body=message, typ="headline", to=barejid + "/" + resource)
                     log.info("SHOUTING : shouting message to %s" % (barejid))
                     self.xmppclient.send(broadcast)
     
@@ -453,14 +450,14 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to add
         """
-        log.info("adding JID %s to roster instance %s" % (str(jid), str(self.jid)))
+        log.info("adding JID %s to roster of %s" % (str(jid), str(self.jid)))
         
         self.roster = self.xmppclient.getRoster()
         
         self.roster.setItem(jid=jid.getStripped(), groups=groups)
         self.subscribe(jid.getStripped())
         
-        self.push_change("subscription", "added")
+        self.push_change("subscription", "added", excludedgroups=['vitualmachines'])
     
     
     def remove_jid(self, jid):
@@ -653,7 +650,7 @@ class TNArchipelBasicXMPPClient(object):
         @type item: dictionnary
         @param item: the dictionnary describing the registrar item
         """
-        log.info("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
+        log.debug("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
         self.messages_registrar.append(item)
     
     

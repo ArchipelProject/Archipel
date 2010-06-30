@@ -275,7 +275,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
-    def alloc(self, requester, requested_name=None, description="", requested_uuid=None, requested_password=None):
+    def alloc(self, requester, requested_name=None, description="", requested_uuid=None, requested_password=None, keep_roster=False):
         """
         Alloc a new XMPP entity
         """
@@ -302,11 +302,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         log.info("starting xmpp threaded virtual machine")
         vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
         
-        log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
-        vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+        if not keep_roster:
+            log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
+            vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
         log.info( "registering the new VM in hypervisor's memory")
-        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid), vm_password, datetime.datetime.now(), description, name))
+        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), description, name))
         self.database.commit()
         self.virtualmachines[vmuuid] = vm
         
@@ -319,36 +320,45 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     def free(self, jid, keep_folder=False, keep_account=False):
         uuid    = jid.getNode()
-        vm      = self.virtualmachines[uuid]
+        
+        try:
+            vm  = self.virtualmachines[uuid]
+        except Exception as ex:
+            log.error("no virtual machine registred with uuid %s" % uuid)
+            return
         
         try:
             if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
                 vm.domain.destroy()
                 vm.domain.undefine()
-        except:
-            pass
+        except Exception as ex:
+            log.error("can't destroy/undefine virtual machine: " % (str(ex)))
         
         log.info( "removing the xmpp vm %s from my roster" % (str(jid)))
-        self.remove_jid(jid)
+        self.remove_jid(jid.getStripped())
         
         if not keep_folder:
             log.info( "removing the vm drive directory")
             vm.remove_folder()
         
         log.info( "unregistering the VM from hypervisor's database")
-        self.database.execute("delete from virtualmachines where jid='{0}'".format(jid))
+        self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         
         try:
             del self.virtualmachines[uuid]
-        except:
-            pass
-        
+        except Exception as ex:
+            log.error("can't remove vm from self.virtualmachines: " % (str(ex)))
+                
         if not keep_account:
-            log.info( "unregistering vm from jabber server ".format(jid))
-            vm._inband_unregistration()
+            try:
+                log.info("unregistering vm from jabber server")
+                vm._inband_unregistration()
+            except Exception as ex:
+                log.error("can't perform unregistration: " % (str(ex)))
         else:
             vm.disconnect()
+        
         self.update_presence()
     
     
@@ -399,14 +409,16 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             except:
                 requested_password = None
             
-            if self.virtualmachines.has_key(requested_uuid):
-                log.info("no needs to alloc vm. already in memory")
-                return
+            keep_roster = False
+            try:
+                if iq.getTag("query").getTag("archipel").getAttr("keeproster") == "1": keep_roster = True
+            except:
+                keep_roster = False;
             
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name, requested_uuid=requested_uuid, requested_password=requested_password)
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name, requested_uuid=requested_uuid, requested_password=requested_password, keep_roster=keep_roster)
             
             reply   = iq.buildReply("result")
-            payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid)})
+            payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
             reply.setQueryPayload([payload])
             
             self.push_change("hypervisor", "alloc", excludedgroups=[GROUP_VM]);
@@ -438,26 +450,24 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             keep_folder = False
             try: 
                 keep = iq.getTag("query").getTag("archipel").getAttr("keepfolder");
-                if keep == "1":
-                    keep_folder = True
+                if keep == "1": keep_folder = True
             except:
                 pass
                 
             keep_account = False
             try: 
-                keep = iq.getTag("query").getTag("archipel").getAttr("keepfolder");
-                if keep == "1":
-                    keep_account = True
+                keep = iq.getTag("query").getTag("archipel").getAttr("keepaccount");
+                if keep == "1": keep_account = True
             except:
                 pass
                     
             
             self.free(vm_jid, keep_folder=keep_folder, keep_account=keep_account)
             
-            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": str(vm_jid)})])
+            reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})])
             log.info( "XMPP Virtual Machine instance sucessfully destroyed")
             self.push_change("hypervisor", "free", excludedgroups=[GROUP_VM]);
-            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[GROUP_VM])
+            #self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[GROUP_VM])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -505,7 +515,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             nodes = []
             for uuid, vm in self.virtualmachines.iteritems():#self.roster.getItems():
                 n = xmpp.Node("item")
-                n.addData(vm.jid)
+                n.addData(vm.jid.getStripped())
                 nodes.append(n)
             reply.setQueryPayload(nodes)
         except Exception as ex:

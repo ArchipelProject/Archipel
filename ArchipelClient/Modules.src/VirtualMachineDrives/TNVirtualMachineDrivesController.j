@@ -200,6 +200,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [fieldJID setStringValue:[_entity JID]];
     
     [self checkIfRunning];
+    [self getDisksInfo];
 }
 
 
@@ -227,8 +228,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
     
     CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-        
-    [self getDisksInfo];
     
     if (type == TNArchipelPushNotificationDisk)
     {
@@ -237,6 +236,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         else if (change == @"deleted")
             [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
     }
+    
+    [self getDisksInfo];
     
     return YES;
 }

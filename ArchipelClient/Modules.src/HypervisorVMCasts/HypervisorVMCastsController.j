@@ -159,7 +159,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var center = [CPNotificationCenter defaultCenter];
     
     [windowDownloadQueue setEntity:_entity];
-    //[_mainOutlineView setDelegate:nil];
+    [_mainOutlineView setDelegate:nil];
     [_mainOutlineView setDelegate:self];
     
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
@@ -177,6 +177,9 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     [windowNewCastURL orderOut:nil];
     
     [_mainOutlineView deselectAll];
+
+    [[_castsDatasource contents] removeAllObjects];
+    [_mainOutlineView reloadData];
 }
 
 - (void)willShow
@@ -367,7 +370,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
                                 delegate:self
                                  actions:[["Delete", @selector(performRemoveAppliance:)], ["Cancel", nil]]];
 
-    [alert runModal];
+    [alert runModal]; 
 }
 
 - (void)performRemoveAppliance:(id)someUserInfo

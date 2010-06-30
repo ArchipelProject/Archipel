@@ -12,6 +12,21 @@ import logging.handlers
 
 log = logging.getLogger('archipel')
 
+
+class ColorFormatter(logging.Formatter):
+    def format(self, record):
+        rec = logging.Formatter.format(self, record)
+        rec = rec.replace("DEBUG", "\033[35mDEBUG\033[0m")
+        rec = rec.replace("INFO", "\033[33mINFO\033[0m")
+        rec = rec.replace("WARNING", "\033[32mWARNING\033[0m")
+        rec = rec.replace("ERROR", "\033[31mERROR\033[0m")
+        rec = rec.replace("CRITICAL", "\033[31mCRITICAL\033[0m")
+        rec = rec.replace("$whiteColor", "\033[37m")
+        rec = rec.replace("$noColor", "\033[0m")
+        return rec
+    
+
+
 def init_conf(path):
     """
     this method intialize the configuration object (that will be passed to all 
@@ -39,8 +54,7 @@ def init_conf(path):
     max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
     backup_count    = conf.getint("LOGGING", "logging_backup_count")
     handler         = logging.handlers.RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
-    log_format      = logging.Formatter(conf.get("LOGGING", "logging_formatter", raw=True), conf.get("LOGGING", "logging_date_format", raw=True))
-    
+    log_format      = ColorFormatter(conf.get("LOGGING", "logging_formatter", raw=True), conf.get("LOGGING", "logging_date_format", raw=True))
     handler.setFormatter(log_format)
     logger.addHandler(handler)
     logger.setLevel(level)
@@ -57,7 +71,7 @@ NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
 
 def build_error_iq(originclass, ex, iq, code=-1, ns="archipel:error:generic"):
     caller = inspect.stack()[2][3];
-    log.error("%s: exception raised is : %s" % (caller, ex))
+    log.error("%s.%s: exception raised is : %s" % (originclass, caller, ex))
     reply = iq.buildReply('error')
     reply.setQueryPayload(iq.getQueryPayload())
     error = xmpp.Node("error", attrs={"code": code, "type": "cancel"})

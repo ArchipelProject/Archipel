@@ -166,7 +166,7 @@ class TNVMApplianceManager:
             self.installing_media_uuid = uuid
             appliance_packager.start()
             
-            self.entity.push_change("vmcasting", "applianceinstalling")
+            self.entity.push_change("vmcasting", "applianceinstalling", excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
             
@@ -188,7 +188,7 @@ class TNVMApplianceManager:
             package_file_path = self.entity.folder + "/current.package"
             os.unlink(package_file_path)
             self.is_installed = False
-            self.entity.push_change("vmcasting", "appliancedetached")
+            self.entity.push_change("vmcasting", "appliancedetached", excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
@@ -228,7 +228,7 @@ class TNVMApplianceManager:
             compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, "/tmp", "/tmp", self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
             
             self.is_installing = True
-            self.entity.push_change("vmcasting", "packaging")
+            self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])
             compressor.start()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)
@@ -239,14 +239,14 @@ class TNVMApplianceManager:
         self.is_installing = False
         self.installing_media_uuid = None
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceinstalled")
+        self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
         self.entity.change_status("Off")
-        self.entity.shout("appliance", "I've terminated to install from applicance.")
+        self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
         
         
     def finish_packaging(self):
         self.is_installing = False
-        self.entity.push_change("vmcasting", "packaged")
+        self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
         self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False);
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
             

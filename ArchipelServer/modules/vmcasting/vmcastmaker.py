@@ -80,5 +80,5 @@ class VMCastMaker:
                             'Auto imported vmcast', 
                             self.baseserverurl, 
                             str(item_uuid), 
-                            self.basepath + xvm2_file, 
+                            self.baseserverurl + "/" + xvm2_file, 
                             str(size))

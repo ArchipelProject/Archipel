@@ -114,10 +114,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         [params setValue:@"message" forKey:@"name"];
         [params setValue:@"headline" forKey:@"type"];
         //<message xmlns="jabber:client" from="hypervisor@virt-hyperviseur/virt-hyperviseur" to="controller@virt-hyperviseur/ArchipelController" type="headline" id="67">​
-        // <push xmlns="archipel:push:hypervisor" change="alloc"></push>​
+        // <x xmlns="archipel:push:hypervisor" change="alloc" />
         //</message>​
-        if (aPushType)
-          [params setValue:aPushType forKey:@"namespace"];
+        // if (aPushType)
+        [params setValue:aPushType forKey:@"namespace"];
         
         [_registredSelectors addObject:[_connection registerSelector:aSelector ofObject:self withDict:params]];
     }

@@ -21,7 +21,7 @@
 		<key>ToolbarItemOnly</key>
         <integer>0</integer>
 		<key>ToolbarIndex</key>
-		<string>501</string>
+		<string>502</string>
         <key>AlternativePluginDisplayName</key>
         <string>Hide Map</string>
         <key>ToolbarIcon</key>

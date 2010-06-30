@@ -98,30 +98,34 @@ class TNVMMigrator(Thread):
         return resp.getTag("query").getTag("uri").getCDATA()
     
     def alloc_remote_archipel_vm(self, name, uuid, password):
+        log.info("starting to ask to %s to alloc new XMPP VM" % self.remote_hypervisor_jid)
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.remote_hypervisor_jid)
-        iq.getTag("query").addChild(name="archipel", attrs={"action": "alloc", "name": name, "uuid": uuid, "password": password})
-        resp = self.xmppclient.SendAndWaitForResponse(iq)
-        
+        iq.getTag("query").addChild(name="archipel", attrs={"action": "alloc", "name": name, "uuid": uuid, "password": password, "keeproster": "1"})
+        self.xmppclient.SendAndWaitForResponse(iq)
+    
     
     def run(self):
         try:
-            ### get the distant libvirt URI
-            log.info("asking for remote hypervisor %s libvirt URI" % self.remote_hypervisor_jid)
             self.remote_libvirt_uri = self.ask_hypervisor_uri();
-            log.info("hypervisor anwsers libvirt uri is %s" % self.remote_libvirt_uri);
-        
+            log.info("remote hypervisor libvirt uri is %s" % self.remote_libvirt_uri);
+            
+            #FIXME
             self.remote_libvirt_uri = self.remote_libvirt_uri.replace("qemu://", "qemu+ssh://")
             
-            self.vm.domain.migrateToURI(self.remote_libvirt_uri, libvirt.VIR_MIGRATE_LIVE | libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST, None, 0)
-
-            ### alloc vm on dest if needed
-            name        = self.vm.name
-            uuid        = self.vm.uuid
-            password    = self.vm.password
+            jid             = self.vm.jid
+            name            = self.vm.name
+            uuid            = self.vm.uuid
+            password        = self.vm.password
+            flags           = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST
             
+            if self.vm.domain.info()[0] == VIR_DOMAIN_RUNNING:
+                log.info("virtual machine is running. Setting live flags")
+                flags |= libvirt.VIR_MIGRATE_LIVE
+            
+            self.vm.change_presence(presence_show=self.vm.xmppstatusshow, presence_status="Migrating...")
+            self.vm.domain.migrateToURI(self.remote_libvirt_uri, flags, None, 0)
+            self.vm.change_presence(presence_show=self.vm.xmppstatusshow, presence_status="Migrated")
             self.alloc_remote_archipel_vm(name, uuid, password)
-            self.vm.hypervisor.free(self.vm.jid, keep_folder=True, keep_account=True)
-            
         except Exception as ex:
             log.error("can't perform live migration: %s" % str(ex))
         
@@ -246,7 +250,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def set_presence_according_to_libvirt_info(self):
         try:
-            self.push_change("virtualmachine:definition", "defined")
+            self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
             
             dominfo = self.domain.info()
             log.info("virtual machine state is %d" %  dominfo[0])
@@ -289,32 +293,35 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
                 if detail == libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED:
                     self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-                    self.push_change("virtualmachine:control", "created")
+                    self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
                 elif detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                     self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-                    self.push_change("virtualmachine:control", "Recovered from migrated")
+                    self.push_change("virtualmachine:control", "Recovered from migrated", excludedgroups=['vitualmachines'])
                     
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
                 self.change_presence("away", NS_ARCHIPEL_STATUS_PAUSED)
-                self.push_change("virtualmachine:control", "suspended")
+                self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
                 self.change_presence("", NS_ARCHIPEL_STATUS_RUNNING)
-                self.push_change("virtualmachine:control", "resumed")
+                self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
                 if detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
-                    pass
+                    iq = xmpp.Iq(typ="set", queryNS="archipel:hypervisor:control", to=self.hypervisor.jid )
+                    iq.getTag("query").addChild(name="archipel", attrs={"action": "free", "jid": self.jid.getStripped(), "keepfolder": "1", "keepaccount": "1"})
+                    self.xmppclient.send(iq)
+                    
                 else:
                     self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-                    self.push_change("virtualmachine:control", "shutdowned")
+                    self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
             
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_NOT_DEFINED)
-                self.push_change("virtualmachine:definition", "undefined")
+                self.push_change("virtualmachine:definition", "undefined", excludedgroups=['vitualmachines'])
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", NS_ARCHIPEL_STATUS_SHUTDOWNED)
-                self.push_change("virtualmachine:definition", "defined")
+                self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
         except Exception as ex:
             log.error("Unable to push state change : %s" % str(ex))
         finally:
@@ -542,6 +549,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         migrator.start()
         log.info("migrator started")
         
+    
+    
     
     ######################################################################################################
     ### XMPP Controls

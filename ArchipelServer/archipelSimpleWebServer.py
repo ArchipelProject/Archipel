@@ -18,6 +18,7 @@
 
 import  BaseHTTPServer
 from threading import Thread
+import os
 
 class TNThreadedWebServer(Thread):
     """
@@ -68,6 +69,10 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     data = data.replace("::SCALE::", options["scaling"])
                 else:
                     data = data.replace("::SCALE::", "100")
+            
+            self.send_response(200)
+            self.send_header("Content-Length", os.path.getsize(self.server_root + self.path))
+            self.end_headers()
             self.wfile.write(data)
             f.close()
         except:

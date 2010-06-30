@@ -128,8 +128,8 @@ class TNMediaManagement:
          
             reply = iq.buildReply("result")
             log.info( "disk created")
-            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
-            self.entity.push_change("disk", "created")
+            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit), excludedgroups=['vitualmachines'])
+            self.entity.push_change("disk", "created", excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CREATE)
         return reply
@@ -166,8 +166,8 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
             log.info( "convertion of  created")
-            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
-            self.entity.push_change("disk", "converted")
+            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format), excludedgroups=['vitualmachines'])
+            self.entity.push_change("disk", "converted", excludedgroups=['vitualmachines'])
         except Exception as ex:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CONVERT)
@@ -198,8 +198,8 @@ class TNMediaManagement:
             
             reply = iq.buildReply("result")
             log.info( "renamed hard drive %s into  %s" % (path, newname))
-            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
-            self.entity.push_change("disk", "renamed")
+            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname), excludedgroups=['vitualmachines'])
+            self.entity.push_change("disk", "renamed", excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_RENAME)
         return reply
@@ -243,14 +243,14 @@ class TNMediaManagement:
                 if have_undefined_at_least_on_disk:
                     xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
                     self.entity.libvirt_connection.defineXML(xml)
-                    self.entity.push_change("virtualmachine:definition", "defined")
+                    self.entity.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
             
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
             reply = iq.buildReply("result")
             log.info("disk %s deleted" % secure_disk_path)
-            self.entity.push_change("disk", "deleted")
-            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
+            self.entity.push_change("disk", "deleted", excludedgroups=['vitualmachines'])
+            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name), excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_DELETE)
         return reply
