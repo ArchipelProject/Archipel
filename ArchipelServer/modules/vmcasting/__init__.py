@@ -5,8 +5,8 @@ import xmpp
 from utils import *
 import archipel
 
-NS_ARCHIPEL_HYPERVISOR_VMCASTING        = "archipel:hypervisor:vmcasting"
-NS_ARCHIPEL_VIRTUALMACHINE_VMCASTING    = "archipel:virtualmachine:vmcasting"
+ARCHIPEL_NS_HYPERVISOR_VMCASTING        = "archipel:hypervisor:vmcasting"
+ARCHIPEL_NS_VIRTUALMACHINE_VMCASTING    = "archipel:virtualmachine:vmcasting"
 
 
 def __module_init__vmcasting_module_for_hypervisor(self):
@@ -38,10 +38,10 @@ def __module_init__vmcasting_module_for_virtualmachine(self):
 
 # this method will be called at registration of handlers for XMPP
 def __module_register_stanza__vmcasting_module_for_hypervisor(self):
-    self.xmppclient.RegisterHandler('iq', self.module_vmcasting.process_iq, typ=NS_ARCHIPEL_HYPERVISOR_VMCASTING)
+    self.xmppclient.RegisterHandler('iq', self.module_vmcasting.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_VMCASTING)
 
 def __module_register_stanza__vmcasting_module_for_virtualmachine(self):
-    self.xmppclient.RegisterHandler('iq', self.module_packaging.process_iq, typ=NS_ARCHIPEL_VIRTUALMACHINE_VMCASTING)
+    self.xmppclient.RegisterHandler('iq', self.module_packaging.process_iq, ns=ARCHIPEL_NS_VIRTUALMACHINE_VMCASTING)
 
 
 

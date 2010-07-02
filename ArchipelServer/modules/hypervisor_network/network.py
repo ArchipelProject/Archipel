@@ -38,14 +38,14 @@ class TNHypervisorNetworks:
         self.entity = entity
         self.libvirt_connection = libvirt.open(self.entity.configuration.get("GLOBAL", "libvirt_uri"))
         if self.libvirt_connection == None:
-            log.error( "unable to connect libvirt")
+            log.error("unable to connect libvirt")
             sys.exit(0) 
-        log.info( "connected to  libvirt")
+        log.info("connected to  libvirt")
     
     
     def process_iq_for_hypervisor(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_NETWORK IQ is received.
+        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
         
         it understands IQ of type:
             - define
@@ -63,9 +63,9 @@ class TNHypervisorNetworks:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -107,7 +107,7 @@ class TNHypervisorNetworks:
     
     def process_iq_for_virtualmachine(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_NETWORK IQ is received.
+        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
         
         it understands IQ of type:
             - bridges
@@ -120,9 +120,9 @@ class TNHypervisorNetworks:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -153,10 +153,10 @@ class TNHypervisorNetworks:
             
             reply = iq.buildReply("result")
             self.libvirt_connection.networkDefineXML(str(network_node))
-            log.info( "virtual network XML is defined")
-            self.entity.push_change("network", "defined", excludedgroups=['virtualmachines'])
+            log.info("virtual network XML is defined")
+            self.entity.push_change("network", "defined", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE)
         return reply
@@ -178,10 +178,10 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.undefine()
             reply = iq.buildReply("result")
-            log.info( "virtual network XML is undefined")
-            self.entity.push_change("network", "undefined", excludedgroups=['virtualmachines'])
+            log.info("virtual network XML is undefined")
+            self.entity.push_change("network", "undefined", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE)
         return reply
@@ -203,11 +203,11 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.create()
             reply = iq.buildReply("result")
-            log.info( "virtual network created")
-            self.entity.push_change("network", "created", excludedgroups=['virtualmachines'])
-            self.entity.shout("network", "Network %s has been started by %s." % (network_uuid, iq.getFrom()), excludedgroups=['virtualmachines'])
+            log.info("virtual network created")
+            self.entity.push_change("network", "created", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
+            self.entity.shout("network", "Network %s has been started by %s." % (network_uuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_CREATE)
         return reply
@@ -229,11 +229,11 @@ class TNHypervisorNetworks:
             libvirt_network = self.libvirt_connection.networkLookupByUUIDString(network_uuid)
             libvirt_network.destroy()
             reply = iq.buildReply("result")
-            log.info( "virtual network destroyed")
-            self.entity.push_change("network", "destroyed", excludedgroups=['virtualmachines'])
-            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()), excludedgroups=['virtualmachines'])
+            log.info("virtual network destroyed")
+            self.entity.push_change("network", "destroyed", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
+            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY)
         return reply
@@ -273,7 +273,7 @@ class TNHypervisorNetworks:
             not_active_networks_root_node = xmpp.Node(tag="unactivedNetworks", payload=not_active_networks_nodes)
             reply.setQueryPayload([active_networks_root_node, not_active_networks_root_node])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GET)
         return reply
@@ -298,7 +298,7 @@ class TNHypervisorNetworks:
                 active_networks_nodes.append(network)
             reply.setQueryPayload(active_networks_nodes)
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES)
         return reply
@@ -325,7 +325,7 @@ class TNHypervisorNetworks:
                 bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES)
         return reply

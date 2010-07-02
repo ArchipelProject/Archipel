@@ -70,7 +70,7 @@ class TNHypervisorGeolocalization:
     
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_GEOLOC IQ is received.
+        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_GEOLOC IQ is received.
         
         it understands IQ of type:
             - get
@@ -82,16 +82,16 @@ class TNHypervisorGeolocalization:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if action == "get":
             reply = self.__get(iq)
             conn.send(reply)
-            log.debug( "geolocalization information sent. Node processed")
+            log.debug("geolocalization information sent. Node processed")
             raise xmpp.protocol.NodeProcessed
     
 

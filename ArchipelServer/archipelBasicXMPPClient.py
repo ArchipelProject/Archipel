@@ -31,18 +31,6 @@ import hashlib
 import time
 import threading
 
-LOOP_OFF = 0
-"""indicates loop off status"""
-
-LOOP_ON = 1
-"""indicates loop on status"""
-
-LOOP_RESTART = 2
-"""indicates loop restart status"""
-
-
-ARCHIPEL_NS_IQ_PUSH = "archipel:push"
-ARCHIPEL_NS_SERVICE_MESSAGE = "headline"
 
 ARCHIPEL_MESSAGING_HELP_MESSAGE = """
 You can communicate with me using text commands, just like if you were chatting with your friends. \
@@ -85,7 +73,7 @@ class TNArchipelBasicXMPPClient(object):
         self.auto_reconnect         = auto_reconnect
         self.messages_registrar     = []
         self.isAuth                 = False;
-        self.loop_status            = LOOP_OFF
+        self.loop_status            = ARCHIPEL_XMPP_LOOP_OFF
         
         self.jid.setResource(self.ressource)
         
@@ -122,12 +110,12 @@ class TNArchipelBasicXMPPClient(object):
         if self.xmppclient.connect() == "":
             log.error("unable to connect to XMPP server")
             if self.auto_reconnect:
-                self.loop_status = LOOP_RESTART
+                self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                 return False
             else:
                 sys.exit(-1)
         
-        self.loop_status = LOOP_ON
+        self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         log.info("sucessfully connected")
         return True
     
@@ -154,7 +142,7 @@ class TNArchipelBasicXMPPClient(object):
         self.get_vcard()
         self.isAuth = True;
         self.perform_all_registered_auth_actions()
-        self.loop_status = LOOP_ON
+        self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         
     
     
@@ -175,7 +163,7 @@ class TNArchipelBasicXMPPClient(object):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False;
-            self.loop_status = LOOP_OFF
+            self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
             self.xmppclient.disconnect()
     
     
@@ -209,7 +197,7 @@ class TNArchipelBasicXMPPClient(object):
             
         elif resp_iq.getType() == "result":
             log.info("the registration complete")
-            self.loop_status = LOOP_RESTART
+            self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
     
     
     def _inband_unregistration(self):
@@ -225,7 +213,7 @@ class TNArchipelBasicXMPPClient(object):
         iq.setQueryPayload([remove_node])
         log.info("unregistration information sent. waiting for response")
         resp_iq = self.xmppclient.send(iq)
-        self.loop_status = LOOP_OFF
+        self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
     
     
     
@@ -603,13 +591,13 @@ class TNArchipelBasicXMPPClient(object):
         This is the main loop of the client
         FIXME : to be change in future (because it's piggy)
         """
-        while not self.loop_status == LOOP_OFF:
+        while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
-                if self.loop_status == LOOP_ON:
+                if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
                     if self.xmppclient.isConnected():
                         self.xmppclient.Process(30)
                 
-                elif self.loop_status == LOOP_RESTART:
+                elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
                         self.disconnect()
                     #time.sleep(5.0)
@@ -620,16 +608,16 @@ class TNArchipelBasicXMPPClient(object):
                 
                 if str(ex).find('User removed') > -1: # ok, there is something I haven't understood with exception...
                     log.info("GREPME : Account has been removed from server")
-                    self.loop_status = LOOP_OFF
+                    self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 
                 elif self.auto_reconnect:
                     log.info("GREPME : Disconnected from server. Trying to reconnect in 5 five seconds")
-                    self.loop_status = LOOP_RESTART
+                    self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
                 
                 else:
                     log.error("GREPME : End of loop forced by exception : %s" % str(ex))
-                    self.loop_status = LOOP_OFF
+                    self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
         
         
         if self.xmppclient.isConnected():

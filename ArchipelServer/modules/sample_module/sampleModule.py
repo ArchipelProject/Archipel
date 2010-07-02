@@ -31,7 +31,7 @@ class TNSampleModule:
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_SAMPLE IQ is received.
+        this method is invoked when a ARCHIPEL_NS_SAMPLE IQ is received.
         
         it understands IQ of type:
             - do-something
@@ -43,9 +43,9 @@ class TNSampleModule:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -67,7 +67,7 @@ class TNSampleModule:
         """
         try:
             reply = iq.buildReply("result")
-            log.info( "I did something!")
+            log.info("I did something!")
             self.entity.push_change("sample", "I_DID_SOMETHING")
             self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")
         except Exception as ex:

@@ -36,19 +36,15 @@ import random
 import libvirtEventLoop
 import libvirt
 
-GROUP_VM                        = "virtualmachines"
-GROUP_HYPERVISOR                = "hypervisors"
-NS_ARCHIPEL_HYPERVISOR_CONTROL  = "archipel:hypervisor:control"
-NS_ARCHIPEL_STATUS_ONLINE       = "Online"
+ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC            = -9001
+ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE             = -9002
+ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER           = -9003
+ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE            = -9004
+ARCHIPEL_ERROR_CODE_HYPERVISOR_IP               = -9005
+ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI      = -9006
+ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION  = -9007
+ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION   = -9008
 
-
-ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC        = -9001
-ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE         = -9002
-ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER       = -9003
-ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE        = -9004
-ARCHIPEL_ERROR_CODE_HYPERVISOR_IP           = -9005
-ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI  = -9006
-ARCHIPEL_ERROR_CODE_HYPERVISOR_MIGRATE      = -9007
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -127,14 +123,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         names_file.close();
         self.number_of_names = len(self.generated_names) - 1
         
-        log.info( "server address defined as {0}".format(self.xmppserveraddr))
+        log.info("server address defined as {0}".format(self.xmppserveraddr))
         
         # libvirt connection
         self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
         if self.libvirt_connection == None:
-            log.error( "unable to connect libvirt")
+            log.error("unable to connect libvirt")
             sys.exit(-42) 
-        log.info( "connected to  libvirt")
+        log.info("connected to  libvirt")
         
         ## start the run loop
         libvirtEventLoop.virEventLoopPureStart()
@@ -151,15 +147,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     def update_presence(self, params=None):
         count = len(self.virtualmachines)
-        self.change_presence(self.xmppstatusshow, NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")")
-        
+        self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count)+ ")")
     
     
     def register_handler(self):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        self.xmppclient.RegisterHandler('iq', self.process_iq, typ=NS_ARCHIPEL_HYPERVISOR_CONTROL)
+        self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
         TNArchipelBasicXMPPClient.register_handler(self)
     
  
@@ -169,10 +164,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a 
         blank database file.
         """
-        log.info( "opening database file {0}".format(self.database_file))
+        log.info("opening database file {0}".format(self.database_file))
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         
-        log.info( "populating database if not exists")
+        log.info("populating database if not exists")
         
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text, name text)")
             
@@ -214,7 +209,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_HYPERVISOR_CONTROL IQ is received.
+        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_CONTROL IQ is received.
         
         it understands IQ of type:
             - alloc
@@ -227,9 +222,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
@@ -263,8 +258,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
-        elif action == "cleanmigrated":
+        elif action == "freemigrated":
             reply = self.iq_free_for_migration(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "allocmigrated":
+            reply = self.iq_alloc_for_migration(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -274,30 +274,17 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
-    def alloc(self, requester, requested_name=None, description="", requested_uuid=None, requested_password=None, keep_roster=False):
+    def alloc(self, requester, requested_name=None):
         """
         Alloc a new XMPP entity
         """
-        if requested_uuid:
-            vmuuid = requested_uuid
-        else:
-            vmuuid  = str(uuid.uuid1())
-        
-        if requested_password:
-            vm_password = requested_password
-        else:
-            vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
-        
-        
-        if self.virtualmachines.has_key(vmuuid):
-            log.warning("No needs to alloc a virtual machine %s. already here" % (vmuuid))
-            return self.virtualmachines[vmuuid]
-        
+        vmuuid      = str(uuid.uuid1())
+        vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower())
         
-        log.info( "adding the xmpp vm %s to my roster" % (str(vm_jid)))
+        log.info("adding the xmpp vm %s to my roster" % (str(vm_jid)))
         
-        self.add_jid(vm_jid, [GROUP_VM])
+        self.add_jid(vm_jid, [ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         
         if not requested_name:
             name = self.generate_name()
@@ -307,76 +294,95 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         log.info("starting xmpp threaded virtual machine")
         vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
         
-        if not keep_roster:
-            log.info( "adding the requesting controller %s to the VM's roster" % (str(requester)))
-            vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+        log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
+        vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
-        log.info( "registering the new VM in hypervisor's memory")
-        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), description, name))
+        log.info("registering the new VM in hypervisor's memory")
+        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
         self.database.commit()
         self.virtualmachines[vmuuid] = vm
         
         self.update_presence()
-        log.info( "XMPP Virtual Machine instance sucessfully initialized")
+        log.info("XMPP Virtual Machine instance sucessfully initialized")
         
         return vm
         
     
+    
+    def alloc_for_migration(self, jid, name, password):
+        """
+        perform light allocation (no registration, no subscription)
+        
+        @type jid: xmpp.JID
+        @param jid: the JID of the migrated VM to alloc
+        @type name: string
+        @param name: the name of the migrated VM to alloc
+        @type password: string
+        @param password: the password of the migrated VM to alloc
+        """
+        uuid    = jid.getNode()
+        
+        log.info("starting xmpp threaded virtual machine")
+        vm = self.create_threaded_vm(jid, password, name).get_instance()
+        
+        log.info("registering the new VM in hypervisor's memory")
+        self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
+        self.database.commit()
+        self.virtualmachines[uuid] = vm
+        
+        self.update_presence()
+        log.info("Migrated XMPP VM is ready")
+        return vm
+        
+    
+    
+    
+    def free(self, jid):
+        uuid    = jid.getNode()
+        vm      = self.virtualmachines[uuid]
+        
+        if vm.is_migrating:
+            raise Exception("virtual machine is migrating. Can't free")
+        
+        if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
+            vm.domain.destroy()
+            vm.domain.undefine()
+        
+        log.info("removing the xmpp vm %s from my roster" % (str(jid)))
+        self.remove_jid(jid)
+        
+        vm.remove_folder()
+        
+        log.info("unregistering the VM from hypervisor's database")
+        self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
+        self.database.commit()
+        
+        del self.virtualmachines[uuid]
+        
+        log.info("unregistering vm from jabber server")
+        vm._inband_unregistration()
+        self.update_presence()
+    
+    
     def free_for_migration(self, jid):
+        """
+        perform light free (no removing of account, no unsubscription)
+        @type jid: xmpp.JID
+        @param jid: the JID of the migrated VM to free
+        """
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
         
         vm.disconnect()
         print "QUERY: delete from virtualmachines where jid='%s'" % jid.getStripped()
         self.remove_jid(jid)
-        log.info( "unregistering the VM from hypervisor's database")
+        log.info("unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
         self.update_presence()
         
-        
-    def free(self, jid, keep_folder=False, keep_account=False):
-        uuid    = jid.getNode()
-        try:
-            vm  = self.virtualmachines[uuid]
-        except Exception as ex:
-            log.error("no virtual machine registred with uuid %s" % uuid)
-            return
-        
-        try:
-            if vm.is_migrating == False and vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
-                vm.domain.destroy()
-                vm.domain.undefine()
-        except Exception as ex:
-            log.error("can't destroy/undefine virtual machine: " % (str(ex)))
-        
-        log.info( "removing the xmpp vm %s from my roster" % (str(jid)))
-        self.remove_jid(jid)
-        
-        if not keep_folder:
-            log.info( "removing the vm drive directory")
-            vm.remove_folder()
-        
-        log.info( "unregistering the VM from hypervisor's database")
-        self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
-        self.database.commit()
-        
-        try:
-            del self.virtualmachines[uuid]
-        except Exception as ex:
-            log.error("can't remove vm from self.virtualmachines: " % (str(ex)))
-                
-        if not keep_account:
-            try:
-                log.info("unregistering vm from jabber server")
-                vm._inband_unregistration()
-            except Exception as ex:
-                log.error("can't perform unregistration: " % (str(ex)))
-        # else:
-        #     vm.disconnect()
-        
-        self.update_presence()
+    
     
     
     def clone(self, uuid, requester):
@@ -387,12 +393,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             raise Exception('The mother vm has to be defined to be cloned')
         
         dominfo = xmppvm.domain.info();
-        if not (dominfo[0] == VIR_DOMAIN_SHUTOFF or dominfo[0] == VIR_DOMAIN_SHUTDOWN):
+        if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother vm has to be stopped to be cloned')
         
         name = "%s (clone)" % xmppvm.name;
         newvm = self.alloc(requester, requested_name=name);
         newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
+    
     
     
     
@@ -415,37 +422,41 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
             except:
                 requested_name = None
-                
-            try:
-                requested_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-            except:
-                requested_uuid = None
             
-            try:
-                requested_password = iq.getTag("query").getTag("archipel").getAttr("password")
-            except:
-                requested_password = None
-            
-            keep_roster = False
-            try:
-                if iq.getTag("query").getTag("archipel").getAttr("keeproster") == "1": keep_roster = True
-            except:
-                keep_roster = False;
-            
-            vm = self.alloc(iq.getFrom(), requested_name=requested_name, requested_uuid=requested_uuid, requested_password=requested_password, keep_roster=keep_roster)
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name)
             
             reply   = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
             reply.setQueryPayload([payload])
             
-            self.push_change("hypervisor", "alloc", excludedgroups=[GROUP_VM]);
-            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid), excludedgroups=[GROUP_VM])
+            self.push_change("hypervisor", "alloc", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC)
             
         return reply
+    
+    
+    def iq_alloc_for_migration(self, iq):
+        """
+        Perform light allocation for handler migrating vm
+        """
+        try:
+            reply       = iq.buildReply("result")
+            vmjid       = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
+            name        = iq.getTag("query").getTag("archipel").getAttr("name")
+            password    = iq.getTag("query").getTag("archipel").getAttr("password")
+            
+            self.alloc_for_migration(vmjid, name, password);
+            
+            self.push_change("hypervisor", "migrate", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.shout("virtualmachine", "The virtual machine %s has been migrated from hypervisor %s" % (vmjid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION)
+        return reply
+    
     
     
     def iq_free(self, iq):
@@ -464,47 +475,41 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             vm_jid      = xmpp.JID(jid=iq.getTag("query").getTag("archipel").getAttr("jid"))
             domain_uuid = vm_jid.getNode()
             
-            keep_folder = False
-            try: 
-                keep = iq.getTag("query").getTag("archipel").getAttr("keepfolder");
-                if keep == "1": keep_folder = True
-            except:
-                pass
-                
-            keep_account = False
-            try: 
-                keep = iq.getTag("query").getTag("archipel").getAttr("keepaccount");
-                if keep == "1": keep_account = True
-            except:
-                pass
-                    
-            
-            self.free(vm_jid, keep_folder=keep_folder, keep_account=keep_account)
+            self.free(vm_jid)
             
             reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})])
-            log.info( "XMPP Virtual Machine instance sucessfully destroyed")
-            self.push_change("hypervisor", "free", excludedgroups=[GROUP_VM]);
-            #self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[GROUP_VM])
+            log.info("XMPP Virtual Machine instance sucessfully destroyed")
+            self.push_change("hypervisor", "free", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE)
         
         return reply
     
+    
     def iq_free_for_migration(self, iq):
-        vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-        self.free_for_migration(vmjid);
-        reply = iq.buildReply("result")
+        """
+        perform light free for virtual machine migration
+        """
+        try:
+            reply = iq.buildReply("result")
+            vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
+            self.free_for_migration(vmjid);
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION)
         return reply
+    
+    
     
     def iq_clone(self, iq):
         """
         alloc a virtual as a clone of another
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -515,8 +520,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
             self.clone(vmuuid, iq.getFrom())
             
-            self.push_change("hypervisor", "clone", excludedgroups=[GROUP_VM]);
-            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (vmuuid, iq.getFrom()), excludedgroups=[GROUP_VM])
+            self.push_change("hypervisor", "clone", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (vmuuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE)
@@ -560,13 +565,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_IP)
         return reply
-
     
     
     def iq_libvirt_uri(self, iq):
         """
         send the hypervisor IP address
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -579,6 +583,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI)
         return reply
+    
+
 
 
     

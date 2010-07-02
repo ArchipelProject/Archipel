@@ -25,6 +25,15 @@ import utils
 import archipelWebServer
 
 
+ARCHIPEL_CMD_HELP   = """\
+Archipel Daemon (c) 2010 Antoine Mercadal
+
+usage: runarchipel.py [--nofork] [--config=</path/to/conf>]
+
+Options :
+* --nofork : run archipel in the current process. Do not fork. This is for testing.
+* --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
+"""
 
 
 def load_modules():
@@ -79,15 +88,7 @@ if __name__ == "__main__":
         if o in ("-n", "--nofork"):
             fork = False
         if o in ("-h", "--help"):
-            print """\
-Archipel Daemon (c) 2010 Antoine Mercadal
-
-usage: runarchipel.py [--nofork] [--config=</path/to/conf>]
-
-Options :
-    * --nofork : run archipel in the current process. Do not fork. This is for testing.
-    * --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
-"""
+            print ARCHIPEL_CMD_HELP
             
             sys.exit(0)
     

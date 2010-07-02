@@ -10,8 +10,38 @@ import inspect
 import logging
 import logging.handlers
 
-log = logging.getLogger('archipel')
+# XMPP groups
+ARCHIPEL_XMPP_GROUP_VM                          = "virtualmachines"
+ARCHIPEL_XMPP_GROUP_HYPERVISOR                  = "hypervisors"
+ARCHIPEL_XMPP_GROUP_CONTROLLER                  = "controllers"
 
+# Namespaces
+ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR               = "libvirt:error:generic"
+ARCHIPEL_NS_GENERIC_ERROR                       = "archipel:error:generic"
+ARCHIPEL_NS_IQ_PUSH                             = "archipel:push"
+ARCHIPEL_NS_SERVICE_MESSAGE                     = "headline"
+ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
+ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
+ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
+
+# XMPP shows
+ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
+ARCHIPEL_XMPP_SHOW_RUNNING                      = "Running"
+ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
+ARCHIPEL_XMPP_SHOW_SHUTDOWNED                   = "Off"
+ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
+ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
+
+# XMPP main loop status
+ARCHIPEL_XMPP_LOOP_OFF                          = 0
+ARCHIPEL_XMPP_LOOP_ON                           = 1
+ARCHIPEL_XMPP_LOOP_RESTART                      = 2
+
+# errors
+ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED         = -42
+
+
+log = logging.getLogger('archipel')
 
 class ColorFormatter(logging.Formatter):
     def format(self, record):
@@ -25,6 +55,7 @@ class ColorFormatter(logging.Formatter):
         rec = rec.replace("$noColor", "\033[0m")
         return rec
     
+
 
 
 def init_conf(path):
@@ -62,11 +93,8 @@ def init_conf(path):
     return conf
 
 
-NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED =   -42
-NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
-
-def build_error_iq(originclass, ex, iq, code=-1, ns="archipel:error:generic"):
-    caller = inspect.stack()[2][3];
+def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
+    caller = inspect.stack()[1][3];
     log.error("%s.%s: exception raised is : %s" % (originclass, caller, ex))
     reply = iq.buildReply('error')
     reply.setQueryPayload(iq.getQueryPayload())
@@ -75,7 +103,8 @@ def build_error_iq(originclass, ex, iq, code=-1, ns="archipel:error:generic"):
     error.addChild(name="text", payload=str(ex))
     reply.addChild(node=error)
     return reply
-            
+
+
 def build_error_message(originclass, ex):
     caller = inspect.stack()[2][3];
     log.error("%s: exception raised is : %s" % (caller, str(ex)))

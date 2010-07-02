@@ -4,7 +4,7 @@ import archipel
 
 
 # the stanza type "archipel:virtualmachine:foo" or "archipel:hypervisor:bar"
-NS_ARCHIPEL_SNAPSHOTING = "archipel:virtualmachine:snapshoting"
+ARCHIPEL_NS_SNAPSHOTING = "archipel:virtualmachine:snapshoting"
 
 # this method will be call at loading
 def __module_init__snapshoting(self):
@@ -12,7 +12,7 @@ def __module_init__snapshoting(self):
 
 # this method will be called at registration of handlers for XMPP
 def __module_register_stanza__snapshoting(self):
-    self.xmppclient.RegisterHandler('iq', self.module_snapshoting.process_iq, typ=NS_ARCHIPEL_SNAPSHOTING)
+    self.xmppclient.RegisterHandler('iq', self.module_snapshoting.process_iq, ns=ARCHIPEL_NS_SNAPSHOTING)
 
 
 

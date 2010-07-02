@@ -51,7 +51,7 @@ class TNThreadedHealthCollector(Thread):
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
         
         
-        #log.info( "opening stats database file {0}".format(self.database_file))
+        #log.info("opening stats database file {0}".format(self.database_file))
         
         self.database_query_connection = sqlite3.connect(self.database_file)
         
@@ -63,7 +63,7 @@ class TNThreadedHealthCollector(Thread):
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
         self.cursor.execute("create table if not exists disk (collection_date date, total int, used int, free int, free_percentage int)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
-        #log.info( "Database ready.")
+        #log.info("Database ready.")
             
         Thread.__init__(self)
     
@@ -74,7 +74,7 @@ class TNThreadedHealthCollector(Thread):
         @rtype: TNArchipelVirtualMachine
         @return: the L{TNArchipelVirtualMachine} instance
         """        
-        #log.debug( "Retrieving last "+ str(limit) + " recorded stats data for sending")
+        #log.debug("Retrieving last "+ str(limit) + " recorded stats data for sending")
         try:
             self.cursor.execute("select * from cpu order by collection_date desc limit " + str(limit))
             cpu_stats = []
@@ -109,7 +109,7 @@ class TNThreadedHealthCollector(Thread):
         
             return {"cpu": cpu_stats, "memory": memory_stats, "disk": disk_stats, "load": load_stats, "uptime": uptime_stats, "uname": self.uname_stats}
         except Exception as ex:
-            log.error( "stat recuperation fails. Exception %s" % str(ex))
+            log.error("stat recuperation fails. Exception %s" % str(ex))
             return None
     
     
@@ -200,7 +200,7 @@ class TNThreadedHealthCollector(Thread):
                 self.database_thread_connection.execute("insert into disk values(?,?,?,?,?)", self.get_disk_stats())
             
                 if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge:
-                    #log.debug( "Purging the last entries.")
+                    #log.debug("Purging the last entries.")
                     self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                     self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                     self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
@@ -208,10 +208,10 @@ class TNThreadedHealthCollector(Thread):
         
                 self.database_thread_connection.commit()
             
-                #log.debug( "Stats collected")
+                #log.debug("Stats collected")
                 time.sleep(self.collection_interval)
             except Exception as ex:
-                log.error( "stat collection fails. Exception %s" % str(ex))
+                log.error("stat collection fails. Exception %s" % str(ex))
             
     def getTimeList(self):
         statFile = file("/proc/stat", "r")

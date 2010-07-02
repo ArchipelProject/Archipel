@@ -40,7 +40,7 @@ class TNMediaManagement:
     
     def process_iq(self, conn, iq):
         """
-        Invoked when new NS_ARCHIPEL_VM_DISK IQ is received.
+        Invoked when new ARCHIPEL_NS_VM_DISK IQ is received.
         
         it understands IQ of type:
         - create
@@ -57,9 +57,9 @@ class TNMediaManagement:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -127,7 +127,7 @@ class TNMediaManagement:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
          
             reply = iq.buildReply("result")
-            log.info( "disk created")
+            log.info("disk created")
             self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "created", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -165,7 +165,7 @@ class TNMediaManagement:
                         
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
-            log.info( "convertion of  created")
+            log.info("convertion of  created")
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "converted", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -197,7 +197,7 @@ class TNMediaManagement:
             os.rename(path, newpath)
             
             reply = iq.buildReply("result")
-            log.info( "renamed hard drive %s into  %s" % (path, newname))
+            log.info("renamed hard drive %s into  %s" % (path, newname))
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "renamed", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -285,7 +285,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            log.info( "info about disks sent")
+            log.info("info about disks sent")
         
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
@@ -319,7 +319,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            log.info( "info about iso sent")
+            log.info("info about iso sent")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
         return reply    
@@ -355,7 +355,7 @@ class TNMediaManagement:
     #     
     #         reply = iq.buildReply("result")
     #         reply.setQueryPayload(nodes)
-    #         log.info( "info about network sent")
+    #         log.info("info about network sent")
     #     
     #     except Exception as ex:
     #         reply = build_error_iq(self, ex, iq)

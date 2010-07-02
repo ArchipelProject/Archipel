@@ -48,7 +48,7 @@ class TNVMApplianceManager:
     
     def process_iq(self, conn, iq):
         """
-        process incoming IQ of type NS_ARCHIPEL_HYPERVISOR_VMCASTING.
+        process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
         it understands IQ of type:
             - get
             - attach
@@ -62,9 +62,9 @@ class TNVMApplianceManager:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -154,8 +154,8 @@ class TNVMApplianceManager:
             for values in self.cursor:
                 name, description, url, uuid, status, source, save_path = values
             
-            log.debug( "Supported extensions : %s " % str(self.disks_extensions))
-            log.info( "will install appliance with uuid %s at path %s"  % (uuid, save_path))
+            log.debug("Supported extensions : %s " % str(self.disks_extensions))
+            log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
             appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.folder, self.entity.define, self.finish_installing, uuid, requester)
             
             self.old_status  = self.entity.xmppstatus

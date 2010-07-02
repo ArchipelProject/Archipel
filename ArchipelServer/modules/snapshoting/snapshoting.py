@@ -39,7 +39,7 @@ class TNSnapshoting:
     
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a NS_ARCHIPEL_SNAPSHOTING IQ is received.
+        this method is invoked when a ARCHIPEL_NS_SNAPSHOTING IQ is received.
         
         it understands IQ of type:
             - take
@@ -55,9 +55,9 @@ class TNSnapshoting:
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info( "IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, NS_ARCHIPEL_ERROR_QUERY_NOT_WELL_FORMED)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -115,18 +115,18 @@ class TNSnapshoting:
             except:
                 return build_error_iq(self, Exception("Virtual machine hasn't any drive to snapshot"), iq, code=ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE)
                 
-            log.info( "creating snapshot with name %s desc :%s" % (name, xmlDesc))
+            log.info("creating snapshot with name %s desc :%s" % (name, xmlDesc))
             
             self.entity.change_presence(presence_show="dnd", presence_status="Snapshoting...")
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            log.info( "snapshot with name %s created" % name);
+            log.info("snapshot with name %s created" % name);
             self.entity.push_change("snapshoting", "taken", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while snapshoting")
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
             try:
                 snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
                 snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
@@ -165,7 +165,7 @@ class TNSnapshoting:
                 nodes.append(n)
             reply.setQueryPayload(nodes)
         except libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_GET)
         return reply
@@ -191,7 +191,7 @@ class TNSnapshoting:
             if ex.get_error_code() == VIR_ERR_NO_DOMAIN_SNAPSHOT:
                 reply = iq.buildReply("result")
             else:
-                reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+                reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_CURRENT)
         return reply
@@ -215,19 +215,19 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             
-            log.info( "deleting snapshot with name %s" % name)
+            log.info("deleting snapshot with name %s" % name)
             
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            log.info( "snapshot with name %s deleted" % name);
+            log.info("snapshot with name %s deleted" % name);
             self.entity.push_change("snapshoting", "deleted", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
@@ -252,18 +252,18 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             
-            log.info( "restoring snapshot with name %s" % name)
+            log.info("restoring snapshot with name %s" % name)
             
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.revertToSnapshot(0);
             
-            log.info( "reverted to snapshot with name %s " % name);
+            log.info("reverted to snapshot with name %s " % name);
             self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT)

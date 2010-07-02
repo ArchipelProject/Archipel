@@ -196,24 +196,50 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [super willShow];
     
     var bounds = [[[self view] contentView] bounds];
-    // bounds.origin.x = 0;
-    // bounds.origin.y = 0;
     bounds.size.height = [documentView bounds].size.height;
-    // bounds.size.width = [[[self view] ] bounds].size.width;
     [documentView setFrame:bounds];
     
+    var center = [CPNotificationCenter defaultCenter];
+    [center addObserver:self selector:@selector(refresh:) name:TNStropheContactNicknameUpdatedNotification object:nil];
+    [center addObserver:self selector:@selector(refresh:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     
     [buttonMigrate setEnabled:NO];
+    
+    [_tableHypervisorOrigin setDelegate:nil];
+    [_tableHypervisorDestination setDelegate:nil];
+    [_tableHypervisorVirtualMachines setDelegate:nil];
+    
+    [_tableHypervisorOrigin setDelegate:self];
+    [_tableHypervisorDestination setDelegate:self];
+    [_tableHypervisorVirtualMachines setDelegate:self];
+    
     [self populateHypervisorOriginTable];
 }
 
 - (void)willHide
 {
     [super willHide];
-    // message sent when the tab is changed
+    
+    var center = [CPNotificationCenter defaultCenter];
+    [center removeObserver:self];
+    
+    [_hypervisorOriginDatasource removeAllObjects];
+    [_hypervisorDestinationDatasource removeAllObjects];
+    [_virtualMachinesDatasource removeAllObjects];
+    
+    [_tableHypervisorOrigin deselectAll];
+    [_tableHypervisorVirtualMachines deselectAll];
+    [_tableHypervisorDestination deselectAll];
+    
+    [self refresh:nil];
 }
 
-
+- (void)refresh:(CPNotification)aNotification
+{
+    [_tableHypervisorOrigin reloadData];
+    [_tableHypervisorDestination reloadData];
+    [_tableHypervisorVirtualMachines reloadData];
+}
 
 - (void)populateHypervisorOriginTable
 {

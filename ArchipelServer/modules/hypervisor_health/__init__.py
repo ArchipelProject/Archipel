@@ -4,7 +4,7 @@ from utils import *
 import archipel
 
 
-NS_ARCHIPEL_HYPERVISOR_HEALTH = "archipel:hypervisor:health"
+ARCHIPEL_NS_HYPERVISOR_HEALTH = "archipel:hypervisor:health"
 
 ######################################################################################################
 ### Registring of the stanza
@@ -24,7 +24,7 @@ def __module_init__health_module(self):
 
 
 def __module_register_stanza__heatlh_module(self):
-    self.xmppclient.RegisterHandler('iq', self.module_health.process_iq, typ=NS_ARCHIPEL_HYPERVISOR_HEALTH)
+    self.xmppclient.RegisterHandler('iq', self.module_health.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_HEALTH)
 
 
 
