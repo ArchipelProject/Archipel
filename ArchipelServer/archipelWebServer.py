@@ -26,6 +26,11 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     """
     server_version  = "ArchipelSimpleWebServer/1.1"
     
+    def log_message(self, format, *args):
+        # we do not want to log anything from here
+        pass
+    
+    
     def parse_options(self):
         """
         Parse the parameters from the request string

@@ -151,7 +151,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     def update_presence(self, params=None):
         count = len(self.virtualmachines)
-        self.change_presence("", NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")")
+        self.change_presence(self.xmppstatusshow, NS_ARCHIPEL_STATUS_ONLINE + " (" + str(count)+ ")")
         
     
     
@@ -253,11 +253,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        elif action == "migrate":
-            reply = self.iq_migrate(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
         elif action == "ip":
             reply = self.iq_ip(iq)
             conn.send(reply)
@@ -267,7 +262,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = self.iq_libvirt_uri(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
+            
+        elif action == "cleanmigrated":
+            reply = self.iq_free_for_migration(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     
@@ -289,9 +288,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         else:
             vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         
+        
+        if self.virtualmachines.has_key(vmuuid):
+            log.warning("No needs to alloc a virtual machine %s. already here" % (vmuuid))
+            return self.virtualmachines[vmuuid]
+        
         vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower())
         
         log.info( "adding the xmpp vm %s to my roster" % (str(vm_jid)))
+        
         self.add_jid(vm_jid, [GROUP_VM])
         
         if not requested_name:
@@ -317,10 +322,22 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return vm
         
     
-    
+    def free_for_migration(self, jid):
+        uuid    = jid.getNode()
+        vm      = self.virtualmachines[uuid]
+        
+        vm.disconnect()
+        print "QUERY: delete from virtualmachines where jid='%s'" % jid.getStripped()
+        self.remove_jid(jid)
+        log.info( "unregistering the VM from hypervisor's database")
+        self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
+        self.database.commit()
+        del self.virtualmachines[uuid]
+        self.update_presence()
+        
+        
     def free(self, jid, keep_folder=False, keep_account=False):
         uuid    = jid.getNode()
-        
         try:
             vm  = self.virtualmachines[uuid]
         except Exception as ex:
@@ -328,7 +345,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             return
         
         try:
-            if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
+            if vm.is_migrating == False and vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
                 vm.domain.destroy()
                 vm.domain.undefine()
         except Exception as ex:
@@ -356,8 +373,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 vm._inband_unregistration()
             except Exception as ex:
                 log.error("can't perform unregistration: " % (str(ex)))
-        else:
-            vm.disconnect()
+        # else:
+        #     vm.disconnect()
         
         self.update_presence()
     
@@ -475,6 +492,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         return reply
     
+    def iq_free_for_migration(self, iq):
+        vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
+        self.free_for_migration(vmjid);
+        reply = iq.buildReply("result")
+        return reply
     
     def iq_clone(self, iq):
         """

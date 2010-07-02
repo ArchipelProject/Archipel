@@ -92,7 +92,7 @@ class TNArchipelBasicXMPPClient(object):
         if self.name == "auto":
             self.name = self.ressource
         
-        log.info("jid defined as %s/%s" % (str(self.jid), self.ressource))
+        log.info("jid defined as %s" % (str(self.jid)))
         
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
         if ip_conf == "auto":
@@ -174,8 +174,8 @@ class TNArchipelBasicXMPPClient(object):
     def disconnect(self):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
-            self.loop_status = LOOP_OFF
             self.isAuth = False;
+            self.loop_status = LOOP_OFF
             self.xmppclient.disconnect()
     
     
@@ -238,8 +238,8 @@ class TNArchipelBasicXMPPClient(object):
         this method have to be overloaded in order to register handler for 
         XMPP events
         """
-        self.xmppclient.RegisterHandler('presence', self.__process_presence_unsubscribe, typ="unsubscribe")
-        self.xmppclient.RegisterHandler('presence', self.__process_presence_subscribe, typ="subscribe")
+        self.xmppclient.RegisterHandler('presence', self.process_presence_unsubscribe, typ="unsubscribe")
+        self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         
         log.info("handlers registred")
@@ -258,7 +258,7 @@ class TNArchipelBasicXMPPClient(object):
         
     
     
-    def __process_presence_subscribe(self, conn, presence):
+    def process_presence_subscribe(self, conn, presence):
         """
         Invoked when new jabber presence subscription is received.
         
@@ -267,7 +267,7 @@ class TNArchipelBasicXMPPClient(object):
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """        
-        log.info("Subscription Presence received from %s with type %s" % (str(presence.getFrom()), str(presence.getType())))
+        log.info("Subscription Presence ask by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
         self.roster = self.xmppclient.getRoster()
         
         barejid = presence.getFrom().getStripped()
@@ -283,7 +283,7 @@ class TNArchipelBasicXMPPClient(object):
         raise xmpp.NodeProcessed
     
     
-    def __process_presence_unsubscribe(self, conn, presence):
+    def process_presence_unsubscribe(self, conn, presence):
         """
         Invoked when new jabber presence unsubscribtion is received.
         
@@ -457,7 +457,13 @@ class TNArchipelBasicXMPPClient(object):
         self.roster = self.xmppclient.getRoster()
         
         self.roster.setItem(jid=jid.getStripped(), groups=groups)
-        self.subscribe(jid.getStripped())
+        
+        try:
+            subs = self.roster.getSubscription(jid.getStripped())
+            if subs == "to" or subs == "none":
+                self.subscribe(jid.getStripped())
+        except:
+            self.subscribe(jid.getStripped())
         
         self.push_change("subscription", "added", excludedgroups=['vitualmachines'])
     
@@ -469,9 +475,9 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to remove
         """
-        log.info("removed jid %s" % jid)
-        self.roster.Unsubscribe(jid)
-        self.roster.Unauthorize(jid)
+        log.info("%s is removing jid %s from it's roster" % (self.jid, jid))
+        # self.roster.Unsubscribe(jid)
+        # self.roster.Unauthorize(jid)
         self.roster.delItem(jid.getStripped())
         
         self.roster = self.xmppclient.getRoster()

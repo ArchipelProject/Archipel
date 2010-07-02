@@ -45,9 +45,10 @@
     
     <!--
         Time in second before starting to load modules when roster selection changes
+        this avoid to spam XMPP server
     -->
     <key>TNArchipelModuleLoadingDelay</key>
-    <real>0.3</real>
+    <real>0.15</real>
     
     <!--
         Use animations
@@ -65,13 +66,13 @@
         Copyright message
     -->
     <key>TNArchipelCopyright</key>
-    <string>Archipel - Copyright © 2010 Antoine Mercadal - antoine.mercadal@inframonde.eu</string>
+    <string>Copyright © 2010 Antoine Mercadal</string>
     
     <!--
         Displayed version of Archipel Client
     -->
     <key>TNArchipelVersion</key>
-    <string>Alpha-0.2 (Symphonia)</string>
+    <string>Archipel Alpha-0.3 (Mercury)</string>
     
     <!--
         If set to 1, StropheCappuccino will be in debug mode.

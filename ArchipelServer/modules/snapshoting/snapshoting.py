@@ -35,7 +35,7 @@ class TNSnapshoting:
     def __init__(self, entity):
         self.entity = entity
         pass
-        
+    
     
     def process_iq(self, conn, iq):
         """
@@ -65,37 +65,38 @@ class TNSnapshoting:
             raise xmpp.protocol.NodeProcessed
         
         elif action == "take":
-            reply = self.__take_snapshot(iq)
+            reply = self.take_snapshot(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "delete":
-            reply = self.__delete(iq)
+            reply = self.delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "get":
-            reply = self.__get(iq)
+            reply = self.get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "current":
-            reply = self.__getcurrent(iq)
+            reply = self.getcurrent(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "revert":
-            reply = self.__revert(iq)
+            reply = self.revert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
-    def __take_snapshot(self, iq):
+    
+    
+    def take_snapshot(self, iq):
         """
         creating a snapshot
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -141,9 +142,9 @@ class TNSnapshoting:
                 pass
             
         return reply
-
-            
-    def __get(self, iq):
+    
+    
+    def get(self, iq):
         """
         list all a snapshot
         
@@ -169,13 +170,14 @@ class TNSnapshoting:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_GET)
         return reply
     
-    def __getcurrent(self, iq):
+    
+    def getcurrent(self, iq):
         """
         return current snapshot
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -194,13 +196,14 @@ class TNSnapshoting:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_CURRENT)
         return reply
     
-    def __delete(self, iq):
+    
+    def delete(self, iq):
         """
         return current snapshot
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -208,17 +211,17 @@ class TNSnapshoting:
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getTag("archipel").getAttr('name')
-        
+            
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
-
+            
             log.info( "deleting snapshot with name %s" % name)
-
+            
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-
+            
             log.info( "snapshot with name %s deleted" % name);
             self.entity.push_change("snapshoting", "deleted", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
@@ -229,15 +232,15 @@ class TNSnapshoting:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
         return reply
-        
-        
-    def __revert(self, iq):
+    
+    
+    def revert(self, iq):
         """
         return current snapshot
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -245,16 +248,16 @@ class TNSnapshoting:
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getTag("archipel").getAttr('name')
-
+            
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
-
+            
             log.info( "restoring snapshot with name %s" % name)
-
+            
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.revertToSnapshot(0);
-
+            
             log.info( "reverted to snapshot with name %s " % name);
             self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
@@ -265,6 +268,4 @@ class TNSnapshoting:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT)
         return reply
-    
-    
     
