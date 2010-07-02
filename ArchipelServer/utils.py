@@ -59,10 +59,6 @@ def init_conf(path):
     logger.addHandler(handler)
     logger.setLevel(level)
     
-    # logging.basicConfig(level=level,
-    #                     datefmt=conf.get("LOGGING", "logging_date_format", raw=True),
-    #                     format=conf.get("LOGGING", "logging_formatter", raw=True),
-    #                     filename=log_file)
     return conf
 
 

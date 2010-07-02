@@ -72,6 +72,7 @@ class TNApplianceDownloader(Thread):
         self.finish_callback    = finish_callback
         self.save_path          = self.save_folder + "/" + uuid + ".xvm2"
         self.progress           = 0.0
+        self.total_size         = None
     
     
     def run(self):

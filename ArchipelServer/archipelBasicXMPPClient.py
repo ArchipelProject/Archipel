@@ -272,11 +272,13 @@ class TNArchipelBasicXMPPClient(object):
         
         barejid = presence.getFrom().getStripped()
         
-        self.roster.Authorize(barejid)
+        subs = self.roster.getSubscription(barejid)
+        log.debug("subscription with %s is %s" % (barejid, subs))
         
-        if not barejid  in self.roster.getItems():
+        if subs == "to" or subs == "none":
             self.subscribe(barejid)
-            #self.roster.Subscribe(barejid)
+        
+        self.roster.Authorize(barejid)
         
         raise xmpp.NodeProcessed
     
@@ -354,7 +356,7 @@ class TNArchipelBasicXMPPClient(object):
             log.debug("purging non persistant action %s" % str(oneshot_action))
             self.registered_actions_to_perform_on_connection.remove(oneshot_action)
         
-        log.debug("keeped persistant actions are: %s" % str(self.registered_actions_to_perform_on_connection))
+        log.debug("all registred actions have been done")
     
     
     def change_presence(self, presence_show=None, presence_status=None):
@@ -470,7 +472,10 @@ class TNArchipelBasicXMPPClient(object):
         log.info("removed jid %s" % jid)
         self.roster.Unsubscribe(jid)
         self.roster.Unauthorize(jid)
-        self.roster.delItem(jid)
+        self.roster.delItem(jid.getStripped())
+        
+        self.roster = self.xmppclient.getRoster()
+        log.debug("roster is now: %s" % str(self.roster.getItems()))
     
     
     def is_jid_subscribed(self, jid):

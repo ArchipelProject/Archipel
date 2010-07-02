@@ -335,7 +335,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log.error("can't destroy/undefine virtual machine: " % (str(ex)))
         
         log.info( "removing the xmpp vm %s from my roster" % (str(jid)))
-        self.remove_jid(jid.getStripped())
+        self.remove_jid(jid)
         
         if not keep_folder:
             log.info( "removing the vm drive directory")
