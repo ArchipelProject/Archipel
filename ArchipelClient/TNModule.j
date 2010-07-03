@@ -218,12 +218,14 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     
     var msg;
     if ([aStanza firstChildWithName:@"text"])
+    {
         msg     = [[aStanza firstChildWithName:@"text"] text]
+        [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
+        CPLog.error(msg);
+    }
     else
-        msg     = "No message provided"
-        
-    [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
-    CPLog.error(msg);
+        CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
+    
 }
 
 - (IBAction)toolbarItemClicked:(id)sender

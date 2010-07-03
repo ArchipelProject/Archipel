@@ -225,7 +225,8 @@ class TNVMApplianceManager:
                 path = disk_node.getTag('source').getAttr('file')
                 paths.append(path)
             
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, "/tmp", "/tmp", self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
+            working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
             
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])

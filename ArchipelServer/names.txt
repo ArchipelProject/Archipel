@@ -1278,6 +1278,7 @@ Grinevia
 Burdigala
 Gersuind
 Sharonov
+Pouss
 Franklin Adams
 Osiris
 Ricouxa
@@ -1512,6 +1513,7 @@ Sabauda
 Alhambra
 Adriana
 Estonia
+Allison
 Memoria
 Rarahu
 VanDeKamp

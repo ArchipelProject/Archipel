@@ -18,7 +18,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-
+@import "TNExtendedContactObject.j"
 
 TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition";
 TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
@@ -38,6 +38,7 @@ TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
 TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
 TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
 TNArchipelTypeVirtualMachineControlResume       = @"resume";
+TNArchipelTypeVirtualMachineControlMigrate      = @"migrate";
 
 VIR_DOMAIN_NOSTATE  = 0;
 VIR_DOMAIN_RUNNING  = 1;
@@ -64,9 +65,17 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldName;
     @outlet CPView                  maskingView;
-
+    @outlet CPScrollView            scrollViewTableHypervisors;
+    @outlet CPSearchField           filterHypervisors;
+    @outlet CPButtonBar             buttonBarMigration;
+    @outlet CPView                  viewTableHypervisorsContainer;
+    
+    CPTableView             _tableHypervisors;
+    TNTableViewDataSource   _datasourceHypervisors;
+    CPButton                _migrateButton;
+    CPString                _currentHypervisorJID;
+    
     CPNumber    _VMLibvirtStatus;
-
     CPImage     _imagePlay;
     CPImage     _imageStop;
     CPImage     _imageDestroy;
@@ -134,6 +143,59 @@ TNArchipelTransportBarReboot    = 4;
     
     [buttonBarTransport setTarget:self];
     [buttonBarTransport setAction:@selector(segmentedControlClicked:)];
+    
+    
+    // table migration
+    [viewTableHypervisorsContainer setBorderedWithHexColor:@"#C0C7D2"];
+    
+    _datasourceHypervisors   = [[TNTableViewDataSource alloc] init];
+    _tableHypervisors        = [[CPTableView alloc] initWithFrame:[scrollViewTableHypervisors bounds]];
+    
+    [scrollViewTableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewTableHypervisors setAutohidesScrollers:YES];
+    [scrollViewTableHypervisors setDocumentView:_tableHypervisors];
+
+    [_tableHypervisors setUsesAlternatingRowBackgroundColors:YES];
+    [_tableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableHypervisors setAllowsColumnReordering:YES];
+    [_tableHypervisors setAllowsColumnResizing:YES];
+    //[_tableHypervisors setTarget:self];
+    //[_tableHypervisors setDoubleAction:@selector(tableDoubleClicked:)];
+    [_tableHypervisors setAllowsEmptySelection:YES];
+    [_tableHypervisors setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    
+    var columnName = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    [columnName setWidth:200]
+    [[columnName headerView] setStringValue:@"Name"];
+    [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
+    
+    var columnStatus      = [[CPTableColumn alloc] initWithIdentifier:@"isSelected"];
+    var imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+    [imgView setImageScaling:CPScaleNone];
+    [columnStatus setDataView:imgView];
+    [columnStatus setResizingMask:CPTableColumnAutoresizingMask ];
+    [columnStatus setWidth:16];
+    [[columnStatus headerView] setStringValue:@""];
+    
+    [filterHypervisors setTarget:_datasourceHypervisors];
+    [filterHypervisors setAction:@selector(filterObjects:)];
+    [_datasourceHypervisors setSearchableKeyPaths:[@"nickname"]];
+    
+    [_tableHypervisors addTableColumn:columnStatus];
+    [_tableHypervisors addTableColumn:columnName];
+    [_datasourceHypervisors setTable:_tableHypervisors];
+    [_tableHypervisors setDataSource:_datasourceHypervisors];
+    
+    // button bar migration
+    
+    _migrateButton  = [CPButtonBar plusButton];
+    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-migrate.png"] size:CPSizeMake(16, 16)]];
+    [_migrateButton setTarget:self];
+    [_migrateButton setAction:@selector(migrate:)];
+    
+    [_migrateButton setEnabled:NO];
+    [buttonBarMigration setButtons:[_migrateButton]];
+    
 }
 
 /* TNModule implementation */
@@ -165,6 +227,12 @@ TNArchipelTransportBarReboot    = 4;
     [maskingView setFrame:[[self view] bounds]];
     
     [self checkIfRunning];
+    
+    [_tableHypervisors setDelegate:nil];
+    [_tableHypervisors setDelegate:self];
+    
+    [_tableHypervisors deselectAll];
+    [self populateHypervisorsTable];
 }
 
 - (void)willHide
@@ -189,6 +257,7 @@ TNArchipelTransportBarReboot    = 4;
     [self disableAllButtons];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
 }
+
 
 - (BOOL)didPushReceive:(TNStropheStanza)aStanza
 {
@@ -223,7 +292,6 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
-/* Notifications listener */
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     [fieldName setStringValue:[_entity nickname]]
@@ -235,6 +303,7 @@ TNArchipelTransportBarReboot    = 4;
     // 
     // [self checkIfRunning];
 }
+
 
 - (void)checkIfRunning
 {
@@ -251,7 +320,28 @@ TNArchipelTransportBarReboot    = 4;
         [maskingView removeFromSuperview];
 }
 
+
 /* population messages */
+
+- (void)populateHypervisorsTable
+{
+    [_datasourceHypervisors removeAllObjects];
+    var rosterItems = [_roster contacts];
+
+    for (var i = 0; i < [rosterItems count]; i++)
+    {
+        var item = [rosterItems objectAtIndex:i];
+        
+        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
+        {
+            var o = [[TNExtendedContact alloc] initWithNickName:[item nickname] fullJID:[item fullJID]];
+            [_datasourceHypervisors addObject:o];
+        }
+    }
+    [_tableHypervisors reloadData];
+    
+}
+
 - (void)getVirtualMachineInfo
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
@@ -260,31 +350,44 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlInfo}];
     
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
 }
 
 - (BOOL)didReceiveVirtualMachineInfo:(id)aStanza
 {
-      if ([aStanza getType] == @"result")
-      {
-          var infoNode      = [aStanza firstChildWithName:@"info"];
-          var libvirtState  = [infoNode valueForAttribute:@"state"];
-          var cpuTime       = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 6000000000);
-          var mem           = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
-          var humanState;
+    if ([aStanza getType] == @"result")
+    {
+        var humanState;
+        var infoNode          = [aStanza firstChildWithName:@"info"];
+        var libvirtState      = [infoNode valueForAttribute:@"state"];
+        var cpuTime           = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 600000000);
+        var mem               = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
+        _currentHypervisorJID = [infoNode valueForAttribute:@"hypervisor"];
+        
 
-          [fieldInfoMem setStringValue:mem + @" Mo"];
-          [fieldInfoCPUs setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
-          [fieldInfoConsumedCPU setStringValue:cpuTime + @" min."];
+        [fieldInfoMem setStringValue:mem + @" Mo"];
+        [fieldInfoCPUs setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
+        [fieldInfoConsumedCPU setStringValue:cpuTime + @" min."];
 
-          _VMLibvirtStatus = libvirtState;
+        _VMLibvirtStatus = libvirtState;
 
-          [self disableAllButtons];
-          
-          [self layoutButtons:libvirtState]
-      }
-      
-      return NO;
+        [self disableAllButtons];
+        
+        [self layoutButtons:libvirtState];
+        
+        for (var i = 0; i < [_datasourceHypervisors count]; i++ )
+        {
+            var item = [_datasourceHypervisors objectAtIndex:i];
+            
+            if ([item fullJID] == _currentHypervisorJID)
+                [item setSelected:YES];
+            else
+                [item setSelected:NO];
+        }
+        [_tableHypervisors reloadData];
+    }
+    
+    return NO;
 }
 
 
@@ -320,7 +423,7 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineControlCreate}];
     
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didPlay:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didPlay:)];
 }
 
 - (BOOL)didPlay:(id)aStanza
@@ -367,8 +470,8 @@ TNArchipelTransportBarReboot    = 4;
             "xmlns": TNArchipelTypeVirtualMachineControl, 
             "action": TNArchipelTypeVirtualMachineControlSuspend}];
     }
-
-    [_entity sendStanza:stanza andRegisterSelector:selector ofObject:self];
+    
+    [self sendStanza:stanza andRegisterSelector:selector];
 }
 
 - (BOOL)didPause:(id)aStanza
@@ -420,7 +523,7 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlShutdown}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didStop:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didStop:)];
 }
 
 - (BOOL)didStop:(id)aStanza
@@ -461,7 +564,7 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlDestroy}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didDestroy:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didDestroy:)];
 }
 
 - (void)doNotPerformDestroy:(id)someUserInfo
@@ -496,7 +599,7 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlReboot}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReboot:) ofObject:self];
+    [self sendStanza:stanza andRegisterSelector:@selector(didReboot:)];
 }
 
 - (BOOL)didReboot:(id)aStanza
@@ -517,6 +620,46 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
+
+
+- (IBAction)migrate:(id)sender
+{
+    var alert = [TNAlert alertWithTitle:@"Migrate Virtual Machine"
+                                message:@"Are you sure you want to migrate this virtual machine ?"
+                                informativeMessage:@"You may can use this machine while migrating"
+                                delegate:self
+                                 actions:[["Migrate", @selector(performMigrate:)], ["Cancel", nil]]];
+
+    [alert runModal];
+    
+}
+
+- (void)performMigrate:(id)someUserInfo
+{
+    var index                   = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    var destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index]
+    var stanza                  = [TNStropheStanza iqWithType:@"set"];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlMigrate,
+        "hypervisorjid": [destinationHypervisor fullJID]}];
+    
+    [self sendStanza:stanza andRegisterSelector:@selector(didMigrate:)];
+}
+
+- (void)didMigrate:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Migration" message:@"Migration has started."];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
 
 /* button management */
 
@@ -632,6 +775,22 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
 }
 
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    var selectedRow = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    if (selectedRow == -1)
+    {
+        [_migrateButton setEnabled:NO];
+        return
+    }
+    
+    var item        = [_datasourceHypervisors objectAtIndex:selectedRow];
+    
+    if ([item fullJID] != _currentHypervisorJID)
+        [_migrateButton setEnabled:YES];
+    else
+        [_migrateButton setEnabled:NO];
+}
 @end
 
 

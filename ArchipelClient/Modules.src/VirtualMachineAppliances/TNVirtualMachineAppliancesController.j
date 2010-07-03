@@ -195,6 +195,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     }
 }
 
+
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
     [self checkIfRunning];
@@ -227,6 +228,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
     return YES;
 }
+
 
 - (IBAction)openNewApplianceWindow:(id)sender
 {

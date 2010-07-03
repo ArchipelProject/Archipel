@@ -107,7 +107,7 @@ class TNMediaManagement:
         """
         try:
             query_node  = iq.getTag("query")
-            disk_name   = query_node.getTag("archipel").getAttr("name")
+            disk_name   = query_node.getTag("archipel").getAttr("name").replace(" ", "_").replace("/", "_").replace("..", "_")
             disk_size   = query_node.getTag("archipel").getAttr("size")
             disk_unit   = query_node.getTag("archipel").getAttr("unit")
             format      = query_node.getTag("archipel").getAttr("format")
@@ -286,7 +286,6 @@ class TNMediaManagement:
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
             log.info("info about disks sent")
-        
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply

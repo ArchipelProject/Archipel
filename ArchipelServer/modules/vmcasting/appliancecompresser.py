@@ -25,17 +25,17 @@ import xmpp
 
 class TNApplianceCompresser(Thread):
     
-    def __init__(self, name, paths, xml_definition, install_path, working_dir, vm_dir, hypervisor_repo_path, callback):
+    def __init__(self, name, paths, xml_definition, working_dir, vm_dir, hypervisor_repo_path, callback):
         """
         initialize a TNApplianceCompresser
         """
         Thread.__init__(self)
         self.name = name.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
         self.paths = paths
-        self.install_path = install_path
         self.callback = callback
         self.xml_definition = xml_definition
         self.vm_dir = vm_dir
+        log.debug("generating temp directory into base dir: %s" % working_dir)
         self.working_dir = tempfile.mkdtemp(dir=working_dir)
         self.hypervisor_repo_path = hypervisor_repo_path
     
