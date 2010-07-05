@@ -54,6 +54,7 @@ ARCHIPEL_ERROR_CODE_VM_VNC          = -1010
 ARCHIPEL_ERROR_CODE_VM_XMLDESC      = -1011
 ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
 ARCHIPEL_ERROR_CODE_VM_MIGRATE      = -1013
+ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -79,8 +80,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.lock_timer                 = None
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         self.is_migrating               = False
-        self.migration_destination_jid  = None;
-        self.event_callback_id          = None;
+        self.is_migrated                = False
+        self.migration_destination_jid  = None
+        self.libvirt_event_callback_id  = None
         
         if not os.path.isdir(self.folder):
             os.mkdir(self.folder)
@@ -204,7 +206,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
             log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
-            self.event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
+            self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
+             
             self.set_presence_according_to_libvirt_info()
         except Exception as ex:
             log.error("can't connect to libvirt : " + str(ex))
@@ -214,64 +217,68 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
         log.info("libvirt event received: %d with detail %s" % (event, detail))
+        
+        if self.is_migrating and not self.is_migrated and event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
+            #self.migrate_step3()
+            return
+        
+        if self.is_migrating or self.is_migrated:
+            return
+        
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED:
-                if not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
+                if detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
+                    self.set_presence_according_to_libvirt_info()
+                else:
                     self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                     self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
-                else:
-                    self.set_presence_according_to_libvirt_info
             
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED:
-                if not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED: 
+                if not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:
                     self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                     self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
-                else:
-                    self.set_presence_according_to_libvirt_info
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED:
-                self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
-                self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
+                if detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED:
+                    self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
+                    self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
+                elif detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
+                    self.set_presence_according_to_libvirt_info()
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED:
-                if detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
-                    self.migrate_step3()
-                else:
+                if not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                     self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                     self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined", excludedgroups=['vitualmachines'])
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
+            
         except Exception as ex:
-            log.error("%s: Unable to change state %d:%d : %s" % ( self.jid.getStripped(), event, detail, str(ex)))
+            log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
             self.unlock()
     
     
-    def clone(self, info):
+    def disconnect(self):
         """
-        clone a vm from another
-        info is a dict that contains following keys
-            - definition : the xml object containing the libvirt definition
-            - path : the vm path to clone (will clone * in it)
-            - baseuuid : the base uuid of cloned vm, in order to replace it
+        overides the disconnect function
         """
-        xml         = info["definition"]
-        path        = info["path"]
-        baseuuid    = info["baseuuid"]
-        xmlstring   = str(xml)
-        xmlstring   = xmlstring.replace(baseuuid, self.uuid)
-        newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+        log.info("%s is disconnecting from everything" % self.jid)
         
-        log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
-        self.change_presence(presence_show="dnd", presence_status="Cloning...")
-        log.info("copying base virtual repository")
-        os.system("cp -a %s/* %s" % (path, self.folder))
-        log.info("defining the cloned virtual machine")
-        self.define(newxml)
+        if not self.libvirt_event_callback_id is None:
+            self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
+            self.libvirt_event_callback_id = None;
+        
+        if self.libvirt_connection:
+            self.libvirt_connection.close()
+            self.libvirt_connection = None
+        
+        TNArchipelBasicXMPPClient.disconnect(self)
     
     
     
@@ -307,6 +314,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             raise xmpp.protocol.NodeProcessed
         
         if not self.libvirt_connection:
+            reply = build_error_iq(self, "Virtual is migrating. You cannot do anything", iq, ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING)
+            conn.send(reply)
             return;
             
         if self.is_migrating:
@@ -384,8 +393,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if self.is_migrating:
-            raise xmpp.protocol.NodeProcessed
+        if not self.libvirt_connection:
+            reply = build_error_iq(self, "Virtual is migrating. You cannot do anything", iq, ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING)
+            conn.send(reply)
+            return;
                 
         if action == "define":
             reply = self.iq_define(iq)
@@ -397,8 +408,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-
-
+    
+    
     ######################################################################################################
     ### libvirt controls
     ######################################################################################################
@@ -458,8 +469,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def define(self, xmldesc):
+        
+        if not xmldesc.getTag('description'): xmldesc.addChild(name='description')
+        xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
+        
         definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.libvirt_connection.defineXML(definitionXML)
+        
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
@@ -469,6 +485,29 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def undefine(self):
         self.domain.undefine()
         self.definition = None;
+    
+    
+    def clone(self, info):
+        """
+        clone a vm from another
+        info is a dict that contains following keys
+            - definition : the xml object containing the libvirt definition
+            - path : the vm path to clone (will clone * in it)
+            - baseuuid : the base uuid of cloned vm, in order to replace it
+        """
+        xml         = info["definition"]
+        path        = info["path"]
+        baseuuid    = info["baseuuid"]
+        xmlstring   = str(xml)
+        xmlstring   = xmlstring.replace(baseuuid, self.uuid)
+        newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+        
+        log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
+        self.change_presence(presence_show="dnd", presence_status="Cloning...")
+        log.info("copying base virtual repository")
+        os.system("cp -a %s/* %s" % (path, self.folder))
+        log.info("defining the cloned virtual machine")
+        self.define(newxml)
     
     
     def migrate_step1(self, destination_jid):
@@ -487,9 +526,16 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             
         if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING:
             raise Exception('Virtual machine must be running')
+            
+        if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
+            raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
         
         self.is_migrating               = True
+        self.is_migrated                = False
         self.migration_destination_jid  = destination_jid
+        
+        self.lock()
+        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
         
         self.xmppclient.UnregisterHandler(name='presence', handler=self.process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.UnregisterHandler(name='presence', handler=self.process_presence_subscribe, typ="subscribe")
@@ -505,45 +551,51 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         once received the remote hypervisor URI, start libvirt migration migration
         """
-        flags                   = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE | libvirt.VIR_MIGRATE_UNDEFINE_SOURCE
-        remote_hypervisor_uri   = resp.getTag("query").getTag("uri").getCDATA().replace("qemu://", "qemu+ssh://")
+        flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE# | libvirt.VIR_MIGRATE_UNDEFINE_SOURCE
         
-        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
+        try:
+            remote_hypervisor_uri   = resp.getTag("query").getTag("uri").getCDATA().replace("qemu://", "qemu+ssh://")
+        except:
+            log.warn("hypervisor %s hasn't gave its URI. aborting migration" % resp.getFrom())
+            return
+        
         self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
         # note that the next step is performed when libvirt event VIR_DOMAIN_EVENT_STOPPED_MIGRATED is received
     
     
-    def migrate_step3(self):
-        """
-        Once the virtual machine is migrated, ask the remote hypervisor to alloc a new XMPP container
-        for the virtual machine
-        """
-        self.libvirt_connection.close()
-        log.info("starting to ask to %s to alloc new XMPP VM" % self.migration_destination_jid)
-        iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.migration_destination_jid)
-        iq.getTag("query").addChild(name="archipel", attrs={
-            "action": "allocmigrated",
-            "jid": self.jid,
-            "name": self.name,
-            "password": self.password})
-        
-        self.xmppclient.SendAndCallForResponse(iq, self.migrate_step4)
-    
-    
-    def migrate_step4(self, conn, resp):
-        """
-        finally ask local hypervisor to soflty remove XMPP virtual machine.
-        This will be this hypervisor that will perform virtual machine XMPP disconnect
-        DO NOT DO IT FROM THIS METHOD OR THREADS WILL DIE!
-        """
-        log.info("alloc done to %s: %s" % (self.migration_destination_jid, resp))
-        
-        iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.hypervisor.jid)
-        iq.getTag("query").addChild(name="archipel", attrs={
-            "action": "freemigrated", 
-            "jid": self.jid})
-        
-        resp = self.xmppclient.send(iq)
+    # def migrate_step3(self):
+    #     """
+    #     Once the virtual machine is migrated, ask the remote hypervisor to alloc a new XMPP container
+    #     for the virtual machine
+    #     """
+    #     self.domain         = None;
+    #     self.is_migrated    = True;
+    #     
+    #     log.info("starting to ask to %s to alloc new XMPP VM" % self.migration_destination_jid)
+    #     iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.migration_destination_jid)
+    #     iq.getTag("query").addChild(name="archipel", attrs={
+    #         "action": "allocmigrated",
+    #         "jid": self.jid,
+    #         "name": self.name,
+    #         "password": self.password})
+    #     
+    #     self.xmppclient.SendAndCallForResponse(iq, self.migrate_step4)
+    # 
+    # 
+    # def migrate_step4(self, conn, resp):
+    #     """
+    #     finally ask local hypervisor to soflty remove XMPP virtual machine.
+    #     This will be this hypervisor that will perform virtual machine XMPP disconnect
+    #     DO NOT DO IT FROM THIS METHOD OR THREADS WILL DIE!
+    #     """
+    #     log.info("alloc done to %s: %s" % (self.migration_destination_jid, resp))
+    #     
+    #     iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.hypervisor.jid)
+    #     iq.getTag("query").addChild(name="archipel", attrs={
+    #         "action": "freemigrated", 
+    #         "jid": self.jid})
+    #     
+    #     resp = self.xmppclient.send(iq)
     
     
     

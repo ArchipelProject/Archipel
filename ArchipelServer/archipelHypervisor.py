@@ -33,7 +33,7 @@ from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 import string
 import random
-import libvirtEventLoop
+# import libvirtEventLoop
 import libvirt
 
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC            = -9001
@@ -79,17 +79,10 @@ class TNThreadedVirtualMachine(Thread):
         """
         overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
-        try:
-            self.xmppvm.connect()
-            self.xmppvm.loop()
-        except Exception as ex:
-            log.error("thread loop exception: %s" % str(ex))
+        self.xmppvm.connect()
+        self.xmppvm.loop() 
     
 
-
-
-        
-    
 
 
 
@@ -125,16 +118,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         log.info("server address defined as {0}".format(self.xmppserveraddr))
         
+        
         # libvirt connection
         self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
         if self.libvirt_connection == None:
             log.error("unable to connect libvirt")
             sys.exit(-42) 
         log.info("connected to  libvirt")
-        
-        ## start the run loop
-        libvirtEventLoop.virEventLoopPureStart()
-        
+                
         # persistance
         self.manage_persistance()
         
@@ -154,10 +145,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
         TNArchipelBasicXMPPClient.register_handler(self)
+        
+        self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
+        
+        self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
     
- 
+    
     def manage_persistance(self):
         """
         if the database_file parameter contain a valid populated sqlite3 database,
@@ -200,6 +194,41 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     def generate_name(self):
         return self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
+    
+    
+    
+    ######################################################################################################
+    ### LIBVIRT events Processing
+    ######################################################################################################
+    
+    def hypervisor_on_domain_event(self, conn, dom, event, detail, opaque):
+        """
+        trigger when a domain trigger vbent. We care only about RESUMED and SHUTDOWNED from MIGRATED
+        """
+        
+        if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
+            try:
+                strdesc = dom.XMLDesc(0)
+                desc = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                vmjid = desc.getTag(name="description").getCDATA().split("::::")[0]
+                log.info("MIGRATION: virtual machine %s stopped because of live migration. Freeing softly" % vmjid)
+                self.free_for_migration(xmpp.JID(vmjid))
+            except Exception as ex:
+                log.error("MIGRATION: can't free softly this virtual machine: %s" % str(ex))
+            
+        elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
+            try:
+                strdesc = dom.XMLDesc(0)
+                desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
+                vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
+                vmname  = desc.getTag(name="description").getCDATA().split("::::")[2]
+                log.info("MIGRATION: virtual machine %s resumed from live migration. Allocating softly" % vmjid)
+                self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
+            except Exception as ex:
+                log.warning("MIGRATION: can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
+            
+    
     
     
     
@@ -257,16 +286,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = self.iq_libvirt_uri(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
-        elif action == "freemigrated":
-            reply = self.iq_free_for_migration(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "allocmigrated":
-            reply = self.iq_alloc_for_migration(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+    
     
     
     
@@ -322,7 +342,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         uuid    = jid.getNode()
         
-        log.info("starting xmpp threaded virtual machine")
+        jid.setResource(self.resource)
+        log.info("starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm = self.create_threaded_vm(jid, password, name).get_instance()
         
         log.info("registering the new VM in hypervisor's memory")
@@ -373,15 +394,15 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
         
+        vm.undefine()
         vm.disconnect()
-        print "QUERY: delete from virtualmachines where jid='%s'" % jid.getStripped()
+        
         self.remove_jid(jid)
         log.info("unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
         self.update_presence()
-        
     
     
     

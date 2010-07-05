@@ -30,6 +30,7 @@ import base64
 import hashlib
 import time
 import threading
+import traceback
 
 
 ARCHIPEL_MESSAGING_HELP_MESSAGE = """
@@ -64,7 +65,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient             = None
         self.vcard                  = None
         self.password               = password
-        self.ressource              = socket.gethostname()
+        self.resource               = socket.gethostname()
         self.jid                    = jid
         self.roster                 = None
         self.roster_retreived       = False
@@ -75,10 +76,10 @@ class TNArchipelBasicXMPPClient(object):
         self.isAuth                 = False;
         self.loop_status            = ARCHIPEL_XMPP_LOOP_OFF
         
-        self.jid.setResource(self.ressource)
+        self.jid.setResource(self.resource)
         
         if self.name == "auto":
-            self.name = self.ressource
+            self.name = self.resource
         
         log.info("jid defined as %s" % (str(self.jid)))
         
@@ -125,7 +126,7 @@ class TNArchipelBasicXMPPClient(object):
         Authentify the client to the XMPP server
         """
         log.info("trying to authentify the client")
-        if self.xmppclient.auth(self.jid.getNode(), self.password, self.ressource) == None:
+        if self.xmppclient.auth(self.jid.getNode(), self.password, self.resource) == None:
             self.isAuth = False;
             if (self.auto_register):
                 log.info("starting registration, according to propertie auto_register")
@@ -596,15 +597,15 @@ class TNArchipelBasicXMPPClient(object):
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
                     if self.xmppclient.isConnected():
                         self.xmppclient.Process(30)
-                
+            
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
                         self.disconnect()
                     #time.sleep(5.0)
                     self.connect()
-                
             except Exception as ex:
                 log.info("GREPME: Loop exception : %s. Loop status is now %d" % (ex, self.loop_status))
+                traceback.print_exc(file=sys.stdout, limit=20)
                 
                 if str(ex).find('User removed') > -1: # ok, there is something I haven't understood with exception...
                     log.info("GREPME : Account has been removed from server")
@@ -618,6 +619,7 @@ class TNArchipelBasicXMPPClient(object):
                 else:
                     log.error("GREPME : End of loop forced by exception : %s" % str(ex))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+                print traceback.extract_stack()
         
         
         if self.xmppclient.isConnected():
@@ -677,7 +679,7 @@ class TNArchipelBasicXMPPClient(object):
             log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
             reply = msg.buildReply("not prepared")
             me = reply.getFrom()
-            me.setResource(self.ressource)
+            me.setResource(self.resource)
             reply.setType("chat")
             #reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
             return reply

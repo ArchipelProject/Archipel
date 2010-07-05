@@ -9,6 +9,7 @@ import xmpp
 import inspect
 import logging
 import logging.handlers
+import traceback
 
 # XMPP groups
 ARCHIPEL_XMPP_GROUP_VM                          = "virtualmachines"
@@ -36,6 +37,9 @@ ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
 ARCHIPEL_XMPP_LOOP_OFF                          = 0
 ARCHIPEL_XMPP_LOOP_ON                           = 1
 ARCHIPEL_XMPP_LOOP_RESTART                      = 2
+
+ARCHIPEL_LIBVIRT_SECRET_JID                     = "D52FA978-FD3B-4ED8-9EF9-A1F5B5311E06"
+ARCHIPEL_LIBVIRT_SECRET_PASSWORD                = "884DCDDE-81E7-4374-A103-78314A4BDB92"
 
 # errors
 ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED         = -42
@@ -94,6 +98,7 @@ def init_conf(path):
 
 
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
+    traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3];
     log.error("%s.%s: exception raised is : %s" % (originclass, caller, ex))
     reply = iq.buildReply('error')

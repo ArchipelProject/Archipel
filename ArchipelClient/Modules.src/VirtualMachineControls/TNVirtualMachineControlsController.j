@@ -159,8 +159,8 @@ TNArchipelTransportBarReboot    = 4;
     [_tableHypervisors setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableHypervisors setAllowsColumnReordering:YES];
     [_tableHypervisors setAllowsColumnResizing:YES];
-    //[_tableHypervisors setTarget:self];
-    //[_tableHypervisors setDoubleAction:@selector(tableDoubleClicked:)];
+    [_tableHypervisors setTarget:self];
+    [_tableHypervisors setDoubleAction:@selector(migrate:)];
     [_tableHypervisors setAllowsEmptySelection:YES];
     [_tableHypervisors setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     
@@ -385,6 +385,15 @@ TNArchipelTransportBarReboot    = 4;
                 [item setSelected:NO];
         }
         [_tableHypervisors reloadData];
+        
+        var index               = [[_tableHypervisors selectedRowIndexes] firstIndex];
+        if (index != -1)
+        {
+            var selectedHypervisor  = [_datasourceHypervisors objectAtIndex:index];
+            
+            if ([selectedHypervisor fullJID] == _currentHypervisorJID)
+                [_migrateButton setEnabled:NO];
+        }
     }
     
     return NO;
@@ -624,20 +633,30 @@ TNArchipelTransportBarReboot    = 4;
 
 - (IBAction)migrate:(id)sender
 {
+    var index                   = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    var destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index];
+    
+    if ([destinationHypervisor fullJID] == _currentHypervisorJID)
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Migration" message:@"You can't migrate to the initial virtual machine's hyperviseur." icon:TNGrowlIconError];
+        return
+    }
+    
     var alert = [TNAlert alertWithTitle:@"Migrate Virtual Machine"
                                 message:@"Are you sure you want to migrate this virtual machine ?"
-                                informativeMessage:@"You may can use this machine while migrating"
+                                informativeMessage:@"You may continue to use this machine while migrating"
                                 delegate:self
                                  actions:[["Migrate", @selector(performMigrate:)], ["Cancel", nil]]];
 
+    [alert setUserInfo:destinationHypervisor]
     [alert runModal];
     
 }
 
 - (void)performMigrate:(id)someUserInfo
 {
-    var index                   = [[_tableHypervisors selectedRowIndexes] firstIndex];
-    var destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index]
+    var destinationHypervisor   = someUserInfo;
     var stanza                  = [TNStropheStanza iqWithType:@"set"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];

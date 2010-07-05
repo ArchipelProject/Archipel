@@ -23,6 +23,7 @@ import archipel
 import xmpp
 import utils
 import archipelWebServer
+import libvirtEventLoop
 
 
 ARCHIPEL_CMD_HELP   = """\
@@ -64,7 +65,10 @@ def main():
     
     httpd = archipelWebServer.TNArchipelWebServer(ip, port, server_root)
     httpd.start()
-
+    
+    # starting thre libvirt event loop
+    libvirtEventLoop.virEventLoopPureStart()
+    
     # initializing the hypervisor XMPP entity
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
