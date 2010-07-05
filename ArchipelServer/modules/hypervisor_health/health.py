@@ -29,8 +29,8 @@ ARCHIPEL_ERROR_CODE_HEALTH_HISTORY  = -8001
 ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
 
 class TNHypervisorHealth:
-    def __init__(self, db_file,collection_interval, max_rows_before_purge): #, snmp_agent, snmp_community, snmp_version, snmp_port):
-        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge)#, snmp_agent, snmp_community, snmp_version, snmp_port)
+    def __init__(self, db_file,collection_interval, max_rows_before_purge, min_row_before_storing): #, snmp_agent, snmp_community, snmp_version, snmp_port):
+        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, min_row_before_storing)#, snmp_agent, snmp_community, snmp_version, snmp_port)
         # self.collector.daemon = True
         self.collector.start()
         

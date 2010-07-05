@@ -164,8 +164,9 @@ class TNArchipelBasicXMPPClient(object):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False;
+            #self.xmppclient.disconnect()
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-            self.xmppclient.disconnect()
+            
     
     
     
@@ -600,7 +601,7 @@ class TNArchipelBasicXMPPClient(object):
             
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
-                        self.disconnect()
+                        self.xmppclient.disconnect()
                     #time.sleep(5.0)
                     self.connect()
             except Exception as ex:
@@ -623,7 +624,7 @@ class TNArchipelBasicXMPPClient(object):
         
         
         if self.xmppclient.isConnected():
-            self.disconnect()
+            self.xmppclient.disconnect()
     
     
     

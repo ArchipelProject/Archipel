@@ -231,6 +231,9 @@ TNArchipelTransportBarReboot    = 4;
     [_tableHypervisors setDelegate:nil];
     [_tableHypervisors setDelegate:self];
     
+    [viewTableHypervisorsContainer setHidden:YES];
+    [filterHypervisors setHidden:YES];
+    
     [_tableHypervisors deselectAll];
     [self populateHypervisorsTable];
 }
@@ -385,6 +388,9 @@ TNArchipelTransportBarReboot    = 4;
                 [item setSelected:NO];
         }
         [_tableHypervisors reloadData];
+        
+        [viewTableHypervisorsContainer setHidden:NO];
+        [filterHypervisors setHidden:NO];
         
         var index               = [[_tableHypervisors selectedRowIndexes] firstIndex];
         if (index != -1)

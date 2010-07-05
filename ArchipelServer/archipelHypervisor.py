@@ -209,8 +209,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
-                desc = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
-                vmjid = desc.getTag(name="description").getCDATA().split("::::")[0]
+                desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
+                vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 log.info("MIGRATION: virtual machine %s stopped because of live migration. Freeing softly" % vmjid)
                 self.free_for_migration(xmpp.JID(vmjid))
             except Exception as ex:
@@ -394,15 +394,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
         
-        vm.undefine()
-        vm.disconnect()
+        vm.undefine_and_disconnect()
         
-        self.remove_jid(jid)
         log.info("unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
         self.update_presence()
+        self.remove_jid(jid)
     
     
     
@@ -598,7 +597,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @return: a ready-to-send IQ containing the results
         """
         try:
-            network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
+            network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.resource)
             reply = iq.buildReply("result")
             reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri);
         except Exception as ex:
