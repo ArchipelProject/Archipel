@@ -561,7 +561,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "uri"})
-        resp = self.xmppclient.SendAndCallForResponse(iq, self.migrate_step2)
+        self.xmppclient.SendAndCallForResponse(iq, self.migrate_step2)
     
     
     def migrate_step2(self, conn, resp):
@@ -577,7 +577,20 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log.warn("hypervisor %s hasn't gave its URI. aborting migration" % resp.getFrom())
             return
         
-        self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
+        try:
+            self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
+        except Exception as ex:
+            self.unlock()
+            self.is_migrating = False;
+            self.migration_destination_jid = None;
+            
+            self.xmppclient.RegisterHandler(name='presence', handler=self.process_presence_unsubscribe, typ="unsubscribe")
+            self.xmppclient.RegisterHandler(name='presence', handler=self.process_presence_subscribe, typ="subscribe")
+            self.xmppclient.RegisterHandler(name='iq', handler=self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
+            self.xmppclient.RegisterHandler(name='iq', handler=self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_DEFINITION)
+            self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
+            self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
+            log.error("can't migrate because of : %s" % str(ex))
     
     
     ######################################################################################################
