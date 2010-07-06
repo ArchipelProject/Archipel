@@ -50,7 +50,6 @@
         [_fieldMessage setAutoresizingMask:CPViewWidthSizable|CPViewHeightSizable];
         [_fieldMessage setLineBreakMode:CPLineBreakByWordWrapping];
         [_fieldMessage setAlignment:CPJustifiedTextAlignment];
-        // [_fieldMessage setBackgroundColor:[CPColor blueColor]];
         
         _fieldTimestamp = [[CPTextField alloc] initWithFrame:CGRectMake(CGRectGetWidth(aFrame) - 200, 10, 190, 20)];
         [_fieldTimestamp setAutoresizingMask:CPViewMinXMargin];
@@ -85,6 +84,8 @@
         
         [self setFrame:aFrame];            
         [_fieldMessage setFrame:messageFrame];
+        
+        [_fieldMessage setSelectable:YES];
     }
     
     return self;

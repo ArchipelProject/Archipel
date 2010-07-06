@@ -56,6 +56,7 @@ ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
 ARCHIPEL_ERROR_CODE_VM_MIGRATE      = -1013
 ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
 ARCHIPEL_ERROR_CODE_VM_AUTOSTART    = -1015
+ARCHIPEL_ERROR_CODE_VM_MEMORY       = -1016
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -245,6 +246,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
+
             
         except Exception as ex:
             log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
@@ -362,6 +364,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
+        elif action == "memory":
+            reply = self.iq_memory(iq);
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     def __process_iq_archipel_definition(self, conn, iq):
@@ -447,7 +453,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def info(self):
         dominfo     = self.domain.info()
         autostart   = self.domain.autostart()
-        log.debug("virtual machine info sent")
         return {
             "state": dominfo[0], 
             "maxMem": dominfo[1], 
@@ -458,6 +463,23 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             "autostart": str(autostart)}
         
     
+    
+    def setMemory(self, value):
+        value = long(value)
+        if value < 10 :
+            value = 10;
+        self.domain.setMemory(value)
+        t = Timer(1.0, self.memoryTimer, kwargs={"requestedMemory": value})
+        t.start()
+    
+    def memoryTimer(self, requestedMemory, retry=3):
+        if requestedMemory / self.info()["memory"] in (0, 1):
+            self.push_change("virtualmachine:control", "memory", excludedgroups=['vitualmachines'])
+        elif retry > 0:
+            t = Timer(1.0, self.memoryTimer, kwargs={"requestedMemory": requestedMemory, "retry": (retry - 1)})
+            t.start()
+        else:
+            self.push_change("virtualmachine:control", "memory", excludedgroups=['vitualmachines'])
     
     def setAutostart(self, flag):
         self.domain.setAutostart(flag)
@@ -1023,4 +1045,23 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_AUTOSTART)
         return reply
         
-    
+    def iq_memory(self, iq):
+        """
+        set if machine should start with host.
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            memory = long(iq.getTag("query").getTag("archipel").getAttr("value"))
+            self.setMemory(memory)
+            log.info("virtual machine memory is set to %d" % memory)
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
+        return reply

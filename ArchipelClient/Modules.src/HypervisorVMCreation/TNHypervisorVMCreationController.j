@@ -70,6 +70,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
     [_tableVirtualMachines setDelegate:self];
     [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_tableVirtualMachines setTarget:self];
+    [_tableVirtualMachines setDoubleAction:@selector(addVMToRoster:)]
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
@@ -249,6 +251,33 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 
 //actions
+
+- (IBAction)addVMToRoster:(id)sender
+{
+    var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex];
+    var vm      = [_virtualMachinesDatasource objectAtIndex:index];
+    
+    if ([_roster containsJID:[vm JID]])
+        return;
+    
+    var alert = [TNAlert alertWithTitle:@"Adding contact"
+                                message:@"Would you like to add " + [vm nickname] + @" to your roster"
+                                delegate:self
+                                 actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
+    [alert setUserInfo:vm];
+    [alert runModal];
+}
+
+- (void)performAddToRoster:(id)someUserInfo
+{
+    var vm      = someUserInfo;
+    
+    [_roster addContact:[vm JID] withName:[vm nickname] inGroupWithName:@"General"];
+    [_roster askAuthorizationTo:[vm JID]];
+    [_roster authorizeJID:[vm JID]];
+}
+
+
 - (IBAction)addVirtualMachine:(id)sender
 {
     [fieldNewVMRequestedName setStringValue:@""];
@@ -339,8 +368,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             "xmlns": TNArchipelTypeHypervisorControl, 
             "action": TNArchipelTypeHypervisorControlFree,
             "jid": [vm JID]}];
-
-        // [_roster removeContact:vm];
+        
+        [_roster removeContact:vm];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];          
     }
@@ -359,6 +388,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+- (void)performRemoveFromRoster:(id)someUserInfo
+{
+    [_roster removeContactWithJID:[someUserInfo JID]];
 }
 
 

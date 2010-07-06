@@ -80,9 +80,32 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     if (![self isVisible])
     {
         if ([_drive device] == @"disk")
-            [[[radioDriveType radios] objectAtIndex:1] setState:CPOnState];
+        {
+            // OK OK.. but the index of Radio button in radio group is not fixed. so. freak me!
+            for (var i = 0; i < [[radioDriveType radios] count]; i++)
+            {
+                var radio = [[radioDriveType radios] objectAtIndex:i];
+                if ([radio title] == @"Hard drive")
+                {
+                    [radio setState:CPOnState];
+                    break;
+                }
+            }
+        }
         else if ([_drive device] == @"cdrom")
-            [[[radioDriveType radios] objectAtIndex:0] setState:CPOnState];
+        {
+            for (var i = 0; i < [[radioDriveType radios] count]; i++)
+            {
+                var radio = [[radioDriveType radios] objectAtIndex:i];
+                if ([radio title] == @"CD/DVD")
+                {
+                    [radio setState:CPOnState];
+                    break;
+                }
+            }
+            
+        }
+            
         
         [self performRadioDriveTypeChanged:nil];
         

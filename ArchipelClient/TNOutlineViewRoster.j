@@ -61,9 +61,13 @@
         [self setOutlineTableColumn:columnLabel];
 
         // highlight style
-        _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
-        _sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"9eafcd"];
-        _sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"7c95bb"];
+        //_sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
+        //_sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"9eafcd"];
+        //_sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"7c95bb"];
+        
+        _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [91.0/255.0, 164.0/255.0, 225.0/255.0,1.0, 0.0/255.0, 105.0/255.0, 191.0/255.0,1.0], [0,1], 2)
+        _sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"3991D5"]; //[CPColor colorWithHexString:@"9eafcd"];
+        _sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"0067be"]; //[CPColor colorWithHexString:@"7c95bb"];
         
         [self setTarget:self];
         [self setDoubleAction:@selector(onDoubleAction:)];
