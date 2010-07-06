@@ -16,3 +16,4 @@ modules.plist
 */Modules/modules.plist
 Documentation/*
 ArchipelClient/Modules/modules.plist
+ArchipelClient/.build-number
