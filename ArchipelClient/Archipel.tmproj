@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/ToolbarMigration/TNToolbarMigrationController.j</string>
+	<string>Modules/modules.plist</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -1074,14 +1074,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>62</integer>
+				<integer>18</integer>
 				<key>line</key>
-				<integer>201</integer>
+				<integer>188</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>172</integer>
+			<integer>160</integer>
 		</dict>
 		<key>Modules.src/ToolbarPauseButton/Info.plist</key>
 		<dict>
@@ -1497,35 +1497,47 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
+		<key>Modules.src/VirtualMachineControls/Resources/vm_stop.png</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Modules.src/VirtualMachineControls/TNExtendedContactObject.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>167</integer>
+				<key>line</key>
+				<integer>38</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>10</integer>
+		</dict>
 		<key>Modules.src/VirtualMachineControls/TNVirtualMachineControlsController.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>33</integer>
+				<integer>48</integer>
 				<key>line</key>
-				<integer>134</integer>
+				<integer>233</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>111</integer>
-			<key>selectFrom</key>
-			<dict>
-				<key>column</key>
-				<integer>24</integer>
-				<key>line</key>
-				<integer>134</integer>
-			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>33</integer>
-				<key>line</key>
-				<integer>134</integer>
-			</dict>
+			<integer>187</integer>
 		</dict>
 		<key>Modules.src/VirtualMachineDefinition/Info.plist</key>
 		<dict>
@@ -2658,6 +2670,8 @@
 		<string>Modules.src/VirtualMachineSnapshots/TNSnapshot.j</string>
 		<string>Modules.src/HypervisorHealth/Jakefile</string>
 		<string>Modules.src/VirtualMachineControls/TNVirtualMachineControlsController.j</string>
+		<string>Modules.src/VirtualMachineControls/TNExtendedContactObject.j</string>
+		<string>Modules.src/VirtualMachineControls/Resources/vm_stop.png</string>
 		<string>Modules.src/VirtualMachineControls/Resources/vm_pause.png</string>
 		<string>Modules.src/VirtualMachineControls/Resources/vm_play.png</string>
 		<string>Modules.src/VirtualMachineControls/Resources/vm_reboot.png</string>
@@ -2714,6 +2728,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{275, 48}, {1126, 823}}</string>
+	<string>{{640, 55}, {1126, 823}}</string>
 </dict>
 </plist>

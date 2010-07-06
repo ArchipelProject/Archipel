@@ -137,7 +137,9 @@ function generateMacAddr()
     @outlet CPView                  viewNicsContainer;
     @outlet TNWindowDriveEdition    windowDriveEdition;
     @outlet TNWindowNicEdition      windowNicEdition;
-
+    @outlet LPMultiLineTextField    fieldStringXMLDesc;
+    @outlet CPWindow                windowXMLEditor;
+    
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
     CPButton                        _minusButtonDrives;
@@ -151,11 +153,15 @@ function generateMacAddr()
     CPTableView                     _tableNetworkNics;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
+    CPString                        _stringXMLDesc;
 }
 
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
+    [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
+    
+    _stringXMLDesc = @"";
     
     var bundle                  = [CPBundle mainBundle];
     var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
@@ -665,13 +671,19 @@ function generateMacAddr()
         var onCrash         = [domain firstChildWithName:@"on_crash"];
         var features        = [domain firstChildWithName:@"features"];
         var clock           = [domain firstChildWithName:@"clock"];
-
+        
+        _stringXMLDesc      = [[aStanza firstChildWithName:@"domain"] stringValue];
+        _stringXMLDesc      = _stringXMLDesc.replace("\n  \n", "\n");
+        _stringXMLDesc      = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
+        
+        [fieldStringXMLDesc setStringValue:_stringXMLDesc];
+        
         [_nicsDatasource removeAllObjects];
         [_drivesDatasource removeAllObjects];
-    
+        
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
         [buttonNumberCPUs selectItemWithTitle:vcpu];
-
+        
         for (var i = 0; i < [graphics count]; i++)
         {
             var graphic = [graphics objectAtIndex:i];
@@ -685,7 +697,7 @@ function generateMacAddr()
                 }
             }
         }
-
+        
         if (boot == "cdrom")
             [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
         else
@@ -783,6 +795,14 @@ function generateMacAddr()
     }
 }
 
+
+- (IBAction)openXMLEditor:(id)sender
+{
+    [windowXMLEditor center];
+    [windowXMLEditor makeKeyAndOrderFront:sender];
+    
+}
+
 - (IBAction)defineXML:(id)sender
 {
     var uid             = [_connection getUniqueId];
@@ -793,7 +813,22 @@ function generateMacAddr()
     [_entity sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
-- (void)didDefineXML:(id)aStanza
+- (IBAction)defineXMLString:(id)sender
+{
+    var desc    = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0];
+    desc        = document.importNode(desc, true);
+    
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+    [stanza addNode:desc];
+    
+    [self sendStanza:stanza andRegisterSelector:@selector(didDefineXML:)];
+    [windowXMLEditor close];
+}
+
+- (void)didDefineXML:(TNStropheStanza)aStanza
 {
     var responseType    = [aStanza getType];
     var responseFrom    = [aStanza getFrom];
@@ -808,6 +843,7 @@ function generateMacAddr()
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 
 - (IBAction)addNetworkCard:(id)sender
 {
@@ -834,6 +870,7 @@ function generateMacAddr()
     [windowNicEdition center];
     [windowNicEdition orderFront:nil];
 }
+
 
 - (IBAction)deleteNetworkCard:(id)sender
 {

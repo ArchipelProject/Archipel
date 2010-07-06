@@ -39,6 +39,7 @@ TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
 TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
 TNArchipelTypeVirtualMachineControlResume       = @"resume";
 TNArchipelTypeVirtualMachineControlMigrate      = @"migrate";
+TNArchipelTypeVirtualMachineControlAutostart    = @"autostart";
 
 VIR_DOMAIN_NOSTATE  = 0;
 VIR_DOMAIN_RUNNING  = 1;
@@ -69,6 +70,8 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPView                  viewTableHypervisorsContainer;
+    @outlet CPCheckBox              checkBoxAutostart;
+    @outlet CPTextField             fieldHypervisor;
     
     CPTableView             _tableHypervisors;
     TNTableViewDataSource   _datasourceHypervisors;
@@ -361,16 +364,24 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza getType] == @"result")
     {
         var humanState;
-        var infoNode          = [aStanza firstChildWithName:@"info"];
-        var libvirtState      = [infoNode valueForAttribute:@"state"];
-        var cpuTime           = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 600000000);
-        var mem               = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
-        _currentHypervisorJID = [infoNode valueForAttribute:@"hypervisor"];
-        
+        var infoNode            = [aStanza firstChildWithName:@"info"];
+        var libvirtState        = [infoNode valueForAttribute:@"state"];
+        var cpuTime             = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 60000000000);
+        var mem                 = parseInt([infoNode valueForAttribute:@"memory"]) / 1024;
+        var autostart           = parseInt([infoNode valueForAttribute:@"autostart"]);
+        var hypervisor          = [infoNode valueForAttribute:@"hypervisor"];
 
+        _currentHypervisorJID = hypervisor;
+        
+        [fieldHypervisor setStringValue:hypervisor.split("@")[0]];
         [fieldInfoMem setStringValue:mem + @" Mo"];
         [fieldInfoCPUs setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
-        [fieldInfoConsumedCPU setStringValue:cpuTime + @" min."];
+        [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
+        
+        if (autostart == 1)
+            [checkBoxAutostart setState:CPOnState];
+        else
+            [checkBoxAutostart setState:CPOffState];
 
         _VMLibvirtStatus = libvirtState;
 
@@ -389,8 +400,11 @@ TNArchipelTransportBarReboot    = 4;
         }
         [_tableHypervisors reloadData];
         
-        [viewTableHypervisorsContainer setHidden:NO];
-        [filterHypervisors setHidden:NO];
+        if ([_entity XMPPShow] == TNStropheContactStatusOnline)
+        {
+            [viewTableHypervisorsContainer setHidden:NO];
+            [filterHypervisors setHidden:NO];
+        }
         
         var index               = [[_tableHypervisors selectedRowIndexes] firstIndex];
         if (index != -1)
@@ -635,6 +649,33 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
+
+- (IBAction)setAutostart:(id)sender
+{
+    var stanza      = [TNStropheStanza iqWithType:@"set"];
+    var autostart   = ([checkBoxAutostart state] == CPOnState) ? "1" : "0";
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlAutostart,
+        "value": autostart}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(didSetAutostart:)];
+    
+}
+
+- (void)didSetAutostart:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Autostart" message:@"Autostart has been set"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
 
 
 - (IBAction)migrate:(id)sender

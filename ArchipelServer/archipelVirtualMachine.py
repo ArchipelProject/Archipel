@@ -55,6 +55,7 @@ ARCHIPEL_ERROR_CODE_VM_XMLDESC      = -1011
 ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
 ARCHIPEL_ERROR_CODE_VM_MIGRATE      = -1013
 ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
+ARCHIPEL_ERROR_CODE_VM_AUTOSTART    = -1015
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -355,6 +356,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = self.iq_migrate(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
+        elif action == "autostart":
+            reply = self.iq_autostart(iq);
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
     
     
     def __process_iq_archipel_definition(self, conn, iq):
@@ -438,9 +445,22 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def info(self):
-        dominfo = self.domain.info()
+        dominfo     = self.domain.info()
+        autostart   = self.domain.autostart()
         log.debug("virtual machine info sent")
-        return {"state": dominfo[0], "maxMem": dominfo[1], "memory": dominfo[2], "nrVirtCpu": dominfo[3], "cpuTime": dominfo[4], "hypervisor": self.hypervisor.jid}
+        return {
+            "state": dominfo[0], 
+            "maxMem": dominfo[1], 
+            "memory": dominfo[2], 
+            "nrVirtCpu": dominfo[3], 
+            "cpuTime": dominfo[4], 
+            "hypervisor": self.hypervisor.jid, 
+            "autostart": str(autostart)}
+        
+    
+    
+    def setAutostart(self, flag):
+        self.domain.setAutostart(flag)
     
     
     def vncdisplay(self):
@@ -451,12 +471,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def xmldesc(self):
         xmldesc = self.domain.XMLDesc(0)
-        return xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
+        descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
+        descnode.delChild("description")
+        return descnode
     
     
     def define(self, xmldesc):
         
-        if not xmldesc.getTag('description'): xmldesc.addChild(name='description')
+        if not xmldesc.getTag('description'): 
+            xmldesc.addChild(name='description')
+        else:
+            xmldesc.delChild("description")
+            xmldesc.addChild(name='description')
+        
         xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
         
         definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
@@ -472,9 +499,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.domain.undefine()
         self.definition = None;
     
+    
     def undefine_and_disconnect(self):
         self.undefine()
         self.disconnect()
+    
     
     def clone(self, info):
         """
@@ -948,8 +977,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        
-        reply = None
         try:
             reply = iq.buildReply("result")
             self.undefine()
@@ -961,4 +988,26 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
+    
+    def iq_autostart(self, iq):
+        """
+        set if machine should start with host.
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            autostart = int(iq.getTag("query").getTag("archipel").getAttr("value"))
+            self.setAutostart(autostart)
+            log.info("virtual autostart is set to %d" % autostart)
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_AUTOSTART)
+        return reply
+        
     
