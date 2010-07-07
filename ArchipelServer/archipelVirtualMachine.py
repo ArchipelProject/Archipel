@@ -368,6 +368,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = self.iq_memory(iq);
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        elif action == "setvcpus":
+            reply = self.iq_setvcpus(iq);
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     def __process_iq_archipel_definition(self, conn, iq):
@@ -472,6 +477,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         t = Timer(1.0, self.memoryTimer, kwargs={"requestedMemory": value})
         t.start()
     
+    
     def memoryTimer(self, requestedMemory, retry=3):
         if requestedMemory / self.info()["memory"] in (0, 1):
             self.push_change("virtualmachine:control", "memory", excludedgroups=['vitualmachines'])
@@ -480,6 +486,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             t.start()
         else:
             self.push_change("virtualmachine:control", "memory", excludedgroups=['vitualmachines'])
+    
+    
+    def setVCPUs(self, value):
+        self.domain.setVcpus(int(value))
     
     def setAutostart(self, flag):
         self.domain.setAutostart(flag)
@@ -1047,7 +1057,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
     def iq_memory(self, iq):
         """
-        set if machine should start with host.
+        balloon memory .
 
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
@@ -1060,6 +1070,27 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             memory = long(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setMemory(memory)
             log.info("virtual machine memory is set to %d" % memory)
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
+        return reply
+
+    def iq_setvcpus(self, iq):
+        """
+        set number of virtual cpus
+
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
+            self.setVCPUs(value)
+            log.info("virtual machine number of cpus is set to %d" % cpus)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:

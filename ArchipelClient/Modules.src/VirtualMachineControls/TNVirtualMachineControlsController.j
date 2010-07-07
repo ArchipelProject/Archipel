@@ -41,6 +41,7 @@ TNArchipelTypeVirtualMachineControlResume       = @"resume";
 TNArchipelTypeVirtualMachineControlMigrate      = @"migrate";
 TNArchipelTypeVirtualMachineControlAutostart    = @"autostart";
 TNArchipelTypeVirtualMachineControlMemory       = @"memory";
+TNArchipelTypeVirtualMachineControlVCPUs        = @"setvcpus";
 
 VIR_DOMAIN_NOSTATE  = 0;
 VIR_DOMAIN_RUNNING  = 1;
@@ -74,6 +75,7 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPCheckBox              checkBoxAutostart;
     @outlet CPTextField             fieldHypervisor;
     @outlet CPSlider                sliderMemory;
+    @outlet TNStepper               stepperCPU;
     
     CPTableView             _tableHypervisors;
     TNTableViewDataSource   _datasourceHypervisors;
@@ -102,6 +104,8 @@ TNArchipelTransportBarReboot    = 4;
     [fieldJID setSelectable:YES];
     [sliderMemory setSendsActionOnEndEditing:YES];
     [sliderMemory setContinuous:NO];
+    [stepperCPU setTarget:self];
+    [stepperCPU setAction:@selector(setVCPUs:)];
     
     var bundle          = [CPBundle bundleForClass:[self class]];
     
@@ -715,7 +719,6 @@ TNArchipelTransportBarReboot    = 4;
         "action": TNArchipelTypeVirtualMachineControlMemory,
         "value": memory}];
     [self sendStanza:stanza andRegisterSelector:@selector(didSetMemory:)];
-    
 }
 
 - (void)didSetMemory:(TNStropheStanza)aStanza
@@ -726,6 +729,31 @@ TNArchipelTransportBarReboot    = 4;
         [self getVirtualMachineInfo];
     }
 }
+
+
+- (IBAction)setVCPUs:(id)sender
+{
+    var stanza      = [TNStropheStanza iqWithType:@"set"];
+    var cpus        = [stepperCPU value];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlVCPUs,
+        "value": cpus}];
+    [self sendStanza:stanza andRegisterSelector:@selector(didSetVCPUs:)];
+}
+
+- (void)didSetVCPUs:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+        [self getVirtualMachineInfo];
+    }
+}
+
+
+
 
 - (IBAction)migrate:(id)sender
 {
