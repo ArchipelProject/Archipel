@@ -30,8 +30,10 @@ ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
 ARCHIPEL_XMPP_SHOW_RUNNING                      = "Running"
 ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
 ARCHIPEL_XMPP_SHOW_SHUTDOWNED                   = "Off"
+ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shutted off"
 ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
 ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
+ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 
 # XMPP main loop status
 ARCHIPEL_XMPP_LOOP_OFF                          = 0

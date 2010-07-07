@@ -101,13 +101,17 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)awakeFromCib
 {
+    var bundle          = [CPBundle bundleForClass:[self class]];
+    
     [fieldJID setSelectable:YES];
     [sliderMemory setSendsActionOnEndEditing:YES];
     [sliderMemory setContinuous:NO];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
+    [stepperCPU setMinValue:1];
+    [stepperCPU setMaxValue:[bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"]];
     
-    var bundle          = [CPBundle bundleForClass:[self class]];
+    
     
     _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
     _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
@@ -247,6 +251,7 @@ TNArchipelTransportBarReboot    = 4;
     [checkBoxAutostart setEnabled:NO];
     [checkBoxAutostart setState:CPOffState];
     [sliderMemory setEnabled:NO];
+    [stepperCPU setEnabled:NO];
     
     [_tableHypervisors deselectAll];
     [self populateHypervisorsTable];
@@ -382,29 +387,28 @@ TNArchipelTransportBarReboot    = 4;
         var maxMem              = parseFloat([infoNode valueForAttribute:@"maxMem"]);
         var autostart           = parseInt([infoNode valueForAttribute:@"autostart"]);
         var hypervisor          = [infoNode valueForAttribute:@"hypervisor"];
-
+        var nvCPUs              = [infoNode valueForAttribute:@"nrVirtCpu"];
+        
         _currentHypervisorJID = hypervisor;
         
         [fieldHypervisor setStringValue:[hypervisor capitalizedString].split("@")[0]];
         [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" Mo"];
-        [fieldInfoCPUs setStringValue:[infoNode valueForAttribute:@"nrVirtCpu"]];
+        [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
+        
+        [stepperCPU setValue:[nvCPUs intValue]];
         
         if ([_entity XMPPShow] == TNStropheContactStatusOnline)
         {
-            [sliderMemory setMinValue:0];
-            [sliderMemory setMaxValue:parseInt(maxMem)];
-            [sliderMemory setIntValue:parseInt(mem)];
             [sliderMemory setEnabled:YES];
+            [stepperCPU setEnabled:YES];
         }
         else
         {
             [sliderMemory setEnabled:NO];
-            [sliderMemory setMinValue:0];
-            [sliderMemory setMaxValue:100];
-            [sliderMemory setIntValue:0];
+            [stepperCPU setEnabled:NO];
         }
-            
+        
         
         [checkBoxAutostart setEnabled:YES];
         if (autostart == 1)
@@ -735,7 +739,6 @@ TNArchipelTransportBarReboot    = 4;
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"];
     var cpus        = [stepperCPU value];
-    console.log(cpus);
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
