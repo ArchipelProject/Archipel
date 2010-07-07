@@ -735,6 +735,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"];
     var cpus        = [stepperCPU value];
+    console.log(cpus);
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
