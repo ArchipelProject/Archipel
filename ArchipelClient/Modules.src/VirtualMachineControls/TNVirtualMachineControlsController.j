@@ -400,12 +400,18 @@ TNArchipelTransportBarReboot    = 4;
         
         if ([_entity XMPPShow] == TNStropheContactStatusOnline)
         {
+            [sliderMemory setMinValue:0];
+            [sliderMemory setMaxValue:parseInt(maxMem)];
+            [sliderMemory setIntValue:parseInt(mem)];
             [sliderMemory setEnabled:YES];
             [stepperCPU setEnabled:YES];
         }
         else
         {
             [sliderMemory setEnabled:NO];
+            [sliderMemory setMinValue:0];
+            [sliderMemory setMaxValue:100];
+            [sliderMemory setIntValue:0];
             [stepperCPU setEnabled:NO];
         }
         
