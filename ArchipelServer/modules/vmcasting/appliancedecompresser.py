@@ -72,8 +72,8 @@ class TNApplianceDecompresser(Thread):
         # This doesn;t work. we have to wait libvirt to handle snapshot recovering.
         # anyway, everything is ready, snapshots desc are stored in xvm2 packages, XML desc
         # are stored into self.snapshots_desc.
-        #log.info("Recovering any snapshots")
-        #self.recover_snapshots()
+        # log.info("Recovering any snapshots")
+        # self.recover_snapshots()
         
         self.finish_callback()
         
@@ -162,9 +162,10 @@ class TNApplianceDecompresser(Thread):
         for snap in self.snapshots_desc:
             try:
                 snap_node = xmpp.simplexml.NodeBuilder(data=snap).getDom()
-                snap_node.getTag("name").setData(str(uuid.uuid1()))
+                #snap_node.getTag("name").setData(str(uuid.uuid1()))
                 snap_node.getTag("domain").getTag("uuid").setData(self.entity.uuid)
                 snap_str = str(snap_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+                print snap_str
                 self.entity.domain.snapshotCreateXML(snap_str, 0)
             except Exception as ex:
                 log.error("can't recover snapshot: %s", str(ex))

@@ -57,6 +57,7 @@ ARCHIPEL_ERROR_CODE_VM_MIGRATE      = -1013
 ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
 ARCHIPEL_ERROR_CODE_VM_AUTOSTART    = -1015
 ARCHIPEL_ERROR_CODE_VM_MEMORY       = -1016
+ARCHIPEL_ERROR_CODE_VM_NETWORKINFO  = -1017
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -153,6 +154,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                                 "parameters": [],
                                 "method": self.message_xmldesc,
                                 "description": "I'll show my description" },
+                            
+                            {  "commands" : ["net", "network", "net stat", "network stat"], 
+                                "parameters": [],
+                                "method": self.message_networkinfo,
+                                "description": "I'll show my network stats" },
                         ]
         self.add_message_registrar_items(registrar_items)
         
@@ -381,6 +387,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = self.iq_setvcpus(iq);
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+            
+        elif action == "networkinfo":
+            reply = self.iq_networkinfo(iq);
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed        
         
         # elif action == "setpincpus":
         #     reply = self.iq_setcpuspin(iq);
@@ -480,6 +491,29 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             "hypervisor": self.hypervisor.jid, 
             "autostart": str(autostart)}
         
+    
+    def network_info(self):
+        desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
+        interfaces_nodes = desc.getTag("devices").getTags("interface")
+        
+        netstats = []
+        for nic in interfaces_nodes:
+            name    = nic.getTag("alias").getAttr("name");
+            target  = nic.getTag("target").getAttr("dev"); 
+            stats   = self.domain.interfaceStats(target);
+            netstats.append({
+                "name": name,
+                "rx_bytes": stats[0],
+                "rx_packets": stats[1],
+                "rx_errs": stats[2],
+                "rx_drop": stats[3],
+                "tx_bytes": stats[4],
+                "tx_packets": stats[5],
+                "tx_errs": stats[6],
+                "tx_drop": stats[7]
+            })
+        
+        return netstats;
     
     
     def setMemory(self, value):
@@ -1123,6 +1157,49 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
         return reply
+    
+    
+    def iq_networkinfo(self, iq):
+        """
+        return info about network
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            if not self.domain:
+                return iq.buildReply("ignore")
+            
+            reply = iq.buildReply("result")
+            infos = self.network_info()
+            stats = []
+            for info in infos:
+                stats.append(xmpp.Node(tag="network", attrs=info))
+            reply.setQueryPayload(stats)
+        except libvirt.libvirtError as ex:
+            if ex.get_error_code() == libvirt.VIR_ERR_NO_DOMAIN:
+                return iq.buildReply("result")
+            else:
+                reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_NETWORKINFO)
+        return reply
+        
+    
+    
+    def message_networkinfo(self, msg):
+        try:
+            s = self.network_info()
+            resp = "My network info are :\n"
+            for i in s:
+                resp = resp + "%s : rx_bytes:%s rx_packets:%s rx_errs:%d rx_drop:%s / tx_bytes:%s tx_packets:%s tx_errs:%d tx_drop:%s" % (i["name"], i["rx_bytes"], i["rx_packets"], i["rx_errs"], i["rx_drop"], i["tx_bytes"], i["tx_packets"], i["tx_errs"], i["tx_drop"])
+            return resp
+        except Exception as ex:
+            return build_error_message(self, ex)
+        
     
     
     # def iq_setcpuspin(self, iq):
