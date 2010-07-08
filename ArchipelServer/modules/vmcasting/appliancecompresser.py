@@ -25,26 +25,49 @@ import xmpp
 
 class TNApplianceCompresser(Thread):
     
-    def __init__(self, name, paths, xml_definition, working_dir, vm_dir, hypervisor_repo_path, callback):
+    def __init__(self, name, paths, xml_definition, xml_snapshots, working_dir, vm_dir, hypervisor_repo_path, callback):
         """
         initialize a TNApplianceCompresser
         """
         Thread.__init__(self)
-        self.name = name.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
-        self.paths = paths
-        self.callback = callback
-        self.xml_definition = xml_definition
-        self.vm_dir = vm_dir
-        log.debug("generating temp directory into base dir: %s" % working_dir)
-        self.working_dir = tempfile.mkdtemp(dir=working_dir)
-        self.hypervisor_repo_path = hypervisor_repo_path
+        self.name                   = name.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
+        self.paths                  = paths
+        self.callback               = callback
+        self.xml_definition         = xml_definition
+        self.xml_snapshots          = xml_snapshots
+        self.vm_dir                 = vm_dir
+        self.working_dir            = tempfile.mkdtemp(dir=working_dir)
+        self.hypervisor_repo_path   = hypervisor_repo_path
+        
+        log.debug("working temp dir is: %s" % self.working_dir)
     
     
     def run(self):
         log.info("packaging appliance %s" % self.name)
         
-        definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '');
+        log.info("creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
+        tar_file = self.working_dir + "/" + self.name + ".xvm2";
+        tar = tarfile.open(tar_file, "w")
         
+        
+        definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '');
+        log.info("writing definion at path  %s/description.xml" % self.working_dir)
+        f = open(self.working_dir + "/description.xml", 'w')
+        f.write(definitionXML)
+        f.close()
+        tar.add(self.working_dir + "/description.xml", "/description.xml")
+        os.unlink(self.working_dir + "/description.xml");
+        
+        for i, snapshot in enumerate(self.xml_snapshots):
+            snapshotXML = str(snapshot).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+            descName = "/snapshot-%d.xml" % i
+            descPath = "%s/%s" % (self.working_dir, descName)
+            f = open(descPath, 'w')
+            f.write(snapshotXML)
+            f.close()
+            tar.add(descPath, descName)
+            os.unlink(descPath);
+            
         zipped_file_paths = [];
         for path in self.paths:
             log.info("zipping file %s" % path)
@@ -53,17 +76,8 @@ class TNApplianceCompresser(Thread):
             zipped_file_paths.append(zipped_file_path)
             log.info("file zipped %s" % zipped_file_path)
         
-        log.info("writing definion at path  %s/description.xml" % self.working_dir)
-        f = open(self.working_dir + "/description.xml", 'w')
-        f.write(definitionXML)
-        f.close()
-            
-        log.info("creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
         
-        tar_file = self.working_dir + "/" + self.name + ".xvm2";
-        tar = tarfile.open(tar_file, "w")
-        tar.add(self.working_dir + "/description.xml", "/description.xml")
-        os.unlink(self.working_dir + "/description.xml");
+        
         for zipped_file_path in zipped_file_paths:
             log.info("adding to tar file %s" % zipped_file_path)
             tar.add(zipped_file_path, "/" + zipped_file_path.split("/")[-1])

@@ -24,10 +24,11 @@ from threading import Thread
 from xml.dom import minidom
 import xmpp
 import shutil
+import uuid
 
 class TNApplianceDecompresser(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, uuid, install_path, define_callback, finish_callback, package_uuid, requester):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, entity, finish_callback, package_uuid, requester):
         """
         initialize a TNApplianceDecompresser
         
@@ -36,19 +37,18 @@ class TNApplianceDecompresser(Thread):
         @type disk_exts: array
         @param disk_exts: contains all the extensions that should be considered as a disks with the initial dot (ie: .gz)
         """
-        
         self.working_dir        = working_dir
         self.disk_extensions    = disk_exts
-        self.description_file   = None
-        self.disk_files         = {}
-        self.other_files        = []
         self.xvm2_package_path  = xvm2_package_path
-        self.uuid               = uuid
-        self.install_path       = install_path
-        self.define_callback    = define_callback
+        self.entity             = entity
         self.finish_callback    = finish_callback
         self.package_uuid       = package_uuid
         self.requester          = requester
+        self.install_path       = entity.folder
+        
+        self.description_file   = None
+        self.disk_files         = {}
+        self.snapshots_desc     = []
         
         Thread.__init__(self)
     
@@ -57,7 +57,7 @@ class TNApplianceDecompresser(Thread):
         log.info("unpacking to %s" % self.working_dir)
         self.unpack()
         
-        log.info("defining UUID in description file as %s" % self.uuid)
+        log.info("defining UUID in description file as %s" % self.entity.uuid)
         self.update_description()
         
         log.info("installing package in %s" % self.install_path)
@@ -67,7 +67,13 @@ class TNApplianceDecompresser(Thread):
         self.clean()
         
         log.info("Defining the virtual machine")
-        self.define_callback(self.description_node)
+        self.entity.define(self.description_node)
+        
+        # This doesn;t work. we have to wait libvirt to handle snapshot recovering.
+        # anyway, everything is ready, snapshots desc are stored in xvm2 packages, XML desc
+        # are stored into self.snapshots_desc.
+        #log.info("Recovering any snapshots")
+        #self.recover_snapshots()
         
         self.finish_callback()
         
@@ -109,6 +115,14 @@ class TNApplianceDecompresser(Thread):
                     o = open(full_path, 'r')
                     self.description_file = o.read()
                     o.close()
+                    
+                if aFile.find("snapshot-") > -1:
+                    log.debug("found snapshot file : %s" % full_path)
+                    o = open(full_path, 'r')
+                    snapXML = o.read()
+                    o.close()
+                    self.snapshots_desc.append(snapXML)
+                
         except Exception as ex:
             log.error( str(ex))
     
@@ -133,13 +147,27 @@ class TNApplianceDecompresser(Thread):
         for disk in disk_nodes:
             source = disk.getTag("source")
             source_file = source.getAttr("file")
-            source.setAttr("file", self.install_path + "/" + source_file.replace(".gz", ""))
-        name_node.setData(self.uuid)
-        uuid_node.setData(self.uuid)
+            source.setAttr("file", source_file.replace(".gz", "").replace(uuid_node.getCDATA(), self.entity.uuid))
+        
+        name_node.setData(self.entity.uuid)
+        uuid_node.setData(self.entity.uuid)
         
         self.description_node = xml_desc
         
         return True
+    
+    
+    def recover_snapshots(self):
+        """recover any snapshots"""
+        for snap in self.snapshots_desc:
+            try:
+                snap_node = xmpp.simplexml.NodeBuilder(data=snap).getDom()
+                snap_node.getTag("name").setData(str(uuid.uuid1()))
+                snap_node.getTag("domain").getTag("uuid").setData(self.entity.uuid)
+                snap_str = str(snap_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+                self.entity.domain.snapshotCreateXML(snap_str, 0)
+            except Exception as ex:
+                log.error("can't recover snapshot: %s", str(ex))
     
     
     def install(self):

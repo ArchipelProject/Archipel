@@ -157,12 +157,13 @@ class TNSnapshoting:
         try:
             reply = iq.buildReply("result")
             nodes = []
-            snapshot_names = self.entity.domain.snapshotListNames(0)
-            for snapshot_name in snapshot_names:
-                snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
-                desc = snapshotObject.getXMLDesc(0)
-                n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
-                nodes.append(n)
+            if self.entity.domain.hasCurrentSnapshot(0):
+                snapshot_names = self.entity.domain.snapshotListNames(0)
+                for snapshot_name in snapshot_names:
+                    snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
+                    desc = snapshotObject.getXMLDesc(0)
+                    n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                    nodes.append(n)
             reply.setQueryPayload(nodes)
         except libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -183,10 +184,11 @@ class TNSnapshoting:
         """
         try:
             reply = iq.buildReply("result")
-            snapshotObject = self.entity.domain.snapshotCurrent(0)
-            desc = snapshotObject.getXMLDesc(0)
-            n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
-            reply.setQueryPayload([n])
+            if self.entity.domain.hasCurrentSnapshot(0):
+                snapshotObject = self.entity.domain.snapshotCurrent(0)
+                desc = snapshotObject.getXMLDesc(0)
+                n = xmpp.simplexml.NodeBuilder(data=desc).getDom()
+                reply.setQueryPayload([n])
         except libvirtError as ex:
             if ex.get_error_code() == VIR_ERR_NO_DOMAIN_SNAPSHOT:
                 reply = iq.buildReply("result")
@@ -256,7 +258,7 @@ class TNSnapshoting:
             
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
-            snapshotObject.revertToSnapshot(0);
+            self.entity.domain.revertToSnapshot(snapshotObject, 0);
             
             log.info("reverted to snapshot with name %s " % name);
             self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])

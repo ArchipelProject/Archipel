@@ -156,7 +156,7 @@ class TNVMApplianceManager:
             
             log.debug("Supported extensions : %s " % str(self.disks_extensions))
             log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity.uuid, self.entity.folder, self.entity.define, self.finish_installing, uuid, requester)
+            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, uuid, requester)
             
             self.old_status  = self.entity.xmppstatus
             self.old_show    = self.entity.xmppstatusshow
@@ -225,8 +225,17 @@ class TNVMApplianceManager:
                 path = disk_node.getTag('source').getAttr('file')
                 paths.append(path)
             
+            
+            snapshots = [];
+            if self.entity.domain.hasCurrentSnapshot(0):
+                snapshot_names = self.entity.domain.snapshotListNames(0)
+                for snapshot_name in snapshot_names:
+                    snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
+                    desc = snapshotObject.getXMLDesc(0)
+                    snapshots.append(desc)
+            
             working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
             
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])

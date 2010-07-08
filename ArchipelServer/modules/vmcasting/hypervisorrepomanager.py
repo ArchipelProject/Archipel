@@ -165,9 +165,12 @@ class TNHypervisorRepoManager:
         self.own_repo_params = own_repo_params
         self.download_queue = {}
         
-        self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"], self.own_repo_params["uuid"], 
-                                                        self.own_repo_params["description"], self.own_repo_params["lang"], 
-                                                        self.own_repo_params["url"], self.own_repo_params["path"])
+        self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"].replace("$HOSTAME", self.entity.resource), 
+                                                        self.own_repo_params["uuid"], 
+                                                        self.own_repo_params["description"].replace("$HOSTAME", self.entity.resource),
+                                                        self.own_repo_params["lang"], 
+                                                        self.own_repo_params["url"], 
+                                                        self.own_repo_params["path"])
         
         self.parse_own_repo(loop=False)
         self.parse_timer = Thread(target=self.parse_own_repo)
