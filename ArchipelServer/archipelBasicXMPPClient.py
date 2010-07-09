@@ -193,9 +193,10 @@ class TNArchipelBasicXMPPClient(object):
             self.pubSubNodeEvent.create()
         self.pubSubNodeEvent.configure({
             pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-            # pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 50,
-            # pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            # pubsub.XMPP_PUBSUB_VAR_PRESENCE_BASED_DELIVERY: "false"
+            pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 10,
+            pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+            pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+            pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         })
         
         # creating/getting the log pubsub node
@@ -205,12 +206,13 @@ class TNArchipelBasicXMPPClient(object):
             self.pubSubNodeLog.create()
         self.pubSubNodeLog.configure({
                 pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                # pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
-                # pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
-                # pubsub.XMPP_PUBSUB_VAR_ITEM_EXPIRE: self.configuration.get("LOGGING", "log_pubsub_item_expire")
+                pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
+                pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+                pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         })
             
-        #self.log.pubSubNode = self.pubSubNodeLog
+        self.log.pubSubNode = self.pubSubNodeLog
     
     def remove_pubsubs(self):
         log.info("removing pubsub node for log")

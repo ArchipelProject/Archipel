@@ -129,6 +129,14 @@ class TNPubSubNode:
         """configure the node"""
         if not self.node: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
         
+        
+        # ask conf of server
+        # iq          = xmpp.Iq(typ="get", to=self.pubsubserver)
+        # pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner")
+        # configure   = pubsub.addChild("configure", attrs={"node": self.nodename})
+        # resp = self.xmppclient.SendAndWaitForResponse(iq)
+        # print "\n\n" + str(resp) + "\n\n"
+        
         iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
         pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner")
         configure   = pubsub.addChild("configure", attrs={"node": self.nodename})
@@ -168,14 +176,14 @@ class TNPubSubNode:
         
         item.addChild(node=itemcontentnode)
         
-        print "\n\n" + str(iq) + "\n\n"
+        #print "\n\n" + str(iq) + "\n\n"
         resp = self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback})
         
     def did_publish_item(self, conn, response, callback):
         """
         triggered on response
         """
-        log.info("PUBSUB: publish done. Answer is : %s" % str(response))
+        log.debug("PUBSUB: publish done. Answer is : %s" % str(response.getType()))
         if callback: callback(response)
 
 
