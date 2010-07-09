@@ -97,14 +97,14 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def lock(self):
-        log.info("acquiring lock")
+        self.log.info("acquiring lock")
         self.locked = True;
         self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
         self.lock_timer.start()
     
     
     def unlock(self):
-        log.info("releasing lock")
+        self.log.info("releasing lock")
         self.locked = False;
         if self.lock_timer:
             self.lock_timer.cancel()
@@ -140,12 +140,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                                 "method": self.message_resume,
                                 "description": "I'll resume" },
                             
-                            {  "commands" : ["info", "how are you"], 
+                            {  "commands" : ["info", "how are you", "and you"], 
                                 "parameters": [],
                                 "method": self.message_info,
                                 "description": "I'll give info about me" },
                             
-                            {  "commands" : ["vnc", "display"], 
+                            {  "commands" : ["vnc", "screen"], 
                                 "parameters": [],
                                 "method": self.message_vncdisplay,
                                 "description": "I'll show my VNC port" },
@@ -155,9 +155,21 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                                 "method": self.message_xmldesc,
                                 "description": "I'll show my description" },
                             
-                            {  "commands" : ["net", "network", "net stat", "network stat"], 
+                            {  "commands" : ["net", "stat"], 
                                 "parameters": [],
                                 "method": self.message_networkinfo,
+                                "description": "I'll show my network stats" },
+                            
+                            {  "commands" : ["fuck", "asshole", "jerk", "stupid", "suck"],
+                                "ignore": True,
+                                "parameters": [],
+                                "method": self.message_insult,
+                                "description": "" },
+                            
+                            {  "commands" : ["hello", "hey", "hi", "good morning", "yo"], 
+                                "ignore": True,
+                                "parameters": [],
+                                "method": self.message_hello,
                                 "description": "I'll show my network stats" },
                         ]
         self.add_message_registrar_items(registrar_items)
@@ -187,7 +199,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
             
             dominfo = self.domain.info()
-            log.info("virtual machine state is %d" %  dominfo[0])
+            self.log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
@@ -196,7 +208,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
-                log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                self.log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
         
@@ -212,18 +224,18 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-            log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
+            self.log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
             self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
              
             self.set_presence_according_to_libvirt_info()
         except Exception as ex:
-            log.error("can't connect to libvirt : " + str(ex))
+            self.log.error("can't connect to libvirt : " + str(ex))
             self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
             
     
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
-        log.info("libvirt event received: %d with detail %s" % (event, detail))
+        self.log.info("libvirt event received: %d with detail %s" % (event, detail))
         
         if self.is_migrating:
             return
@@ -263,7 +275,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
 
             
         except Exception as ex:
-            log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
+            self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
             self.unlock()
     
@@ -272,7 +284,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         overides the disconnect function
         """
-        log.info("%s is disconnecting from everything" % self.jid)
+        self.log.info("%s is disconnecting from everything" % self.jid)
         
         if not self.libvirt_event_callback_id is None:
             self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
@@ -311,7 +323,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            self.log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
@@ -414,7 +426,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            self.log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
@@ -445,38 +457,38 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def create(self):
         self.lock()
         self.domain.create()
-        log.info("virtual machine created")
+        self.log.info("virtual machine created")
         return str(self.domain.ID())
     
 
     def shutdown(self):
         self.lock()
         self.domain.shutdown()
-        log.info("virtual machine shutdowned")
+        self.log.info("virtual machine shutdowned")
     
     
     def destroy(self):
         self.lock()
         self.domain.destroy()
-        log.info("virtual machine destroyed")
+        self.log.info("virtual machine destroyed")
     
     
     def reboot(self):
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
-        log.info("virtual machine rebooted")
+        self.log.info("virtual machine rebooted")
     
     
     def suspend(self):
         self.lock()
         self.domain.suspend()
-        log.info("virtual machine suspended")
+        self.log.info("virtual machine suspended")
     
     
     def resume(self):
         self.lock()
         self.domain.resume()
-        log.info("virtual machine resumed")
+        self.log.info("virtual machine resumed")
     
     
     def info(self):
@@ -609,11 +621,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         xmlstring   = xmlstring.replace(baseuuid, self.uuid)
         newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
         
-        log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
+        self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
-        log.info("copying base virtual repository")
+        self.log.info("copying base virtual repository")
         os.system("cp -a %s/* %s" % (path, self.folder))
-        log.info("defining the cloned virtual machine")
+        self.log.info("defining the cloned virtual machine")
         self.define(newxml)
     
     
@@ -663,7 +675,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             remote_hypervisor_uri   = resp.getTag("query").getTag("uri").getCDATA() #.replace("qemu://", "qemu+ssh://")
         except:
-            log.warn("hypervisor %s hasn't gave its URI. aborting migration" % resp.getFrom())
+            self.log.warn("hypervisor %s hasn't gave its URI. aborting migration" % resp.getFrom())
             return
         
         try:
@@ -679,7 +691,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.xmppclient.RegisterHandler(name='iq', handler=self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_DEFINITION)
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
-            log.error("can't migrate because of : %s" % str(ex))
+            self.log.error("can't migrate because of : %s" % str(ex))
     
     
     ######################################################################################################
@@ -710,7 +722,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -750,7 +762,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -787,7 +799,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -826,7 +838,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -864,7 +876,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -902,7 +914,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:    
@@ -1060,7 +1072,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
             
             self.define(domain_node)
-            log.info("virtual machine XML is defined")
+            self.log.info("virtual machine XML is defined")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1082,7 +1094,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             reply = iq.buildReply("result")
             self.undefine()
-            log.info("virtual machine is undefined")
+            self.log.info("virtual machine is undefined")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1105,7 +1117,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply("result")
             autostart = int(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setAutostart(autostart)
-            log.info("virtual autostart is set to %d" % autostart)
+            self.log.info("virtual autostart is set to %d" % autostart)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1127,7 +1139,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply("result")
             memory = long(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setMemory(memory)
-            log.info("virtual machine memory is set to %d" % memory)
+            self.log.info("virtual machine memory is set to %d" % memory)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1149,7 +1161,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = iq.buildReply("result")
             cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setVCPUs(cpus)
-            log.info("virtual machine number of cpus is set to %d" % cpus)
+            self.log.info("virtual machine number of cpus is set to %d" % cpus)
             self.push_change("virtualmachine:control", "nvcpu", excludedgroups=['vitualmachines'])
             self.push_change("virtualmachine:definition", "nvcpu", excludedgroups=['vitualmachines'])
         except libvirt.libvirtError as ex:
@@ -1157,6 +1169,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
         return reply
+    
     
     
     def iq_networkinfo(self, iq):
@@ -1202,6 +1215,16 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
     
     
+    
+    def message_insult(self, msg):
+        return "Please, don't be so rude with me, I try to do my best everyday for you."
+    
+    
+    def message_hello(self, msg):
+        return "Hello %s! How are you today ?"% (msg.getFrom().getNode())
+        
+    
+    
     # def iq_setcpuspin(self, iq):
     #     """
     #     set number of virtual cpus
@@ -1216,7 +1239,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     #         reply = iq.buildReply("result")
     #         cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
     #         self.setVCPUs(cpus)
-    #         log.info("virtual machine number of cpus is set to %d" % cpus)
+    #         self.log.info("virtual machine number of cpus is set to %d" % cpus)
     #         self.push_change("virtualmachine:control", "nvcpu", excludedgroups=['vitualmachines'])
     #     except libvirt.libvirtError as ex:
     #         reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

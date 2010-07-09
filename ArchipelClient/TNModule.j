@@ -74,14 +74,16 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     TNStropheRoster         _roster                 @accessors(property=roster);
 
     CPArray                 _registredSelectors;
+    CPArray                 _pubsubRegistrar;
 }
 
 - (id)init
 {
     if (self = [super init])
     {
-        _isActive       = NO;
-        _isVisible      = NO;
+        _isActive           = NO;
+        _isVisible          = NO;
+        _pubsubRegistrar    = [CPArray array];
     }
     
     return self;
@@ -100,6 +102,58 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _connection = aConnection;
 }
 
+/*! this method register the module for pubsub events
+*/
+- (void)registerToPubSubEvents
+{
+    var params = [[CPDictionary alloc] init];
+    
+    [params setValue:@"message" forKey:@"name"];
+    [params setValue:@"headline" forKey:@"type"];
+    [params setValue:{"matchBare": YES} forKey:@"options"];
+    // <message from="pubsub.virt-hyperviseur" type="headline" to="controller@virt-hyperviseur" >
+    // <event xmlns="http://jabber.org/protocol/pubsub#event">
+    // <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events" >
+    // <item id="4FEA5748C038E" >
+    // <push xmlns="archipel:push:disk" date="2010-07-09 14:15:04.749484" change="created" />
+    // </item>
+    // </items>
+    // </event>
+    // <headers xmlns="http://jabber.org/protocol/shim">
+    // <header name="Collection" >/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events</header>
+    // </headers>
+    // </message>
+    [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
+    
+    [_registredSelectors addObject:[_connection registerSelector:@selector(onPubSubEvents:) ofObject:self withDict:params]];
+    
+}
+
+- (void)onPubSubEvents:(TNStropheStanza)aStanza
+{
+    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1];
+    var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
+    var pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"];
+    var pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"];
+    
+    var infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
+                                                                    pushType,   @"type",
+                                                                    pushDate,   @"date",
+                                                                    pushChange, @"change"];
+    
+    for (var i = 0; i < [_pubsubRegistrar count]; i++)
+    {
+        var item = [_pubsubRegistrar objectAtIndex:i];
+        if (pushType == [item objectForKey:@"type"])
+        {
+            [self performSelector:[item objectForKey:@"selector"] withObject:infoDict]
+        }
+    }
+    
+    return YES;
+}
+
+
 /*! This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
     @param aSelector: Selector to perform on recieve of archipel:push with given type
     @param aPushType: CPString of the push type that will trigger the selector.
@@ -108,18 +162,13 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 {
     if ([_entity class] == TNStropheContact)
     {
+        var registrarItem = [CPDictionary dictionary];
+        
         CPLog.info([self class] + " is registring for push notification of type : " + aPushType);
-        var params = [[CPDictionary alloc] init];
+        [registrarItem setValue:aSelector forKey:@"selector"];
+        [registrarItem setValue:aPushType forKey:@"type"];
         
-        [params setValue:@"message" forKey:@"name"];
-        [params setValue:@"headline" forKey:@"type"];
-        //<message xmlns="jabber:client" from="hypervisor@virt-hyperviseur/virt-hyperviseur" to="controller@virt-hyperviseur/ArchipelController" type="headline" id="67">​
-        // <x xmlns="archipel:push:hypervisor" change="alloc" />
-        //</message>​
-        // if (aPushType)
-        [params setValue:aPushType forKey:@"namespace"];
-        
-        [_registredSelectors addObject:[_connection registerSelector:aSelector ofObject:self withDict:params]];
+        [_pubsubRegistrar addObject:registrarItem];
     }
 }
 
@@ -131,8 +180,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _useAnimations      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"]; // if I put this in init, it won't work.
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _registredSelectors = [CPArray array];
+    _pubsubRegistrar    = [CPArray array];
     _isActive           = YES;
     
+    [self registerToPubSubEvents];
     [_menuItem setEnabled:YES];
 }
 
@@ -148,6 +199,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
         [_connection deleteRegistredSelector:selector];
     }
+    
+    [_pubsubRegistrar removeAllObjects];
     
     [_menuItem setEnabled:NO];
     

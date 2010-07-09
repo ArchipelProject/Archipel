@@ -39,6 +39,7 @@ ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 ARCHIPEL_XMPP_LOOP_OFF                          = 0
 ARCHIPEL_XMPP_LOOP_ON                           = 1
 ARCHIPEL_XMPP_LOOP_RESTART                      = 2
+ARCHIPEL_XMPP_LOOP_REMOVE_USER                  = 3
 
 ARCHIPEL_LIBVIRT_SECRET_JID                     = "D52FA978-FD3B-4ED8-9EF9-A1F5B5311E06"
 ARCHIPEL_LIBVIRT_SECRET_PASSWORD                = "884DCDDE-81E7-4374-A103-78314A4BDB92"
@@ -47,7 +48,56 @@ ARCHIPEL_LIBVIRT_SECRET_PASSWORD                = "884DCDDE-81E7-4374-A103-78314
 ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED         = -42
 
 
+ARCHIPEL_LOG_LEVEL                              = 0
+ARCHIPEL_LOG_DEBUG                              = 0
+ARCHIPEL_LOG_INFO                               = 1
+ARCHIPEL_LOG_WARNING                            = 2
+ARCHIPEL_LOG_ERROR                              = 3
+
 log = logging.getLogger('archipel')
+
+class TNArchipelLogger:
+    def __init__(self, entity, pubsubnode=None, xmppconn=None):
+        self.xmppclient = xmppconn
+        self.entity     = entity
+        self.pubSubNode = pubsubnode
+    
+    def __log(self, level, msg):
+        log = logging.getLogger('archipel')
+        if level < ARCHIPEL_LOG_LEVEL: 
+            return
+        elif level == ARCHIPEL_LOG_DEBUG:
+            log.debug(msg)
+        elif level == ARCHIPEL_LOG_INFO:
+            log.info(msg)
+        elif level == ARCHIPEL_LOG_WARNING:
+            log.warning(msg)
+        elif level == ARCHIPEL_LOG_ERROR:
+             log.error(msg)
+            
+        if self.xmppclient and self.pubSubNode:
+            log = xmpp.Node(tag="log", attrs={"date": datetime.datetime.now(), "level": str(level)})
+            log.setData(msg)
+            self.pubSubNode.add_item(log)
+    
+        
+        
+    def debug(self, msg):
+        self.__log(ARCHIPEL_LOG_DEBUG, msg)
+    
+    
+    def info(self, msg):
+        self.__log(ARCHIPEL_LOG_INFO, msg)
+    
+    
+    def warning(self, msg):
+        self.__log(ARCHIPEL_LOG_WARNING, msg)
+    
+    
+    def error(self, msg):
+        self.__log(ARCHIPEL_LOG_ERROR, msg)
+    
+
 
 class ColorFormatter(logging.Formatter):
     def format(self, record):

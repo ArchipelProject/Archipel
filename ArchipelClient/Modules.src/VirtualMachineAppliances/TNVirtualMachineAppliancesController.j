@@ -209,12 +209,12 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     }
 }
 
-- (BOOL)didPushReceive:(TNStropheStanza)aStanza
+- (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
-    var sender  = [aStanza getFromNode];
-    var type    = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"xmlns"];
-    var change  = [[aStanza firstChildWithName:@"x"] valueForAttribute:@"change"];
-    
+    var sender  = [somePushInfo objectForKey:@"owner"];
+    var type    = [somePushInfo objectForKey:@"type"];
+    var change  = [somePushInfo objectForKey:@"change"];
+    var date    = [somePushInfo objectForKey:@"date"];
     CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     
     if (change == @"applianceinstalled")
