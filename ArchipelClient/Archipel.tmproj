@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>Modules.src/HypervisorNetworks/TNHypervisorNetworksController.j</string>
+	<string>kanaka/utils/web.py</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,6 +13,8 @@
 			<string>Archipel</string>
 			<key>regexFolderFilter</key>
 			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
+			<key>selected</key>
+			<true/>
 			<key>sourceDirectory</key>
 			<string></string>
 		</dict>
@@ -40,9 +42,9 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>13</integer>
 				<key>line</key>
-				<integer>943</integer>
+				<integer>1098</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -482,14 +484,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>97</integer>
+				<integer>47</integer>
 				<key>line</key>
-				<integer>224</integer>
+				<integer>193</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>184</integer>
+			<integer>163</integer>
 		</dict>
 		<key>Modules.src/HypervisorVMCasts/Info.plist</key>
 		<dict>
@@ -540,7 +542,7 @@
 				<key>column</key>
 				<integer>0</integer>
 				<key>line</key>
-				<integer>17</integer>
+				<integer>27</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -566,14 +568,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>53</integer>
+				<integer>19</integer>
 				<key>line</key>
-				<integer>88</integer>
+				<integer>43</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>68</integer>
+			<integer>19</integer>
 		</dict>
 		<key>Modules.src/HypervisorVMCreation/Build/Debug/HypervisorVMCreation/Browser.environment/HypervisorVMCreation.sj</key>
 		<dict>
@@ -1540,14 +1542,30 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>97</integer>
+				<integer>4</integer>
 				<key>line</key>
-				<integer>289</integer>
+				<integer>172</integer>
 			</dict>
+			<key>columnSelection</key>
+			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>262</integer>
+			<integer>154</integer>
+			<key>selectFrom</key>
+			<dict>
+				<key>column</key>
+				<integer>66</integer>
+				<key>line</key>
+				<integer>172</integer>
+			</dict>
+			<key>selectTo</key>
+			<dict>
+				<key>column</key>
+				<integer>4</integer>
+				<key>line</key>
+				<integer>172</integer>
+			</dict>
 		</dict>
 		<key>Modules.src/VirtualMachineDefinition/Info.plist</key>
 		<dict>
@@ -2284,43 +2302,43 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>71</integer>
+				<integer>56</integer>
 				<key>line</key>
 				<integer>118</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>118</integer>
+			<integer>95</integer>
 		</dict>
 		<key>TNOutlineViewRoster.j</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>127</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>69</integer>
+				<integer>47</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>55</integer>
+			<integer>26</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>33</integer>
 				<key>line</key>
-				<integer>67</integer>
+				<integer>47</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>127</integer>
+				<integer>8</integer>
 				<key>line</key>
-				<integer>69</integer>
+				<integer>47</integer>
 			</dict>
 		</dict>
 		<key>TNQuickEditView.j</key>
@@ -2597,6 +2615,20 @@
 				<integer>19</integer>
 			</dict>
 		</dict>
+		<key>kanaka/utils/web.py</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>0</integer>
+				<key>line</key>
+				<integer>0</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>11</integer>
+		</dict>
 		<key>main.j</key>
 		<dict>
 			<key>caret</key>
@@ -2679,6 +2711,7 @@
 		<string>Modules.src/VirtualMachineSnapshots/TNSnapshot.j</string>
 		<string>Modules.src/HypervisorHealth/Jakefile</string>
 		<string>TNOutlineTableColumn.j</string>
+		<string>kanaka/utils/web.py</string>
 		<string>TNStepper.j</string>
 		<string>Modules.src/VirtualMachineControls/TNVirtualMachineControlsController.j</string>
 		<string>TNModuleLoader.j</string>
@@ -2743,6 +2776,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{290, 61}, {1087, 817}}</string>
+	<string>{{1743, 380}, {1087, 817}}</string>
 </dict>
 </plist>
