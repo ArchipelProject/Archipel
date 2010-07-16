@@ -40,6 +40,7 @@ from archipelBasicXMPPClient import *
 from threading import Timer, Thread
 from libvirtEventLoop import *
 import libvirt
+import archipelWebSocket
 
 ARCHIPEL_ERROR_CODE_VM_CREATE       = -1001
 ARCHIPEL_ERROR_CODE_VM_SUSPEND      = -1002
@@ -202,6 +203,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
+                self.create_novnc_proxy()
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
@@ -244,7 +246,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
-                
+                self.create_novnc_proxy()
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED and not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                 self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
@@ -297,6 +300,16 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.disconnect(self)
     
     
+    def create_novnc_proxy(self):
+        """
+        create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
+        """
+        current_vnc_port        = self.vncdisplay()["direct"]
+        novnc_proxy_port        = self.vncdisplay()["proxy"]
+        log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
+        
+        self.novnc_proxy = archipelWebSocket.TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port);
+        self.novnc_proxy.start()
     
     ######################################################################################################
     ### Process IQ
@@ -374,7 +387,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = self.iq_vncdisplay(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
+        
         elif action == "xmldesc":
             reply = self.iq_xmldesc(iq)
             conn.send(reply)
@@ -504,6 +517,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             "autostart": str(autostart)}
         
     
+    
     def network_info(self):
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
@@ -567,7 +581,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def vncdisplay(self):
         xmldesc = self.domain.XMLDesc(0)
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-        return xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port")
+        directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
+        proxyport = directport + 1000
+        return {"direct": directport, "proxy": proxyport}
     
     
     def xmldesc(self):
@@ -994,8 +1010,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try:
             if not self.domain:
                 return iq.buildReply('ignore')
-            port = self.vncdisplay()
-            payload = xmpp.Node("vncdisplay", attrs={"port": str(port), "host": self.ipaddr})
+            ports = self.vncdisplay()
+            payload = xmpp.Node("vncdisplay", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.ipaddr})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -1009,13 +1025,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         handle message vnc display order
         """
         try:
-            port = self.vncdisplay()
-            return "you can connect to my screen at %s:%s" % (self.ipaddr, port)
+            ports = self.vncdisplay()
+            return "you can connect to my screen at %s:%s" % (self.ipaddr, ports["direct"])
         except Exception as ex:
             return build_error_message(self, ex)
     
     
-       
+    
     def iq_xmldesc(self, iq):
         """
         get the XML Desc of the virtual machine.

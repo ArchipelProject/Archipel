@@ -180,12 +180,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         var defaults    = [TNUserDefaults standardUserDefaults];
         var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
         var lastScale   = [defaults objectForKey:key];
-        _vncDisplay     = [displayNode valueForAttribute:@"port"];
+        _vncDisplay     = [displayNode valueForAttribute:@"proxy"];
         _VMHost         = [displayNode valueForAttribute:@"host"];
         
         
-        _url = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay;
-        
+        _url = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?host="+ _VMHost  +"&port=" + _vncDisplay;
         if (lastScale)
         {
             [sliderScaling setValue:lastScale];
@@ -194,12 +193,20 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         else
             [sliderScaling setValue:100];
         
-        [_vncWebView setMainFrameURL:_url];
+        [_vncWebView setFrameLoadDelegate:self];
+        
+        [_vncWebView setMainFrameURL:_url];        
     }
     else if ([aStanza getType] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+}
+
+- (void)webView:(CPWebView)aWebView didFinishLoadForFrame:(id)aFrame
+{
+    console.log("dkfjsdlkfdklfdnsklfsdklfndkslfnkldsnfklsdfndklsfndlksfndsklfndskdnfsdlknf")
+    _vncWebView._iframe.focus()
 }
 
 - (IBAction)openInNewWindow:(id)sender
@@ -215,7 +222,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var vncWebViewForWindow = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
     
     [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [vncWebViewForWindow setMainFrameURL:@"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay];
+    [vncWebViewForWindow setMainFrameURL:@"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay + "&host="+_VMHost];
     //[scrollView setDocumentView:vncWebViewForWindow];
     //[scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     
@@ -226,7 +233,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     // [platformVNCWindow setTitle:@"Display for " + [_entity nickname]];
     //[scrollView setFrame:[[VNCWindow contentView] bounds]];
     [vncWebViewForWindow setFrame:[[VNCWindow contentView] bounds]];
-
+    
     [VNCWindow orderFront:nil];
     [platformVNCWindow orderFront:nil];
 }
@@ -237,7 +244,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     {
         var defaults = [TNUserDefaults standardUserDefaults];
         
-        _url = @"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay + @"&scaling=" + [sliderScaling intValue];
+        _url = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?host="+ _VMHost  +"&port=" + _vncDisplay;
         
         var key = TNArchipelVNCScaleFactor + [[self entity] JID];
         [defaults setObject:[sliderScaling intValue] forKey:key];

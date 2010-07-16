@@ -19,6 +19,7 @@ from utils import *
 import BaseHTTPServer
 from threading import Thread
 import os
+import socket
 
 class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     """
@@ -71,8 +72,11 @@ class SimpleHTTPHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             data = f.read()
             f.close()
             
-            if self.path == "index.html":
+            print self.path
+            if self.path == "index.html" or self.path == "/index.html":
                 data = data.replace("::PORT::", options["port"])
+                data = data.replace("::HOST::", options["host"])
+                print data
                 if options.has_key("scaling"):
                     data = data.replace("::SCALE::", options["scaling"])
                 else:

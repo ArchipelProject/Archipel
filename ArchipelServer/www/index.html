@@ -1,27 +1,35 @@
 <!-- 
-     index.vnc - default HTML page for TightVNC Java viewer applet, to be
-     used with Xvnc. On any file ending in .vnc, the HTTP server embedded in
-     Xvnc will substitute the following variables when preceded by a dollar:
-     USER, DESKTOP, DISPLAY, APPLETWIDTH, APPLETHEIGHT, WIDTH, HEIGHT, PORT,
-     PARAMS. Use two dollar signs ($$) to get a dollar sign in the generated
-     HTML page.
-
-     NOTE: the $PARAMS variable is not supported by the standard VNC, so
-     make sure you have TightVNC on the server side, if you're using this
-     variable.
+noVNC example: simple example using default controls
 -->
-
 <html>
     <head>
+        <title>VNC Client</title>
+        <link rel="stylesheet" href="include/plain.css" TITLE="plain">
+        <link rel="Alternate StyleSheet" href="include/black.css" TITLE="Black">
+        <!--
+        <script type='text/javascript' 
+            src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
+        -->
+        <script src="include/vnc.js"></script>
         
     </head>
-    <body style="margin: 0px; padding: 0px">
-        <div style="cursor: none;">
-            <applet code=VncViewer.class archive=VncViewer.jar width="100%" height="100%">
-                <param name=PORT value=::PORT::>
-                <param name="Show controls" value="no">
-                <param name="Scaling factor" value="::SCALE::">
-            </applet>
+
+    <body>
+        <div id='vnc'>
+            <div id="VNC_screen">
+              <canvas id="VNC_canvas" width="0px" height="0px">
+                  Canvas not supported.
+              </canvas>
+            </div>
         </div>
     </body>
+
+    <script>
+        window.onload = function () {
+            //DefaultControls.load('vnc');
+            RFB.load();
+            RFB.connect("::HOST::", ::PORT::, "", false, true);
+            $("VNC_screen").focus()
+        }
+    </script>
 </html>
