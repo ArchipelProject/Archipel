@@ -176,6 +176,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     if ([aStanza getType] == @"result")
     {
+        var bundle      = [CPBundle bundleForClass:self];
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
         var defaults    = [TNUserDefaults standardUserDefaults];
         var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
@@ -185,6 +186,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         
         
         _url = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?host="+ _VMHost  +"&port=" + _vncDisplay;
+        // var path = [bundle pathForResource:@"index.html"];
+        // path += @"?host="+ _VMHost  + @"&port=" + _vncDisplay
+        
         if (lastScale)
         {
             [sliderScaling setValue:lastScale];
@@ -195,7 +199,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         
         [_vncWebView setFrameLoadDelegate:self];
         
-        [_vncWebView setMainFrameURL:_url];        
+        [_vncWebView setMainFrameURL:_url];
+        [_vncWebView setMainFrameURL:path];
     }
     else if ([aStanza getType] == @"error")
     {
@@ -205,8 +210,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (void)webView:(CPWebView)aWebView didFinishLoadForFrame:(id)aFrame
 {
-    console.log("dkfjsdlkfdklfdnsklfsdklfndkslfnkldsnfklsdfndklsfndlksfndsklfndskdnfsdlknf")
-    _vncWebView._iframe.focus()
+    _vncWebView._iframe.focus()  
 }
 
 - (IBAction)openInNewWindow:(id)sender
@@ -223,8 +227,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     
     [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [vncWebViewForWindow setMainFrameURL:@"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay + "&host="+_VMHost];
-    //[scrollView setDocumentView:vncWebViewForWindow];
-    //[scrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     
     [[VNCWindow contentView] addSubview:vncWebViewForWindow];
     [VNCWindow setPlatformWindow:platformVNCWindow];
@@ -244,7 +246,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     {
         var defaults = [TNUserDefaults standardUserDefaults];
         
-        _url = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?host="+ _VMHost  +"&port=" + _vncDisplay;
+        _url = @"http://" + _VMHost + @":" + _webServerPort + @"/index.html?host="+ _VMHost  +"&port=" + _vncDisplay + "&scaling=" + [sliderScaling intValue];
         
         var key = TNArchipelVNCScaleFactor + [[self entity] JID];
         [defaults setObject:[sliderScaling intValue] forKey:key];

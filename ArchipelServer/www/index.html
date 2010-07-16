@@ -1,35 +1,21 @@
-<!-- 
-noVNC example: simple example using default controls
--->
 <html>
     <head>
-        <title>VNC Client</title>
-        <link rel="stylesheet" href="include/plain.css" TITLE="plain">
-        <link rel="Alternate StyleSheet" href="include/black.css" TITLE="Black">
-        <!--
-        <script type='text/javascript' 
-            src='http://getfirebug.com/releases/lite/1.2/firebug-lite-compressed.js'></script>
-        -->
         <script src="include/vnc.js"></script>
-        
+        <script>
+            window.onload = function () {
+                RFB.load();
+                RFB.connect("::HOST::", ::PORT::, "", false, true);
+                $("VNC_screen").focus()
+            }
+        </script>
     </head>
-
     <body>
         <div id='vnc'>
             <div id="VNC_screen">
-              <canvas id="VNC_canvas" width="0px" height="0px">
+              <canvas id="VNC_canvas" width="0px" height="0px" style="zoom: ::SCALE::%">
                   Canvas not supported.
               </canvas>
             </div>
         </div>
     </body>
-
-    <script>
-        window.onload = function () {
-            //DefaultControls.load('vnc');
-            RFB.load();
-            RFB.connect("::HOST::", ::PORT::, "", false, true);
-            $("VNC_screen").focus()
-        }
-    </script>
 </html>

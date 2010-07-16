@@ -12,7 +12,7 @@ this code has been rewrited by antoine mercadal in order to make a usable class
 
 
 import sys, socket, ssl, struct, traceback
-import os, resource, errno, signal # daemonizing
+# import os, resource, errno, signal # daemonizing
 from base64 import b64encode, b64decode
 from hashlib import md5
 from threading import Thread
@@ -31,7 +31,6 @@ class TNArchipelWebSocket(Thread):
         self.ssl_only = False
         
         self.buffer_size = 65536
-        self.rec = None
         self.cert = None
         
         self.client_settings = {
@@ -113,14 +112,14 @@ Connection: Upgrade\r
         
         # Peek, but don't read the data
         handshake = sock.recv(1024, socket.MSG_PEEK)
-        #print "Handshake [%s]" % repr(handshake)
+        ## print "Handshake [%s]" % repr(handshake)
         if handshake == "":
-            print "Ignoring empty handshake"
+            # print "Ignoring empty handshake"
             sock.close()
             return False
         elif handshake.startswith("<policy-file-request/>"):
             handshake = sock.recv(1024)
-            print "Sending flash policy response"
+            # print "Sending flash policy response"
             sock.send(self.policy_response)
             sock.close()
             return False
@@ -131,17 +130,17 @@ Connection: Upgrade\r
                     certfile=self.cert,
                     ssl_version=ssl.PROTOCOL_TLSv1)
             scheme = "wss"
-            print "  using SSL/TLS"
+            # print "  using SSL/TLS"
         elif self.ssl_only:
-            print "Non-SSL connection disallowed"
+            # print "Non-SSL connection disallowed"
             sock.close()
             return False
         else:
             retsock = sock
             scheme = "ws"
-            print "  using plain (not SSL) socket"
+            # print "  using plain (not SSL) socket"
         handshake = retsock.recv(4096)
-        #print "handshake: " + repr(handshake)
+        ## print "handshake: " + repr(handshake)
         h = self.parse_handshake(handshake)
         
         # Parse client settings from the GET path
@@ -151,21 +150,21 @@ Connection: Upgrade\r
             if name not in ['b64encode']: continue
             value = val and val or True
             self.client_settings[name] = value
-            print "  %s=%s" % (name, value)
+            # print "  %s=%s" % (name, value)
         
         if h.get('key3'):
             trailer = self.gen_md5(h)
             pre = "Sec-"
-            print "  using protocol version 76"
+            # print "  using protocol version 76"
         else:
             trailer = ""
             pre = ""
-            print "  using protocol version 75"
+            # print "  using protocol version 75"
         
         response = self.server_handshake % (pre, h['Origin'], pre, scheme,
                 h['Host'], h['path'], pre, trailer)
         
-        #print "sending response:", repr(response)
+        ## print "sending response:", repr(response)
         retsock.send(response)
         
         return retsock
@@ -197,10 +196,7 @@ Connection: Upgrade\r
             if client in outs:
                 dat = cqueue.pop(0)
                 sent = client.send(dat)
-                if sent == len(dat):
-                    ##if rec: rec.write("Client send: %s ...\n" % repr(dat[0:80]))
-                    if self.rec: self.rec.write("%s,\n" % repr(">" + dat[1:-1]))
-                else:
+                if not sent == len(dat):
                     cqueue.insert(0, dat[sent:])
                     ##if rec: rec.write("Client send partial: %s\n" % repr(dat[0:send]))
                 
@@ -217,7 +213,6 @@ Connection: Upgrade\r
                 
                 if buf[-1] == '\xff':
                     ##if rec: rec.write("Client recv (%d): %s\n" % (len(buf), repr(buf)))
-                    if self.rec: self.rec.write("%s,\n" % repr(buf[1:-1]))
                     if cpartial:
                         tqueue.extend(self.decode(cpartial + buf))
                         cpartial = ""
@@ -229,11 +224,7 @@ Connection: Upgrade\r
     
     
     def proxy_handler(self, client):
-        # if settings['record']:
-        #     print "Opening record file: %s" % settings['record']
-        #     self.rec = open(settings['record'], 'a')
-        
-        print "Connecting to: %s:%s" % (self.target_host, self.target_port)
+        # print "Connecting to: %s:%s" % (self.target_host, self.target_port)
         tsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tsock.connect((self.target_host, self.target_port))
         
@@ -241,7 +232,6 @@ Connection: Upgrade\r
             self.do_proxy(client, tsock)
         except:
             if tsock: tsock.close()
-            if self.rec: self.rec.close()
             raise
     
     
@@ -251,29 +241,22 @@ Connection: Upgrade\r
         lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         lsock.bind((self.listen_host, self.listen_port))
         lsock.listen(100)
-        print "NOVNC : server started"
+        # print "NOVNC : server started"
         while True:
             try:
                 csock = startsock = None
-                print 'waiting for connection on port %s' % self.listen_port
+                # print 'waiting for connection on port %s' % self.listen_port
                 startsock, address = lsock.accept()
-                print 'Got client connection from %s' % address[0]
+                # print 'Got client connection from %s' % address[0]
                 csock = self.do_handshake(startsock)
                 if not csock: continue
                 
                 self.proxy_handler(csock)
                 
             except Exception:
-                print "Ignoring exception:"
-                print traceback.format_exc()
+                # print "Ignoring exception:"
+                # print traceback.format_exc()
                 if csock: csock.close()
                 if startsock and startsock != csock: startsock.close()
     
 
-
-
-
-
-# s = TNArchipelWebSocket("127.0.0.1", 5902, "0.0.0.0", 6902);
-# 
-# s.run()
