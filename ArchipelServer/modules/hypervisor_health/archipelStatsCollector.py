@@ -59,7 +59,7 @@ class TNThreadedHealthCollector(Thread):
     
     
     def recover_stored_stats(self):
-        log.info("recovering stored statistics")
+        log.info("recovering stored statistics. It may take a while...")
         self.cursor.execute("select * from cpu order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, idle = values

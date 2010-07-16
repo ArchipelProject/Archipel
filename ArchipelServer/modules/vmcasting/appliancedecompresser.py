@@ -25,6 +25,7 @@ from xml.dom import minidom
 import xmpp
 import shutil
 import uuid
+import random
 
 class TNApplianceDecompresser(Thread):
     
@@ -143,12 +144,19 @@ class TNApplianceDecompresser(Thread):
         
         name_node = xml_desc.getTag("name")
         uuid_node = xml_desc.getTag("uuid")
+        
         disk_nodes = xml_desc.getTag("devices").getTags("disk")
         for disk in disk_nodes:
             source = disk.getTag("source")
             source_file = source.getAttr("file")
-            source.setAttr("file", source_file.replace(".gz", "").replace(uuid_node.getCDATA(), self.entity.uuid))
+            source.setAttr("file", os.path.join(self.entity.folder, source_file.replace(".gz", "")))
+            #source.setAttr("file", source_file.replace(".gz", "").replace(uuid_node.getCDATA(), self.entity.uuid))
         
+        nics_nodes = xml_desc.getTag("devices").getTags("interface")
+        for nic in nics_nodes:
+            mac = nic.getTag("mac")
+            mac.setAttr("address", self.generate_new_mac())
+            
         name_node.setData(self.entity.uuid)
         uuid_node.setData(self.entity.uuid)
         
@@ -221,3 +229,15 @@ class TNApplianceDecompresser(Thread):
     def clean(self):
         os.system("rm -rf " + self.temp_path)
     
+    
+    def generate_new_mac(self):
+        """generate a new mac address"""
+        dico = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+        digit1 = "DE"
+        digit2 = "AD"
+        digit3 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+        digit4 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+        digit5 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+        digit6 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+        
+        return "%s:%s:%s:%s:%s:%s" % (digit1, digit2, digit3, digit4, digit5, digit6)

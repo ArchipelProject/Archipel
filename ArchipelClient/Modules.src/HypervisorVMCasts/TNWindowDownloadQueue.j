@@ -40,7 +40,9 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
     _mainTableView = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainTableView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-
+    [_mainTableView setUsesAlternatingRowBackgroundColors:YES];
+    [_mainTableView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    
     var columnIdentifier = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columnIdentifier headerView] setStringValue:@"Name"];
 

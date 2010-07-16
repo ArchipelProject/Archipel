@@ -75,8 +75,10 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     _castsDatasource = [[TNVMCastDatasource alloc] init];
     
     _mainOutlineView = [[CPOutlineView alloc] initWithFrame:[mainScrollView bounds]];
+    [_mainOutlineView setCornerView:nil];
     [_mainOutlineView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainOutlineView setAllowsColumnResizing:YES];
+    [_mainOutlineView setUsesAlternatingRowBackgroundColors:YES];
     [_mainOutlineView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_mainOutlineView setDataSource:_castsDatasource];
     
@@ -188,6 +190,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+    
+    CPLog.trace([_mainOutlineView cornerView]);
 }
 
 - (void)willHide

@@ -135,7 +135,7 @@ class TNApplianceDownloader(Thread):
         self.total_size = total_size
         percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100
         #print str(float(blocks_count)) +  "*" + str(float(block_size)) + "/"  + str(float(total_size)) + "*"  + "100"
-        #print "downloading: " + str(percentage) + "%"
+        # print "downloading: " + str(percentage) + "%"
         if percentage >= 100.0:
             self.finish_callback(self.uuid, self.save_path)
         
@@ -255,7 +255,7 @@ class TNHypervisorRepoManager:
             reply = self.download(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
+        
         elif action == "downloadqueue":
             reply = self.get_download_queue(iq)
             conn.send(reply)
@@ -365,8 +365,9 @@ class TNHypervisorRepoManager:
             for values in self.cursor:
                 name, description, url, uuid, status, source, path = values
                 downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete)
-                downloader.start()
                 self.download_queue[uuid] = downloader
+                downloader.daemon  = True
+                downloader.start()
             self.old_entity_status = self.entity.xmppstatus
             self.entity.change_status("Downloading appliance...")
         except Exception as ex:
