@@ -19,6 +19,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "TNZoomAnimation.j";
+
+
 /*! @defgroup  virtualmachinevnc Module VirtualMachineVNC 
     @desc This module allows to access to virtual machine displays
     using VNC.
@@ -50,8 +53,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPTextField     fieldName;
     @outlet CPView          maskingView;
     @outlet CPSlider        sliderScaling;
-    @outlet CPButton        buttonFullscreen;
-
+    @outlet CPButton        buttonZoomFitToWindow;
+    @outlet CPButton        buttonZoomReset;
+    @outlet CPTextField     fieldZoomValue;
+    @outlet CPView          viewControls;
+    
     CPString                _url;
     CPString                _VMHost;
     CPString                _vncDisplay;
@@ -65,17 +71,30 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [fieldJID setSelectable:YES];
     
-    var imageFullscreen = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-fullscreen.png"] size:CPSizeMake(16, 16)]
-    [buttonFullscreen setImage:imageFullscreen];
+    var bundle  = [CPBundle bundleForClass:[self class]];
+    
+    var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]];
+    [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
+    
+    
+    var imageZoomFit = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-fullscreen.png"] size:CPSizeMake(16, 16)]
+    [buttonZoomFitToWindow setImage:imageZoomFit];
+    
+    var imageZoomReset = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-reset.png"] size:CPSizeMake(16, 16)]
+    [buttonZoomReset setImage:imageZoomReset];
+    
     _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
     
     _vncView    = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    [_vncView setCanvasBorderColor:@"#C0C7D2"];
     
+    [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setDocumentView:_vncView];
     [mainScrollView setAutohidesScrollers:YES];
     [sliderScaling setContinuous:YES];
     [sliderScaling setMinValue:1];
+    [sliderScaling setMaxValue:200];
 }
 
 /*! TNModule implementation
@@ -89,9 +108,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     
-    var viewBounds = [[self view] bounds];
-    viewBounds.size.height = 1000;
-    [[self view] setFrame:viewBounds];
+    // var viewBounds = [[self view] bounds];
+    // viewBounds.size.height = 1000;
+    // [[self view] setFrame:viewBounds];
 }
 
 /*! TNModule implementation
@@ -105,15 +124,18 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
     [self checkIfRunning];
+    
+    [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    [[self view] setFrame:[[[self view] superview] bounds]];
 }
 
 /*! TNModule implementation
 */
 - (void)willHide
 {
+    [_vncView disconnect:nil];
+    
     [super willHide];
-
-    //[_vncView disconnect:nil];
 }
 
 /*! TNModule implementation
@@ -183,13 +205,18 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         {
             [sliderScaling setDoubleValue:lastScale];
             [_vncView setZoom:lastScale];
+            [fieldZoomValue setStringValue:lastScale];
         }
         else
+        {
             [sliderScaling setDoubleValue:100];
+            [fieldZoomValue setStringValue:@"100"];
+        }
         
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncDisplay];
         [_vncView connect:nil];
+        [_vncView becomeFirstResponder];
         
     }
     else if ([aStanza getType] == @"error")
@@ -199,31 +226,24 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-- (IBAction)openInNewWindow:(id)sender
+- (IBAction)fitToScreen:(id)sender
 {
-    // var winFrame        = CGRectMake(100,100, 800, 600);
-    // var pfWinFrame      = CGRectMake(100,100, 800, 600);
-    // var scrollFrame     = CGRectMake(0,0, 800, 600);
-    // 
-    // var VNCWindow           = [[CPWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
-    // var scrollView          = [[CPScrollView alloc] initWithFrame:CGRectMakeZero()];
-    // var platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
-    // 
-    // var vncWebViewForWindow = [[CPWebView alloc] initWithFrame:[mainScrollView bounds]];
-    // 
-    // [vncWebViewForWindow setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    // [vncWebViewForWindow setMainFrameURL:@"http://" + _VMHost + @":" + _webServerPort + @"?port=" + _vncDisplay + "&host="+_VMHost];
-    // 
-    // [[VNCWindow contentView] addSubview:vncWebViewForWindow];
-    // [VNCWindow setPlatformWindow:platformVNCWindow];
-    // [VNCWindow setDelegate:self];
-    // [VNCWindow setTitle:@"Display for " + [_entity nickname]];
-    // // [platformVNCWindow setTitle:@"Display for " + [_entity nickname]];
-    // //[scrollView setFrame:[[VNCWindow contentView] bounds]];
-    // [vncWebViewForWindow setFrame:[[VNCWindow contentView] bounds]];
-    // 
-    // [VNCWindow orderFront:nil];
-    // [platformVNCWindow orderFront:nil];
+    var visibleRect     = [_vncView visibleRect];
+    var currentVNCSize  = [_vncView canvasSize];
+    var currentVNCZoom  = [_vncView canvasZoom];
+    var newZoom         = 100 - (Math.abs((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height) * 100);
+
+    [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
+}
+
+- (IBAction)resetZoom:(id)sender
+{
+    var visibleRect     = [_vncView visibleRect];
+    var currentVNCSize  = [_vncView canvasSize];
+    var currentVNCZoom  = [_vncView canvasZoom];
+    var newZoom         = 100 - (Math.abs((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height) * 100);
+
+    [self animateChangeScaleFrom:currentVNCZoom to:100];
 }
 
 - (IBAction)changeScale:(id)sender
@@ -235,6 +255,40 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [defaults setObject:zoom forKey:key];
     
     [_vncView setZoom:zoom];
+    [fieldZoomValue setStringValue:parseInt(zoom)];
+}
+
+- (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
+{
+    var useAnimations = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"];
+    
+    if (useAnimations)
+    {
+        var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
+        [anim setDelegate:self];
+        [anim setStartZoomValue:aStartZoom];
+        [anim setEndZoomValue:aEndZoom];
+        [anim startAnimation];
+    }
+    else
+    {
+        [sliderScaling setDoubleValue:aEndZoom];
+        [self changeScale:nil];
+    }
+}
+
+
+- (float)animation:(CPAnimation)animation valueForProgress:(float)progress
+{
+    [sliderScaling setDoubleValue:[animation currentZoom]];
+    
+    [_vncView setZoom:[animation currentZoom]];
+    [fieldZoomValue setStringValue:parseInt([animation currentZoom])];
+}
+
+- (void)animationDidEnd:(CPAnimation)animation
+{
+    [self changeScale:nil];
 }
 
 @end
