@@ -57,15 +57,7 @@ def load_modules():
 def main():
     """
     main function of Archipel
-    """
-    # starting simple web server for Java VNC applet
-    port        = config.getint("WEBSERVER", "webserver_port")
-    ip          = config.get("WEBSERVER", "webserver_listen")
-    server_root = config.get("WEBSERVER", "webserver_root")
-    
-    httpd = archipelWebServer.TNArchipelWebServer(ip, port, server_root)
-    httpd.start()
-    
+    """    
     # starting thre libvirt event loop
     libvirtEventLoop.virEventLoopPureStart()
     

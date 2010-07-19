@@ -150,7 +150,7 @@ def init_conf(path):
 
 
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
-    traceback.print_exc(file=sys.stdout, limit=20)
+    #traceback.print_exc(file=sys.stdout, limit=20)
     caller = inspect.stack()[1][3];
     log.error("%s.%s: exception raised is : %s" % (originclass, caller, ex))
     reply = iq.buildReply('error')

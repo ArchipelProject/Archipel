@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>kanaka/utils/web.py</string>
+	<string>Modules.src/VirtualMachineVNC/TNVirtualMachineVNCController.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -13,8 +13,6 @@
 			<string>Archipel</string>
 			<key>regexFolderFilter</key>
 			<string>!.*/(\.[^/]*|CVS|_darcs|_MTN|\{arch\}|blib|.*~\.nib|.*\.(framework|app|pbproj|pbxproj|xcode(proj)?|bundle))$</string>
-			<key>selected</key>
-			<true/>
 			<key>sourceDirectory</key>
 			<string></string>
 		</dict>
@@ -1865,7 +1863,7 @@
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>6</integer>
+			<integer>16</integer>
 		</dict>
 		<key>Modules.src/VirtualMachineVNC/Resources/VirtualMachineVNC.cib</key>
 		<dict>
@@ -1895,35 +1893,63 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>Modules.src/VirtualMachineVNC/TNVirtualMachineVNCController.j</key>
+		<key>Modules.src/VirtualMachineVNC/Resources/novnc/include/vnc.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>117</integer>
+				<integer>36</integer>
 				<key>line</key>
-				<integer>239</integer>
+				<integer>10</integer>
 			</dict>
 			<key>columnSelection</key>
 			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>209</integer>
+			<integer>0</integer>
 			<key>selectFrom</key>
 			<dict>
 				<key>column</key>
-				<integer>104</integer>
+				<integer>34</integer>
 				<key>line</key>
-				<integer>239</integer>
+				<integer>10</integer>
 			</dict>
 			<key>selectTo</key>
 			<dict>
 				<key>column</key>
-				<integer>117</integer>
+				<integer>40</integer>
 				<key>line</key>
-				<integer>239</integer>
+				<integer>10</integer>
 			</dict>
+		</dict>
+		<key>Modules.src/VirtualMachineVNC/Resources/novnc/index.html</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>14</integer>
+				<key>line</key>
+				<integer>9</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
+		<key>Modules.src/VirtualMachineVNC/TNVirtualMachineVNCController.j</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>41</integer>
+				<key>line</key>
+				<integer>196</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>193</integer>
 		</dict>
 		<key>Modules/HypervisorVMCreation/Browser.environment/HypervisorVMCreation.sj</key>
 		<dict>
@@ -2615,20 +2641,6 @@
 				<integer>19</integer>
 			</dict>
 		</dict>
-		<key>kanaka/utils/web.py</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>0</integer>
-				<key>line</key>
-				<integer>0</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>11</integer>
-		</dict>
 		<key>main.j</key>
 		<dict>
 			<key>caret</key>
@@ -2711,7 +2723,6 @@
 		<string>Modules.src/VirtualMachineSnapshots/TNSnapshot.j</string>
 		<string>Modules.src/HypervisorHealth/Jakefile</string>
 		<string>TNOutlineTableColumn.j</string>
-		<string>kanaka/utils/web.py</string>
 		<string>TNStepper.j</string>
 		<string>Modules.src/VirtualMachineControls/TNVirtualMachineControlsController.j</string>
 		<string>TNModuleLoader.j</string>
@@ -2744,6 +2755,9 @@
 		<string>Modules.src/VirtualMachineSnapshots/Jakefile</string>
 		<string>Modules.src/HypervisorHealth/Info.plist</string>
 		<string>Modules.src/VirtualMachineVNC/TNVirtualMachineVNCController.j</string>
+		<string>Modules.src/VirtualMachineVNC/Resources/novnc/include/vnc.js</string>
+		<string>Modules.src/VirtualMachineVNC/Resources/empty.html</string>
+		<string>Modules.src/VirtualMachineVNC/Resources/novnc/index.html</string>
 		<string>Modules.src/HypervisorVMCasts/Info.plist</string>
 		<string>Modules.src/HypervisorVMCasts/Jakefile</string>
 		<string>Modules.src/VirtualMachineDefinition/TNWindowDriveEdition.j</string>
@@ -2776,6 +2790,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{1743, 380}, {1087, 817}}</string>
+	<string>{{58, 61}, {1023, 817}}</string>
 </dict>
 </plist>

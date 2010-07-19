@@ -21,6 +21,8 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <GrowlCappuccino/GrowlCappuccino.j>
+@import <VNCCappuccino/VNCCappuccino.j>
+
 //@import <LPKit/LPCrashReporter.j>
 
 @import "LPMultiLineTextField.j";

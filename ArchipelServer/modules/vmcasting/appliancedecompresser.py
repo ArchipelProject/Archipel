@@ -173,7 +173,7 @@ class TNApplianceDecompresser(Thread):
                 #snap_node.getTag("name").setData(str(uuid.uuid1()))
                 snap_node.getTag("domain").getTag("uuid").setData(self.entity.uuid)
                 snap_str = str(snap_node).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-                print snap_str
+                #print snap_str
                 self.entity.domain.snapshotCreateXML(snap_str, 0)
             except Exception as ex:
                 log.error("can't recover snapshot: %s", str(ex))

@@ -3,25 +3,25 @@
 <plist version="1.0">
     <dict>
         <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.virtualmachinevnc</string>
+        <string>org.archipelproject.virtualmachinenovnc</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
         <key>CPBundleName</key>
-        <string>VirtualMachineVNC</string>
+        <string>VirtualMachineNOVNC</string>
         <key>CPBundlePackageType</key>
         <string>280N</string>
         <key>CPBundleVersion</key>
         <string>1.0</string>
         <key>CPPrincipalClass</key>
-        <string>TNVirtualMachineVNCController</string>
+        <string>TNVirtualMachineNOVNCController</string>
         <key>PluginDisplayName</key>
         <string>VNC Console</string>
         <key>InsertionType</key>
 		<string>tab</string>
 		<key>TabIndex</key>
-		<integer>5</integer>
+		<integer>6</integer>
         <key>CibName</key>
-        <string>VirtualMachineVNC</string>
+        <string>VirtualMachineNOVNC</string>
         <key>SupportedEntityTypes</key>
 		<array>
 			<string>virtualmachine</string>
