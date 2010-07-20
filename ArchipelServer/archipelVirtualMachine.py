@@ -603,6 +603,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
         
+        # this is more user firendly when using virsh or whaterver
+        # but as we can't change a name of an already defined VM (stupid...)
+        # we'll activate this later for release. So FIXME.
+        #xmldesc.getTag('name').setData(self.name)
+        
         definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.libvirt_connection.defineXML(definitionXML)
         
@@ -1083,6 +1088,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         try :
             domain_node = iq.getTag("query").getTag("archipel").getTag("domain")
             domain_uuid = domain_node.getTag("uuid").getData()
+            
             
             if domain_uuid != self.jid.getNode():
                 raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))

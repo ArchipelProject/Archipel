@@ -17,18 +17,14 @@
         <key>PluginDisplayName</key>
         <string>VNC Console</string>
         <key>InsertionType</key>
-		<string>tab</string>
-		<key>TabIndex</key>
-		<integer>6</integer>
+        <string>tab</string>
+        <key>TabIndex</key>
+        <integer>6</integer>
         <key>CibName</key>
         <string>VirtualMachineNOVNC</string>
         <key>SupportedEntityTypes</key>
-		<array>
-			<string>virtualmachine</string>
-		</array>
-		
-		<key>ArchipelServerSideWebServerPort</key>
-        <string>8088</string>
-        
+        <array>
+            <string>virtualmachine</string>
+        </array>
     </dict>
 </plist>

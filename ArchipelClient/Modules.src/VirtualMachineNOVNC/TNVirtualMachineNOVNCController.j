@@ -55,13 +55,19 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPSlider        sliderScaling;
     @outlet CPButton        buttonZoomFitToWindow;
     @outlet CPButton        buttonZoomReset;
+    @outlet CPButton        buttonGetPasteboard;
+    @outlet CPButton        buttonSetPasteboard;
     @outlet CPTextField     fieldZoomValue;
+    @outlet CPTextField     fieldPassword;
+    @outlet CPButton        buttonDirectURL;
     @outlet CPView          viewControls;
+    @outlet CPWindow        windowPassword;
+    @outlet CPCheckBox      checkboxPasswordRemember;
     
     CPString                _url;
     CPString                _VMHost;
-    CPString                _vncDisplay;
-    CPString                _webServerPort;
+    CPString                _vncProxyPort;
+    CPString                _vncDirectPort;
     TNVNCView               _vncView;
 }
 
@@ -83,11 +89,14 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var imageZoomReset = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-reset.png"] size:CPSizeMake(16, 16)]
     [buttonZoomReset setImage:imageZoomReset];
     
-    _webServerPort   = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"ArchipelServerSideWebServerPort"];
+    var imageDirectAccess = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-screen.png"] size:CPSizeMake(16, 16)]
+    [buttonDirectURL setImage:imageDirectAccess];
+    
+    [fieldPassword setSecure:YES];
     
     _vncView    = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [_vncView setCanvasBorderColor:@"#C0C7D2"];
+    [_vncView setBackgroundImage:[bundle pathForResource:@"vncbg.png"]];
     
     [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setDocumentView:_vncView];
@@ -136,6 +145,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [_vncView disconnect:nil];
     
     [super willHide];
+    
+    if ([windowPassword isVisible])
+        [windowPassword close];
 }
 
 /*! TNModule implementation
@@ -143,6 +155,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)willUnload
 {
     [super willUnload];
+    [fieldPassword setStringValue:@""];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -198,8 +211,12 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         var defaults    = [TNUserDefaults standardUserDefaults];
         var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
         var lastScale   = [defaults objectForKey:key];
-        _vncDisplay     = [displayNode valueForAttribute:@"proxy"];
+        var defaults    = [TNUserDefaults standardUserDefaults];
+        var key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+        
         _VMHost         = [displayNode valueForAttribute:@"host"];
+        _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
+        _vncDirectPort  = [displayNode valueForAttribute:@"port"];
         
         if (lastScale)
         {
@@ -213,11 +230,22 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [fieldZoomValue setStringValue:@"100"];
         }
         
-        [_vncView setHost:_VMHost];
-        [_vncView setPort:_vncDisplay];
-        [_vncView connect:nil];
-        [_vncView becomeFirstResponder];
+        if ([defaults stringForKey:key])
+        {
+            [fieldPassword setStringValue:[defaults stringForKey:key]];
+            [checkboxPasswordRemember setState:CPOnState];
+        }
+        else
+        {
+            [checkboxPasswordRemember setState:CPOffState];
+        }
         
+        [_vncView setHost:_VMHost];
+        [_vncView setPort:_vncProxyPort];
+        [_vncView setPassword:[fieldPassword stringValue]];
+        [_vncView setDelegate:self];
+        
+        [_vncView connect:nil];
     }
     else if ([aStanza getType] == @"error")
     {
@@ -231,7 +259,12 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var visibleRect     = [_vncView visibleRect];
     var currentVNCSize  = [_vncView canvasSize];
     var currentVNCZoom  = [_vncView canvasZoom];
-    var newZoom         = 100 - (Math.abs((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height) * 100);
+    var diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height);
+    
+    if (diffPerc < 0)
+        var newZoom = 100 - (Math.abs(diffPerc) * 100);
+    else
+        var newZoom = 100 + (Math.abs(diffPerc) * 100);
 
     [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
 }
@@ -291,6 +324,70 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [self changeScale:nil];
 }
 
+
+- (IBAction)openDirectURI:(id)sender
+{
+    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort, "écran");
+}
+
+- (IBAction)rememberPassword:(id)sender
+{
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+    
+    if ([checkboxPasswordRemember state] == CPOnState)
+        [defaults setObject:[fieldPassword stringValue] forKey:key];
+    else
+        [defaults setObject:@"" forKey:key];
+}
+
+- (IBAction)changePassword:(id)sender
+{
+    [_vncView setPassword:[fieldPassword stringValue]];
+    
+    if (([_vncView state] == TNVNCCappuccinoStateNormal) || ([_vncView state] == TNVNCCappuccinoStatePassword))
+       [_vncView disconnect:nil];
+
+    // some asynchronous things here.
+    [CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(tryToReconnect:) userInfo:nil repeats:NO];
+    //[_vncView sendPassword:[fieldPassword stringValue]];
+    [windowPassword close];
+    [self rememberPassword:nil];
+}
+
+- (void)tryToReconnect:(CPTimer)aTimer
+{
+    [_vncView connect:nil];   
+}
+
+- (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
+{
+    if (aState == TNVNCCappuccinoStateFailed)
+    {
+        if (aMessage.indexOf("Authentication failed") > -1)
+        {
+            [windowPassword center];
+            [windowPassword makeKeyAndOrderFront:nil];
+            [_vncView reset];
+        }
+        else
+        {
+            var growl = [TNGrowlCenter defaultCenter];
+            [growl pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
+            [_vncView reset];
+        }
+    }
+    else if (aState == TNVNCCappuccinoStatePassword)
+    {
+        [windowPassword center];
+        [windowPassword makeKeyAndOrderFront:nil];
+        [_vncView reset];
+    }
+    else if (aState == TNVNCCappuccinoStateNormal)
+    {
+        [_vncView focus];
+    }
+}
 @end
 
 

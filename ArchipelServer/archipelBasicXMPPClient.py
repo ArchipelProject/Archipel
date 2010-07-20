@@ -667,7 +667,6 @@ class TNArchipelBasicXMPPClient(object):
     def loop(self):
         """
         This is the main loop of the client
-        FIXME : to be change in future (because it's piggy)
         """
         while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
