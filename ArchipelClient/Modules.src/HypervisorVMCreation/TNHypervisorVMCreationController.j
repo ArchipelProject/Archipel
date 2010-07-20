@@ -71,7 +71,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_tableVirtualMachines setDelegate:self];
     [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_tableVirtualMachines setTarget:self];
-    [_tableVirtualMachines setDoubleAction:@selector(addVMToRoster:)]
+    [_tableVirtualMachines setDoubleAction:@selector(didDoubleClick:)]
     
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
     [vmColumNickname setWidth:250];
@@ -252,20 +252,27 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 //actions
 
-- (IBAction)addVMToRoster:(id)sender
+- (IBAction)didDoubleClick:(id)sender
 {
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex];
     var vm      = [_virtualMachinesDatasource objectAtIndex:index];
     
     if ([_roster containsJID:[vm JID]])
-        return;
-    
-    var alert = [TNAlert alertWithTitle:@"Adding contact"
-                                message:@"Would you like to add " + [vm nickname] + @" to your roster"
-                                delegate:self
-                                 actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
-    [alert setUserInfo:vm];
-    [alert runModal];
+    {
+        var row             = [[_roster mainOutlineView] rowForItem:vm];
+        var indexes         = [CPIndexSet indexSetWithIndex:row];
+        
+        [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
+    }
+    else
+    {
+        var alert = [TNAlert alertWithTitle:@"Adding contact"
+                                    message:@"Would you like to add " + [vm nickname] + @" to your roster"
+                                    delegate:self
+                                     actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
+        [alert setUserInfo:vm];
+        [alert runModal];
+    }
 }
 
 - (void)performAddToRoster:(id)someUserInfo
