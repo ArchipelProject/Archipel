@@ -103,7 +103,6 @@ if __name__ == "__main__":
     if fork:
         os.setsid()
         os.umask(0)
-        
         try:
             pid = os.fork()
             if pid > 0:

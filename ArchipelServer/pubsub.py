@@ -183,8 +183,51 @@ class TNPubSubNode:
         """
         triggered on response
         """
-        log.debug("PUBSUB: publish done. Answer is : %s" % str(response.getType()))
+        #log.debug("PUBSUB: publish done. Answer is : %s" % str(response.getType()))
         if callback: callback(response)
+    
+    
+    def subscribe(self, jid, subscribe_callback):
+        """
+        subscribe to the node
+        """
+        self.subscriber_callback = subscribe_callback
+        self.subscriber_jid      = jid
+        
+        iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        subscribe   = pubsub.addChild("subscribe", attrs={"node": self.nodename, "jid": jid})
+        
+        self.xmppclient.RegisterHandler('message', self.on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+        
+        self.xmppclient.send(iq)
 
+    def on_pubsub_event(self, conn, event):
+        """
+        trigger the callback for subscription
+        """
+        try:
+            #log.info(event)
+            node = event.getTag("event").getTag("items").getAttr("node")
+            if node == self.nodename and self.subscriber_callback and event.getTo() == self.subscriber_jid:
+                self.subscriber_callback(event)
+        except Exception as ex:
+            log.error("Error in on_pubsub_event : %s" % str(ex))
+    
+    
+    def unsubscribe(self, jid):
+        """
+        unsubscribe from a node
+        """
+        self.subscriber_callback    = None
+        self.subscriber_jid         = None
+        
+        iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        unsubscribe = pubsub.addChild("unsubscribe", attrs={"node": self.nodename, "jid": jid})
+        
+        self.xmppclient.UnregisterHandler('message', self.on_pubsub_event, ns=xmpp.protocol.NS_PUBSUB+"#event", typ="headline")
+        log.info(str(iq))
+        self.xmppclient.send(iq)
 
     
