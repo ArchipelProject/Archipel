@@ -70,11 +70,11 @@
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachineSnapshots</string>
+                <string>VirtualMachineNOVNC</string>
             </dict>
             <dict>
                 <key>folder</key>
-                <string>VirtualMachineNOVNC</string>
+                <string>VirtualMachineSnapshots</string>
             </dict>
 
         </array>

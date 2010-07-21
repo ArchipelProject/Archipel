@@ -346,7 +346,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
             var JID     = [[queryItems objectAtIndex:i] text];
             var entry   = [_roster contactWithJID:JID];
             
-            console.log([entry JID]);
+            // console.log([entry JID]);
             
             if (entry)
             {

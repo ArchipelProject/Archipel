@@ -105,7 +105,7 @@
 - (IBAction)rememberCredentials:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    console.log("LALAAA")
+    
     if ([sender state] == CPOnState)
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     else
