@@ -22,7 +22,6 @@
 {
     float   _startZoomValue @accessors(property=startZoomValue);
     float   _endZoomValue   @accessors(property=endZoomValue);
-
     float   _currentZoom    @accessors(getter=currentZoom);
 }
 

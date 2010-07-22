@@ -116,18 +116,12 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    
-    // var viewBounds = [[self view] bounds];
-    // viewBounds.size.height = 1000;
-    // [[self view] setFrame:viewBounds];
 }
 
-/*! TNModule implementation
-*/
 - (void)willShow
 {
     [super willShow];
-
+    
     [maskingView setFrame:[[self view] bounds]];
     
     [fieldName setStringValue:[_entity nickname]];
@@ -138,25 +132,28 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [[self view] setFrame:[[[self view] superview] bounds]];
 }
 
-/*! TNModule implementation
-*/
 - (void)willHide
 {
-    [_vncView disconnect:nil];
-    
-    [super willHide];
+    if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+    {
+        [_vncView disconnect:nil];
+    }
     
     if ([windowPassword isVisible])
         [windowPassword close];
+    
+    [super willHide];
+    
+    [_vncView invalidate];
 }
 
-/*! TNModule implementation
-*/
 - (void)willUnload
 {
-    [super willUnload];
     [fieldPassword setStringValue:@""];
+    [super willUnload];
 }
+
+
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
@@ -165,8 +162,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
        [fieldName setStringValue:[_entity nickname]]
     }
 }
-/*! send stanza to get the current virtual machine VNC display
-*/
 
 - (void)didPresenceUpdated:(CPNotification)aNotification
 {
@@ -189,6 +184,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
+/*! send stanza to get the current virtual machine VNC display
+*/
 - (void)getVirtualMachineVNCDisplay
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
@@ -222,7 +219,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         if (lastScale)
         {
             [sliderScaling setDoubleValue:lastScale];
-            [_vncView setZoom:lastScale];
             [fieldZoomValue setStringValue:lastScale];
         }
         else
@@ -238,12 +234,17 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         }
         else
         {
+            [fieldPassword setStringValue:@""];
             [checkboxPasswordRemember setState:CPOffState];
         }
         
+        [_vncView load];
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncProxyPort];
         [_vncView setPassword:[fieldPassword stringValue]];
+        [_vncView setZoom:(lastScale) ? (lastScale / 100) : 1];
+        [_vncView setTrueColor:YES];
+        [_vncView setEncrypted:NO];
         [_vncView setDelegate:self];
         
         [_vncView connect:nil];
@@ -255,11 +256,32 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
+
+/*
+    Controls
+*/
+- (IBAction)openDirectURI:(id)sender
+{
+    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort, "écran");
+}
+
+- (IBAction)changeScale:(id)sender
+{
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var zoom        = [sender intValue];
+    
+    var key = TNArchipelVNCScaleFactor + [[self entity] JID];
+    [defaults setObject:zoom forKey:key];
+    
+    [_vncView setZoom:(zoom / 100)];
+    [fieldZoomValue setStringValue:parseInt(zoom)];
+}
+
 - (IBAction)fitToScreen:(id)sender
 {
     var visibleRect     = [_vncView visibleRect];
     var currentVNCSize  = [_vncView canvasSize];
-    var currentVNCZoom  = [_vncView canvasZoom];
+    var currentVNCZoom  = [_vncView zoom] * 100;
     var diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height);
     
     if (diffPerc < 0)
@@ -274,24 +296,16 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     var visibleRect     = [_vncView visibleRect];
     var currentVNCSize  = [_vncView canvasSize];
-    var currentVNCZoom  = [_vncView canvasZoom];
+    var currentVNCZoom  = [_vncView zoom] * 100;
     var newZoom         = 100 - (Math.abs((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height) * 100);
 
     [self animateChangeScaleFrom:currentVNCZoom to:100];
 }
 
-- (IBAction)changeScale:(id)sender
-{
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var zoom        = [sliderScaling intValue];
-    
-    var key = TNArchipelVNCScaleFactor + [[self entity] JID];
-    [defaults setObject:zoom forKey:key];
-    
-    [_vncView setZoom:zoom];
-    [fieldZoomValue setStringValue:parseInt(zoom)];
-}
 
+/*
+    Zoom animation
+*/
 - (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
 {
     var useAnimations = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"];
@@ -311,26 +325,24 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
 }
 
-
 - (float)animation:(CPAnimation)animation valueForProgress:(float)progress
 {
     [sliderScaling setDoubleValue:[animation currentZoom]];
     
-    [_vncView setZoom:[animation currentZoom]];
+    [_vncView setZoom:([animation currentZoom] / 100)];
     [fieldZoomValue setStringValue:parseInt([animation currentZoom])];
 }
 
 - (void)animationDidEnd:(CPAnimation)animation
 {
-    [self changeScale:nil];
+    [self changeScale:sliderScaling];
 }
 
 
-- (IBAction)openDirectURI:(id)sender
-{
-    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort, "écran");
-}
 
+/*
+    Password management
+*/
 - (IBAction)rememberPassword:(id)sender
 {
     var defaults    = [TNUserDefaults standardUserDefaults];
@@ -344,51 +356,57 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (IBAction)changePassword:(id)sender
 {
-    [_vncView setPassword:[fieldPassword stringValue]];
-    
-    if (([_vncView state] == TNVNCCappuccinoStateNormal) || ([_vncView state] == TNVNCCappuccinoStatePassword))
-       [_vncView disconnect:nil];
-
-    // some asynchronous things here.
-    [CPTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(tryToReconnect:) userInfo:nil repeats:NO];
-    //[_vncView sendPassword:[fieldPassword stringValue]];
     [windowPassword close];
     [self rememberPassword:nil];
+    [_vncView sendPassword:[fieldPassword stringValue]];
 }
 
-- (void)tryToReconnect:(CPTimer)aTimer
-{
-    [_vncView connect:nil];   
-}
 
+/*
+    VNCView delegate
+*/
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
 {
-    if (aState == TNVNCCappuccinoStateFailed)
+    switch(aState)
     {
-        if (aMessage.indexOf("Authentication failed") > -1)
-        {
+        case TNVNCCappuccinoStateFailed:
+            if ([aVNCView oldState] == TNVNCCappuccinoStateSecurityResult)
+            {
+                [windowPassword center];
+                [windowPassword makeKeyAndOrderFront:nil];
+            }
+            else
+            {
+                var growl = [TNGrowlCenter defaultCenter];
+                [growl pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
+            }
+            break;
+            
+        case TNVNCCappuccinoStatePassword:
             [windowPassword center];
             [windowPassword makeKeyAndOrderFront:nil];
-            [_vncView reset];
-        }
-        else
-        {
-            var growl = [TNGrowlCenter defaultCenter];
-            [growl pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
-            [_vncView reset];
-        }
-    }
-    else if (aState == TNVNCCappuccinoStatePassword)
-    {
-        [windowPassword center];
-        [windowPassword makeKeyAndOrderFront:nil];
-        [_vncView reset];
-    }
-    else if (aState == TNVNCCappuccinoStateNormal)
-    {
-        [_vncView focus];
+            break;
+        
+        case TNVNCCappuccinoStateNormal:
+            [_vncView focus];
+            break;
+
+        // case TNVNCCappuccinoStateDisconnected:
+        //     if (([aVNCView oldState] == TNVNCCappuccinoStateFailed)
+        //     {
+        //         var alert = [TNAlert alertWithTitle:@"Disconnection"
+        //                                     message:@"Connection to VNC screen failed. retry?"
+        //                          informativeMessage:@"If you abort connection, you'll need to leave this module and come back later."
+        //                                    delegate:self
+        //                                     actions:[["Retry", @selector(per:)], ["Abort", nil]]];
+        //         [alert runModal];
+        //     }
     }
 }
+
+/*
+    TNAlert actoions
+*/
 @end
 
 

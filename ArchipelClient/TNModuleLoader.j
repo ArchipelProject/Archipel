@@ -509,6 +509,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     
     var currentTabItem = [aTabView selectedTabViewItem];
     
+    if (currentTabItem == anItem)
+        return;
+    
     if (currentTabItem)
     {
         var oldModule = [currentTabItem module];
