@@ -325,7 +325,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         novnc_proxy_port        = self.vncdisplay()["proxy"]
         log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         
-        self.novnc_proxy = archipelWebSocket.TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port);
+        cert = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
+        if cert.lower() in ("none", "no", "false"): cert = None;
+        log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
+        onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl");
+        log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
+        
+        self.novnc_proxy = archipelWebSocket.TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl);
         self.novnc_proxy.start()
     
     
@@ -527,21 +533,24 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.log.info("virtual machine created")
         return str(self.domain.ID())
     
-
+    
     def shutdown(self):
         self.lock()
+        self.novnc_proxy.stop()
         self.domain.shutdown()
         self.log.info("virtual machine shutdowned")
     
     
     def destroy(self):
         self.lock()
+        self.novnc_proxy.stop()
         self.domain.destroy()
         self.log.info("virtual machine destroyed")
     
     
     def reboot(self):
         self.lock()
+        self.novnc_proxy.stop()
         self.domain.reboot(0) # flags not used in libvirt but required.
         self.log.info("virtual machine rebooted")
     
@@ -637,7 +646,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
         proxyport = directport + 1000
-        return {"direct": directport, "proxy": proxyport}
+        supportSSL = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
+        if supportSSL.lower() in ("none", "no", "false"): 
+            supportSSL = False;
+        else: 
+            supportSSL = True;
+        return {"direct": directport, "proxy": proxyport, "onlyssl": self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl"), "supportssl": supportSSL}
     
     
     def xmldesc(self):
@@ -784,6 +798,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.triggers[name].delete_pubsub_node()
         del self.triggers[name]    
     
+    
     def add_watcher(self, name, targetjid, triggername, onaction, offaction, state=ARCHIPEL_WATCHER_STATE_ON):
         if self.watchers.has_key(name): return
         self.watchers[name] = TNArchipelTriggerWatcher(self, name, targetjid, triggername, onaction, offaction)
@@ -818,7 +833,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
-        
     def iq_create(self, iq):
         """
         Create a domain using libvirt connection
@@ -1103,7 +1117,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             if not self.domain:
                 return iq.buildReply('ignore')
             ports = self.vncdisplay()
-            payload = xmpp.Node("vncdisplay", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.ipaddr})
+            payload = xmpp.Node("vncdisplay", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

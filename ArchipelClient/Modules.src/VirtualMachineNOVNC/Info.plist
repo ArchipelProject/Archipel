@@ -26,5 +26,7 @@
         <array>
             <string>virtualmachine</string>
         </array>
+        <key>NOVNCPreferSSL</key>
+        <integer>1</integer>
     </dict>
 </plist>

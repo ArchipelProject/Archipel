@@ -62,10 +62,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPButton        buttonDirectURL;
     @outlet CPView          viewControls;
     @outlet CPWindow        windowPassword;
+    @outlet CPImageView     imageViewSecureConnection;
     @outlet CPCheckBox      checkboxPasswordRemember;
     
     CPString                _url;
     CPString                _VMHost;
+    BOOL                    _vncOnlySSL;
+    BOOL                    _vncSupportSSL;
+    BOOL                    _useSSL;
+    BOOL                    _preferSSL;
     CPString                _vncProxyPort;
     CPString                _vncDirectPort;
     TNVNCView               _vncView;
@@ -76,6 +81,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
+    [imageViewSecureConnection setHidden:YES];
     
     var bundle  = [CPBundle bundleForClass:[self class]];
     
@@ -134,17 +140,19 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (void)willHide
 {
-    if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
-    {
-        [_vncView disconnect:nil];
-    }
-    
+    [imageViewSecureConnection setHidden:YES];
     if ([windowPassword isVisible])
         [windowPassword close];
     
-    [super willHide];
-    
+    if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+    {
+        [_vncView disconnect:nil];
+        [_vncView clear];
+        [_vncView unfocus];
+    }
     [_vncView invalidate];
+       
+    [super willHide];
 }
 
 - (void)willUnload
@@ -178,6 +186,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
     else
     {
+        if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+        {
+            [_vncView disconnect:nil];
+            [_vncView clear];
+            [_vncView unfocus];
+        }
+        
         [maskingView setFrame:[[self view] bounds]];
         [[self view] addSubview:maskingView];
     }
@@ -193,7 +208,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlVNCDisplay}];
-                
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }
 
@@ -204,7 +219,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     if ([aStanza getType] == @"result")
     {
-        var bundle      = [CPBundle bundleForClass:self];
+        var bundle      = [CPBundle bundleForClass:[self class]];
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
         var defaults    = [TNUserDefaults standardUserDefaults];
         var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
@@ -215,6 +230,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
         _vncDirectPort  = [displayNode valueForAttribute:@"port"];
+        _vncSupportSSL  = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
+        _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
+        
+        _useSSL         = NO;
+        _preferSSL      = ([bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
+        
+        //alert("_vncOnlySSL: " + _vncOnlySSL + " _preferSSL:" + _preferSSL + " _vncSupportSSL:" + _vncSupportSSL);
+        if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
+            _useSSL = YES;        
         
         if (lastScale)
         {
@@ -237,14 +261,14 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [fieldPassword setStringValue:@""];
             [checkboxPasswordRemember setState:CPOffState];
         }
-        
+                
         [_vncView load];
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncProxyPort];
         [_vncView setPassword:[fieldPassword stringValue]];
         [_vncView setZoom:(lastScale) ? (lastScale / 100) : 1];
         [_vncView setTrueColor:YES];
-        [_vncView setEncrypted:NO];
+        [_vncView setEncrypted:_useSSL];
         [_vncView setDelegate:self];
         
         [_vncView connect:nil];
@@ -262,7 +286,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)openDirectURI:(id)sender
 {
-    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort, "écran");
+    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
 }
 
 - (IBAction)changeScale:(id)sender
@@ -372,14 +396,17 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         case TNVNCCappuccinoStateFailed:
             if ([aVNCView oldState] == TNVNCCappuccinoStateSecurityResult)
             {
+                [imageViewSecureConnection setHidden:YES];
                 [windowPassword center];
                 [windowPassword makeKeyAndOrderFront:nil];
             }
             else
             {
+                [imageViewSecureConnection setHidden:YES];
                 var growl = [TNGrowlCenter defaultCenter];
                 [growl pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
             }
+            [_vncView clear];
             break;
             
         case TNVNCCappuccinoStatePassword:
@@ -388,9 +415,10 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             break;
         
         case TNVNCCappuccinoStateNormal:
-            [_vncView focus];
+            if (_useSSL)
+                [imageViewSecureConnection setHidden:NO];
             break;
-
+        
         // case TNVNCCappuccinoStateDisconnected:
         //     if (([aVNCView oldState] == TNVNCCappuccinoStateFailed)
         //     {

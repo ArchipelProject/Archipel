@@ -103,8 +103,8 @@ class ColorFormatter(logging.Formatter):
     def format(self, record):
         rec = logging.Formatter.format(self, record)
         rec = rec.replace("DEBUG", "\033[35mDEBUG\033[0m")
-        rec = rec.replace("INFO", "\033[33mINFO\033[0m")
-        rec = rec.replace("WARNING", "\033[32mWARNING\033[0m")
+        rec = rec.replace("INFO", "\033[32mINFO\033[0m")
+        rec = rec.replace("WARNING", "\033[33mWARNING\033[0m")
         rec = rec.replace("ERROR", "\033[31mERROR\033[0m")
         rec = rec.replace("CRITICAL", "\033[31mCRITICAL\033[0m")
         rec = rec.replace("$whiteColor", "\033[37m")
