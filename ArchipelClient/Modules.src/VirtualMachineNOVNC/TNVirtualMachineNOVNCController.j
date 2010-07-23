@@ -181,7 +181,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         [maskingView removeFromSuperview];
-        if (_isVisible)
+        if ((_isVisible) && ([_vncView state] == TNVNCCappuccinoStateDisconnected))
             [self getVirtualMachineVNCDisplay];
     }
     else

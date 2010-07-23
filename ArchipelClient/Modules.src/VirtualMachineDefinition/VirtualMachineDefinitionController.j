@@ -131,6 +131,7 @@ function generateMacAddr()
     @outlet CPSearchField           fieldFilterNics;
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldMemory;
+    @outlet CPTextField             fieldVNCPassword;
     @outlet CPTextField             fieldName;
     @outlet CPView                  maskingView;
     @outlet CPView                  viewDrivesContainer;
@@ -354,6 +355,8 @@ function generateMacAddr()
     [menuDrive addItemWithTitle:@"Edit" action:@selector(editDrive:) keyEquivalent:@""];
     [menuDrive addItemWithTitle:@"Delete" action:@selector(deleteDrive:) keyEquivalent:@""];
     [_tableDrives setMenu:menuDrive];
+    
+    [fieldVNCPassword setSecure:YES];
 }
 
 
@@ -448,6 +451,7 @@ function generateMacAddr()
     
     [buttonNumberCPUs selectItemWithTitle:cpu];
     [fieldMemory setStringValue:mem];
+    [fieldVNCPassword setStringValue:@""];
     [buttonArchitecture selectItemWithTitle:arch];
     [buttonVNCKeymap selectItemWithTitle:vnck];
     [buttonOnPowerOff selectItemWithTitle:opo];
@@ -492,7 +496,7 @@ function generateMacAddr()
     var nics        = [_nicsDatasource content];
     var drives      = [_drivesDatasource content];
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid}];
+    var stanza      = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid, "type": "set"}];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{
@@ -631,7 +635,23 @@ function generateMacAddr()
     if (hypervisor == TNXMLDescHypervisorKVM || hypervisor == TNXMLDescHypervisorQemu
         || hypervisor == TNXMLDescHypervisorKQemu || hypervisor == TNXMLDescHypervisorXen)
     {
-        [stanza addChildName:@"graphics" withAttributes:{"autoport": "yes", "type": "vnc", "port": "-1", "keymap": [buttonVNCKeymap title]}];
+        if ([fieldVNCPassword stringValue] != @"")
+        {
+            [stanza addChildName:@"graphics" withAttributes:{
+                "autoport": "yes", 
+                "type": "vnc", 
+                "port": "-1", 
+                "keymap": [buttonVNCKeymap title],
+                "passwd": [fieldVNCPassword stringValue]}];
+        }
+        else
+        {
+            [stanza addChildName:@"graphics" withAttributes:{
+                "autoport": "yes", 
+                "type": "vnc", 
+                "port": "-1", 
+                "keymap": [buttonVNCKeymap title]}];
+        }
         [stanza up];
     }
 
@@ -692,10 +712,11 @@ function generateMacAddr()
             {
                 var keymap = [graphic valueForAttribute:@"keymap"];
                 if (keymap)
-                {
                     [buttonVNCKeymap selectItemWithTitle:keymap];
-                    break;
-                }
+                
+                var passwd = [graphic valueForAttribute:@"passwd"];
+                if (passwd)
+                    [fieldVNCPassword setStringValue:passwd];
             }
         }
         

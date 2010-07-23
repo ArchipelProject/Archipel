@@ -31,7 +31,9 @@ class TNArchipelWebSocket(threading.Thread):
         self.listen_host    = listen_host
         self.listen_port    = listen_port
         self.ssl_only       = onlySSL
-        self.buffer_size = 65536
+        self.buffer_size    = 65536
+        self.csock          = None
+        self.startsock      = None
         
         self.client_settings = {
             'b64encode'   : False
@@ -250,28 +252,30 @@ Connection: Upgrade\r
         try:
             while True:
                 try:
-                    csock = startsock = None
+                    self.csock = self.startsock = None
                     # print 'waiting for connection on port %s' % self.listen_port
                     #FIXME : log.debug this
                     log.info("WEBSOCKETPROXY: waiting for connection on port %s" % self.listen_port)
                     startsock, address = lsock.accept()
                     # print 'Got client connection from %s' % address[0]
                     log.info("WEBSOCKETPROXY: Got client connection from %s" % address[0])
-                    csock = self.do_handshake(startsock)
-                    if not csock: continue
+                    self.csock = self.do_handshake(startsock)
+                    if not self.csock: continue
                 
-                    self.proxy_handler(csock)
+                    self.proxy_handler(self.csock)
                 
                 except Exception as ex:
                     log.warn("WEBSOCKETPROXY: connection interrupted: %s" % str(ex))
                     #print "Ignoring exception:"
                     #print traceback.format_exc()
-                    if csock: csock.close()
-                    if startsock and startsock != csock: startsock.close()
+                    if self.csock: self.csock.close()
+                    if self.startsock and self.startsock != self.csock: self.startsock.close()
         except Exception as ex:
             log.error("WEBSOCKETPROXY: loop exception: %s" % str(ex))
     
     def stop(self):
         log.info("WEBSOCKETPROXY: thread stopped")
+        if self.csock : self.csock.close()
+        if self.startsock and self.startsock != self.csock: self.startsock.close()
         self._stop.set()
 

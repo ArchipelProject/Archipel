@@ -215,9 +215,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
-            elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
+            elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
-                self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+            elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
+                self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
+                
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 self.log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
@@ -273,16 +275,19 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.novnc_proxy.stop()
             
             elif event == libvirt.VIR_DOMAIN_CRASHED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_CRASHED)
                 self.push_change("virtualmachine:control", "crashed", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.novnc_proxy.stop()
                 
             elif event == libvirt.VIR_DOMAIN_SHUTOFF:
-                self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTOFF)
+                self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTOFF)
                 self.push_change("virtualmachine:control", "shutoff", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.novnc_proxy.stop()
             
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
@@ -536,21 +541,22 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def shutdown(self):
         self.lock()
-        self.novnc_proxy.stop()
+        # log.info("%d ?= %d" % (self.info()["state"], libvirt.VIR_DOMAIN_SHUTDOWN))
         self.domain.shutdown()
+        if (self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING):
+            self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
+        
         self.log.info("virtual machine shutdowned")
     
     
     def destroy(self):
         self.lock()
-        self.novnc_proxy.stop()
         self.domain.destroy()
         self.log.info("virtual machine destroyed")
     
     
     def reboot(self):
         self.lock()
-        self.novnc_proxy.stop()
         self.domain.reboot(0) # flags not used in libvirt but required.
         self.log.info("virtual machine rebooted")
     
@@ -655,8 +661,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def xmldesc(self):
-        xmldesc = self.domain.XMLDesc(0)
-        descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom();
+        xmldesc = self.domain.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
+        descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         descnode.delChild("description")
         return descnode
     

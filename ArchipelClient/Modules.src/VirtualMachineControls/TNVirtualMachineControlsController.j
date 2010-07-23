@@ -602,7 +602,7 @@ TNArchipelTransportBarReboot    = 4;
     if (responseType == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is stopped"];
+        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is shutdowning"];
     }
     else
     {
