@@ -123,7 +123,9 @@ Connection: Upgrade\r
                     sock,
                     server_side=True,
                     certfile=self.cert,
-                    ssl_version=ssl.PROTOCOL_SSLv3)
+                    ssl_version=ssl.PROTOCOL_TLSv1)
+            scheme = "wss"
+            log.info("WEBSOCKETPROXY: using SSL socket PROTOCOL_TLSv1")
         elif handshake.startswith("\x80"):
             retsock = ssl.wrap_socket(
                     sock,
@@ -131,7 +133,7 @@ Connection: Upgrade\r
                     certfile=self.cert,
                     ssl_version=ssl.PROTOCOL_SSLv23)
             scheme = "wss"
-            log.info("WEBSOCKETPROXY: using SSL socket")
+            log.info("WEBSOCKETPROXY: using SSL socket PROTOCOL_SSLv23")
         elif self.ssl_only:
             log.info("WEBSOCKETPROXY: Non-SSL connection disallowed")
             sock.close()
