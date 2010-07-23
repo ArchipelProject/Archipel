@@ -236,9 +236,23 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         _useSSL         = NO;
         _preferSSL      = ([bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
         
-        //alert("_vncOnlySSL: " + _vncOnlySSL + " _preferSSL:" + _preferSSL + " _vncSupportSSL:" + _vncSupportSSL);
         if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
             _useSSL = YES;        
+        
+        if ((navigator.appVersion.indexOf("Safari") > -1) && _useSSL)
+        {
+            var growl = [TNGrowlCenter defaultCenter];
+            if (_vncOnlySSL)
+            {
+                [growl pushNotificationWithTitle:@"VNC" message:@"Safari doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
+                return;
+            }
+            else
+            {
+                [growl pushNotificationWithTitle:@"VNC" message:@"Safari doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
+                _useSSL = NO;
+            }
+        }
         
         if (lastScale)
         {

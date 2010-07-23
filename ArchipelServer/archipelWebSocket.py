@@ -123,7 +123,13 @@ Connection: Upgrade\r
                     sock,
                     server_side=True,
                     certfile=self.cert,
-                    ssl_version=ssl.PROTOCOL_TLSv1)
+                    ssl_version=ssl.PROTOCOL_SSLv3)
+        elif handshake.startswith("\x80"):
+            retsock = ssl.wrap_socket(
+                    sock,
+                    server_side=True,
+                    certfile=self.cert,
+                    ssl_version=ssl.PROTOCOL_SSLv23)
             scheme = "wss"
             log.info("WEBSOCKETPROXY: using SSL socket")
         elif self.ssl_only:
@@ -134,8 +140,10 @@ Connection: Upgrade\r
             retsock = sock
             scheme = "ws"
             log.info("WEBSOCKETPROXY: using plain (non SSL) socket")
+        
         handshake = retsock.recv(4096)
         h = self.parse_handshake(handshake)
+        
         
         # Parse client settings from the GET path
         cvars = h['path'].partition('?')[2].partition('#')[0].split('&')
@@ -145,6 +153,7 @@ Connection: Upgrade\r
             value = val and val or True
             self.client_settings[name] = value
             # print "  %s=%s" % (name, value)
+        
         
         if h.get('key3'):
             trailer = self.gen_md5(h)
