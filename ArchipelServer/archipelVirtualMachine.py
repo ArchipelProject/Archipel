@@ -45,23 +45,24 @@ import archipelWebSocket
 import sqlite3
 
 
-ARCHIPEL_ERROR_CODE_VM_CREATE       = -1001
-ARCHIPEL_ERROR_CODE_VM_SUSPEND      = -1002
-ARCHIPEL_ERROR_CODE_VM_RESUME       = -1003
-ARCHIPEL_ERROR_CODE_VM_DESTROY      = -1004
-ARCHIPEL_ERROR_CODE_VM_SHUTDOWN     = -1005
-ARCHIPEL_ERROR_CODE_VM_REBOOT       = -1006
-ARCHIPEL_ERROR_CODE_VM_DEFINE       = -1007
-ARCHIPEL_ERROR_CODE_VM_UNDEFINE     = -1008
-ARCHIPEL_ERROR_CODE_VM_INFO         = -1009
-ARCHIPEL_ERROR_CODE_VM_VNC          = -1010
-ARCHIPEL_ERROR_CODE_VM_XMLDESC      = -1011
-ARCHIPEL_ERROR_CODE_VM_LOCKED       = -1012
-ARCHIPEL_ERROR_CODE_VM_MIGRATE      = -1013
-ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING = -1014
-ARCHIPEL_ERROR_CODE_VM_AUTOSTART    = -1015
-ARCHIPEL_ERROR_CODE_VM_MEMORY       = -1016
-ARCHIPEL_ERROR_CODE_VM_NETWORKINFO  = -1017
+ARCHIPEL_ERROR_CODE_VM_CREATE                   = -1001
+ARCHIPEL_ERROR_CODE_VM_SUSPEND                  = -1002
+ARCHIPEL_ERROR_CODE_VM_RESUME                   = -1003
+ARCHIPEL_ERROR_CODE_VM_DESTROY                  = -1004
+ARCHIPEL_ERROR_CODE_VM_SHUTDOWN                 = -1005
+ARCHIPEL_ERROR_CODE_VM_REBOOT                   = -1006
+ARCHIPEL_ERROR_CODE_VM_DEFINE                   = -1007
+ARCHIPEL_ERROR_CODE_VM_UNDEFINE                 = -1008
+ARCHIPEL_ERROR_CODE_VM_INFO                     = -1009
+ARCHIPEL_ERROR_CODE_VM_VNC                      = -1010
+ARCHIPEL_ERROR_CODE_VM_XMLDESC                  = -1011
+ARCHIPEL_ERROR_CODE_VM_LOCKED                   = -1012
+ARCHIPEL_ERROR_CODE_VM_MIGRATE                  = -1013
+ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING             = -1014
+ARCHIPEL_ERROR_CODE_VM_AUTOSTART                = -1015
+ARCHIPEL_ERROR_CODE_VM_MEMORY                   = -1016
+ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
+ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -78,6 +79,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         self.hypervisor                 = hypervisor
         self.libvirt_connection         = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
+        self.libvirt_status             = libvirt.VIR_DOMAIN_SHUTDOWN
         self.domain                     = None
         self.definition                 = None
         self.uuid                       = self.jid.getNode()
@@ -207,6 +209,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
             
             dominfo = self.domain.info()
+            self.libvirt_status = dominfo[0]
             self.log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
@@ -302,6 +305,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except Exception as ex:
             self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
+            self.libvirt_status = self.info()["state"]
             self.unlock()
     
     
@@ -370,11 +374,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.add_trigger("libvirt_run", "basic trigger based on libvirt RUNNING state")
     
     
-    # def TEST_ON(self):
-    #     log.info("==================> ON");
-    #     
-    # def TEST_OFF(self):
-    #     log.info("==================> ON");
+    
     
     ######################################################################################################
     ### Process IQ
@@ -525,7 +525,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = self.iq_undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
+        
+        elif action == "capabilities":
+            reply = self.iq_capabilities(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     ######################################################################################################
@@ -878,7 +882,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             return build_error_message(self, ex)
     
     
-
     def iq_shutdown(self, iq):
         """
         Shutdown a domain using libvirt connection
@@ -1353,6 +1356,21 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return "Hello %s! How are you today ?"% (msg.getFrom().getNode())
         
     
+    def iq_capabilities(self, iq):
+        """
+        send the virtual machine's hypervisor capabilities
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            reply.setQueryPayload([self.hypervisor.capabilities])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES)
+        return reply
     
     # def iq_setcpuspin(self, iq):
     #     """

@@ -128,6 +128,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
         [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsSCSI];
     }
+    else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
+    {
+        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
+    }
+    
     [buttonTarget selectItemWithTitle:[_drive target]];
 }
 

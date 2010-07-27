@@ -394,9 +394,17 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (IBAction)changePassword:(id)sender
 {
-    [windowPassword close];
     [self rememberPassword:nil];
-    [_vncView sendPassword:[fieldPassword stringValue]];
+    [windowPassword close];
+    if ([_vncView state] == TNVNCCappuccinoStateDisconnected)
+    {
+        [_vncView setPassword:[fieldPassword stringValue]];
+        [_vncView connect:nil];
+    }
+    else
+    {
+        [_vncView sendPassword:[fieldPassword stringValue]];
+    }
 }
 
 

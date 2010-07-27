@@ -33,7 +33,6 @@ from archipelBasicXMPPClient import *
 from archipelVirtualMachine import *
 import string
 import random
-# import libvirtEventLoop
 import libvirt
 
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC            = -9001
@@ -44,7 +43,7 @@ ARCHIPEL_ERROR_CODE_HYPERVISOR_IP               = -9005
 ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI      = -9006
 ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION  = -9007
 ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION   = -9008
-
+ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES     = -9009
 
 class TNThreadedVirtualMachine(Thread):
     """
@@ -125,7 +124,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             self.log.error("unable to connect libvirt")
             sys.exit(-42) 
         self.log.info("connected to  libvirt")
-                
+        
+        self.capabilities = self.get_capabilities()
+        
         # persistance
         self.manage_persistance()
         
@@ -137,8 +138,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     def update_presence(self, params=None):
-        count = len(self.virtualmachines)
-        self.change_presence(self.xmppstatusshow, ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count)+ ")")
+        count   = len(self.virtualmachines)
+        nup     = 0
+        status = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
+        self.change_presence(self.xmppstatusshow, status)
     
     
     def register_handler(self):
@@ -205,7 +208,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         trigger when a domain trigger vbent. We care only about RESUMED and SHUTDOWNED from MIGRATED
         """
-        
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
@@ -284,6 +286,11 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             
         elif action == "uri":
             reply = self.iq_libvirt_uri(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "capabilities":
+            reply = self.iq_capabilities(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -421,7 +428,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
     
     
-    
+    def get_capabilities(self):
+        """return hypervisor's capabilities"""
+        capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
+        return capp;
     
     ######################################################################################################
     ###  Hypervisor IQs
@@ -604,7 +614,23 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI)
         return reply
     
-
+    
+    def iq_capabilities(self, iq):
+        """
+        send the hypervisor capabilities
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        try:
+            reply = iq.buildReply("result")
+            reply.setQueryPayload(self.capabilities)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_CAPABILITIES)
+        return reply
+    
 
 
     

@@ -31,6 +31,7 @@ TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc";
 TNArchipelTypeVirtualMachineControlInfo             = @"info";
 TNArchipelTypeVirtualMachineDefinitionDefine        = @"define";
 TNArchipelTypeVirtualMachineDefinitionUndefine      = @"undefine";
+TNArchipelTypeVirtualMachineDefinitionCapabilities  = @"capabilities";
 
 TNArchipelPushNotificationDefinitition              = @"archipel:push:virtualmachine:definition";
 
@@ -50,11 +51,6 @@ TNXMLDescBoots              = [ TNXMLDescBootHardDrive, TNXMLDescBootCDROM,
                                 TNXMLDescBootNetwork, TNXMLDescBootFileDescriptor];
 
 
-TNXMLDescArchx64            = @"x86_64";
-TNXMLDescArchi686           = @"i686";
-TNXMLDescArchs              = [TNXMLDescArchx64, TNXMLDescArchi686];
-
-
 TNXMLDescHypervisorKVM          = @"kvm";
 TNXMLDescHypervisorXen          = @"xen";
 TNXMLDescHypervisorOpenVZ       = @"openvz";
@@ -65,11 +61,11 @@ TNXMLDescHypervisorUML          = @"uml";
 TNXMLDescHypervisorVBox         = @"vbox";
 TNXMLDescHypervisorVMWare       = @"vmware";
 TNXMLDescHypervisorOpenNebula   = @"one";
-TNXMLDescHypervisors            = [ TNXMLDescHypervisorKVM, TNXMLDescHypervisorXen,
-                                    TNXMLDescHypervisorOpenVZ, TNXMLDescHypervisorQemu,
-                                    TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC,
-                                    TNXMLDescHypervisorUML, TNXMLDescHypervisorVBox,
-                                    TNXMLDescHypervisorVMWare, TNXMLDescHypervisorOpenNebula];
+// TNXMLDescHypervisors            = [ TNXMLDescHypervisorKVM, TNXMLDescHypervisorXen,
+//                                     TNXMLDescHypervisorOpenVZ, TNXMLDescHypervisorQemu,
+//                                     TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC,
+//                                     TNXMLDescHypervisorUML, TNXMLDescHypervisorVBox,
+//                                     TNXMLDescHypervisorVMWare, TNXMLDescHypervisorOpenNebula];
 
 TNXMLDescVNCKeymapFR            = @"fr";
 TNXMLDescVNCKeymapEN_US         = @"en-us";
@@ -122,9 +118,11 @@ function generateMacAddr()
     @outlet CPCheckBox              checkboxACPI;
     @outlet CPCheckBox              checkboxAPIC;
     @outlet CPCheckBox              checkboxPAE;
+    @outlet CPCheckBox              checkboxHugePages;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonNumberCPUs;
     @outlet CPPopUpButton           buttonVNCKeymap;
+    @outlet CPPopUpButton           buttonMachines;
     @outlet CPScrollView            scrollViewForDrives;
     @outlet CPScrollView            scrollViewForNics;
     @outlet CPSearchField           fieldFilterDrives;
@@ -155,6 +153,7 @@ function generateMacAddr()
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
     CPString                        _stringXMLDesc;
+    CPDictionary                    _supportedCapabilities;
 }
 
 - (void)awakeFromCib
@@ -322,6 +321,7 @@ function generateMacAddr()
     [buttonArchitecture removeAllItems];
     [buttonHypervisor removeAllItems];
     [buttonVNCKeymap removeAllItems];
+    [buttonMachines removeAllItems];
     [buttonOnPowerOff removeAllItems];
     [buttonOnReboot removeAllItems];
     [buttonOnCrash removeAllItems];
@@ -329,8 +329,7 @@ function generateMacAddr()
 
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
     [buttonNumberCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
-    [buttonArchitecture addItemsWithTitles:TNXMLDescArchs];
-    [buttonHypervisor addItemsWithTitles:TNXMLDescHypervisors];
+    //[buttonHypervisor addItemsWithTitles:TNXMLDescHypervisors];
     [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
     [buttonOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
     [buttonOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
@@ -357,6 +356,8 @@ function generateMacAddr()
     [_tableDrives setMenu:menuDrive];
     
     [fieldVNCPassword setSecure:YES];
+    
+    _supportedCapabilities = [CPDictionary dictionary];
 }
 
 
@@ -384,7 +385,8 @@ function generateMacAddr()
     
     [fieldStringXMLDesc setStringValue:@""];
     
-    [self getXMLDesc];
+    [self getCapabilities];
+    
 }
 
 - (void)willShow
@@ -425,7 +427,7 @@ function generateMacAddr()
     var date    = [somePushInfo objectForKey:@"date"];
     CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     
-    [self getXMLDesc];
+    [self getCapabilities];
     return YES;
 }
 
@@ -449,10 +451,11 @@ function generateMacAddr()
     var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
     var apic    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"];
     
+    _supportedCapabilities = [CPDictionary dictionary];
+    
     [buttonNumberCPUs selectItemWithTitle:cpu];
     [fieldMemory setStringValue:mem];
     [fieldVNCPassword setStringValue:@""];
-    [buttonArchitecture selectItemWithTitle:arch];
     [buttonVNCKeymap selectItemWithTitle:vnck];
     [buttonOnPowerOff selectItemWithTitle:opo];
     [buttonOnReboot selectItemWithTitle:or];
@@ -488,15 +491,17 @@ function generateMacAddr()
 
 - (TNStropheStanza)generateXMLDescStanzaWithUniqueID:(CPNumber)anUid
 {
-    var memory      = "" + [fieldMemory intValue] * 1024 + ""; //put it into kb and make a string like a pig
-    var arch        = [buttonArchitecture title];
-    var hypervisor  = [buttonHypervisor title];
-    var nCPUs       = [buttonNumberCPUs title];
-    var boot        = [buttonBoot title];
-    var nics        = [_nicsDatasource content];
-    var drives      = [_drivesDatasource content];
+    var memory          = "" + [fieldMemory intValue] * 1024 + ""; //put it into kb and make a string like a pig
+    var arch            = [buttonArchitecture title];
+    var machine         = [buttonMachines title];
+    var hypervisor      = [buttonHypervisor title];
+    var nCPUs           = [buttonNumberCPUs title];
+    var boot            = [buttonBoot title];
+    var nics            = [_nicsDatasource content];
+    var drives          = [_drivesDatasource content];
     
-    var stanza      = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid, "type": "set"}];
+    var capabilities    = [_supportedCapabilities objectForKey:arch];
+    var stanza          = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": anUid, "type": "set"}];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{
@@ -519,13 +524,22 @@ function generateMacAddr()
     [stanza addChildName:@"currentMemory"];
     [stanza addTextNode:memory];
     [stanza up];
+    
+    if ([checkboxHugePages state] == CPOnState)
+    {
+        [stanza addChildName:@"memoryBacking"]
+        [stanza addChildName:@"hugepages"];
+        [stanza up];
+        [stanza up];
+    }
+    
 
     [stanza addChildName:@"vcpu"];
     [stanza addTextNode:nCPUs];
     [stanza up];
 
     [stanza addChildName:@"os"];
-    [stanza addChildName:@"type" withAttributes:{"machine": "pc-0.11", "arch": arch}]
+    [stanza addChildName:@"type" withAttributes:{"machine": machine, "arch": arch}]
     [stanza addTextNode:@"hvm"];
     [stanza up];
     [stanza addChildName:@"boot" withAttributes:{"dev": boot}]
@@ -546,7 +560,7 @@ function generateMacAddr()
     
     // FEATURES
     [stanza addChildName:@"features"];
-
+    
     if ([checkboxPAE state] == CPOnState)
     {
         [stanza addChildName:TNXMLDescFeaturePAE];
@@ -564,7 +578,7 @@ function generateMacAddr()
         [stanza addChildName:TNXMLDescFeatureAPIC];
         [stanza up];
     }
-
+    
     [stanza up];
 
     //Clock
@@ -575,22 +589,22 @@ function generateMacAddr()
     }
     
     
-    // Deviaces
+    // Devices
     [stanza addChildName:@"devices"];
 
-    if (hypervisor == TNXMLDescHypervisorKVM)
-    {
-        [stanza addChildName:@"emulator"];
-        [stanza addTextNode:@"/usr/bin/kvm"];
-        [stanza up];
-    }
-    if (hypervisor == TNXMLDescHypervisorQemu)
-    {
-        [stanza addChildName:@"emulator"];
-        [stanza addTextNode:@"/usr/bin/qemu"];
-        [stanza up];
-    }
+    // emulator
+    var emulator;
+    [stanza addChildName:@"emulator"];
+    if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"emulator"])
+        emulator = [[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"emulator"];
+    else
+        emulator = [capabilities objectForKey:@"emulator"];
+        
+    [stanza addTextNode:emulator];
+    [stanza up];
 
+
+    // drives
     for (var i = 0; i < [drives count]; i++)
     {
         var drive = [drives objectAtIndex:i];
@@ -607,7 +621,8 @@ function generateMacAddr()
         [stanza up];
         [stanza up];
     }
-
+    
+    // nics
     for (var i = 0; i < [nics count]; i++)
     {
         var nic     = [nics objectAtIndex:i];
@@ -661,6 +676,108 @@ function generateMacAddr()
     return stanza;
 }
 
+// XML Capabilities
+- (void)getCapabilities
+{
+    var stanza   = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineDefinitionCapabilities}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLCapabilities:) ofObject:self];
+}
+
+
+- (void)didReceiveXMLCapabilities:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        var guests = [aStanza childrenWithName:@"guest"];
+        _supportedCapabilities = [CPDictionary dictionary];
+        
+        for (var i = 0; i < [guests count]; i++)
+        {
+            var guest               = [guests objectAtIndex:i];
+            var osType              = [[guest firstChildWithName:@"os_type"] text];
+            var arch                = [[guest firstChildWithName:@"arch"] valueForAttribute:@"name"];
+            var emulator            = [[[guest firstChildWithName:@"arch"] firstChildWithName:@"emulator"] text];
+            var features            = [guest firstChildWithName:@"features"];
+            var supportNonPAE       = NO;
+            var supportPAE          = NO;
+            var supportACPI         = NO;
+            var supportAPIC         = NO;
+            var domains             = [guest childrenWithName:@"domain"];
+            var domainsDict         = [CPDictionary dictionary];
+            var defaultMachines     = [CPArray array];
+            var defaultMachinesNode = [[guest firstChildWithName:@"arch"] ownChildrenWithName:@"machine"];
+            
+            for (var j = 0; j < [defaultMachinesNode count]; j++)
+            {
+                var machine = [defaultMachinesNode objectAtIndex:j];
+                if (![defaultMachinesNode containsObject:[machine text]])
+                    [defaultMachines addObject:[machine text]];
+            }
+            CPLog.debug('-----------------------------');
+            CPLog.debug(defaultMachines);
+            CPLog.debug('-----------------------------');
+            
+            if (domains)
+            {
+                for (var j = 0; j < [domains count]; j++)
+                {
+                    var domain          = [domains objectAtIndex:j];
+                    var machines        = [CPArray array];
+                    var machinesNode    = [domain childrenWithName:@"machine"];
+                    var domEmulator     = nil;
+                    var dict            = [CPDictionary dictionary];
+                    
+                    if ([domain containsChildrenWithName:@"emulator"])
+                        domEmulator = [[domain firstChildWithName:@"emulator"] text];
+                    
+                    if ([machinesNode count] == 0)
+                        machines = defaultMachines;
+                    else
+                        for (var k = 0; k < [machinesNode count]; k++)
+                        {
+                            var machine = [machinesNode objectAtIndex:k];
+                            [machines addObject:[machine text]];
+                        }
+                    
+                    [dict setObject:domEmulator forKey:@"emulator"];
+                    [dict setObject:machines forKey:@"machines"];
+                    
+                    [domainsDict setObject:dict forKey:[domain valueForAttribute:@"type"]]
+                }
+            }
+            
+            if (features)
+            {
+                supportNonPAE   = [features containsChildrenWithName:@"pae"];
+                supportPAE      = [features containsChildrenWithName:@"nonpae"];
+                supportACPI     = [features containsChildrenWithName:@"acpi"];
+                supportAPIC     = [features containsChildrenWithName:@"apic"];
+            }
+            
+            var cap = [CPDictionary dictionaryWithObjectsAndKeys:   supportPAE,         @"PAE", 
+                                                                    supportNonPAE,      @"NONPAE",
+                                                                    supportAPIC,        @"APIC",
+                                                                    supportACPI,        @"ACPI",
+                                                                    emulator,           @"emulator",
+                                                                    domainsDict,        @"domains"];
+            
+            [_supportedCapabilities setObject:cap forKey:arch];
+        }
+        CPLog.debug(_supportedCapabilities);
+        
+        [self getXMLDesc];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+    
+}
 
 //  XML Desc
 - (void)getXMLDesc
@@ -674,14 +791,16 @@ function generateMacAddr()
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
 
-- (void)didReceiveXMLDesc:(id)aStanza
+- (void)didReceiveXMLDesc:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"result")
     {
         var domain          = [aStanza firstChildWithName:@"domain"];
         var hypervisor      = [domain valueForAttribute:@"type"];
         var memory          = [[domain firstChildWithName:@"currentMemory"] text];
+        var memoryBacking   = [domain firstChildWithName:@"memoryBacking"];
         var arch            = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"arch"];
+        var machine         = [[[domain firstChildWithName:@"os"] firstChildWithName:@"type"] valueForAttribute:@"machine"];
         var vcpu            = [[domain firstChildWithName:@"vcpu"] text];
         var boot            = [[domain firstChildWithName:@"boot"] valueForAttribute:@"dev"];
         var interfaces      = [domain childrenWithName:@"interface"];
@@ -692,6 +811,40 @@ function generateMacAddr()
         var onCrash         = [domain firstChildWithName:@"on_crash"];
         var features        = [domain firstChildWithName:@"features"];
         var clock           = [domain firstChildWithName:@"clock"];
+        var capabilities    = [_supportedCapabilities objectForKey:arch];
+        var shouldRefresh   = NO;
+        
+        [buttonArchitecture removeAllItems];
+        [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
+         if ([buttonArchitecture indexOfItemWithTitle:arch] == -1)
+         {
+             [buttonArchitecture selectItemAtIndex:0];
+             shouldRefresh = YES;
+         }
+        else
+            [buttonArchitecture selectItemWithTitle:arch];
+        
+        [buttonHypervisor removeAllItems];
+        [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
+        if ([buttonHypervisor indexOfItemWithTitle:hypervisor] == -1)
+        {
+            [buttonHypervisor selectItemAtIndex:0];
+            shouldRefresh = YES;
+        }
+        else
+            [buttonHypervisor selectItemWithTitle:hypervisor];
+        
+        [buttonMachines removeAllItems];
+        [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"]];
+        if ([buttonMachines indexOfItemWithTitle:machine] == -1)
+        {
+            [buttonMachines selectItemAtIndex:0];
+            shouldRefresh = YES;
+        }
+        else
+            [buttonMachines selectItemWithTitle:machine];
+        
+        
         
         _stringXMLDesc      = [[aStanza firstChildWithName:@"domain"] stringValue];
         _stringXMLDesc      = _stringXMLDesc.replace("\n  \n", "\n");
@@ -743,20 +896,54 @@ function generateMacAddr()
             [buttonOnPowerOff selectItemWithTitle:@"Default"];
         
         // features
+        [checkboxAPIC setEnabled:NO];
         [checkboxAPIC setState:CPOffState];
-        [checkboxACPI setState:CPOffState];
-        [checkboxPAE setState:CPOffState];
-        if (features)
+        if ([capabilities containsKey:@"APIC"] && [capabilities objectForKey:@"APIC"])
         {
-            if ([features firstChildWithName:TNXMLDescFeaturePAE])
-                [checkboxPAE setState:CPOnState];
-
-            if ([features firstChildWithName:TNXMLDescFeatureACPI])
-                [checkboxACPI setState:CPOnState];
-
-            if ([features firstChildWithName:TNXMLDescFeatureAPIC])
+            [checkboxAPIC setEnabled:YES];
+            
+            if (features && [features containsChildrenWithName:TNXMLDescFeatureAPIC])
                 [checkboxAPIC setState:CPOnState];
         }
+        
+        [checkboxACPI setEnabled:NO];
+        [checkboxACPI setState:CPOffState];
+        if ([capabilities containsKey:@"ACPI"] && [capabilities objectForKey:@"ACPI"])
+        {
+            [checkboxACPI setEnabled:YES];
+            
+            if (features && [features containsChildrenWithName:TNXMLDescFeatureACPI])
+                [checkboxACPI setState:CPOnState];
+        }
+        
+        [checkboxPAE setEnabled:NO];
+        [checkboxPAE setState:CPOffState];
+        CPLog(capabilities);
+        if ([capabilities containsKey:@"PAE"] && ![capabilities containsKey:@"NONPAE"])
+        {
+            [checkboxPAE setState:CPOnState];
+        }
+        else if (![capabilities containsKey:@"PAE"] && [capabilities containsKey:@"NONPAE"])
+        {
+            [checkboxPAE setState:CPOffState];
+        }
+        else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"] 
+            && [capabilities containsKey:@"NONPAE"] && [capabilities objectForKey:@"NONPAE"])
+        {
+            [checkboxPAE setEnabled:YES];
+            if (features && [features containsChildrenWithName:TNXMLDescFeaturePAE])
+                [checkboxPAE setState:CPOnState];
+        }
+        
+        
+        // huge pages
+        [checkboxHugePages setState:CPOffState];
+        if (memoryBacking)
+        {
+            if ([memoryBacking containsChildrenWithName:@"hugepages"])
+                [checkboxHugePages setState:CPOnState];
+        }
+        
         
         //clock
         if ((hypervisor == TNXMLDescHypervisorKVM) || (hypervisor == TNXMLDescHypervisorQemu) || (hypervisor == TNXMLDescHypervisorKQemu))
@@ -810,6 +997,11 @@ function generateMacAddr()
             [_drivesDatasource addObject:newDrive];
         }
         [_tableDrives reloadData];
+        
+        // if automatic changes has been done while changing arch, hypervisor etc, 
+        // redefine virtual machine
+        if (shouldRefresh)
+            [self defineXML:nil];
     }
     else if ([aStanza getType] == @"error")
     {

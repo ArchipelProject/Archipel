@@ -136,11 +136,11 @@ def main():
     if opt_should_remove_modules:
         remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths);
     
-    if opt_build_native:
-        make_native_app(opt_build_native, opt_build_config);
-    
     if opt_should_generate_plist:
         generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths);
+    
+    if opt_build_native:
+        make_native_app(opt_build_native, opt_build_config);    
     
     if opt_export_sdk_path:
         export_sdk(opt_export_sdk_path);
