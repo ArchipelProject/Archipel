@@ -467,9 +467,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
     var vCard   = [[aNotification object] vCard];
-    // console.log("----------------------------------------------------")
-    // console.log(vCard);
-    // console.log("----------------------------------------------------")
+    
     if ([vCard text] != [[_entity vCard] text])
     {
         _moduleType = [self analyseVCard:vCard];
@@ -532,7 +530,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     var cpdata = [CPData dataWithRawString:data];
 
-    CPLog.info("Module.plist recovered");
+    CPLog.info(@"Module.plist recovered");
 
     _modulesPList = [cpdata plistObject];
     
@@ -612,37 +610,39 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
     var moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
     var supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
+    var useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"];
     var moduleItem                  = [[CPMenuItem alloc] init];
     var moduleRootMenu              = [[CPMenu alloc] init];
     var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
     var frame                       = [_mainModuleView bounds];
     
-    [moduleItem setTitle:moduleLabel];
-    
-    [_modulesMenu setAutoenablesItems:NO];
-    
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
     [currentModuleController setBundle:aBundle];
-    
-    [moduleItem setTarget:currentModuleController];
-    [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
-    
-    [currentModuleController setMenuItem:moduleItem];
-    [currentModuleController setMenu:moduleRootMenu];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
-    [currentModuleController menuReady];
     
-    [moduleItem setEnabled:NO];
+    if (useMenu)
+    {
+        [moduleItem setTitle:moduleLabel];
+        [_modulesMenu setAutoenablesItems:NO];
+        [moduleItem setTarget:currentModuleController];
+        [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
+        [currentModuleController setMenuItem:moduleItem];
+        [currentModuleController setMenu:moduleRootMenu];
+        [currentModuleController menuReady];
+        
+        [moduleItem setEnabled:NO];
+        
+        if (![_modulesMenuItems containsKey:supportedTypes])
+            [_modulesMenuItems setObject:[CPArray array] forKey:supportedTypes];
+        
+        [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
+    }
     
     [_loadedTabModules addObject:currentModuleController];
     
-    if (![_modulesMenuItems containsKey:supportedTypes])
-        [_modulesMenuItems setObject:[CPArray array] forKey:supportedTypes];
-        
-    [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
 }
 
 - (void)manageToolbarItemLoad:(CPBundle)aBundle

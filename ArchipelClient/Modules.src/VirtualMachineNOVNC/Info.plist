@@ -26,6 +26,9 @@
         <array>
             <string>virtualmachine</string>
         </array>
+        <key>UseModuleMenu</key>
+		<integer>0</integer>
+        
         <key>NOVNCPreferSSL</key>
         <integer>1</integer>
     </dict>

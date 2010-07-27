@@ -25,7 +25,10 @@
 			<string>user</string>
 			<string>hypervisor</string>
 			<string>virtualmachine</string> 
-		</array>		
+		</array>
+		<key>UseModuleMenu</key>
+		<integer>1</integer>
+        	
         <key>CibName</key>
         <string>UserChat</string>
         

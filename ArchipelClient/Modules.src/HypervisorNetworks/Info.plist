@@ -23,7 +23,9 @@
 		<key>SupportedEntityTypes</key>
 		<array>
 		    <string>hypervisor</string>
-		</array>		
+		</array>
+		<key>UseModuleMenu</key>
+		<integer>1</integer>	
         <key>CibName</key>
         <string>HypervisorNetworks</string>
     </dict>

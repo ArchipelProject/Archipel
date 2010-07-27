@@ -73,6 +73,9 @@
             <string>virtualmachine</string>
         </array>
         
+        <key>UseModuleMenu</key>
+		<integer>1</integer>
+        
         <!--
             This indicate to the module loader which CIB to load.
             It must be the fileName without the .cib extension

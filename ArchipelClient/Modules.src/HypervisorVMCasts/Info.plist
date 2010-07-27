@@ -37,6 +37,9 @@
             <string>hypervisor</string>
         </array>
         
+        <key>UseModuleMenu</key>
+		<integer>1</integer>
+        
         <key>CibName</key>
         <string>HypervisorVMCasts</string>
     </dict>

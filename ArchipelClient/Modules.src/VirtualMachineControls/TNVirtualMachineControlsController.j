@@ -284,8 +284,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     [[_menu addItemWithTitle:@"Start" action:@selector(play:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Shutdown" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Pause" action:@selector(pause:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Resume" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Pause / Resume" action:@selector(pause:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Reboot" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Destroy" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
@@ -296,7 +295,7 @@ TNArchipelTransportBarReboot    = 4;
     var type    = [somePushInfo objectForKey:@"type"];
     var change  = [somePushInfo objectForKey:@"change"];
     var date    = [somePushInfo objectForKey:@"date"];
-    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     
     [self checkIfRunning];
     return YES;
@@ -309,16 +308,16 @@ TNArchipelTransportBarReboot    = 4;
     switch(command)
     {
         case TNArchipelControlPlay:
-            [self play];
+            [self play:nil];
             break;
         case (TNArchipelControlSuspend || TNArchipelControlResume):
-            [self pause];
+            [self pause:nil];
             break;
         case TNArchipelControlReboot:
-            [self reboot];
+            [self reboot:nil];
             break;
         case TNArchipelControlStop:
-            [self stop];
+            [self stop:nil];
             break;
     }
 }

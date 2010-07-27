@@ -87,8 +87,7 @@ var gmNamespace = nil;
     
     // for some things the current google namespace needs to be used...
     var localGmNamespace = domWin.google.maps;
-
-    //console.log("Creating map");
+    
     _gMap = new localGmNamespace.Map2(_DOMMapElement);
     //_gMap.addMapType(G_SATELLITE_3D_MAP);
     _gMap.setMapType(localGmNamespace.G_PHYSICAL_MAP);

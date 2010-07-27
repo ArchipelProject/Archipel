@@ -69,7 +69,7 @@ TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 {
     var center = [CPNotificationCenter defaultCenter];
     
-    CPLog.info("Sending TNArchipelControlNotification with command TNArchipelControlSuspend");
+    CPLog.info(@"Sending TNArchipelControlNotification with command TNArchipelControlSuspend");
     [center postNotificationName:TNArchipelControlNotification object:self userInfo:TNArchipelControlSuspend];
 }
 

@@ -26,6 +26,8 @@
 		</array>		
         <key>CibName</key>
         <string>VirtualMachineControls</string>
+        <key>UseModuleMenu</key>
+		<integer>1</integer>
         
         <key>TNArchipelControlsMaxVCPUs</key>
         <integer>4</integer>

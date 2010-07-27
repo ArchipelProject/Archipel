@@ -165,7 +165,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     {
         var registrarItem = [CPDictionary dictionary];
         
-        CPLog.info([self class] + " is registring for push notification of type : " + aPushType);
+        CPLog.info([self class] + @" is registring for push notification of type : " + aPushType);
         [registrarItem setValue:aSelector forKey:@"selector"];
         [registrarItem setValue:aPushType forKey:@"type"];
         
@@ -186,8 +186,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     
     [self registerToPubSubEvents];
     [_menuItem setEnabled:YES];
-    
-    CPLog.info("WILLLOAD---------------------------->" + [_menuItem isEnabled]);
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -212,8 +210,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [center removeObserver:self];
     
     _isActive = NO;
-    
-    CPLog.info("WILLUNLOAD---------------------------->" + [_menuItem isEnabled]);
 }
 
 /*! This message is sent when module will be displayed

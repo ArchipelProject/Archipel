@@ -24,6 +24,8 @@
         <array>
             <string>group</string>
         </array>
+        <key>UseModuleMenu</key>
+		<integer>1</integer>
         <key>CibName</key>
         <string>GroupManagement</string>
     </dict>

@@ -141,7 +141,7 @@
     [connectButton setEnabled:YES];
     [message setStringValue:@"Connection failed."];
 
-    CPLog.info("XMPP connection failed");
+    CPLog.info(@"XMPP connection failed");
 }
 
 /*! delegate of TNStropheConnection
@@ -151,7 +151,7 @@
 {
     [message setStringValue:@"Authenticating..."];
 
-    CPLog.info("XMPP authenticating...");
+    CPLog.info(@"XMPP authenticating...");
 }
 
 /*! delegate of TNStropheConnection
@@ -163,7 +163,7 @@
     [connectButton setEnabled:YES];
     [message setStringValue:@"Authentication failed."];
 
-    CPLog.info("XMPP auth failed");
+    CPLog.info(@"XMPP auth failed");
 }
 
 /*! delegate of TNStropheConnection
@@ -175,7 +175,7 @@
     [connectButton setEnabled:YES];
     [message setStringValue:@"Unknown error."];
 
-    CPLog.info("XMPP unknown error");
+    CPLog.info(@"XMPP unknown error");
 }
 
 -(void) onStropheDisconnecting:(TNStropheConnection)aStrophe
@@ -184,7 +184,7 @@
     [connectButton setEnabled:NO];
     [message setStringValue:@"Disconnecting."];
 
-   CPLog.info("XMPP is disconnecting");
+   CPLog.info(@"XMPP is disconnecting");
 }
 
 /*! delegate of TNStropheConnection
@@ -197,6 +197,6 @@
     [connectButton setEnabled:YES];
     [message setStringValue:@"Disconnected."];
     
-    CPLog.info("XMPP connection is now disconnected");
+    CPLog.info(@"XMPP connection is now disconnected");
 }
 @end

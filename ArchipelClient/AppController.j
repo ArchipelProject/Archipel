@@ -466,7 +466,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 */
 - (void)moduleLoader:(TNModuleLoader)aLoader hasLoadBundle:(CPBundle)aBundle
 {
-    CPLog.info("Bundle loaded : " + aBundle);
+    CPLog.info(@"Bundle loaded : " + aBundle);
     [textFieldLoadedBundle setStringValue:@"Sucessfully loaded " + [aBundle objectForInfoDictionaryKey:@"CPBundleName"]];
 }
 
@@ -807,7 +807,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [presence up]
     [presence addChildName:@"show"];
     [presence addTextNode:XMPPShow];
-    CPLog.info("Changing presence to " + statusLabel + ":" + XMPPShow);
+    CPLog.info(@"Changing presence to " + statusLabel + ":" + XMPPShow);
     
     var growl = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
@@ -1122,7 +1122,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     copy.style.bottom = "8px";
     copy.style.left = "50%";
     copy.style.textAlign = "center";
-    copy.style.marginLeft = "-250px";
+    copy.style.marginLeft = "-350px";
     copy.style.textShadow = "0px 1px 0px white";
     copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);

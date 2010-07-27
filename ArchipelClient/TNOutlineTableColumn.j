@@ -250,24 +250,7 @@
     var bundle  = [CPBundle mainBundle];
     var center  = [CPNotificationCenter defaultCenter];
     
-    // [_syncButton setImage:_syncImage];
     [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:_contact];
-    
-    // _entityType = [self analyseEntity:_contact];
-    // 
-    // if ([self analyseEntity:_contact] == TNArchipelEntityTypeVirtualMachine)
-    // {
-    //     console.log([self analyseEntity:_contact]);
-    //     
-    //     [_pauseButton setHidden:NO];
-    //     [_playButton setHidden:NO];
-    // }
-    // else
-    // {
-    //     console.log([self analyseEntity:_contact]);
-    //     [_pauseButton setHidden:YES];
-    //     [_playButton setHidden:YES];
-    // }
 }
 
 
@@ -285,11 +268,6 @@
            [_events setBackgroundColor:_selectedStateCartoucheColor];
     if (aState == CPThemeStateNormal)
            [_events setBackgroundColor:_normalStateCartoucheColor];
-       
-    // if ((aState == CPThemeStateSelectedDataView) && ([_contact XMPPShow] != TNStropheContactStatusOffline) && ([_events isHidden] == YES))
-    //     [_syncButton setHidden:NO];
-    // else
-    //     [_syncButton setHidden:YES];
 }
 
 /*! implement theming in order to allow change color of selected item

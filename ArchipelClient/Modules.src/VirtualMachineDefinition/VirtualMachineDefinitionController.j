@@ -439,7 +439,7 @@ function generateMacAddr()
     var type    = [somePushInfo objectForKey:@"type"];
     var change  = [somePushInfo objectForKey:@"change"];
     var date    = [somePushInfo objectForKey:@"date"];
-    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     
     [self getCapabilities];
     return YES;
@@ -738,9 +738,6 @@ function generateMacAddr()
                 if (![defaultMachinesNode containsObject:[machine text]])
                     [defaultMachines addObject:[machine text]];
             }
-            CPLog.debug('-----------------------------');
-            CPLog.debug(defaultMachines);
-            CPLog.debug('-----------------------------');
             
             if (domains)
             {
@@ -788,7 +785,6 @@ function generateMacAddr()
             
             [_supportedCapabilities setObject:cap forKey:arch];
         }
-        CPLog.debug(_supportedCapabilities);
         
         [self getXMLDesc];
     }
@@ -941,7 +937,7 @@ function generateMacAddr()
         
         [checkboxPAE setEnabled:NO];
         [checkboxPAE setState:CPOffState];
-        CPLog(capabilities);
+        
         if ([capabilities containsKey:@"PAE"] && ![capabilities containsKey:@"NONPAE"])
         {
             [checkboxPAE setState:CPOnState];
@@ -1043,11 +1039,7 @@ function generateMacAddr()
             [buttonHypervisor removeAllItems];
             [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
             [buttonHypervisor selectItemAtIndex:0];
-
-            CPLog.info("###################### " + [buttonHypervisor title]);
-            CPLog.info([capabilities objectForKey:@"domains"]);
-            CPLog.info("######################");
-
+            
             [buttonMachines removeAllItems];
             [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
             [buttonMachines selectItemAtIndex:0];
@@ -1225,7 +1217,6 @@ function generateMacAddr()
     }
     
      var selectedIndexes = [_tableDrives selectedRowIndexes];
-     CPLog.debug(selectedIndexes);
      
      [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
      

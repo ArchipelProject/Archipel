@@ -34,6 +34,10 @@
             <string>virtualmachine</string>
         </array>
         
+        <key>UseModuleMenu</key>
+		<integer>1</integer>
+        
+        
         <key>CibName</key>
         <string>VirtualMachineAppliances</string>
     </dict>

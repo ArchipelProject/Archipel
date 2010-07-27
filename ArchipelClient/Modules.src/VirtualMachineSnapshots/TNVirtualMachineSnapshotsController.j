@@ -221,7 +221,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     var type    = [somePushInfo objectForKey:@"type"];
     var change  = [somePushInfo objectForKey:@"change"];
     var date    = [somePushInfo objectForKey:@"date"];
-    CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
+    CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
         
     [self getSnapshots:nil];
     

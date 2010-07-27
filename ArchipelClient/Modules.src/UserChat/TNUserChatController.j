@@ -260,7 +260,7 @@
             [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
 
-            CPLog.info("message received : " + messageBody);
+            CPLog.info(@"message received : " + messageBody);
         }
     }
     else
