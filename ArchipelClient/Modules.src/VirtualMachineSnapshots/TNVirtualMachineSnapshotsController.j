@@ -198,6 +198,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [super willHide];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Take a snapshot" action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Revert to selected drive" action:@selector(revertSnapshot:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Delete selected snapshot" action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
+}
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
@@ -397,7 +404,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
         return;
     }
-                    
+    
+    if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+        return;
+    }
+    
     var alert = [TNAlert alertWithTitle:@"Delete to snapshot"
                                 message:@"Are you sure you want to destory this snapshot ? this is not reversible."
                                 delegate:self

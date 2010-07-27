@@ -161,6 +161,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [super willUnload];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Fit screen to window" action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Reset zoom" action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Open external VNC program" action:@selector(openDirectURI:) keyEquivalent:@""] setTarget:self];
+}
 
 
 - (void)didNickNameUpdated:(CPNotification)aNotification

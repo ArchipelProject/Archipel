@@ -203,6 +203,14 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [self getDisksInfo];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Create a drive" action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(openRenamePanel:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Delete selected drive" action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
+}
+
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
@@ -518,7 +526,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
     
     var alert = [TNAlert alertWithTitle:@"Delete to drive"
-                                message:@"Are you sure you want to destory this drive ? this is not reversible."
+                                message:@"Are you sure you want to destroy this drive ? this is not reversible."
                                 delegate:self
                                  actions:[["Delete", @selector(performRemoveDisk:)], ["Cancel", nil]]];
     [alert runModal];

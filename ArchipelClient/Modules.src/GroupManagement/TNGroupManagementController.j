@@ -186,6 +186,17 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [super willHide];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Start selected virtual machines" action:@selector(create:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Shutdown selected virtual machines" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Pause selected virtual machines" action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Resume selected virtual machines" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Reboot selected virtual machines" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Destroy selected virtual machines" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+}
+
+
 - (void)didVirtualMachineDoubleClick:(id)sender
 {
     var selectedIndexes = [_tableVirtualMachines selectedRowIndexes];

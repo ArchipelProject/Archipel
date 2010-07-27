@@ -182,6 +182,14 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [super willHide];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Attach selected appliance" action:@selector(attach:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Dettach from selected appliance" action:@selector(detach:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Create appliance from this virtual machine" action:@selector(package:) keyEquivalent:@""] setTarget:self];
+}
+
 - (void)checkIfRunning
 {
     if ([_entity XMPPShow] == TNStropheContactStatusBusy)

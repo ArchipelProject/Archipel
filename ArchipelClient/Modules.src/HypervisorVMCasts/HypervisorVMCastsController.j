@@ -200,6 +200,16 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     // message sent when the tab is changed
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Register to a new VMCasts" action:@selector(openNewVMCastURLWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Unregister from selected VMCast" action:@selector(removeVMCast:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Download selected appliance" action:@selector(download:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Remove selected appliance" action:@selector(removeAppliance:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Show activity monitor" action:@selector(showDownloadQueue:) keyEquivalent:@""] setTarget:self];
+}
 
 
 - (IBAction)fieldFilterDidChange:(id)sender

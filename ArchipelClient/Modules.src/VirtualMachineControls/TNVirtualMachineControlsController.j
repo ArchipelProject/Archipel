@@ -280,6 +280,15 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Start" action:@selector(play:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Shutdown" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Pause" action:@selector(pause:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Resume" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Reboot" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Destroy" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+}
 
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
@@ -467,24 +476,24 @@ TNArchipelTransportBarReboot    = 4;
     switch(segment)
     {
         case TNArchipelTransportBarPlay:
-            [self play];
+            [self play:sender];
             break;
         case TNArchipelTransportBarPause:
-            [self pause];
+            [self pause:sender];
             break;
         case TNArchipelTransportBarStop:
-            [self stop];
+            [self stop:sender];
             break;
         case TNArchipelTransportBarDestroy:
-            [self destroy];
+            [self destroy:sender];
             break;
         case TNArchipelTransportBarReboot:
-            [self reboot];
+            [self reboot:sender];
             break;
     }
 }
 
-- (void)play
+- (IBAction)play:(id)sender
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
@@ -515,7 +524,7 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-- (void)pause
+- (IBAction)pause:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
     var selector;
@@ -583,7 +592,7 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-- (void)stop
+- (IBAction)stop:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 
@@ -613,7 +622,7 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-- (void)destroy
+- (IBAction)destroy:(id)sender
 {
     var alert = [TNAlert alertWithTitle:@"Unplug Virtual Machine"
                                 message:@"Unplug this virtual machine ?"
@@ -659,7 +668,7 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-- (void)reboot
+- (IBAction)reboot:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 

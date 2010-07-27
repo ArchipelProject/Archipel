@@ -84,6 +84,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         _isActive           = NO;
         _isVisible          = NO;
         _pubsubRegistrar    = [CPArray array];
+        
     }
     
     return self;
@@ -185,6 +186,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     
     [self registerToPubSubEvents];
     [_menuItem setEnabled:YES];
+    
+    CPLog.info("WILLLOAD---------------------------->" + [_menuItem isEnabled]);
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -209,6 +212,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [center removeObserver:self];
     
     _isActive = NO;
+    
+    CPLog.info("WILLUNLOAD---------------------------->" + [_menuItem isEnabled]);
 }
 
 /*! This message is sent when module will be displayed

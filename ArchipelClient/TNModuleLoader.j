@@ -75,6 +75,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     TNToolbar               _mainToolbar                    @accessors(property=mainToolbar);
 
     CPArray                 _bundles;
+    CPDictionary            _modulesMenuItems;
     CPArray                 _loadedTabModules;
     CPDictionary            _loadedToolbarModules;
     CPString                _previousXMPPShow;
@@ -103,6 +104,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         _allModulesReady        = NO;
         _bundles                = [CPArray array];
         _loadedTabModules       = [CPArray array];
+        _modulesMenuItems       = [CPDictionary dictionary];
         _loadedToolbarModules   = [CPDictionary dictionary];
     }
 
@@ -565,10 +567,42 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [center postNotificationName:TNArchipelModulesLoadingCompleteNotification object:self];
         
         if ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
+        {
             [_delegate moduleLoaderLoadingComplete:self];
+            [self insertModulesMenuItems];
+        }
     }
 }
 
+- (void)insertModulesMenuItems
+{
+    var keys = [_modulesMenuItems allKeys];
+    for (var k = 0; k < [keys count] ; k++)
+    {
+        var key = [keys objectAtIndex:k]
+        var arr = [_modulesMenuItems objectForKey:key];
+        
+        var sortedItems = [arr sortedArrayUsingFunction:function(a, b, context){
+            var indexA = [a title];
+            var indexB = [b title];
+            if (indexA < indexB)
+                    return CPOrderedAscending;
+                else if (indexA > indexB)
+                    return CPOrderedDescending;
+                else
+                    return CPOrderedSame;
+        }];
+
+        for (var i = 0; i < [sortedItems count]; i++)
+        {
+            [_modulesMenu addItem:[sortedItems objectAtIndex:i]];
+        }
+        
+        if (k + 1 < [keys count])
+            [_modulesMenu addItem:[CPMenuItem separatorItem]];
+    }
+    
+}
 
 - (void)manageTabItemLoad:(CPBundle)aBundle
 {
@@ -578,18 +612,20 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
     var moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
     var supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-    var moduleItem                  = [_modulesMenu addItemWithTitle:moduleLabel action:nil keyEquivalent:@""];
-    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+    var moduleItem                  = [[CPMenuItem alloc] init];
     var moduleRootMenu              = [[CPMenu alloc] init];
+    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
     var frame                       = [_mainModuleView bounds];
     
+    [moduleItem setTitle:moduleLabel];
+    
+    [_modulesMenu setAutoenablesItems:NO];
     
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
     [currentModuleController setBundle:aBundle];
-
-    [moduleItem setEnabled:NO];
+    
     [moduleItem setTarget:currentModuleController];
     [_modulesMenu setSubmenu:moduleRootMenu forItem:moduleItem];
     
@@ -599,8 +635,14 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     [currentModuleController setIndex:moduleTabIndex];
     [currentModuleController menuReady];
     
+    [moduleItem setEnabled:NO];
+    
     [_loadedTabModules addObject:currentModuleController];
     
+    if (![_modulesMenuItems containsKey:supportedTypes])
+        [_modulesMenuItems setObject:[CPArray array] forKey:supportedTypes];
+        
+    [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
 }
 
 - (void)manageToolbarItemLoad:(CPBundle)aBundle

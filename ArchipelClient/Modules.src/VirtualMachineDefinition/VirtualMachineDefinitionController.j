@@ -410,6 +410,20 @@ function generateMacAddr()
     [self setDefaultValues];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Undefine" action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Add drive" action:@selector(addDrive:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(editDrive:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Add network card" action:@selector(addNetworkCard:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Edit selected network card" action:@selector(editNetworkCard:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
+}
+
+
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
@@ -446,6 +460,7 @@ function generateMacAddr()
     var opo     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"];
     var or      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"];
     var oc      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"];
+    var hp      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"];
     var clock   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"];
     var pae     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"];
     var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
@@ -454,7 +469,7 @@ function generateMacAddr()
     _supportedCapabilities = [CPDictionary dictionary];
     
     [buttonNumberCPUs selectItemWithTitle:cpu];
-    [fieldMemory setStringValue:mem];
+    [fieldMemory setStringValue:@""];
     [fieldVNCPassword setStringValue:@""];
     [buttonVNCKeymap selectItemWithTitle:vnck];
     [buttonOnPowerOff selectItemWithTitle:opo];
@@ -464,6 +479,11 @@ function generateMacAddr()
     [checkboxPAE setState:(pae == 1) ? CPOnState : CPOffState];
     [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
     [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
+    [checkboxHugePages setState:(hp == 1) ? CPOnState : CPOffState];
+    
+    [buttonMachines removeAllItems];
+    [buttonHypervisor removeAllItems];
+    [buttonArchitecture removeAllItems];
     
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
@@ -814,18 +834,21 @@ function generateMacAddr()
         var capabilities    = [_supportedCapabilities objectForKey:arch];
         var shouldRefresh   = NO;
         
+        
         [buttonArchitecture removeAllItems];
         [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
-         if ([buttonArchitecture indexOfItemWithTitle:arch] == -1)
-         {
-             [buttonArchitecture selectItemAtIndex:0];
-             shouldRefresh = YES;
-         }
+        if ([buttonArchitecture indexOfItemWithTitle:arch] == -1)
+        {
+            [buttonArchitecture selectItemAtIndex:0];
+            shouldRefresh = YES;
+        }
         else
             [buttonArchitecture selectItemWithTitle:arch];
         
+        
         [buttonHypervisor removeAllItems];
         [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
+        
         if ([buttonHypervisor indexOfItemWithTitle:hypervisor] == -1)
         {
             [buttonHypervisor selectItemAtIndex:0];
@@ -1005,7 +1028,34 @@ function generateMacAddr()
     }
     else if ([aStanza getType] == @"error")
     {
-        [self handleIqErrorFromStanza:aStanza];
+        if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] == "not-defined")
+        {
+            [checkboxAPIC setEnabled:NO];
+            [checkboxACPI setEnabled:NO];
+            [checkboxPAE setEnabled:NO];
+            
+            [buttonArchitecture removeAllItems];
+            [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
+            [buttonArchitecture selectItemAtIndex:0];
+            
+            var capabilities = [_supportedCapabilities objectForKey:[buttonArchitecture title]];
+            
+            [buttonHypervisor removeAllItems];
+            [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
+            [buttonHypervisor selectItemAtIndex:0];
+
+            CPLog.info("###################### " + [buttonHypervisor title]);
+            CPLog.info([capabilities objectForKey:@"domains"]);
+            CPLog.info("######################");
+
+            [buttonMachines removeAllItems];
+            [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
+            [buttonMachines selectItemAtIndex:0];
+        }
+        else
+        {
+            [self handleIqErrorFromStanza:aStanza];
+        }
     }
 }
 
@@ -1057,6 +1107,44 @@ function generateMacAddr()
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
+
+- (IBAction)undefineXML:(id)sender
+{
+        var alert = [TNAlert alertWithTitle:@"Undefine virtual machine"
+                                    message:@"Are you sure you want to undefine this virtual machine ?"
+                         informativeMessage:@"All your changes will be definitly lost."
+                                    delegate:self
+                                     actions:[["Undefine", @selector(performUndefineXML:)], ["Cancel", nil]]];
+        [alert runModal];
+    }
+
+- (void)performUndefineXML:(id)someUserInfo
+{
+    var stanza   = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didUndefineXML:) ofObject:self];
+}
+
+- (void)didUndefineXML:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Virtual machine" message:@"Virtual machine has been undefined"];
+        [self setDefaultValues];
+        [self getCapabilities];
+    }
+    else if ([aStanza getType] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
 
 
 - (IBAction)addNetworkCard:(id)sender

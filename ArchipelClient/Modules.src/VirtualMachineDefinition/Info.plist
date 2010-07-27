@@ -53,6 +53,8 @@
 		<integer>0</integer>
 		<key>TNDescDefaultAPIC</key>
 		<integer>0</integer>
+		<key>TNDescDefaultHugePages</key>
+		<integer>0</integer>
 		
     </dict>
 </plist>

@@ -296,6 +296,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.domain = None;
+                self.description = None;
             
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
@@ -305,7 +307,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         except Exception as ex:
             self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
-            self.libvirt_status = self.info()["state"]
+            if not event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED and not event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
+                self.libvirt_status = self.info()["state"]
             self.unlock()
     
     
@@ -696,8 +699,14 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def undefine(self):
+        #I though I was dumb myself. But test only self.libvirt_event_callback_id doesn't work if id is 0 ;)
+        if not self.libvirt_event_callback_id is None:
+            self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
+            self.libvirt_event_callback_id = None;
         self.domain.undefine()
+        self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
         self.definition = None;
+        self.domain = None;
     
     
     def undefine_and_disconnect(self):
@@ -1160,7 +1169,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         reply = iq.buildReply("result")
         try:
             if not self.domain:
-                return iq.buildReply('ignore')
+                raise Exception("not-defined")
             xmldescnode = self.xmldesc()
             reply.setQueryPayload([xmldescnode])
         except libvirt.libvirtError as ex:

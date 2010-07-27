@@ -209,6 +209,17 @@ function generateIPForNewNetwork()
     [fieldJID setStringValue:[[self entity] JID]];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Edit selected network" action:@selector(editNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Delete selected network" action:@selector(delNetwork:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Activate this network" action:@selector(activateNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Deactivate this network" action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
+}
+
+
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
     if ([aNotification object] == [self entity])
@@ -386,6 +397,8 @@ function generateIPForNewNetwork()
 
     return stanza;
 }
+
+
 
 
 - (IBAction)editNetwork:(id)sender

@@ -166,6 +166,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [super willUnload];
 }
 
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Create new virtual machine" action:@selector(addVirtualMachine:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Delete virtual machine" action:@selector(deleteVirtualMachine:) keyEquivalent:@""] setTarget:self];
+    [_menu addItem:[CPMenuItem separatorItem]];
+    [[_menu addItemWithTitle:@"Clone this virtual machine" action:@selector(cloneVirtualMachine:) keyEquivalent:@""] setTarget:self];
+}
+
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"];
@@ -324,6 +332,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
+
 
 - (IBAction)deleteVirtualMachine:(id)sender
 {
