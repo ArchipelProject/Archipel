@@ -582,7 +582,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def info(self):
         dominfo     = self.domain.info()
-        autostart   = self.domain.autostart()
+        try:
+            autostart   = self.domain.autostart()
+        except:
+            autostart = 0
+        
         return {
             "state": dominfo[0], 
             "maxMem": dominfo[1], 
@@ -670,7 +674,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     def xmldesc(self):
         xmldesc = self.domain.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
         descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-        descnode.delChild("description")
+        
+        if descnode.getTag("description"):
+            descnode.delChild("description")
         return descnode
     
     

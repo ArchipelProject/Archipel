@@ -193,6 +193,7 @@ class TNArchipelBasicXMPPClient(object):
             self.pubSubNodeEvent.create()
         self.pubSubNodeEvent.configure({
             pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
             pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 10,
             pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
             pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
@@ -206,6 +207,7 @@ class TNArchipelBasicXMPPClient(object):
             self.pubSubNodeLog.create()
         self.pubSubNodeLog.configure({
                 pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
                 pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
                 pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
                 pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
@@ -245,7 +247,7 @@ class TNArchipelBasicXMPPClient(object):
         resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
         
         if resp_iq.getType() == "error":
-            self.log.error("unable to register : %s" % str(iq))
+            self.log.error("unable to register : %s" % str(resp_iq))
             sys.exit(-1)
             
         elif resp_iq.getType() == "result":

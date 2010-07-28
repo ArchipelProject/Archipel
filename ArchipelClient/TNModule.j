@@ -112,6 +112,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [params setValue:@"message" forKey:@"name"];
     [params setValue:@"headline" forKey:@"type"];
     [params setValue:{"matchBare": YES} forKey:@"options"];
+    [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
     // <message from="pubsub.virt-hyperviseur" type="headline" to="controller@virt-hyperviseur" >
     // <event xmlns="http://jabber.org/protocol/pubsub#event">
     // <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events" >
@@ -124,14 +125,14 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     // <header name="Collection" >/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events</header>
     // </headers>
     // </message>
-    [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
     
     [_registredSelectors addObject:[_connection registerSelector:@selector(onPubSubEvents:) ofObject:self withDict:params]];
-    
 }
 
 - (void)onPubSubEvents:(TNStropheStanza)aStanza
 {
+    CPLog.info("==========================> RAW PUBSUB EVENT RECIEVED!");
+    
     var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1];
     var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
     var pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"];

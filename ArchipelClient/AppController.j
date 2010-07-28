@@ -533,6 +533,8 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     
     [propertiesView hide];
     [_rosterOutlineView deselectAll];
+    
+    [self unregisterFromEventNodeOfJID:[contact JID] ofServer:@"pubsub." + [contact domain]];
 }
 
 
@@ -928,43 +930,87 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [_mainRoster answerAuthorizationRequest:stanza answer:YES];
     
     // evenually subscribe to event node of the entity
-    var pubSubServer        = "pubsub." + [stanza getDomain];
+    [self registerToEventNodeOfJID:[stanza getFrom] ofServer:@"pubsub." + [stanza getDomain]];
+}
+
+- (void)registerToEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
+{
+    var pubSubServer        = aServer;
     var uid                 = [[_mainRoster connection] getUniqueId];
     var nodeSubscribeStanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
     
     [nodeSubscribeStanza setTo:pubSubServer];
     [nodeSubscribeStanza addChildName:@"pubsub" withAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
     [nodeSubscribeStanza addChildName:@"subscribe" withAttributes:{
-        "node": "/archipel/" + [stanza getFrom].split("/")[0] + "/events",
+        "node": "/archipel/" + aJID.split("/")[0] + "/events",
         "jid": [[_mainRoster connection] JID],
     }];
     
     var params = [[CPDictionary alloc] init];
     [params setValue:uid forKey:@"id"];
+    
+    [[_mainRoster connection] registerSelector:@selector(didPubSubSubscribe:) ofObject:self withDict:params]
     [[_mainRoster connection] send:nodeSubscribeStanza];
+    
 }
 
-- (void)performUnsubscribe:(id)userInfo
+- (void)didPubSubSubscribe:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        CPLog.info("Sucessfully subscribed to pubsub event node of " + [aStanza getFrom]);
+    }
+    else
+    {
+        CPLog.error("unable to subscribe to pubsub");
+    }
+    
+    return NO;
+}
+
+- (BOOL)performUnsubscribe:(id)userInfo
 {
     var stanza = userInfo;
     [_mainRoster answerAuthorizationRequest:stanza answer:NO];
     
     // evenually unsubscribe to event node of the entity
-    var pubSubServer            = "pubsub." + [stanza getDomain];
+   [self unregisterFromEventNodeOfJID:[stanza getFrom] ofServer:@"pubsub." + [stanza getDomain]];
+}
+
+- (void)unregisterFromEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
+{
+    var pubSubServer            = aServer;
     var uid                     = [[_mainRoster connection] getUniqueId];
     var nodeUnsubscribeStanza   = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
-    
-    [nodeSubscribeStanza setTo:pubSubServer];
-    [nodeSubscribeStanza addChildName:@"pubsub" withAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
-    [nodeSubscribeStanza addChildName:@"unsubscribe" withAttributes:{
-        "node": "/archipel/" + [stanza getFrom].split("/")[0] + "/events",
+
+    [nodeUnsubscribeStanza setTo:pubSubServer];
+    [nodeUnsubscribeStanza addChildName:@"pubsub" withAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
+    [nodeUnsubscribeStanza addChildName:@"unsubscribe" withAttributes:{
+        "node": "/archipel/" + aJID.split("/")[0] + "/events",
         "jid": [[_mainRoster connection] JID],
     }];
-    
+
     var params = [[CPDictionary alloc] init];
     [params setValue:uid forKey:@"id"];
-    [[_mainRoster connection] send:nodeSubscribeStanza];
+
+    [[_mainRoster connection] registerSelector:@selector(didPubSubUnsubscribe:) ofObject:self withDict:params]
+    [[_mainRoster connection] send:nodeUnsubscribeStanza];    
 }
+
+- (BOOL)didPubSubUnsubscribe:(TNStropheStanza)aStanza
+{
+    if ([aStanza getType] == @"result")
+    {
+        CPLog.info("Sucessfully unsubscribed from pubsub event node of " + [aStanza getFrom]);
+    }
+    else
+    {
+        CPLog.error("unable to unsubscribe to pubsub");
+    }
+    
+    return NO;
+}
+
 
 
 /*! Display the helpView in the rightView

@@ -18,6 +18,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <VNCCappuccino/VNCCappuccino.j>
 
 @import "TNZoomAnimation.j";
 

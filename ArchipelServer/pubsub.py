@@ -97,7 +97,7 @@ class TNPubSubNode:
                 log.info("PUBSUB: pubsub node %s has been created" % self.nodename)
                 self.get()
             else:
-                log.error("PUBSUB: can't configure pubsub: %s" % str(resp))
+                log.error("PUBSUB: can't create pubsub: %s" % str(resp))
         except Exception as ex:
             log.error("PUBSUB: unable to create pubsub node: %s" % str(ex))
     

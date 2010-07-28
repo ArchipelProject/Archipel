@@ -131,7 +131,6 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     // [self rememberLastSelectedTabIndex];
     
     
-    
     [self _removeAllTabsFromModulesTabView];
     _numberOfReadyModules = 0;
     _allModulesReady = NO;
@@ -574,7 +573,11 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
 - (void)insertModulesMenuItems
 {
-    var keys = [_modulesMenuItems allKeys];
+    var keys = [_modulesMenuItems allKeys].sort();
+    // it would be better but it didn't work..
+    // var desc = [CPSortDescriptor sortDescriptorWithKey:@"string" ascending:YES];
+    // var keys = [_modulesMenuItems allKeys] sortedArrayUsingDescriptors:[CPArray arrayWithObject:desc]];
+    
     for (var k = 0; k < [keys count] ; k++)
     {
         var key = [keys objectAtIndex:k]
