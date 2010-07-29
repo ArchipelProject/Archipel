@@ -793,9 +793,7 @@ function generateMacAddr()
             
             [_supportedCapabilities setObject:cap forKey:arch];
         }
-        CPLog.info("------------------------------------");
-        CPLog.info(_supportedCapabilities);
-        CPLog.info("------------------------------------");
+        CPLog.trace(_supportedCapabilities);
         [self getXMLDesc];
     }
     else

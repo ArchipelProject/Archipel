@@ -75,10 +75,16 @@
     <string>Archipel Alpha-0.4 (Uranus)</string>
     
     <!--
-        If set to 1, StropheCappuccino will be in debug mode.
+        Minimal log level
+         - trace
+         - debug
+         - info
+         - warn
+         - error
+         - fatal
     -->
-    <key>TNStropheCappuccinoDebugMode</key>
-    <integer>1</integer>
+    <key>TNArchipelConsoleDebugLevel</key>
+    <string>info</string>
     
 </dict>
 </plist>

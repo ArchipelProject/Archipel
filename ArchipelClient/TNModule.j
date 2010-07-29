@@ -131,7 +131,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
 - (void)onPubSubEvents:(TNStropheStanza)aStanza
 {
-    CPLog.info("==========================> RAW PUBSUB EVENT RECIEVED!");
+    CPLog.trace("Raw (not filtered) pubsub event received from " + [aStanza getFrom]);
     
     var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1];
     var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];

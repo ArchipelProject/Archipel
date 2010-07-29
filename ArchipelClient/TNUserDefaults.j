@@ -79,7 +79,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
-        CPLog.debug(@"Recovering from HTML5 storage");
+        CPLog.trace(@"Recovering from HTML5 storage");
         
         try
         {
@@ -93,7 +93,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
-        CPLog.debug(@"Recovering from cookie storage");
+        CPLog.trace(@"Recovering from cookie storage");
         
         if ((rawDataString = [[CPCookie alloc] initWithName:identifier]) && [rawDataString value] != @"")
         {
@@ -104,7 +104,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     }
     else if ( TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
     {
-        CPLog.debug(@"No storage specified");
+        CPLog.trace(@"No storage specified");
         
         ret = nil;
     }
@@ -138,7 +138,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
-        CPLog.debug(@"saving into cookie storage");
+        CPLog.trace(@"saving into cookie storage");
         
         var cookie      = [[CPCookie alloc] initWithName:identifier];
         var theString   = string.replace(/;/g, "__dotcoma__").replace(/$/g, "__dollar__");
@@ -161,7 +161,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
-        CPLog.debug(@"clearing HTML5 storage");
+        CPLog.trace(@"clearing HTML5 storage");
         
         localStorage.clear(identifier);
     }
@@ -186,13 +186,13 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
-        CPLog.debug(@"clearing HTML5 storage for key " + aKey);
+        CPLog.trace(@"clearing HTML5 storage for key " + aKey);
         
         localStorage.removeItem(identifier);
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
-        CPLog.debug(@"clearing cookie storage for key " + aKey);
+        CPLog.trace(@"clearing cookie storage for key " + aKey);
         
         var cookie  = [[CPCookie alloc] initWithName:identifier];
         

@@ -164,8 +164,6 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 - (void)awakeFromCib
 {
     [connectionWindow orderOut:nil];
-    // register logs
-    CPLogRegister(CPLogConsole);
     
     var bundle      = [CPBundle mainBundle];
     var defaults    = [TNUserDefaults standardUserDefaults];
@@ -178,8 +176,13 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
             [bundle objectForInfoDictionaryKey:@"TNStropheCappuccinoDebugMode"], @"TNStropheCappuccinoDebugMode",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel"
     ]];
+    
+    
+    // register logs
+    CPLogRegister(CPLogConsole, [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"]);
     
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
@@ -363,9 +366,13 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [center addObserver:self selector:@selector(didMinusBouttonClicked:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
     
     CPLog.info(@"Initialization of AppController OK");
+    
+    _tempNumberOfReadyModules = -1;
 }
+
 - (void)makeMainMenu
 {
+    CPLog.trace(@"Creating the main menu");
     _mainMenu = [[CPMenu alloc] init];
     
     var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""];
@@ -446,15 +453,16 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [CPApp setMainMenu:_mainMenu];
     [CPMenu setMenuBarVisible:NO];
     
-    _tempNumberOfReadyModules = -1;
+    CPLog.trace(@"Main menu created");
 }
 
 /*! delegate of TNModuleLoader sent when all modules are loaded
 */
 - (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
 {
-    //connection window
-    CPLog.trace(@"positionnig the connectionWindow");
+    CPLog.info(@"All modules have been loaded");
+    CPLog.trace(@"Positionning the connection window");
+    
     [windowModuleLoading orderOut:nil];
     [connectionWindow center];
     [connectionWindow makeKeyAndOrderFront:nil];
