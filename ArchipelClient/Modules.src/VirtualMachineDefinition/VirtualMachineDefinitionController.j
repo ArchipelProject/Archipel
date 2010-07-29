@@ -358,6 +358,9 @@ function generateMacAddr()
     [fieldVNCPassword setSecure:YES];
     
     _supportedCapabilities = [CPDictionary dictionary];
+    
+    [windowDriveEdition setTable:_tableDrives];
+    [windowNicEdition setTable:_tableNetworkNics];
 }
 
 
@@ -376,10 +379,17 @@ function generateMacAddr()
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     
     [_tableDrives setDelegate:nil];
-    [_tableDrives setDelegate:self]; // hum....
-    
+    [_tableDrives setDelegate:self];
     [_tableNetworkNics setDelegate:nil];
-    [_tableNetworkNics setDelegate:self]; // hum....
+    [_tableNetworkNics setDelegate:self];
+
+    [windowDriveEdition setDelegate:nil];
+    [windowDriveEdition setDelegate:self];
+    [windowDriveEdition setEntity:_entity];
+    
+    [windowNicEdition setDelegate:nil];
+    [windowNicEdition setDelegate:self];
+    [windowNicEdition setEntity:_entity];
     
     [self setDefaultValues];
     
@@ -706,7 +716,6 @@ function generateMacAddr()
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLCapabilities:) ofObject:self];
 }
 
-
 - (void)didReceiveXMLCapabilities:(TNStropheStanza)aStanza
 {
     if ([aStanza getType] == @"result")
@@ -795,6 +804,7 @@ function generateMacAddr()
     }
     
 }
+
 
 //  XML Desc
 - (void)getXMLDesc
@@ -1080,13 +1090,12 @@ function generateMacAddr()
     
 }
 
+
 - (IBAction)defineXML:(id)sender
 {
     var uid             = [_connection getUniqueId];
     var defineStanza    = [self generateXMLDescStanzaWithUniqueID:uid];
 
-    [windowNicEdition close];
-    [windowDriveEdition close];
     [_entity sendStanza:defineStanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
@@ -1135,11 +1144,10 @@ function generateMacAddr()
 - (void)performUndefineXML:(id)someUserInfo
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
-
+    
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
-        
+    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
+    
     [_entity sendStanza:stanza andRegisterSelector:@selector(didUndefineXML:) ofObject:self];
 }
 
@@ -1173,15 +1181,15 @@ function generateMacAddr()
 {
     if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
+         //[CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
+         [self addNetworkCard:sender];
          return;
     }
     var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex];
     var nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
     [windowNicEdition setNic:nicObject];
-    [windowNicEdition setTable:_tableNetworkNics];
-    [windowNicEdition setEntity:_entity];
+    [windowNicEdition update];
     [windowNicEdition center];
     [windowNicEdition orderFront:nil];
 }
@@ -1216,17 +1224,17 @@ function generateMacAddr()
 {
     if ([[_tableDrives selectedRowIndexes] count] != 1)
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select one drive"];
+         //[CPAlert alertWithTitle:@"Error" message:@"You must select one drive"];
+         [self addDrive:sender];
          return;
     }
     var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex];
     var driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
 
     [windowDriveEdition setDrive:driveObject];
-    [windowDriveEdition setTable:_tableDrives];
-    [windowDriveEdition setEntity:_entity];
+    [windowDriveEdition update];
     [windowDriveEdition center];
-    [windowDriveEdition orderFront:nil];
+    [windowDriveEdition makeKeyAndOrderFront:nil];
 }
 
 - (IBAction)deleteDrive:(id)sender

@@ -72,7 +72,7 @@
         Displayed version of Archipel Client
     -->
     <key>TNArchipelVersion</key>
-    <string>Archipel Alpha-0.3 (Mercury)</string>
+    <string>Archipel Alpha-0.4 (Uranus)</string>
     
     <!--
         If set to 1, StropheCappuccino will be in debug mode.

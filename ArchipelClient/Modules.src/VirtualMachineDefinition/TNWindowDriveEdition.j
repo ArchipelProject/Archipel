@@ -57,6 +57,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     @outlet CPPopUpButton   buttonType;
     @outlet CPRadioGroup    radioDriveType;
 
+    id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
     TNNetworkDrive          _drive          @accessors(property=drive);
     TNStropheContact        _entity         @accessors(property=entity);
@@ -75,51 +76,38 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
 }
 
-- (void)orderFront:(id)sender
+- (void)update
 {
-    if (![self isVisible])
+    [radioDriveType setTarget:nil];
+    for (var i = 0; i < [[radioDriveType radios] count]; i++)
     {
-        if ([_drive device] == @"disk")
+        var radio = [[radioDriveType radios] objectAtIndex:i];
+        if (([radio title] == @"Hard drive") && ([_drive device] == @"disk") 
+            || (([radio title] == @"CD/DVD") && ([_drive device] == @"cdrom")))
         {
-            // OK OK.. but the index of Radio button in radio group is not fixed. so. freak me!
-            for (var i = 0; i < [[radioDriveType radios] count]; i++)
-            {
-                var radio = [[radioDriveType radios] objectAtIndex:i];
-                if ([radio title] == @"Hard drive")
-                {
-                    [radio setState:CPOnState];
-                    break;
-                }
-            }
+            [radio setState:CPOnState];
+            break;
         }
-        else if ([_drive device] == @"cdrom")
-        {
-            for (var i = 0; i < [[radioDriveType radios] count]; i++)
-            {
-                var radio = [[radioDriveType radios] objectAtIndex:i];
-                if ([radio title] == @"CD/DVD")
-                {
-                    [radio setState:CPOnState];
-                    break;
-                }
-            }
-            
-        }
-            
-        
-        [self performRadioDriveTypeChanged:nil];
-        
-        [buttonType selectItemWithTitle:[_drive type]];
-        [buttonTarget selectItemWithTitle:[_drive target]];
-        [buttonBus selectItemWithTitle:[_drive bus]];
     }
-    [super orderFront:sender];
+    [radioDriveType setTarget:self];
+    
+    if ([_drive device] == @"disk")
+        [self getDisksInfo];
+    else if ([_drive device] == @"cdrom")
+        [self getISOsInfo];
+    
+    [self populateTargetButton:nil];
+    
+    [buttonType selectItemWithTitle:[_drive type]];
+    [buttonTarget selectItemWithTitle:[_drive target]];
+    [buttonBus selectItemWithTitle:[_drive bus]];
 }
 
 
-- (void)populateTargetButton
+- (IBAction)populateTargetButton:(id)sender
 {
     [buttonTarget removeAllItems];
+    
     if ([buttonBus title] == TNXMLDescDiskBusIDE)
     {
         [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
@@ -130,7 +118,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
     else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
     {
-        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
+        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargets];
     }
     
     [buttonTarget selectItemWithTitle:[_drive target]];
@@ -138,11 +126,6 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (IBAction)save:(id)sender
 {
-    if (sender == buttonBus)
-    {
-       [self populateTargetButton];
-    }
-    
     if ([buttonSource selectedItem])
         [_drive setSource:[[buttonSource selectedItem] stringValue]];
     else
@@ -162,6 +145,9 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [_drive setBus:[buttonBus title]];
 
     [_table reloadData];
+    
+    [_delegate defineXML:sender];
+    [self close];
 }
 
 - (IBAction)performRadioDriveTypeChanged:(id)sender
@@ -172,8 +158,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
         if ([buttonBus title] == TNXMLDescDiskBusIDE)
             [buttonTarget selectItemWithTitle:@"hda"];
-        else
+        else if ([buttonBus title] == TNXMLDescDiskBusSCSI)
             [buttonTarget selectItemWithTitle:@"sda"];
+        else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
+            [buttonTarget selectItemWithTitle:@"hda"];
             
         [self getDisksInfo];
     }
@@ -181,13 +169,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     {
         if ([buttonBus title] == TNXMLDescDiskBusIDE)
             [buttonTarget selectItemWithTitle:@"hdc"];
-        else
+        else if ([buttonBus title] == TNXMLDescDiskBusSCSI)
+            [buttonTarget selectItemWithTitle:@"sdc"];
+        else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
             [buttonTarget selectItemWithTitle:@"sdc"];
             
         [self getISOsInfo];
     }
-    
-    [self save:nil];
 }
 
 
@@ -223,16 +211,18 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             [item setStringValue:[disk valueForAttribute:@"path"]];
             [buttonSource addItem:item];
         }
-
+        
         for (var i = 0; i < [[buttonSource itemArray] count]; i++)
         {
             var item  = [[buttonSource itemArray] objectAtIndex:i];
 
             if ([item stringValue] == [_drive source])
+            {
                 [buttonSource selectItem:item];
+                break;
+            }
+                
         }
-        
-        [self save:nil];
     }
 }
 
@@ -247,6 +237,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
+
 
 - (void)didReceiveISOsInfo:(id)aStanza
 {
@@ -271,12 +262,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         for (var i = 0; i < [[buttonSource itemArray] count]; i++)
         {
             var item  = [[buttonSource itemArray] objectAtIndex:i];
-            
             if ([item stringValue] == [_drive source])
+            {
                 [buttonSource selectItem:item];
+                break;
+            }
+                
         }
-        
-        [self save:nil];
     }
 }
 

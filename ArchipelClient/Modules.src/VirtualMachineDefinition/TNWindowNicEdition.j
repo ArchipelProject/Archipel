@@ -33,9 +33,10 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     @outlet CPRadioGroup    radioNetworkType;
     @outlet CPTextField     fieldMac;
 
-    CPTableView             _table       @accessors(property=table);
-    TNNetworkInterface      _nic         @accessors(property=nic);
-    TNStropheContact        _entity      @accessors(property=entity);
+    id                      _delegate   @accessors(property=delegate);
+    CPTableView             _table      @accessors(property=table);
+    TNNetworkInterface      _nic        @accessors(property=nic);
+    TNStropheContact        _entity     @accessors(property=entity);
 }
 
 - (void)awakeFromCib
@@ -48,33 +49,61 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
 }
 
-- (void)orderFront:(id)sender
+// - (void)orderFront:(id)sender
+// {
+//     if (![self isVisible])
+//     {
+//         if ([_nic mac] == "00:00:00:00:00:00")
+//             [fieldMac setStringValue:generateMacAddr()];
+//         else
+//             [fieldMac setStringValue:[_nic mac]];
+// 
+//         [buttonSource removeAllItems];
+// 
+//         for (var i = 0; i < [[radioNetworkType radios] count]; i++)
+//         {
+//             var radio = [[radioNetworkType radios] objectAtIndex:i];
+// 
+//             if ([[radio title] lowercaseString] == [_nic type])
+//             {
+//                 [radio setState:CPOnState];
+//                 [self performRadioNicTypeChanged:radioNetworkType];
+//                 break;
+//             }
+//         }
+//         [buttonType selectItemWithTitle:[_nic type]];
+//         [buttonModel selectItemWithTitle:[_nic model]];
+//         [buttonSource selectItemWithTitle:[_nic source]];
+//     }
+//     [super orderFront:sender];
+// }
+
+- (void)update
 {
-    if (![self isVisible])
+    if ([_nic mac] == "00:00:00:00:00:00")
+        [fieldMac setStringValue:generateMacAddr()];
+    else
+        [fieldMac setStringValue:[_nic mac]];
+
+    [buttonSource removeAllItems];
+    
+    [radioNetworkType setTarget:nil];
+    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
     {
-        if ([_nic mac] == "00:00:00:00:00:00")
-            [fieldMac setStringValue:generateMacAddr()];
-        else
-            [fieldMac setStringValue:[_nic mac]];
+        var radio = [[radioNetworkType radios] objectAtIndex:i];
 
-        [buttonSource removeAllItems];
-
-        for (var i = 0; i < [[radioNetworkType radios] count]; i++)
+        if ([[radio title] lowercaseString] == [_nic type])
         {
-            var radio = [[radioNetworkType radios] objectAtIndex:i];
-
-            if ([[radio title] lowercaseString] == [_nic type])
-            {
-                [radio setState:CPOnState];
-                [self performRadioNicTypeChanged:radioNetworkType];
-                break;
-            }
+            [radio setState:CPOnState];
+            [self performRadioNicTypeChanged:radioNetworkType];
+            break;
         }
-        [buttonType selectItemWithTitle:[_nic type]];
-        [buttonModel selectItemWithTitle:[_nic model]];
-        [buttonSource selectItemWithTitle:[_nic source]];
     }
-    [super orderFront:sender];
+    [radioNetworkType setTarget:self];
+    
+    [buttonType selectItemWithTitle:[_nic type]];
+    [buttonModel selectItemWithTitle:[_nic model]];
+    [buttonSource selectItemWithTitle:[_nic source]];
 }
 
 - (IBAction)save:(id)sender
@@ -83,7 +112,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
     
+    [_delegate defineXML:sender];
     [_table reloadData];
+    [self close];
 }
 
 - (void)getHypervisorNetworks
@@ -112,7 +143,6 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         if (![buttonSource selectedItem])
         {
             [buttonSource selectItemAtIndex:0];
-            [self save:nil];
         }
     }
     else
@@ -146,7 +176,6 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         if (![buttonSource selectedItem])
         {
             [buttonSource selectItemAtIndex:0];
-            [self save:nil];
         }
     }
     else
