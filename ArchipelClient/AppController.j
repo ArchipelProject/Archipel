@@ -194,7 +194,6 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
         var bounds = [leftView bounds];
         bounds.size.width = posx;
         [leftView setFrame:bounds];
-        [leftView setBackgroundColor:[CPColor redColor]]
     }
     [mainHorizontalSplitView setDelegate:self];    
     

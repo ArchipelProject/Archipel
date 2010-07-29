@@ -259,10 +259,10 @@ class TNMediaManagement:
     def __get(self, iq):
         """
         Get the virtual hatd drives of the virtual machine
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-    
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -273,7 +273,12 @@ class TNMediaManagement:
             for disk in disks:
                 file_cmd_output = commands.getoutput("file " + self.entity.folder + "/" + disk).lower()
                 
-                if (file_cmd_output.find("format: qcow") > -1) or (file_cmd_output.find("boot sector") > -1) or (file_cmd_output.find("vmware") > -1) or (file_cmd_output.find("data") > -1) or (file_cmd_output.find("user-mode linux cow file") > -1):
+                if (file_cmd_output.find("format: qcow") > -1 \
+                or file_cmd_output.find("boot sector") > -1 \
+                or file_cmd_output.find("vmware") > -1\
+                or file_cmd_output.find("data") > -1\
+                or file_cmd_output.find("user-mode linux cow file") > -1) \
+                and file_cmd_output.find("sqlite") == -1:
                     diskinfo = commands.getoutput("qemu-img info " + self.entity.folder + "/" + disk).split("\n")
                     node = xmpp.Node(tag="disk", attrs={ "name": disk.split('.')[0],
                         "path": self.entity.folder + "/" + disk,
@@ -289,15 +294,15 @@ class TNMediaManagement:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply
-
+    
 
     def __getisos(self, iq):
         """
         Get the virtual cdrom ISO of the virtual machine
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-    
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -321,44 +326,8 @@ class TNMediaManagement:
             log.info("info about iso sent")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
-        return reply    
-
-
-    # def __networkstats(self, iq):
-    #     """
-    #     get statistics about network uses of the VM.
-    # 
-    #     @type iq: xmpp.Protocol.Iq
-    #     @param iq: the received IQ
-    # 
-    #     @rtype: xmpp.Protocol.Iq
-    #     @return: a ready to send IQ containing the result of the action
-    #     """
-    #     try:
-    #         target_nodes = iq.getQueryPayload()
-    #         nodes = []
-    #     
-    #         for target in target_nodes:
-    #             stats = self.domain.interfaceStats(target.getData())
-    #             node = xmpp.Node(tag="stats", attrs={ "interface":    target.getData(),
-    #                 "rx_bytes":     stats[0],
-    #                 "rx_packets":   stats[1],
-    #                 "rx_errs":      stats[2],
-    #                 "rx_drops":     stats[3],
-    #                 "tx_bytes":     stats[4],
-    #                 "tx_packets":   stats[5],
-    #                 "tx_errs":      stats[6],
-    #                 "tx_drops":     stats[7]
-    #             })
-    #             nodes.append(node)
-    #     
-    #         reply = iq.buildReply("result")
-    #         reply.setQueryPayload(nodes)
-    #         log.info("info about network sent")
-    #     
-    #     except Exception as ex:
-    #         reply = build_error_iq(self, ex, iq)
-    #     return reply
+        return reply
+    
 
 
 
