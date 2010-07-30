@@ -92,7 +92,15 @@ class TNThreadedHealthCollector(Thread):
         try:
             uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
             uptime_stats = {"up" : uptime}
-            return {"cpu": self.stats_CPU[-limit:], "memory": self.stats_memory[-limit:], "disk": self.stats_disks[-limit:], "load": self.stats_load[-limit:], "uptime": uptime_stats, "uname": self.uname_stats}
+            acpu    = self.stats_CPU[-limit:]
+            amem    = self.stats_memory[-limit:]
+            adisk   = self.stats_disks[-limit:]
+            aload   = self.stats_load[-limit:]
+            acpu.reverse()
+            amem.reverse()
+            adisk.reverse()
+            aload.reverse()
+            return {"cpu": acpu, "memory": amem, "disk": adisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
         except Exception as ex:
             log.error("stat recuperation fails. Exception %s" % str(ex))
             return None
