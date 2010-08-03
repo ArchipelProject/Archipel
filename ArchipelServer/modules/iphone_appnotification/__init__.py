@@ -24,30 +24,38 @@ import appnotificator
 def __module_init__iphone_notification_vm(self):
     log.info("initializing iPhone notification for virtual machine")
     
+    self.iphone_notifications = []
     creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");
-    self.iphone_notification = appnotificator.AppNotificator(creds);
     
-    self.register_hook("HOOK_VM_CREATE", self.iphone_notification.vm_create)
-    self.register_hook("HOOK_VM_SHUTOFF", self.iphone_notification.vm_shutoff)
-    self.register_hook("HOOK_VM_STOP", self.iphone_notification.vm_stop)
-    self.register_hook("HOOK_VM_DESTROY", self.iphone_notification.vm_destroy)
-    self.register_hook("HOOK_VM_SUSPEND", self.iphone_notification.vm_suspend)
-    self.register_hook("HOOK_VM_RESUME", self.iphone_notification.vm_resume)
-    self.register_hook("HOOK_VM_UNDEFINE", self.iphone_notification.vm_undefine)
-    self.register_hook("HOOK_VM_DEFINE", self.iphone_notification.vm_define)
+    for cred in creds.split(",,"):
+        iphone_n = appnotificator.AppNotificator(cred);
+        self.iphone_notifications.append(iphone_n);
+        
+        self.register_hook("HOOK_VM_CREATE", iphone_n.vm_create)
+        self.register_hook("HOOK_VM_SHUTOFF", iphone_n.vm_shutoff)
+        self.register_hook("HOOK_VM_STOP", iphone_n.vm_stop)
+        self.register_hook("HOOK_VM_DESTROY", iphone_n.vm_destroy)
+        self.register_hook("HOOK_VM_SUSPEND", iphone_n.vm_suspend)
+        self.register_hook("HOOK_VM_RESUME", iphone_n.vm_resume)
+        self.register_hook("HOOK_VM_UNDEFINE", iphone_n.vm_undefine)
+        self.register_hook("HOOK_VM_DEFINE", iphone_n.vm_define)
 
 
 def __module_init__iphone_notification_hypervisor(self):
     log.info("initializing iPhone notification for hypervisor")
     
+    self.iphone_notifications = []
     creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");
-    self.iphone_notification = appnotificator.AppNotificator(creds);
     
-    self.register_hook("HOOK_HYPERVISOR_ALLOC", self.iphone_notification.hypervisor_alloc)
-    self.register_hook("HOOK_HYPERVISOR_FREE", self.iphone_notification.hypervisor_free)
-    self.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", self.iphone_notification.hypervisor_migrate_leave)
-    self.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", self.iphone_notification.hypervisor_migrate_arrive)
-    self.register_hook("HOOK_HYPERVISOR_CLONE", self.iphone_notification.hypervisor_clone)
+    for cred in creds.split(",,"):
+        iphone_n = appnotificator.AppNotificator(cred);
+        self.iphone_notifications.append(iphone_n);
+        
+        self.register_hook("HOOK_HYPERVISOR_ALLOC", iphone_n.hypervisor_alloc)
+        self.register_hook("HOOK_HYPERVISOR_FREE", iphone_n.hypervisor_free)
+        self.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", iphone_n.hypervisor_migrate_leave)
+        self.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", iphone_n.hypervisor_migrate_arrive)
+        self.register_hook("HOOK_HYPERVISOR_CLONE", iphone_n.hypervisor_clone)
         
     
 
