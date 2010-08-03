@@ -23,8 +23,9 @@ TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
 TNArchipelTypeVirtualMachineDiskGet    = @"get";
 TNArchipelTypeVirtualMachineISOGet     = @"getiso";
 
-TNXMLDescDiskType   = @"file";
-TNXMLDescDiskTypes  = [TNXMLDescDiskType];
+TNXMLDescDriveTypeFile      = @"file";
+TNXMLDescDriveTypeBlock     = @"block";
+TNXMLDescDriveTypes         = [TNXMLDescDriveTypeFile, TNXMLDescDriveTypeBlock];
 
 TNXMLDescDiskTargetHda  = @"hda";
 TNXMLDescDiskTargetHdb  = @"hdb";
@@ -56,6 +57,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     @outlet CPPopUpButton   buttonTarget;
     @outlet CPPopUpButton   buttonType;
     @outlet CPRadioGroup    radioDriveType;
+    @outlet CPTextField     fieldDevicePath;
 
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
@@ -71,7 +73,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonBus removeAllItems];
     [buttonSource removeAllItems];
 
-    [buttonType addItemsWithTitles:TNXMLDescDiskTypes];
+    [buttonType addItemsWithTitles:TNXMLDescDriveTypes];
     [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
 }
@@ -82,8 +84,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     for (var i = 0; i < [[radioDriveType radios] count]; i++)
     {
         var radio = [[radioDriveType radios] objectAtIndex:i];
-        if (([radio title] == @"Hard drive") && ([_drive device] == @"disk") 
-            || (([radio title] == @"CD/DVD") && ([_drive device] == @"cdrom")))
+        if ((([radio title] == @"Hard drive") && ([_drive device] == @"disk"))
+            ||  (([radio title] == @"CD/DVD") && ([_drive device] == @"cdrom")) )
         {
             [radio setState:CPOnState];
             break;
@@ -99,6 +101,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [self populateTargetButton:nil];
     
     [buttonType selectItemWithTitle:[_drive type]];
+    
+    [buttonType selectItemWithTitle:[_drive type]]
+    [self driveTypeDidChange:nil];
+    
     [buttonTarget selectItemWithTitle:[_drive target]];
     [buttonBus selectItemWithTitle:[_drive bus]];
 }
@@ -126,10 +132,18 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (IBAction)save:(id)sender
 {
-    if ([buttonSource selectedItem])
+    if ([buttonSource isEnabled] && [buttonSource selectedItem])
+    {
         [_drive setSource:[[buttonSource selectedItem] stringValue]];
-    else
+    }
+    else if ([buttonType title] == TNXMLDescDriveTypeBlock)
+    {
+        [_drive setSource:[fieldDevicePath stringValue]];
+    }
+    else if ([buttonType title] == TNXMLDescDriveTypeFile)
+    {
         [_drive setSource:([_drive device] == @"cdrom") ? @"" : @"/tmp/nodisk"];
+    }
     
     [_drive setType:[buttonType title]];
 
@@ -178,7 +192,32 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
 }
 
-
+- (IBAction)driveTypeDidChange:(id)sender
+{
+    if ([buttonType title] == TNXMLDescDriveTypeBlock)
+    {
+        [fieldDevicePath setHidden:NO];
+        [buttonSource setHidden:YES];
+        
+        [fieldDevicePath setEnabled:YES];
+        [buttonSource setEnabled:NO];
+        
+        if (sender)
+            [fieldDevicePath setStringValue:@"/dev/cdrom"];
+        else
+            [fieldDevicePath setStringValue:[_drive source]];
+    }
+    else if ([buttonType title] == TNXMLDescDriveTypeFile)
+    {
+        [fieldDevicePath setHidden:YES];
+        [buttonSource setHidden:NO];
+        
+        [fieldDevicePath setEnabled:NO];
+        [buttonSource setEnabled:YES];
+        
+        [fieldDevicePath setStringValue:@""];
+    }
+}
 
 -(void)getDisksInfo
 {
@@ -221,7 +260,6 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 [buttonSource selectItem:item];
                 break;
             }
-                
         }
     }
 }

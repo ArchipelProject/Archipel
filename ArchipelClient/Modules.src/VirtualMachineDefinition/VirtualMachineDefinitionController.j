@@ -638,12 +638,16 @@ function generateMacAddr()
         var drive = [drives objectAtIndex:i];
         
         [stanza addChildName:@"disk" withAttributes:{"device": [drive device], "type": [drive type]}];
-        if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! TODO!
+        if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! FIXME!
         {
             [stanza addChildName:@"driver" withAttributes:{"type": "qcow2"}];
             [stanza up];
         }
-        [stanza addChildName:@"source" withAttributes:{"file": [drive source]}];
+        if ([drive type] == @"file")
+            [stanza addChildName:@"source" withAttributes:{"file": [drive source]}];
+        else if ([drive type] == @"block")
+            [stanza addChildName:@"source" withAttributes:{"dev": [drive source]}];
+        
         [stanza up];
         [stanza addChildName:@"target" withAttributes:{"bus": [drive bus], "dev": [drive target]}];
         [stanza up];
@@ -1028,7 +1032,7 @@ function generateMacAddr()
             var iDevice     = [currentDisk valueForAttribute:@"device"];
             var iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"];
             var iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"];
-            var iSource     = [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"];
+            var iSource     = (iType == @"file") ? [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"] : [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"dev"];
 
             var newDrive =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus]
 

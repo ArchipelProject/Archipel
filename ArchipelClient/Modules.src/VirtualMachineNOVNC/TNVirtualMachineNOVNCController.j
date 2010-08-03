@@ -283,8 +283,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [fieldPassword setStringValue:@""];
             [checkboxPasswordRemember setState:CPOffState];
         }
-                
-        [_vncView load];
+        
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncProxyPort];
         [_vncView setPassword:[fieldPassword stringValue]];
@@ -293,6 +292,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         [_vncView setEncrypted:_useSSL];
         [_vncView setDelegate:self];
         
+        [_vncView load];
         [_vncView connect:nil];
     }
     else if ([aStanza getType] == @"error")
@@ -343,7 +343,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var visibleRect     = [_vncView visibleRect];
     var currentVNCSize  = [_vncView canvasSize];
     var currentVNCZoom  = [_vncView zoom] * 100;
-    var newZoom         = 100 - (Math.abs((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height) * 100);
 
     [self animateChangeScaleFrom:currentVNCZoom to:100];
 }

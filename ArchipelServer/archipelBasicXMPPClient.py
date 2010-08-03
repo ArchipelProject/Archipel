@@ -87,7 +87,7 @@ class TNArchipelBasicXMPPClient(object):
         if self.name == "auto":
             self.name = self.resource
         
-        self.log.info("jid defined as %s" % (str(self.jid)))
+        log.info("jid defined as %s" % (str(self.jid)))
         
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
         if ip_conf == "auto":
@@ -115,7 +115,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #['dispatcher', 'nodebuilder']
         
         if self.xmppclient.connect() == "":
-            self.log.error("unable to connect to XMPP server")
+            log.error("unable to connect to XMPP server")
             if self.auto_reconnect:
                 self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                 return False
@@ -123,7 +123,7 @@ class TNArchipelBasicXMPPClient(object):
                 sys.exit(-1)
         
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        self.log.info("sucessfully connected")
+        log.info("sucessfully connected")
         return True
     
     
@@ -131,18 +131,18 @@ class TNArchipelBasicXMPPClient(object):
         """
         Authentify the client to the XMPP server
         """
-        self.log.info("trying to authentify the client")
+        log.info("trying to authentify the client")
         if self.xmppclient.auth(self.jid.getNode(), self.password, self.resource) == None:
             self.isAuth = False;
             if (self.auto_register):
-                self.log.info("starting registration, according to propertie auto_register")
+                log.info("starting registration, according to propertie auto_register")
                 self._inband_registration()
                 return
-            self.log.error("bad authentication. exiting")
+            log.error("bad authentication. exiting")
             sys.exit(0)
         
         self.recover_pubsubs()
-        self.log.xmppclient = self.xmppclient
+        logxmppclient = self.xmppclient
         self.register_handler()
         self.xmppclient.sendInitPresence()
         self.roster = self.xmppclient.getRoster()
@@ -150,7 +150,7 @@ class TNArchipelBasicXMPPClient(object):
         self.isAuth = True;
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        self.log.info("sucessfully authenticated")
+        log.info("sucessfully authenticated")
         
         
         
@@ -214,7 +214,7 @@ class TNArchipelBasicXMPPClient(object):
                 pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         })
             
-        self.log.pubSubNode = self.pubSubNodeLog
+        logpubSubNode = self.pubSubNodeLog
     
     def remove_pubsubs(self):
         log.info("removing pubsub node for log")
@@ -234,7 +234,7 @@ class TNArchipelBasicXMPPClient(object):
         if not self.auto_register:    
             return
         
-        self.log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
+        log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
         payload_username = xmpp.Node(tag="username")
         payload_username.addData(self.jid.getNode())
@@ -243,15 +243,15 @@ class TNArchipelBasicXMPPClient(object):
         iq.setQueryNS("jabber:iq:register")
         iq.setQueryPayload([payload_username, payload_password])
         
-        self.log.info("registration information sent. wait for response")
+        log.info("registration information sent. wait for response")
         resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
         
         if resp_iq.getType() == "error":
-            self.log.error("unable to register : %s" % str(resp_iq))
+            log.error("unable to register : %s" % str(resp_iq))
             sys.exit(-1)
             
         elif resp_iq.getType() == "result":
-            self.log.info("the registration complete")
+            log.info("the registration complete")
             self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
     
     
@@ -264,29 +264,29 @@ class TNArchipelBasicXMPPClient(object):
         # 
         # self.remove_pubsubs()
         # 
-        # self.log.info("trying to unregister")
+        # log.info("trying to unregister")
         # iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         # iq.setQueryNS("jabber:iq:register")
         # 
         # remove_node = xmpp.Node(tag="remove")
         # 
         # iq.setQueryPayload([remove_node])
-        # self.log.info("unregistration information sent. waiting for response")
+        # log.info("unregistration information sent. waiting for response")
         # resp_iq = self.xmppclient.send(iq)
         
     def process_inband_unregistration(self):
         self.remove_pubsubs()
         
-        self.log.info("trying to unregister")
+        log.info("trying to unregister")
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         iq.setQueryNS("jabber:iq:register")
         
         remove_node = xmpp.Node(tag="remove")
         
         iq.setQueryPayload([remove_node])
-        self.log.info("unregistration information sent. waiting for response")
+        log.info("unregistration information sent. waiting for response")
         resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
-        self.log.info("account removed!")
+        log.info("account removed!")
         self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
         
     
@@ -304,7 +304,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         
-        self.log.info("handlers registred")
+        log.info("handlers registred")
         
         for method in self.__class__.__dict__:
             if not method.find("__module_register_stanza__") == -1:
@@ -329,13 +329,13 @@ class TNArchipelBasicXMPPClient(object):
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """        
-        self.log.info("Subscription Presence ask by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
+        log.info("Subscription Presence ask by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
         self.roster = self.xmppclient.getRoster()
         
         barejid = presence.getFrom().getStripped()
         
         subs = self.roster.getSubscription(barejid)
-        self.log.debug("subscription with %s is %s" % (barejid, subs))
+        log.debug("subscription with %s is %s" % (barejid, subs))
         
         if subs == "to" or subs == "none":
             self.subscribe(barejid)
@@ -354,7 +354,7 @@ class TNArchipelBasicXMPPClient(object):
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
-        self.log.info("Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
+        log.info("Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
         
         self.remove_jid(presence.getFrom())
         raise xmpp.NodeProcessed
@@ -374,10 +374,10 @@ class TNArchipelBasicXMPPClient(object):
         @type args: Array
         @param args: an array containing the arguments to pass to the method
         """
-        self.log.info("registering action to perform on auth :%s" % method_name)
+        log.info("registering action to perform on auth :%s" % method_name)
         
         if self.isAuth:
-            self.log.info("performing action right now, because we are already authenticated")
+            log.info("performing action right now, because we are already authenticated")
             
             if persistant:
                 self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args, "persistant": persistant})
@@ -399,12 +399,12 @@ class TNArchipelBasicXMPPClient(object):
         if not self.isAuth:
             return
         
-        self.log.debug("going to perform action to perform on auth: %s" % str(self.registered_actions_to_perform_on_connection))
+        log.debug("going to perform action to perform on auth: %s" % str(self.registered_actions_to_perform_on_connection))
         
         actions_to_purge = []
         
         for action in self.registered_actions_to_perform_on_connection:
-            self.log.debug("performing action %s" % str(action))
+            log.debug("performing action %s" % str(action))
             if hasattr(self, action["name"]):
                 m = getattr(self, action["name"])
                 if action["args"] != None:
@@ -415,17 +415,17 @@ class TNArchipelBasicXMPPClient(object):
                 actions_to_purge.append(action)
         
         for oneshot_action in actions_to_purge:
-            self.log.debug("purging non persistant action %s" % str(oneshot_action))
+            log.debug("purging non persistant action %s" % str(oneshot_action))
             self.registered_actions_to_perform_on_connection.remove(oneshot_action)
         
-        self.log.debug("all registred actions have been done")
+        log.debug("all registred actions have been done")
     
     
     def change_presence(self, presence_show=None, presence_status=None):
         self.xmppstatus     = presence_status
         self.xmppstatusshow = presence_show
         
-        self.log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
+        log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         #self.mass_sender.stanzas.append(pres)
@@ -441,7 +441,7 @@ class TNArchipelBasicXMPPClient(object):
         @type msg: xmpp.Protocol.Message
         @param msg: the received message 
         """
-        self.log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
+        log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
 
         reply_stanza = self.__filter_message(msg)
         if reply_stanza:
@@ -489,7 +489,7 @@ class TNArchipelBasicXMPPClient(object):
         #         for resource in resources:
         #             push_message = xmpp.Message(typ="headline", to=barejid + "/" + resource)
         #             push_message.addChild(name="x", namespace=ns, attrs={"change": change})
-        #             self.log.info("PUSH : pushing %s->%s to %s" % (ns, change, barejid + "/" + resource))
+        #             log.info("PUSH : pushing %s->%s to %s" % (ns, change, barejid + "/" + resource))
         #             self.xmppclient.send(push_message)
     
     
@@ -509,7 +509,7 @@ class TNArchipelBasicXMPPClient(object):
                 resources = self.roster.getResources(barejid);
                 for resource in resources:
                     broadcast = xmpp.Message(body=message, typ="headline", to=barejid + "/" + resource)
-                    self.log.info("SHOUTING : shouting message to %s" % (barejid))
+                    log.info("SHOUTING : shouting message to %s" % (barejid))
                     self.xmppclient.send(broadcast)
     
     
@@ -520,7 +520,7 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to add
         """
-        self.log.info("adding JID %s to roster of %s" % (str(jid), str(self.jid)))
+        log.info("adding JID %s to roster of %s" % (str(jid), str(self.jid)))
         
         self.roster = self.xmppclient.getRoster()
         
@@ -543,14 +543,16 @@ class TNArchipelBasicXMPPClient(object):
         @type jid: string
         @param jid: this jid to remove
         """
-        self.log.info("%s is removing jid %s from it's roster" % (self.jid, jid))
-        # self.roster.Unsubscribe(jid)
-        # self.roster.Unauthorize(jid)
-        self.roster.delItem(jid.getStripped())
+        try:
+            log.info("%s is removing jid %s from it's roster" % (self.jid, jid))
+            # self.roster.Unsubscribe(jid)
+            # self.roster.Unauthorize(jid)
+            self.roster.delItem(jid.getStripped())
         
-        self.roster = self.xmppclient.getRoster()
-        self.log.debug("roster is now: %s" % str(self.roster.getItems()))
-    
+            self.roster = self.xmppclient.getRoster()
+            log.debug("roster is now: %s" % str(self.roster.getItems()))
+        except Exception as ex:
+            log.error("cannot remove jid from roster: %s" % str(ex))
     
     def is_jid_subscribed(self, jid):
           """
@@ -563,16 +565,16 @@ class TNArchipelBasicXMPPClient(object):
           """ 
           try:
               self.roster.getSubscription(str(jid))
-              self.log.info("stanza sent form authorized JID {0}".format(jid))
+              log.info("stanza sent form authorized JID {0}".format(jid))
               return True
           except KeyError:
-              self.log.info("stanza sent form unauthorized JID {0}".format(jid))
+              log.info("stanza sent form unauthorized JID {0}".format(jid))
               return False
     
     
     def get_vcard(self):
         
-        self.log.info("asking for own vCard")
+        log.info("asking for own vCard")
         node_iq = xmpp.Iq(typ='get', frm=self.jid)
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         
@@ -582,7 +584,7 @@ class TNArchipelBasicXMPPClient(object):
         # if self.vCard.getTag("NAME") and not self.vCard.getTag("NAME").getCDATA() == "":
         #     self.name = self.vCard.getTag("NAME").getCDATA()
             
-        self.log.info("own vcard retrieved")
+        log.info("own vcard retrieved")
     
         
     def set_vcard(self, params):
@@ -592,7 +594,7 @@ class TNArchipelBasicXMPPClient(object):
         @type params: dict
         @param params: adict containing at least entity_type keys, and options avatar_file key
         """
-        self.log.info("vcard making started")
+        log.info("vcard making started")
 
         node_iq = xmpp.Iq(typ='set', xmlns=None)
         
@@ -624,7 +626,7 @@ class TNArchipelBasicXMPPClient(object):
             if self.vCard and self.vCard.getTag("PHOTO"):
                 old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
                 if old_photo_binval == photo_data:
-                    self.log.info("vCard photo hasn't change.")
+                    log.info("vCard photo hasn't change.")
                     self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
             
             node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
@@ -634,7 +636,7 @@ class TNArchipelBasicXMPPClient(object):
             node_iq.addChild(name="vCard", payload=[type_node, name_node], namespace="vcard-temp")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
         
-        self.log.info("vcard information sent with type: {0}".format(params["entity_type"]))        
+        log.info("vcard information sent with type: {0}".format(params["entity_type"]))        
     
     
     def send_update_vcard(self, conn, presence, photo_hash=None):
@@ -658,7 +660,7 @@ class TNArchipelBasicXMPPClient(object):
             node_presence.addChild(name="x", namespace='vcard-temp:x:update', payload=[node_photo_sha1])
         
         self.xmppclient.send(node_presence)
-        self.log.info("vcard update presence sent") 
+        log.info("vcard update presence sent") 
     
     
     
@@ -686,20 +688,20 @@ class TNArchipelBasicXMPPClient(object):
                     time.sleep(1.0)
                     self.connect()
             except Exception as ex:
-                self.log.info("GREPME: Loop exception : %s. Loop status is now %d" % (ex, self.loop_status))
+                log.info("GREPME: Loop exception : %s. Loop status is now %d" % (ex, self.loop_status))
                 traceback.print_exc(file=sys.stdout, limit=20)
                 
                 if str(ex).find('User removed') > -1: # ok, there is something I haven't understood with exception...
-                    self.log.info("GREPME : Account has been removed from server")
+                    log.info("GREPME : Account has been removed from server")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 
                 elif self.auto_reconnect:
-                    self.log.info("GREPME : Disconnected from server. Trying to reconnect in 5 five seconds")
+                    log.info("GREPME : Disconnected from server. Trying to reconnect in 5 five seconds")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
                 
                 else:
-                    self.log.error("GREPME : End of loop forced by exception : %s" % str(ex))
+                    log.error("GREPME : End of loop forced by exception : %s" % str(ex))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 print traceback.extract_stack()
         
@@ -733,7 +735,7 @@ class TNArchipelBasicXMPPClient(object):
         @type item: dictionnary
         @param item: the dictionnary describing the registrar item
         """
-        self.log.debug("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
+        log.debug("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
         self.messages_registrar.append(item)
     
     
@@ -758,7 +760,7 @@ class TNArchipelBasicXMPPClient(object):
         @param msg: the received message
         """
         if not msg.getType() == ARCHIPEL_NS_SERVICE_MESSAGE and not msg.getType() == ARCHIPEL_NS_IQ_PUSH and not msg.getType() == "error" and msg.getBody():
-            self.log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
+            log.info("message received from %s (%s)" % (msg.getFrom(), msg.getType()))
             reply = msg.buildReply("not prepared")
             me = reply.getFrom()
             me.setResource(self.resource)
@@ -766,7 +768,7 @@ class TNArchipelBasicXMPPClient(object):
             #reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
             return reply
         else:
-            self.log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
+            log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
             return False
     
     
