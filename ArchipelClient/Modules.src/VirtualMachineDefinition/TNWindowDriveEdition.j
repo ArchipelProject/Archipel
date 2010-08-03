@@ -129,7 +129,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     if ([buttonSource selectedItem])
         [_drive setSource:[[buttonSource selectedItem] stringValue]];
     else
-        [_drive setSource:@"/tmp/nodisk"];
+        [_drive setSource:([_drive device] == @"cdrom") ? @"" : @"/tmp/nodisk"];
     
     [_drive setType:[buttonType title]];
 
