@@ -244,12 +244,13 @@ Connection: Upgrade\r
     
     def run(self):
         # if self.settings['daemon']: daemonize()
-        lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        lsock.bind((self.listen_host, self.listen_port))
-        lsock.listen(100)
         # print "NOVNC : server started"
         try:
+            lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            lsock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            lsock.bind((self.listen_host, self.listen_port))
+            lsock.listen(100)
+            
             while True:
                 try:
                     self.csock = self.startsock = None

@@ -135,6 +135,14 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.register_actions_to_perform_on_auth("set_vcard", {"entity_type": "hypervisor", "avatar_file": default_avatar})
         self.register_actions_to_perform_on_auth("update_presence")
         
+        self.create_hook("HOOK_HYPERVISOR_ALLOC");
+        self.create_hook("HOOK_HYPERVISOR_FREE");
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE");
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE");
+        self.create_hook("HOOK_HYPERVISOR_CLONE")
+        
+        self.initialize_modules()
+        
     
     
     def update_presence(self, params=None):
@@ -215,6 +223,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 log.info("MIGRATION: virtual machine %s stopped because of live migration. Freeing softly" % vmjid)
                 self.free_for_migration(xmpp.JID(vmjid))
+                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", dom)
             except Exception as ex:
                 log.error("MIGRATION: can't free softly this virtual machine: %s" % str(ex))
             
@@ -227,6 +236,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
                 vmname  = desc.getTag(name="description").getCDATA().split("::::")[2]
                 log.info("MIGRATION: virtual machine %s resumed from live migration. Allocating softly" % vmjid)
                 self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
+                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", dom)
             except Exception as ex:
                 log.warning("MIGRATION: can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
             
@@ -331,7 +341,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         self.update_presence()
         log.info("XMPP Virtual Machine instance sucessfully initialized")
-        
+        self.perform_hooks("HOOK_HYPERVISOR_ALLOC", vm)
         return vm
         
     
@@ -389,6 +399,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         log.info("unregistering vm from jabber server")
         vm._inband_unregistration()
+        self.perform_hooks("HOOK_HYPERVISOR_FREE", vm)
         self.update_presence()
     
     
@@ -426,7 +437,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         name = "%s (clone)" % xmppvm.name;
         newvm = self.alloc(requester, requested_name=name);
         newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
-    
+        self.perform_hooks("HOOK_HYPERVISOR_CLONE", xmppvm)
+        
     
     def get_capabilities(self):
         """return hypervisor's capabilities"""

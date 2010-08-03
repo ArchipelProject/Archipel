@@ -94,6 +94,15 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.triggers                   = {};
         self.watchers                   = {};
         
+        self.create_hook("HOOK_VM_CREATE");
+        self.create_hook("HOOK_VM_SHUTOFF");
+        self.create_hook("HOOK_VM_STOP");
+        self.create_hook("HOOK_VM_DESTROY");
+        self.create_hook("HOOK_VM_SUSPEND");
+        self.create_hook("HOOK_VM_RESUME");
+        self.create_hook("HOOK_VM_UNDEFINE");
+        self.create_hook("HOOK_VM_DEFINE");
+        
         if not os.path.isdir(self.folder): os.mkdir(self.folder)
         log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
         self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
@@ -104,6 +113,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.register_actions_to_perform_on_auth("set_vcard", {"entity_type": "virtualmachine", "avatar_file": default_avatar})
         
         self.register_for_messages()
+        
+        self.initialize_modules()
     
     
     def lock(self):
@@ -262,22 +273,26 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
                 self.create_novnc_proxy()
+                self.perform_hooks("HOOK_VM_STARTED")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_ON)
             
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED and not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                 self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
+                self.perform_hooks("HOOK_VM_SUSPEND")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and not detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
+                self.perform_hooks("HOOK_VM_RESUME")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
                 
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_STOP")
                 self.stop_novnc_proxy()
             
             elif event == libvirt.VIR_DOMAIN_CRASHED:
@@ -290,13 +305,14 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTOFF)
                 self.push_change("virtualmachine:control", "shutoff", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_SHUTOFF")
                 self.stop_novnc_proxy()
             
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
-                print "MAIS QUESCT CE QUE JE FOUT LA>>"
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None;
                 self.description = None;
             
@@ -304,6 +320,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_DEFINE")
             
         except Exception as ex:
             log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
@@ -354,6 +371,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.novnc_proxy = archipelWebSocket.TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl);
         self.novnc_proxy.start()
     
+    
     def stop_novnc_proxy(self):
         """
         stops the current novnc websocket proxy is any.
@@ -362,6 +380,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log.info("stopping novnc proxy")
             self.novnc_proxy.stop()
             self.novnc_proxy = None;
+    
     
     def manage_trigger_persistance(self):
         """
@@ -568,7 +587,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.domain.shutdown()
         if (self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING):
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
-        
         log.info("virtual machine shutdowned")
     
     

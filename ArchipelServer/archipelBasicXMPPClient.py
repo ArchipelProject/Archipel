@@ -80,6 +80,7 @@ class TNArchipelBasicXMPPClient(object):
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None;
         self.pubSubNodeLog          = None;
+        self.hooks                  = {};
         
         
         self.jid.setResource(self.resource)
@@ -94,7 +95,9 @@ class TNArchipelBasicXMPPClient(object):
             self.ipaddr = socket.gethostbyname(socket.gethostname())
         else:
             self.ipaddr = ip_conf
-        
+    
+    
+    def initialize_modules(self):
         for method in self.__class__.__dict__:
             if not method.find("__module_init__") == -1:
                 m = getattr(self, method)
@@ -222,6 +225,46 @@ class TNArchipelBasicXMPPClient(object):
         
         log.info("removing pubsub node for events")
         self.pubSubNodeEvent.delete(nowait=False)
+    
+    ######################################################################################################
+    ### Hooks management
+    ######################################################################################################
+    
+    def create_hook(self, hookname):
+        """register a new hook"""
+        self.hooks[hookname] = [];
+        log.info("HOOK: creating hook with name %s" % hookname)
+        return True
+    
+    def remove_hook(self, hookname):
+        """unregister an existing hook"""
+        if self.hooks.has_key(hookname):
+            del self.hooks[hookname];
+            log.info("HOOK: removing hook with name %s" % hookname)
+            return True
+        return False
+    
+    def register_hook(self, hookname, m):
+        """register a method that will be triggered by a hook"""
+        if self.hooks.has_key(hookname):
+            self.hooks[hookname].append(m);
+            log.info("HOOK: registering hook method %s for hook name %s" % (m.__name__, hookname))
+            return True
+        return False
+        
+    def unregister_hook(self, hookname, m):
+        """unregister a method from a hook"""
+        if self.hooks.has_key(hookname):
+            self.hooks[hookname].remove(m);
+            log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
+            return True
+        return False
+    
+    def perform_hooks(self, hookname, args=None):
+        log.info("HOOK: going to run methods for hook %s" % hookname)
+        for m in self.hooks[hookname]:
+            log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
+            m(self, args)
     
     ######################################################################################################
     ### Server registration
