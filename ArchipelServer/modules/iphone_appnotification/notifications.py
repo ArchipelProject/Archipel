@@ -64,9 +64,9 @@ def get_credentials(email, password):
     return token[0].firstChild.data
 
 
-def send(credentials, message, title=None, long_message=None,
+def send(credentials, message, title=None, long_message=None, subtitle=None,
          long_message_preview=None, message_level=0, silent=False,
-         action_loc_key=None, run_command=None, sound=1, debug=False):
+         action_loc_key=None, run_command=None, sound=1, icon_url=None, debug=False):
     """Send a notification, waiting for the message to be sent.
 
     The first two arguments (credentials  and message) are mandatory, all of the
@@ -93,11 +93,11 @@ def send(credentials, message, title=None, long_message=None,
     data['notification[message]'] = message
 
     for key in ("title", "long_message", "long_message_preview",
-                "message_level", "action_loc_key", "run_command"):
+                "message_level", "action_loc_key", "run_command", "icon_url", "subtitle"):
         value = locals()[key]
         if value is not None:
             data['notification[%s]' % key] = value
-
+    
     if silent:
         data['notification[silent]'] = 1
     else:
@@ -130,9 +130,10 @@ def send_async(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    import sys
+    import sys, time
     
     if len(sys.argv) != 3:
         print >> sys.stderr, "Syntax: %s credentials message" % sys.argv[0]
     else:
-        send(sys.argv[1], sys.argv[2], debug=True)
+        send_async(sys.argv[1], sys.argv[2], title="MyTITLE", debug=True)
+        time.sleep(5)

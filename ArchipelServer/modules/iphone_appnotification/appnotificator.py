@@ -23,60 +23,61 @@ class AppNotificator:
     def __init__(self, credentials):
         self.credentials = credentials;
     
-    def send(self, title, message):
-        notifications.send_async(credentials=self.credentials, title=title, message=message)
+    def send(self, title, message, subtitle=None):
+        long_message_preview = message
+        notifications.send_async(self.credentials, message, title=title, subtitle=subtitle, icon_url="http://antoinemercadal.fr/logo_archipel.png", long_message_preview=long_message_preview)
     
     
     def vm_create(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been started")
+        self.send("Archipel", "virtual machine %s has been started" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_shutoff(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been shut off")
+        self.send("Archipel", "virtual machine %s has been shut off" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_stop(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been stopped")
+        self.send("Archipel", "virtual machine %s has been stopped" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_destroy(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been destroyed")
+        self.send("Archipel", "virtual machine %s has been destroyed" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_suspend(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been suspended")
+        self.send("Archipel", "virtual machine %s has been suspended" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_resume(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been resumed")
+        self.send("Archipel", "virtual machine %s has been resumed" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_undefine(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been undefined")
+        self.send("Archipel", "virtual machine %s has been undefined" % entity.name, subtitle="Virtual machine event")
     
     
     def vm_define(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine has been defined")
+        self.send("Archipel", "virtual machine %s has been defined" % entity.name, subtitle="Virtual machine event")
 
 
 
     def hypervisor_alloc(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine %s has been allocated" % args.name)
+        self.send("Archipel", "virtual machine %s has been allocated" % args.name, subtitle="Hypervisor event")
     
     
     def hypervisor_free(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine %s has been removed" % args.name)
+        self.send("Archipel", "virtual machine %s has been removed" % args.name, subtitle="Hypervisor event")
     
     
     def hypervisor_clone(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine %s has been cloned" % args.name)
+        self.send("Archipel", "virtual machine %s has been cloned" % args.name, subtitle="Hypervisor event")
     
     
     def hypervisor_migrate_leave(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine %s has migrate to another hypervisor" % args.name)
+        self.send("Archipel", "virtual machine %s has migrate to another hypervisor" % args.name, subtitle="Hypervisor event")
     
     
     def hypervisor_migrate_arrive(self, entity, args):
-        self.send("Archipel: %s" % entity.name, "virtual machine %s has juste arrived from another hypervisor" % args.name)
+        self.send("Archipel", "virtual machine %s has juste arrived from another hypervisor" % args.name, subtitle="Hypervisor event")
     
 

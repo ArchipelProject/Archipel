@@ -18,8 +18,8 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-//@import <VNCCappuccino/VNCCappuccino.j>
 
+@import "TNExternalVNCWindow.j";
 @import "TNZoomAnimation.j";
 
 
@@ -284,6 +284,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [checkboxPasswordRemember setState:CPOffState];
         }
         
+        [_vncView load];
+        
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncProxyPort];
         [_vncView setPassword:[fieldPassword stringValue]];
@@ -292,7 +294,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         [_vncView setEncrypted:_useSSL];
         [_vncView setDelegate:self];
         
-        [_vncView load];
+        
         [_vncView connect:nil];
     }
     else if ([aStanza getType] == @"error")
@@ -308,7 +310,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)openDirectURI:(id)sender
 {
-    window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
+    // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
+    [self openVNCInNewWindow:sender];
 }
 
 - (IBAction)changeScale:(id)sender
@@ -423,7 +426,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     switch(aState)
     {
         case TNVNCCappuccinoStateFailed:
-            if ([aVNCView oldState] == TNVNCCappuccinoStateSecurityResult)
+            if ([_vncView oldState] == TNVNCCappuccinoStateSecurityResult)
             {
                 [imageViewSecureConnection setHidden:YES];
                 [windowPassword center];
@@ -447,23 +450,31 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             if (_useSSL)
                 [imageViewSecureConnection setHidden:NO];
             break;
-        
-        // case TNVNCCappuccinoStateDisconnected:
-        //     if (([aVNCView oldState] == TNVNCCappuccinoStateFailed)
-        //     {
-        //         var alert = [TNAlert alertWithTitle:@"Disconnection"
-        //                                     message:@"Connection to VNC screen failed. retry?"
-        //                          informativeMessage:@"If you abort connection, you'll need to leave this module and come back later."
-        //                                    delegate:self
-        //                                     actions:[["Retry", @selector(per:)], ["Abort", nil]]];
-        //         [alert runModal];
-        //     }
     }
 }
 
-/*
-    TNAlert actoions
-*/
+- (void)openVNCInNewWindow:(id)sender
+{
+    var vncSize             = [_vncView canvasSize];
+    var winFrame            = CGRectMake(100, 100, vncSize.width + 6, vncSize.height + 6);
+    var pfWinFrame          = CGRectMake(100, 100, vncSize.width + 6, vncSize.height + 6);
+    var VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
+    var platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+    
+    [VNCWindow setPlatformWindow:platformVNCWindow];
+    [VNCWindow makeKeyAndOrderFront:nil];
+    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " ("+ [_entity JID] +")"];
+    
+    [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+    [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+    
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES];
+    [VNCWindow makeKeyWindow];
+}
+
+
+
+
 @end
 
 

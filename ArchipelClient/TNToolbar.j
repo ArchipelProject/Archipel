@@ -61,6 +61,9 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 {
     if (self = [super init])
     {
+        // not implemented in Cappuccino
+        //[self setDisplayMode:CPToolbarDisplayModeIconOnly];
+        
         var bundle          = [CPBundle bundleForClass:self];
         _toolbarItems       = [CPDictionary dictionary];
         _toolbarItemsOrder  = [CPDictionary dictionary];
@@ -108,14 +111,7 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:901];
         [_toolbarItemsOrder setObject:TNToolBarItemHelp forKey:902];
         [_toolbarItemsOrder setObject:TNToolBarItemLogout forKey:903];
-        
-        //[self setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
-        //[self setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        //[self setPosition:900 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        //[self setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-        //[self setPosition:902 forToolbarItemIdentifier:TNToolBarItemHelp];
-        //[self setPosition:903 forToolbarItemIdentifier:TNToolBarItemLogout];
-        
+
         [self setDelegate:self];
     }
 

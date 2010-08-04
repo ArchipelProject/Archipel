@@ -16,6 +16,7 @@ import sys, socket, ssl, struct, traceback
 from base64 import b64encode, b64decode
 from hashlib import md5
 import threading
+import thread
 import sys, socket, ssl, optparse
 from select import select
 from utils import *
@@ -109,7 +110,6 @@ Connection: Upgrade\r
         
         # Peek, but don't read the data
         handshake = sock.recv(1024, socket.MSG_PEEK)
-        log.info("WEBSOCKETPROXY: Handshake [%s]" % repr(handshake))
         if handshake == "":
             # print "Ignoring empty handshake"
             sock.close()
@@ -184,62 +184,61 @@ Connection: Upgrade\r
         tqueue = []
         rlist = [client, target]
         
-        while True:
-            wlist = []
-            if tqueue: wlist.append(target)
-            if cqueue: wlist.append(client)
-            ins, outs, excepts = select(rlist, wlist, [], 1)
-            if excepts: raise Exception("Socket exception")
+        try:
+            while True:
+                wlist = []
+                if tqueue: wlist.append(target)
+                if cqueue: wlist.append(client)
+                ins, outs, excepts = select(rlist, wlist, [], 1)
+                if excepts: raise Exception("Socket exception")
                 
-            if target in outs:
-                dat = tqueue.pop(0)
-                sent = target.send(dat)
-                if sent == len(dat):
-                    pass
-                else:
-                    tqueue.insert(0, dat[sent:])
-                ##if rec: rec.write("Target send: %s\n" % map(ord, dat))
-                
-            if client in outs:
-                dat = cqueue.pop(0)
-                sent = client.send(dat)
-                if not sent == len(dat):
-                    cqueue.insert(0, dat[sent:])
-                    ##if rec: rec.write("Client send partial: %s\n" % repr(dat[0:send]))
-                
-            if target in ins:
-                buf = target.recv(self.buffer_size)
-                if len(buf) == 0: raise Exception("Target closed")
-                
-                cqueue.append(self.encode(buf))
-                ##if rec: rec.write("Target recv (%d): %s\n" % (len(buf), map(ord, buf)))
-                
-            if client in ins:
-                buf = client.recv(self.buffer_size)
-                if len(buf) == 0: raise Exception("Client closed")
-                
-                if buf[-1] == '\xff':
-                    ##if rec: rec.write("Client recv (%d): %s\n" % (len(buf), repr(buf)))
-                    if cpartial:
-                        tqueue.extend(self.decode(cpartial + buf))
-                        cpartial = ""
+                if target in outs:
+                    dat = tqueue.pop(0)
+                    sent = target.send(dat)
+                    if sent == len(dat):
+                        pass
                     else:
-                        tqueue.extend(self.decode(buf))
-                else:
-                    ##if rec: rec.write("Client recv partial (%d): %s\n" % (len(buf), repr(buf)))
-                    cpartial = cpartial + buf
-    
+                        tqueue.insert(0, dat[sent:])
+                    ##if rec: rec.write("Target send: %s\n" % map(ord, dat))
+                
+                if client in outs:
+                    dat = cqueue.pop(0)
+                    sent = client.send(dat)
+                    if not sent == len(dat):
+                        cqueue.insert(0, dat[sent:])
+                        ##if rec: rec.write("Client send partial: %s\n" % repr(dat[0:send]))
+                
+                if target in ins:
+                    buf = target.recv(self.buffer_size)
+                    if len(buf) == 0: raise Exception("Target closed")
+                
+                    cqueue.append(self.encode(buf))
+                    ##if rec: rec.write("Target recv (%d): %s\n" % (len(buf), map(ord, buf)))
+                
+                if client in ins:
+                    buf = client.recv(self.buffer_size)
+                    if len(buf) == 0: raise Exception("Client closed")
+                
+                    if buf[-1] == '\xff':
+                        ##if rec: rec.write("Client recv (%d): %s\n" % (len(buf), repr(buf)))
+                        if cpartial:
+                            tqueue.extend(self.decode(cpartial + buf))
+                            cpartial = ""
+                        else:
+                            tqueue.extend(self.decode(buf))
+                    else:
+                        ##if rec: rec.write("Client recv partial (%d): %s\n" % (len(buf), repr(buf)))
+                        cpartial = cpartial + buf
+        except:
+            if target: target.close()
+        
     
     def proxy_handler(self, client):
         # print "Connecting to: %s:%s" % (self.target_host, self.target_port)
         tsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tsock.connect((self.target_host, self.target_port))
         
-        try:
-            self.do_proxy(client, tsock)
-        except:
-            if tsock: tsock.close()
-            raise
+        thread.start_new_thread(self.do_proxy, (client, tsock))
     
     
     def run(self):
@@ -258,6 +257,7 @@ Connection: Upgrade\r
                     #FIXME : log.debug this
                     log.info("WEBSOCKETPROXY: waiting for connection on port %s" % self.listen_port)
                     startsock, address = lsock.accept()
+                    
                     # print 'Got client connection from %s' % address[0]
                     log.info("WEBSOCKETPROXY: Got client connection from %s" % address[0])
                     self.csock = self.do_handshake(startsock)
