@@ -46,6 +46,7 @@ if __name__ == "__main__":
     build_vnccappuccino()
     build_strophecappuccino()
     build_archipel()
+    apply_cappuccino_frameworks()
     
     print "* build complete"
     
