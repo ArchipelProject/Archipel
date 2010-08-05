@@ -34,7 +34,7 @@ def build_archipel():
 
 def apply_cappuccino_frameworks():
     print "* Adding Cappuccino framework"
-    os.system("/usr/local/narwhal/bin/capp -f ./ArchipelClient")
+    os.system("/usr/local/narwhal/bin/capp gen -f ./ArchipelClient")
     print "* Cappuccino added"
 
 if __name__ == "__main__":
