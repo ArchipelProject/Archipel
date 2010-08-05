@@ -219,7 +219,7 @@ class TNArchipelWebSocket(threading.Thread):
         return retsock
     
     
-    def __do_proxy(self, client, target):
+    def __do_proxy(self, client, target, addr):
         """ Proxy WebSocket to normal socket. """
         cqueue = []
         cpartial = ""
@@ -267,17 +267,17 @@ class TNArchipelWebSocket(threading.Thread):
                     else:
                         cpartial = cpartial + buf
         except:
-            log.info("WEBSOCKETPROXY: client disconnected");
+            log.info("WEBSOCKETPROXY: client %s disconnected" % str(addr));
             if client: client.close()
             if target: target.close()
         
     
     
-    def __proxy_handler(self, client):
+    def __proxy_handler(self, client, addr):
         tsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         tsock.connect((self.target_host, self.target_port))
         
-        thread.start_new_thread(self.__do_proxy, (client, tsock))
+        thread.start_new_thread(self.__do_proxy, (client, tsock, addr))
     
     
     def run(self):
@@ -298,14 +298,13 @@ class TNArchipelWebSocket(threading.Thread):
                     
                     log.debug("WEBSOCKETPROXY: waiting for connection on port %s" % self.listen_port)
                     startsock, address = self.lsock.accept()
-                    
+                    if not self.on: return
                     log.info("WEBSOCKETPROXY: Got client connection from %s" % address[0])
                     csock = self.__do_handshake(startsock)
                     if not csock: continue
                     
                     self.clientSockets.append((csock, startsock))
-                    self.__proxy_handler(csock)
-                
+                    self.__proxy_handler(csock, address[0])
                 except Exception as ex:
                     log.error("WEBSOCKETPROXY: connection interrupted: %s" % str(ex))
         except Exception as ex:

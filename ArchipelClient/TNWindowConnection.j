@@ -96,6 +96,7 @@
     }
     
     _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]];
+    
     [_stropheConnection setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [_stropheConnection setDelegate:self];
     [_stropheConnection connect];

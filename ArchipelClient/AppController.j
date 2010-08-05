@@ -173,13 +173,12 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
             [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
-            [bundle objectForInfoDictionaryKey:@"TNStropheCappuccinoDebugMode"], @"TNStropheCappuccinoDebugMode",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright"
     ]];
-    
     
     // register logs
     CPLogRegister(CPLogConsole, [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"]);

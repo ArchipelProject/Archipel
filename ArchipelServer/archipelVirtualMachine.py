@@ -702,7 +702,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             supportSSL = False;
         else: 
             supportSSL = True;
-        return {"direct": directport, "proxy": proxyport, "onlyssl": self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl"), "supportssl": supportSSL}
+        return {"direct"        : directport, 
+                "proxy"         : proxyport, 
+                "onlyssl"       : self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl"), 
+                "supportssl"    : supportSSL}
     
     
     def xmldesc(self):
