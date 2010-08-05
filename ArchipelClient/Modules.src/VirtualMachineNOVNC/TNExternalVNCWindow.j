@@ -61,8 +61,6 @@
     [[self platformWindow] DOMWindow].onbeforeunload = function(){
         [self close];
     };
-    
-    alert([[self platformWindow] DOMWindow].onbeforeunload)
 }
 
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
