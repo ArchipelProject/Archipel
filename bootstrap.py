@@ -45,8 +45,8 @@ if __name__ == "__main__":
     build_growlcappuccino()
     build_vnccappuccino()
     build_strophecappuccino()
-    build_archipel()
     apply_cappuccino_frameworks()
+    build_archipel()
     
     print "* build complete"
     
