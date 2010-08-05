@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import os, sys
+import os, sys, getopt
 
 
 def test_capp():
@@ -36,6 +36,14 @@ def apply_cappuccino_frameworks():
     print "* Adding Cappuccino framework"
     os.system("/usr/local/narwhal/bin/capp gen -f ./ArchipelClient")
     print "* Cappuccino added"
+
+
+def install_archipelserver():
+    inst_bin    = raw_input(" * Where do you want to install ArchipelServer ? [/usr/local/bin]")
+    inst_data   = raw_input(" * Where do you want to ArchipelServer stores its datas ? [/usr/local/var/archipel]")
+    inst_init   = raw_input(" * Would you like to install the init script ? [Y/n]")
+
+
 
 if __name__ == "__main__":
     if not test_capp(): 
