@@ -273,7 +273,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
                 self.create_novnc_proxy()
-                self.perform_hooks("HOOK_VM_STARTED")
+                self.perform_hooks("HOOK_VM_CREATE")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_ON)
             
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED and not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:

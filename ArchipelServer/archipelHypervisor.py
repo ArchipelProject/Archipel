@@ -118,6 +118,17 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         log.info("server address defined as {0}".format(self.xmppserveraddr))
         
         
+        # hooks
+        self.create_hook("HOOK_HYPERVISOR_ALLOC");
+        self.create_hook("HOOK_HYPERVISOR_FREE");
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE");
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE");
+        self.create_hook("HOOK_HYPERVISOR_CLONE")
+        
+        # module inits;
+        self.initialize_modules()
+        
+        
         # libvirt connection
         self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
         if self.libvirt_connection == None:
@@ -134,14 +145,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.register_actions_to_perform_on_auth("set_vcard", {"entity_type": "hypervisor", "avatar_file": default_avatar})
         self.register_actions_to_perform_on_auth("update_presence")
-        
-        self.create_hook("HOOK_HYPERVISOR_ALLOC");
-        self.create_hook("HOOK_HYPERVISOR_FREE");
-        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE");
-        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE");
-        self.create_hook("HOOK_HYPERVISOR_CLONE")
-        
-        self.initialize_modules()
         
     
     

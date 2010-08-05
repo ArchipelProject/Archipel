@@ -35,32 +35,7 @@
 @implementation TNExternalVNCWindow : CPWindow
 {
     TNVNCView       _vncView;
-    // CPToolbar       _toolbar;
-    // CPDictionary    _toolbarItems;
 }
-
-
-// - (id)initWithContentRect:(CPRect)aRect styleMask:(id)aStyleMask
-// {
-//     if (self = [super initWithContentRect:aRect styleMask:aStyleMask])
-//     {
-//         var bundle      = [CPBundle mainBundle];
-//         _toolbar        = [[CPToolbar alloc] initWithIdentifier:[CPString UUID]];
-//         _toolbarItems   = [CPDictionary dictionary];
-//         
-//         var lockItem    = [[CPToolbarItem alloc] initWithItemIdentifier:@"lock"];
-//         var imageLock   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"lock.png"]];
-//         
-//         [lockItem setLabel:@"Lock"];
-//         [lockItem setImage:[[CPImage alloc] initWithContentsOfFile:imageLock size:CPSizeMake(32,32)]];
-//         [_toolbarItems setObject:lockItem forKey:@"lock"];
-//         
-//         [_toolbar setDelegate:self];
-//         [self setToolbar:_toolbar];
-//     }
-//     
-//     return self;
-// }
 
 - (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor
 {
@@ -80,6 +55,14 @@
     [_vncView setEncrypted:isEncrypted];
     [_vncView setDelegate:self];
     [_vncView connect:nil];
+    
+    
+    
+    [[self platformWindow] DOMWindow].onbeforeunload = function(){
+        [self close];
+    };
+    
+    alert([[self platformWindow] DOMWindow].onbeforeunload)
 }
 
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
@@ -96,17 +79,17 @@
     }
 }
 
-// - (CPArray)toolbarDefaultItemIdentifiers:(CPToolbar)toolbar
-// {
-//     CPLog.info([_toolbarItems allKeys])
-//     return [_toolbarItems allKeys];
-// }
-// 
-// - (CPToolbarItem)toolbar:(CPToolbar)toolbar itemForItemIdentifier:(CPString)itemIdentifier willBeInsertedIntoToolbar:(BOOL)flag
-// {
-//     var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-//     
-//     return ([_toolbarItems objectForKey:itemIdentifier]) ? [_toolbarItems objectForKey:itemIdentifier] : toolbarItem;
-// }
-
+- (void)close
+{
+    CPLog.info("disconnecting windowed noVNC client")
+    
+    if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+    {
+        [_vncView disconnect:nil];
+        [_vncView clear];
+        [_vncView unfocus];
+    }
+    [_vncView invalidate];
+    [super close];
+}
 @end
