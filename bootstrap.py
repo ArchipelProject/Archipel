@@ -32,6 +32,10 @@ def build_archipel():
     print "* ArchipelClient built"
 
 
+def apply_cappuccino_frameworks():
+    print "* Adding Cappuccino framework"
+    os.system("capp -f ./ArchipelClient")
+    print "* Cappuccino added"
 
 if __name__ == "__main__":
     if not test_capp(): 
