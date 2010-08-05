@@ -210,11 +210,11 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceivedGeolocalization:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
         var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
-        var item        = [_roster contactWithJID:[aStanza getFromNode]];
+        var item        = [_roster contactWithJID:[aStanza fromNode]];
 
         var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
         var marker      = [[MKMarker alloc] initAtLocation:loc];
@@ -250,7 +250,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceiveOriginHypervisorRoster:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
@@ -281,7 +281,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 - (void)didReceiveDestinationHypervisorRoster:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];

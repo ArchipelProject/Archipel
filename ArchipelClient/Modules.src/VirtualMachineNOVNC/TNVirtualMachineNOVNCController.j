@@ -225,7 +225,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)_didReceiveVNCDisplay:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var bundle      = [CPBundle bundleForClass:[self class]];
         var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
@@ -297,7 +297,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         
         [_vncView connect:nil];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

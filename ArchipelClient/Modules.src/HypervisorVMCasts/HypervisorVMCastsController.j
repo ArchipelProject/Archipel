@@ -262,7 +262,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didReceivedVMCasts:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         [[_castsDatasource contents] removeAllObjects];
         
@@ -301,7 +301,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
         [_mainOutlineView reloadData];
         [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -346,7 +346,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didAddNewVMCast:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred"];
@@ -405,7 +405,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didDeleteAppliance:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled"];
@@ -445,7 +445,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didUnregistred:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred"];

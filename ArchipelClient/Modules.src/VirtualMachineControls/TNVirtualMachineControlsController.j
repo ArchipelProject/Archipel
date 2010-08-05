@@ -385,7 +385,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didReceiveVirtualMachineInfo:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var humanState;
         var infoNode            = [aStanza firstChildWithName:@"info"];
@@ -504,8 +504,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didPlay:(id)aStanza
 {
-    var responseType = [aStanza getType];
-    var responseFrom = [aStanza getFrom];
+    var responseType = [aStanza type];
+    var responseFrom = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -552,8 +552,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didPause:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     [self layoutButtons:_VMLibvirtStatus];
     
@@ -572,8 +572,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didResume:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     [self layoutButtons:_VMLibvirtStatus];
     
@@ -604,8 +604,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didStop:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -650,8 +650,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didDestroy:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -680,8 +680,8 @@ TNArchipelTransportBarReboot    = 4;
 
 - (BOOL)didReboot:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -712,7 +712,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didSetAutostart:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         if ([checkBoxAutostart state] == CPOnState)
@@ -741,7 +741,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didSetMemory:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"error")
+    if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
@@ -763,7 +763,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didSetVCPUs:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"error")
+    if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
@@ -811,7 +811,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didMigrate:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Migration" message:@"Migration has started."];

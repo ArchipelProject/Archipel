@@ -917,7 +917,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     if ([requestStanza firstChildWithName:@"nick"])
         nick = [[requestStanza firstChildWithName:@"nick"] text];
     else
-        nick = [requestStanza getFrom];
+        nick = [requestStanza from];
     
     var alert = [TNAlert alertWithTitle:@"Subscription request"
                                 message:nick + " is asking you subscription. Do you want to add it ?"
@@ -936,7 +936,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [_mainRoster answerAuthorizationRequest:stanza answer:YES];
     
     // evenually subscribe to event node of the entity
-    [self registerToEventNodeOfJID:[stanza getFrom] ofServer:@"pubsub." + [stanza getDomain]];
+    [self registerToEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
 - (void)registerToEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
@@ -962,9 +962,9 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 
 - (void)didPubSubSubscribe:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
-        CPLog.info("Sucessfully subscribed to pubsub event node of " + [aStanza getFrom]);
+        CPLog.info("Sucessfully subscribed to pubsub event node of " + [aStanza from]);
     }
     else
     {
@@ -980,7 +980,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [_mainRoster answerAuthorizationRequest:stanza answer:NO];
     
     // evenually unsubscribe to event node of the entity
-   [self unregisterFromEventNodeOfJID:[stanza getFrom] ofServer:@"pubsub." + [stanza getDomain]];
+   [self unregisterFromEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
 - (void)unregisterFromEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
@@ -1005,9 +1005,9 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 
 - (BOOL)didPubSubUnsubscribe:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
-        CPLog.info("Sucessfully unsubscribed from pubsub event node of " + [aStanza getFrom]);
+        CPLog.info("Sucessfully unsubscribed from pubsub event node of " + [aStanza from]);
     }
     else
     {

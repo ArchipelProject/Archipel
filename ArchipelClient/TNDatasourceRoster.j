@@ -72,7 +72,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 - (void)onUserMessage:(CPNotification)aNotification
 {
-    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] getFromNodeUser];
+    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser];
     var message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text];
     var growl           = [TNGrowlCenter defaultCenter];
     var bundle          = [CPBundle mainBundle];

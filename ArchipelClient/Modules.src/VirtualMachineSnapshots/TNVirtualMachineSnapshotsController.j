@@ -271,7 +271,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didGetSnapshots:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var snapshots = [aStanza childrenWithName:@"domainsnapshot"];
         
@@ -320,7 +320,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (IBAction)didGetCurrentSnapshot:(TNStropheStanza)aStanza
 {
     [fieldInfo setStringValue:@""];
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var snapshots   = [aStanza firstChildWithName:@"domainsnapshot"];
         var name        = [[snapshots firstChildWithName:@"name"] text];
@@ -338,11 +338,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
             
         }
     }
-    else if ([aStanza getType] == @"ignore")
+    else if ([aStanza type] == @"ignore")
     {
         [fieldInfo setStringValue:@"There is no snapshot for this virtual machine"];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -383,7 +383,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didTakeSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
@@ -439,12 +439,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didDeleteSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot deleted"];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -492,7 +492,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)didRevertSnapshot:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {        
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot sucessfully reverted"];

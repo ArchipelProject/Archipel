@@ -305,7 +305,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 - (void)didMigrate:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         [_tableHypervisorDestination deselectAll];
         [_tableHypervisorVirtualMachines deselectAll];
@@ -334,7 +334,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 - (void)didReceiveRoster:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];

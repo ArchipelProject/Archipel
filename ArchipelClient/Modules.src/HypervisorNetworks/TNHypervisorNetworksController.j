@@ -254,7 +254,7 @@ function generateIPForNewNetwork()
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var activeNetworks      = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
         var unactiveNetworks    = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
@@ -458,7 +458,7 @@ function generateIPForNewNetwork()
 
 - (void)didDefineNetwork:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
@@ -603,7 +603,7 @@ function generateIPForNewNetwork()
 
 - (void)didDelNetwork:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
@@ -617,7 +617,7 @@ function generateIPForNewNetwork()
 
 - (void)didNetworkStatusChange:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];

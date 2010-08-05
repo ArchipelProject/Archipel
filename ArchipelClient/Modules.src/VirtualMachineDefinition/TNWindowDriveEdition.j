@@ -232,8 +232,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (void)didReceiveDisksInfo:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -279,8 +279,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
 - (void)didReceiveISOsInfo:(id)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
     
     if (responseType == @"result")
     {

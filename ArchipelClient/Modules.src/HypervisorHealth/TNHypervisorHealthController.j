@@ -150,7 +150,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var memNode = [aStanza firstChildWithName:@"memory"];
         var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024)
@@ -181,7 +181,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
@@ -206,7 +206,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
 - (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var stats = [aStanza childrenWithName:@"stat"];
         stats.reverse();
@@ -244,7 +244,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

@@ -722,7 +722,7 @@ function generateMacAddr()
 
 - (void)didReceiveXMLCapabilities:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var guests = [aStanza childrenWithName:@"guest"];
         _supportedCapabilities = [CPDictionary dictionary];
@@ -822,7 +822,7 @@ function generateMacAddr()
 
 - (void)didReceiveXMLDesc:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var domain          = [aStanza firstChildWithName:@"domain"];
         var hypervisor      = [domain valueForAttribute:@"type"];
@@ -1045,7 +1045,7 @@ function generateMacAddr()
         if (shouldRefresh)
             [self defineXML:nil];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] == "not-defined")
         {
@@ -1118,8 +1118,8 @@ function generateMacAddr()
 
 - (void)didDefineXML:(TNStropheStanza)aStanza
 {
-    var responseType    = [aStanza getType];
-    var responseFrom    = [aStanza getFrom];
+    var responseType    = [aStanza type];
+    var responseFrom    = [aStanza from];
 
     if (responseType == @"result")
     {
@@ -1155,14 +1155,14 @@ function generateMacAddr()
 
 - (void)didUndefineXML:(TNStropheStanza)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual machine" message:@"Virtual machine has been undefined"];
         // [self setDefaultValues];
         [self getXMLDesc];
     }
-    else if ([aStanza getType] == @"error")
+    else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }

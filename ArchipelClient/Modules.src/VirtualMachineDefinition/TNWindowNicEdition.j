@@ -130,7 +130,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)didReceiveHypervisorNetworks:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var names = [aStanza childrenWithName:@"network"]
         for (var i = 0; i < [names count]; i++)
@@ -161,7 +161,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 - (void)didReceiveBridges:(id)aStanza
 {
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var bridges = [aStanza childrenWithName:@"bridge"];
         

@@ -288,9 +288,9 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
 - (void)didSentAction:(TNStropheStanza)aStanza
 {
-    var sender = [aStanza getFromNodeUser];
+    var sender = [aStanza fromUser];
     
-    if ([aStanza getType] == @"result")
+    if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" state modified"];
