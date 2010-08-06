@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ARCHIPEL_CLIENT_BUILD_DIR="ArchipelClient/Build/release/Archipel"
-ARCHIPEL_CLIENT_BUILD_COMMAND="./build.py -bag --ignoremodules=SampleTabModule,SampleToolbarModule"
+ARCHIPEL_CLIENT_BUILD_COMMAND="./build.py -bag"
 PUBLICATION_DIR="/var/www/html/"
 PUBLICATION_OWNER="apache:apache"
 PUBLICATION_RIGHTS="755"
