@@ -184,10 +184,10 @@ def install_archipelclient():
     inst_growl      = ask_bool("Would you like to build GrowlCappuccino ?")
     inst_vnc        = ask_bool("Would you like to build VNCCappuccino ?")
     inst_strophe    = ask_bool("Would you like to build StropheCappuccino ?")
-    inst_archipel   = ask_bool("Would you like to buil Archipel Client ?")
+    inst_archipel   = ask_bool("Would you like to build Archipel Client ?")
     inst_appcapp    = ask_bool("Would you like to apply Cappuccino Framework ?")
     
-    if ask_bool("Would to export Archipel ?"):
+    if ask_bool("Would you like to export Archipel ?"):
         inst_export    = ask("Where do you want to export Archipel Client ?", None, "~/")
         
     print ""
