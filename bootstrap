@@ -210,7 +210,7 @@ def install_archipelclient():
     if inst_strophe:    build_strophecappuccino()
     if inst_appcapp:    apply_cappuccino_frameworks()
     if inst_archipel:   build_archipel()
-    if inst_archipel:   export_archipel(inst_export)
+    if inst_export:     export_archipel(inst_export)
     
     print "\033[32m"
     print " Installation is now complete.\n"
