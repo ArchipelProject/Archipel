@@ -107,6 +107,14 @@ task ("run-desktop", ["desktop"], function()
     OS.system([FILE.join("Build", "Desktop", "Archipel", "Archipel.app", "Contents", "MacOS", "NativeHost"), "-i"]);
 });
 
+task ("cucumber", ["debug"], function()
+{
+	var outfile = FILE.join("Build", "Debug", "Archipel", "cucumber_result.html");
+    OS.system(["cucumber", "--format", "html", "--out", outfile]);
+    OS.system(["open", outfile]);
+});
+
+
 function printResults(configuration)
 {
     print("----------------------------");
