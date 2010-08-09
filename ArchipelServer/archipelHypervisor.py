@@ -307,6 +307,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             reply = self.iq_capabilities(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+        
     
     
     
@@ -648,5 +649,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         return reply
     
 
+    
 
     

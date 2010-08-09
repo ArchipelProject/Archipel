@@ -24,6 +24,7 @@ ARCHIPEL_NS_SERVICE_MESSAGE                     = "headline"
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
 ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
+ARCHIPEL_NS_AVATAR                              = "archipel:avatar"
 
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"

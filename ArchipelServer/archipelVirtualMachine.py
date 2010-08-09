@@ -63,8 +63,6 @@ ARCHIPEL_ERROR_CODE_VM_AUTOSTART                = -1015
 ARCHIPEL_ERROR_CODE_VM_MEMORY                   = -1016
 ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
-ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_AVATARS       = -1020
-ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_SET_AVATAR    = -1021
 
 
 class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
@@ -524,15 +522,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        elif action == "getavatars":
-            reply = self.iq_get_available_avatars(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "setavatar":
-            reply = self.iq_set_available_avatars(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
         
         # elif action == "setpincpus":
         #     reply = self.iq_setcpuspin(iq);
@@ -1438,30 +1427,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES)
         return reply
     
-    
-    def iq_get_available_avatars(self, iq):
-        """
-        return a list of availables avatars
-        """
-        try:
-            reply = iq.buildReply("result")
-            reply.setQueryPayload([self.get_available_avatars()])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_AVATARS)
-        return reply
-    
-    
-    def iq_set_available_avatars(self, iq):
-        """
-        set the current avatars of the virtual machine
-        """
-        try:
-            reply = iq.buildReply("result")
-            avatar = iq.getTag("query").getTag("archipel").getAttr("avatar")
-            self.set_avatar(avatar)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_SET_AVATAR)
-        return reply
     
     
     # def iq_setcpuspin(self, iq):

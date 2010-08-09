@@ -20,9 +20,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineControlGetAvatars   = @"getavatars";
-TNArchipelTypeVirtualMachineControlSetAvatar    = @"setavatar";
+TNArchipelTypeAvatar             = @"archipel:avatar";
+TNArchipelTypeAvatarGetAvatars   = @"getavatars";
+TNArchipelTypeAvatarSetAvatar    = @"setavatar";
 
 TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
@@ -94,9 +94,9 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeAvatar}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlGetAvatars}];
+        "action": TNArchipelTypeAvatarGetAvatars}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceivedAvailableAvatars:) ofObject:self];
 }
@@ -139,9 +139,9 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     var selectedAvatar = [collectionViewAvatars itemAtIndex:selectedIndex];
     var filename = [[selectedAvatar representedObject] avatarFilename];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeAvatar}];
     [stanza addChildName:@"archipel" withAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlSetAvatar,
+        "action": TNArchipelTypeAvatarSetAvatar,
         "avatar": filename}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didSetAvatar:) ofObject:self];

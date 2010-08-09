@@ -35,6 +35,10 @@ import traceback
 import datetime
 import pubsub
 
+
+ARCHIPEL_ERROR_CODE_AVATARS       = -1
+ARCHIPEL_ERROR_CODE_SET_AVATAR    = -2
+
 ARCHIPEL_MESSAGING_HELP_MESSAGE = """
 You can communicate with me using text commands, just like if you were chatting with your friends. \
 I try to understand you as much as I can, but you have to be nice with me.\
@@ -355,7 +359,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_unsubscribe, typ="unsubscribe")
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
-        
+        self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
         log.info("handlers registred")
         
         for method in self.__class__.__dict__:
@@ -733,6 +737,63 @@ class TNArchipelBasicXMPPClient(object):
         photo_data = base64.b64encode(f.read())
         f.close()
         return photo_data
+    
+    
+    def iq_get_available_avatars(self, iq):
+        """
+        return a list of availables avatars
+        """
+        try:
+            reply = iq.buildReply("result")
+            reply.setQueryPayload([self.get_available_avatars()])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
+        return reply
+    
+    
+    def iq_set_available_avatars(self, iq):
+        """
+        set the current avatars of the virtual machine
+        """
+        try:
+            reply = iq.buildReply("result")
+            avatar = iq.getTag("query").getTag("archipel").getAttr("avatar")
+            self.set_avatar(avatar)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
+    
+    
+    def __process_avatar_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
+        
+        it understands IQ of type:
+            - alloc
+            - free
+            
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "getavatars":
+            reply = self.iq_get_available_avatars(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "setavatar":
+            reply = self.iq_set_available_avatars(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     ######################################################################################################
