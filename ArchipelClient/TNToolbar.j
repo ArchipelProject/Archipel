@@ -20,7 +20,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNAvatarManager.j";
 
 /*! @global
     @group TNToolBarItem
@@ -96,14 +95,7 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         var statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
         [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
         [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
-        
-        var avatarSelector = [[TNAvatarManager alloc] initWithFrame:CGRectMake(0.0, 0.0, 32.0, 32.0)];
-        [avatarSelector setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]]];
-
-        var avatarItem = [self addItemWithIdentifier:TNToolBarItemAvatar label:@"Avatar" view:avatarSelector target:nil action:nil];
-        [avatarItem setMinSize:CGSizeMake(32.0, 32.0)];
-        [avatarItem setMaxSize:CGSizeMake(32.0, 32.0)];
-        
+                
         [_toolbarItemsOrder setObject:TNToolBarItemStatus forKey:0];
         [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:1];
 

@@ -26,6 +26,7 @@
 //@import <LPKit/LPCrashReporter.j>
 
 @import "LPMultiLineTextField.j";
+@import "TNAvatarManager.j";
 @import "TNCategoriesAndGlobalSubclasses.j";
 @import "TNDatasourceRoster.j";
 @import "TNOutlineViewRoster.j";
@@ -134,6 +135,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     @outlet TNWindowAddContact  addContactWindow;
     @outlet TNWindowAddGroup    addGroupWindow;
     @outlet TNWindowConnection  connectionWindow;
+    @outlet TNAvatarManager     windowAvatarManager;
 
     BOOL                        _shouldShowHelpView;
     CPImage                     _imageLedInData;
@@ -155,7 +157,6 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     TNOutlineViewRoster         _rosterOutlineView;
     TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
-
 }
 
 /*! This method initialize the content of the GUI when the CIB file
@@ -214,6 +215,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
     [[leftSplitView subviews][1] removeFromSuperview];
     [leftSplitView addSubview:propertiesView];
     [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
+    [propertiesView setAvatarManager:windowAvatarManager];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");

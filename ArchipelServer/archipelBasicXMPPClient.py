@@ -65,7 +65,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppstatus             = None
         self.xmppstatusshow         = None
         self.xmppclient             = None
-        self.vcard                  = None
+        self.vCard                  = None
         self.password               = password
         self.resource               = socket.gethostname()
         self.jid                    = jid
@@ -75,13 +75,15 @@ class TNArchipelBasicXMPPClient(object):
         self.auto_register          = auto_register
         self.auto_reconnect         = auto_reconnect
         self.messages_registrar     = []
-        self.isAuth                 = False;
+        self.isAuth                 = False
         self.loop_status            = ARCHIPEL_XMPP_LOOP_OFF
         self.pubsubserver           = self.configuration.get("GLOBAL", "xmpp_pubsub_server")
         self.log                    = TNArchipelLogger(self)
-        self.pubSubNodeEvent        = None;
-        self.pubSubNodeLog          = None;
-        self.hooks                  = {};
+        self.pubSubNodeEvent        = None
+        self.pubSubNodeLog          = None
+        self.hooks                  = {}
+        self.b64Avatar              = None
+        self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
         
         self.jid.setResource(self.resource)
@@ -137,7 +139,7 @@ class TNArchipelBasicXMPPClient(object):
         """
         log.info("trying to authentify the client")
         if self.xmppclient.auth(self.jid.getNode(), self.password, self.resource) == None:
-            self.isAuth = False;
+            self.isAuth = False
             if (self.auto_register):
                 log.info("starting registration, according to propertie auto_register")
                 self._inband_registration()
@@ -151,7 +153,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.sendInitPresence()
         self.roster = self.xmppclient.getRoster()
         self.get_vcard()
-        self.isAuth = True;
+        self.isAuth = True
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         log.info("sucessfully authenticated")
@@ -165,7 +167,7 @@ class TNArchipelBasicXMPPClient(object):
         Connect and auth to XMPP Server
         """
         if self.xmppclient and self.xmppclient.isConnected():
-            return;
+            return
         
         if self._connect_xmpp():
             self._auth_xmpp()
@@ -176,7 +178,7 @@ class TNArchipelBasicXMPPClient(object):
     def disconnect(self):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
-            self.isAuth = False;
+            self.isAuth = False
             #self.xmppclient.disconnect()
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
     
@@ -235,7 +237,7 @@ class TNArchipelBasicXMPPClient(object):
     
     def create_hook(self, hookname):
         """register a new hook"""
-        self.hooks[hookname] = [];
+        self.hooks[hookname] = []
         log.info("HOOK: creating hook with name %s" % hookname)
         return True
     
@@ -243,7 +245,7 @@ class TNArchipelBasicXMPPClient(object):
     def remove_hook(self, hookname):
         """unregister an existing hook"""
         if self.hooks.has_key(hookname):
-            del self.hooks[hookname];
+            del self.hooks[hookname]
             log.info("HOOK: removing hook with name %s" % hookname)
             return True
         return False
@@ -252,7 +254,7 @@ class TNArchipelBasicXMPPClient(object):
     def register_hook(self, hookname, m):
         """register a method that will be triggered by a hook"""
         if self.hooks.has_key(hookname):
-            self.hooks[hookname].append(m);
+            self.hooks[hookname].append(m)
             log.info("HOOK: registering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
@@ -260,7 +262,7 @@ class TNArchipelBasicXMPPClient(object):
     def unregister_hook(self, hookname, m):
         """unregister a method from a hook"""
         if self.hooks.has_key(hookname):
-            self.hooks[hookname].remove(m);
+            self.hooks[hookname].remove(m)
             log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
@@ -521,42 +523,22 @@ class TNArchipelBasicXMPPClient(object):
         
         push = xmpp.Node(tag="push", attrs={"date": datetime.datetime.now(), "xmlns": ns, "change": change})
         self.pubSubNodeEvent.add_item(push)
-        
-        # self.roster = self.xmppclient.getRoster()
-        # 
-        # ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace 
-        # 
-        # for barejid in self.roster.getItems():
-        #     excluded = False;
-        #     if excludedgroups:
-        #         for excludedgroup in excludedgroups:
-        #             groups = self.roster.getGroups(barejid)
-        #             if groups and excludedgroup in groups:
-        #                 excluded = True
-        #                 break;
-        #     if not excluded:
-        #         resources = self.roster.getResources(barejid);
-        #         for resource in resources:
-        #             push_message = xmpp.Message(typ="headline", to=barejid + "/" + resource)
-        #             push_message.addChild(name="x", namespace=ns, attrs={"change": change})
-        #             log.info("PUSH : pushing %s->%s to %s" % (ns, change, barejid + "/" + resource))
-        #             self.xmppclient.send(push_message)
     
     
     def shout(self, subject, message, excludedgroups=None):
         """send a message to evrybody in roster"""
         
         for barejid in self.roster.getItems():
-            excluded = False;
+            excluded = False
             if excludedgroups:
                 for excludedgroup in excludedgroups:
                     groups = self.roster.getGroups(barejid)
                     if groups and excludedgroup in groups:
                         excluded = True
-                        break;
+                        break
             
             if not excluded:
-                resources = self.roster.getResources(barejid);
+                resources = self.roster.getResources(barejid)
                 for resource in resources:
                     broadcast = xmpp.Message(body=message, typ="headline", to=barejid + "/" + resource)
                     log.info("SHOUTING : shouting message to %s" % (barejid))
@@ -628,17 +610,18 @@ class TNArchipelBasicXMPPClient(object):
         log.info("asking for own vCard")
         node_iq = xmpp.Iq(typ='get', frm=self.jid)
         node_iq.addChild(name="vCard", namespace="vcard-temp")
+        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)        
+    
+    
+    def did_receive_vcard(self, conn, vcard):
+        self.vCard = vcard.getTag("vCard")
+        if self.vCard and self.vCard.getTag("PHOTO"):
+            self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
         
-        resp = self.xmppclient.SendAndWaitForResponse(stanza=node_iq)
-        self.vCard = resp.getTag("vCard")
-        
-        # if self.vCard.getTag("NAME") and not self.vCard.getTag("NAME").getCDATA() == "":
-        #     self.name = self.vCard.getTag("NAME").getCDATA()
-            
         log.info("own vcard retrieved")
     
-        
-    def set_vcard(self, params):
+    
+    def set_vcard(self, params=None):
         """
         allows to define a vCard type for the entry
         
@@ -658,15 +641,10 @@ class TNArchipelBasicXMPPClient(object):
             name_node.setData(self.name)
         
         if (self.configuration.getboolean("GLOBAL", "use_avatar")):
-            avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
-            try:
-                avatar_file = params["avatar_file"]
-            except:
-                avatar_file = "default.png"
-        
-            f = open(os.path.join(avatar_dir, avatar_file), "r")
-            photo_data = base64.b64encode(f.read())
-            f.close()
+            if not self.b64Avatar:
+                photo_data = self.b64avatar_from_filename(self.default_avatar)
+            else:
+                photo_data = self.b64Avatar
         
             node_photo_content_type = xmpp.Node(tag="TYPE")
             node_photo_content_type.setData("image/png")
@@ -719,19 +697,21 @@ class TNArchipelBasicXMPPClient(object):
     ### Avatars
     ###################################################################################################### 
     
-    def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg"]):
+    def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg", "gif"]):
         """
         return a stanza with a list of availables avatars
         encoded in base64
         """
         path = self.configuration.get("GLOBAL", "machine_avatar_directory")
         resp = xmpp.Node("avatars")
-        for img in glob.glob(os.path.join(path, "*.png")):
-            f = open(img, 'r')
-            data = base64.b64encode(f.read())
-            f.close()
-            node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1]});
-            node_img.setData(data)
+        
+        for ctype in supported_file_extensions:
+            for img in glob.glob(os.path.join(path, "*.%s" % ctype)):
+                f = open(img, 'r')
+                data = base64.b64encode(f.read())
+                f.close()
+                node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1], "content-type": "image/%s" % ctype})
+                node_img.setData(data)
         
         return resp
     
@@ -742,7 +722,18 @@ class TNArchipelBasicXMPPClient(object):
         @type name string
         @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
         """
-        self.set_vcard({"avatar_file": name});
+        name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
+        self.b64Avatar = self.b64avatar_from_filename(name)
+        self.set_vcard()
+    
+    
+    def b64avatar_from_filename(self, image):
+        avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
+        f = open(os.path.join(avatar_dir, image), "r")
+        photo_data = base64.b64encode(f.read())
+        f.close()
+        return photo_data
+    
     
     ######################################################################################################
     ### Loop
@@ -862,7 +853,7 @@ class TNArchipelBasicXMPPClient(object):
         if body.find("help") >= 0:
             reply_stanza.setBody(self.__build_help())
         else:
-            loop = True;
+            loop = True
             for registrar_item in self.messages_registrar:
                 for cmd in registrar_item["commands"]:
                     if body.find(cmd) >= 0:
@@ -874,7 +865,7 @@ class TNArchipelBasicXMPPClient(object):
                 if not loop:
                     break
         
-        return reply_stanza;
+        return reply_stanza
     
     
     def __build_help(self):

@@ -96,6 +96,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.triggers                   = {};
         self.watchers                   = {};
         self.entity_type                = "virtualmachine";
+        self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         
         self.create_hook("HOOK_VM_CREATE");
         self.create_hook("HOOK_VM_SHUTOFF");
@@ -110,10 +111,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
         self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
         
-        default_avatar = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
         self.register_actions_to_perform_on_auth("connect_domain", None)
-        self.register_actions_to_perform_on_auth("set_vcard", {"avatar_file": default_avatar})
+        self.register_actions_to_perform_on_auth("set_vcard")
         
         self.register_for_messages()
         

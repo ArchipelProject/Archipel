@@ -110,6 +110,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.xmppserveraddr     = self.jid.getDomain()
         self.local_libvirt_uri  = self.configuration.get("GLOBAL", "libvirt_uri")
         self.entity_type        = "hypervisor"
+        self.default_avatar     = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
         self.generated_names = names_file.readlines();
@@ -143,8 +144,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.manage_persistance()
         
         # action on auth
-        default_avatar = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
-        self.register_actions_to_perform_on_auth("set_vcard", {"avatar_file": default_avatar})
+        self.register_actions_to_perform_on_auth("set_vcard")
         self.register_actions_to_perform_on_auth("update_presence")
         
     

@@ -20,62 +20,134 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineControlGetAvatars   = @"getavatars";
+TNArchipelTypeVirtualMachineControlSetAvatar    = @"setavatar";
 
-@implementation TNAvatarManager : CPImageView
+TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
+
+
+@implementation TNAvatarImage: TNBase64Image
 {
-    CPMenu  avatarMenu @accessors;
+    CPString _avatarFilename @accessors(property=avatarFilename);
+}
+@end
 
-    CPPanel avatarPanel @accessors;
+@implementation TNAvatarView : CPView
+{
+    CPImageView         _imageView;
+    id                  _representedObject @accessors(getter=representedObject);
 }
 
-- (id)initWithFrame:(CPRect)aFrame
+- (void)setRepresentedObject:(id)anObject
 {
-    if (self = [super initWithFrame:aFrame])
+    if (!_imageView)
     {
+        var frame = CGRectInset([self bounds], 5.0, 5.0);
         
+        _imageView = [[CPImageView alloc] initWithFrame:frame];
         
+        [_imageView setImageScaling:CPScaleProportionally];
+        [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+        
+        [self addSubview:_imageView];
     }
+    _representedObject = anObject;
+    [_imageView setImage:anObject];
+}
+
+- (void)setSelected:(BOOL)isSelected
+{
+    [self setBackgroundColor:isSelected ? [CPColor colorWithHexString:@"5595D1"] : nil];
+}
+
+@end
+
+@implementation TNAvatarManager : CPWindow
+{
+    @outlet CPCollectionView collectionViewAvatars;
     
-    return self;
+    TNStropheContact        _entity @accessors(property=entity);
 }
 
 - (void)awakeFromCib
 {
-    avatarPanel = [[CPPanel alloc] initWithContentRect:CPRectMake(50, 50, 300, 200) styleMask:CPTitledWindowMask];
-}
-
-- (void)mouseDown:(CPEvent)anEvent
-{
-    // avatarPanel = [[CPPanel alloc] initWithContentRect:CPRectMake(50, 50, 300, 200) styleMask:CPTitledWindowMask];
-    [avatarPanel orderFront:nil];
-    [super mouseDown:anEvent];
-}
-
-
-
-/*! CPCoder compliance
-*/
-- (id)initWithCoder:(CPCoder)aCoder
-{
-    self = [super initWithCoder:aCoder];
-
-    if (self)
-    {
-        avatarMenu  = [aCoder decodeObjectForKey:@"avatarMenu"];
-        avatarPanel = [aCoder decodeObjectForKey:@"avatarPanel"];
-    }
-
-    return self;
-}
-
-/*! CPCoder compliance
-*/
-- (void)encodeWithCoder:(CPCoder)aCoder
-{
-    [super encodeWithCoder:aCoder];
+    [collectionViewAvatars setMinItemSize:TNArchipelAvatarManagerThumbSize];
+    [collectionViewAvatars setMaxItemSize:TNArchipelAvatarManagerThumbSize];
+    [collectionViewAvatars setSelectable:YES];
+    [[[collectionViewAvatars superview] superview] setBorderedWithHexColor:@"#a5a5a5"]; //access the Atlas generated scrollview
     
-    [aCoder encodeObject:avatarPanel forKey:@"avatarPanel"];
-    [aCoder encodeObject:avatarMenu forKey:@"avatarMenu"];
+    var itemPrototype   = [[CPCollectionViewItem alloc] init];
+    var avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
+    
+    [itemPrototype setView:avatarView];
+    
+    [collectionViewAvatars setItemPrototype:itemPrototype];
+}
+
+- (void)getAvailableAvatars
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlGetAvatars}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceivedAvailableAvatars:) ofObject:self];
+}
+
+- (void)didReceivedAvailableAvatars:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [collectionViewAvatars setContent:[]];
+        [collectionViewAvatars reloadContent];
+
+        var avatars = [aStanza childrenWithName:@"avatar"];
+        var images  = [CPArray array];
+        
+        for (var i = 0; i < [avatars count]; i++)
+        {
+            var avatar  = [avatars objectAtIndex:i];
+            var file    = [avatar valueForAttribute:@"name"];
+            var ctype   = [avatar valueForAttribute:@"content-type"];
+            var data    = [avatar text];
+            var img     = [[TNAvatarImage alloc] init];
+            
+            [img setBaseEncoded64Data:data];
+            [img setContentType:ctype];
+            [img setSize:TNArchipelAvatarManagerThumbSize];
+            [img setAvatarFilename:file];
+            [img load];
+            [images addObject:img];
+        }
+        [collectionViewAvatars setContent:images];
+        [collectionViewAvatars reloadContent];
+    }
+}
+
+- (IBAction)setAvatar:(id)sender
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+    var selectedIndex = [[collectionViewAvatars selectionIndexes] firstIndex];
+    var selectedAvatar = [collectionViewAvatars itemAtIndex:selectedIndex];
+    var filename = [[selectedAvatar representedObject] avatarFilename];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlSetAvatar,
+        "avatar": filename}];
+        
+    [_entity sendStanza:stanza andRegisterSelector:@selector(didSetAvatar:) ofObject:self];
+}
+
+- (void)didSetAvatar:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        CPLog.info("Avatar changed for entity " + [_entity JID]);
+        [self close];
+    }
 }
 
 @end

@@ -27,7 +27,7 @@
 */
 @implementation TNViewProperties: CPView
 {
-    @outlet CPImageView     entryAvatar;
+    @outlet CPButton        entryAvatar;
     @outlet CPImageView     entryStatusIcon;
     @outlet CPTextField     entryDomain;
     @outlet CPTextField     entryResource;
@@ -40,6 +40,7 @@
 
     TNStropheContact        _entity         @accessors(property=entity);
     TNStropheRoster         _roster         @accessors(property=roster);
+    TNAvatarManager         _avatarManager  @accessors(getter=avatarManager);
     
     CPImage                 _unknownUserImage;
     CPNumber                _height;
@@ -68,10 +69,12 @@
     
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
-
+    
+    [entryAvatar setBordered:NO];
     [entryAvatar setBorderedWithHexColor:@"#a5a5a5"];
     [entryAvatar setBackgroundColor:[CPColor blackColor]];
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
+    [entryAvatar setImageScaling:CPScaleProportionally];
     
     [self setHidden:YES];
 
@@ -88,6 +91,25 @@
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
 
+
+- (void)setAvatarManager:(TNAvatarManager)anAvatarManager
+{
+    _avatarManager = anAvatarManager;
+    
+    [entryAvatar setTarget:self];
+    [entryAvatar setAction:@selector(openAvatarManager:)];
+}
+
+- (IBAction)openAvatarManager:(id)sender
+{
+    if (_avatarManager)
+    {
+        [_avatarManager center];
+        [_avatarManager makeKeyAndOrderFront:sender];
+    }
+    else
+        CPLog.warn("no avatar manager set.");
+}
 
 
 /*! hide the panel
@@ -152,6 +174,12 @@
             [entryAvatar setImage:_unknownUserImage];
 
         [entryStatus setStringValue:[_entity XMPPStatus]];
+        
+        if (_avatarManager)
+        {
+            [_avatarManager setEntity:_entity];
+            [_avatarManager getAvailableAvatars];
+        }
     }
     else if ([_entity class] == TNStropheGroup)
     {
