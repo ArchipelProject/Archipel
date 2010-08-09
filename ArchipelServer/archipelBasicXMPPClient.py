@@ -23,6 +23,7 @@ This provides basic XMPP features, like connecting, auth...
 import xmpp
 import sys
 import socket
+import glob
 from utils import *
 import uuid
 import os
@@ -81,7 +82,7 @@ class TNArchipelBasicXMPPClient(object):
         self.pubSubNodeEvent        = None;
         self.pubSubNodeLog          = None;
         self.hooks                  = {};
-        
+        self.entity_type            = "not-defined"
         
         self.jid.setResource(self.resource)
         
@@ -157,7 +158,7 @@ class TNArchipelBasicXMPPClient(object):
         
         
         
-        
+    
     
     def connect(self):
         """
@@ -219,12 +220,14 @@ class TNArchipelBasicXMPPClient(object):
             
         logpubSubNode = self.pubSubNodeLog
     
+    
     def remove_pubsubs(self):
         log.info("removing pubsub node for log")
         self.pubSubNodeLog.delete(nowait=False)
         
         log.info("removing pubsub node for events")
         self.pubSubNodeEvent.delete(nowait=False)
+    
     
     ######################################################################################################
     ### Hooks management
@@ -236,6 +239,7 @@ class TNArchipelBasicXMPPClient(object):
         log.info("HOOK: creating hook with name %s" % hookname)
         return True
     
+    
     def remove_hook(self, hookname):
         """unregister an existing hook"""
         if self.hooks.has_key(hookname):
@@ -243,6 +247,7 @@ class TNArchipelBasicXMPPClient(object):
             log.info("HOOK: removing hook with name %s" % hookname)
             return True
         return False
+    
     
     def register_hook(self, hookname, m):
         """register a method that will be triggered by a hook"""
@@ -269,6 +274,7 @@ class TNArchipelBasicXMPPClient(object):
     ######################################################################################################
     ### Server registration
     ###################################################################################################### 
+    
     
     def _inband_registration(self):
         """
@@ -316,7 +322,8 @@ class TNArchipelBasicXMPPClient(object):
         # iq.setQueryPayload([remove_node])
         # log.info("unregistration information sent. waiting for response")
         # resp_iq = self.xmppclient.send(iq)
-        
+    
+    
     def process_inband_unregistration(self):
         self.remove_pubsubs()
         
@@ -597,6 +604,7 @@ class TNArchipelBasicXMPPClient(object):
         except Exception as ex:
             log.error("cannot remove jid from roster: %s" % str(ex))
     
+    
     def is_jid_subscribed(self, jid):
           """
           Check if the JID is authorized or not
@@ -635,14 +643,14 @@ class TNArchipelBasicXMPPClient(object):
         allows to define a vCard type for the entry
         
         @type params: dict
-        @param params: adict containing at least entity_type keys, and options avatar_file key
+        @param params: adict containing at least option avatar_file key
         """
         log.info("vcard making started")
-
+        
         node_iq = xmpp.Iq(typ='set', xmlns=None)
         
         type_node = xmpp.Node(tag="TYPE")
-        type_node.setData(params["entity_type"])
+        type_node.setData(self.entity_type)
         
         name_node = None
         if self.name:
@@ -679,7 +687,7 @@ class TNArchipelBasicXMPPClient(object):
             node_iq.addChild(name="vCard", payload=[type_node, name_node], namespace="vcard-temp")
             self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
         
-        log.info("vcard information sent with type: {0}".format(params["entity_type"]))        
+        log.info("vcard information sent with type: {0}".format(self.entity_type))        
     
     
     def send_update_vcard(self, conn, presence, photo_hash=None):
@@ -708,7 +716,36 @@ class TNArchipelBasicXMPPClient(object):
     
     
     ######################################################################################################
-    ### XMPP Utilities
+    ### Avatars
+    ###################################################################################################### 
+    
+    def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg"]):
+        """
+        return a stanza with a list of availables avatars
+        encoded in base64
+        """
+        path = self.configuration.get("GLOBAL", "machine_avatar_directory")
+        resp = xmpp.Node("avatars")
+        for img in glob.glob(os.path.join(path, "*.png")):
+            f = open(img, 'r')
+            data = base64.b64encode(f.read())
+            f.close()
+            node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1]});
+            node_img.setData(data)
+        
+        return resp
+    
+    
+    def set_avatar(self, name):
+        """
+        change the current avatar of the entity.
+        @type name string
+        @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
+        """
+        self.set_vcard({"avatar_file": name});
+    
+    ######################################################################################################
+    ### Loop
     ###################################################################################################### 
     
     def loop(self):
@@ -751,7 +788,6 @@ class TNArchipelBasicXMPPClient(object):
         
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
-    
     
     
     ######################################################################################################

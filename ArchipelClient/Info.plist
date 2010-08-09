@@ -84,7 +84,7 @@
          - fatal
     -->
     <key>TNArchipelConsoleDebugLevel</key>
-    <string>info</string>
+    <string>debug</string>
     
 </dict>
 </plist>
