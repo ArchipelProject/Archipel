@@ -65,9 +65,11 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 @implementation TNAvatarManager : CPWindow
 {
-    @outlet CPCollectionView collectionViewAvatars;
+    @outlet CPCollectionView    collectionViewAvatars;
+    @outlet CPImageView         imageSpinner;
     
-    TNStropheContact        _entity @accessors(property=entity);
+    BOOL                        isReady;
+    TNStropheContact            _entity @accessors(property=entity);
 }
 
 - (void)awakeFromCib
@@ -75,6 +77,7 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [collectionViewAvatars setMinItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setMaxItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setSelectable:YES];
+    [collectionViewAvatars setDelegate:self];
     [[[collectionViewAvatars superview] superview] setBorderedWithHexColor:@"#a5a5a5"]; //access the Atlas generated scrollview
     
     var itemPrototype   = [[CPCollectionViewItem alloc] init];
@@ -87,6 +90,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 - (void)getAvailableAvatars
 {
+    [imageSpinner setHidden:NO];
+    
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
@@ -124,6 +129,7 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
         [collectionViewAvatars setContent:images];
         [collectionViewAvatars reloadContent];
     }
+    [imageSpinner setHidden:YES];
 }
 
 - (IBAction)setAvatar:(id)sender
@@ -150,4 +156,14 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     }
 }
 
+- (IBAction)makeKeyAndOrderFront:(id)sender
+{
+    [self getAvailableAvatars];
+    [super makeKeyAndOrderFront:sender];
+}
+
+- (void)collectionView:(CPCollectionView)collectionView didDoubleClickOnItemAtIndex:(int)index
+{
+    [self setAvatar:nil];
+}
 @end

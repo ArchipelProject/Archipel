@@ -71,8 +71,6 @@
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
     
     [entryAvatar setBordered:NO];
-    [entryAvatar setBorderedWithHexColor:@"#a5a5a5"];
-    [entryAvatar setBackgroundColor:[CPColor blackColor]];
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     
@@ -178,7 +176,6 @@
         if (_avatarManager)
         {
             [_avatarManager setEntity:_entity];
-            [_avatarManager getAvailableAvatars];
         }
     }
     else if ([_entity class] == TNStropheGroup)
