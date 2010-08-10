@@ -148,8 +148,8 @@ class TNApplianceDecompresser(Thread):
         disk_nodes = xml_desc.getTag("devices").getTags("disk")
         for disk in disk_nodes:
             source = disk.getTag("source")
-            source_file = source.getAttr("file")
-            source.setAttr("file", os.path.join(self.entity.folder, source_file.replace(".gz", "")))
+            source_file = os.path.basename(source.getAttr("file")).replace(".gz", "")
+            source.setAttr("file", os.path.join(self.entity.folder, source_file))
             #source.setAttr("file", source_file.replace(".gz", "").replace(uuid_node.getCDATA(), self.entity.uuid))
         
         nics_nodes = xml_desc.getTag("devices").getTags("interface")
