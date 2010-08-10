@@ -309,6 +309,17 @@ class TNHypervisorRepoManager:
         try:
             if not url or url=="":
                 raise Exception("IncorrectStanza", "Stanza must have url")
+            
+            try:
+                f = urllib.urlopen(url)
+            except:
+                raise Exception("The given url doesn't exist. Can't register")
+            
+            try:
+                self.getFeed(f.read())
+            except:
+                raise Exception("The given url doesn't contains a valid VMCast feed. Can't register")
+                
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
             self.database_connection.commit()
             self.entity.push_change("vmcasting", "register", excludedgroups=['vitualmachines'])
@@ -496,6 +507,14 @@ class TNHypervisorRepoManager:
         return reply
     
     
+    def getFeed(self, data):
+        feed_content        = xmpp.simplexml.NodeBuilder(data=str(data)).getDom()
+        feed_uuid           = feed_content.getTag("channel").getTag("uuid").getCDATA()
+        feed_description    = feed_content.getTag("channel").getTag("description").getCDATA()
+        feed_name           = feed_content.getTag("channel").getTag("title").getCDATA()
+        items               = feed_content.getTag("channel").getTags("item")
+        return (feed_content, feed_uuid, feed_description, feed_name, items)
+    
     def parseRSS(self):
         """
         parse the content of the database, update the feed, create the answer node.
@@ -516,20 +535,10 @@ class TNHypervisorRepoManager:
             try:
                 f = urllib.urlopen(url)
             except Exception as ex:
-                tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url)
-                self.database_connection.commit()
-                self.entity.push_change("vmcasting", "unregister", excludedgroups=['vitualmachines'])
-                raise Exception("404", "Feed is not reponding. removed from database.")
+                continue
             
             try:
-                feed_content        = xmpp.simplexml.NodeBuilder(data=str(f.read())).getDom()
-                feed_uuid           = feed_content.getTag("channel").getTag("uuid").getCDATA()
-                feed_description    = feed_content.getTag("channel").getTag("description").getCDATA()
-                feed_name           = feed_content.getTag("channel").getTag("title").getCDATA()
-                items               = feed_content.getTag("channel").getTags("item")
-                            
-                if not feed_uuid or not feed_name:
-                    raise
+                feed_content, feed_uuid, feed_description, feed_name, items = self.getFeed(f.read())
             except:
                 tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url)
                 self.database_connection.commit()

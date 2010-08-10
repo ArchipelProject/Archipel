@@ -123,21 +123,18 @@ class TNThreadedHealthCollector(Thread):
     def get_cpu_stats(self):
         dt      = self.deltaTime(1)
         cpuPct  = (dt[len(dt) - 1] * 100.00 / sum(dt))
-        
         return {"date": datetime.datetime.now(), "id": cpuPct}
     
     
     def get_load_stats(self):
         load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
         load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
-        
         return {"date": datetime.datetime.now(), "one": load1min, "five": load5min, "fifteen": load15min}
     
     
     def get_disk_stats(self):
         disk_free = commands.getoutput("df -h --total | grep total").split()
         total, used, free, freePrct = (disk_free[1], disk_free[2],disk_free[3], disk_free[4])
-        
         return {"date": datetime.datetime.now(), "total" : total, "used": used, "free": free, "free_percentage": freePrct}
     
     
