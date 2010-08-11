@@ -43,6 +43,7 @@ from libvirtEventLoop import *
 import libvirt
 import archipelWebSocket
 import sqlite3
+import thread
 
 
 ARCHIPEL_ERROR_CODE_VM_CREATE                   = -1001
@@ -777,8 +778,15 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
-        log.info("copying base virtual repository")
-        os.system("cp -a %s/* %s" % (path, self.folder))
+        log.info("starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
+        thread.start_new_thread(self.perform_threaded_copy, (path, newxml))
+        
+    
+    def perform_threaded_copy(self, src_path, newxml):
+        """
+        perform threaded copy of the virtual machine and then define it
+        """
+        os.system("cp -a %s/* %s" % (src_path, self.folder))
         log.info("defining the cloned virtual machine")
         self.define(newxml)
     
