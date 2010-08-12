@@ -559,6 +559,8 @@ TNArchipelTransportBarReboot    = 4;
     
     if (responseType == @"result") 
     {
+        var growl = [TNGrowlCenter defaultCenter];
+        
         [self enableButtonsForPaused];
         [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
     }
