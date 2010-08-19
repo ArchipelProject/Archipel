@@ -252,6 +252,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         exit on any error.
         """
+        if self.domain:
+            log.info("already connected to domain. ignoring.")
+            return;
+        
         try:
             self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()

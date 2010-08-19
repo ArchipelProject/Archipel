@@ -105,12 +105,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration, name)
         
-        self.virtualmachines    = {}
-        self.database_file      = database_file
-        self.xmppserveraddr     = self.jid.getDomain()
-        self.local_libvirt_uri  = self.configuration.get("GLOBAL", "libvirt_uri")
-        self.entity_type        = "hypervisor"
-        self.default_avatar     = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
+        self.virtualmachines            = {}
+        self.database_file              = database_file
+        self.xmppserveraddr             = self.jid.getDomain()
+        self.local_libvirt_uri          = self.configuration.get("GLOBAL", "libvirt_uri")
+        self.entity_type                = "hypervisor"
+        self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
+        self.libvirt_event_callback_id  = None;
         
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
         self.generated_names = names_file.readlines();
@@ -137,6 +138,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             log.error("unable to connect libvirt")
             sys.exit(-42) 
         log.info("connected to  libvirt")
+        self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
         
         self.capabilities = self.get_capabilities()
         
@@ -164,7 +166,6 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
         
-        self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
     
     
     def manage_persistance(self):
