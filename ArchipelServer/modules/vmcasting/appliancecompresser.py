@@ -49,7 +49,7 @@ class TNApplianceCompresser(Thread):
         tar_file = self.working_dir + "/" + self.name + ".xvm2";
         tar = tarfile.open(tar_file, "w")
         
-        
+        self.xml_definition.getTag("description").setData("")
         definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '');
         log.info("writing definion at path  %s/description.xml" % self.working_dir)
         f = open(self.working_dir + "/description.xml", 'w')

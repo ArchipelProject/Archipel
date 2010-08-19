@@ -36,5 +36,13 @@ def update(dbfile, newdomain):
     
     
 if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print """\
+update_xmpp_domain (c) 2010 Antoine Mercadal
+This tool allows you to quicky change the domain of all virtual machines in a hypervisor database.
+usage: update_xmpp_domain databasefile.sqlite3 newjabberdomain
+
+example: update_xmpp_domain hypervisor.sqlite3 jabber.org"""
+        sys.exit(0)
     update(sys.argv[1], sys.argv[2])
     
