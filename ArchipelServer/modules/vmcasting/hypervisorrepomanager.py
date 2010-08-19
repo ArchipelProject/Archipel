@@ -206,7 +206,7 @@ class TNHypervisorRepoManager:
           
           del self.download_queue[uuid]
           self.database_connection.commit()
-          self.entity.push_change("vmcasting", "download_complete", excludedgroups=['vitualmachines'])
+          self.entity.push_change("vmcasting", "download_complete")
           self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid), excludedgroups=['vitualmachines'])
           self.entity.change_status(self.old_entity_status)
     
@@ -322,7 +322,10 @@ class TNHypervisorRepoManager:
                 
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
             self.database_connection.commit()
-            self.entity.push_change("vmcasting", "register", excludedgroups=['vitualmachines'])
+            
+            self.parseRSS();
+            
+            self.entity.push_change("vmcasting", "register")
             self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()), excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER)
@@ -346,7 +349,7 @@ class TNHypervisorRepoManager:
             self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid)
             self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid)
             self.database_connection.commit()
-            self.entity.push_change("vmcasting", "unregister", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "unregister")
             self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER)
@@ -371,7 +374,7 @@ class TNHypervisorRepoManager:
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
             self.database_connection.commit()
             
-            self.entity.push_change("vmcasting", "download_start", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "download_start")
             
             for values in self.cursor:
                 name, description, url, uuid, status, source, path = values
@@ -499,7 +502,7 @@ class TNHypervisorRepoManager:
             self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid))
             self.database_connection.commit()
             
-            self.entity.push_change("vmcasting", "appliancedeleted", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "appliancedeleted")
             self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
             
         except Exception as ex:
@@ -575,6 +578,5 @@ class TNHypervisorRepoManager:
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node)
-            
         return nodes
     
