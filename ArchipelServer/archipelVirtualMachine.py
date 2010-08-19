@@ -789,14 +789,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         thread.start_new_thread(self.perform_threaded_copy, (path, newxml))
         
     
-    def perform_threaded_copy(self, src_path, newxml):
-        """
-        perform threaded copy of the virtual machine and then define it
-        """
-        os.system("cp -a %s/* %s" % (src_path, self.folder))
-        log.info("defining the cloned virtual machine")
-        self.define(newxml)
-    
     
     def migrate_step1(self, destination_jid):
         """
@@ -826,7 +818,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             remote_hypervisor_uri = resp.getTag("query").getTag("uri").getCDATA()
         except Exception as ex:
             self.is_migrating = False;
-            
+        
         self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
         thread.start_new_thread(self.migrate_step3, (remote_hypervisor_uri,))
     
@@ -844,6 +836,22 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             log.error("can't migrate because of : %s" % str(ex))
+    
+    
+    ######################################################################################################
+    ### Other stuffs
+    ######################################################################################################
+    
+    
+    def perform_threaded_copy(self, src_path, newxml):
+        """
+        perform threaded copy of the virtual machine and then define it
+        """
+        os.system("cp -a %s/* %s" % (src_path, self.folder))
+        log.info("defining the cloned virtual machine")
+        self.define(newxml)
+    
+    
     
     def add_trigger(self, name, description):
         if self.triggers.has_key(name): return
@@ -1399,14 +1407,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     
-    def message_insult(self, msg):
-        return "Please, don't be so rude with me, I try to do my best everyday for you."
-    
-    
-    def message_hello(self, msg):
-        return "Hello %s! How are you today ?"% (msg.getFrom().getNode())
-        
-    
     def iq_capabilities(self, iq):
         """
         send the virtual machine's hypervisor capabilities
@@ -1424,6 +1424,17 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         return reply
     
     
+    
+    def message_insult(self, msg):
+        return "Please, don't be so rude with me, I try to do my best everyday for you."
+    
+    
+    def message_hello(self, msg):
+        return "Hello %s! How are you today ?"% (msg.getFrom().getNode())
+        
+    
+    
+        
     
     # def iq_setcpuspin(self, iq):
     #     """
