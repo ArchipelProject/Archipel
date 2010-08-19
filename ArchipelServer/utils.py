@@ -48,6 +48,7 @@ ARCHIPEL_LIBVIRT_SECRET_PASSWORD                = "884DCDDE-81E7-4374-A103-78314
 
 # errors
 ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED         = -42
+ARCHIPEL_NS_ERROR_MIGRATING                     = -43
 
 
 ARCHIPEL_LOG_LEVEL                              = 0

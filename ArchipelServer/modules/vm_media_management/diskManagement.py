@@ -64,6 +64,11 @@ class TNMediaManagement:
             raise xmpp.protocol.NodeProcessed
         
         
+        if self.entity.is_migrating and (not action in ("get", "getiso")):
+            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any drives operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
         if action == "create":
             reply = self.__create(iq)
             conn.send(reply)

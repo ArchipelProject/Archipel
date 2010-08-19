@@ -90,7 +90,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.lock_timer                 = None
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         self.is_migrating               = False
-        self.migration_destination_jid  = None
         self.libvirt_event_callback_id  = None
         self.triggers                   = {};
         self.watchers                   = {};
@@ -272,6 +271,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         log.info("libvirt event received: %d with detail %s" % (event, detail))
         
         if self.is_migrating:
+            log.info("event received but virtual machine is migrating.")
             return
         
         try:
@@ -452,9 +452,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             raise xmpp.protocol.NodeProcessed
         
         if not self.libvirt_connection:
+            log.info("control action required but no libvirt connection")
             raise xmpp.protocol.NodeProcessed
-            
-        if self.is_migrating:
+        
+        if self.is_migrating and (not action in ("info", "vncdisplay", "xmldesc", "networkinfo")):
+            reply = build_error_iq(self, "virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         if action == "info":
@@ -802,64 +805,45 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         Then ask for the destination_jid hypervisor what is his 
         libvirt uri
         """
-        
-        if self.is_migrating:
-            raise Exception('Virtual machine is already migrating')
-        
-        if not self.definition:
-            raise Exception('Virtual machine must be defined')
-            
-        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING:
-            raise Exception('Virtual machine must be running')
-            
-        if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
-            raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
+        if self.is_migrating: raise Exception('Virtual machine is already migrating')
+        if not self.definition: raise Exception('Virtual machine must be defined')
+        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING: raise Exception('Virtual machine must be running')
+        if self.hypervisor.jid.getStripped() == destination_jid.getStripped(): raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
         
         self.is_migrating               = True
-        self.migration_destination_jid  = destination_jid
+        migration_destination_jid       = destination_jid
         
-        self.lock()
-        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
-        
-        self.xmppclient.UnregisterHandler(name='presence', handler=self.process_presence_unsubscribe, typ="unsubscribe")
-        self.xmppclient.UnregisterHandler(name='presence', handler=self.process_presence_subscribe, typ="subscribe")
-        self.xmppclient.UnregisterHandler(name='iq', handler=self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
-        self.xmppclient.UnregisterHandler(name='iq', handler=self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_DEFINITION)
-        
-        iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=self.migration_destination_jid)
+        iq = xmpp.Iq(typ="get", queryNS="archipel:hypervisor:control", to=migration_destination_jid)
         iq.getTag("query").addChild(name="archipel", attrs={"action": "uri"})
         self.xmppclient.SendAndCallForResponse(iq, self.migrate_step2)
     
     
     def migrate_step2(self, conn, resp):
         """
-        once received the remote hypervisor URI, start libvirt migration migration
+        once received the remote hypervisor URI, start libvirt migration in a thread
+        """
+        try:
+            remote_hypervisor_uri = resp.getTag("query").getTag("uri").getCDATA()
+        except Exception as ex:
+            self.is_migrating = False;
+            
+        self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
+        thread.start_new_thread(self.migrate_step3, (remote_hypervisor_uri,))
+    
+    
+    def migrate_step3(self, remote_hypervisor_uri):
+        """
+        perform the migration
         """
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
         flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE# | libvirt.VIR_MIGRATE_UNDEFINE_SOURCE
-        
-        try:
-            remote_hypervisor_uri   = resp.getTag("query").getTag("uri").getCDATA() #.replace("qemu://", "qemu+ssh://")
-        except:
-            log.warn("hypervisor %s hasn't gave its URI. aborting migration" % resp.getFrom())
-            return
-        
         try:
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
         except Exception as ex:
-            self.unlock()
             self.is_migrating = False;
-            self.migration_destination_jid = None;
-            
-            self.xmppclient.RegisterHandler(name='presence', handler=self.process_presence_unsubscribe, typ="unsubscribe")
-            self.xmppclient.RegisterHandler(name='presence', handler=self.process_presence_subscribe, typ="subscribe")
-            self.xmppclient.RegisterHandler(name='iq', handler=self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
-            self.xmppclient.RegisterHandler(name='iq', handler=self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_DEFINITION)
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             log.error("can't migrate because of : %s" % str(ex))
-    
-    
     
     def add_trigger(self, name, description):
         if self.triggers.has_key(name): return

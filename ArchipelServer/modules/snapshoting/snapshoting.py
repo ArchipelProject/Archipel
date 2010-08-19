@@ -64,6 +64,11 @@ class TNSnapshoting:
         if not self.entity.domain:
             raise xmpp.protocol.NodeProcessed
         
+        if self.entity.is_migrating and (not action in ("current", "get")):
+            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
         elif action == "take":
             reply = self.take_snapshot(iq)
             conn.send(reply)
