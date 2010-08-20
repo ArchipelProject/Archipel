@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>features/step_definitions/test_steps.rb</string>
+	<string>AppController.j</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -40,14 +40,14 @@
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>4</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>1167</integer>
+				<integer>103</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>1141</integer>
+			<integer>966</integer>
 		</dict>
 		<key>Archipel.doxygen</key>
 		<dict>
@@ -2737,6 +2737,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{354, 59}, {1023, 817}}</string>
+	<string>{{309, 56}, {1023, 817}}</string>
 </dict>
 </plist>

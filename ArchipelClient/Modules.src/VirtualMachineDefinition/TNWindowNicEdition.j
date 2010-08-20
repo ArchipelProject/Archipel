@@ -49,35 +49,6 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
 }
 
-// - (void)orderFront:(id)sender
-// {
-//     if (![self isVisible])
-//     {
-//         if ([_nic mac] == "00:00:00:00:00:00")
-//             [fieldMac setStringValue:generateMacAddr()];
-//         else
-//             [fieldMac setStringValue:[_nic mac]];
-// 
-//         [buttonSource removeAllItems];
-// 
-//         for (var i = 0; i < [[radioNetworkType radios] count]; i++)
-//         {
-//             var radio = [[radioNetworkType radios] objectAtIndex:i];
-// 
-//             if ([[radio title] lowercaseString] == [_nic type])
-//             {
-//                 [radio setState:CPOnState];
-//                 [self performRadioNicTypeChanged:radioNetworkType];
-//                 break;
-//             }
-//         }
-//         [buttonType selectItemWithTitle:[_nic type]];
-//         [buttonModel selectItemWithTitle:[_nic model]];
-//         [buttonSource selectItemWithTitle:[_nic source]];
-//     }
-//     [super orderFront:sender];
-// }
-
 - (void)update
 {
     if ([_nic mac] == "00:00:00:00:00:00")

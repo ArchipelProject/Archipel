@@ -1193,7 +1193,7 @@ function generateMacAddr()
     [windowNicEdition setNic:nicObject];
     [windowNicEdition update];
     [windowNicEdition center];
-    [windowNicEdition orderFront:nil];
+    [windowNicEdition makeKeyAndOrderFront:nil];
 }
 
 

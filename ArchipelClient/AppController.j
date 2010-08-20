@@ -101,11 +101,10 @@ TNArchipelStatusDNDLabel       = @"Do not disturb";
 */
 TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
 
-TNArchipelXMPPNamespace = "http://archipelproject.org";
+TNArchipelXMPPNamespace             = "http://archipelproject.org";
+TNArchipelRememberOpenedGroup       = @"TNArchipelRememberOpenedGroup_";
+TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
-TNArchipelRememberOpenedGroup = @"TNArchipelRememberOpenedGroup_";
-
-TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
     Anyone that is interessted in the way of Archipel is working should begin
@@ -374,7 +373,7 @@ TNArchipelGroupMergedNotification = @"TNArchipelGroupMergedNotification";
 - (void)makeMainMenu
 {
     CPLog.trace(@"Creating the main menu");
-    _mainMenu = [[CPMenu alloc] init];
+    _mainMenu = [theWindow menu]; //[[CPMenu alloc] init];
     
     var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""];
     var contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""];

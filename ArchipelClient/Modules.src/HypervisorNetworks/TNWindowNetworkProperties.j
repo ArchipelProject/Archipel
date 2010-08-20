@@ -189,7 +189,7 @@
     [_tableViewHosts setMenu:menuHost];
 }
 
-- (void)orderFront:(id)sender
+- (void)makeKeyAndOrderFront:(id)sender
 {
     if (![self isVisible])
     {
@@ -216,7 +216,7 @@
         [self displayRangesTable:nil];
     }
     
-    [super orderFront:sender];
+    [super makeKeyAndOrderFront:sender];
     
     // ouais, ben ouais, commentes, tu vas voir...
     var frame = [_tableViewHosts bounds];

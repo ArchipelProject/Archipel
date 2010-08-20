@@ -34,13 +34,12 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (void)orderFront:(id)sender
+- (void)makeKeyAndOrderFront:(id)sender
 {
     [newGroupName setStringValue:@""];
-    //[self makeFirstResponder:newGroupName];
     
     [self center];
-    [super orderFront:sender];
+    [super makeKeyAndOrderFront:sender];
 }
 
 /*! add a group according to the outlets

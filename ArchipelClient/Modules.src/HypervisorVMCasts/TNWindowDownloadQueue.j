@@ -68,12 +68,12 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [_mainTableView reloadData];
 }
 
-- (void)orderFront:(id)sender
+- (void)makeKeyAndOrderFront:(id)sender
 {
     [self getDownloadQueue:nil];
     if (!_timer)
         _timer = [CPTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(getDownloadQueue:) userInfo:nil repeats:YES];
-    [super orderFront:sender];
+    [super makeKeyAndOrderFront:sender];
 }
 
 - (void)performClose:(id)sender

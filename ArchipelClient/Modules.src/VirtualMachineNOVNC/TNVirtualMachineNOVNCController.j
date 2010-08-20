@@ -56,13 +56,16 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPSlider        sliderScaling;
     @outlet CPButton        buttonZoomFitToWindow;
     @outlet CPButton        buttonZoomReset;
-    @outlet CPButton        buttonGetPasteboard;
-    @outlet CPButton        buttonSetPasteboard;
+    @outlet CPButton        buttonSendCtrlAtlDel;
+    @outlet CPButton        buttonSendPasteBoard;
+    @outlet CPButton        buttonGetPasteBoard;
     @outlet CPTextField     fieldZoomValue;
     @outlet CPTextField     fieldPassword;
     @outlet CPButton        buttonDirectURL;
     @outlet CPView          viewControls;
     @outlet CPWindow        windowPassword;
+    @outlet CPWindow        windowPasteBoard;
+    @outlet LPMultiLineTextField        fieldPasteBoard;
     @outlet CPImageView     imageViewSecureConnection;
     @outlet CPCheckBox      checkboxPasswordRemember;
     
@@ -98,6 +101,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     
     var imageDirectAccess = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-screen.png"] size:CPSizeMake(16, 16)]
     [buttonDirectURL setImage:imageDirectAccess];
+    
+    var imageCtrlAltDel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"skull.png"] size:CPSizeMake(16, 16)]
+    [buttonSendCtrlAtlDel setImage:imageCtrlAltDel];
+    
+    var imageSendPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sendPasteBoard.png"] size:CPSizeMake(16, 16)]
+    [buttonSendPasteBoard setImage:imageSendPasteBoard];
+    
+    var imageGetPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"getPasteBoard.png"] size:CPSizeMake(16, 16)]
+    [buttonGetPasteBoard setImage:imageGetPasteBoard];
     
     [fieldPassword setSecure:YES];
     
@@ -350,6 +362,26 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [self animateChangeScaleFrom:currentVNCZoom to:100];
 }
 
+- (IBAction)sendCtrlAltDel:(id)sender
+{
+    CPLog.info("sending ctrl+alt+del to VNCView");
+    [_vncView sendCtrlAltDel:sender];
+    
+    // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
+}
+
+- (IBAction)sendPasteBoard:(id)sender
+{
+    CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
+    
+    [_vncView sendTextToPasteboard:[fieldPasteBoard stringValue]];
+    
+    [fieldPasteBoard setStringValue:@""];
+    
+    [windowPasteBoard close];
+}
+
+
 
 /*
     Zoom animation
@@ -451,6 +483,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
                 [imageViewSecureConnection setHidden:NO];
             break;
     }
+}
+
+- (void)vncView:(TNVNCView)aVNCView didReceivePasteBoardText:(CPString)aText
+{
+    alert(aText);
 }
 
 - (void)openVNCInNewWindow:(id)sender
