@@ -373,7 +373,13 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (void)makeMainMenu
 {
     CPLog.trace(@"Creating the main menu");
-    _mainMenu = [theWindow menu]; //[[CPMenu alloc] init];
+    
+    // free the menu
+    // _mainMenu = [theWindow menu]; //[[CPMenu alloc] init];
+    // 
+    // for (var i = 0; i < [[_mainMenu itemArray] count]; i++)
+    //     [_mainMenu removeItem:[[_mainMenu itemArray] objectAtIndex:i]];
+    _mainMenu = [[CPMenu alloc] init];
     
     var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""];
     var contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""];

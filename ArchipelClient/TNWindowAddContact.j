@@ -36,7 +36,7 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (IBAction)orderFront:(id)sender
+- (IBAction)makeKeyAndOrderFront:(id)sender
 {
     var groups = [_roster groups];
     var i;
@@ -62,7 +62,7 @@
 
     [self center];
 
-    [super orderFront:sender];
+    [super makeKeyAndOrderFront:sender];
 }
 
 /*! add a contact according to the values of the outlets

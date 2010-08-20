@@ -496,7 +496,7 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 
 - (void)didDownload:(TNStropheStanza)aStanza
 {
-    [windowDownloadQueue orderFront:nil];
+    [windowDownloadQueue makeKeyAndOrderFront:nil];
 }
 
 
