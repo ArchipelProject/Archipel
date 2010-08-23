@@ -163,7 +163,7 @@
 - (void)moveUp:(id)sender
 {
     var index = [[self selectedRowIndexes] firstIndex];
-    
+
     if (index == 0)
     {
         [[self window] makeFirstResponder:_searchField];
@@ -172,6 +172,7 @@
     else
         [super moveUp:sender];
 }
+
 
 - (void)keyDown:(CPEvent)anEvent
 {
