@@ -22,7 +22,6 @@ import getopt
 import archipel
 import xmpp
 import utils
-import archipelWebServer
 import libvirtEventLoop
 
 

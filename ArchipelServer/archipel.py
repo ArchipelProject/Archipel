@@ -23,4 +23,3 @@ import logging
 from libvirtEventLoop import *
 from archipelVirtualMachine import * 
 from archipelHypervisor import *
-from archipelModule import *
