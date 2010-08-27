@@ -57,6 +57,8 @@
 		<integer>0</integer>
 		<key>TNDescDefaultHugePages</key>
 		<integer>0</integer>
+		<key>TNDescDefaultInputType</key>
+		<string>mouse</string>
 		
     </dict>
 </plist>

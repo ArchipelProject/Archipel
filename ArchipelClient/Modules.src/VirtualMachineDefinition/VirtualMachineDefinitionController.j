@@ -89,6 +89,10 @@ TNXMLDescClockTimezone  = @"timezone";
 TNXMLDescClockVariable  = @"variable";
 TNXMLDescClocks         = [TNXMLDescClockUTC, TNXMLDescClockLocalTime];
 
+TNXMLDescInputTypeMouse     = @"mouse";
+TNXMLDescInputTypeTablet    = @"tablet";
+TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet];
+
 function generateMacAddr()
 {
     var hexTab      = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"];
@@ -123,6 +127,7 @@ function generateMacAddr()
     @outlet CPPopUpButton           buttonNumberCPUs;
     @outlet CPPopUpButton           buttonVNCKeymap;
     @outlet CPPopUpButton           buttonMachines;
+    @outlet CPPopUpButton           buttonInputType;
     @outlet CPScrollView            scrollViewForDrives;
     @outlet CPScrollView            scrollViewForNics;
     @outlet CPSearchField           fieldFilterDrives;
@@ -326,15 +331,16 @@ function generateMacAddr()
     [buttonOnReboot removeAllItems];
     [buttonOnCrash removeAllItems];
     [buttonClocks removeAllItems];
+    [buttonInputType removeAllItems];
 
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
     [buttonNumberCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
-    //[buttonHypervisor addItemsWithTitles:TNXMLDescHypervisors];
     [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
     [buttonOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
     [buttonOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
     [buttonOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
     [buttonClocks addItemsWithTitles:TNXMLDescClocks];
+    [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
     
     [checkboxPAE setState:CPOffState];
     [checkboxACPI setState:CPOffState];
@@ -475,6 +481,7 @@ function generateMacAddr()
     var pae     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"];
     var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
     var apic    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"];
+    var input   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"];
     
     _supportedCapabilities = [CPDictionary dictionary];
     
@@ -486,6 +493,7 @@ function generateMacAddr()
     [buttonOnReboot selectItemWithTitle:or];
     [buttonOnCrash selectItemWithTitle:oc];
     [buttonClocks selectItemWithTitle:clock];
+    [buttonInputType selectItemWithTitle:input];
     [checkboxPAE setState:(pae == 1) ? CPOnState : CPOffState];
     [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
     [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
@@ -619,6 +627,8 @@ function generateMacAddr()
     }
     
     
+    
+    
     // Devices
     [stanza addChildName:@"devices"];
 
@@ -676,7 +686,7 @@ function generateMacAddr()
         [stanza up];
     }
 
-    [stanza addChildName:@"input" withAttributes:{"bus": "ps2", "type": "mouse"}];
+    [stanza addChildName:@"input" withAttributes:{"bus": "usb", "type": [buttonInputType title]}];
     [stanza up];
 
     if (hypervisor == TNXMLDescHypervisorKVM || hypervisor == TNXMLDescHypervisorQemu
@@ -840,6 +850,7 @@ function generateMacAddr()
         var onCrash         = [domain firstChildWithName:@"on_crash"];
         var features        = [domain firstChildWithName:@"features"];
         var clock           = [domain firstChildWithName:@"clock"];
+        var input           = [[domain firstChildWithName:@"input"] valueForAttribute:@"type"];
         var capabilities    = [_supportedCapabilities objectForKey:arch];
         var shouldRefresh   = NO;
         
@@ -1001,6 +1012,9 @@ function generateMacAddr()
         {
             [buttonClocks setEnabled:NO];
         }
+        
+        //input type
+        [buttonInputType selectItemWithTitle:input]
         
         // NICs
         for (var i = 0; i < [interfaces count]; i++)
