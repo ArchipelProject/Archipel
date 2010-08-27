@@ -72,7 +72,11 @@
     [net setBridgeName:aBridgeName];
     [net setBridgeDelay:aBridgeDelay];
     [net setBridgeForwardMode:aForwardMode];
-    [net setBridgeForwardDevice:aForwardDevice];
+    
+    if (aForwardDevice)
+        [net setBridgeForwardDevice:aForwardDevice];
+    else
+        [net setBridgeForwardDevice:@"nothing"];
     [net setBridgeIP:anIP];
     [net setBridgeNetmask:aNetmask];
     [net setDHCPEntriesRanges:someRangeEntries];

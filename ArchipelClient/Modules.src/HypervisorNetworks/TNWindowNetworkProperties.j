@@ -279,6 +279,9 @@
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
     [_externalTable reloadData];
+    
+    [[self delegate] defineNetworkXML:nil];
+    [self close];
 }
 
 - (IBAction)addDHCPRange:(id)sender
@@ -288,7 +291,6 @@
     [checkBoxDHCPEnabled setState:CPOnState];
     [_datasourceDHCPRanges addObject:newRange];
     [_tableViewRanges reloadData];
-    [self save:nil];
 }
 
 - (IBAction)removeDHCPRange:(id)sender
@@ -301,7 +303,6 @@
     if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
 
-    [self save:nil];
 }
 
 - (IBAction)addDHCPHost:(id)sender
@@ -311,7 +312,6 @@
     [checkBoxDHCPEnabled setState:CPOnState];
     [_datasourceDHCPHosts addObject:newHost];
     [_tableViewHosts reloadData];
-    [self save:nil];
 }
 
 - (IBAction)removeDHCPHost:(id)sender
@@ -323,8 +323,6 @@
 
     if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
-
-    [self save:nil];
 }
 
 @end

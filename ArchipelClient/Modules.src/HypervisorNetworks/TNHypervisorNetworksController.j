@@ -131,7 +131,7 @@ function generateIPForNewNetwork()
     [_tableViewNetworks addTableColumn:columBridgeNetmask];
 
     [_datasourceNetworks setTable:_tableViewNetworks];
-    [_datasourceNetworks setSearchableKeyPaths:[@"bridgeNetmask", @"bridgeIP", @"bridgeForwardDevice", @"bridgeForwardMode", @"bridgeName", @"networkName"]];
+    [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"bridgeName", @"bridgeForwardMode", @"bridgeForwardDevice", @"bridgeIP", @"bridgeNetmask"]];
     
     [fieldFilterNetworks setTarget:_datasourceNetworks];
     [fieldFilterNetworks setAction:@selector(filterObjects:)];
@@ -630,12 +630,12 @@ function generateIPForNewNetwork()
 
 
 
--(BOOL)windowShouldClose:(id)window
-{
-    [self defineNetworkXML:nil];
-
-    return YES;
-}
+// -(BOOL)windowShouldClose:(id)window
+// {
+//     [self defineNetworkXML:nil];
+// 
+//     return YES;
+// }
 
 - (void)didTableSelectionChange:(CPNotification)aNotification
 {
