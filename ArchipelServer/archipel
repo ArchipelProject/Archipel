@@ -49,17 +49,15 @@ restart() {
 
 case "$1" in
     start)
-        rh_status_q && exit 0
         $1
         ;;
     stop)
-        rh_status_q || exit 0
         $1
         ;;
     restart)
         $1
         ;;
     *)
-        echo $"Usage: $0 {start|stop|reload|configtest|status|force-reload|upgrade|restart}"
+        echo $"Usage: $0 {start|stop|restart}"
         exit 2
 esac

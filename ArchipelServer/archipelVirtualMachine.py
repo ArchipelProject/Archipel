@@ -558,11 +558,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if self.is_migrating:
-            reply = build_error_iq(self, "virtual machine is migrating. Can't do anything", iq, ARCHIPEL_ERROR_CODE_VM_IS_MIGRATING)
+        if self.is_migrating and (not action in ("capabilities")):
+            reply = build_error_iq(self, "virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
         
         if action == "define":
             reply = self.iq_define(iq)
