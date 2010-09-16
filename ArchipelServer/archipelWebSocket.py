@@ -166,12 +166,11 @@ class TNArchipelWebSocket(threading.Thread):
             sock.send(self.policy_response)
             sock.close()
             return False
-        elif handshake.startswith("\x16"):
+        elif handshake[0] in ("\x16", "\x80"):
             retsock = ssl.wrap_socket(
                     sock,
                     server_side=True,
-                    certfile=self.cert,
-                    ssl_version=ssl.PROTOCOL_TLSv1)
+                    certfile=self.cert)
             scheme = "wss"
             log.info("WEBSOCKETPROXY: using SSL socket PROTOCOL_TLSv1")
         elif handshake.startswith("\x80"):
@@ -192,6 +191,8 @@ class TNArchipelWebSocket(threading.Thread):
             log.info("WEBSOCKETPROXY: using plain (non SSL) socket")
         
         handshake = retsock.recv(4096)
+        if len(handshake) == 0:
+            log.info("WEBSOCKETPROXY: lient closed during handshake")
         h = self.__parse_handshake(handshake)
         
         

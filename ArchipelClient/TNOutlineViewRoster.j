@@ -176,14 +176,15 @@
 
 - (void)keyDown:(CPEvent)anEvent
 {
-    if ([anEvent keyCode] == CPDeleteKeyCode)
-    {
-        var center = [CPNotificationCenter defaultCenter];
-        [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
-        
-        return
-    }
-    else if ([anEvent keyCode] == CPEscapeKeyCode)
+    // if ([anEvent keyCode] == CPDeleteKeyCode)
+    // {
+    //     var center = [CPNotificationCenter defaultCenter];
+    //     [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
+    //     
+    //     return
+    // }
+    //else 
+    if ([anEvent keyCode] == CPEscapeKeyCode)
     {
         [_searchField _searchFieldCancel:self];
         

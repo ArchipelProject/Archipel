@@ -827,7 +827,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         perform the migration
         """
         ## DO NOT UNDEFINE DOMAIN HERE. the hypervisor is in charge of this. If undefined here, can't free XMPP client
-        flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE# | libvirt.VIR_MIGRATE_UNDEFINE_SOURCE
+        flags = libvirt.VIR_MIGRATE_PEER2PEER | libvirt.VIR_MIGRATE_PERSIST_DEST | libvirt.VIR_MIGRATE_LIVE
         try:
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
         except Exception as ex:
@@ -849,7 +849,6 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         os.system("cp -a %s/* %s" % (src_path, self.folder))
         log.info("defining the cloned virtual machine")
         self.define(newxml)
-    
     
     
     def add_trigger(self, name, description):

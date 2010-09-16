@@ -259,20 +259,20 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
             _useSSL = YES;        
         
-        if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
-        {
-            var growl = [TNGrowlCenter defaultCenter];
-            if (_vncOnlySSL)
-            {
-                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
-                return;
-            }
-            else
-            {
-                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
-                _useSSL = NO;
-            }
-        }
+        // if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
+        // {
+        //     var growl = [TNGrowlCenter defaultCenter];
+        //     if (_vncOnlySSL)
+        //     {
+        //         [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
+        //         return;
+        //     }
+        //     else
+        //     {
+        //         [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
+        //         _useSSL = NO;
+        //     }
+        // }
         
         if (lastScale)
         {

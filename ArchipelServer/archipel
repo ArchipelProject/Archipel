@@ -14,10 +14,7 @@
 
 archipel="/usr/bin/ArchipelServer/runarchipel.py"
 prog=$(basename $archipel)
-
 ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
-
-
 lockfile=/var/lock/subsys/archipel
 
 start() {
