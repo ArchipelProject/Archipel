@@ -90,9 +90,9 @@ class TNArchipelWebSocket(threading.Thread):
         """
         if self.base64encode:
             buf = b64encode(buf)
-        else:
-            # Modified UTF-8 encode
-            buf = buf.decode('latin-1').encode('utf-8').replace("\x00", "\xc4\x80")
+        # else:
+        #     # Modified UTF-8 encode
+        #     buf = buf.decode('latin-1').encode('utf-8').replace("\x00", "\xc4\x80")
         
         return "\x00%s\xff" % buf
     
@@ -130,12 +130,12 @@ class TNArchipelWebSocket(threading.Thread):
         ret['path'] = req_lines[0].split(" ")[1]
         for line in req_lines[1:]:
             if line == "": break
-            var, delim, val = line.partition(": ")
+            var, val = line.split(": ")
             ret[var] = val
-            
+        
         if req_lines[-2] == "":
             ret['key3'] = req_lines[-1]
-            
+        
         return ret
     
     
@@ -154,7 +154,7 @@ class TNArchipelWebSocket(threading.Thread):
     
     def __do_handshake(self, sock):
         """peform the handshage"""
-        self.base64encode = False
+        self.base64encode = True
         
         # Peek, but don't read the data
         handshake = sock.recv(1024, socket.MSG_PEEK)
@@ -172,15 +172,7 @@ class TNArchipelWebSocket(threading.Thread):
                     server_side=True,
                     certfile=self.cert)
             scheme = "wss"
-            log.info("WEBSOCKETPROXY: using SSL socket PROTOCOL_TLSv1")
-        elif handshake.startswith("\x80"):
-            retsock = ssl.wrap_socket(
-                    sock,
-                    server_side=True,
-                    certfile=self.cert,
-                    ssl_version=ssl.PROTOCOL_SSLv23)
-            scheme = "wss"
-            log.info("WEBSOCKETPROXY: using SSL socket PROTOCOL_SSLv23")
+            log.info("WEBSOCKETPROXY: using SSL/TLS")
         elif self.ssl_only:
             log.info("WEBSOCKETPROXY: Non-SSL connection disallowed")
             sock.close()
@@ -192,7 +184,7 @@ class TNArchipelWebSocket(threading.Thread):
         
         handshake = retsock.recv(4096)
         if len(handshake) == 0:
-            log.info("WEBSOCKETPROXY: lient closed during handshake")
+            raise Exception("WEBSOCKETPROXY: client closed during handshake")
         h = self.__parse_handshake(handshake)
         
         
@@ -252,14 +244,14 @@ class TNArchipelWebSocket(threading.Thread):
                 if target in ins:
                     buf = target.recv(self.buffer_size)
                     if len(buf) == 0: raise Exception("Target closed")
-                
                     cqueue.append(self.__encode(buf))
                 
                 if client in ins:
                     buf = client.recv(self.buffer_size)
                     if len(buf) == 0: raise Exception("Client closed")
-                
-                    if buf[-1] == '\xff':
+                    if buf == '\xff\x00':
+                        raise Exception("WEBSOCKETPROXY: Client sent orderly close frame")
+                    elif buf[-1] == '\xff':
                         if cpartial:
                             tqueue.extend(self.__decode(cpartial + buf))
                             cpartial = ""

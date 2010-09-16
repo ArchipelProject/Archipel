@@ -37,7 +37,7 @@
     TNVNCView       _vncView;
 }
 
-- (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor
+- (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor checkRate:(int)aCheckRate FBURate:(int)aFBURate
 {
     [[self platformWindow] setTitle:[self title]];
     _vncView  = [[TNVNCView alloc] initWithFrame:[[self contentView] bounds]];
@@ -46,17 +46,20 @@
     [[self contentView] addSubview:_vncView];
     
     [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
-    [_vncView load];
+    
     [_vncView setHost:aHost];
     [_vncView setPort:aPort];
     [_vncView setPassword:aPassword];
     [_vncView setZoom:1];
     [_vncView setTrueColor:isTrueColor];
     [_vncView setEncrypted:isEncrypted];
+    [_vncView setCheckRate:aCheckRate];
+    [_vncView setFrameBufferRequestRate:aFBURate];
+    
     [_vncView setDelegate:self];
+    
+    [_vncView load];
     [_vncView connect:nil];
-    
-    
     
     [[self platformWindow] DOMWindow].onbeforeunload = function(){
         [self close];

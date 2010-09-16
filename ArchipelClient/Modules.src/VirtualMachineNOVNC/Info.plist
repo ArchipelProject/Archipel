@@ -31,5 +31,21 @@
         
         <key>NOVNCPreferSSL</key>
         <integer>1</integer>
+        
+        <!--
+            set the time in ms for the framebuffer refresh
+            the higher the value, the lower the performances
+            the lower the value, the higher performances (but is more CPU / network intensive)
+        -->
+        <key>NOVNCFBURate</key>
+        <integer>141</integer>
+        
+        <!--
+            set the time in ms for the event check refresh
+            the higher the value, the lower the performances
+            the lower the value, the higher performances (but is more CPU / network intensive)
+        -->
+        <key>NOVNCheckRate</key>
+        <integer>30</integer>
     </dict>
 </plist>

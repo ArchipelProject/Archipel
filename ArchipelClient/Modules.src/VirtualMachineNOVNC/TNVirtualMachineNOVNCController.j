@@ -78,6 +78,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     CPString                _vncProxyPort;
     CPString                _vncDirectPort;
     TNVNCView               _vncView;
+    int                     _NOVNCheckRate;
+    int                     _NOVNCFBURate;
 }
 
 /*! initialize some value at CIB awakening
@@ -157,7 +159,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     if ([windowPassword isVisible])
         [windowPassword close];
     
-    if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+    if (([_vncView state] != TNVNCCappuccinoStateDisconnected) 
+        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
     {
         [_vncView disconnect:nil];
         [_vncView clear];
@@ -201,12 +204,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         [maskingView removeFromSuperview];
-        if ((_isVisible) && ([_vncView state] == TNVNCCappuccinoStateDisconnected))
+        if ((_isVisible) && (([_vncView state] == TNVNCCappuccinoStateDisconnected) || ([_vncView state] == TNVNCCappuccinoStateDisconnect)))
             [self getVirtualMachineVNCDisplay];
     }
     else
     {
-        if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
+        if (([_vncView state] != TNVNCCappuccinoStateDisconnected) 
+            && ([_vncView state] != TNVNCCappuccinoStateDisconnect))
         {
             [_vncView disconnect:nil];
             [_vncView clear];
@@ -255,24 +259,26 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         
         _useSSL         = NO;
         _preferSSL      = ([bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
+        _NOVNCFBURate   = [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"];
+        _NOVNCheckRate  = [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"];
         
         if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
             _useSSL = YES;        
         
-        // if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
-        // {
-        //     var growl = [TNGrowlCenter defaultCenter];
-        //     if (_vncOnlySSL)
-        //     {
-        //         [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
-        //         return;
-        //     }
-        //     else
-        //     {
-        //         [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
-        //         _useSSL = NO;
-        //     }
-        // }
+        if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
+        {
+            var growl = [TNGrowlCenter defaultCenter];
+            if (_vncOnlySSL)
+            {
+                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
+                return;
+            }
+            else
+            {
+                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
+                _useSSL = NO;
+            }
+        }
         
         if (lastScale)
         {
@@ -296,8 +302,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [checkboxPasswordRemember setState:CPOffState];
         }
         
-        [_vncView load];
-        
+        [_vncView setCheckRate:_NOVNCheckRate];
+        [_vncView setFrameBufferRequestRate:_NOVNCFBURate];
         [_vncView setHost:_VMHost];
         [_vncView setPort:_vncProxyPort];
         [_vncView setPassword:[fieldPassword stringValue]];
@@ -306,7 +312,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         [_vncView setEncrypted:_useSSL];
         [_vncView setDelegate:self];
         
-        
+        [_vncView load];
         [_vncView connect:nil];
     }
     else if ([aStanza type] == @"error")
@@ -438,7 +444,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [self rememberPassword:nil];
     [windowPassword close];
-    if ([_vncView state] == TNVNCCappuccinoStateDisconnected)
+    if (([_vncView state] == TNVNCCappuccinoStateDisconnected) 
+        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
     {
         [_vncView setPassword:[fieldPassword stringValue]];
         [_vncView connect:nil];
@@ -505,7 +512,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
     [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
     
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES];
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
     [VNCWindow makeKeyWindow];
 }
 
