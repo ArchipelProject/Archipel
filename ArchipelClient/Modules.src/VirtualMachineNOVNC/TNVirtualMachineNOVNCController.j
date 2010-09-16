@@ -499,9 +499,19 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (void)openVNCInNewWindow:(id)sender
 {
+    var widthOffset         = 6;
+    var heightOffset        = 6;
+    
+    // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
+    if (navigator.appVersion.indexOf("Chrome") != -1)
+    {
+        widthOffset     =   6;
+        heightOffset    =   56;
+    }
+    
     var vncSize             = [_vncView canvasSize];
-    var winFrame            = CGRectMake(100, 100, vncSize.width + 6, vncSize.height + 6);
-    var pfWinFrame          = CGRectMake(100, 100, vncSize.width + 6, vncSize.height + 6);
+    var winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset);
+    var pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset);
     var VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
     var platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
     
@@ -515,10 +525,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
     [VNCWindow makeKeyWindow];
 }
-
-
-
-
 @end
 
 
