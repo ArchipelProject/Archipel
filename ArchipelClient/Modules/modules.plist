@@ -42,6 +42,11 @@
             </dict>
             <dict>
                 <key>folder</key>
+                <string>ToolbarDestroyButton</string>
+            </dict>
+            
+            <dict>
+                <key>folder</key>
                 <string>ToolbarPlayButton</string>
             </dict>
             <dict>

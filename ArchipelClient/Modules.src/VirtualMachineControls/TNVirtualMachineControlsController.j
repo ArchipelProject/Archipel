@@ -28,6 +28,7 @@ TNArchipelControlPlay                           = @"TNArchipelControlPlay";
 TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
 TNArchipelControlResume                         = @"TNArchipelControlResume";
 TNArchipelControlStop                           = @"TNArchipelControlStop";
+TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 
 TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
@@ -303,7 +304,7 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)didReceiveControlNotification:(CPNotification)aNotification
 {
-    var command                  = [aNotification userInfo];
+    var command = [aNotification userInfo];
     
     switch(command)
     {
@@ -318,6 +319,9 @@ TNArchipelTransportBarReboot    = 4;
             break;
         case TNArchipelControlStop:
             [self stop:nil];
+            break;
+        case TNArchipelControlDestroy:
+            [self destroy:nil];
             break;
     }
 }
