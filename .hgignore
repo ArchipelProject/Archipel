@@ -24,5 +24,5 @@ syntax: glob
 */Modules/modules.plist
 *Documentation/*
 *ArchipelClient/Modules/modules.plist
-/.build-number
+*.build-number
 *ArchipelClient/.build-number
