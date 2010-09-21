@@ -89,7 +89,7 @@ LPAristo = nil;
     var cpuViewFrame = [viewGraphCPU bounds];
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
-    [_chartViewCPU setDrawView:[[LPChartDrawView alloc] init]];
+    [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewCPU setFixedMaxValue:100];
     [_chartViewCPU setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphCPU addSubview:_chartViewCPU];
@@ -97,14 +97,14 @@ LPAristo = nil;
     var memoryViewFrame = [viewGraphMemory bounds];
 
     _chartViewMemory   = [[LPChartView alloc] initWithFrame:memoryViewFrame];
-    [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
+    [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
     
     var loadViewFrame = [viewGraphLoad bounds];
 
     _chartViewLoad   = [[LPChartView alloc] initWithFrame:loadViewFrame];
-    [_chartViewLoad setDrawView:[[LPChartDrawView alloc] init]];
+    [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewLoad setFixedMaxValue:1000];
     [_chartViewLoad setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphLoad addSubview:_chartViewLoad];
@@ -205,7 +205,9 @@ LPAristo = nil;
         [healthDiskUsage setStringValue:diskPerc];
 
         var loadNode = [aStanza firstChildWithName:@"load"];
+        var loadOne  = [loadNode valueForAttribute:@"one"];
         var loadFive = [loadNode valueForAttribute:@"five"];
+        var loadFifteen = [loadNode valueForAttribute:@"fifteen"];
         [healthLoad setStringValue:loadFive];
 
         var uptimeNode = [aStanza firstChildWithName:@"uptime"];
@@ -220,8 +222,11 @@ LPAristo = nil;
 
         [_cpuDatasource pushData:parseInt(cpuFree)];
         [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-        [_loadDatasource pushData:parseFloat(loadFive * 1000)];
         
+        [_loadDatasource pushData:parseFloat(loadOne * 1000) inSet:0];
+        [_loadDatasource pushData:parseFloat(loadFive * 1000) inSet:1];
+        [_loadDatasource pushData:parseFloat(loadFifteen * 1000) inSet:2];
+            
         [_disksDatasource removeAllObjects];
         [_disksDatasource pushData:parseInt(diskPerc)];
         [_disksDatasource pushData:(100 - parseInt(diskPerc))];
@@ -285,12 +290,16 @@ LPAristo = nil;
             [healthCPUUsage setStringValue:cpuFree + @"%"];
             
             var loadNode = [currentNode firstChildWithName:@"load"];
+            var loadOne = Math.round(parseFloat([loadNode valueForAttribute:@"one"]) * 1000);
             var loadFive = Math.round(parseFloat([loadNode valueForAttribute:@"five"]) * 1000);
+            var loadFifteen = Math.round(parseFloat([loadNode valueForAttribute:@"fifteen"]) * 1000);
             
             
             [_cpuDatasource pushData:parseInt(cpuFree)];
             [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-            [_loadDatasource pushData:parseInt(loadFive)];
+            [_loadDatasource pushData:parseInt(loadOne) inSet:0];
+            [_loadDatasource pushData:parseInt(loadFive) inSet:1];
+            [_loadDatasource pushData:parseInt(loadFifteen) inSet:2];
         }
 
         var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )
@@ -301,10 +310,6 @@ LPAristo = nil;
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
-        
-        
-        [_disksDatasource pushData:78];
-        [_disksDatasource pushData:22];
         
         /* reload the charts view */
         [_chartViewMemory reloadData];

@@ -19,6 +19,9 @@
 @implementation TNDatasourceGraphLoad : CPObject
 {
     CPArray     _datas;
+    CPArray     _datasOne;
+    CPArray     _datasFive;
+    CPArray     _datasFifteen;
     int         _maxNumberOfPoints;
 }
 
@@ -26,7 +29,11 @@
 {
     if (self = [super init])
     {
-        _datas = [];
+        _datasOne = [];
+        _datasFive = [];
+        _datasFifteen = [];
+        
+        _datas = [_datasOne, _datasFive, _datasFifteen];
         _maxNumberOfPoints = 100;
     }
     return self;
@@ -34,20 +41,20 @@
 
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
 {
-    return 1;
+    return [_datas count];
 }
 
 - (CPNumber)chart:(LPChartView)aChartView numberOfValuesInSet:(CPNumber)setIndex
 {
-    return [_datas count];
+    return [[_datas objectAtIndex:setIndex] count];
 }
 
 - (id)chart:(LPChartView)aChartView valueForIndex:(CPNumber)itemIndex set:(CPNumber)setIndex
 {
-    if (itemIndex > ([_datas count] - 1))
+    if (itemIndex > ([[_datas objectAtIndex:setIndex] count] - 1))
         return 0;
 
-    return [_datas objectAtIndex:itemIndex];
+    return [[_datas objectAtIndex:setIndex] objectAtIndex:itemIndex];
 }
 
 - (CPString)chart:(LPChartView)aChartView labelValueForIndex:(int)anIndex
@@ -55,17 +62,65 @@
     return @"";
 }
 
-- (void)pushData:(id)data
+- (void)pushData:(id)data inSet:(CPNumber)setIndex
 {
-    if ([_datas count] >= _maxNumberOfPoints)
-        [_datas removeObjectAtIndex:0];
+    if ([[_datas objectAtIndex:setIndex] count] >= _maxNumberOfPoints)
+        [[_datas objectAtIndex:setIndex] removeObjectAtIndex:0];
 
-    _datas.push(parseInt(data));
+    [_datas objectAtIndex:setIndex].push(parseInt(data));
 }
 
 - (void)removeAllObjects
 {
     _datas = [];
+}
+
+@end
+
+
+
+@implementation TNChartDrawView : LPChartDrawView
+{
+}
+
+- (void)drawSetWithFrames:(CPArray)aFramesSet inContext:(CGContext)context
+{
+    // Overwrite this method in your subclass
+    // to get complete control of the drawing.
+    
+    var colors = [[CPColor colorWithHexString:@"4379ca"], [CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"ABC93F"]]
+    
+    CGContextSetLineWidth(context, 1.0);
+    
+    for (var setIndex = 0; setIndex < aFramesSet.length; setIndex++)
+    {
+        CGContextSetStrokeColor(context, colors[setIndex]);
+        
+        var items = aFramesSet[setIndex];
+        
+        // Start path
+        CGContextBeginPath(context);
+        
+        for (var itemIndex = 0; itemIndex < items.length; itemIndex++)
+        {
+            var itemFrame = items[itemIndex],
+                point = CGPointMake(CGRectGetMidX(itemFrame), CGRectGetMinY(itemFrame));
+            
+            // Begin path
+            if (itemIndex == 0)
+                CGContextMoveToPoint(context, point.x, point.y);
+            
+            // Add point
+            else
+                CGContextAddLineToPoint(context, point.x, point.y);
+        }
+        
+        // Stroke path
+        CGContextStrokePath(context);
+        
+        // Close path
+        CGContextClosePath(context);
+    }
 }
 
 @end
