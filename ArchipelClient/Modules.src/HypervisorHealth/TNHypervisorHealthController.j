@@ -25,16 +25,20 @@
 @import "TNDatasourceGraphCPU.j"
 @import "TNDatasourceGraphMemory.j"
 @import "TNDatasourceGraphDisks.j"
+@import "TNDatasourceGraphLoad.j"
 
 TNArchipelTypeHypervisorHealth           = @"archipel:hypervisor:health";
 TNArchipelTypeHypervisorHealthInfo       = @"info";
 TNArchipelTypeHypervisorHealthHistory    = @"history";
 
+LPAristo = nil;
 
 @implementation TNHypervisorHealthController : TNModule
 {
     @outlet CPImageView         imageCPULoading;
     @outlet CPImageView         imageMemoryLoading;
+    @outlet CPImageView         imageLoadLoading;
+    @outlet CPImageView         imageDiskLoading;
     @outlet CPTextField         fieldHalfMemory;
     @outlet CPTextField         fieldJID;
     @outlet CPTextField         fieldName;
@@ -48,15 +52,20 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     @outlet CPTextField         healthUptime;
     @outlet CPView              viewGraphCPU;
     @outlet CPView              viewGraphMemory;
+    @outlet CPView              viewGraphLoad;
+    @outlet CPView              viewGraphDisk;
     
     CPNumber                    _statsHistoryCollectionSize;
     CPTimer                     _timer;
     float                       _timerInterval;
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewMemory;
+    LPChartView                 _chartViewLoad;
     LPPieChartView              _chartViewDisk;
     TNDatasourceGraphCPU        _cpuDatasource;
     TNDatasourceGraphMemory     _memoryDatasource;
+    TNDatasourceGraphLoad       _loadDatasource;
+    TNDatasourceGraphDisks      _disksDatasource;
 }
 
 - (void)awakeFromCib
@@ -68,8 +77,13 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
     [imageCPULoading setImage:spinner];
     [imageMemoryLoading setImage:spinner];
+    [imageLoadLoading setImage:spinner];
+    [imageDiskLoading setImage:spinner];
+    
     [imageCPULoading setHidden:YES];
     [imageMemoryLoading setHidden:YES];
+    [imageLoadLoading setHidden:YES];
+    [imageDiskLoading setHidden:YES];
 
 
     var cpuViewFrame = [viewGraphCPU bounds];
@@ -86,6 +100,21 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     [_chartViewMemory setDrawView:[[LPChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphMemory addSubview:_chartViewMemory];
+    
+    var loadViewFrame = [viewGraphLoad bounds];
+
+    _chartViewLoad   = [[LPChartView alloc] initWithFrame:loadViewFrame];
+    [_chartViewLoad setDrawView:[[LPChartDrawView alloc] init]];
+    [_chartViewLoad setFixedMaxValue:1000];
+    [_chartViewLoad setDisplayLabels:YES] // in fact this deactivates the labels... yes...
+    [viewGraphLoad addSubview:_chartViewLoad];
+    
+    var diskViewFrame = [viewGraphDisk bounds];
+
+    _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
+    [_chartViewDisk setDrawView:[[TNPieChartDrawView alloc] init]];
+    [viewGraphDisk addSubview:_chartViewDisk];
+    [_chartViewDisk setDelegate:self];
 
     var moduleBundle = [CPBundle bundleForClass:[self class]]
     _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"];
@@ -103,9 +132,13 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
     _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
-
+    _loadDatasource     = [[TNDatasourceGraphLoad alloc] init];
+    _disksDatasource    = [[TNDatasourceGraphDisks alloc] init];
+    
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
+    [_chartViewLoad setDataSource:_loadDatasource];
+    [_chartViewDisk setDataSource:_disksDatasource];
 
     [self getHypervisorHealthHistory];
     
@@ -121,6 +154,8 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
     [_cpuDatasource removeAllObjects];
     [_memoryDatasource removeAllObjects];
+    [_loadDatasource removeAllObjects];
+    [_disksDatasource removeAllObjects];
 }
 
 - (void)willShow
@@ -147,6 +182,11 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
     [stanza addChildName:@"archipel" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth, "action": TNArchipelTypeHypervisorHealthInfo}];
     
+    [imageCPULoading setHidden:NO];
+    [imageMemoryLoading setHidden:NO];
+    [imageLoadLoading setHidden:NO];
+    [imageDiskLoading setHidden:NO];
+    
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
 }
 
@@ -161,10 +201,12 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         [healthMemSwapped setStringValue:swapped + " Mo"];
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
-        [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+        var diskPerc = [diskNode valueForAttribute:@"used-percentage"];
+        [healthDiskUsage setStringValue:diskPerc];
 
         var loadNode = [aStanza firstChildWithName:@"load"];
-        [healthLoad setStringValue:[loadNode valueForAttribute:@"five"]];
+        var loadFive = [loadNode valueForAttribute:@"five"];
+        [healthLoad setStringValue:loadFive];
 
         var uptimeNode = [aStanza firstChildWithName:@"uptime"];
         [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
@@ -178,15 +220,27 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
         [_cpuDatasource pushData:parseInt(cpuFree)];
         [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-
+        [_loadDatasource pushData:parseFloat(loadFive * 1000)];
+        
+        [_disksDatasource removeAllObjects];
+        [_disksDatasource pushData:parseInt(diskPerc)];
+        [_disksDatasource pushData:(100 - parseInt(diskPerc))];
+        
         /* reload the charts view */
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
+        [_chartViewLoad reloadData];
+        [_chartViewDisk reloadData];
     }
     else if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+    
+    [imageCPULoading setHidden:YES];
+    [imageMemoryLoading setHidden:YES];
+    [imageLoadLoading setHidden:YES];
+    [imageDiskLoading setHidden:YES];
 }
 
 
@@ -199,9 +253,10 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
         "action": TNArchipelTypeHypervisorHealthHistory,
         "limit": _statsHistoryCollectionSize}];
     
-
     [imageCPULoading setHidden:NO];
     [imageMemoryLoading setHidden:NO];
+    [imageLoadLoading setHidden:NO];
+    [imageDiskLoading setHidden:NO];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
 }
@@ -220,17 +275,22 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
             var memNode = [currentNode firstChildWithName:@"memory"];
             var freeMem = Math.round(parseInt([memNode valueForAttribute:@"free"]) / 1024);
             var swapped = Math.round(parseInt([memNode valueForAttribute:@"swapped"]) / 1024);
-
+            
             [healthMemUsage setStringValue:freeMem + " Mo"];
             [healthMemSwapped setStringValue:swapped + " Mo"];
-
+            
             var cpuNode = [currentNode firstChildWithName:@"cpu"];
             var cpuFree = 100 - parseInt([cpuNode valueForAttribute:@"id"]);
 
             [healthCPUUsage setStringValue:cpuFree + @"%"];
-
+            
+            var loadNode = [currentNode firstChildWithName:@"load"];
+            var loadFive = Math.round(parseFloat([loadNode valueForAttribute:@"five"]) * 1000);
+            
+            
             [_cpuDatasource pushData:parseInt(cpuFree)];
             [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
+            [_loadDatasource pushData:parseInt(loadFive)];
         }
 
         var maxMem = Math.round(parseInt([memNode valueForAttribute:@"total"]) / 1024 / 1024 )
@@ -241,10 +301,16 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
-
+        
+        
+        [_disksDatasource pushData:78];
+        [_disksDatasource pushData:22];
+        
         /* reload the charts view */
         [_chartViewMemory reloadData];
         [_chartViewCPU reloadData];
+        [_chartViewLoad reloadData];
+        [_chartViewDisk reloadData];
     }
     else if ([aStanza type] == @"error")
     {
@@ -253,6 +319,9 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
     [imageCPULoading setHidden:YES];
     [imageMemoryLoading setHidden:YES];
+    [imageLoadLoading setHidden:YES];
+    [imageDiskLoading setHidden:YES];
+    
 
     [self getHypervisorHealth:nil];
 

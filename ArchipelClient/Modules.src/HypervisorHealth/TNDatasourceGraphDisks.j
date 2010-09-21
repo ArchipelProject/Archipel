@@ -18,7 +18,7 @@
 
 @implementation TNDatasourceGraphDisks : CPObject
 {
-    CPArray   _datas;
+    CPArray     _datas;
 }
 
 - (void)init
@@ -30,13 +30,55 @@
     return self;
 }
 
+
 - (int)numberOfItemsInPieChartView:(LPPieChartView)aPieChartView
 {
-    return _datas.length;
+    return [_datas count];
 }
 
 - (int)pieChartView:(LPPieChartView)aPieChartView floatValueForIndex:(int)anIndex
 {
     return _datas[anIndex];
 }
+
+- (void)pushData:(id)aData
+{
+    [_datas addObject:aData];
+}
+
+- (void)removeAllObjects
+{
+    [_datas removeAllObjects];
+}
+
+@end
+
+
+
+
+@implementation TNPieChartDrawView : LPPieChartDrawView
+
+- (void)drawInContext:(CGContext)context paths:(CPArray)paths
+{
+    /*
+        Overwrite this method in your subclass.
+    */
+    CGContextSetLineWidth(context, 1.0);
+    CGContextSetStrokeColor(context, [CPColor whiteColor]);
+    
+    var fillColors = [[CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"75B886"]];
+    
+    for (var i = 0; i < paths.length; i++)
+    {
+        CGContextBeginPath(context);
+        CGContextAddPath(context, paths[i]);
+        CGContextClosePath(context);
+
+        CGContextSetFillColor(context, fillColors[i]);
+
+        CGContextFillPath(context);
+        CGContextStrokePath(context);
+    }
+}
+
 @end

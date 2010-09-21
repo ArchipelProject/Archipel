@@ -57,36 +57,6 @@
 
 - (void)awakeFromCib
 {
-    var bundle                  = [CPBundle mainBundle];
-    // var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
-    // var buttonBezel             = [CPColor colorWithPatternImage:centerBezel];
-    // var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
-    // var centerBezelSelected     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelSelected.png"] size:CGSizeMake(1, 26)];
-    // _bezelColor                 = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
-    // _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
-    // _buttonBezelSelected = [CPColor colorWithPatternImage:centerBezelSelected];
-    
-
-    // [buttonBar setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
-    // [buttonBar setValue:_buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-    // 
-    // var rangeButton = [[CPButton alloc] initWithFrame:CPRectMake(0,0,[buttonBar frame].size.width / 2 - 2,25)];
-    // [rangeButton setValue:_buttonBezelHighlighted forThemeAttribute:"bezel-color" inState:CPThemeStateSelected];
-    // [rangeButton setBordered:NO];
-    // [rangeButton setTarget:self];
-    // [rangeButton setAction:@selector(displayRangesTable:)];
-    // [rangeButton setTitle:@"DHCP Ranges"];
-    // 
-    // var hostButton = [[CPButton alloc] initWithFrame:CPRectMake([buttonBar frame].size.width / 2 - 2,0,[buttonBar frame].size.width / 2,25)];
-    // [hostButton setValue:_buttonBezelHighlighted forThemeAttribute:"bezel-color" inState:CPThemeStateSelected];
-    // [hostButton setBordered:NO];
-    // [hostButton setTarget:self];
-    // [hostButton setAction:@selector(displayHostsTable:)];
-    // [hostButton setTitle:@"DHCP Hosts"];
-    // 
-    // [buttonBar setButtons:[rangeButton, hostButton]];
-    // [buttonBar layoutSubviews];
-    
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
@@ -187,11 +157,6 @@
     [_tableViewHosts setDelegate:self];
     [_tableViewRanges setDelegate:self];
     
-    // // setting the current selected table
-    // // _currentTableScrollView = scrollViewDHCPRanges;
-    // [viewCurrentTable addSubview:scrollViewDHCPRanges];
-    // [rangeButton setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-    
     var menuRange = [[CPMenu alloc] init];
     [menuRange addItemWithTitle:@"Add new range" action:@selector(addDHCPRange:) keyEquivalent:@""];
     [menuRange addItemWithTitle:@"Remove" action:@selector(removeDHCPRange:) keyEquivalent:@""];
@@ -234,10 +199,7 @@
 
         [_tableViewRanges reloadData];
         [_tableViewHosts reloadData];
-        
-        // [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-        // _currentTableScrollView = scrollViewDHCPHosts;
-        // [self displayRangesTable:nil];
+
     }
     
     [super makeKeyAndOrderFront:sender];
@@ -249,44 +211,6 @@
     [_tableViewHosts setFrame:frame];
     [_tableViewRanges setFrame:frame];
 }
-
-// - (IBAction)displayRangesTable:(id)sender
-// {
-//     if (_currentTableScrollView != scrollViewDHCPRanges)
-//     {
-//         [_currentTableScrollView removeFromSuperview];
-//         _currentTableScrollView = scrollViewDHCPRanges;
-//         [scrollViewDHCPRanges setFrame:[viewCurrentTable bounds]];
-//         [viewCurrentTable addSubview:scrollViewDHCPRanges];
-//         
-//         [[[buttonBar buttons] objectAtIndex:0] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-//         [[[buttonBar buttons] objectAtIndex:1] setValue:_bezelColor forThemeAttribute:"bezel-color"];
-//         
-//         [_plusButton setTarget:self];
-//         [_plusButton setAction:@selector(addDHCPRange:)];
-//         [_minusButton setTarget:self];
-//         [_minusButton setAction:@selector(removeDHCPRange:)];
-//     }
-// }
-
-// - (IBAction)displayHostsTable:(id)sender
-// {
-//     if (_currentTableScrollView != scrollViewDHCPHosts)
-//     {
-//         [_currentTableScrollView removeFromSuperview];
-//         _currentTableScrollView = scrollViewDHCPHosts;
-//         [scrollViewDHCPHosts setFrame:[viewCurrentTable bounds]];
-//         [viewCurrentTable addSubview:scrollViewDHCPHosts];
-// 
-//         [[[buttonBar buttons] objectAtIndex:1] setValue:_buttonBezelSelected forThemeAttribute:"bezel-color"];
-//         [[[buttonBar buttons] objectAtIndex:0] setValue:_bezelColor forThemeAttribute:"bezel-color"];
-//         
-//         [_plusButton setTarget:self];
-//         [_plusButton setAction:@selector(addDHCPHost:)];
-//         [_minusButton setTarget:self];
-//         [_minusButton setAction:@selector(removeDHCPHost:)];
-//     }
-// }
 
 - (IBAction)save:(id)sender
 {

@@ -95,6 +95,7 @@ class TNHypervisorHealth:
                 statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} )
                 statNode.addChild("cpu", attrs={"id": stats["cpu"][i]["id"]})
                 statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]})
+                statNode.addChild("load", attrs={"one" : stats["load"][i]["one"], "five":  stats["load"][i]["five"], "fifteen":  stats["load"][i]["fifteen"]})
                 nodes.append(statNode)
             
             reply.setQueryPayload(nodes)
