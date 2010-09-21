@@ -22,10 +22,12 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <VNCCappuccino/VNCCappuccino.j>
+@import <LPKit/LPKit.j>
+@import <iTunesTabView/iTunesTabView.j>
 
 //@import <LPKit/LPCrashReporter.j>
 
-@import "LPMultiLineTextField.j";
+//@import "LPMultiLineTextField.j";
 @import "TNAvatarManager.j";
 @import "TNCategoriesAndGlobalSubclasses.j";
 @import "TNDatasourceRoster.j";
@@ -144,7 +146,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     CPMenu                      _modulesMenu;
     CPPlatformWindow            _platformHelpWindow;
     CPScrollView                _outlineScrollView;
-    CPTabView                   _moduleTabView;
+    TNiTunesTabView             _moduleTabView;
     CPTextField                 _rightViewTextField;
     CPTimer                     _ledInTimer;
     CPTimer                     _ledOutTimer;
@@ -247,7 +249,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
-    _moduleTabView = [[CPTabView alloc] initWithFrame:[rightView bounds]];
+    _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
     [rightView addSubview:_moduleTabView];

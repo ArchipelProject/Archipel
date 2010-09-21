@@ -129,7 +129,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     // [fieldNewVMRequestedTags setEnabled:NO];
     // [fieldNewVMRequestedDescription setPlaceholderString:@"Description (not implemented)"];
     // [fieldNewVMRequestedDescription setEnabled:NO];
-    [buttonAlloc setDefaultButton:YES];
 }
 
 - (void)willLoad

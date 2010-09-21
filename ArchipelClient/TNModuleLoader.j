@@ -19,10 +19,12 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
+@import <iTunesTabView/iTunesTabView.j>
+
 @import "TNCategoriesAndGlobalSubclasses.j";
 
 
-@implementation TNModuleTabViewItem : CPTabViewItem
+@implementation TNModuleTabViewItem : TNiTunesTabViewItem
 {
     TNModule _module @accessors(property=module);
 }
@@ -64,7 +66,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     CPMenu                  _modulesMenu                    @accessors(property=modulesMenu);
     CPString                _modulesPath                    @accessors(property=modulesPath);
     CPString                _moduleType                     @accessors(property=moduleType);
-    CPTabView               _mainTabView                    @accessors(property=mainTabView);
+    TNiTunesTabView         _mainTabView                    @accessors(property=mainTabView);
     CPTextField             _infoTextField                  @accessors(property=infoTextField);
     CPView                  _mainModuleView                 @accessors(property=mainModuleView);
     id                      _delegate                       @accessors(property=delegate);
@@ -189,7 +191,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 }
 
 /*! set wich item tab to remember
-    @param anItem: the CPTabView item to remember
+    @param anItem: the TNiTunesTabView item to remember
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
@@ -494,11 +496,11 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
 /// DELEGATES
 
-/*! CPTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
-    @param aTabView the CPTabView that sent the message (_mainTabView)
+/*! TNiTunesTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
+    @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
     @param anItem the new selected item
 */
-- (void)tabView:(CPTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
+- (void)tabView:(TNiTunesTabView)aTabView willSelectTabViewItem:(TNModuleTabViewItem)anItem
 {
     if ([aTabView numberOfTabViewItems] <= 0)
         return

@@ -19,7 +19,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "LPChartView.j"
+@import <LPKit/LPKit.j>
+//@import "LPChartView.j"
+
 @import "TNDatasourceGraphCPU.j"
 @import "TNDatasourceGraphMemory.j"
 @import "TNDatasourceGraphDisks.j"
@@ -74,7 +76,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
     [_chartViewCPU setDrawView:[[LPChartDrawView alloc] init]];
-    [_chartViewCPU setUserDefinedMaxValue:100];
+    [_chartViewCPU setFixedMaxValue:100];
     [_chartViewCPU setDisplayLabels:YES] // in fact this deactivates the labels... yes...
     [viewGraphCPU addSubview:_chartViewCPU];
 
@@ -235,7 +237,7 @@ TNArchipelTypeHypervisorHealthHistory    = @"history";
 
         [fieldTotalMemory setStringValue: maxMem + "G"];
         [fieldHalfMemory setStringValue: Math.round(maxMem / 2) + "G"];
-        [_chartViewMemory setUserDefinedMaxValue: parseInt([memNode valueForAttribute:@"total"])];
+        [_chartViewMemory setFixedMaxValue: parseInt([memNode valueForAttribute:@"total"])];
 
         var diskNode = [aStanza firstChildWithName:@"disk"];
         [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];

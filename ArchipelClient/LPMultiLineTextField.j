@@ -32,8 +32,9 @@ var CPTextFieldInputOwner = nil;
 
 @implementation LPMultiLineTextField : CPTextField
 {
-    id _DOMTextareaElement;
-    CPString _stringValue;
+    id          _DOMTextareaElement;
+    CPString    _stringValue;
+    BOOL        _hideOverflow;
 }
 
 - (DOMElement)_DOMTextareaElement
@@ -54,7 +55,7 @@ var CPTextFieldInputOwner = nil;
                 [[CPTextFieldInputOwner window] makeFirstResponder:nil];
                 CPTextFieldInputOwner = nil;
             };
-        
+
         self._DOMElement.appendChild(_DOMTextareaElement);
     }
     
@@ -68,6 +69,17 @@ var CPTextFieldInputOwner = nil;
     }
     return self;
 }
+
+- (BOOL)isScrollable
+{
+   return !_hideOverflow;
+}
+
+- (void)setScrollable:(BOOL)shouldScroll
+{
+    _hideOverflow = !shouldScroll;
+}
+
 
 - (void)setEditable:(BOOL)shouldBeEditable
 {
@@ -92,7 +104,7 @@ var CPTextFieldInputOwner = nil;
     var DOMElement = [self _DOMTextareaElement],
         contentInset = [self currentValueForThemeAttribute:@"content-inset"],
         bounds = [self bounds];
-    
+
     DOMElement.style.top = contentInset.top + @"px";
     DOMElement.style.bottom = contentInset.bottom + @"px";
     DOMElement.style.left = contentInset.left + @"px";
@@ -103,7 +115,36 @@ var CPTextFieldInputOwner = nil;
         
     DOMElement.style.color = [[self currentValueForThemeAttribute:@"text-color"] cssString];
     DOMElement.style.font = [[self currentValueForThemeAttribute:@"font"] cssString];
+ 
+    switch ([self currentValueForThemeAttribute:@"alignment"])
+    {
+        case CPLeftTextAlignment:
+            DOMElement.style.textAlign = "left";
+            break;        
+        case CPJustifiedTextAlignment:
+            DOMElement.style.textAlign = "justify"; //not supported
+            break;        
+        case CPCenterTextAlignment:
+            DOMElement.style.textAlign = "center";
+            break;
+        case CPRightTextAlignment:
+            DOMElement.style.textAlign = "right";
+            break;
+        default:
+            DOMElement.style.textAlign = "left";
+    }
+ 
     DOMElement.value = _stringValue || @"";
+
+    if(_hideOverflow)
+        DOMElement.style.overflow=@"hidden";
+}
+
+- (void)scrollWheel:(CPEvent)anEvent
+{
+    var DOMElement = [self _DOMTextareaElement];
+    DOMElement.scrollLeft += anEvent._deltaX;
+    DOMElement.scrollTop += anEvent._deltaY;
 }
 
 - (void)mouseDown:(CPEvent)anEvent
@@ -112,6 +153,11 @@ var CPTextFieldInputOwner = nil;
         [[[self window] platformWindow] _propagateCurrentDOMEvent:YES];
     else
         [super mouseDown:anEvent];
+}
+
+ - (void)mouseDragged:(CPEvent)anEvent
+{
+    return [[[anEvent window] platformWindow] _propagateCurrentDOMEvent:YES];
 }
 
 - (void)keyDown:(CPEvent)anEvent
@@ -206,6 +252,31 @@ var CPTextFieldInputOwner = nil;
 {
     _stringValue = aString;
     [self setNeedsLayout];
+}
+
+@end
+
+
+var LPMultiLineTextFieldStringValueKey = "LPMultiLineTextFieldStringValueKey",
+    LPMultiLineTextFieldScrollableKey = "LPMultiLineTextFieldScrollableKey";
+    
+@implementation LPMultiLineTextField (CPCoding)
+
+- (id)initWithCoder:(CPCoder)aCoder
+{
+    if (self = [super initWithCoder:aCoder])
+    {
+        [self setStringValue:[aCoder decodeObjectForKey:LPMultiLineTextFieldStringValueKey]];
+        [self setScrollable:[aCoder decodeBoolForKey:LPMultiLineTextFieldScrollableKey]];
+    }
+    return self;
+}
+
+- (void)encodeWithCoder:(CPCoder)aCoder
+{
+    [super encodeWithCoder:aCoder];      
+    [aCoder encodeObject:_stringValue forKey:LPMultiLineTextFieldStringValueKey];
+    [aCoder encodeBool:(_hideOverflow?NO:YES) forKey:LPMultiLineTextFieldScrollableKey];
 }
 
 @end

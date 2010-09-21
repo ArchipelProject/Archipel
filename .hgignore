@@ -6,10 +6,12 @@ syntax: glob
 *ArchipelClient/debug.txt
 *ArchipelClient/Frameworks/AppKit
 *ArchipelClient/Frameworks/Foundation
+*ArchipelClient/Frameworks/LPKit
 *ArchipelClient/Frameworks/Objective-J
 *ArchipelClient/Frameworks/Debug/AppKit
 *ArchipelClient/Frameworks/Debug/Foundation
-*ArchipelClient/Frameworks/Debug/Objective-J
+*ArchipelClient/Frameworks/Debug
+*ArchipelClient/Frameworks/Debug/LPKit
 
 *ArchipelClient/Build
 *ArchipelClient/Documentation
