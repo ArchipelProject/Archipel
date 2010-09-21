@@ -18,7 +18,18 @@
 
 @import "Resources/dateFormat.js";
 @import <AppKit/CPTabView.j>
+@import <AppKit/CPBox.j>
 
+
+@implementation CPTabView (borderEditable)
+
+- (void)setBorderColor:(CPColor)aColor
+{
+    [box setBorderColor:aColor];
+}
+
+
+@end
 /*! @ingroup utils
     Categories that allows CPView with border
 */

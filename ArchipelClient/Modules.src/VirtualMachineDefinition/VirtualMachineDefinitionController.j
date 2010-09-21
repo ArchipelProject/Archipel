@@ -62,11 +62,6 @@ TNXMLDescHypervisorUML          = @"uml";
 TNXMLDescHypervisorVBox         = @"vbox";
 TNXMLDescHypervisorVMWare       = @"vmware";
 TNXMLDescHypervisorOpenNebula   = @"one";
-// TNXMLDescHypervisors            = [ TNXMLDescHypervisorKVM, TNXMLDescHypervisorXen,
-//                                     TNXMLDescHypervisorOpenVZ, TNXMLDescHypervisorQemu,
-//                                     TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC,
-//                                     TNXMLDescHypervisorUML, TNXMLDescHypervisorVBox,
-//                                     TNXMLDescHypervisorVMWare, TNXMLDescHypervisorOpenNebula];
 
 TNXMLDescVNCKeymapFR            = @"fr";
 TNXMLDescVNCKeymapEN_US         = @"en-us";
@@ -77,7 +72,7 @@ TNXMLDescLifeCycleDestroy           = @"destroy";
 TNXMLDescLifeCycleRestart           = @"restart";
 TNXMLDescLifeCyclePreserve          = @"preserve";
 TNXMLDescLifeCycleRenameRestart     = @"rename-restart";
-TNXMLDescLifeCycles                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart, 
+TNXMLDescLifeCycles                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart,
                                         TNXMLDescLifeCyclePreserve, TNXMLDescLifeCycleRenameRestart];
 
 TNXMLDescFeaturePAE                 = @"pae";
@@ -122,33 +117,33 @@ function generateMacAddr()
     @outlet CPButtonBar             buttonBarControlNics;
     @outlet CPCheckBox              checkboxACPI;
     @outlet CPCheckBox              checkboxAPIC;
-    @outlet CPCheckBox              checkboxPAE;
     @outlet CPCheckBox              checkboxHugePages;
-    @outlet CPPopUpButton           buttonOSType;
+    @outlet CPCheckBox              checkboxPAE;
     @outlet CPPopUpButton           buttonBoot;
-    @outlet CPPopUpButton           buttonNumberCPUs;
-    @outlet CPPopUpButton           buttonVNCKeymap;
-    @outlet CPPopUpButton           buttonMachines;
     @outlet CPPopUpButton           buttonInputType;
+    @outlet CPPopUpButton           buttonMachines;
+    @outlet CPPopUpButton           buttonNumberCPUs;
+    @outlet CPPopUpButton           buttonOSType;
+    @outlet CPPopUpButton           buttonVNCKeymap;
     @outlet CPScrollView            scrollViewForDrives;
     @outlet CPScrollView            scrollViewForNics;
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
+    @outlet CPTabView               tabViewDevices;
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldMemory;
-    @outlet CPTextField             fieldVNCPassword;
     @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldVNCPassword;
     @outlet CPView                  maskingView;
-    @outlet CPView                  viewDrivesContainer;
-    @outlet CPView                  viewNicsContainer;
-    @outlet TNWindowDriveEdition    windowDriveEdition;
-    @outlet TNWindowNicEdition      windowNicEdition;
-    @outlet LPMultiLineTextField    fieldStringXMLDesc;
-    @outlet CPWindow                windowXMLEditor;
     @outlet CPView                  viewDeviceVirtualDrives;
     @outlet CPView                  viewDeviceVirtualNics;
-    @outlet CPTabView               tabViewDevices;
-    
+    @outlet CPView                  viewDrivesContainer;
+    @outlet CPView                  viewNicsContainer;
+    @outlet CPWindow                windowXMLEditor;
+    @outlet LPMultiLineTextField    fieldStringXMLDesc;
+    @outlet TNWindowDriveEdition    windowDriveEdition;
+    @outlet TNWindowNicEdition      windowNicEdition;
+
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
     CPButton                        _minusButtonDrives;
@@ -158,22 +153,21 @@ function generateMacAddr()
     CPColor                         _bezelColor;
     CPColor                         _buttonBezelHighlighted;
     CPColor                         _buttonBezelSelected;
+    CPDictionary                    _supportedCapabilities;
+    CPString                        _stringXMLDesc;
     CPTableView                     _tableDrives;
     CPTableView                     _tableNetworkNics;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
-    CPString                        _stringXMLDesc;
-    CPDictionary                    _supportedCapabilities;
-    
 }
 
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
-    
+
     _stringXMLDesc = @"";
-    
+
     var bundle                  = [CPBundle mainBundle];
     var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
     var buttonBezel             = [CPColor colorWithPatternImage:centerBezel];
@@ -203,33 +197,33 @@ function generateMacAddr()
     _plusButtonNics     = [CPButtonBar plusButton];
     _minusButtonNics    = [CPButtonBar minusButton];
     _editButtonNics     = [CPButtonBar plusButton];
-    
+
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
-    [_editButtonNics setAction:@selector(editNetworkCard:)];    
+    [_editButtonNics setAction:@selector(editNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
     [_editButtonNics setEnabled:NO];
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
-    
-    
+
+
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    
+
     [windowNicEdition setDelegate:self];
-    [windowDriveEdition setDelegate:self];    
-    
+    [windowDriveEdition setDelegate:self];
+
     //drives
     _drivesDatasource       = [[TNTableViewDataSource alloc] init];
     _tableDrives            = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
-    
+
     [scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewForDrives setAutohidesScrollers:YES];
     [scrollViewForDrives setDocumentView:_tableDrives];
-    
+
     [_tableDrives setUsesAlternatingRowBackgroundColors:YES];
     [_tableDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableDrives setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
@@ -239,37 +233,37 @@ function generateMacAddr()
     [_tableDrives setTarget:self];
     [_tableDrives setDelegate:self];
     [_tableDrives setDoubleAction:@selector(editDrive:)];
-    
+
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [[driveColumnType headerView] setStringValue:@"Type"];
     [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
-    
+
     var driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"];
     [[driveColumnDevice headerView] setStringValue:@"Device"];
     [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
-    
+
     var driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"];
     [[driveColumnTarget headerView] setStringValue:@"Target"];
     [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
-    
+
     var driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
     [driveColumnSource setWidth:300];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
-    
+
     var driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
-    
+
     [_tableDrives addTableColumn:driveColumnType];
     [_tableDrives addTableColumn:driveColumnDevice];
     [_tableDrives addTableColumn:driveColumnTarget];
     [_tableDrives addTableColumn:driveColumnBus];
     [_tableDrives addTableColumn:driveColumnSource];
-    
+
     [_drivesDatasource setTable:_tableDrives];
     [_drivesDatasource setSearchableKeyPaths:[@"type", @"device", @"target", @"source", @"bus"]];
-    
+
     [_tableDrives setDataSource:_drivesDatasource];
 
 
@@ -292,11 +286,11 @@ function generateMacAddr()
     [_tableNetworkNics setDelegate:self];
     [_tableNetworkNics setDoubleAction:@selector(editNetworkCard:)];
     [_tableNetworkNics setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    
+
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"];
     [[columnType headerView] setStringValue:@"Type"];
     [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
-    
+
     var columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"];
     [[columnModel headerView] setStringValue:@"Model"];
     [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
@@ -318,27 +312,27 @@ function generateMacAddr()
 
     [_nicsDatasource setTable:_tableNetworkNics];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"mac", @"source"]];
-    
+
     [_tableNetworkNics setDataSource:_nicsDatasource];
-    
+
     [fieldFilterDrives setTarget:_drivesDatasource];
     [fieldFilterDrives setAction:@selector(filterObjects:)];
     [fieldFilterNics setTarget:_nicsDatasource];
     [fieldFilterNics setAction:@selector(filterObjects:)];
-    
-    
+
+
     // device tabView
     [tabViewDevices setAutoresizingMask:CPViewWidthSizable];
     var tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"];
     [tabViewItemDrives setLabel:@"Virtual Medias"];
     [tabViewItemDrives setView:viewDeviceVirtualDrives];
     [tabViewDevices addTabViewItem:tabViewItemDrives];
-    
+
     var tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
     [tabViewItemNics setLabel:@"Virtual Nics"];
     [tabViewItemNics setView:viewDeviceVirtualNics];
     [tabViewDevices addTabViewItem:tabViewItemNics];
-    
+
     // others..
     [buttonBoot removeAllItems];
     [buttonNumberCPUs removeAllItems];
@@ -360,30 +354,30 @@ function generateMacAddr()
     [buttonOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
     [buttonClocks addItemsWithTitles:TNXMLDescClocks];
     [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
-    
+
     [checkboxPAE setState:CPOffState];
     [checkboxACPI setState:CPOffState];
     [checkboxAPIC setState:CPOffState];
-    
-    
+
+
     var menuNet = [[CPMenu alloc] init];
     [menuNet addItemWithTitle:@"Create new network interface" action:@selector(addNetworkCard:) keyEquivalent:@""];
     [menuNet addItem:[CPMenuItem separatorItem]];
     [menuNet addItemWithTitle:@"Edit" action:@selector(editNetworkCard:) keyEquivalent:@""];
     [menuNet addItemWithTitle:@"Delete" action:@selector(deleteNetworkCard:) keyEquivalent:@""];
     [_tableNetworkNics setMenu:menuNet];
-    
+
     var menuDrive = [[CPMenu alloc] init];
     [menuDrive addItemWithTitle:@"Create new drive" action:@selector(addDrive:) keyEquivalent:@""];
     [menuDrive addItem:[CPMenuItem separatorItem]];
     [menuDrive addItemWithTitle:@"Edit" action:@selector(editDrive:) keyEquivalent:@""];
     [menuDrive addItemWithTitle:@"Delete" action:@selector(deleteDrive:) keyEquivalent:@""];
     [_tableDrives setMenu:menuDrive];
-    
+
     [fieldVNCPassword setSecure:YES];
-    
+
     _supportedCapabilities = [CPDictionary dictionary];
-    
+
     [windowDriveEdition setTable:_tableDrives];
     [windowNicEdition setTable:_tableNetworkNics];
 }
@@ -393,15 +387,15 @@ function generateMacAddr()
 - (void)willLoad
 {
     [super willLoad];
-    
+
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    
+
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
-    
+
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-    
+
     [_tableDrives setDelegate:nil];
     [_tableDrives setDelegate:self];
     [_tableNetworkNics setDelegate:nil];
@@ -410,15 +404,15 @@ function generateMacAddr()
     [windowDriveEdition setDelegate:nil];
     [windowDriveEdition setDelegate:self];
     [windowDriveEdition setEntity:_entity];
-    
+
     [windowNicEdition setDelegate:nil];
     [windowNicEdition setDelegate:self];
     [windowNicEdition setEntity:_entity];
-    
+
     [self setDefaultValues];
-    
+
     [fieldStringXMLDesc setStringValue:@""];
-    
+
     [self getCapabilities];
 }
 
@@ -427,8 +421,16 @@ function generateMacAddr()
     [super willShow];
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
+
     [self checkIfRunning];
+
+    // ugly trick ti be sure the content of tabView is reloaded...
+    var frame = [tabViewDevices frame];
+    frame.height++;
+    [tabViewDevices setFrame:frame];
+    frame.height--;
+    [tabViewDevices setFrame:frame];
+    // and it works... FIXME: remove this sometimes. seems to be a cappuccino bug.
 }
 
 - (void)willHide
@@ -439,7 +441,7 @@ function generateMacAddr()
 - (void)willUnload
 {
     [super willUnload];
-    
+
     [self setDefaultValues];
 }
 
@@ -473,7 +475,7 @@ function generateMacAddr()
     var change  = [somePushInfo objectForKey:@"change"];
     var date    = [somePushInfo objectForKey:@"date"];
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-    
+
     [self getXMLDesc];
     return YES;
 }
@@ -499,9 +501,9 @@ function generateMacAddr()
     var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
     var apic    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"];
     var input   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"];
-    
+
     _supportedCapabilities = [CPDictionary dictionary];
-    
+
     [buttonNumberCPUs selectItemWithTitle:cpu];
     [fieldMemory setStringValue:@""];
     [fieldVNCPassword setStringValue:@""];
@@ -515,23 +517,23 @@ function generateMacAddr()
     [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
     [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
     [checkboxHugePages setState:(hp == 1) ? CPOnState : CPOffState];
-    
+
     [buttonMachines removeAllItems];
     [buttonHypervisor removeAllItems];
     [buttonArchitecture removeAllItems];
     [buttonOSType removeAllItems];
-    
+
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
     [_tableNetworkNics reloadData];
     [_tableDrives reloadData];
-    
+
 }
 
 - (void)checkIfRunning
 {
     var XMPPShow = [_entity XMPPShow];
-    
+
     if (XMPPShow != TNStropheContactStatusBusy)
     {
         if (![maskingView superview])
@@ -559,7 +561,7 @@ function generateMacAddr()
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionCapabilities}];
-        
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLCapabilities:) ofObject:self];
 }
 
@@ -569,7 +571,7 @@ function generateMacAddr()
     {
         var guests = [aStanza childrenWithName:@"guest"];
         _supportedCapabilities = [CPDictionary dictionary];
-        
+
         for (var i = 0; i < [guests count]; i++)
         {
             var guest               = [guests objectAtIndex:i];
@@ -585,14 +587,14 @@ function generateMacAddr()
             var defaultMachines     = [CPArray array];
             var defaultEmulator     = [[[guest firstChildWithName:@"arch"] firstChildWithName:@"emulator"] text];
             var defaultMachinesNode = [[guest firstChildWithName:@"arch"] ownChildrenWithName:@"machine"];
-            
+
             for (var j = 0; j < [defaultMachinesNode count]; j++)
             {
                 var machine = [defaultMachinesNode objectAtIndex:j];
                 if (![defaultMachinesNode containsObject:[machine text]])
                     [defaultMachines addObject:[machine text]];
             }
-            
+
             if (domains)
             {
                 for (var j = 0; j < [domains count]; j++)
@@ -602,12 +604,12 @@ function generateMacAddr()
                     var machinesNode    = [domain childrenWithName:@"machine"];
                     var domEmulator     = nil;
                     var dict            = [CPDictionary dictionary];
-                    
+
                     if ([domain containsChildrenWithName:@"emulator"])
                         domEmulator = [[domain firstChildWithName:@"emulator"] text];
                     else
                         domEmulator = defaultEmulator;
-                    
+
                     if ([machinesNode count] == 0)
                         machines = defaultMachines;
                     else
@@ -616,14 +618,14 @@ function generateMacAddr()
                             var machine = [machinesNode objectAtIndex:k];
                             [machines addObject:[machine text]];
                         }
-                    
+
                     [dict setObject:domEmulator forKey:@"emulator"];
                     [dict setObject:machines forKey:@"machines"];
-                    
+
                     [domainsDict setObject:dict forKey:[domain valueForAttribute:@"type"]]
                 }
             }
-            
+
             if (features)
             {
                 supportNonPAE   = [features containsChildrenWithName:@"pae"];
@@ -631,14 +633,14 @@ function generateMacAddr()
                 supportACPI     = [features containsChildrenWithName:@"acpi"];
                 supportAPIC     = [features containsChildrenWithName:@"apic"];
             }
-            
-            var cap = [CPDictionary dictionaryWithObjectsAndKeys:   supportPAE,         @"PAE", 
+
+            var cap = [CPDictionary dictionaryWithObjectsAndKeys:   supportPAE,         @"PAE",
                                                                     supportNonPAE,      @"NONPAE",
                                                                     supportAPIC,        @"APIC",
                                                                     supportACPI,        @"ACPI",
                                                                     domainsDict,        @"domains",
                                                                     osType,             @"OSType"];
-            
+
             [_supportedCapabilities setObject:cap forKey:arch];
         }
         CPLog.trace(_supportedCapabilities);
@@ -648,7 +650,7 @@ function generateMacAddr()
     {
         [self handleIqErrorFromStanza:aStanza];
     }
-    
+
 }
 
 
@@ -660,7 +662,7 @@ function generateMacAddr()
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
-        
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
 }
 
@@ -687,17 +689,17 @@ function generateMacAddr()
         var input           = [[domain firstChildWithName:@"input"] valueForAttribute:@"type"];
         var capabilities    = [_supportedCapabilities objectForKey:arch];
         var shouldRefresh   = NO;
-        
+
         //////////////////////////////////////////
         // BASIC SETTINGS
         //////////////////////////////////////////
-        
+
         // Memory
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
-        
+
         // CPUs
         [buttonNumberCPUs selectItemWithTitle:vcpu];
-        
+
         // button architecture
         [buttonArchitecture removeAllItems];
         [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
@@ -708,12 +710,12 @@ function generateMacAddr()
         }
         else
             [buttonArchitecture selectItemWithTitle:arch];
-        
+
         // button BOOT
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
             [buttonBoot setEnabled:YES];
-            
+
             if (boot == "cdrom")
                 [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
             else
@@ -723,40 +725,40 @@ function generateMacAddr()
         {
             [buttonBoot setEnabled:NO];
         }
-        
-        
+
+
         //////////////////////////////////////////
         // LIFECYCLE
         //////////////////////////////////////////
-        
+
         // power Off
         if (onPowerOff)
             [buttonOnPowerOff selectItemWithTitle:[onPowerOff text]];
         else
             [buttonOnPowerOff selectItemWithTitle:@"Default"];
-        
+
         // reboot
         if (onReboot)
             [buttonOnReboot selectItemWithTitle:[onReboot text]];
         else
             [buttonOnPowerOff selectItemWithTitle:@"Default"];
-        
+
         // crash
         if (onCrash)
             [buttonOnCrash selectItemWithTitle:[onCrash text]];
         else
             [buttonOnPowerOff selectItemWithTitle:@"Default"];
-        
-        
+
+
         //////////////////////////////////////////
         // CONTROLS
         //////////////////////////////////////////
-        
+
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
             [fieldVNCPassword setEnabled:YES];
             [buttonVNCKeymap setEnabled:YES]
-            
+
             for (var i = 0; i < [graphics count]; i++)
             {
                 var graphic = [graphics objectAtIndex:i];
@@ -777,10 +779,10 @@ function generateMacAddr()
             [fieldVNCPassword setEnabled:NO];
             [buttonVNCKeymap setEnabled:NO]
         }
-        
+
         //input type
-        if ((hypervisor == TNXMLDescHypervisorKVM) 
-            || (hypervisor == TNXMLDescHypervisorQemu) 
+        if ((hypervisor == TNXMLDescHypervisorKVM)
+            || (hypervisor == TNXMLDescHypervisorQemu)
             || (hypervisor == TNXMLDescHypervisorKQemu))
         {
             [buttonInputType setEnabled:YES];
@@ -790,12 +792,12 @@ function generateMacAddr()
         {
             [buttonInputType setEnabled:NO];
         }
-        
-        
+
+
         //////////////////////////////////////////
         // HYPERVISOR
         //////////////////////////////////////////
-        
+
         // button Hypervisor
         [buttonHypervisor removeAllItems];
         [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
@@ -806,7 +808,7 @@ function generateMacAddr()
         }
         else
             [buttonHypervisor selectItemWithTitle:hypervisor];
-        
+
         // button Machine
         [buttonMachines removeAllItems];
         if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"machines"] &&
@@ -826,42 +828,42 @@ function generateMacAddr()
         }
         else
             [buttonMachines setEnabled:NO];
-        
+
         // button OStype
         [buttonOSType removeAllItems];
         [buttonOSType addItemWithTitle:[capabilities objectForKey:@"OSType"]];
-        
-        
+
+
         //////////////////////////////////////////
         // ADVANCED FEATURES
         //////////////////////////////////////////
-        
+
         // APIC
         [checkboxAPIC setEnabled:NO];
         [checkboxAPIC setState:CPOffState];
         if ([capabilities containsKey:@"APIC"] && [capabilities objectForKey:@"APIC"])
         {
             [checkboxAPIC setEnabled:YES];
-            
+
             if (features && [features containsChildrenWithName:TNXMLDescFeatureAPIC])
                 [checkboxAPIC setState:CPOnState];
         }
-        
+
         // ACPI
         [checkboxACPI setEnabled:NO];
         [checkboxACPI setState:CPOffState];
         if ([capabilities containsKey:@"ACPI"] && [capabilities objectForKey:@"ACPI"])
         {
             [checkboxACPI setEnabled:YES];
-            
+
             if (features && [features containsChildrenWithName:TNXMLDescFeatureACPI])
                 [checkboxACPI setState:CPOnState];
         }
-        
+
         // PAE
         [checkboxPAE setEnabled:NO];
         [checkboxPAE setState:CPOffState];
-        
+
         if ([capabilities containsKey:@"PAE"] && ![capabilities containsKey:@"NONPAE"])
         {
             [checkboxPAE setState:CPOnState];
@@ -870,14 +872,14 @@ function generateMacAddr()
         {
             [checkboxPAE setState:CPOffState];
         }
-        else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"] 
+        else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"]
             && [capabilities containsKey:@"NONPAE"] && [capabilities objectForKey:@"NONPAE"])
         {
             [checkboxPAE setEnabled:YES];
             if (features && [features containsChildrenWithName:TNXMLDescFeaturePAE])
                 [checkboxPAE setState:CPOnState];
         }
-        
+
         // huge pages
         [checkboxHugePages setState:CPOffState];
         if (memoryBacking)
@@ -885,12 +887,12 @@ function generateMacAddr()
             if ([memoryBacking containsChildrenWithName:@"hugepages"])
                 [checkboxHugePages setState:CPOnState];
         }
-        
+
         //clock
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC]])
         {
             [buttonClocks setEnabled:YES];
-            
+
             if (clock)
             {
                 [buttonClocks selectItemWithTitle:[clock valueForAttribute:@"offset"]];
@@ -900,22 +902,22 @@ function generateMacAddr()
         {
             [buttonClocks setEnabled:NO];
         }
-        
-        
+
+
         //////////////////////////////////////////
         // MANUAL
         //////////////////////////////////////////
-        
+
         // field XML
         _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
         if (_stringXMLDesc)
         {
             _stringXMLDesc      = _stringXMLDesc.replace("\n  \n", "\n");
-            _stringXMLDesc      = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");        
+            _stringXMLDesc      = _stringXMLDesc.replace("xmlns='http://www.gajim.org/xmlns/undeclared' ", "");
             [fieldStringXMLDesc setStringValue:_stringXMLDesc];
         }
-        
-        
+
+
         //////////////////////////////////////////
         // DRIVES
         //////////////////////////////////////////
@@ -934,8 +936,8 @@ function generateMacAddr()
             [_drivesDatasource addObject:newDrive];
         }
         [_tableDrives reloadData];
-        
-        
+
+
         //////////////////////////////////////////
         // NICS
         //////////////////////////////////////////
@@ -960,10 +962,10 @@ function generateMacAddr()
             [_nicsDatasource addObject:newNic];
         }
         [_tableNetworkNics reloadData];
-        
-        
-        
-        // if automatic changes has been done while changing arch, hypervisor etc, 
+
+
+
+        // if automatic changes has been done while changing arch, hypervisor etc,
         // redefine virtual machine
         if (shouldRefresh)
             [self defineXML:nil];
@@ -975,18 +977,18 @@ function generateMacAddr()
             [checkboxAPIC setEnabled:NO];
             [checkboxACPI setEnabled:NO];
             [checkboxPAE setEnabled:NO];
-            
+
             [buttonArchitecture removeAllItems];
             [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
             [buttonArchitecture selectItemAtIndex:0];
-            
+
             var capabilities = [_supportedCapabilities objectForKey:[buttonArchitecture title]];
-            
+
             [buttonOSType removeAllItems];
             [buttonOSType addItemWithTitle:[capabilities objectForKey:@"OSType"]];
             [buttonOSType selectItemAtIndex:0];
-            
-            
+
+
             CPLog.info(capabilities);
             [buttonHypervisor setEnabled:NO];
             [buttonHypervisor removeAllItems];
@@ -996,7 +998,7 @@ function generateMacAddr()
                 [buttonHypervisor selectItemAtIndex:0];
                 [buttonHypervisor setEnabled:YES];
             }
-            
+
             [buttonMachines setEnabled:NO];
             [buttonMachines removeAllItems];
             if ([capabilities containsKey:@"domains"] && [[[capabilities objectForKey:@"domains"] objectForKey:@"machines"] count] > 0)
@@ -1029,40 +1031,40 @@ function generateMacAddr()
     var OSType          = [buttonOSType title];
     var VNCKeymap       = [buttonVNCKeymap title];
     var VNCPassword     = [fieldVNCPassword stringValue];
-    
+
     var capabilities    = [_supportedCapabilities objectForKey:arch];
     var stanza          = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": uid, "type": "set"}];
-    
+
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    
+
     //////////////////////////////////////////
     // COMMON INFORMATION
     //////////////////////////////////////////
-    
+
     [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
-    
+
     // name
     [stanza addChildName:@"name"];
     [stanza addTextNode:[_entity nodeName]];
     [stanza up];
-    
+
     // uuid
     [stanza addChildName:@"uuid"];
     [stanza addTextNode:[_entity nodeName]];
     [stanza up];
-    
+
     //memory
     [stanza addChildName:@"memory"];
     [stanza addTextNode:memory];
     [stanza up];
-    
+
     // currenrt memory
     [stanza addChildName:@"currentMemory"];
     [stanza addTextNode:memory];
     [stanza up];
-    
+
     if ([checkboxHugePages state] == CPOnState)
     {
         [stanza addChildName:@"memoryBacking"]
@@ -1070,23 +1072,23 @@ function generateMacAddr()
         [stanza up];
         [stanza up];
     }
-    
+
     // cpu
     [stanza addChildName:@"vcpu"];
     [stanza addTextNode:nCPUs];
     [stanza up];
-    
+
     //////////////////////////////////////////
     // OS PART
     //////////////////////////////////////////
     [stanza addChildName:@"os"];
-    
+
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorLXC]])
     {
         [stanza addChildName:@"type"];
         [stanza addTextNode:OSType];
         [stanza up];
-        
+
         // TODO
         [stanza addChildName:@"init"];
         [stanza addTextNode:@"/bin/sh"];
@@ -1097,50 +1099,50 @@ function generateMacAddr()
         [stanza addChildName:@"type" withAttributes:{"machine": machine, "arch": arch}]
         [stanza addTextNode:OSType];
         [stanza up];
-        
+
         [stanza addChildName:@"boot" withAttributes:{"dev": boot}]
         [stanza up];
         [stanza up];
     }
-    
+
     //////////////////////////////////////////
     // POWER MANAGEMENT
     //////////////////////////////////////////
     [stanza addChildName:@"on_poweroff"];
     [stanza addTextNode:[buttonOnPowerOff title]];
     [stanza up];
-    
+
     [stanza addChildName:@"on_reboot"];
     [stanza addTextNode:[buttonOnReboot title]];
     [stanza up];
-    
+
     [stanza addChildName:@"on_crash"];
     [stanza addTextNode:[buttonOnCrash title]];
     [stanza up];
-    
+
     //////////////////////////////////////////
     // FEATURES
     //////////////////////////////////////////
     [stanza addChildName:@"features"];
-    
+
     if ([checkboxPAE state] == CPOnState)
     {
         [stanza addChildName:TNXMLDescFeaturePAE];
         [stanza up];
     }
-    
+
     if ([checkboxACPI state] == CPOnState)
     {
         [stanza addChildName:TNXMLDescFeatureACPI];
         [stanza up];
     }
-    
+
     if ([checkboxAPIC state] == CPOnState)
     {
         [stanza addChildName:TNXMLDescFeatureAPIC];
         [stanza up];
     }
-    
+
     [stanza up];
 
     //Clock
@@ -1149,28 +1151,28 @@ function generateMacAddr()
         [stanza addChildName:@"clock" withAttributes:{"offset": [buttonClocks title]}];
         [stanza up];
     }
-    
-    
+
+
     //////////////////////////////////////////
     // DEVICES
     //////////////////////////////////////////
     [stanza addChildName:@"devices"];
-    
+
     // emulator
     if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"emulator"])
     {
         var emulator = [[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"emulator"];
-        
+
         [stanza addChildName:@"emulator"];
         [stanza addTextNode:emulator];
         [stanza up];
     }
-    
+
     // drives
     for (var i = 0; i < [drives count]; i++)
     {
         var drive = [drives objectAtIndex:i];
-        
+
         [stanza addChildName:@"disk" withAttributes:{"device": [drive device], "type": [drive type]}];
         if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! FIXME!
         {
@@ -1181,13 +1183,13 @@ function generateMacAddr()
             [stanza addChildName:@"source" withAttributes:{"file": [drive source]}];
         else if ([drive type] == @"block")
             [stanza addChildName:@"source" withAttributes:{"dev": [drive source]}];
-        
+
         [stanza up];
         [stanza addChildName:@"target" withAttributes:{"bus": [drive bus], "dev": [drive target]}];
         [stanza up];
         [stanza up];
     }
-    
+
     // nics
     for (var i = 0; i < [nics count]; i++)
     {
@@ -1197,10 +1199,10 @@ function generateMacAddr()
         [stanza addChildName:@"interface" withAttributes:{"type": nicType}];
         [stanza addChildName:@"mac" withAttributes:{"address": [nic mac]}];
         [stanza up];
-        
+
         [stanza addChildName:@"model" withAttributes:{"type": [nic model]}];
         [stanza up];
-        
+
         if (nicType == @"bridge")
             [stanza addChildName:@"source" withAttributes:{"bridge": [nic source]}];
         else
@@ -1209,8 +1211,8 @@ function generateMacAddr()
         [stanza up];
         [stanza up];
     }
-    
-    
+
+
     //////////////////////////////////////////
     // CONTROLS
     //////////////////////////////////////////
@@ -1218,22 +1220,22 @@ function generateMacAddr()
     {
         [stanza addChildName:@"input" withAttributes:{"bus": "usb", "type": [buttonInputType title]}];
         [stanza up];
-        
+
         if ([fieldVNCPassword stringValue] != @"")
         {
             [stanza addChildName:@"graphics" withAttributes:{
-                "autoport": "yes", 
-                "type": "vnc", 
-                "port": "-1", 
+                "autoport": "yes",
+                "type": "vnc",
+                "port": "-1",
                 "keymap": VNCKeymap,
                 "passwd": VNCPassword}];
         }
         else
         {
             [stanza addChildName:@"graphics" withAttributes:{
-                "autoport": "yes", 
-                "type": "vnc", 
-                "port": "-1", 
+                "autoport": "yes",
+                "type": "vnc",
+                "port": "-1",
                 "keymap": VNCKeymap}];
         }
         [stanza up];
@@ -1241,8 +1243,8 @@ function generateMacAddr()
 
     //devices up
     [stanza up];
-    
-    
+
+
     // send stanza
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
 }
@@ -1269,20 +1271,20 @@ function generateMacAddr()
 {
     [windowXMLEditor center];
     [windowXMLEditor makeKeyAndOrderFront:sender];
-    
+
 }
 
 - (IBAction)defineXMLString:(id)sender
 {
     var desc    = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0];
     desc        = document.importNode(desc, true);
-    
+
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addNode:desc];
-    
+
     [self sendStanza:stanza andRegisterSelector:@selector(didDefineXML:)];
     [windowXMLEditor close];
 }
@@ -1302,10 +1304,10 @@ function generateMacAddr()
 - (void)performUndefineXML:(id)someUserInfo
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
-    
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didUndefineXML:) ofObject:self];
 }
 
@@ -1363,7 +1365,7 @@ function generateMacAddr()
 
      var selectedIndexes = [_tableNetworkNics selectedRowIndexes];
      [_nicsDatasource removeObjectsAtIndexes:selectedIndexes];
-     
+
      [_tableNetworkNics reloadData];
      [_tableNetworkNics deselectAll];
      [self defineXML:nil];
@@ -1402,11 +1404,11 @@ function generateMacAddr()
         [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
         return;
     }
-    
+
      var selectedIndexes = [_tableDrives selectedRowIndexes];
-     
+
      [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
-     
+
      [_tableDrives reloadData];
      [_tableDrives deselectAll];
      [self defineXML:nil];

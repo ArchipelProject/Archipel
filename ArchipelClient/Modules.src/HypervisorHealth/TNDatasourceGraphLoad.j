@@ -88,13 +88,21 @@
     // Overwrite this method in your subclass
     // to get complete control of the drawing.
     
-    var colors = [[CPColor colorWithHexString:@"4379ca"], [CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"ABC93F"]]
+    var fillColors = [
+                        [CPColor colorWithHexString:@"4379ca"],
+                        [CPColor colorWithHexString:@"7fca43"],
+                        [CPColor colorWithHexString:@"ca4343"],
+                        [CPColor colorWithHexString:@"dcd639"],
+                        [CPColor colorWithHexString:@"ca9f43"],
+                        [CPColor colorWithHexString:@"af43ca"],
+                        [CPColor colorWithHexString:@"43afca"]
+                    ];
     
-    CGContextSetLineWidth(context, 1.0);
+    CGContextSetLineWidth(context, 1.6);
     
     for (var setIndex = 0; setIndex < aFramesSet.length; setIndex++)
     {
-        CGContextSetStrokeColor(context, colors[setIndex]);
+        CGContextSetStrokeColor(context, fillColors[setIndex]);
         
         var items = aFramesSet[setIndex];
         

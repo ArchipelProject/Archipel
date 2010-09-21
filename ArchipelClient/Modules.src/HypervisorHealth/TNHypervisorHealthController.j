@@ -54,6 +54,9 @@ LPAristo = nil;
     @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphDisk;
+    @outlet CPTabView           tabViewInfos;
+    @outlet CPView              viewCharts;
+    @outlet CPView              viewLogs;
     
     CPNumber                    _statsHistoryCollectionSize;
     CPTimer                     _timer;
@@ -89,24 +92,30 @@ LPAristo = nil;
     var cpuViewFrame = [viewGraphCPU bounds];
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
+    [_chartViewCPU setDrawViewPadding:1.0];
+    [_chartViewCPU setLabelViewHeight:0.0];
     [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewCPU setFixedMaxValue:100];
-    [_chartViewCPU setDisplayLabels:YES] // in fact this deactivates the labels... yes...
+    [_chartViewCPU setDisplayLabels:NO];
     [viewGraphCPU addSubview:_chartViewCPU];
 
     var memoryViewFrame = [viewGraphMemory bounds];
 
     _chartViewMemory   = [[LPChartView alloc] initWithFrame:memoryViewFrame];
+    [_chartViewMemory setDrawViewPadding:1.0];
+    [_chartViewMemory setLabelViewHeight:0.0];
     [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewMemory setDisplayLabels:YES] // in fact this deactivates the labels... yes...
+    [_chartViewMemory setDisplayLabels:NO];
     [viewGraphMemory addSubview:_chartViewMemory];
     
     var loadViewFrame = [viewGraphLoad bounds];
 
     _chartViewLoad   = [[LPChartView alloc] initWithFrame:loadViewFrame];
+    [_chartViewLoad setDrawViewPadding:1.0];
+    [_chartViewLoad setLabelViewHeight:0.0];
     [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewLoad setFixedMaxValue:1000];
-    [_chartViewLoad setDisplayLabels:YES] // in fact this deactivates the labels... yes...
+    [_chartViewLoad setDisplayLabels:YES];
     [viewGraphLoad addSubview:_chartViewLoad];
     
     var diskViewFrame = [viewGraphDisk bounds];
@@ -119,6 +128,21 @@ LPAristo = nil;
     var moduleBundle = [CPBundle bundleForClass:[self class]]
     _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"];
     _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
+    
+    
+    // tabview
+    [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
+
+    var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"];
+    [tabViewItemCharts setLabel:@"Charts"];
+    [tabViewItemCharts setView:viewCharts];
+    [tabViewInfos addTabViewItem:tabViewItemCharts];
+    
+    var tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"];
+    [tabViewItemLogs setLabel:@"Logs"];
+    [tabViewItemLogs setView:viewLogs];
+    [tabViewInfos addTabViewItem:tabViewItemLogs];
+    
 }
 
 

@@ -63,10 +63,19 @@
     /*
         Overwrite this method in your subclass.
     */
-    CGContextSetLineWidth(context, 1.0);
+    CGContextSetLineWidth(context, 1.3);
     CGContextSetStrokeColor(context, [CPColor whiteColor]);
     
-    var fillColors = [[CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"75B886"]];
+    //var fillColors = [[CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"75B886"]];
+    var fillColors = [
+                        [CPColor colorWithHexString:@"4379ca"],
+                        [CPColor colorWithHexString:@"7fca43"],
+                        [CPColor colorWithHexString:@"ca4343"],
+                        [CPColor colorWithHexString:@"dcd639"],
+                        [CPColor colorWithHexString:@"ca9f43"],
+                        [CPColor colorWithHexString:@"af43ca"],
+                        [CPColor colorWithHexString:@"43afca"]
+                    ];
     
     for (var i = 0; i < paths.length; i++)
     {
