@@ -181,11 +181,12 @@ def install_archipelclient():
     
     inst_export = None
     
-    inst_growl      = ask_bool("Would you like to build GrowlCappuccino ?")
-    inst_vnc        = ask_bool("Would you like to build VNCCappuccino ?")
-    inst_strophe    = ask_bool("Would you like to build StropheCappuccino ?")
-    inst_archipel   = ask_bool("Would you like to build Archipel Client ?")
-    inst_appcapp    = ask_bool("Would you like to apply Cappuccino Framework ?")
+    inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
+    inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
+    inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
+    inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
+    inst_archipel       = ask_bool("Would you like to build Archipel Client ?")
+    inst_appcapp        = ask_bool("Would you like to apply Cappuccino Framework ?")
     
     if ask_bool("Would you like to export Archipel ?"):
         inst_export    = ask("Where do you want to export Archipel Client ?", None, "~/")
@@ -195,6 +196,7 @@ def install_archipelclient():
     print "   - build GrowlCappuccino       : %s" % str(inst_growl)
     print "   - build VNCCappuccino         : %s" % str(inst_vnc)
     print "   - build StropheCappuccino     : %s" % str(inst_strophe)
+    print "   - build iTunesTabView         : %s" % str(inst_itunestabview)
     print "   - build Archipel Client       : %s" % str(inst_archipel)
     print "   - apply Cappuccino            : %s" % str(inst_appcapp)
     if inst_export: print "   - export to                   : %s" % inst_export
@@ -205,12 +207,13 @@ def install_archipelclient():
         print " \033[33m* Installation canceled by user\033[0m"
         sys.exit(0)
     
-    if inst_growl:      build_growlcappuccino()
-    if inst_vnc:        build_vnccappuccino()
-    if inst_strophe:    build_strophecappuccino()
-    if inst_appcapp:    apply_cappuccino_frameworks()
-    if inst_archipel:   build_archipel()
-    if inst_export:     export_archipel(inst_export)
+    if inst_growl:          build_growlcappuccino()
+    if inst_vnc:            build_vnccappuccino()
+    if inst_strophe:        build_strophecappuccino()
+    if inst_itunestabview:  build_itunestabview()
+    if inst_appcapp:        apply_cappuccino_frameworks()
+    if inst_archipel:       build_archipel()
+    if inst_export:         export_archipel(inst_export)
     
     print "\033[32m"
     print " Installation is now complete.\n"
@@ -244,6 +247,17 @@ def build_vnccappuccino():
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
     print "\033[32m * VNCCappuccino builded\033[0m"
+
+
+def build_itunestabview():
+    print " * Building iTunesTabView";
+    s = Spinner();
+    ret = os.system("cd ./iTunesTabView && export CONFIG=Debug && jake  > /dev/null 2>&1 && export CONFIG=Release && jake > /dev/null 2>&1")
+    s.stop()
+    if ret != 0:
+        print "\033[31mUnable to build iTunesTabView\033[0m"
+        sys.exit(1)
+    print "\033[32m * iTunesTabView builded\033[0m"
 
 
 def build_archipel(exportpath=None):
