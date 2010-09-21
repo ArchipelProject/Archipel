@@ -23,11 +23,11 @@
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 @import <LPKit/LPKit.j>
+@import <LPKit/LPMultiLineTextField.j>
 @import <iTunesTabView/iTunesTabView.j>
 
 //@import <LPKit/LPCrashReporter.j>
 
-//@import "LPMultiLineTextField.j";
 @import "TNAvatarManager.j";
 @import "TNCategoriesAndGlobalSubclasses.j";
 @import "TNDatasourceRoster.j";

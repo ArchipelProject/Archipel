@@ -145,6 +145,9 @@ function generateMacAddr()
     @outlet TNWindowNicEdition      windowNicEdition;
     @outlet LPMultiLineTextField    fieldStringXMLDesc;
     @outlet CPWindow                windowXMLEditor;
+    @outlet CPView                  viewDeviceVirtualDrives;
+    @outlet CPView                  viewDeviceVirtualNics;
+    @outlet CPTabView               tabViewDevices;
     
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
@@ -161,6 +164,7 @@ function generateMacAddr()
     TNTableViewDataSource           _nicsDatasource;
     CPString                        _stringXMLDesc;
     CPDictionary                    _supportedCapabilities;
+    
 }
 
 - (void)awakeFromCib
@@ -321,7 +325,20 @@ function generateMacAddr()
     [fieldFilterDrives setAction:@selector(filterObjects:)];
     [fieldFilterNics setTarget:_nicsDatasource];
     [fieldFilterNics setAction:@selector(filterObjects:)];
-
+    
+    
+    // device tabView
+    [tabViewDevices setAutoresizingMask:CPViewWidthSizable];
+    var tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"];
+    [tabViewItemDrives setLabel:@"Virtual Medias"];
+    [tabViewItemDrives setView:viewDeviceVirtualDrives];
+    [tabViewDevices addTabViewItem:tabViewItemDrives];
+    
+    var tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
+    [tabViewItemNics setLabel:@"Virtual Nics"];
+    [tabViewItemNics setView:viewDeviceVirtualNics];
+    [tabViewDevices addTabViewItem:tabViewItemNics];
+    
     // others..
     [buttonBoot removeAllItems];
     [buttonNumberCPUs removeAllItems];
@@ -371,7 +388,6 @@ function generateMacAddr()
     [windowNicEdition setTable:_tableNetworkNics];
 }
 
-
 // TNModule impl.
 
 - (void)willLoad
@@ -404,7 +420,6 @@ function generateMacAddr()
     [fieldStringXMLDesc setStringValue:@""];
     
     [self getCapabilities];
-    
 }
 
 - (void)willShow
