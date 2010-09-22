@@ -73,8 +73,6 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPView                  viewTableHypervisorsContainer;
-    @outlet CPCheckBox              checkBoxAutostart;
-    @outlet CPTextField             fieldHypervisor;
     @outlet CPSlider                sliderMemory;
     @outlet TNStepper               stepperCPU;
     
@@ -97,6 +95,7 @@ TNArchipelTransportBarReboot    = 4;
     CPImage     _imageRebootDisabled;
     CPImage     _imagePlaySelected;
     CPImage     _imageStopSelected;
+    @outlet     TNSwitch    switchAutoStart;
 }
 
 
@@ -212,6 +211,12 @@ TNArchipelTransportBarReboot    = 4;
     [_migrateButton setEnabled:NO];
     [buttonBarMigration setButtons:[_migrateButton]];
     
+    //TNSwitch
+    // switchAutoStart = [TNSwitch switchWithFrame:CGRectMake(653, 130, 77, 24)];
+    // [[self view] addSubview:switchAutoStart];
+    
+    [switchAutoStart setTarget:self];
+    [switchAutoStart setAction:@selector(setAutostart:)];
 }
 
 /* TNModule implementation */
@@ -249,8 +254,8 @@ TNArchipelTransportBarReboot    = 4;
     
     [viewTableHypervisorsContainer setHidden:YES];
     [filterHypervisors setHidden:YES];
-    [checkBoxAutostart setEnabled:NO];
-    [checkBoxAutostart setState:CPOffState];
+    [switchAutoStart setEnabled:NO];
+    [switchAutoStart setOn:NO animated:YES sendAction:NO];
     [sliderMemory setEnabled:NO];
     [stepperCPU setEnabled:NO];
     
@@ -403,7 +408,6 @@ TNArchipelTransportBarReboot    = 4;
         
         _currentHypervisorJID = hypervisor;
         
-        [fieldHypervisor setStringValue:[hypervisor capitalizedString].split("@")[0]];
         [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" Mo"];
         [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
@@ -428,11 +432,11 @@ TNArchipelTransportBarReboot    = 4;
         }
         
         
-        [checkBoxAutostart setEnabled:YES];
+        [switchAutoStart setEnabled:YES];
         if (autostart == 1)
-            [checkBoxAutostart setState:CPOnState];
+            [switchAutoStart setOn:YES animated:YES sendAction:NO];
         else
-            [checkBoxAutostart setState:CPOffState];
+            [switchAutoStart setOn:NO animated:YES sendAction:NO];
 
         _VMLibvirtStatus = libvirtState;
 
@@ -706,7 +710,7 @@ TNArchipelTransportBarReboot    = 4;
 - (IBAction)setAutostart:(id)sender
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"];
-    var autostart   = ([checkBoxAutostart state] == CPOnState) ? "1" : "0";
+    var autostart   = [switchAutoStart isOn] ? "1" : "0";
     
     [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildName:@"archipel" withAttributes:{
@@ -721,7 +725,7 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza type] == @"result")
     {
         var growl = [TNGrowlCenter defaultCenter];
-        if ([checkBoxAutostart state] == CPOnState)
+        if ([switchAutoStart isOn])
             [growl pushNotificationWithTitle:@"Autostart" message:@"Autostart has been set"];
         else
             [growl pushNotificationWithTitle:@"Autostart" message:@"Autostart has been unset"];

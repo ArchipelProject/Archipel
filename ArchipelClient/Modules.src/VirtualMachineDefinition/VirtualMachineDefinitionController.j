@@ -115,10 +115,10 @@ function generateMacAddr()
     @outlet CPButton                buttonOnReboot;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
-    @outlet CPCheckBox              checkboxACPI;
-    @outlet CPCheckBox              checkboxAPIC;
-    @outlet CPCheckBox              checkboxHugePages;
-    @outlet CPCheckBox              checkboxPAE;
+    @outlet TNSwitch                switchACPI;
+    @outlet TNSwitch                switchAPIC;
+    @outlet TNSwitch                switchHugePages;
+    @outlet TNSwitch                switchPAE;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonInputType;
     @outlet CPPopUpButton           buttonMachines;
@@ -355,10 +355,9 @@ function generateMacAddr()
     [buttonClocks addItemsWithTitles:TNXMLDescClocks];
     [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
 
-    [checkboxPAE setState:CPOffState];
-    [checkboxACPI setState:CPOffState];
-    [checkboxAPIC setState:CPOffState];
-
+    [switchPAE setOn:NO animated:YES sendAction:NO];
+    [switchACPI setOn:NO animated:YES sendAction:NO];
+    [switchAPIC setOn:NO animated:YES sendAction:NO];
 
     var menuNet = [[CPMenu alloc] init];
     [menuNet addItemWithTitle:@"Create new network interface" action:@selector(addNetworkCard:) keyEquivalent:@""];
@@ -380,6 +379,16 @@ function generateMacAddr()
 
     [windowDriveEdition setTable:_tableDrives];
     [windowNicEdition setTable:_tableNetworkNics];
+    
+    // switch
+    [switchAPIC setTarget:self];
+    [switchAPIC setAction:@selector(defineXML:)];
+    [switchACPI setTarget:self];
+    [switchACPI setAction:@selector(defineXML:)];
+    [switchPAE setTarget:self];
+    [switchPAE setAction:@selector(defineXML:)];
+    [switchHugePages setTarget:self];
+    [switchHugePages setAction:@selector(defineXML:)];
 }
 
 // TNModule impl.
@@ -513,10 +522,10 @@ function generateMacAddr()
     [buttonOnCrash selectItemWithTitle:oc];
     [buttonClocks selectItemWithTitle:clock];
     [buttonInputType selectItemWithTitle:input];
-    [checkboxPAE setState:(pae == 1) ? CPOnState : CPOffState];
-    [checkboxACPI setState:(acpi == 1) ? CPOnState : CPOffState];
-    [checkboxAPIC setState:(apic == 1) ? CPOnState : CPOffState];
-    [checkboxHugePages setState:(hp == 1) ? CPOnState : CPOffState];
+    [switchPAE setOn:((pae == 1) ? YES : NO) animated:YES sendAction:NO];
+    [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
+    [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
+    [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
 
     [buttonMachines removeAllItems];
     [buttonHypervisor removeAllItems];
@@ -839,53 +848,53 @@ function generateMacAddr()
         //////////////////////////////////////////
 
         // APIC
-        [checkboxAPIC setEnabled:NO];
-        [checkboxAPIC setState:CPOffState];
+        [switchAPIC setEnabled:NO];
+        [switchAPIC setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"APIC"] && [capabilities objectForKey:@"APIC"])
         {
-            [checkboxAPIC setEnabled:YES];
+            [switchAPIC setEnabled:YES];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureAPIC])
-                [checkboxAPIC setState:CPOnState];
+                [switchAPIC setOn:YES animated:YES sendAction:NO];
         }
 
         // ACPI
-        [checkboxACPI setEnabled:NO];
-        [checkboxACPI setState:CPOffState];
+        [switchACPI setEnabled:NO];
+        [switchACPI setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"ACPI"] && [capabilities objectForKey:@"ACPI"])
         {
-            [checkboxACPI setEnabled:YES];
+            [switchACPI setEnabled:YES];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureACPI])
-                [checkboxACPI setState:CPOnState];
+                [switchACPI setOn:YES animated:YES sendAction:NO];
         }
 
         // PAE
-        [checkboxPAE setEnabled:NO];
-        [checkboxPAE setState:CPOffState];
+        [switchPAE setEnabled:NO];
+        [switchPAE setOn:NO animated:YES sendAction:NO];
 
         if ([capabilities containsKey:@"PAE"] && ![capabilities containsKey:@"NONPAE"])
         {
-            [checkboxPAE setState:CPOnState];
+            [switchPAE setOn:YES animated:YES sendAction:NO];
         }
         else if (![capabilities containsKey:@"PAE"] && [capabilities containsKey:@"NONPAE"])
         {
-            [checkboxPAE setState:CPOffState];
+            [switchPAE setOn:NO animated:YES sendAction:NO];
         }
         else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"]
             && [capabilities containsKey:@"NONPAE"] && [capabilities objectForKey:@"NONPAE"])
         {
-            [checkboxPAE setEnabled:YES];
+            [switchPAE setEnabled:YES];
             if (features && [features containsChildrenWithName:TNXMLDescFeaturePAE])
-                [checkboxPAE setState:CPOnState];
+                [switchPAE setOn:YES animated:YES sendAction:NO];
         }
 
         // huge pages
-        [checkboxHugePages setState:CPOffState];
+        [switchHugePages setOn:NO animated:YES sendAction:NO];
         if (memoryBacking)
         {
             if ([memoryBacking containsChildrenWithName:@"hugepages"])
-                [checkboxHugePages setState:CPOnState];
+                [switchHugePages setOn:YES animated:YES sendAction:NO];
         }
 
         //clock
@@ -974,9 +983,9 @@ function generateMacAddr()
     {
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] == "not-defined")
         {
-            [checkboxAPIC setEnabled:NO];
-            [checkboxACPI setEnabled:NO];
-            [checkboxPAE setEnabled:NO];
+            [switchAPIC setEnabled:NO];
+            [switchACPI setEnabled:NO];
+            [swutchPAE setEnabled:NO];
 
             [buttonArchitecture removeAllItems];
             [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
@@ -1065,7 +1074,7 @@ function generateMacAddr()
     [stanza addTextNode:memory];
     [stanza up];
 
-    if ([checkboxHugePages state] == CPOnState)
+    if ([switchHugePages isOn])
     {
         [stanza addChildName:@"memoryBacking"]
         [stanza addChildName:@"hugepages"];
@@ -1125,19 +1134,19 @@ function generateMacAddr()
     //////////////////////////////////////////
     [stanza addChildName:@"features"];
 
-    if ([checkboxPAE state] == CPOnState)
+    if ([switchPAE isOn])
     {
         [stanza addChildName:TNXMLDescFeaturePAE];
         [stanza up];
     }
 
-    if ([checkboxACPI state] == CPOnState)
+    if ([switchACPI isOn])
     {
         [stanza addChildName:TNXMLDescFeatureACPI];
         [stanza up];
     }
 
-    if ([checkboxAPIC state] == CPOnState)
+    if ([switchAPIC isOn])
     {
         [stanza addChildName:TNXMLDescFeatureAPIC];
         [stanza up];

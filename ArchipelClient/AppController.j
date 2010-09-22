@@ -44,6 +44,7 @@
 @import "TNTableViewDataSource.j";
 @import "TNSearchField.j";
 @import "TNStepper.j";
+@import "TNSwitch.j";
 
 /*! @global
     @group TNArchipelEntityType

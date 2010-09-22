@@ -33,6 +33,8 @@ TNArchipelTypeHypervisorHealthInfo          = @"info";
 TNArchipelTypeHypervisorHealthHistory       = @"history";
 TNArchipelTypeHypervisorHealthLog           = @"logs";
 
+TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
+
 LPAristo = nil;
 
 @implementation TNHypervisorHealthController : TNModule
@@ -56,6 +58,7 @@ LPAristo = nil;
     @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphDisk;
+    @outlet TNSwitch            switchRefresh;
     
     @outlet CPView              viewGraphCPUContainer;
     @outlet CPView              viewGraphMemoryContainer;
@@ -230,15 +233,46 @@ LPAristo = nil;
     
     [filterLogField setTarget:_datasourceLogs];
     [filterLogField setAction:@selector(filterObjects:)];
+    
+    // refresh switch
+    [switchRefresh setTarget:self];
+    [switchRefresh setAction:@selector(pauseRefresh:)];
 }
 
+
+
+- (IBAction)pauseRefresh:(id)sender
+{
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
+    if (![sender isOn])
+    {
+        if (_timerStats)
+            [_timerStats invalidate];
+        
+        if (_timerLogs)
+            [_timerLogs invalidate];
+            
+        [defaults setBool:NO forKey:key];
+    }
+    else
+    {
+        _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+        _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+        
+        [defaults setBool:YES forKey:key];
+    }
+}
 
 // Modules implementation
 - (void)willLoad
 {
     [super willLoad];
     
-    var center = [CPNotificationCenter defaultCenter];
+    var center      = [CPNotificationCenter defaultCenter];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
+    
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
     _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
@@ -254,6 +288,9 @@ LPAristo = nil;
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
+    
+    [switchRefresh setOn:[defaults boolForKey:key] animated:YES sendAction:NO]; // not really a swicth..
+    [self pauseRefresh:switchRefresh];
     
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
@@ -447,9 +484,12 @@ LPAristo = nil;
 
     [self getHypervisorHealth:nil];
 
-    /* now get health every 5 seconds */
-    _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
-    _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+    if ([sender isOn])
+    {
+        /* now get health every 5 seconds */
+        _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+        _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+    }
     
     return NO;
 }
