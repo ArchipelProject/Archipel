@@ -187,7 +187,7 @@ LPAristo = nil;
     
     [viewLogsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewLogsTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewLogsTable setAutohidesScrollers:YES];
+    [scrollViewLogsTable setAutohidesScrollers:NO];
     [scrollViewLogsTable setDocumentView:_tableLogs];
     
     [_tableLogs setUsesAlternatingRowBackgroundColors:YES];
@@ -245,20 +245,39 @@ LPAristo = nil;
 {
     var defaults    = [TNUserDefaults standardUserDefaults];
     var key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
-    if (![sender isOn])
+    
+    alert("IS ON ? " + [switchRefresh isOn]);
+    if (![switchRefresh isOn])
     {
         if (_timerStats)
+        {
             [_timerStats invalidate];
+            CPLog.debug("timer for stats invalidated");
+            _timerStats = nil;
+        }
         
         if (_timerLogs)
+        {
             [_timerLogs invalidate];
-            
+            CPLog.debug("timer for logs invalidated");
+            _timerLogs = nil;
+        }
+        
         [defaults setBool:NO forKey:key];
     }
     else
     {
-        _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
-        _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+        if (!_timerStats)
+        {
+            _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+            CPLog.debug("timer for stats started from switch action");
+        }
+        if (!_timerLogs)
+        {
+            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+            CPLog.debug("timer for logs started from switch action");
+        }
+            
         
         [defaults setBool:YES forKey:key];
     }
@@ -300,11 +319,20 @@ LPAristo = nil;
     [super willUnload];
 
     if (_timerStats)
+    {
         [_timerStats invalidate];
+        CPLog.debug("timer for stats invalidated");
+        _timerStats = nil;
+    }
+        
     
     if (_timerLogs)
+    {
         [_timerLogs invalidate];
-
+        CPLog.debug("timer for logs invalidated");
+        _timerLogs = nil;
+    }
+    
     [_cpuDatasource removeAllObjects];
     [_memoryDatasource removeAllObjects];
     [_loadDatasource removeAllObjects];
@@ -390,6 +418,7 @@ LPAristo = nil;
         [_chartViewCPU reloadData];
         [_chartViewLoad reloadData];
         [_chartViewDisk reloadData];
+        CPLog.debug("current stats recovered");
     }
     else if ([aStanza type] == @"error")
     {
@@ -470,6 +499,8 @@ LPAristo = nil;
         [_chartViewCPU reloadData];
         [_chartViewLoad reloadData];
         [_chartViewDisk reloadData];
+
+        CPLog.debug("Stats history recovered");
     }
     else if ([aStanza type] == @"error")
     {
@@ -481,15 +512,7 @@ LPAristo = nil;
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
     
-
     [self getHypervisorHealth:nil];
-
-    if ([sender isOn])
-    {
-        /* now get health every 5 seconds */
-        _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
-        _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
-    }
     
     return NO;
 }
@@ -530,6 +553,7 @@ LPAristo = nil;
             [_datasourceLogs addObject:logEntry];
         }
         [_tableLogs reloadData];
+        CPLog.debug("logs recovered");
 
     }
     else if ([aStanza type] == @"error")

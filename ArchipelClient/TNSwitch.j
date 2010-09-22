@@ -68,12 +68,15 @@
         
         var offBackgroundImageDisabled = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-off-background-disabled.png"] size:switchSize]];
         [self setValue:offBackgroundImageDisabled forThemeAttribute:@"off-background-color" inState:CPThemeStateDisabled];
+        [self setValue:offBackgroundImageDisabled forThemeAttribute:@"on-background-color" inState:CPThemeStateDisabled];
         
         var knobBackgroundDisabled = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"LPSwitch/switch-knob-disabled.png"] size:switchSize]];
         [self setValue:knobBackgroundDisabled forThemeAttribute:@"knob-background-color" inState:CPThemeStateDisabled];
         
         [self setValue:CGSizeMake(30, aFrame.height) forThemeAttribute:@"knob-size"];
         
+        [self setValue:[CPColor grayColor] forThemeAttribute:@"off-label-text-color" inState:CPThemeStateDisabled];
+        [self setValue:[CPColor grayColor] forThemeAttribute:@"on-label-text-color" inState:CPThemeStateDisabled];
     }
     
     return self;

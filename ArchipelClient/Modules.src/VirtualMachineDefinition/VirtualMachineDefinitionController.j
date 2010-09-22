@@ -423,6 +423,10 @@ function generateMacAddr()
     [fieldStringXMLDesc setStringValue:@""];
 
     [self getCapabilities];
+    
+    // seems to be necessary
+    [_tableDrives reloadData];
+    [_tableNetworkNics reloadData];
 }
 
 - (void)willShow
@@ -432,14 +436,6 @@ function generateMacAddr()
     [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
-
-    // ugly trick ti be sure the content of tabView is reloaded...
-    var frame = [tabViewDevices frame];
-    frame.height++;
-    [tabViewDevices setFrame:frame];
-    frame.height--;
-    [tabViewDevices setFrame:frame];
-    // and it works... FIXME: remove this sometimes. seems to be a cappuccino bug.
 }
 
 - (void)willHide
@@ -659,7 +655,6 @@ function generateMacAddr()
     {
         [self handleIqErrorFromStanza:aStanza];
     }
-
 }
 
 
@@ -971,9 +966,7 @@ function generateMacAddr()
             [_nicsDatasource addObject:newNic];
         }
         [_tableNetworkNics reloadData];
-
-
-
+        
         // if automatic changes has been done while changing arch, hypervisor etc,
         // redefine virtual machine
         if (shouldRefresh)
