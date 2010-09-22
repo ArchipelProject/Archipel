@@ -26,10 +26,12 @@
 @import "TNDatasourceGraphMemory.j"
 @import "TNDatasourceGraphDisks.j"
 @import "TNDatasourceGraphLoad.j"
+@import "TNLogEntryObject.j"
 
-TNArchipelTypeHypervisorHealth           = @"archipel:hypervisor:health";
-TNArchipelTypeHypervisorHealthInfo       = @"info";
-TNArchipelTypeHypervisorHealthHistory    = @"history";
+TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health";
+TNArchipelTypeHypervisorHealthInfo          = @"info";
+TNArchipelTypeHypervisorHealthHistory       = @"history";
+TNArchipelTypeHypervisorHealthLog           = @"logs";
 
 LPAristo = nil;
 
@@ -54,13 +56,26 @@ LPAristo = nil;
     @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphDisk;
+    
+    @outlet CPView              viewGraphCPUContainer;
+    @outlet CPView              viewGraphMemoryContainer;
+    @outlet CPView              viewGraphLoadContainer;
+    @outlet CPView              viewGrapDiskContainer;
+    
     @outlet CPTabView           tabViewInfos;
     @outlet CPView              viewCharts;
     @outlet CPView              viewLogs;
+    @outlet CPView              viewLogsTableContainer;
+    @outlet CPScrollView        scrollViewLogsTable;
+    @outlet CPSearchField       filterLogField;
     
     CPNumber                    _statsHistoryCollectionSize;
-    CPTimer                     _timer;
+    CPTimer                     _timerStats;
+    CPTimer                     _timerLogs;
     float                       _timerInterval;
+    int                         _maxLogEntries;
+    BOOL                        _tableLogDisplayMethodColumn;
+    BOOL                        _tableLogDisplayFileColumn;
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewMemory;
     LPChartView                 _chartViewLoad;
@@ -69,6 +84,10 @@ LPAristo = nil;
     TNDatasourceGraphMemory     _memoryDatasource;
     TNDatasourceGraphLoad       _loadDatasource;
     TNDatasourceGraphDisks      _disksDatasource;
+    
+    CPTableView                 _tableLogs;
+    TNTableViewDataSource       _datasourceLogs;
+    
 }
 
 - (void)awakeFromCib
@@ -88,7 +107,16 @@ LPAristo = nil;
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
 
-
+    [viewGraphCPUContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    [viewGraphMemoryContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    [viewGraphLoadContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    [viewGrapDiskContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    
+    [viewGraphCPUContainer setBorderRadius:4];
+    [viewGraphMemoryContainer setBorderRadius:4];
+    [viewGraphLoadContainer setBorderRadius:4];
+    [viewGrapDiskContainer setBorderRadius:4];
+    
     var cpuViewFrame = [viewGraphCPU bounds];
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
@@ -97,6 +125,7 @@ LPAristo = nil;
     [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewCPU setFixedMaxValue:100];
     [_chartViewCPU setDisplayLabels:NO];
+    [[_chartViewCPU gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphCPU addSubview:_chartViewCPU];
 
     var memoryViewFrame = [viewGraphMemory bounds];
@@ -106,6 +135,7 @@ LPAristo = nil;
     [_chartViewMemory setLabelViewHeight:0.0];
     [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewMemory setDisplayLabels:NO];
+    [[_chartViewMemory gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphMemory addSubview:_chartViewMemory];
     
     var loadViewFrame = [viewGraphLoad bounds];
@@ -116,6 +146,7 @@ LPAristo = nil;
     [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
     [_chartViewLoad setFixedMaxValue:1000];
     [_chartViewLoad setDisplayLabels:YES];
+    [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphLoad addSubview:_chartViewLoad];
     
     var diskViewFrame = [viewGraphDisk bounds];
@@ -128,6 +159,10 @@ LPAristo = nil;
     var moduleBundle = [CPBundle bundleForClass:[self class]]
     _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"];
     _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
+    _maxLogEntries              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"];
+    
+    _tableLogDisplayFileColumn    = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
+    _tableLogDisplayMethodColumn    = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
     
     
     // tabview
@@ -143,6 +178,58 @@ LPAristo = nil;
     [tabViewItemLogs setView:viewLogs];
     [tabViewInfos addTabViewItem:tabViewItemLogs];
     
+    // logs tables
+    _datasourceLogs = [[TNTableViewDataSource alloc] init];
+    _tableLogs      = [[CPTableView alloc] initWithFrame:[scrollViewLogsTable bounds]];
+    
+    [viewLogsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewLogsTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewLogsTable setAutohidesScrollers:YES];
+    [scrollViewLogsTable setDocumentView:_tableLogs];
+    
+    [_tableLogs setUsesAlternatingRowBackgroundColors:YES];
+    [_tableLogs setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableLogs setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_tableLogs setAllowsColumnReordering:NO];
+    [_tableLogs setAllowsColumnResizing:YES];
+    [_tableLogs setAllowsEmptySelection:YES];
+    [_tableLogs setAllowsMultipleSelection:NO];
+    
+    var columnLogLevel = [[CPTableColumn alloc] initWithIdentifier:@"level"];
+    [columnLogLevel setWidth:50];
+    [columnLogLevel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"level" ascending:YES]];
+    [[columnLogLevel headerView] setStringValue:@"Level"];
+    
+    var columnLogDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
+    [columnLogDate setWidth:125];
+    [columnLogDate setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"date" ascending:YES]];
+    [[columnLogDate headerView] setStringValue:@"Date"];
+    
+    var columnLogFile = [[CPTableColumn alloc] initWithIdentifier:@"file"];
+    [columnLogFile setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"file" ascending:YES]];
+    [[columnLogFile headerView] setStringValue:@"file"];
+    
+    var columnLogMethod = [[CPTableColumn alloc] initWithIdentifier:@"method"];
+    [columnLogMethod setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"method" ascending:YES]];
+    [[columnLogMethod headerView] setStringValue:@"method"];
+    
+    var columnLogMessage = [[CPTableColumn alloc] initWithIdentifier:@"message"];
+    [columnLogMessage setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"message" ascending:YES]];
+    [[columnLogMessage headerView] setStringValue:@"message"];
+    
+    [_tableLogs addTableColumn:columnLogLevel];
+    [_tableLogs addTableColumn:columnLogDate];
+    if (_tableLogDisplayFileColumn)
+        [_tableLogs addTableColumn:columnLogFile];
+    if (_tableLogDisplayMethodColumn)
+        [_tableLogs addTableColumn:columnLogMethod];
+    [_tableLogs addTableColumn:columnLogMessage];
+
+    [_datasourceLogs setTable:_tableLogs];
+    [_datasourceLogs setSearchableKeyPaths:[@"level", @"date", @"message"]];
+    
+    [filterLogField setTarget:_datasourceLogs];
+    [filterLogField setAction:@selector(filterObjects:)];
 }
 
 
@@ -163,7 +250,9 @@ LPAristo = nil;
     [_chartViewCPU setDataSource:_cpuDatasource];
     [_chartViewLoad setDataSource:_loadDatasource];
     [_chartViewDisk setDataSource:_disksDatasource];
+    [_tableLogs setDataSource:_datasourceLogs]; 
 
+    [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
     
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -173,13 +262,17 @@ LPAristo = nil;
 {
     [super willUnload];
 
-    if (_timer)
-        [_timer invalidate];
+    if (_timerStats)
+        [_timerStats invalidate];
+    
+    if (_timerLogs)
+        [_timerLogs invalidate];
 
     [_cpuDatasource removeAllObjects];
     [_memoryDatasource removeAllObjects];
     [_loadDatasource removeAllObjects];
     [_disksDatasource removeAllObjects];
+    [_datasourceLogs removeAllObjects];
 }
 
 - (void)willShow
@@ -355,9 +448,55 @@ LPAristo = nil;
     [self getHypervisorHealth:nil];
 
     /* now get health every 5 seconds */
-    _timer = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES]
-
+    _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+    _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+    
     return NO;
+}
+
+
+- (void)getHypervisorLog:(CPTimer)aTimer
+{
+    var stanza    = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "xmlns": TNArchipelTypeHypervisorHealth, 
+        "action": TNArchipelTypeHypervisorHealthLog,
+        "limit": _maxLogEntries}];
+        
+    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorLog:)];
+}
+
+- (void)didReceiveHypervisorLog:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var logNodes = [aStanza childrenWithName:@"log"];
+        logNodes.reverse();
+        
+        [_datasourceLogs removeAllObjects];
+        
+        for (var i = 0; i < [logNodes count]; i++)
+        {
+            var currentLog  = [logNodes objectAtIndex:i];
+            var lvl         = [currentLog valueForAttribute:@"level"];
+            var date        = [currentLog valueForAttribute:@"date"];
+            var file        = [currentLog valueForAttribute:@"file"];
+            var method      = [currentLog valueForAttribute:@"method"];
+            var message     = [currentLog text];
+            var logEntry    = [TNLogEntry logEntryWithLevel:lvl date:date file:file method:method message:message];
+            
+            [_datasourceLogs addObject:logEntry];
+        }
+        [_tableLogs reloadData];
+
+    }
+    else if ([aStanza type] == @"error")
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
 }
 
 

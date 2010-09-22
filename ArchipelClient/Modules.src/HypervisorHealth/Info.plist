@@ -32,5 +32,11 @@
         <real>5.0</real>
         <key>TNArchipelHealthStatsHistoryCollectionSize</key>
         <integer>100</integer>
+        <key>TNArchipelHealthMaxLogEntry</key>
+        <integer>50</integer>
+        <key>TNArchipelHealthTableLogDisplayMethodColumn</key>
+        <integer>0</integer>
+        <key>TNArchipelHealthTableLogDisplayFileColumn</key>
+        <integer>0</integer>
     </dict>
 </plist>

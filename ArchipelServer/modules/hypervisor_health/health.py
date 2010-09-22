@@ -27,13 +27,15 @@ from archipelStatsCollector import *
 
 ARCHIPEL_ERROR_CODE_HEALTH_HISTORY  = -8001
 ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
+ARCHIPEL_ERROR_CODE_HEALTH_LOG      = -8003
 
 class TNHypervisorHealth:
-    def __init__(self, db_file,collection_interval, max_rows_before_purge, max_cached_rows): #, snmp_agent, snmp_community, snmp_version, snmp_port):
+    def __init__(self, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file): #, snmp_agent, snmp_community, snmp_version, snmp_port):
         self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)#, snmp_agent, snmp_community, snmp_version, snmp_port)
         # self.collector.daemon = True
+        self.logfile = log_file
         self.collector.start()
-        
+    
         
     def process_iq(self, conn, iq):
         """
@@ -65,10 +67,13 @@ class TNHypervisorHealth:
             reply = self.__healthinfo(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-        
-        
-
-
+            
+        elif action == "logs":
+            reply = self.__get_logs(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+    
     def __healthinfo_history(self, iq):
         """
         get a range of old stat history according to the limit parameters in iq node
@@ -107,7 +112,7 @@ class TNHypervisorHealth:
     def __healthinfo(self, iq):
         """
         send information about the hypervisor health info
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -116,7 +121,7 @@ class TNHypervisorHealth:
         # TODO : add some ACL here later
         try:
             reply = iq.buildReply("result") 
-    
+            
             nodes = []
             stats = self.collector.get_collected_stats(1)
             
@@ -145,3 +150,34 @@ class TNHypervisorHealth:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)
         return reply
+    
+    
+    
+    def __get_logs(self, iq):
+        """
+        read the hypervisor's log file
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results        
+        """
+        
+        try:
+            reply = iq.buildReply("result")
+            limit = int(iq.getTag("query").getTag("archipel").getAttr("limit"))
+            output = commands.getoutput("tail -n %d %s" % (limit, self.logfile));
+            nodes = []
+            for line in output.split("\n"):
+                infos = line.split("::")
+                log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": infos[2], "method": infos[3]})
+                log_node.setData(infos[4]);
+                nodes.append(log_node)
+                
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_LOG)
+        return reply
+    
+
+

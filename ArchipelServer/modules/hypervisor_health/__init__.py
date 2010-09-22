@@ -14,14 +14,10 @@ def __module_init__health_module(self):
     db_file                 = self.configuration.get("HEALTH", "health_database_path")
     collection_interval     = self.configuration.getint("HEALTH", "health_collection_interval")
     max_rows_before_purge   = self.configuration.getint("HEALTH", "max_rows_before_purge")
-    max_cached_rows  = self.configuration.getint("HEALTH", "max_cached_rows")
-    #snmp_agent              = self.configuration.get("HEALTH", "health_snmp_agent")
-    #snmp_community          = self.configuration.get("HEALTH", "health_snmp_community")
-    #snmp_version            = self.configuration.getint("HEALTH", "health_snmp_version")
-    #snmp_port               = self.configuration.getint("HEALTH", "health_snmp_port")
-    #snmp_infos               = {"snmp_agent": snmp_agent, "snmp_community": snmp_community, "snmp_version": snmp_version, "snmp_port": snmp_port}
+    max_cached_rows         = self.configuration.getint("HEALTH", "max_cached_rows")
+    log_file                = self.configuration.get("LOGGING", "logging_file_path")
     
-    self.module_health = health.TNHypervisorHealth(db_file, collection_interval, max_rows_before_purge, max_cached_rows) #, snmp_infos)
+    self.module_health = health.TNHypervisorHealth(db_file, collection_interval, max_rows_before_purge, max_cached_rows, log_file)
 
 
 def __module_register_stanza__heatlh_module(self):
