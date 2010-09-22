@@ -246,7 +246,6 @@ LPAristo = nil;
     var defaults    = [TNUserDefaults standardUserDefaults];
     var key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
     
-    alert("IS ON ? " + [switchRefresh isOn]);
     if (![switchRefresh isOn])
     {
         if (_timerStats)
