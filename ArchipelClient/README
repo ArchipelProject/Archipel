@@ -1,7 +1,7 @@
 <h2>Archipel</h2>
 
 Archipel is an Open Source project that aims to bring push notifications to virtualization orchestration
-using XMPP. 
+using XMPP.
 
 Archipel relies on open source technologies like python, ejabberd, cappuccino, strophe, nginx, libvirt, KVM and 
 even more. All of these  technologies are mixed together to create a real time orchestration solution for
