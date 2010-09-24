@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 ARCHIPEL_CLIENT_BUILD_DIR="ArchipelClient/Build/release/Archipel"
 ARCHIPEL_CLIENT_BUILD_COMMAND="./build.py -bag"
 PUBLICATION_DIR="/var/www/html/"
