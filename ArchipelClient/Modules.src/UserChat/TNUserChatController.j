@@ -19,7 +19,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import "TNMessageBoard.j"
 
 /*! @defgroup userchat Module UserChat
     @desc this module allows to chat with XMPP entities.

@@ -436,6 +436,11 @@ function generateMacAddr()
     [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
+    
+    // seems to be necessary
+    [_tableDrives reloadData];
+    [_tableNetworkNics reloadData];
+    
 }
 
 - (void)willHide

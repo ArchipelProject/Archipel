@@ -25,6 +25,7 @@
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <iTunesTabView/iTunesTabView.j>
+@import <MessageBoard/MessageBoard.j>
 
 //@import <LPKit/LPCrashReporter.j>
 
@@ -97,7 +98,7 @@ TNArchipelStatusBusyLabel       = @"Busy";
 TNArchipelStatusDNDLabel       = @"Do not disturb";
 
 
-
+TNArchipelMainWindow            = nil;
 /*! @global
     @group TNArchipelAction
     ask for removing the current roster item
@@ -204,6 +205,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     
     /* hide main window */
     [theWindow orderOut:nil];
+    TNArchipelMainWindow = theWindow;
     
     /* toolbar */
     CPLog.trace("initializing mianToolbar");
@@ -533,7 +535,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
                                 message:@"Are you sure you want to delete this contact?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
-    [alert setUserInfo:item]
+    [alert setUserInfo:item];
     [alert runModal];
 }
 
@@ -1179,13 +1181,13 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     var copy = document.createElement("div");
     copy.style.position = "absolute";
     copy.style.fontSize = "10px";
-    copy.style.color = "#5a5a5a";
+    copy.style.color = "#6C707F";
     copy.style.width = "700px";
     copy.style.bottom = "8px";
     copy.style.left = "50%";
     copy.style.textAlign = "center";
     copy.style.marginLeft = "-350px";
-    copy.style.textShadow = "0px 1px 0px white";
+    // copy.style.textShadow = "0px 1px 0px #C6CAD9";
     copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);
     

@@ -28,7 +28,7 @@
 @implementation TNWindowConnection: TNWhiteWindow
 {
     @outlet CPButton    connectButton;
-    @outlet CPCheckBox  credentialRemember;
+    @outlet TNSwitch    credentialRemember;
     @outlet CPImageView spinning;
     @outlet CPTextField boshService;
     @outlet CPTextField JID;
@@ -45,6 +45,9 @@
 {
     [password setSecure:YES];
     [self setShowsResizeIndicator:NO];
+    [credentialRemember setTarget:self];
+    [credentialRemember setAction:@selector(rememberCredentials:)];
+    [self setDefaultButton:connectButton];
 }
 
 /*! Initialize credentials informations according to the Application Defaults
@@ -110,6 +113,8 @@
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     else
         [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
+        
+    CPLog.debug("credential remember set");
 }
 
 /*! delegate of TNStropheConnection

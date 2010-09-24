@@ -22,13 +22,41 @@
         <script src ="Frameworks/Objective-J/Objective-J.js" type = "text/javascript"></script>
 		
         <style type = "text/css">
-            body{margin:0; padding:0;
-                background-image: url(Resources/logo_archipel_ecusson.png);
+            html{
+                margin:0; 
+                padding:0;
+                background-image: url(/Resources/archipel_website_logo_white.png),
+                                    -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 450, from(#6A6B73), to(#2B2C33));
+                background-image: url(/Resources/archipel_website_logo_white.png),
+                                    -moz-radial-gradient(50% 50%, 0, 50% 50%, 450, from(#6A6B73), to(#2B2C33));
                 background-repeat: no-repeat;
-				background-color: rgb(211, 218, 223);}
-            #container {position: absolute; top:50%; left:50%;}
-            #content {width:800px; text-align:center; margin-left: -400px; height:50px; margin-top:-25px; line-height: 50px;}
-            #content {font-family: "Helvetica", "Arial", sans-serif; font-size: 18px; color: black; text-shadow: 0px 1px 0px white; }
+                width: 100%;
+                height: 100%;
+            }
+            #loadingcontainer {
+                
+            }
+            #container {
+                position: absolute; 
+                top:50%; 
+                left:50%;
+            }
+            #content {
+                padding:10px;
+            	width: 200px;
+            	-webkit-border-radius: 7px;
+            	-moz-border-radius: 7px;
+            	background-color: #F5F6F7;
+            	margin-bottom: 3px;
+            	border-radius: 7px;
+            	background-color: #B6BCCC;
+            	color: #6A7080;
+            	text-shadow: 1px 1px #C4CADA;
+            	border: 1px solid #7A8293;
+            	border-top: 1px solid #C4CADA;
+            	margin-bottom: 5px;
+                text-align:center; margin-left: -100px; height:50px; margin-top:-25px; line-height: 50px;
+        	 }
             #loadgraphic {margin-right: 0.2em; margin-bottom:-2px;}
         </style>
 
@@ -38,10 +66,10 @@
             #content { position: relative;}
         </STYLE>
         <![endif]-->
-
     </head>
+    
     <body>
-	        <div id="loadingcontainer" style="background-color: rgb(211, 218, 223); overflow:hidden; width:100%; height:100%; position: absolute; top: 0; left: 0;">
+	        <div id="loadingcontainer" style="overflow:hidden; width:100%; height:100%; position: absolute; top: 0; left: 0;">
 	    
             <script type = "text/javascript">
                 document.write("<div id='container'><p id='content'>" +
@@ -67,5 +95,4 @@
             </noscript>
         </div>
     </body>
-
 </html>

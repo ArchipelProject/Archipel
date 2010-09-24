@@ -41,7 +41,7 @@
         display the defaut welcome page (offline)
     -->
     <key>TNArchipelHelpWindowURL</key>
-    <string>http://antoinemercadal.fr/archipelhelp/</string>
+    <string>http://antoinemercadal.fr/archipelhelp2/</string>
     
     <!--
         Time in second before starting to load modules when roster selection changes

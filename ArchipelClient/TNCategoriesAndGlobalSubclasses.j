@@ -237,7 +237,13 @@
 
 - (void)runModal
 {
-    [_alert runModal];
+    //[_alert runModal];
+    [self beginSheetModalForWindow:TNArchipelMainWindow];
+}
+
+- (void)beginSheetModalForWindow:(CPWindow)aWindow
+{
+    [_alert beginSheetModalForWindow:aWindow];
 }
 
 - (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
