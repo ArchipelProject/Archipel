@@ -531,7 +531,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         return;
     }
     
-    var alert = [TNAlert alertWithTitle:@"Delet contact"
+    var alert = [TNAlert alertWithTitle:@"Delete contact"
                                 message:@"Are you sure you want to delete this contact?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];

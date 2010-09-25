@@ -33,100 +33,118 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
 @implementation TNMapViewController : TNModule
 {
-    @outlet CPView          mapViewContainer            @accessors;
-    @outlet CPTextField     textFieldOriginName         @accessors;
-    @outlet CPTextField     textFieldDestinationName    @accessors;
-    @outlet CPSplitView     splitViewVertical           @accessors;
-    @outlet CPSplitView     splitViewHorizontal         @accessors;
+    @outlet CPScrollView    scrollViewDestination;
+    @outlet CPScrollView    scrollViewOrigin;
+    @outlet CPSplitView     splitViewHorizontal;
+    @outlet CPSplitView     splitViewVertical;
+    @outlet CPTextField     textFieldDestinationName;
+    @outlet CPTextField     textFieldOriginName;
+    @outlet CPTextField     textFieldDestinationNameLabel;
+    @outlet CPTextField     textFieldOriginNameLabel;
+    @outlet CPView          viewOrigin;
+    @outlet CPView          viewDestination;
+    @outlet CPSearchField   filterFieldOrigin;
+    @outlet CPSearchField   filterFieldDestination;
+    
+    @outlet CPView          mapViewContainer;
 
-    @outlet CPScrollView    scrollViewOrigin            @accessors;
-    @outlet CPScrollView    scrollViewDestination       @accessors;
-
-    CPTableView             tableOriginVMs                  @accessors;
-    CPTableView             tableDestinationVMs             @accessors;
-
-    TNDatasourceMigrationVMs     vmOrginDatasource          @accessors;
-    TNDatasourceMigrationVMs     vmDestinationDatasource    @accessors;
-
-    TNStropheContact            originHypervisor            @accessors;
-    TNStropheContact            destinationHypervisor       @accessors;
-
-    id          _currentItem;
-    MKMapView   _mainMapView;
+    CPTableView             _tableVMDestination;
+    CPTableView             _tableVMOrigin;
+    MKMapView               _mainMapView;
+    TNStropheContact        _destinationHypervisor;
+    TNStropheContact        _originHypervisor;
+    TNTableViewDataSource   _dataSourceVMDestination;
+    TNTableViewDataSource   _dataSourceVMOrigin;
 }
 
 - (id)awakeFromCib
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
     var posy;
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var bundle      = [CPBundle bundleForClass:[self class]];
+    
+    var gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
+    
+    [viewOrigin setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    [viewDestination setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    
+    [textFieldOriginNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldDestinationNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldOriginName setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldDestinationName setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldOriginNameLabel setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldDestinationNameLabel setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldOriginName setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldDestinationName setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
-    {
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
-    }
-    [[self splitViewHorizontal] setDelegate:self];
+
+    [splitViewHorizontal setDelegate:self];
     
     [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [[self splitViewVertical] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [[self splitViewVertical] setIsPaneSplitter:YES];
+    [splitViewVertical setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [splitViewVertical setIsPaneSplitter:YES];
 
     // VM origin table view
-    vmOrginDatasource       = [[TNDatasourceMigrationVMs alloc] init];
-    tableOriginVMs          = [[CPTableView alloc] initWithFrame:[[self scrollViewOrigin] bounds]];
+    _dataSourceVMOrigin     = [[TNTableViewDataSource alloc] init];
+    _tableVMOrigin          = [[CPTableView alloc] initWithFrame:[scrollViewOrigin bounds]];
 
-    [[self scrollViewOrigin] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self scrollViewOrigin] setAutohidesScrollers:YES];
-    [[self scrollViewOrigin] setDocumentView:[self tableOriginVMs]];
-    // [[self scrollViewOrigin] setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewOrigin setAutohidesScrollers:YES];
+    [scrollViewOrigin setDocumentView:_tableVMOrigin];
 
-    [[self tableOriginVMs] setUsesAlternatingRowBackgroundColors:YES];
-    [[self tableOriginVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self tableOriginVMs] setAllowsColumnReordering:YES];
-    [[self tableOriginVMs] setAllowsColumnResizing:YES];
-    [[self tableOriginVMs] setAllowsEmptySelection:YES];
+    [_tableVMOrigin setUsesAlternatingRowBackgroundColors:YES];
+    [_tableVMOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableVMOrigin setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_tableVMOrigin setAllowsColumnResizing:YES];
+    [_tableVMOrigin setAllowsEmptySelection:YES];
 
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
-    //[vmColumNickname setWidth:250];
+    [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
     var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
-    //[vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
     var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
     var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
-    [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
+    
+    [filterFieldOrigin setTarget:_dataSourceVMOrigin];
+    [filterFieldOrigin setAction:@selector(filterObjects:)];
+    
+    [_dataSourceVMOrigin setTable:_tableVMOrigin];
+    [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_tableVMOrigin addTableColumn:vmColumStatusIcon];
+    [_tableVMOrigin addTableColumn:vmColumNickname];
+    [_tableVMOrigin addTableColumn:vmColumJID];
+    [_tableVMOrigin setDataSource:_dataSourceVMOrigin];
 
-    [[self tableOriginVMs] addTableColumn:vmColumStatusIcon];
-    [[self tableOriginVMs] addTableColumn:vmColumNickname];
-    [[self tableOriginVMs] addTableColumn:vmColumJID];
-
-    [[self tableOriginVMs] setDataSource:[self vmOrginDatasource]];
 
     // VM Destination table view
-    vmDestinationDatasource     = [[TNDatasourceMigrationVMs alloc] init];
-    tableDestinationVMs         = [[CPTableView alloc] initWithFrame:[[self scrollViewDestination] bounds]];
+    _dataSourceVMDestination     = [[TNTableViewDataSource alloc] init];
+    _tableVMDestination         = [[CPTableView alloc] initWithFrame:[scrollViewDestination bounds]];
 
-    [[self scrollViewDestination] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self scrollViewDestination] setAutohidesScrollers:YES];
-    [[self scrollViewDestination] setDocumentView:[self tableDestinationVMs]];
-    // [[self scrollViewDestination] setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewDestination setAutohidesScrollers:YES];
+    [scrollViewDestination setDocumentView:_tableVMDestination];
 
-    [[self tableDestinationVMs] setUsesAlternatingRowBackgroundColors:YES];
-    [[self tableDestinationVMs] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [[self tableDestinationVMs] setAllowsColumnReordering:YES];
-    [[self tableDestinationVMs] setAllowsColumnResizing:YES];
-    [[self tableDestinationVMs] setAllowsEmptySelection:YES];
+    [_tableVMDestination setUsesAlternatingRowBackgroundColors:YES];
+    [_tableVMDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableVMDestination setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_tableVMDestination setAllowsColumnReordering:YES];
+    [_tableVMDestination setAllowsColumnResizing:YES];
+    [_tableVMDestination setAllowsEmptySelection:YES];
 
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
-    //[vmColumNickname setWidth:250];
+    [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
     var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
-    //[vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
     var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
@@ -136,34 +154,36 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
-
-    [[self tableDestinationVMs] addTableColumn:vmColumStatusIcon];
-    [[self tableDestinationVMs] addTableColumn:vmColumNickname];
-    [[self tableDestinationVMs] addTableColumn:vmColumJID];
-
-    [[self tableDestinationVMs] setDataSource:[self vmDestinationDatasource]];
+    
+    [filterFieldDestination setTarget:_dataSourceVMDestination];
+    [filterFieldDestination setAction:@selector(filterObjects:)];
+    
+    [_dataSourceVMDestination setTable:_tableVMDestination];
+    [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID"]];
+    [_tableVMDestination addTableColumn:vmColumStatusIcon];
+    [_tableVMDestination addTableColumn:vmColumNickname];
+    [_tableVMDestination addTableColumn:vmColumJID];
+    [_tableVMDestination setDataSource:_dataSourceVMDestination];
 }
 
 
 // TNModule
-- (void)willLoad
-{
-    [super willLoad];
-    // 
-    // [_mainMapView setFrame:[[self superview] bounds]];
-    // [mapViewContainer setFrame:[[self superview] bounds]];
-}
 
 - (void)willShow
 {
     [super willShow];
 
-    _mainMapView = [[MKMapView alloc] initWithFrame:[[self mapViewContainer] bounds] apiKey:''];
+    _mainMapView = [[MKMapView alloc] initWithFrame:[mapViewContainer bounds] apiKey:''];
 
     [_mainMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainMapView setDelegate:self];
 
     [mapViewContainer addSubview:_mainMapView];
+    
+    
+    var defaults = [TNUserDefaults standardUserDefaults];
+    if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
+        [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 }
 
 - (void)willHide
@@ -242,7 +262,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [stanza addChildName:@"archipel" withAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
-    if (anHypervisor == [self originHypervisor])
+    if (anHypervisor == _originHypervisor)
         [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
     else
         [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
@@ -255,7 +275,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
 
-        [[[self vmOrginDatasource] VMs] removeAllObjects];
+        [_dataSourceVMOrigin removeAllObjects];
 
         for (var i = 0; i < [queryItems count]; i++)
         {
@@ -266,12 +286,12 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
-                    [[self vmOrginDatasource] addVM:entry];
+                    [_dataSourceVMOrigin addObject:entry];
                     //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
                }
             }
         }
-        [[self tableOriginVMs] reloadData];
+        [_tableVMOrigin reloadData];
     }
     else
     {
@@ -286,7 +306,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
         var queryItems  = [aStanza childrenWithName:@"item"];
         var center      = [CPNotificationCenter defaultCenter];
 
-        [[[self vmDestinationDatasource] VMs] removeAllObjects];
+        [_dataSourceVMDestination removeAllObjects];
 
         for (var i = 0; i < [queryItems count]; i++)
         {
@@ -297,12 +317,12 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
-                    [[self vmDestinationDatasource] addVM:entry];
+                    [_dataSourceVMDestination addObject:entry];
                     //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
                }
             }
         }
-        [[self tableDestinationVMs] reloadData];
+        [_tableVMDestination reloadData];
     }
     else
     {
@@ -314,33 +334,31 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 // marker delegate
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
-    _currentItem = [someUserInfo objectForKey:@"rosterItem"];
+    var item    = [someUserInfo objectForKey:@"rosterItem"];
+    var alert   = [TNAlert alertWithTitle:@"Define path"
+                                message:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
+                                delegate:self
+                                 actions:[["Origin", @selector(setOrigin:)], ["Destination",  @selector(setDestination:)], [@"Cancel", nil]]];
+    [alert setUserInfo:item];
+    [alert runModal];
 
-    [CPAlert alertWithTitle:@"Define path"
-                    message:@"Please choose if this " + [_currentItem nickname] + @" is origin or destination of the migration."
-                      style:CPInformationalAlertStyle
-                   delegate:self
-                    buttons:["Origin", "Destination", "Cancel"]];
 
 }
 
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
+- (void)setOrigin:(id)anItem
 {
-    if (returnCode == 0)
-    {
-        [self setOriginHypervisor:_currentItem];
-        [[self textFieldOriginName] setStringValue:[_currentItem nickname]];
-    }
-    else if (returnCode == 1)
-    {
-        [self setDestinationHypervisor:_currentItem];
-        [[self textFieldDestinationName] setStringValue:[_currentItem nickname]];
-    }
-    else
-        return;
-
-    [self rosterOfHypervisor:_currentItem];
+    _originHypervisor = anItem;
+    [textFieldOriginName setStringValue:[anItem nickname]];
+    [self rosterOfHypervisor:anItem];
 }
+
+- (void)setDestination:(id)anItem
+{
+    _destinationHypervisor= anItem;
+    [textFieldDestinationName setStringValue:[anItem nickname]];
+    [self rosterOfHypervisor:anItem];
+}
+
 
 /*! Delegate of SplitView
 */

@@ -5,19 +5,18 @@
 
 @implementation MKMarker : MKMapItem
 {
-    Marker      _gMarker    @accessors(property=gMarker);
-    MKLocation  _location   @accessors(property=location);
-    BOOL        _draggable  @accessors(getter=isDraggable, setter=setDraggable:);
-    BOOL        _withShadow  @accessors(property=withShadow);
-    BOOL        _clickable  @accessors(getter=isClickable, setter=setClickable:);
-    CPString    _iconUrl    @accessors(property=iconUrl);
-    CPString    _shadowUrl  @accessors(property=shadowUrl);
-    id          _delegate  @accessors(property=delegate);
-    CPString    _infoWindowHTML;
-    CPDictionary _eventHandlers;
+    BOOL            _clickable          @accessors(getter=isClickable, setter=setClickable:);
+    BOOL            _draggable          @accessors(getter=isDraggable, setter=setDraggable:);
+    BOOL            _withShadow         @accessors(property=withShadow);
+    CPString        _iconUrl            @accessors(property=iconUrl);
+    CPString        _shadowUrl          @accessors(property=shadowUrl);
+    id              _delegate           @accessors(property=delegate);
+    id              _userInfo           @accessors(property=userInfo);
+    Marker          _gMarker            @accessors(property=gMarker);
+    MKLocation      _location           @accessors(property=location);
     
-    CPDictionary    userInfo @accessors;
-    id              delegate @accessors;
+    CPString        _infoWindowHTML;
+    CPDictionary    _eventHandlers;    
 }
 
 + (MKMarker)marker
@@ -27,14 +26,19 @@
 
 - (id)initAtLocation:(MKLocation)aLocation
 {
-    if (self = [super init]) {
-        _location = aLocation;
-        _withShadow = YES;
-        _draggable = YES;
-        _clickable = YES;
+    if (self = [super init])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+        
+        _location       = aLocation;
+        _withShadow     = NO;
+        _draggable      = YES;
+        _clickable      = YES;
+        _iconUrl        = [bundle pathForResource:@"pin.png"];
+        
         [self addEventForName:@"click" withFunction:function(){
-            if ([[self delegate] respondsToSelector:@selector(markerClicked:userInfo:)])
-                [[self delegate] markerClicked:self userInfo:[self userInfo]];
+            if ([_delegate respondsToSelector:@selector(markerClicked:userInfo:)])
+                [_delegate markerClicked:self userInfo:_userInfo];
         }];
     }
     return self;
@@ -44,7 +48,8 @@
 {
     _location = [[MKLocation alloc] initWithLatLng:_gMarker.getLatLng()];
     
-    if (_delegate && [_delegate respondsToSelector:@selector(mapMarker:didMoveToLocation:)]) {
+    if (_delegate && [_delegate respondsToSelector:@selector(mapMarker:didMoveToLocation:)])
+    {
         [_delegate mapMarker:self didMoveToLocation:_location];
     }
 }
@@ -53,21 +58,30 @@
 {
     _withShadow = withShadow;
     
-    if (anIconName) {
+    if (anIconName)
+    {
         _iconUrl = "http://maps.google.com/mapfiles/ms/micons/" + anIconName + ".png"
         
-        if (withShadow) {
-            if (anIconName.match(/dot/) || anIconName.match(/(blue|green|lightblue|orange|pink|purple|red|yellow)$/)) {
+        if (withShadow)
+        {
+            if (anIconName.match(/dot/) || anIconName.match(/(blue|green|lightblue|orange|pink|purple|red|yellow)$/))
+            {
                 _shadowUrl = "http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png";
-            } else if (anIconName.match(/pushpin/)) {
+            }
+            else if (anIconName.match(/pushpin/))
+            {
                 _shadowUrl = "http://maps.google.com/mapfiles/ms/micons/pushpin_shadow.png";
-            } else {
+            }
+            else
+            {
                 _shadowUrl = "http://maps.google.com/mapfiles/ms/micons/" + anIconName + ".shadow.png";
             }
         }
-    } else {
-        _iconUrl = nil;
-        _shadowUrl = "http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png"; //default shadow
+    }
+    else
+    {
+        _iconUrl    = nil;
+        _shadowUrl  = "http://maps.google.com/mapfiles/ms/micons/msmarker.shadow.png"; //default shadow
     }
 }
 
@@ -133,17 +147,17 @@
 
 - (void)addToMapView:(MKMapView)mapView
 {
-    var googleMap = [mapView gMap];
-    var gm = [MKMapView gmNamespace];
+    var googleMap   = [mapView gMap];
+    var gm          = [MKMapView gmNamespace];
+    var icon        = new gm.Icon(gm.DEFAULT_ICON);
     
-    var icon = new gm.Icon(gm.DEFAULT_ICON);
-    
+    icon.shadow = nil;
     // set a different icon if the _iconUrl is set
     if (_iconUrl) 
     {
         icon.image = _iconUrl;
-        icon.iconSize = new gm.Size(32, 32);
-        icon.iconAnchor = new gm.Point(16, 32);
+        icon.iconSize = new gm.Size(29, 36);
+        icon.iconAnchor = new gm.Point(9, 36);
     }
     
     // set the shadow

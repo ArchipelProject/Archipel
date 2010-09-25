@@ -343,7 +343,7 @@
 
         [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
         [_dataViewForRoot setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-
+        
         [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_dataViewForRoot setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
 
