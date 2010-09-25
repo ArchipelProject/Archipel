@@ -20,8 +20,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "MapKit/MKMapView.j"
-@import "TNDatasourceMigrationVMs.j"
+@import "MapKit/MKMapView.j";
+@import "TNDragDropTableViewDataSource.j";
+
 
 TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
 TNArchipelTypeHypervisorControlAlloc        = @"alloc";
@@ -30,6 +31,9 @@ TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
 TNArchipelTypeHypervisorGeolocalization     = @"archipel:hypervisor:geolocalization";
 TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
+
+TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 @implementation TNMapViewController : TNModule
 {
@@ -45,16 +49,15 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     @outlet CPView          viewDestination;
     @outlet CPSearchField   filterFieldOrigin;
     @outlet CPSearchField   filterFieldDestination;
-    
     @outlet CPView          mapViewContainer;
 
-    CPTableView             _tableVMDestination;
-    CPTableView             _tableVMOrigin;
-    MKMapView               _mainMapView;
-    TNStropheContact        _destinationHypervisor;
-    TNStropheContact        _originHypervisor;
-    TNTableViewDataSource   _dataSourceVMDestination;
-    TNTableViewDataSource   _dataSourceVMOrigin;
+    CPTableView                     _tableVMDestination;
+    CPTableView                     _tableVMOrigin;
+    MKMapView                       _mainMapView;
+    TNStropheContact                _destinationHypervisor;
+    TNStropheContact                _originHypervisor;
+    TNDragDropTableViewDataSource   _dataSourceVMDestination;
+    TNDragDropTableViewDataSource   _dataSourceVMOrigin;
 }
 
 - (id)awakeFromCib
@@ -90,7 +93,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [splitViewVertical setIsPaneSplitter:YES];
 
     // VM origin table view
-    _dataSourceVMOrigin     = [[TNTableViewDataSource alloc] init];
+    _dataSourceVMOrigin     = [[TNDragDropTableViewDataSource alloc] init];
     _tableVMOrigin          = [[CPTableView alloc] initWithFrame:[scrollViewOrigin bounds]];
 
     [scrollViewOrigin setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -126,10 +129,11 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [_tableVMOrigin addTableColumn:vmColumNickname];
     [_tableVMOrigin addTableColumn:vmColumJID];
     [_tableVMOrigin setDataSource:_dataSourceVMOrigin];
+    // [_tableVMOrigin registerForDraggedTypes:[CPArray arrayWithObjects:CPGeneralPboardType, nil]];
 
 
     // VM Destination table view
-    _dataSourceVMDestination     = [[TNTableViewDataSource alloc] init];
+    _dataSourceVMDestination     = [[TNDragDropTableViewDataSource alloc] init];
     _tableVMDestination         = [[CPTableView alloc] initWithFrame:[scrollViewDestination bounds]];
 
     [scrollViewDestination setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -167,6 +171,12 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [_tableVMDestination addTableColumn:vmColumNickname];
     [_tableVMDestination addTableColumn:vmColumJID];
     [_tableVMDestination setDataSource:_dataSourceVMDestination];
+    
+    
+    [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
+    [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
+    [_tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
+    [_tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
 }
 
 
@@ -180,6 +190,11 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 
     [_mainMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainMapView setDelegate:self];
+    
+    [_tableVMOrigin setDelegate:nil];
+    [_tableVMOrigin setDelegate:self];
+    [_tableVMDestination setDelegate:nil];
+    [_tableVMDestination setDelegate:self];
 
     [mapViewContainer addSubview:_mainMapView];
     
@@ -374,6 +389,38 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [defaults setInteger:newPos forKey:@"mapViewSplitViewPosition"];
 }
 
+
+// Migration
+- (IBAction)migrate:(TNStropheContact)aVirualMachine toHypervisor:(TNStropheContact)aHypervisor
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+    
+    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildName:@"archipel" withAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlMigrate,
+        "hypervisorjid": [aHypervisor fullJID]}];
+
+
+    [aVirualMachine sendStanza:stanza andRegisterSelector:@selector(didMigrate:) ofObject:self];
+    
+}
+
+- (void)didMigrate:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        // [_tableHypervisorDestination deselectAll];
+        // [_tableHypervisorVirtualMachines deselectAll];
+        // [_tableHypervisorOrigin deselectAll];
+        
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
 @end
 
 

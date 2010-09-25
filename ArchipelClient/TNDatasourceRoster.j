@@ -263,16 +263,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
 {
-    var draggedItem = [theItems objectAtIndex:0];
-    
-    // if ([draggedItem class] == TNStropheGroup)
-    //     return NO;
-
     _draggedItem = [theItems objectAtIndex:0];
-
+    
     [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
     [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
-
+    
     return YES;
 }
 
