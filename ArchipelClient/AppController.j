@@ -122,7 +122,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     @outlet CPSplitView         leftSplitView;
     @outlet CPSplitView         mainHorizontalSplitView;
     @outlet CPTextField         textFieldAboutVersion;
-    @outlet CPTextField         textFieldLoadedBundle;
     @outlet CPView              filterView;
     @outlet CPView              leftView;
     @outlet CPView              rightView;
@@ -139,6 +138,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     @outlet TNWindowAddGroup    addGroupWindow;
     @outlet TNWindowConnection  connectionWindow;
     @outlet TNAvatarManager     windowAvatarManager;
+    @outlet CPTextField         textFieldLoadingModuleTitle;
+    @outlet CPTextField         textFieldLoadingModuleLabel;
 
     BOOL                        _shouldShowHelpView;
     CPImage                     _imageLedInData;
@@ -276,6 +277,14 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     // var frame   = [windowModuleLoading frame];
     [windowModuleLoading center]
     [windowModuleLoading makeKeyAndOrderFront:nil];
+    [textFieldLoadingModuleTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldLoadingModuleTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldLoadingModuleTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
+    
+    [textFieldLoadingModuleLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [textFieldLoadingModuleLabel setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldLoadingModuleLabel setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    
     
     CPLog.trace(@"initializing _moduleLoader");
     _moduleLoader = [[TNModuleLoader alloc] init]
@@ -478,14 +487,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [connectionWindow center];
     [connectionWindow makeKeyAndOrderFront:nil];
     [connectionWindow initCredentials];
-}
-
-/*! delegate of TNModuleLoader sent when a module is loaded
-*/
-- (void)moduleLoader:(TNModuleLoader)aLoader hasLoadBundle:(CPBundle)aBundle
-{
-    CPLog.info(@"Bundle loaded : " + aBundle);
-    [textFieldLoadedBundle setStringValue:@"Sucessfully loaded " + [aBundle objectForInfoDictionaryKey:@"CPBundleName"]];
 }
 
 - (IBAction)didMinusBouttonClicked:(id)sender

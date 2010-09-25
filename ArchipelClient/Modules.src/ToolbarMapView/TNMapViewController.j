@@ -62,8 +62,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     var posy;
     var defaults    = [TNUserDefaults standardUserDefaults];
     var bundle      = [CPBundle bundleForClass:[self class]];
-    
-    var gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
+    var gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
     
     [viewOrigin setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
     [viewDestination setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -72,10 +71,14 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     [textFieldDestinationNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldOriginName setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldDestinationName setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [textFieldOriginNameLabel setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [textFieldDestinationNameLabel setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [textFieldOriginName setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [textFieldDestinationName setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldOriginNameLabel setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldDestinationNameLabel setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldOriginName setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldDestinationName setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldOriginNameLabel setTextColor:[CPColor colorWithHexString:@"00000"]];
+    [textFieldOriginName setTextColor:[CPColor colorWithHexString:@"00000"]];
+    [textFieldDestinationNameLabel setTextColor:[CPColor colorWithHexString:@"00000"]];
+    [textFieldDestinationName setTextColor:[CPColor colorWithHexString:@"00000"]];
     
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
@@ -338,7 +341,7 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
     var alert   = [TNAlert alertWithTitle:@"Define path"
                                 message:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
                                 delegate:self
-                                 actions:[["Origin", @selector(setOrigin:)], ["Destination",  @selector(setDestination:)], [@"Cancel", nil]]];
+                                 actions:[[@"Cancel", nil], ["Destination",  @selector(setDestination:)], ["Origin", @selector(setOrigin:)]]];
     [alert setUserInfo:item];
     [alert runModal];
 

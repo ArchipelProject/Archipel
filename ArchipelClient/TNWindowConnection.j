@@ -34,7 +34,13 @@
     @outlet CPTextField JID;
     @outlet CPTextField message;
     @outlet CPTextField password;
+    @outlet CPTextField labelPassword;
+    @outlet CPTextField labelBoshService;
+    @outlet CPTextField labelJID;
+    @outlet CPTextField labelRemeber;
+    @outlet CPTextField labelTitle;
 
+    
 
     TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
 }
@@ -48,6 +54,27 @@
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
     [self setDefaultButton:connectButton];
+    
+    [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelJID setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelPassword setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelPassword setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelBoshService setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelBoshService setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelRemeber setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelRemeber setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [message setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    
+    
+    [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
+    [labelJID setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    [labelPassword setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    [labelBoshService setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    [labelRemeber setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    [message setTextColor:[CPColor colorWithHexString:@"6A7087"]];
 }
 
 /*! Initialize credentials informations according to the Application Defaults
