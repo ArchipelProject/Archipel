@@ -199,7 +199,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     {
         var selector = [_registredSelectors objectAtIndex:i];
 
-        [_connection deleteRegistredSelector:selector];
+        [_connection deleteRegisteredSelector:selector];
     }
     
     [_pubsubRegistrar removeAllObjects];
