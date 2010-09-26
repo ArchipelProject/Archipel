@@ -1,5 +1,5 @@
 /*
- * temp_graphDatasource.j
+ * TNDatasourceGraphChartView.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,27 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@implementation TNDatasourceGraphLoad : CPObject
+@implementation TNDatasourceChartView : CPObject
 {
     CPArray     _datas;
-    CPArray     _datasOne;
-    CPArray     _datasFive;
-    CPArray     _datasFifteen;
     int         _maxNumberOfPoints;
+}
+
+- (void)initWithNumberOfSets:(int)numberOfSets
+{
+    if (self = [super init])
+    {
+        _datas = [CPArray array];
+        
+        for (var i = 0 ; i < numberOfSets; i++)
+            [_datas addObject:[CPArray array]];
+        
+        _maxNumberOfPoints = 100;
+    }
+    return self;
 }
 
 - (void)init
 {
-    if (self = [super init])
-    {
-        _datasOne = [];
-        _datasFive = [];
-        _datasFifteen = [];
-        
-        _datas = [_datasOne, _datasFive, _datasFifteen];
-        _maxNumberOfPoints = 100;
-    }
-    return self;
+    return [self initWithSets:1];
 }
 
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView

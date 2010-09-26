@@ -1,5 +1,5 @@
 /*
- * TNDatasourceDisks.j
+ * TNDatasourcePieChartView.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@implementation TNDatasourceGraphDisks : CPObject
+@implementation TNDatasourcePieChartView : CPObject
 {
     CPArray     _datas;
 }
@@ -25,7 +25,7 @@
 {
     if (self = [super init])
     {
-        _datas = [];
+        _datas = [CPArray array];
     }
     return self;
 }

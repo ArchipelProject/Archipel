@@ -22,10 +22,8 @@
 @import <LPKit/LPKit.j>
 //@import "LPChartView.j"
 
-@import "TNDatasourceGraphCPU.j"
-@import "TNDatasourceGraphMemory.j"
-@import "TNDatasourceGraphDisks.j"
-@import "TNDatasourceGraphLoad.j"
+@import "TNDatasourceChartView.j"
+@import "TNDatasourcePieChartView.j"
 @import "TNLogEntryObject.j"
 
 TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health";
@@ -83,10 +81,10 @@ LPAristo = nil;
     LPChartView                 _chartViewMemory;
     LPChartView                 _chartViewLoad;
     LPPieChartView              _chartViewDisk;
-    TNDatasourceGraphCPU        _cpuDatasource;
-    TNDatasourceGraphMemory     _memoryDatasource;
-    TNDatasourceGraphLoad       _loadDatasource;
-    TNDatasourceGraphDisks      _disksDatasource;
+    TNDatasourceChartView       _cpuDatasource;
+    TNDatasourceChartView       _memoryDatasource;
+    TNDatasourceChartView       _loadDatasource;
+    TNDatasourcePieChartView    _disksDatasource;
     
     CPTableView                 _tableLogs;
     TNTableViewDataSource       _datasourceLogs;
@@ -293,10 +291,10 @@ LPAristo = nil;
     
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     
-    _memoryDatasource   = [[TNDatasourceGraphMemory alloc] init];
-    _cpuDatasource      = [[TNDatasourceGraphCPU alloc] init];
-    _loadDatasource     = [[TNDatasourceGraphLoad alloc] init];
-    _disksDatasource    = [[TNDatasourceGraphDisks alloc] init];
+    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
+    _disksDatasource    = [[TNDatasourcePieChartView alloc] init];
     
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
@@ -401,9 +399,8 @@ LPAristo = nil;
         var infoNode = [aStanza firstChildWithName:@"uname"];
         [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
 
-        [_cpuDatasource pushData:parseInt(cpuFree)];
-        [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
-        
+        [_cpuDatasource pushData:parseInt(cpuFree) inSet:0];
+        [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"]) inSet:0];
         [_loadDatasource pushData:parseFloat(loadOne * 1000) inSet:0];
         [_loadDatasource pushData:parseFloat(loadFive * 1000) inSet:1];
         [_loadDatasource pushData:parseFloat(loadFifteen * 1000) inSet:2];
@@ -477,8 +474,8 @@ LPAristo = nil;
             var loadFifteen = Math.round(parseFloat([loadNode valueForAttribute:@"fifteen"]) * 1000);
             
             
-            [_cpuDatasource pushData:parseInt(cpuFree)];
-            [_memoryDatasource pushDataMemUsed:parseInt([memNode valueForAttribute:@"used"])];
+            [_cpuDatasource pushData:parseInt(cpuFree) inSet:0];
+            [_memoryDatasource pushData:parseInt([memNode valueForAttribute:@"used"]) inSet:0];
             [_loadDatasource pushData:parseInt(loadOne) inSet:0];
             [_loadDatasource pushData:parseInt(loadFive) inSet:1];
             [_loadDatasource pushData:parseInt(loadFifteen) inSet:2];
