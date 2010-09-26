@@ -16,7 +16,7 @@ Thanks to Archipel you will be able to :
 * Use it with KVM, Xen, OpenVZ, VirtualBox, and mix them all if you want to ;
 * Have a great real time interface.
 
-[Archipel](http://antoinemercadal.fr/archipelblog/wp-content/uploads/manual/archipel_pres.png|gui)
+![Archipel](http://antoinemercadal.fr/archipelblog/wp-content/uploads/manual/archipel_pres.png)
 
 
 # Team
