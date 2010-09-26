@@ -253,8 +253,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingGet}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didReceivedVMCasts:)];
@@ -313,8 +313,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingDownloadProgress}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDownloadProgress:) ofObject:self];
@@ -336,8 +336,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     [fieldNewURL setStringValue:@""];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingRegister,
         "url": url}];
 
@@ -395,8 +395,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var uuid            = [currentVMCast UUID];
     var stanza          = [TNStropheStanza iqWithType:@"set"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingDeleteAppliance,
         "uuid": uuid}];
 
@@ -434,8 +434,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     var uuid            = [currentVMCast UUID];
     var stanza          = [TNStropheStanza iqWithType:@"set"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingUnregister,
         "uuid": uuid}];
 
@@ -486,8 +486,8 @@ TNArchipelPushNotificationVMCasting      = @"archipel:push:vmcasting";
     
     var stanza  = [TNStropheStanza iqWithType:@"set"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingDownload,
         "uuid": uuid}];
 

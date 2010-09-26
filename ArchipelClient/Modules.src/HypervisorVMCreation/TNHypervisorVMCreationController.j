@@ -200,8 +200,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
@@ -308,8 +308,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     [windowNewVirtualMachine orderOut:nil];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlAlloc,
         "name": [fieldNewVMRequestedName stringValue]}];
     
@@ -379,8 +379,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         var vm              = [objects objectAtIndex:i];
         var stanza          = [TNStropheStanza iqWithType:@"set"];
         
-        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-        [stanza addChildName:@"archipel" withAttributes:{
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+        [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeHypervisorControl, 
             "action": TNArchipelTypeHypervisorControlFree,
             "jid": [vm JID]}];
@@ -437,8 +437,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     
     [_tableVirtualMachines deselectAll];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildName:@"archipel" withAttributes:{ 
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{ 
         "action": TNArchipelTypeHypervisorControlClone,
         "jid": [vm JID]}];
 

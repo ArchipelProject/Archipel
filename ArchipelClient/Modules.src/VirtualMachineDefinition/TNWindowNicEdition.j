@@ -92,8 +92,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGetNames}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
@@ -124,8 +124,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkBridges}];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
 }

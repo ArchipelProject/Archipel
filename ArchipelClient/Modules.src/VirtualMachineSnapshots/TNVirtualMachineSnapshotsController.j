@@ -262,8 +262,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotGet}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didGetSnapshots:)];
@@ -309,8 +309,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotCurrent}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didGetCurrentSnapshot:)];
@@ -359,17 +359,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     var stanza  = [TNStropheStanza iqWithType:@"set"];
     var uuid    = [CPString UUID];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotTake}];
 
-    [stanza addChildName:@"domainsnapshot"];
+    [stanza addChildWithName:@"domainsnapshot"];
 
-    [stanza addChildName:@"name"];
+    [stanza addChildWithName:@"name"];
     [stanza addTextNode:[fieldNewSnapshotName stringValue]];
     [stanza up];
 
-    [stanza addChildName:@"description"];
+    [stanza addChildWithName:@"description"];
     [stanza addTextNode:[[fieldNewSnapshotDescription stringValue] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
     //[stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
     [stanza up];    
@@ -428,8 +428,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     var name            = [object name];
     
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotDelete,
         "name": name}];
 
@@ -482,8 +482,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     var object  = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
     var name    = [object name];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotRevert,
         "name": name}];
            

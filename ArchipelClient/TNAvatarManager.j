@@ -94,8 +94,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeAvatar}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeAvatar}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeAvatarGetAvatars}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceivedAvailableAvatars:) ofObject:self];
@@ -139,8 +139,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     var selectedAvatar = [collectionViewAvatars itemAtIndex:selectedIndex];
     var filename = [[selectedAvatar representedObject] avatarFilename];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeAvatar}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeAvatar}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeAvatarSetAvatar,
         "avatar": filename}];
         

@@ -264,8 +264,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingGet}];
         
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
@@ -323,8 +323,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
     var stanza          = [TNStropheStanza iqWithType:@"set"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingAttach,
         "uuid": [appliance UUID]}];
 
@@ -372,8 +372,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     
     var stanza          = [TNStropheStanza iqWithType:@"set"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingDetach}];    
 
     [_detachButton setEnabled:NO];
@@ -408,8 +408,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     var name    = [fieldNewApplianceName stringValue];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingPackage,
         "name": name}];
 

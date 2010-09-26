@@ -568,8 +568,8 @@ function generateMacAddr()
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionCapabilities}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLCapabilities:) ofObject:self];
@@ -668,8 +668,8 @@ function generateMacAddr()
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
@@ -1042,72 +1042,72 @@ function generateMacAddr()
     var capabilities    = [_supportedCapabilities objectForKey:arch];
     var stanza          = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": uid, "type": "set"}];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
 
     //////////////////////////////////////////
     // COMMON INFORMATION
     //////////////////////////////////////////
 
-    [stanza addChildName:@"domain" withAttributes:{"type": hypervisor}];
+    [stanza addChildWithName:@"domain" andAttributes:{"type": hypervisor}];
 
     // name
-    [stanza addChildName:@"name"];
+    [stanza addChildWithName:@"name"];
     [stanza addTextNode:[_entity nodeName]];
     [stanza up];
 
     // uuid
-    [stanza addChildName:@"uuid"];
+    [stanza addChildWithName:@"uuid"];
     [stanza addTextNode:[_entity nodeName]];
     [stanza up];
 
     //memory
-    [stanza addChildName:@"memory"];
+    [stanza addChildWithName:@"memory"];
     [stanza addTextNode:memory];
     [stanza up];
 
     // currenrt memory
-    [stanza addChildName:@"currentMemory"];
+    [stanza addChildWithName:@"currentMemory"];
     [stanza addTextNode:memory];
     [stanza up];
 
     if ([switchHugePages isOn])
     {
-        [stanza addChildName:@"memoryBacking"]
-        [stanza addChildName:@"hugepages"];
+        [stanza addChildWithName:@"memoryBacking"]
+        [stanza addChildWithName:@"hugepages"];
         [stanza up];
         [stanza up];
     }
 
     // cpu
-    [stanza addChildName:@"vcpu"];
+    [stanza addChildWithName:@"vcpu"];
     [stanza addTextNode:nCPUs];
     [stanza up];
 
     //////////////////////////////////////////
     // OS PART
     //////////////////////////////////////////
-    [stanza addChildName:@"os"];
+    [stanza addChildWithName:@"os"];
 
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorLXC]])
     {
-        [stanza addChildName:@"type"];
+        [stanza addChildWithName:@"type"];
         [stanza addTextNode:OSType];
         [stanza up];
 
         // TODO
-        [stanza addChildName:@"init"];
+        [stanza addChildWithName:@"init"];
         [stanza addTextNode:@"/bin/sh"];
         [stanza up];
     }
     else
     {
-        [stanza addChildName:@"type" withAttributes:{"machine": machine, "arch": arch}]
+        [stanza addChildWithName:@"type" andAttributes:{"machine": machine, "arch": arch}]
         [stanza addTextNode:OSType];
         [stanza up];
 
-        [stanza addChildName:@"boot" withAttributes:{"dev": boot}]
+        [stanza addChildWithName:@"boot" andAttributes:{"dev": boot}]
         [stanza up];
         [stanza up];
     }
@@ -1115,38 +1115,38 @@ function generateMacAddr()
     //////////////////////////////////////////
     // POWER MANAGEMENT
     //////////////////////////////////////////
-    [stanza addChildName:@"on_poweroff"];
+    [stanza addChildWithName:@"on_poweroff"];
     [stanza addTextNode:[buttonOnPowerOff title]];
     [stanza up];
 
-    [stanza addChildName:@"on_reboot"];
+    [stanza addChildWithName:@"on_reboot"];
     [stanza addTextNode:[buttonOnReboot title]];
     [stanza up];
 
-    [stanza addChildName:@"on_crash"];
+    [stanza addChildWithName:@"on_crash"];
     [stanza addTextNode:[buttonOnCrash title]];
     [stanza up];
 
     //////////////////////////////////////////
     // FEATURES
     //////////////////////////////////////////
-    [stanza addChildName:@"features"];
+    [stanza addChildWithName:@"features"];
 
     if ([switchPAE isOn])
     {
-        [stanza addChildName:TNXMLDescFeaturePAE];
+        [stanza addChildWithName:TNXMLDescFeaturePAE];
         [stanza up];
     }
 
     if ([switchACPI isOn])
     {
-        [stanza addChildName:TNXMLDescFeatureACPI];
+        [stanza addChildWithName:TNXMLDescFeatureACPI];
         [stanza up];
     }
 
     if ([switchAPIC isOn])
     {
-        [stanza addChildName:TNXMLDescFeatureAPIC];
+        [stanza addChildWithName:TNXMLDescFeatureAPIC];
         [stanza up];
     }
 
@@ -1155,7 +1155,7 @@ function generateMacAddr()
     //Clock
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC]])
     {
-        [stanza addChildName:@"clock" withAttributes:{"offset": [buttonClocks title]}];
+        [stanza addChildWithName:@"clock" andAttributes:{"offset": [buttonClocks title]}];
         [stanza up];
     }
 
@@ -1163,14 +1163,14 @@ function generateMacAddr()
     //////////////////////////////////////////
     // DEVICES
     //////////////////////////////////////////
-    [stanza addChildName:@"devices"];
+    [stanza addChildWithName:@"devices"];
 
     // emulator
     if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"emulator"])
     {
         var emulator = [[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"emulator"];
 
-        [stanza addChildName:@"emulator"];
+        [stanza addChildWithName:@"emulator"];
         [stanza addTextNode:emulator];
         [stanza up];
     }
@@ -1180,19 +1180,19 @@ function generateMacAddr()
     {
         var drive = [drives objectAtIndex:i];
 
-        [stanza addChildName:@"disk" withAttributes:{"device": [drive device], "type": [drive type]}];
+        [stanza addChildWithName:@"disk" andAttributes:{"device": [drive device], "type": [drive type]}];
         if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! FIXME!
         {
-            [stanza addChildName:@"driver" withAttributes:{"type": "qcow2"}];
+            [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2"}];
             [stanza up];
         }
         if ([drive type] == @"file")
-            [stanza addChildName:@"source" withAttributes:{"file": [drive source]}];
+            [stanza addChildWithName:@"source" andAttributes:{"file": [drive source]}];
         else if ([drive type] == @"block")
-            [stanza addChildName:@"source" withAttributes:{"dev": [drive source]}];
+            [stanza addChildWithName:@"source" andAttributes:{"dev": [drive source]}];
 
         [stanza up];
-        [stanza addChildName:@"target" withAttributes:{"bus": [drive bus], "dev": [drive target]}];
+        [stanza addChildWithName:@"target" andAttributes:{"bus": [drive bus], "dev": [drive target]}];
         [stanza up];
         [stanza up];
     }
@@ -1203,17 +1203,17 @@ function generateMacAddr()
         var nic     = [nics objectAtIndex:i];
         var nicType = [nic type];
 
-        [stanza addChildName:@"interface" withAttributes:{"type": nicType}];
-        [stanza addChildName:@"mac" withAttributes:{"address": [nic mac]}];
+        [stanza addChildWithName:@"interface" andAttributes:{"type": nicType}];
+        [stanza addChildWithName:@"mac" andAttributes:{"address": [nic mac]}];
         [stanza up];
 
-        [stanza addChildName:@"model" withAttributes:{"type": [nic model]}];
+        [stanza addChildWithName:@"model" andAttributes:{"type": [nic model]}];
         [stanza up];
 
         if (nicType == @"bridge")
-            [stanza addChildName:@"source" withAttributes:{"bridge": [nic source]}];
+            [stanza addChildWithName:@"source" andAttributes:{"bridge": [nic source]}];
         else
-            [stanza addChildName:@"source" withAttributes:{"network": [nic source]}];
+            [stanza addChildWithName:@"source" andAttributes:{"network": [nic source]}];
 
         [stanza up];
         [stanza up];
@@ -1225,12 +1225,12 @@ function generateMacAddr()
     //////////////////////////////////////////
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorXen]])
     {
-        [stanza addChildName:@"input" withAttributes:{"bus": "usb", "type": [buttonInputType title]}];
+        [stanza addChildWithName:@"input" andAttributes:{"bus": "usb", "type": [buttonInputType title]}];
         [stanza up];
 
         if ([fieldVNCPassword stringValue] != @"")
         {
-            [stanza addChildName:@"graphics" withAttributes:{
+            [stanza addChildWithName:@"graphics" andAttributes:{
                 "autoport": "yes",
                 "type": "vnc",
                 "port": "-1",
@@ -1239,7 +1239,7 @@ function generateMacAddr()
         }
         else
         {
-            [stanza addChildName:@"graphics" withAttributes:{
+            [stanza addChildWithName:@"graphics" andAttributes:{
                 "autoport": "yes",
                 "type": "vnc",
                 "port": "-1",
@@ -1288,8 +1288,8 @@ function generateMacAddr()
 
     var stanza  = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addNode:desc];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didDefineXML:)];
@@ -1312,8 +1312,8 @@ function generateMacAddr()
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildName:@"archipel" withAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionUndefine}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didUndefineXML:) ofObject:self];
 }

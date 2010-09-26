@@ -360,8 +360,8 @@ LPAristo = nil;
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
-    [stanza addChildName:@"archipel" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth, "action": TNArchipelTypeHypervisorHealthInfo}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildWithName:@"archipel" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth, "action": TNArchipelTypeHypervisorHealthInfo}];
     
     [imageCPULoading setHidden:NO];
     [imageMemoryLoading setHidden:NO];
@@ -435,8 +435,8 @@ LPAristo = nil;
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorHealthHistory,
         "limit": _statsHistoryCollectionSize}];
     
@@ -521,8 +521,8 @@ LPAristo = nil;
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "xmlns": TNArchipelTypeHypervisorHealth, 
         "action": TNArchipelTypeHypervisorHealthLog,
         "limit": _maxLogEntries}];

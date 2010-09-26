@@ -823,10 +823,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     }
     
     var presence    = [TNStropheStanza presenceWithAttributes:{}];
-    [presence addChildName:@"status"];
+    [presence addChildWithName:@"status"];
     [presence addTextNode:statusLabel];
     [presence up]
-    [presence addChildName:@"show"];
+    [presence addChildWithName:@"show"];
     [presence addTextNode:XMPPShow];
     CPLog.info(@"Changing presence to " + statusLabel + ":" + XMPPShow);
     
@@ -959,8 +959,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     var nodeSubscribeStanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
     
     [nodeSubscribeStanza setTo:pubSubServer];
-    [nodeSubscribeStanza addChildName:@"pubsub" withAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
-    [nodeSubscribeStanza addChildName:@"subscribe" withAttributes:{
+    [nodeSubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
+    [nodeSubscribeStanza addChildWithName:@"subscribe" andAttributes:{
         "node": "/archipel/" + aJID.split("/")[0] + "/events",
         "jid": [[_mainRoster connection] JID],
     }];
@@ -1003,8 +1003,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     var nodeUnsubscribeStanza   = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
 
     [nodeUnsubscribeStanza setTo:pubSubServer];
-    [nodeUnsubscribeStanza addChildName:@"pubsub" withAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
-    [nodeUnsubscribeStanza addChildName:@"unsubscribe" withAttributes:{
+    [nodeUnsubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
+    [nodeUnsubscribeStanza addChildWithName:@"unsubscribe" andAttributes:{
         "node": "/archipel/" + aJID.split("/")[0] + "/events",
         "jid": [[_mainRoster connection] JID],
     }];

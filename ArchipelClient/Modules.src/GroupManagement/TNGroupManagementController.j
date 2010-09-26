@@ -276,8 +276,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         var vm = [objects objectAtIndex:i];
         var controlStanza = [TNStropheStanza iqWithType:@"set"];
         
-        [controlStanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-        [controlStanza addChildName:@"archipel" withAttributes:{
+        [controlStanza addChildName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+        [controlStanza addChildName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeVirtualMachineControl, 
             "action": controlType}];
 

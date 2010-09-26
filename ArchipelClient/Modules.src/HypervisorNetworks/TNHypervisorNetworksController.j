@@ -245,8 +245,8 @@ function generateIPForNewNetwork()
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGet}];
     
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
@@ -346,38 +346,38 @@ function generateIPForNewNetwork()
     var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
     var stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkDefine}];
 
-    [stanza addChildName:@"network"];
+    [stanza addChildWithName:@"network"];
 
-    [stanza addChildName:@"name"];
+    [stanza addChildWithName:@"name"];
     [stanza addTextNode:[networkObject networkName]];
     [stanza up];
 
-    [stanza addChildName:@"uuid"];
+    [stanza addChildWithName:@"uuid"];
     [stanza addTextNode:[networkObject UUID]];
     [stanza up];
 
-    [stanza addChildName:@"forward" withAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
+    [stanza addChildWithName:@"forward" andAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
     [stanza up];
 
-    [stanza addChildName:@"bridge" withAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
+    [stanza addChildWithName:@"bridge" andAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
     [stanza up];
 
-    [stanza addChildName:@"ip" withAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
+    [stanza addChildWithName:@"ip" andAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
     var dhcp = [networkObject isDHCPEnabled];
     if (dhcp)
     {
-        [stanza addChildName:@"dhcp"];
+        [stanza addChildWithName:@"dhcp"];
 
         var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
         for (var i = 0; i < [DHCPRangeEntries count]; i++)
         {
             var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
 
-            [stanza addChildName:@"range" withAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
+            [stanza addChildWithName:@"range" andAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
             [stanza up];
         }
 
@@ -386,7 +386,7 @@ function generateIPForNewNetwork()
         {
             var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
 
-            [stanza addChildName:@"host" withAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
+            [stanza addChildWithName:@"host" andAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
             [stanza up];
         }
 
@@ -440,8 +440,8 @@ function generateIPForNewNetwork()
 
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkUndefine, 
         "uuid": [networkObject UUID]}];
 
@@ -481,8 +481,8 @@ function generateIPForNewNetwork()
 
         if (![networkObject isNetworkEnabled])
         {
-            [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-            [stanza addChildName:@"archipel" withAttributes:{
+            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildWithName:@"archipel" andAttributes:{
                 "xmlns": TNArchipelTypeHypervisorNetwork, 
                 "action": TNArchipelTypeHypervisorNetworkCreate, 
                 "uuid": [networkObject UUID]}];
@@ -516,8 +516,8 @@ function generateIPForNewNetwork()
 
         if ([networkObject isNetworkEnabled])
         {
-            [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-            [stanza addChildName:@"archipel" withAttributes:{
+            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildWithName:@"archipel" andAttributes:{
                 "xmlns": TNArchipelTypeHypervisorNetwork, 
                 "action": TNArchipelTypeHypervisorNetworkDestroy,
                 "uuid" : [networkObject UUID]}];
@@ -591,8 +591,8 @@ function generateIPForNewNetwork()
 
         var stanza    = [TNStropheStanza iqWithType:@"get"];
         
-        [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-        [stanza addChildName:@"archipel" withAttributes:{
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+        [stanza addChildWithName:@"archipel" andAttributes:{
             "xmlns": TNArchipelTypeHypervisorNetwork, 
             "action": TNArchipelTypeHypervisorNetworkUndefine,
             "uuid": [networkObject UUID]}];

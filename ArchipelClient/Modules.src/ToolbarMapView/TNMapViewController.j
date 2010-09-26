@@ -239,8 +239,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorGeolocalization}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorGeolocalization}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorGeolocalizationGet}];
 
     [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
@@ -276,8 +276,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     if (anHypervisor == _originHypervisor)
@@ -395,8 +395,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
     
-    [stanza addChildName:@"query" withAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-    [stanza addChildName:@"archipel" withAttributes:{
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlMigrate,
         "hypervisorjid": [aHypervisor fullJID]}];
 
