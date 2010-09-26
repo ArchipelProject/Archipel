@@ -158,8 +158,6 @@
 
     var messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
     
-    
-    
     [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
 }
 
@@ -178,7 +176,7 @@
         var color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"];
         var date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
         
-        [_messageBoard addMessage:message from:author color:color date:date];
+        [_messageBoard addMessage:message from:author date:date color:color];
     }
 }
 
@@ -235,7 +233,7 @@
     var frame           = [[messagesScrollView documentView] frame];
     
     [_messages addObject:newMessageDict];
-    [_messageBoard addMessage:aMessage from:aSender color:color date:date];
+    [_messageBoard addMessage:aMessage from:aSender date:date color:color];
     
     // scroll to bottom;
     var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
@@ -291,7 +289,7 @@
 {
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
-
+    
     [_entity sendMessage:[fieldMessage stringValue]];
     [self appendMessageToBoard:[fieldMessage stringValue] from:@"me"];
     [fieldMessage setStringValue:@""];
