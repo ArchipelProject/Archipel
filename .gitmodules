@@ -1,6 +1,3 @@
-[submodule "Archipel"]
-	path = Archipel
-	url = git@github.com:primalmotion/Archipel.git
 [submodule "VNCCappuccino"]
 	path = VNCCappuccino
 	url = git@github.com:primalmotion/VNCCappuccino.git
