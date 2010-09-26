@@ -188,6 +188,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     // register logs
     CPLogRegister(CPLogConsole, [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"]);
     
+    
     [mainHorizontalSplitView setIsPaneSplitter:YES];
     
     [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
@@ -273,9 +274,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [self makeMainMenu];
     
     /* module Loader */
-    // var view    = [windowModuleLoading contentView];
-    // var frame   = [windowModuleLoading frame];
-    [windowModuleLoading center]
+    [windowModuleLoading center];
     [windowModuleLoading makeKeyAndOrderFront:nil];
     [textFieldLoadingModuleTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldLoadingModuleTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
@@ -298,10 +297,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_moduleLoader setMainModuleView:rightView];
     [_moduleLoader setModulesMenu:_modulesMenu];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
-
+    
     CPLog.trace(@"Starting loading all modules");
     [_moduleLoader load];
-
     
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
@@ -1124,9 +1122,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     
     var item        = [aTimer userInfo];
     var defaults    = [TNUserDefaults standardUserDefaults];
-    
-    // if (item == [_moduleLoader entity])
-    //     return;
     
     [_mainRoster setCurrentItem:item];
     
