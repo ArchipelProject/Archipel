@@ -1,15 +1,18 @@
-[submodule "StropheCappuccino"]
-	path = StropheCappuccino
-	url = https://primalmotion@github.com/primalmotion/StropheCappuccino.git
-[submodule "GrowlCappuccino"]
-	path = GrowlCappuccino
-	url = https://primalmotion@github.com/primalmotion/GrowlCappuccino.git
-[submodule "iTunesTabView"]
-	path = iTunesTabView
-	url = https://primalmotion@github.com/primalmotion/iTunesTabView.git
-[submodule "MessageBoard"]
-	path = MessageBoard
-	url = https://primalmotion@github.com/primalmotion/MessageBoard.git
 [submodule "Archipel"]
 	path = Archipel
 	url = git@github.com:primalmotion/Archipel.git
+[submodule "VNCCappuccino"]
+	path = VNCCappuccino
+	url = git@github.com:primalmotion/VNCCappuccino.git
+[submodule "StropheCappuccino"]
+	path = StropheCappuccino
+	url = git@github.com:primalmotion/StropheCappuccino.git
+[submodule "GrowlCappuccino"]
+	path = GrowlCappuccino
+	url = git@github.com:primalmotion/GrowlCappuccino.git
+[submodule "MessageBoard"]
+	path = MessageBoard
+	url = git@github.com:primalmotion/MessageBoard.git
+[submodule "iTunesTabView"]
+	path = iTunesTabView
+	url = git@github.com:primalmotion/iTunesTabView.git
