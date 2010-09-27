@@ -256,9 +256,9 @@ function generateIPForNewNetwork()
 {
     if ([aStanza type] == @"result")
     {
-        var activeNetworks      = [[[aStanza childrenWithName:@"activedNetworks"] objectAtIndex:0] children];
-        var unactiveNetworks    = [[[aStanza childrenWithName:@"unactivedNetworks"] objectAtIndex:0] children];
-        var allNetworks         = [CPArray array];
+        var activeNetworks      = [[aStanza firstChildWithName:@"activedNetworks"] children],
+            unactiveNetworks    = [[aStanza firstChildWithName:@"unactivedNetworks"] children],
+            allNetworks         = [CPArray array];
 
         [allNetworks addObjectsFromArray:activeNetworks];
         [allNetworks addObjectsFromArray:unactiveNetworks];
