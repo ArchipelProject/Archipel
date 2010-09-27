@@ -41,7 +41,7 @@ TNQuickEditViewPadding = 20.0;
     {
         var bundle          = [CPBundle bundleForClass:[self class]],
             bgImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-pview.png"]],
-            background      = [CPColor colorWithPatternImage:bgImage];,
+            background      = [CPColor colorWithPatternImage:bgImage],
             modifiedFrame   = winFrame;
 
         modifiedFrame.size.width    -= TNQuickEditViewPadding;
