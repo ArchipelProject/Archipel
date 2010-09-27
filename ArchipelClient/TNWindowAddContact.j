@@ -39,7 +39,6 @@
 - (IBAction)makeKeyAndOrderFront:(id)sender
 {
     var groups = [_roster groups];
-    var i;
 
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
@@ -52,9 +51,9 @@
     }
 
     //@each (var group in groups)
-    for(var i = 0; i < [groups count]; i++)
+    for (var i = 0; i < [groups count]; i++)
     {
-        var group   = [groups objectAtIndex:i];        
+        var group   = [groups objectAtIndex:i];
         [newContactGroup addItemWithTitle:[group name]];
     }
 
@@ -70,25 +69,23 @@
 */
 - (IBAction)addContact:(id)sender
 {
-    var group   = [newContactGroup title];
-    var JID     = [[newContactJID stringValue] lowercaseString];
-    var name    = [newContactName stringValue];
-    var growl   = [TNGrowlCenter defaultCenter];
-    
+    var group   = [newContactGroup title],
+        JID     = [[newContactJID stringValue] lowercaseString],
+        name    = [newContactName stringValue],
+        growl   = [TNGrowlCenter defaultCenter],
+        msg     = @"Presence subsciption has been sent to " + JID + ".";
+
     if (name == "")
         name = [[JID componentsSeparatedByString:@"@"] objectAtIndex:0];
-    
+
     [_roster addContact:JID withName:name inGroupWithName:group];
     [_roster askAuthorizationTo:JID];
     [_roster authorizeJID:JID];
 
     [self performClose:nil];
 
-    var msg     = @"Presence subsciption has been sent to " + JID + ".";
-    
     CPLog.info(@"added contact " + JID);
-    
-    
+
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
 }
 

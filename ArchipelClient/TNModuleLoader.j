@@ -1,17 +1,17 @@
-/*  
+/*
  * TNModuleLoader.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -49,13 +49,13 @@ TNArchipelModuleTypeToolbar = @"toolbar";
 TNArchipelModulesLoadingCompleteNotification = @"TNArchipelModulesLoadingCompleteNotification"
 
 TNArchipelModulesReadyNotification          = @"TNArchipelModulesReadyNotification";
-TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotification"; 
+TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotification";
 
 /*! @ingroup archipelcore
-    
+
     this is the Archipel Module loader.
     It supports 3 delegates :
-    
+
      - moduleLoader:hasLoadBundle: is sent when a module is loaded
      - moduleLoader:willLoadBundle: is sent when a module will be loaded
      - moduleLoaderLoadingComplete: is sent when all modules has been loaded
@@ -96,7 +96,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     if (self = [super init])
     {
         var center = [CPNotificationCenter defaultCenter];
-        
+
         _loadedTabModulesScrollViews     = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
         _numberOfModulesToLoad  = 0;
@@ -124,19 +124,19 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     if (anEntity == _entity)
         return NO;
-        
+
     var center = [CPNotificationCenter defaultCenter];
-    
+
     [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    
+
     _numberOfActiveModules = 0;
     // [self rememberLastSelectedTabIndex];
-    
-    
+
+
     [self _removeAllTabsFromModulesTabView];
     _numberOfReadyModules = 0;
     _allModulesReady = NO;
-    
+
     _entity     = anEntity;
     _roster     = aRoster;
     _moduleType = aType;
@@ -145,16 +145,18 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
-    
+
     if ([_entity class] == TNStropheContact)
     {
         _previousXMPPShow = [_entity XMPPShow];
-        
+
         if ((_previousXMPPShow != TNStropheContactStatusOffline) && (_previousXMPPShow != TNStropheContactStatusDND))
             [self _populateModulesTabView];
         else
         {
-            var label;
+            var label,
+                center = [CPNotificationCenter defaultCenter];
+
             if (_previousXMPPShow == TNStropheContactStatusOffline)
                 label = @"Entity is offline";
             else if (_previousXMPPShow == TNStropheContactStatusDND)
@@ -162,19 +164,18 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
                 [self rememberLastSelectedTabIndex];
                 label = @"Entity do not want to be disturbed";
             }
-            
+
             [_infoTextField setStringValue:label];
-            
-            var center = [CPNotificationCenter defaultCenter];
+
             [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
-            
+
         }
     }
     else
     {
         [self _populateModulesTabView];
     }
-    
+
     return YES;
 }
 
@@ -185,7 +186,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     if (_entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
         var currentItem = [_mainTabView selectedTabViewItem];
-        
+
         [self rememberSelectedIndexOfItem:currentItem];
     }
 }
@@ -197,20 +198,20 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     if (anItem && _entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
-        var identifier;
-        var memid;
-        var defaults                = [TNUserDefaults standardUserDefaults];
-        var currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem];
-        
+        var identifier,
+            memid,
+            defaults                = [TNUserDefaults standardUserDefaults],
+            currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem];
+
         if ([_entity class] == TNStropheContact)
             identifier = [_entity JID];
         else
             identifier = [_entity name];
 
         memid = @"selectedTabIndexFor" + identifier;
-        
+
         CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
-        
+
         [defaults setInteger:currentSelectedIndex forKey:memid];
     }
 }
@@ -220,16 +221,17 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)recoverFromLastSelectedIndex
 {
     var identifier;
+
     if ([_entity class] == TNStropheContact)
         identifier = [_entity JID];
     else
         identifier = [_entity name];
-    
-    var defaults            = [TNUserDefaults standardUserDefaults];
-    var memid               = @"selectedTabIndexFor" + identifier;
-    var oldSelectedIndex    = [defaults integerForKey:memid];
-    var numberOfTabItems    = [_mainTabView numberOfTabViewItems];
-    
+
+    var defaults            = [TNUserDefaults standardUserDefaults],
+        memid               = @"selectedTabIndexFor" + identifier,
+        oldSelectedIndex    = [defaults integerForKey:memid],
+        numberOfTabItems    = [_mainTabView numberOfTabViewItems];
+
     if (_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
     {
         CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
@@ -244,9 +246,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)setRosterForToolbarItems:(TNStropheRoster)aRoster andConnection:(TNStropheConnection)aConnection
 {
-    for(var i = 0; i < [[_loadedToolbarModules allValues] count]; i++)
+    for (var i = 0; i < [[_loadedToolbarModules allValues] count]; i++)
     {
         var module = [[_loadedToolbarModules allValues] objectAtIndex:i];
+
         [module initializeWithEntity:nil connection:aConnection andRoster:aRoster];
     }
 
@@ -277,10 +280,10 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)load
 {
     [self unloadAllModules];
-    
-    var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]];
-    var connection  = [CPURLConnection connectionWithRequest:request delegate:self];
-    
+
+    var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]],
+        connection  = [CPURLConnection connectionWithRequest:request delegate:self];
+
     [connection cancel];
     [connection start];
 }
@@ -297,25 +300,25 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)_loadAllBundles
 {
     CPLog.debug("going to parse the PList");
-    
+
     _numberOfModulesToLoad = [[_modulesPList objectForKey:@"Modules"] count];
-    
-    for(var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
+
+    for (var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
     {
         CPLog.debug("parsing " + [CPBundle bundleWithPath:path]);
-        
-        var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i];
-        var path    = _modulesPath + [module objectForKey:@"folder"];
-        var bundle  = [CPBundle bundleWithPath:path];
-        
-        // _numberOfModulesToLoad++;    
-            
+
+        var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i],
+            path    = _modulesPath + [module objectForKey:@"folder"],
+            bundle  = [CPBundle bundleWithPath:path];
+
+        // _numberOfModulesToLoad++;
+
         if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
             [_delegate moduleLoader:self willLoadBundle:bundle];
-                       
+
         [bundle loadWithDelegate:self];
     }
-    
+
     // if ((_numberOfModulesToLoad == 0) && ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
     //     [_delegate moduleLoaderLoadingComplete:self];
 }
@@ -325,49 +328,48 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_populateModulesTabView
 {
-    var sortedValue = [_loadedTabModules sortedArrayUsingFunction:function(a, b, context){
-        var indexA = [a index];
-        var indexB = [b index];
-        if (indexA < indexB)
+    var modulesToLoad = [CPArray array],
+        sortFunction = function(a, b, context) {
+            var indexA = [a index],
+                indexB = [b index];
+
+            if (indexA < indexB)
                 return CPOrderedAscending;
             else if (indexA > indexB)
                 return CPOrderedDescending;
             else
                 return CPOrderedSame;
-    }]
-    
-    var modulesToLoad = [CPArray array];
-    
-    
+        },
+        sortedValue = [_loadedTabModules sortedArrayUsingFunction:sortFunction];
+
+
     // THE PIGGY WAY. I'LL REDO THAT LATER.
-    _numberOfActiveModules = 0; 
-    for(var i = 0; i < [sortedValue count]; i++)
+    _numberOfActiveModules = 0;
+    for (var i = 0; i < [sortedValue count]; i++)
     {
-        var module      = [sortedValue objectAtIndex:i];
-        var moduleTypes = [module supportedEntityTypes];
-        var moduleIndex = [module index];
-        var moduleLabel = [module label];
-        var moduleName  = [module name];
-        
+        var module      = [sortedValue objectAtIndex:i],
+            moduleTypes = [module supportedEntityTypes],
+            moduleIndex = [module index],
+            moduleLabel = [module label],
+            moduleName  = [module name];
+
         if ([moduleTypes containsObject:_moduleType])
             _numberOfActiveModules++;
     }
 
     //@each(var module in [_modulesPList objectForKey:@"Modules"];
-    for(var i = 0; i < [sortedValue count]; i++)
+    for (var i = 0; i < [sortedValue count]; i++)
     {
-        var module      = [sortedValue objectAtIndex:i];
-        var moduleTypes = [module supportedEntityTypes];
-        var moduleIndex = [module index];
-        var moduleLabel = [module label];
-        var moduleName  = [module name];
-        
+        var module      = [sortedValue objectAtIndex:i],
+            moduleTypes = [module supportedEntityTypes],
+            moduleIndex = [module index],
+            moduleLabel = [module label],
+            moduleName  = [module name];
+
         if ([moduleTypes containsObject:_moduleType])
-        {
             [self _addItemToModulesTabView:module];
-        }
-    }    
-    
+    }
+
     [self recoverFromLastSelectedIndex];
 }
 
@@ -377,20 +379,20 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 {
     if ([_mainTabView numberOfTabViewItems] <= 0)
         return;
-        
+
     var arrayCpy        = [[_mainTabView tabViewItems] copy];
 
-    for(var i = 0; i < [arrayCpy count]; i++)
+    for (var i = 0; i < [arrayCpy count]; i++)
     {
-        var tabViewItem = [arrayCpy objectAtIndex:i];
-        var module      = [tabViewItem module];
-        
+        var tabViewItem = [arrayCpy objectAtIndex:i],
+            module      = [tabViewItem module];
+
         [module willUnload];
         [module setEntity:nil];
         [module setRoster:nil];
-        
+
         [[module view] scrollPoint:CPMakePoint(0.0, 0.0)];
-        
+
         [[tabViewItem view] removeFromSuperview];
         [_mainTabView removeTabViewItem:tabViewItem];
     }
@@ -403,31 +405,31 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (void)_addItemToModulesTabView:(TNModule)aModule
 {
-    var frame           = [_mainModuleView bounds];
-    var newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]];
-    var theEntity       = _entity;
-    var theConnection   = [_entity connection];
-    var theRoster       = _roster;
-    var scrollView      = [[CPScrollView alloc] initWithFrame:frame];
-    
+    var frame           = [_mainModuleView bounds],
+        newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]],
+        theEntity       = _entity,
+        theConnection   = [_entity connection],
+        theRoster       = _roster,
+        scrollView      = [[CPScrollView alloc] initWithFrame:frame];
+
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [scrollView setAutohidesScrollers:YES];
     [scrollView setBackgroundColor:[CPColor whiteColor]];
-    
+
     frame.size.height = [[aModule view] bounds].size.height;
     [[aModule view] setFrame:frame];
-        
+
     [newViewItem setModule:aModule];
     [newViewItem setLabel:[aModule label]];
     [newViewItem setView:scrollView];
-    
+
     [aModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
     [aModule willLoad];
-    
-    [scrollView setDocumentView:[aModule view]];   
-    
+
+    [scrollView setDocumentView:[aModule view]];
+
     [_mainTabView addTabViewItem:newViewItem];
-}   
+}
 
 /*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
     to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to
@@ -447,7 +449,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     {
         _numberOfActiveModules  = 0;
         _allModulesReady        = NO;
-        
+
         [self _removeAllTabsFromModulesTabView];
         _previousXMPPShow = TNStropheContactStatusDND;
         [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
@@ -468,7 +470,7 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)_didReceiveVcard:(CPNotification)aNotification
 {
     var vCard   = [[aNotification object] vCard];
-    
+
     if ([vCard text] != [[_entity vCard] text])
     {
         _moduleType = [self analyseVCard:vCard];
@@ -481,14 +483,14 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)_didAllModulesReady:(CPNotification)aNotification
 {
     _numberOfReadyModules++;
-    
+
     if (_numberOfReadyModules == _numberOfActiveModules)
     {
         var center = [CPNotificationCenter defaultCenter];
-        
+
         CPLog.debug("sending all modules ready notification")
         [center postNotificationName:TNArchipelModulesAllReadyNotification object:self];
-        
+
         _allModulesReady = YES;
     }
 }
@@ -507,19 +509,21 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
     if ([self isAllModulesReady])
         [self rememberSelectedIndexOfItem:anItem];
-    
+
     var currentTabItem = [aTabView selectedTabViewItem];
-    
+
     if (currentTabItem == anItem)
         return;
-    
+
     if (currentTabItem)
     {
         var oldModule = [currentTabItem module];
+
         [oldModule willHide];
     }
-    
+
     var newModule = [anItem module];
+
     [newModule willShow];
 }
 
@@ -534,9 +538,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     CPLog.info(@"Module.plist recovered");
 
     _modulesPList = [cpdata plistObject];
-    
+
     [self _removeAllTabsFromModulesTabView];
-    
+
     [self _loadAllBundles];
 }
 
@@ -546,25 +550,25 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 - (void)bundleDidFinishLoading:(CPBundle)aBundle
 {
     var moduleInsertionType = [aBundle objectForInfoDictionaryKey:@"InsertionType"];
-    
+
     [_bundles addObject:aBundle];
-    
+
     if (moduleInsertionType == TNArchipelModuleTypeTab)
         [self manageTabItemLoad:aBundle];
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
         [self manageToolbarItemLoad:aBundle];
-    
+
     if ([_delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
         [_delegate moduleLoader:self hasLoadBundle:aBundle];
-    
+
     _numberOfModulesLoaded++;
     CPLog.debug("Loaded " + _numberOfModulesLoaded + " module(s) of " + _numberOfModulesToLoad)
     if (_numberOfModulesLoaded == _numberOfModulesToLoad)
     {
         var center = [CPNotificationCenter defaultCenter];
-        
+
         [center postNotificationName:TNArchipelModulesLoadingCompleteNotification object:self];
-        
+
         if ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)])
         {
             [_delegate moduleLoaderLoadingComplete:self];
@@ -579,55 +583,55 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     // it would be better but it didn't work..
     // var desc = [CPSortDescriptor sortDescriptorWithKey:@"string" ascending:YES];
     // var keys = [_modulesMenuItems allKeys] sortedArrayUsingDescriptors:[CPArray arrayWithObject:desc]];
-    
+
     for (var k = 0; k < [keys count] ; k++)
     {
-        var key = [keys objectAtIndex:k]
-        var arr = [_modulesMenuItems objectForKey:key];
-        
-        var sortedItems = [arr sortedArrayUsingFunction:function(a, b, context){
-            var indexA = [a title];
-            var indexB = [b title];
-            if (indexA < indexB)
-                    return CPOrderedAscending;
-                else if (indexA > indexB)
-                    return CPOrderedDescending;
-                else
-                    return CPOrderedSame;
-        }];
+        var key = [keys objectAtIndex:k],
+            arr = [_modulesMenuItems objectForKey:key],
+            sortFunction = function(a, b, context) {
+                var indexA = [a title],
+                    indexB = [b title];
+                if (indexA < indexB)
+                        return CPOrderedAscending;
+                    else if (indexA > indexB)
+                        return CPOrderedDescending;
+                    else
+                        return CPOrderedSame;
+            },
+            sortedItems = [arr sortedArrayUsingFunction:sortFunction];
 
         for (var i = 0; i < [sortedItems count]; i++)
         {
             [_modulesMenu addItem:[sortedItems objectAtIndex:i]];
         }
-        
+
         if (k + 1 < [keys count])
             [_modulesMenu addItem:[CPMenuItem separatorItem]];
     }
-    
+
 }
 
 - (void)manageTabItemLoad:(CPBundle)aBundle
 {
-    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"];
-    var moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    var moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-    var moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
-    var supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-    var useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"];
-    var moduleItem                  = [[CPMenuItem alloc] init];
-    var moduleRootMenu              = [[CPMenu alloc] init];
-    var currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-    var frame                       = [_mainModuleView bounds];
-    
+    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
+        moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"],
+        moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
+        moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
+        moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
+        supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
+        useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"],
+        moduleItem                  = [[CPMenuItem alloc] init],
+        moduleRootMenu              = [[CPMenu alloc] init],
+        currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle],
+        frame                       = [_mainModuleView bounds];
+
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
     [currentModuleController setBundle:aBundle];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
-    
+
     if (useMenu)
     {
         [moduleItem setTitle:moduleLabel];
@@ -637,35 +641,35 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
         [currentModuleController setMenuItem:moduleItem];
         [currentModuleController setMenu:moduleRootMenu];
         [currentModuleController menuReady];
-        
+
         [moduleItem setEnabled:NO];
-        
+
         if (![_modulesMenuItems containsKey:supportedTypes])
             [_modulesMenuItems setObject:[CPArray array] forKey:supportedTypes];
-        
+
         [[_modulesMenuItems objectForKey:supportedTypes] addObject:moduleItem];
     }
-    
+
     [_loadedTabModules addObject:currentModuleController];
-    
+
 }
 
 - (void)manageToolbarItemLoad:(CPBundle)aBundle
 {
-    var currentModuleController;
-    var moduleName              = [aBundle objectForInfoDictionaryKey:@"CPBundleName"];
-    var moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
-    var moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-    var moduleTabIndex          = [aBundle objectForInfoDictionaryKey:@"TabIndex"];
-    var supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"];
-    var moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"];
-    var toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"];
-    var frame                   = [_mainModuleView bounds];
-    var moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
-    
+    var currentModuleController,
+        moduleName              = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
+        moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
+        moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
+        moduleTabIndex          = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
+        supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
+        moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"],
+        toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"],
+        frame                   = [_mainModuleView bounds],
+        moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
+
     [moduleToolbarItem setLabel:moduleLabel];
     [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)]];
-    
+
     // if toolbar item only, no cib
     if (toolbarOnly)
     {
@@ -673,15 +677,15 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 
         [currentModuleController setToolbarItemOnly:YES];
         [moduleToolbarItem setTarget:currentModuleController];
-        [moduleToolbarItem setAction:@selector(toolbarItemClicked:)];        
+        [moduleToolbarItem setAction:@selector(toolbarItemClicked:)];
     }
     else
     {
         var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
         currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-        
+
         [currentModuleController setToolbarItemOnly:NO];
-        
+
         [moduleToolbarItem setTarget:self];
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
@@ -689,9 +693,9 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
     [_mainToolbar _reloadToolbarItems];
-    
+
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
-    
+
     [currentModuleController willLoad];
 }
 
@@ -701,36 +705,36 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 */
 - (IBAction)didToolbarModuleClicked:(id)sender
 {
-    var module  = [_loadedToolbarModules objectForKey:[sender itemIdentifier]];
-    var oldModule;
+    var module  = [_loadedToolbarModules objectForKey:[sender itemIdentifier]],
+        oldModule;
 
     if (_currentToolbarModule)
     {
-        var moduleBundle    = [_currentToolbarModule bundle];
-        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"ToolbarIcon"]];
-        
+        var moduleBundle    = [_currentToolbarModule bundle],
+            iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"ToolbarIcon"]];
+
         oldModule = _currentToolbarModule;
         [_currentToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-        
+
         [_currentToolbarModule willHide];
         [[_currentToolbarModule view] removeFromSuperview];
         _currentToolbarModule   = nil;
         _currentToolbarItem     = nil;
     }
-        
+
     if (module != oldModule)
     {
-        var bounds          = [_mainModuleView bounds];
-        var moduleBundle    = [module bundle];
-        var iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
-        
+        var bounds          = [_mainModuleView bounds],
+            moduleBundle    = [module bundle],
+            iconPath        = [moduleBundle pathForResource:[moduleBundle objectForInfoDictionaryKey:@"AlternativeToolbarIcon"]];
+
         [sender setImage:[[CPImage alloc] initWithContentsOfFile:iconPath size:CPSizeMake(32,32)]];
-        
+
         [[module view] setFrame:bounds];
         [module willShow];
-        
+
         [_mainModuleView addSubview:[module view]];
-        
+
         _currentToolbarModule   = module;
         _currentToolbarItem     = sender;
     }

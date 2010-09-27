@@ -173,7 +173,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     var bundle      = [CPBundle mainBundle],
         defaults    = [TNUserDefaults standardUserDefaults],
         growl       = [TNGrowlCenter defaultCenter],
-        center      = [CPNotificationCenter defaultCenter];
+        center      = [CPNotificationCenter defaultCenter],
         posx;
 
     // register defaults defaults

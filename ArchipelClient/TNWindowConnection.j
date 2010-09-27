@@ -47,7 +47,7 @@
 
 /*! initialize the window when CIB is loaded
 */
-- (void) awakeFromCib
+- (void)awakeFromCib
 {
     [password setSecure:YES];
     [self setShowsResizeIndicator:NO];
@@ -81,12 +81,11 @@
 */
 - (void)initCredentials
 {
-    var defaults            = [TNUserDefaults standardUserDefaults];
-
-    var lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"];
-    var lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"];
-    var lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"];
-    var lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
+    var defaults            = [TNUserDefaults standardUserDefaults],
+        lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"],
+        lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"],
+        lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"],
+        lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
 
     if (lastBoshService)
         [boshService setStringValue:lastBoshService];
@@ -210,7 +209,7 @@
     CPLog.info(@"XMPP unknown error");
 }
 
--(void) onStropheDisconnecting:(TNStropheConnection)aStrophe
+- (void)onStropheDisconnecting:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:NO];
     [connectButton setEnabled:NO];

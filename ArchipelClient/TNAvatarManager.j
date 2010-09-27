@@ -1,17 +1,17 @@
-/*  
+/*
  * TNAvatarManager.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -44,12 +44,12 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     if (!_imageView)
     {
         var frame = CGRectInset([self bounds], 5.0, 5.0);
-        
+
         _imageView = [[CPImageView alloc] initWithFrame:frame];
-        
+
         [_imageView setImageScaling:CPScaleProportionally];
         [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-        
+
         [self addSubview:_imageView];
     }
     _representedObject = anObject;
@@ -67,37 +67,37 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 {
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
-    
+
     BOOL                        isReady;
     TNStropheContact            _entity @accessors(property=entity);
 }
 
 - (void)awakeFromCib
 {
+    var itemPrototype   = [[CPCollectionViewItem alloc] init],
+        avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
+
     [collectionViewAvatars setMinItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setMaxItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setSelectable:YES];
     [collectionViewAvatars setDelegate:self];
     [[[collectionViewAvatars superview] superview] setBorderedWithHexColor:@"#a5a5a5"]; //access the Atlas generated scrollview
-    
-    var itemPrototype   = [[CPCollectionViewItem alloc] init];
-    var avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
-    
+
     [itemPrototype setView:avatarView];
-    
+
     [collectionViewAvatars setItemPrototype:itemPrototype];
 }
 
 - (void)getAvailableAvatars
 {
-    [imageSpinner setHidden:NO];
-    
     var stanza = [TNStropheStanza iqWithType:@"get"];
-    
+
+    [imageSpinner setHidden:NO];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeAvatar}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeAvatarGetAvatars}];
-        
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceivedAvailableAvatars:) ofObject:self];
 }
 
@@ -105,20 +105,20 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 {
     if ([aStanza type] == @"result")
     {
+        var avatars = [aStanza childrenWithName:@"avatar"],
+            images  = [CPArray array];
+
         [collectionViewAvatars setContent:[]];
         [collectionViewAvatars reloadContent];
 
-        var avatars = [aStanza childrenWithName:@"avatar"];
-        var images  = [CPArray array];
-        
         for (var i = 0; i < [avatars count]; i++)
         {
-            var avatar  = [avatars objectAtIndex:i];
-            var file    = [avatar valueForAttribute:@"name"];
-            var ctype   = [avatar valueForAttribute:@"content-type"];
-            var data    = [avatar text];
-            var img     = [[TNAvatarImage alloc] init];
-            
+            var avatar  = [avatars objectAtIndex:i],
+                file    = [avatar valueForAttribute:@"name"],
+                ctype   = [avatar valueForAttribute:@"content-type"],
+                data    = [avatar text],
+                img     = [[TNAvatarImage alloc] init];
+
             [img setBaseEncoded64Data:data];
             [img setContentType:ctype];
             [img setSize:TNArchipelAvatarManagerThumbSize];
@@ -134,16 +134,16 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 - (IBAction)setAvatar:(id)sender
 {
-    var stanza = [TNStropheStanza iqWithType:@"set"];
-    var selectedIndex = [[collectionViewAvatars selectionIndexes] firstIndex];
-    var selectedAvatar = [collectionViewAvatars itemAtIndex:selectedIndex];
-    var filename = [[selectedAvatar representedObject] avatarFilename];
-    
+    var stanza          = [TNStropheStanza iqWithType:@"set"],
+        selectedIndex   = [[collectionViewAvatars selectionIndexes] firstIndex],
+        selectedAvatar  = [collectionViewAvatars itemAtIndex:selectedIndex],
+        filename        = [[selectedAvatar representedObject] avatarFilename];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeAvatar}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeAvatarSetAvatar,
         "avatar": filename}];
-        
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didSetAvatar:) ofObject:self];
 }
 

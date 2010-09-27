@@ -56,7 +56,7 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     @param aTarget the target
     @return a initialized instance of TNToolbar
 */
--(id)initWithTarget:(id)aTarget
+- (id)initWithTarget:(id)aTarget
 {
     if (self = [super init])
     {
@@ -70,29 +70,29 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
         
-        var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)];
-
-        var availableItem = [[CPMenuItem alloc] init];
+        var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
+            availableItem = [[CPMenuItem alloc] init],
+            awayItem = [[CPMenuItem alloc] init],
+            busyItem = [[CPMenuItem alloc] init],
+            DNDItem = [[CPMenuItem alloc] init],
+            statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
+            
         [availableItem setTitle:TNArchipelStatusAvailableLabel];
         [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Available.png"]]];
         [statusSelector addItem:availableItem];
         
-        var awayItem = [[CPMenuItem alloc] init];
         [awayItem setTitle:TNArchipelStatusAwayLabel];
         [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Away.png"]]];
         [statusSelector addItem:awayItem];
         
-        var busyItem = [[CPMenuItem alloc] init];
         [busyItem setTitle:TNArchipelStatusBusyLabel];
         [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
         [statusSelector addItem:busyItem];
         
-        var DNDItem = [[CPMenuItem alloc] init];
         [DNDItem setTitle:TNArchipelStatusDNDLabel];
         [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"DND.png"]]];
         [statusSelector addItem:DNDItem];
         
-        var statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
         [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
         [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
                 
@@ -136,18 +136,20 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 
 - (void)_reloadToolbarItems
 {
-    var sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:function(a, b, context){
-        var indexA = a;
-        var indexB = b;
+    var sortFunction = function(a, b, context){
+        var indexA = a,
+            indexB = b;
         if (a < b)
                 return CPOrderedAscending;
             else if (a > b)
                 return CPOrderedDescending;
             else
                 return CPOrderedSame;
-    }];
+        },
+        sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:sortFunction];
     
     _sortedToolbarItems = [CPArray array];
+    
     for (var i = 0; i < [sortedKeys count]; i++)
     {
         var key = [sortedKeys objectAtIndex:i];

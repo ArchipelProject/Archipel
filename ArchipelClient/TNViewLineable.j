@@ -61,26 +61,26 @@
 
 - (void)mouseDown:(CPEvent)anEvent
 {
-	var locationInWindow = [anEvent locationInWindow];
+    var locationInWindow = [anEvent locationInWindow];
     _origin = [self convertPoint:locationInWindow fromView:nil];
 
-	[_path moveToPoint:_origin];
-	_originPoint = [CPBezierPath bezierPathWithOvalInRect:CGRectMake(_origin.x - 1 , _origin.y - 1.6 , 3, 3)];
+    [_path moveToPoint:_origin];
+    _originPoint = [CPBezierPath bezierPathWithOvalInRect:CGRectMake(_origin.x - 1 , _origin.y - 1.6 , 3, 3)];
 
-	[self setNeedsDisplay:YES];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)mouseUp:(CPEvent)anEvent
 {
-	[_path removeAllPoints];
-	[_originPoint removeAllPoints];
-	[_endPoint removeAllPoints];
-	[self setNeedsDisplay:YES];
+    [_path removeAllPoints];
+    [_originPoint removeAllPoints];
+    [_endPoint removeAllPoints];
+    [self setNeedsDisplay:YES];
 }
 
 - (void)mouseDragged:(CPEvent)anEvent
 {
-	var locationInWindow = [anEvent locationInWindow];
+    var locationInWindow = [anEvent locationInWindow];
     _end = [self convertPoint:locationInWindow fromView:nil];
 
     [_path removeAllPoints];
@@ -89,7 +89,7 @@
 
     _endPoint = [CPBezierPath bezierPathWithOvalInRect:CGRectMake(_end.x - 1 , _end.y - 1, 3, 3)];
 
-	[self setNeedsDisplay:YES];
+    [self setNeedsDisplay:YES];
 }
 
 @end

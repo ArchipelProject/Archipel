@@ -35,7 +35,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPSearchField   _filterField     @accessors(property=filterField);
     CPString        _filter          @accessors(property=filter);
     id              _currentItem     @accessors(property=currentItem);
-    
+
     id              _draggedItem;
 }
 
@@ -48,10 +48,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (self = [super initWithConnection:aConnection])
     {
         _filter = nil;
-        
+
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
-        
+
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
@@ -70,26 +70,26 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 - (void)onUserMessage:(CPNotification)aNotification
 {
-    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser];
-    var message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text];
-    var growl           = [TNGrowlCenter defaultCenter];
-    var bundle          = [CPBundle mainBundle];
-    var customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]];
-    var currentContact  = [aNotification object];
-    
+    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
+        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
+        growl           = [TNGrowlCenter defaultCenter],
+        bundle          = [CPBundle mainBundle],
+        customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
+        currentContact  = [aNotification object];
+
     if ([_mainOutlineView selectedRow] != [_mainOutlineView rowForItem:currentContact])
     {
             [growl pushNotificationWithTitle:user message:message customIcon:customIcon target:self action:@selector(growlNotification:clickedWithUser:) actionParameters:currentContact];
     }
-    
+
     [self updateOutlineView:aNotification];
 }
 
 - (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
 {
-    var row     = [_mainOutlineView rowForItem:aContact];
-    var indexes = [CPIndexSet indexSetWithIndex:row];
-    
+    var row     = [_mainOutlineView rowForItem:aContact],
+        indexes = [CPIndexSet indexSetWithIndex:row];
+
     [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
@@ -122,9 +122,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (void)updateOutlineView:(CPNotification)aNotification
 {
     var index   = -1;//[[self _mainOutlineView] rowForItem:[aNotification object]];
-    
+
     [_mainOutlineView reloadData];
-    
+
     if ((_currentItem) && ([_mainOutlineView rowForItem:_currentItem] != -1))
     {
         var index = [_mainOutlineView rowForItem:_currentItem];
@@ -136,7 +136,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         if ([_mainOutlineView numberOfSelectedRows] > 0)
             [_mainOutlineView deselectAll];
     }
-    
+
     [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
@@ -148,13 +148,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (CPArray)_getEntriesMatching:(CPString)aFilter
 {
-    var theEntries      = [self contacts];
-    var filteredEntries = [CPArray array];
+    var theEntries      = [self contacts],
+        filteredEntries = [CPArray array];
 
     if (!aFilter)
         return theEntries;
 
-    for(var i = 0; i < [theEntries count]; i++)
+    for (var i = 0; i < [theEntries count]; i++)
     {
         var entry = [theEntries objectAtIndex:i];
 
@@ -176,7 +176,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     if (!aFilter)
         return [aGroup contacts];
 
-    for(var i = 0; i < [[aGroup contacts] count]; i++)
+    for (var i = 0; i < [[aGroup contacts] count]; i++)
     {
         var entry = [[aGroup contacts] objectAtIndex:i];
 
@@ -194,13 +194,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (CPArray)_getGroupContainingEntriesMatching:(CPString)aFilter
 {
-    var theGroups      = [self groups];
-    var filteredGroup   = [CPArray array];
+    var theGroups       = [self groups],
+        filteredGroup   = [CPArray array];
 
     if (!aFilter)
         return [self groups];
 
-    for(var i = 0; i < [theGroups count]; i++)
+    for (var i = 0; i < [theGroups count]; i++)
     {
         var group = [theGroups objectAtIndex:i];
 
@@ -217,19 +217,19 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (!item)
     {
-	    return [[self _getGroupContainingEntriesMatching:_filter] count];
-	}
-	else
-	{
-	    return [[self _getEntriesMatching:_filter inGroup:item] count];
-	}
+        return [[self _getGroupContainingEntriesMatching:_filter] count];
+    }
+    else
+    {
+        return [[self _getEntriesMatching:_filter inGroup:item] count];
+    }
 }
 
 /*! CPOutlineView Delegate
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-	return ([item class] == TNStropheGroup) ? YES : NO;
+    return ([item class] == TNStropheGroup) ? YES : NO;
 }
 
 /*! CPOutlineView Delegate
@@ -264,10 +264,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
 {
     _draggedItem = [theItems objectAtIndex:0];
-    
+
     [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
     [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
-    
+
     return YES;
 }
 
@@ -286,7 +286,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
         return CPDragOperationEvery;
     }
-    
+
     return CPDragOperationNone;
 }
 
@@ -296,29 +296,29 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup) && (theItem  != _draggedItem))
     {
-        var center          = [CPNotificationCenter defaultCenter];
-        var contactsToMove  = [[_draggedItem contacts] copy]; 
-        
+        var center          = [CPNotificationCenter defaultCenter],
+            contactsToMove  = [[_draggedItem contacts] copy];
+
         for (var i = 0; i < [contactsToMove count]; i++)
         {
             var contact = [contactsToMove objectAtIndex:i];
-            
+
             [self changeGroup:theItem ofContact:contact];
         }
-        
+
         [self removeGroup:_draggedItem];
         [anOutlineView reloadData];
-        
+
         return YES;
     }
     else if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
     {
         [self changeGroup:theItem ofContact:_draggedItem];
         [anOutlineView reloadData];
-        
+
         return YES;
     }
-    
+
     return NO;
 }
 

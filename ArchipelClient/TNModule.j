@@ -84,9 +84,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         _isActive           = NO;
         _isVisible          = NO;
         _pubsubRegistrar    = [CPArray array];
-        
+
     }
-    
+
     return self;
 }
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
@@ -108,7 +108,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 - (void)registerToPubSubEvents
 {
     var params = [[CPDictionary alloc] init];
-    
+
     [params setValue:@"message" forKey:@"name"];
     [params setValue:@"headline" forKey:@"type"];
     [params setValue:{"matchBare": YES} forKey:@"options"];
@@ -125,33 +125,33 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     // <header name="Collection" >/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events</header>
     // </headers>
     // </message>
-    
+
     [_registredSelectors addObject:[_connection registerSelector:@selector(onPubSubEvents:) ofObject:self withDict:params]];
 }
 
 - (void)onPubSubEvents:(TNStropheStanza)aStanza
 {
     CPLog.trace("Raw (not filtered) pubsub event received from " + [aStanza from]);
-    
-    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1];
-    var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
-    var pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"];
-    var pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"];
-    
-    var infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
+
+    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1],
+        pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
+        pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],
+        pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"],
+        infoDict    = [CPDictionary dictionaryWithObjectsAndKeys:   nodeOwner,  @"owner",
                                                                     pushType,   @"type",
                                                                     pushDate,   @"date",
                                                                     pushChange, @"change"];
-    
+
     for (var i = 0; i < [_pubsubRegistrar count]; i++)
     {
         var item = [_pubsubRegistrar objectAtIndex:i];
+
         if (pushType == [item objectForKey:@"type"])
         {
             [self performSelector:[item objectForKey:@"selector"] withObject:infoDict]
         }
     }
-    
+
     return YES;
 }
 
@@ -165,11 +165,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     if ([_entity class] == TNStropheContact)
     {
         var registrarItem = [CPDictionary dictionary];
-        
+
         CPLog.info([self class] + @" is registring for push notification of type : " + aPushType);
         [registrarItem setValue:aSelector forKey:@"selector"];
         [registrarItem setValue:aPushType forKey:@"type"];
-        
+
         [_pubsubRegistrar addObject:registrarItem];
     }
 }
@@ -184,7 +184,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _registredSelectors = [CPArray array];
     _pubsubRegistrar    = [CPArray array];
     _isActive           = YES;
-    
+
     [self registerToPubSubEvents];
     [_menuItem setEnabled:YES];
 }
@@ -195,21 +195,21 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 - (void)willUnload
 {
     // unregister all selectors
-    for(var i = 0; i < [_registredSelectors count]; i++)
+    for (var i = 0; i < [_registredSelectors count]; i++)
     {
         var selector = [_registredSelectors objectAtIndex:i];
 
         [_connection deleteRegisteredSelector:selector];
     }
-    
+
     [_pubsubRegistrar removeAllObjects];
-    
+
     [_menuItem setEnabled:NO];
-    
+
     // remove all notification observers
     var center  = [CPNotificationCenter defaultCenter];
     [center removeObserver:self];
-    
+
     _isActive = NO;
 }
 
@@ -219,8 +219,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 {
     if (_useAnimations == 1)
     {
-        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self view], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
-        var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self view], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
+            anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
 
         [anim setDuration:_animationDuration];
         [anim startAnimation];
@@ -267,25 +267,25 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
-    var growl   = [TNGrowlCenter defaultCenter];
-    var code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"];
-    var type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"];
-    
-    var msg;
+    var growl   = [TNGrowlCenter defaultCenter],
+        code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"],
+        type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"];
+
     if ([aStanza firstChildWithName:@"text"])
     {
-        msg     = [[aStanza firstChildWithName:@"text"] text]
+        var msg     = [[aStanza firstChildWithName:@"text"] text];
+
         [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
         CPLog.error(msg);
     }
     else
         CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
-    
+
 }
 
 - (IBAction)toolbarItemClicked:(id)sender
 {
-    
+
 }
 
 @end

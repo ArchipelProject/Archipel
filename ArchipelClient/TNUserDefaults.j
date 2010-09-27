@@ -1,17 +1,17 @@
-/*  
+/*
  * TNUserPreferences
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -42,14 +42,14 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     {
         standardUserDefaultsInstance = [[TNUserDefaults alloc] init];
     }
-    
+
     return standardUserDefaultsInstance;
 }
 
 + (void)resetStandardUserDefaults
 {
     localStorage.removeItem(TNUserDefaultsStorageIdentifier);
-    
+
     standardUserDefaultsInstance = [[TNUserDefaults alloc] init];
 }
 
@@ -62,7 +62,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
         [_defaults setObject:[CPDictionary dictionary] forKey:_user];
     }
-    
+
     return self;
 }
 
@@ -73,14 +73,14 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
 - (void)recoverObjectForKey:(CPString)aKey
 {
-    var rawDataString;
-    var ret;
-    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
-    
+    var rawDataString,
+        ret,
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
+
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         CPLog.trace(@"Recovering from HTML5 storage");
-        
+
         try
         {
             if (rawDataString = localStorage.getItem(identifier))
@@ -94,7 +94,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
         CPLog.trace(@"Recovering from cookie storage");
-        
+
         if ((rawDataString = [[CPCookie alloc] initWithName:identifier]) && [rawDataString value] != @"")
         {
             var decodedString =  [rawDataString value].replace(/__dotcoma__/g, ";").replace(/__dollar__/g, "$");
@@ -105,26 +105,26 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     else if ( TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
     {
         CPLog.trace(@"No storage specified");
-        
+
         ret = nil;
     }
     else
     {
         throw new Error("Unknown storage type: " + _defaultStorageType + " storage type is unknown");
     }
-    
+
     if (!ret)
         ret = [_appDefaults objectForKey:aKey];
-    
+
     return ret;
 }
 
 - (void)synchronizeObject:(id)anObject forKey:(CPString)aKey
 {
-    var datas       = [CPKeyedArchiver archivedDataWithRootObject:anObject];
-    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
-    var string      = [datas rawString];
-    
+    var datas       = [CPKeyedArchiver archivedDataWithRootObject:anObject],
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey,
+        string      = [datas rawString];
+
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         try
@@ -139,10 +139,10 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
         CPLog.trace(@"saving into cookie storage");
-        
-        var cookie      = [[CPCookie alloc] initWithName:identifier];
-        var theString   = string.replace(/;/g, "__dotcoma__").replace(/$/g, "__dollar__");
-        
+
+        var cookie      = [[CPCookie alloc] initWithName:identifier],
+            theString   = string.replace(/;/g, "__dotcoma__").replace(/$/g, "__dollar__");
+
         [cookie setValue:theString expires:[CPDate distantFuture] domain:@""];
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
@@ -158,11 +158,11 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (void)clean
 {
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"];
-    
+
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         CPLog.trace(@"clearing HTML5 storage");
-        
+
         localStorage.clear(identifier);
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
@@ -183,19 +183,19 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (void)removeObjectForKey:(CPString)aKey
 {
     var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
-    
+
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
         CPLog.trace(@"clearing HTML5 storage for key " + aKey);
-        
+
         localStorage.removeItem(identifier);
     }
     else if (TNUserDefaultStorageType == TNUserDefaultStorageTypeCookie)
     {
         CPLog.trace(@"clearing cookie storage for key " + aKey);
-        
+
         var cookie  = [[CPCookie alloc] initWithName:identifier];
-        
+
         [cookie setValue:@"" expires:[CPDate distantFuture] domain:@""];
     }
     else
@@ -220,7 +220,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (BOOL)boolForKey:(CPString)aKey
 {
     var value = [self objectForKey:aKey];
-    
+
     return (value == @"YES") ? YES : NO;
 }
 
@@ -269,24 +269,20 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (void)setObject:(id)aValue forKey:(CPString)aKey
 {
     //CPLog.trace("Setting default " + aKey + " = " + aValue);
-    
-    var currentDefault = [_defaults objectForKey:_user];
-    
+
+    var currentDefault = [_defaults objectForKey:_user],
+        datas       = [CPKeyedArchiver archivedDataWithRootObject:aValue],
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey,
+        string      = [datas rawString];
+
     [currentDefault setObject:aValue forKey:aKey];
-    
-    var datas       = [CPKeyedArchiver archivedDataWithRootObject:aValue];
-    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
-    var string      = [datas rawString];
-    
-    //localStorage.setItem(identifier, string);
-    
     [self synchronizeObject:aValue forKey:aKey];
 }
 
 - (void)setBool:(BOOL)aValue forKey:(CPString)aKey
 {
     var value = (aValue) ? @"YES" : @"NO";
-    
+
     [self setObject:value forKey:aKey];
 }
 
@@ -315,7 +311,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     _defaults        = [aCoder decodeObjectForKey:@"_defaults"];
     _appDefaults     = [aCoder decodeObjectForKey:@"_appDefaults"];
     _user            = [aCoder decodeObjectForKey:@"_user"];
-    
+
     return self;
 }
 

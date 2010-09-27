@@ -41,7 +41,7 @@
     TNStropheContact        _entity         @accessors(property=entity);
     TNStropheRoster         _roster         @accessors(property=roster);
     TNAvatarManager         _avatarManager  @accessors(getter=avatarManager);
-    
+
     CPImage                 _unknownUserImage;
     CPNumber                _height;
 }
@@ -63,27 +63,26 @@
 */
 - (void)awakeFromCib
 {
-    //[self setAutoresizingMask: CPViewNotSizable];
+    var bundle          = [CPBundle mainBundle],
+        center = [CPNotificationCenter defaultCenter];
 
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    
+
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
-    
+
     [entryAvatar setBordered:NO];
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
-    
+
     [self setHidden:YES];
 
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
-    
-    var bundle          = [CPBundle mainBundle];
+
     _unknownUserImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
-    
-    var center = [CPNotificationCenter defaultCenter];
+
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:nil];
@@ -93,7 +92,7 @@
 - (void)setAvatarManager:(TNAvatarManager)anAvatarManager
 {
     _avatarManager = anAvatarManager;
-    
+
     [entryAvatar setTarget:self];
     [entryAvatar setAction:@selector(openAvatarManager:)];
 }
@@ -151,18 +150,18 @@
         [self hide];
         return;
     }
-    
+
     [self show];
-    
+
     if ([_entity class] == TNStropheContact)
     {
         [labelResource setStringValue:@"Resource :"];
         [labelStatus setHidden:NO];
         [labelDomain setHidden:NO];
         [entryAvatar setHidden:NO];
-        
+
         [entryName setStringValue:[_entity nickname]];
-        
+
         [entryDomain setStringValue:[_entity domain]];
         [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatusIcon setImage:[_entity statusIcon]];
@@ -172,7 +171,7 @@
             [entryAvatar setImage:_unknownUserImage];
 
         [entryStatus setStringValue:[_entity XMPPStatus]];
-        
+
         if (_avatarManager)
         {
             [_avatarManager setEntity:_entity];
@@ -181,12 +180,12 @@
     else if ([_entity class] == TNStropheGroup)
     {
         var population = ([_entity count] > 1) ? [_entity count] + @" contacts in group" : [_entity count] + @" contact in group";
-        
+
         [labelResource setStringValue:@"Contents :"];
         [labelStatus setHidden:YES];
         [labelDomain setHidden:YES];
         [entryAvatar setHidden:YES];
-        
+
         [entryStatusIcon setImage:_groupUserImage];
         [entryName setStringValue:[_entity name]];
         [entryDomain setStringValue:@""];
@@ -206,11 +205,11 @@
         [_roster changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
     else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
     {
-        var defaults    = [TNUserDefaults standardUserDefaults];
-        var oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
-        
+        var defaults    = [TNUserDefaults standardUserDefaults],
+            oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
+
         [_entity changeName:[entryName stringValue]];
-        
+
         [defaults removeObjectForKey:oldKey];
     }
 }

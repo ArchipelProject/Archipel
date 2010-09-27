@@ -28,7 +28,7 @@
 {
     @outlet CPTextField newGroupName;
 
-    TNStropheRoster     roster          @accessors;
+    TNStropheRoster     roster  @accessors;
 }
 
 /*! overide of the orderFront
@@ -37,7 +37,7 @@
 - (void)makeKeyAndOrderFront:(id)sender
 {
     [newGroupName setStringValue:@""];
-    
+
     [self center];
     [super makeKeyAndOrderFront:sender];
 }
@@ -54,11 +54,11 @@
     else
     {
         var groupName = [newGroupName stringValue];
-        
+
         [[self roster] addGroupWithName:groupName];
         [newGroupName setStringValue:@""];
         CPLog.info(@"new group " + groupName + " added.");
-        
+
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
 
@@ -66,7 +66,7 @@
     }
 }
 
--(void)keyDown:(CPEvent)anEvent
+- (void)keyDown:(CPEvent)anEvent
 {
     if ([anEvent keyCode] == CPEscapeKeyCode)
     {

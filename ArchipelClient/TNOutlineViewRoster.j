@@ -38,25 +38,25 @@
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var center      = [CPNotificationCenter defaultCenter];
-        var columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
+        var center      = [CPNotificationCenter defaultCenter],
+            columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
 
         [center addObserver:self selector:@selector(_populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];
-        
+
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         [self setRowHeight:35];
         [self setIndentationPerLevel:13];
-        
+
         [columnLabel setWidth:aFrame.size.width];
-        
+
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-        
-        
+
+
         //[columnLabel setResizingMask:CPTableColumnAutoresizingMask];
-        
+
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
 
@@ -64,22 +64,22 @@
         //_sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [172.0/255.0, 189.0/255.0, 217.0/255.0,1.0, 128.0/255.0, 151.0/255.0, 189.0/255.0,1.0], [0,1], 2);
         //_sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"9eafcd"];
         //_sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"7c95bb"];
-        
-        _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [91.0/255.0, 164.0/255.0, 225.0/255.0,1.0, 0.0/255.0, 105.0/255.0, 191.0/255.0,1.0], [0,1], 2)
+
+        _sourceListActiveGradient           = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), [91.0 / 255.0, 164.0 / 255.0, 225.0 / 255.0, 1.0, 0.0 / 255.0, 105.0 / 255.0, 191.0 / 255.0, 1.0], [0,1], 2)
         _sourceListActiveTopLineColor       = [CPColor colorWithHexString:@"3991D5"]; //[CPColor colorWithHexString:@"9eafcd"];
         _sourceListActiveBottomLineColor    = [CPColor colorWithHexString:@"0067be"]; //[CPColor colorWithHexString:@"7c95bb"];
-        
+
         [self setTarget:self];
         [self setDoubleAction:@selector(onDoubleAction:)];
     }
 
-	return self;
+    return self;
 }
 
 - (IBAction)onDoubleAction:(id)sender
 {
     // var frame = [self rectOfRow:[[self selectedRowIndexes] firstIndex]];
-    // 
+    //
     // var pv = [[TNQuickEditView alloc] initWithObjectFrame:frame size:CGSizeMake(200,200)];
     // [pv orderFront:self];
 }
@@ -100,21 +100,21 @@
 - (void)moveLeft:(id)sender
 {
     var index = [self selectedRowIndexes];
-    
+
     if ([index firstIndex] == -1)
         return;
-    
+
     var item = [self itemAtRow:[index firstIndex]];
-    
+
     if ([self isExpandable:item])
         [self collapseItem:item];
     else
     {
         //mouarf... crappy mode on..
         // I should patch capp..
-        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]];
-        var numberOfItems   = [_tabViewModules numberOfTabViewItems];
-        
+        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]],
+            numberOfItems   = [_tabViewModules numberOfTabViewItems];
+
         if (selectedIndex > 0)
             [_tabViewModules selectPreviousTabViewItem:nil];
         else if (numberOfItems > 1) // avoid looping if there is one item
@@ -125,20 +125,20 @@
 - (void)moveRight:(id)sender
 {
     var index = [self selectedRowIndexes];
-    
+
     if ([index firstIndex] == -1)
         return;
-    
+
     var item = [self itemAtRow:[index firstIndex]];
-    
+
     if ([self isExpandable:item])
         [self expandItem:item];
     else
     {
         //mouarf... crappy mode on..
-        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]];
-        var numberOfItems   = [_tabViewModules numberOfTabViewItems];
-        
+        var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]],
+            numberOfItems   = [_tabViewModules numberOfTabViewItems];
+
         if (selectedIndex < numberOfItems - 1)
             [_tabViewModules selectNextTabViewItem:nil];
         else if (numberOfItems > 1) // avoid looping if there is one item
@@ -150,7 +150,7 @@
 - (void)moveDown:(id)sender
 {
     var index = [[self selectedRowIndexes] firstIndex];
-    
+
     if (index == [self numberOfRows] - 1)
     {
         [[self window] makeFirstResponder:_searchField];
@@ -180,14 +180,14 @@
     // {
     //     var center = [CPNotificationCenter defaultCenter];
     //     [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
-    //     
+    //
     //     return
     // }
-    //else 
+    //else
     if ([anEvent keyCode] == CPEscapeKeyCode)
     {
         [_searchField _searchFieldCancel:self];
-        
+
         return
     }
     else if ([anEvent keyCode] == CPReturnKeyCode)
@@ -196,10 +196,10 @@
         [_entityRenameField mouseDown:nil];
         [_entityRenameField _inputElement].focus();
         [[self window] makeFirstResponder:_entityRenameField];
-        
+
         return;
     }
-    
+
     [super keyDown:anEvent];
 }
 
