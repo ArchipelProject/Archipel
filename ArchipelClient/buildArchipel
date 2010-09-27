@@ -229,7 +229,12 @@ def remove_modules(modules_paths, config, ignorepaths):
 
 def make_native_app(platform, config):
     print "# generation of the native " + platform + " Application"
-    os.system("jake run-desktop")
+    os.system("jake desktop")
+    print "# copying modules to the native application"
+    os.system("cp -a ./Modules ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/Archipel")
+    print "# copying icon to the native application"
+    os.system("cp -a ./Resources/icon.icns ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/")
+    
 
 
 def generate_modules_plist(modules_paths, ignorepaths):
