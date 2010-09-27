@@ -169,10 +169,13 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (void)awakeFromCib
 {
     [connectionWindow orderOut:nil];
-    
-    var bundle      = [CPBundle mainBundle];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    
+
+    var bundle      = [CPBundle mainBundle],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        growl       = [TNGrowlCenter defaultCenter],
+        center      = [CPNotificationCenter defaultCenter];
+        posx;
+
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
@@ -184,16 +187,15 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright"
     ]];
-    
+
     // register logs
     CPLogRegister(CPLogConsole, [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"]);
-    
-    
+
+
     [mainHorizontalSplitView setIsPaneSplitter:YES];
-    
+
     [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
-    
-    var posx;
+
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
         CPLog.trace("recovering with of main vertical CPSplitView from last state");
@@ -203,12 +205,12 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         bounds.size.width = posx;
         [leftView setFrame:bounds];
     }
-    [mainHorizontalSplitView setDelegate:self];    
-    
+    [mainHorizontalSplitView setDelegate:self];
+
     /* hide main window */
     [theWindow orderOut:nil];
     TNArchipelMainWindow = theWindow;
-    
+
     /* toolbar */
     CPLog.trace("initializing mianToolbar");
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
@@ -247,7 +249,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     CPLog.trace(@"initializing rightView");
     [rightView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    
+
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
@@ -269,25 +271,25 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:18]];
     [_rightViewTextField setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:_rightViewTextField];
-    
+
     /* main menu */
     [self makeMainMenu];
-    
+
     /* module Loader */
     [windowModuleLoading center];
     [windowModuleLoading makeKeyAndOrderFront:nil];
     [textFieldLoadingModuleTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldLoadingModuleTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [textFieldLoadingModuleTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
-    
+
     [textFieldLoadingModuleLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldLoadingModuleLabel setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [textFieldLoadingModuleLabel setTextColor:[CPColor colorWithHexString:@"6A7087"]];
-    
-    
+
+
     CPLog.trace(@"initializing _moduleLoader");
     _moduleLoader = [[TNModuleLoader alloc] init]
-    
+
     [_moduleLoader setDelegate:self];
     [_moduleTabView setDelegate:_moduleLoader];
     [_moduleLoader setMainToolbar:_mainToolbar];
@@ -297,112 +299,110 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_moduleLoader setMainModuleView:rightView];
     [_moduleLoader setModulesMenu:_modulesMenu];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
-    
+
     CPLog.trace(@"Starting loading all modules");
     [_moduleLoader load];
-    
+
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
     [self showHelpView];
-    
+
     CPLog.trace(@"initializing Growl");
-    var growl = [TNGrowlCenter defaultCenter];
     [growl setView:rightView];
-    
+
     CPLog.trace(@"Initializing the traffic status LED");
     [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"statusBarBg.png"]]]];
     _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
     _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
     _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
-    
+
     // buttonBar
     CPLog.trace(@"Initializing the roster button bar");
     [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
-    
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
-    var leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)];
-    var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
-    var rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)];
-    var buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]];
-    var leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)];
-    var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
-    var rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)];
-    var buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]];
-    var plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)];
-    var plusMenu                = [[CPMenu alloc] init];
-    var minusButton             = [CPButtonBar minusButton];
-    
+
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
+        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)],
+        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
+        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)],
+        buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
+        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)],
+        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
+        buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
+        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)],
+        plusMenu                = [[CPMenu alloc] init],
+        minusButton             = [CPButtonBar minusButton];
+
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-    
+
     [plusButton setTarget:self];
     [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"plus-menu.png"] size:CPSizeMake(20, 20)]];
     [plusButton setBordered:NO];
     [plusButton setImagePosition:CPImageOnly];
-    
+
     [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
     [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
     [plusButton setMenu:plusMenu];
-    
+
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
     [minusButton setAction:@selector(didMinusBouttonClicked:)];
 
     [buttonBarLeft setButtons:[plusButton, minusButton]];
-    
+
     // copyright;
     [self copyright];
-    
+
     // about window
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
     [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
-    
+
     /* notifications */
-    var center = [CPNotificationCenter defaultCenter];
 
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
-    
+
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
-    
+
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
-    
+
     CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
     [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
 
     CPLog.trace(@"registering for notification TNArchipelActionRemoveSelectedRosterEntityNotification");
     [center addObserver:self selector:@selector(didMinusBouttonClicked:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
-    
+
     CPLog.info(@"Initialization of AppController OK");
-    
+
     _tempNumberOfReadyModules = -1;
 }
 
 - (void)makeMainMenu
 {
     CPLog.trace(@"Creating the main menu");
-    
-    // free the menu
-    // _mainMenu = [theWindow menu]; //[[CPMenu alloc] init];
-    // 
-    // for (var i = 0; i < [[_mainMenu itemArray] count]; i++)
-    //     [_mainMenu removeItem:[[_mainMenu itemArray] objectAtIndex:i]];
+
     _mainMenu = [[CPMenu alloc] init];
-    
-    var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""];
-    var contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""];
-    var groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""];
-    var statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""];
-    var navigationItem  = [_mainMenu addItemWithTitle:@"Navigation" action:nil keyEquivalent:@""];
-    var moduleItem      = [_mainMenu addItemWithTitle:@"Modules" action:nil keyEquivalent:@""];
-    var helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""];
-    
+
+    var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""],
+        contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""],
+        groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""],
+        statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""],
+        navigationItem  = [_mainMenu addItemWithTitle:@"Navigation" action:nil keyEquivalent:@""],
+        moduleItem      = [_mainMenu addItemWithTitle:@"Modules" action:nil keyEquivalent:@""],
+        helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""],
+        archipelMenu    = [[CPMenu alloc] init],
+        groupsMenu      = [[CPMenu alloc] init],
+        contactsMenu    = [[CPMenu alloc] init],
+        statusMenu      = [[CPMenu alloc] init],
+        navigationMenu  = [[CPMenu alloc] init],
+        helpMenu        = [[CPMenu alloc] init];
+
     // Archipel
-    var archipelMenu = [[CPMenu alloc] init];
     [archipelMenu addItemWithTitle:@"About Archipel" action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:@"Preferences" action:nil keyEquivalent:@""];
@@ -410,17 +410,15 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"Q"];
     [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
-    
+
     // Groups
-    var groupsMenu = [[CPMenu alloc] init];
     [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
     [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
     [groupsMenu addItem:[CPMenuItem separatorItem]];
     [groupsMenu addItemWithTitle:@"Rename group" action:@selector(renameGroup:) keyEquivalent:@""];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
-    
+
     // Contacts
-    var contactsMenu = [[CPMenu alloc] init];
     [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
     [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
     [contactsMenu addItem:[CPMenuItem separatorItem]];
@@ -428,18 +426,16 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [contactsMenu addItem:[CPMenuItem separatorItem]];
     [contactsMenu addItemWithTitle:@"Reload vCard" action:@selector(reloadContactVCard:) keyEquivalent:@""];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
-    
+
     // Status
-    var statusMenu = [[CPMenu alloc] init];
     [statusMenu addItemWithTitle:@"Set status available" action:nil keyEquivalent:@"1"];
     [statusMenu addItemWithTitle:@"Set status away" action:nil keyEquivalent:@"2"];
     [statusMenu addItemWithTitle:@"Set status busy" action:nil keyEquivalent:@"3"];
     [statusMenu addItem:[CPMenuItem separatorItem]];
     [statusMenu addItemWithTitle:@"Set custom status" action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:statusMenu forItem:statusItem];
-    
+
     // navigation
-    var navigationMenu = [[CPMenu alloc] init];
     [navigationMenu addItemWithTitle:@"Hide main menu" action:@selector(switchMainMenu:) keyEquivalent:@"U"];
     [navigationMenu addItemWithTitle:@"Search entity" action:@selector(focusFilter:) keyEquivalent:@"F"];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
@@ -452,13 +448,12 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [navigationMenu addItemWithTitle:@"Expand all groups" action:@selector(expandAllGroups:) keyEquivalent:@""];
     [navigationMenu addItemWithTitle:@"Collapse all groups" action:@selector(collapseAllGroups:) keyEquivalent:@""];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
-    
+
     // Modules
     _modulesMenu = [[CPMenu alloc] init];
     [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
-    
+
     // help
-    var helpMenu = [[CPMenu alloc] init];
     [helpMenu addItemWithTitle:@"Archipel Help" action:nil keyEquivalent:@""];
     [helpMenu addItemWithTitle:@"Release note" action:nil keyEquivalent:@""];
     [helpMenu addItem:[CPMenuItem separatorItem]];
@@ -467,10 +462,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [helpMenu addItem:[CPMenuItem separatorItem]];
     [helpMenu addItemWithTitle:@"Make a donation" action:@selector(openDonationPage:) keyEquivalent:@""];
     [_mainMenu setSubmenu:helpMenu forItem:helpItem];
-    
+
     [CPApp setMainMenu:_mainMenu];
     [CPMenu setMenuBarVisible:NO];
-    
+
     CPLog.trace(@"Main menu created");
 }
 
@@ -480,7 +475,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 {
     CPLog.info(@"All modules have been loaded");
     CPLog.trace(@"Positionning the connection window");
-    
+
     [windowModuleLoading orderOut:nil];
     [connectionWindow center];
     [connectionWindow makeKeyAndOrderFront:nil];
@@ -489,9 +484,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (IBAction)didMinusBouttonClicked:(id)sender
 {
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item    = [_rosterOutlineView itemAtRow:index];
-    
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        item    = [_rosterOutlineView itemAtRow:index];
+
     if ([item class] == TNStropheContact)
         [self deleteContact:sender];
     else if ([item class] == TNStropheGroup)
@@ -501,14 +496,14 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (IBAction)logout:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+
     [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
     [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
     [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
-    
+
     CPLog.info(@"starting to disconnect");
     [_mainRoster disconnect];
-    
+
     [CPMenu setMenuBarVisible:NO];
 }
 
@@ -520,17 +515,18 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (IBAction)deleteContact:(id)sender
 {
-    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item    = [_rosterOutlineView itemAtRow:index];
-    
+    var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        item    = [_rosterOutlineView itemAtRow:index],
+        growl   = [TNGrowlCenter defaultCenter];
+        alert;
+
     if ([item class] != TNStropheContact)
     {
-        var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
         return;
     }
-    
-    var alert = [TNAlert alertWithTitle:@"Delete contact"
+
+    alert = [TNAlert alertWithTitle:@"Delete contact"
                                 message:@"Are you sure you want to delete this contact?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
@@ -540,17 +536,17 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (void)performDeleteContact:(id)userInfo
 {
-    var growl   = [TNGrowlCenter defaultCenter];
-    var contact = userInfo;
-    
+    var growl   = [TNGrowlCenter defaultCenter],
+        contact = userInfo;
+
     [_mainRoster removeContactWithJID:[contact JID]];
-    
+
     CPLog.info(@"contact " + [contact JID] + "removed");
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
-    
+
     [propertiesView hide];
     [_rosterOutlineView deselectAll];
-    
+
     [self unregisterFromEventNodeOfJID:[contact JID] ofServer:@"pubsub." + [contact domain]];
 }
 
@@ -563,24 +559,25 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (IBAction)deleteGroup:(id)sender
 {
-    var growl       = [TNGrowlCenter defaultCenter];
-    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item        = [_rosterOutlineView itemAtRow:index];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    
+    var growl       = [TNGrowlCenter defaultCenter],
+        index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        item        = [_rosterOutlineView itemAtRow:index],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        alert;
+
     if ([item class] != TNStropheGroup)
     {
-        [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError]; 
+        [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError];
         return;
     }
-    
+
     if ([[item contacts] count] != 0)
     {
         [growl pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
         return;
     }
-    
-    var alert = [TNAlert alertWithTitle:@"Delete group"
+
+    alert = [TNAlert alertWithTitle:@"Delete group"
                                 message:@"Are you sure you want to delete this group?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
@@ -590,34 +587,34 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (void)performDeleteGroup:(id)userInfo
 {
-    var group   = userInfo;
-    var key     = TNArchipelRememberOpenedGroup + [group name];
-    
+    var group   = userInfo,
+        key     = TNArchipelRememberOpenedGroup + [group name];
+
     [_mainRoster removeGroup:group];
     [_rosterOutlineView reloadData];
     [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
-    
+
     [defaults removeObjectForKey:key];
-    
+
     [propertiesView hide];
     [_rosterOutlineView deselectAll];
 }
 
 - (IBAction)selectNextEntity:(id)sender
 {
-    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var nextIndex       = (selectedIndex + 1) > [_rosterOutlineView numberOfRows] - 1 ? 0 : (selectedIndex + 1);
-    
+    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        nextIndex       = (selectedIndex + 1) > [_rosterOutlineView numberOfRows] - 1 ? 0 : (selectedIndex + 1);
+
     [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
 }
 
 - (IBAction)selectPreviousEntity:(id)sender
 {
-    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var nextIndex       = (selectedIndex - 1) < 0 ? [_rosterOutlineView numberOfRows] -1 : (selectedIndex - 1);
-    
+    var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        nextIndex       = (selectedIndex - 1) < 0 ? [_rosterOutlineView numberOfRows] -1 : (selectedIndex - 1);
+
     [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
-    
+
 }
 
 - (IBAction)renameContact:(id)sender
@@ -633,24 +630,24 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (IBAction)expandGroup:(id)sender
 {
     var index       = [_rosterOutlineView selectedRowIndexes];
-    
+
     if ([index firstIndex] == -1)
         return;
-    
+
     var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
-    
+
     [_rosterOutlineView expandItem:item];
 }
 
 - (IBAction)collapseGroup:(id)sender
 {
     var index = [_rosterOutlineView selectedRowIndexes];
-    
+
     if ([index firstIndex] == -1)
         return;
-    
+
     var item = [_rosterOutlineView itemAtRow:[index firstIndex]];
-    
+
     [_rosterOutlineView collapseItem:item];
 }
 
@@ -759,26 +756,26 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     if (!_helpWindow)
     {
         _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
-        
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
+
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
         var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
-        
+
         [_helpWindow setPlatformWindow:_platformHelpWindow];
         [_platformHelpWindow orderFront:nil];
-        
+
         [_helpWindow setDelegate:self];
-        
-        var bundle          = [CPBundle mainBundle];
-        var defaults        = [TNUserDefaults standardUserDefaults];
-        var newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
-        var url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"];
-        var version         = [defaults objectForKey:@"TNArchipelVersion"];
-        
+
+        var bundle          = [CPBundle mainBundle],
+            defaults        = [TNUserDefaults standardUserDefaults],
+            newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
+            url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+            version         = [defaults objectForKey:@"TNArchipelVersion"];
+
         if (!url || (url == @"local"))
             url = @"help/index.html";
-        
+
         [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
-        
+
         [scrollView setAutohidesScrollers:YES];
         [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [scrollView setDocumentView:newHelpView];
@@ -801,9 +798,11 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 */
 - (IBAction)toolbarItemPresenceStatusClick:(id)sender
 {
-    var XMPPShow;
-    var statusLabel = [sender title];
-    
+    var XMPPShow,
+        statusLabel = [sender title],
+        presence    = [TNStropheStanza presenceWithAttributes:{}],
+        growl       = [TNGrowlCenter defaultCenter];
+
     switch (statusLabel)
     {
         case TNArchipelStatusAvailableLabel:
@@ -819,18 +818,16 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
             XMPPShow = TNStropheContactStatusDND
             break;
     }
-    
-    var presence    = [TNStropheStanza presenceWithAttributes:{}];
+
     [presence addChildWithName:@"status"];
     [presence addTextNode:statusLabel];
     [presence up]
     [presence addChildWithName:@"show"];
     [presence addTextNode:XMPPShow];
     CPLog.info(@"Changing presence to " + statusLabel + ":" + XMPPShow);
-    
-    var growl = [TNGrowlCenter defaultCenter];
+
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
-    
+
     [[_mainRoster connection] send:presence];
 }
 
@@ -858,19 +855,19 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:filterField];
     [propertiesView setRoster:_mainRoster];
-    
-    
+
+
     [_mainRoster getRoster];
-    
+
     [CPMenu setMenuBarVisible:YES];
-    
+
     [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
-    
+
     var user = [[_mainRoster connection] JID];
-    
+
     [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
-    
+
     var growl = [TNGrowlCenter defaultCenter];
     [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user];
 }
@@ -878,17 +875,17 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
 {
     [ledIn setImage:_imageLedInData];
-    
+
     if (_ledInTimer)
         [_ledInTimer invalidate];
-    
+
     _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
 }
 
 - (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
 {
     [ledOut setImage:_imageLedOutData];
-    
+
     if (_ledOutTimer)
         [_ledOutTimer invalidate];
     _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
@@ -924,16 +921,16 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 - (void)didReceiveSubscriptionRequest:(id)requestStanza
 {
     var nick;
-    
+
     if ([requestStanza firstChildWithName:@"nick"])
         nick = [[requestStanza firstChildWithName:@"nick"] text];
     else
         nick = [requestStanza from];
-    
+
     var alert = [TNAlert alertWithTitle:@"Subscription request"
                                 message:nick + " is asking you subscription. Do you want to add it ?"
                                 delegate:self
-                                 actions:[["Accept", @selector(performSubscribe:)], 
+                                 actions:[["Accept", @selector(performSubscribe:)],
                                             ["Decline", @selector(performUnsubscribe:)]]];
 
     [alert setUserInfo:requestStanza]
@@ -942,33 +939,34 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (void)performSubscribe:(id)userInfo
 {
-    var bundle  = [CPBundle mainBundle];
-    var stanza  = userInfo;
-    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
+    var bundle  = [CPBundle mainBundle],
+        stanza  = userInfo;
     
+    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
+
     // evenually subscribe to event node of the entity
     [self registerToEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
 - (void)registerToEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
 {
-    var pubSubServer        = aServer;
-    var uid                 = [[_mainRoster connection] getUniqueId];
-    var nodeSubscribeStanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
-    
+    var pubSubServer        = aServer,
+        uid                 = [[_mainRoster connection] getUniqueId],
+        nodeSubscribeStanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}],
+        params              = [[CPDictionary alloc] init];
+
     [nodeSubscribeStanza setTo:pubSubServer];
     [nodeSubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
     [nodeSubscribeStanza addChildWithName:@"subscribe" andAttributes:{
         "node": "/archipel/" + aJID.split("/")[0] + "/events",
         "jid": [[_mainRoster connection] JID],
     }];
-    
-    var params = [[CPDictionary alloc] init];
+
     [params setValue:uid forKey:@"id"];
-    
+
     [[_mainRoster connection] registerSelector:@selector(didPubSubSubscribe:) ofObject:self withDict:params]
     [[_mainRoster connection] send:nodeSubscribeStanza];
-    
+
 }
 
 - (void)didPubSubSubscribe:(TNStropheStanza)aStanza
@@ -981,7 +979,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     {
         CPLog.error("unable to subscribe to pubsub");
     }
-    
+
     return NO;
 }
 
@@ -989,16 +987,17 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 {
     var stanza = userInfo;
     [_mainRoster answerAuthorizationRequest:stanza answer:NO];
-    
+
     // evenually unsubscribe to event node of the entity
    [self unregisterFromEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
 - (void)unregisterFromEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
 {
-    var pubSubServer            = aServer;
-    var uid                     = [[_mainRoster connection] getUniqueId];
-    var nodeUnsubscribeStanza   = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}];
+    var pubSubServer            = aServer,
+        uid                     = [[_mainRoster connection] getUniqueId],
+        nodeUnsubscribeStanza   = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}],
+        params                  = [[CPDictionary alloc] init];
 
     [nodeUnsubscribeStanza setTo:pubSubServer];
     [nodeUnsubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
@@ -1007,11 +1006,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         "jid": [[_mainRoster connection] JID],
     }];
 
-    var params = [[CPDictionary alloc] init];
     [params setValue:uid forKey:@"id"];
 
     [[_mainRoster connection] registerSelector:@selector(didPubSubUnsubscribe:) ofObject:self withDict:params]
-    [[_mainRoster connection] send:nodeUnsubscribeStanza];    
+    [[_mainRoster connection] send:nodeUnsubscribeStanza];
 }
 
 - (BOOL)didPubSubUnsubscribe:(TNStropheStanza)aStanza
@@ -1024,7 +1022,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     {
         CPLog.error("unable to unsubscribe to pubsub");
     }
-    
+
     return NO;
 }
 
@@ -1036,24 +1034,24 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 {
     if (![helpView mainFrameURL])
     {
-        var bundle      = [CPBundle mainBundle];
-        var defaults    = [TNUserDefaults standardUserDefaults];
-        var url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"];
-        var version     = [defaults objectForKey:@"TNArchipelVersion"];
-        
+        var bundle      = [CPBundle mainBundle],
+            defaults    = [TNUserDefaults standardUserDefaults],
+            url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+            version     = [defaults objectForKey:@"TNArchipelVersion"];
+
         if (!url || (url == @"local"))
             url = @"help/index.html";
-        
+
         [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
     }
-    
-    
+
+
     [helpView setFrame:[rightView bounds]];
     [rightView addSubview:helpView];
-    
-    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:helpView, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey];
-    var anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-    
+
+    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:helpView, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
+        anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
+
     [anim setDuration:0.3];
     // [anim startAnimation];
 }
@@ -1072,39 +1070,39 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex];
-    var item        = [_rosterOutlineView itemAtRow:index];
-    var loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
-    
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        item        = [_rosterOutlineView itemAtRow:index],
+        loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
+
     if (_moduleLoadingDelay)
         [_moduleLoadingDelay invalidate];
-    
+
     [viewLoadingModule setFrame:[rightView bounds]];
-    
+
     [propertiesView setEntity:item];
     [propertiesView reload];
-    
+
     _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
 
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
 {
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var key         = TNArchipelRememberOpenedGroup + [item name];
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
 
     [defaults setObject:"expanded" forKey:key];
 }
 
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
 {
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var key         = TNArchipelRememberOpenedGroup + [item name];
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
 
     [defaults setObject:"collapsed" forKey:key];
-    
+
     return YES;
 }
 
@@ -1119,14 +1117,14 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [propertiesView hide];
         return;
     }
-    
-    var item        = [aTimer userInfo];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    
+
+    var item        = [aTimer userInfo],
+        defaults    = [TNUserDefaults standardUserDefaults];
+
     [_mainRoster setCurrentItem:item];
-    
+
     [self hideHelpView];
-    
+
     if ([item class] == TNStropheGroup)
     {
         CPLog.info(@"setting the entity as " + item + " of type group");
@@ -1135,12 +1133,12 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     }
     else if ([item class] == TNStropheContact)
     {
-        var vCard       = [item vCard];
-        var entityType  = [_moduleLoader analyseVCard:vCard];
+        var vCard       = [item vCard],
+            entityType  = [_moduleLoader analyseVCard:vCard];
 
         CPLog.info(@"setting the entity as " + item + " of type " + entityType);
         [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
-        
+
     }
 }
 
@@ -1149,10 +1147,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 */
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var splitView   = [aNotification object];
-    var newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
-    
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        splitView   = [aNotification object],
+        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
+
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
@@ -1172,9 +1170,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (void)copyright
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        copy = document.createElement("div");
     
-    var copy = document.createElement("div");
     copy.style.position = "absolute";
     copy.style.fontSize = "10px";
     copy.style.color = "#6C707F";
@@ -1186,6 +1184,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     // copy.style.textShadow = "0px 1px 0px #C6CAD9";
     copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);
-    
+
 }
 @end
