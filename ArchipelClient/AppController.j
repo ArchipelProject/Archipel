@@ -389,6 +389,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     _mainMenu = [[CPMenu alloc] init];
 
     var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""],
+        editMenu        = [_mainMenu addItemWithTitle:@"Edit" action:nil keyEquivalent:@""],
         contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""],
         groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""],
         statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""],
@@ -396,6 +397,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         moduleItem      = [_mainMenu addItemWithTitle:@"Modules" action:nil keyEquivalent:@""],
         helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""],
         archipelMenu    = [[CPMenu alloc] init],
+        editMenuItem    = [[CPMenu alloc] init],
         groupsMenu      = [[CPMenu alloc] init],
         contactsMenu    = [[CPMenu alloc] init],
         statusMenu      = [[CPMenu alloc] init],
@@ -411,6 +413,16 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
 
+    //Edit
+    [editMenuItem addItemWithTitle:@"Undo" action:@selector(undo:) keyEquivalent:@"z"];
+    [editMenuItem addItemWithTitle:@"Redo" action:@selector(redo:) keyEquivalent:@"Z"];
+    [editMenuItem addItem:[CPMenuItem separatorItem]];
+    [editMenuItem addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@"c"];
+    [editMenuItem addItemWithTitle:@"Cut" action:@selector(cut:) keyEquivalent:@"x"];
+    [editMenuItem addItemWithTitle:@"Paste" action:@selector(paste:) keyEquivalent:@"v"];
+    [editMenuItem addItemWithTitle:@"Select all" action:@selector(selectAll:) keyEquivalent:@"a"];
+    [_mainMenu setSubmenu:editMenuItem forItem:editMenu];
+    
     // Groups
     [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
     [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
