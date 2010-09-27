@@ -10,8 +10,8 @@
     <string>Archipel</string>
     <key>CPPrincipalClass</key>
     <string>CPApplication</string>
-    <key>CPBundleIconFile</key>
-    <string>icon.png</string>
+    <key>CFBundleIconFile</key>
+    <string>icon.icns</string>
     
     
     <key>TNArchipelBOSHService</key>
