@@ -230,8 +230,8 @@
 
 - (void)runModal
 {
-    //[_alert runModal];
-    [self beginSheetModalForWindow:TNArchipelMainWindow];
+    [_alert runModal];
+    //[self beginSheetModalForWindow:TNArchipelMainWindow];
 }
 
 - (void)beginSheetModalForWindow:(CPWindow)aWindow
