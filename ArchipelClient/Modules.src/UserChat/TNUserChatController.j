@@ -35,6 +35,7 @@
     @outlet CPTextField     fieldMessage;
     @outlet CPTextField     fieldName;
     @outlet CPTextField     fieldUserJID;
+    @outlet CPTextField     fieldPreferencesMaxChatMessage;
 
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
@@ -45,6 +46,14 @@
 */
 - (void)awakeFromCib
 {
+    var bundle      = [CPBundle bundleForClass:[self class]],
+        defaults    = [TNUserDefaults standardUserDefaults];
+
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore"
+    ]];
+    
     [fieldJID setSelectable:YES];
     
     _messages = [CPArray array];
@@ -145,19 +154,31 @@
     [fieldJID setStringValue:[_entity JID]];
 }
 
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+            
+    [defaults setInteger:[fieldPreferencesMaxChatMessage stringValue] forKey:@"TNUserChatMaxMessageStore"];
+}
+
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [fieldPreferencesMaxChatMessage setStringValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
+}
+
 - (void)save
 {
-    var defaults        = [TNUserDefaults standardUserDefaults];
-    var bundle          = [CPBundle bundleForClass:[self class]];
-    var max             = [_messages count];
-    var saveMax         = [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"];
-    var location        = ((max - saveMax) > 0) ? (max - saveMax) : 0;
-    var lenght          = (saveMax <= max) ? saveMax : max;
-
+    var defaults        = [TNUserDefaults standardUserDefaults],
+        max             = [_messages count],
+        saveMax         = [defaults integerForKey:@"TNUserChatMaxMessageStore"],
+        location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
+        lenght          = (saveMax <= max) ? saveMax : max,
+        messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
+    
     CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
 
-    var messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
-    
     [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
 }
 

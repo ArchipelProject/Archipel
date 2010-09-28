@@ -68,6 +68,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet LPMultiLineTextField        fieldPasteBoard;
     @outlet CPImageView     imageViewSecureConnection;
     @outlet CPCheckBox      checkboxPasswordRemember;
+    @outlet CPTextField     fieldPreferencesFBURefreshRate;
+    @outlet CPTextField     fieldPreferencesCheckRate;
+    @outlet TNSwitch        switchPreferencesPreferSSL;
     
     CPString                _url;
     CPString                _VMHost;
@@ -89,7 +92,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [fieldJID setSelectable:YES];
     [imageViewSecureConnection setHidden:YES];
     
-    var bundle  = [CPBundle bundleForClass:[self class]];
+    var bundle  = [CPBundle bundleForClass:[self class]],
+        defaults    = [TNUserDefaults standardUserDefaults];
+
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"], @"NOVNCPreferSSL",
+            [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"], @"NOVNCFBURate",
+            [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"], @"NOVNCheckRate"
+    ]];
     
     var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]];
     [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
@@ -177,6 +188,24 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [super willUnload];
 }
 
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [defaults setObject:[fieldPreferencesFBURefreshRate stringValue] forKey:@"NOVNCFBURate"];
+    [defaults setObject:[fieldPreferencesCheckRate stringValue] forKey:@"NOVNCheckRate"];
+    [defaults setBool:[switchPreferencesPreferSSL isOn] forKey:@"NOVNCPreferSSL"];
+}
+
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [fieldPreferencesFBURefreshRate setStringValue:[defaults objectForKey:@"NOVNCFBURate"]];
+    [fieldPreferencesCheckRate setStringValue:[defaults objectForKey:@"NOVNCheckRate"]];
+    [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
+}
+
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Fit screen to window" action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
@@ -243,13 +272,12 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     if ([aStanza type] == @"result")
     {
-        var bundle      = [CPBundle bundleForClass:[self class]];
-        var displayNode = [aStanza firstChildWithName:@"vncdisplay"];
-        var defaults    = [TNUserDefaults standardUserDefaults];
-        var key         = TNArchipelVNCScaleFactor + [[self entity] JID];
-        var lastScale   = [defaults objectForKey:key];
-        var defaults    = [TNUserDefaults standardUserDefaults];
-        var key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+        var defaults    = [TNUserDefaults standardUserDefaults],
+            displayNode = [aStanza firstChildWithName:@"vncdisplay"],
+            key         = TNArchipelVNCScaleFactor + [[self entity] JID],
+            lastScale   = [defaults objectForKey:key],
+            defaults    = [TNUserDefaults standardUserDefaults],
+            key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
         
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
@@ -258,9 +286,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
         
         _useSSL         = NO;
-        _preferSSL      = ([bundle objectForInfoDictionaryKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
-        _NOVNCFBURate   = [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"];
-        _NOVNCheckRate  = [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"];
+        _preferSSL      = ([defaults boolForKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
+        _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
+        _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
         
         if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
             _useSSL = YES;        

@@ -143,6 +143,19 @@ function generateMacAddr()
     @outlet LPMultiLineTextField    fieldStringXMLDesc;
     @outlet TNWindowDriveEdition    windowDriveEdition;
     @outlet TNWindowNicEdition      windowNicEdition;
+    @outlet CPTextField             fieldPreferencesMemory;
+    @outlet CPPopUpButton           buttonPreferencesNumberOfCPUs;
+    @outlet CPPopUpButton           buttonPreferencesBoot;
+    @outlet CPPopUpButton           buttonPreferencesVNCKeyMap;
+    @outlet CPPopUpButton           buttonPreferencesOnPowerOff;
+    @outlet CPPopUpButton           buttonPreferencesOnReboot;
+    @outlet CPPopUpButton           buttonPreferencesOnCrash;
+    @outlet CPPopUpButton           buttonPreferencesClockOffset;
+    @outlet CPPopUpButton           buttonPreferencesInput;
+    @outlet TNSwitch                switchPreferencesPAE;
+    @outlet TNSwitch                switchPreferencesAPIC;
+    @outlet TNSwitch                switchPreferencesACPI;
+    @outlet TNSwitch                switchPreferencesHugePages;
 
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
@@ -163,18 +176,39 @@ function generateMacAddr()
 
 - (void)awakeFromCib
 {
+    var bundle      = [CPBundle bundleForClass:[self class]],
+        defaults    = [TNUserDefaults standardUserDefaults];
+
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"], @"TNDescDefaultNumberCPU",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultMemory"], @"TNDescDefaultMemory",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultBoot"], @"TNDescDefaultBoot",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultVNCKeymap"], @"TNDescDefaultVNCKeymap",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"], @"TNDescDefaultOnPowerOff",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"], @"TNDescDefaultOnReboot",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"], @"TNDescDefaultOnCrash",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"], @"TNDescDefaultClockOffset",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"], @"TNDescDefaultPAE",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"], @"TNDescDefaultACPI",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"], @"TNDescDefaultAPIC",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"], @"TNDescDefaultHugePages",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType"
+    ]];
+    
+    
     [fieldJID setSelectable:YES];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 
     _stringXMLDesc = @"";
 
-    var bundle                  = [CPBundle mainBundle];
-    var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
+    var mainBundle              = [CPBundle mainBundle];
+    var centerBezel             = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)];
     var buttonBezel             = [CPColor colorWithPatternImage:centerBezel];
-    var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
-    var centerBezelSelected     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelSelected.png"] size:CGSizeMake(1, 26)];
+    var centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)];
+    var centerBezelSelected     = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarCenterBezelSelected.png"] size:CGSizeMake(1, 26)];
 
-    _bezelColor                 = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
+    _bezelColor                 = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]];
     _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
     _buttonBezelSelected        = [CPColor colorWithPatternImage:centerBezelSelected];
 
@@ -186,7 +220,7 @@ function generateMacAddr()
     [_plusButtonDrives setAction:@selector(addDrive:)];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
-    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_minusButtonDrives setEnabled:NO];
@@ -202,7 +236,7 @@ function generateMacAddr()
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
-    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
@@ -345,15 +379,39 @@ function generateMacAddr()
     [buttonOnCrash removeAllItems];
     [buttonClocks removeAllItems];
     [buttonInputType removeAllItems];
-
+    
+    [buttonPreferencesNumberOfCPUs removeAllItems];
+    [buttonPreferencesBoot removeAllItems];
+    [buttonPreferencesVNCKeyMap removeAllItems];
+    [buttonPreferencesOnPowerOff removeAllItems];
+    [buttonPreferencesOnReboot removeAllItems];
+    [buttonPreferencesOnCrash removeAllItems];
+    [buttonPreferencesClockOffset removeAllItems];
+    [buttonPreferencesInput removeAllItems];
+    
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
+    [buttonPreferencesBoot addItemsWithTitles:TNXMLDescBoots];
+    
     [buttonNumberCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
+    [buttonPreferencesNumberOfCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
+    
     [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
+    [buttonPreferencesVNCKeyMap addItemsWithTitles:TNXMLDescVNCKeymaps];
+    
     [buttonOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonPreferencesOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
+    
     [buttonOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonPreferencesOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
+    
     [buttonOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonPreferencesOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
+    
     [buttonClocks addItemsWithTitles:TNXMLDescClocks];
+    [buttonPreferencesClockOffset addItemsWithTitles:TNXMLDescClocks];
+    
     [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
+    [buttonPreferencesInput addItemsWithTitles:TNXMLDescInputTypes];
 
     [switchPAE setOn:NO animated:YES sendAction:NO];
     [switchACPI setOn:NO animated:YES sendAction:NO];
@@ -455,6 +513,44 @@ function generateMacAddr()
     [self setDefaultValues];
 }
 
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
+    [buttonPreferencesNumberOfCPUs selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultNumberCPU"]];
+    [buttonPreferencesBoot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultBoot"]];
+    [buttonPreferencesVNCKeyMap selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultVNCKeymap"]];
+    [buttonPreferencesOnPowerOff selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnPowerOff"]];
+    [buttonPreferencesOnReboot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnReboot"]];
+    [buttonPreferencesOnCrash selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnCrash"]];
+    [buttonPreferencesClockOffset selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultClockOffset"]];
+    [buttonPreferencesInput selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultInputType"]];
+    [switchPreferencesPAE setOn:[defaults boolForKey:@"TNDescDefaultPAE"] animated:YES sendAction:NO];
+    [switchPreferencesACPI setOn:[defaults boolForKey:@"TNDescDefaultACPI"] animated:YES sendAction:NO];
+    [switchPreferencesAPIC setOn:[defaults boolForKey:@"TNDescDefaultAPIC"] animated:YES sendAction:NO];
+    [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
+}
+
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [defaults setObject:[fieldPreferencesMemory intValue] forKey:@"TNDescDefaultMemory"];
+    [defaults setObject:[buttonPreferencesNumberOfCPUs title] forKey:@"TNDescDefaultNumberCPU"];
+    [defaults setObject:[buttonPreferencesBoot title] forKey:@"TNDescDefaultBoot"];
+    [defaults setObject:[buttonPreferencesVNCKeyMap title] forKey:@"TNDescDefaultVNCKeymap"];
+    [defaults setObject:[buttonPreferencesOnPowerOff title] forKey:@"TNDescDefaultOnPowerOff"];
+    [defaults setObject:[buttonPreferencesOnReboot title] forKey:@"TNDescDefaultOnReboot"];
+    [defaults setObject:[buttonPreferencesOnCrash title] forKey:@"TNDescDefaultOnCrash"];
+    [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
+    [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
+    [defaults setBool:[switchPreferencesPAE isOn] forKey:@"TNDescDefaultPAE"];
+    [defaults setBool:[switchPreferencesACPI isOn] forKey:@"TNDescDefaultACPI"];
+    [defaults setBool:[switchPreferencesAPIC isOn] forKey:@"TNDescDefaultAPIC"];
+    [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
+}
+
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Undefine" action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
@@ -497,20 +593,19 @@ function generateMacAddr()
 
 - (void)setDefaultValues
 {
-    var bundle  = [CPBundle bundleForClass:[self class]];
-    var cpu     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"];
-    var mem     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultMemory"];
-    var arch    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultArchitecture"];
-    var vnck    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultVNCKeymap"];
-    var opo     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnPowerOff"];
-    var or      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"];
-    var oc      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"];
-    var hp      = [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"];
-    var clock   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"];
-    var pae     = [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"];
-    var acpi    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"];
-    var apic    = [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"];
-    var input   = [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"];
+    var defaults    = [TNUserDefaults standardUserDefaults];
+    var cpu     = [defaults integerForKey:@"TNDescDefaultNumberCPU"];
+    var mem     = [defaults integerForKey:@"TNDescDefaultMemory"];
+    var vnck    = [defaults objectForKey:@"TNDescDefaultVNCKeymap"];
+    var opo     = [defaults objectForKey:@"TNDescDefaultOnPowerOff"];
+    var or      = [defaults objectForKey:@"TNDescDefaultOnReboot"];
+    var oc      = [defaults objectForKey:@"TNDescDefaultOnCrash"];
+    var hp      = [defaults boolForKey:@"TNDescDefaultHugePages"];
+    var clock   = [defaults objectForKey:@"TNDescDefaultClockOffset"];
+    var pae     = [defaults boolForKey:@"TNDescDefaultPAE"];
+    var acpi    = [defaults boolForKey:@"TNDescDefaultACPI"];
+    var apic    = [defaults boolForKey:@"TNDescDefaultAPIC"];
+    var input   = [defaults objectForKey:@"TNDescDefaultInputType"];
 
     _supportedCapabilities = [CPDictionary dictionary];
 

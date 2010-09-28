@@ -75,6 +75,7 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet CPSlider                sliderMemory;
     @outlet TNStepper               stepperCPU;
+    @outlet CPTextField             fieldPreferencesMaxCPUs;
     
     CPTableView             _tableHypervisors;
     TNTableViewDataSource   _datasourceHypervisors;
@@ -101,7 +102,13 @@ TNArchipelTransportBarReboot    = 4;
 
 - (void)awakeFromCib
 {
-    var bundle          = [CPBundle bundleForClass:[self class]];
+    var bundle      = [CPBundle bundleForClass:[self class]],
+        defaults    = [TNUserDefaults standardUserDefaults];
+    
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs"
+    ]];
     
     [fieldJID setSelectable:YES];
     [sliderMemory setSendsActionOnEndEditing:YES];
@@ -109,7 +116,7 @@ TNArchipelTransportBarReboot    = 4;
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
-    [stepperCPU setMaxValue:[bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"]];
+    [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     
     
     
@@ -294,6 +301,21 @@ TNArchipelTransportBarReboot    = 4;
     [[_menu addItemWithTitle:@"Reboot" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Destroy" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
+
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [defaults setInteger:[fieldPreferencesMaxCPUs stringValue] forKey:@"TNArchipelControlsMaxVCPUs"];
+}
+
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+        
+    [fieldPreferencesMaxCPUs setStringValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
+}
+
 
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {

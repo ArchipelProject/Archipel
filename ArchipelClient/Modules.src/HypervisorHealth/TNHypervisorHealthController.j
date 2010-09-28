@@ -57,6 +57,11 @@ LPAristo = nil;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphDisk;
     @outlet TNSwitch            switchRefresh;
+    @outlet CPTextField         fieldPreferencesAutoRefresh;
+    @outlet CPTextField         fieldPreferencesMaxItems;
+    @outlet CPTextField         fieldPreferencesMaxLogEntries;
+    @outlet TNSwitch            switchPreferencesShowColunmMethod;
+    @outlet TNSwitch            switchPreferencesShowColunmFile;
     
     @outlet CPView              viewGraphCPUContainer;
     @outlet CPView              viewGraphMemoryContainer;
@@ -95,8 +100,18 @@ LPAristo = nil;
 {
     [fieldJID setSelectable:YES];
     
-    var bundle  = [CPBundle bundleForClass:[self class]];
-    var spinner = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]];
+    var bundle      = [CPBundle bundleForClass:[self class]],
+        spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
+        defaults    = [TNUserDefaults standardUserDefaults];
+
+    // register defaults defaults
+    [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"], @"TNArchipelHealthRefreshStatsInterval",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayMethodColumn"], @"TNArchipelHealthTableLogDisplayMethodColumn",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"], @"TNArchipelHealthTableLogDisplayFileColumn"
+    ]];
 
     [imageCPULoading setImage:spinner];
     [imageMemoryLoading setImage:spinner];
@@ -156,14 +171,13 @@ LPAristo = nil;
     [_chartViewDisk setDrawView:[[TNPieChartDrawView alloc] init]];
     [viewGraphDisk addSubview:_chartViewDisk];
     [_chartViewDisk setDelegate:self];
-
-    var moduleBundle = [CPBundle bundleForClass:[self class]]
-    _timerInterval              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"];
-    _statsHistoryCollectionSize = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
-    _maxLogEntries              = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"];
     
-    _tableLogDisplayFileColumn    = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
-    _tableLogDisplayMethodColumn    = [moduleBundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
+    
+    _timerInterval                  = [defaults floatForKey:@"TNArchipelHealthRefreshStatsInterval"];
+    _statsHistoryCollectionSize     = [defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
+    _maxLogEntries                  = [defaults integerForKey:@"TNArchipelHealthMaxLogEntry"];
+    _tableLogDisplayFileColumn      = [defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
+    _tableLogDisplayMethodColumn    = [defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
     
     
     // tabview
@@ -345,6 +359,27 @@ LPAristo = nil;
     [fieldJID setStringValue:[_entity JID]];
 }
 
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
+    [defaults setInteger:[fieldPreferencesAutoRefresh intValue] forKey:@"TNArchipelHealthRefreshStatsInterval"];
+    [defaults setInteger:[fieldPreferencesMaxItems intValue] forKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
+    [defaults setInteger:[fieldPreferencesMaxLogEntries intValue] forKey:@"TNArchipelHealthMaxLogEntry"];
+    [defaults setBool:[switchPreferencesShowColunmMethod isOn] forKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
+    [defaults setBool:[switchPreferencesShowColunmFile isOn] forKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
+}
+
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+        
+    [fieldPreferencesAutoRefresh setIntValue:[defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"]];
+    [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
+    [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
+    [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
+    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO],
+}
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
 {
