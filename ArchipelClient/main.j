@@ -16,7 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>
+var a;
+var b;
+
+@import <Foundation/Foundation.j>   
 @import <AppKit/AppKit.j>
 
 @import "AppController.j"
@@ -32,8 +35,7 @@
     @htmlonly <pre>@endhtmlonly
     @htmlinclude ./LICENSE
     @htmlonly </pre>@endhtmlonly
-    
-    
+        
     @defgroup archipelmodules Archipel Modules
     @defgroup utils Archipel Utilities
 */
