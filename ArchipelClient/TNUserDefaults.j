@@ -57,9 +57,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 {
     if (self = [super init])
     {
-        _defaults   = [CPDictionary dictionary];
-        _user       = aUser;
-
+        _defaults       = [CPDictionary dictionary];
+        _appDefaults    = [CPDictionary dictionary];
+        _user           = aUser;
         [_defaults setObject:[CPDictionary dictionary] forKey:_user];
     }
 
@@ -177,7 +177,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
 - (void)registerDefaults:(CPDictionary)someDefaults
 {
-    _appDefaults = [someDefaults copy];
+    [_appDefaults addEntriesFromDictionary:someDefaults];
 }
 
 - (void)removeObjectForKey:(CPString)aKey

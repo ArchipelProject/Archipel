@@ -56,6 +56,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 @implementation TNModule : CPViewController
 {
+    @outlet CPView          viewPreferences         @accessors;
+    
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
@@ -72,7 +74,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     TNStropheConnection     _connection             @accessors(property=connection);
     TNStropheGroup          _group                  @accessors(property=group);
     TNStropheRoster         _roster                 @accessors(property=roster);
-
+    
     CPArray                 _registredSelectors;
     CPArray                 _pubsubRegistrar;
 }
@@ -261,6 +263,23 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var selectorID = [_entity sendStanza:aStanza andRegisterSelector:aSelector ofObject:self withSpecificID:anUid];
     [_registredSelectors addObject:selectorID];
 }
+
+/*! this method is called when the user changes the preferences. Implement this method to store
+    datas from your eventual viewPreferences
+*/
+- (void)savePreferences
+{
+    // executed when use saves preferences
+}
+
+/*! this method is called when Archipel displays the preferences window.
+    implement this in order to refresh your eventual viewPreferences
+*/
+- (void)loadPreferences
+{
+    // executed when archipel displays preferences panel
+}
+
 
 /*! This message allow to display an error when stanza type is error
 */

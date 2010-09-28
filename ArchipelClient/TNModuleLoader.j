@@ -63,23 +63,23 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
 @implementation TNModuleLoader: CPObject
 {
     BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
+    CPArray                 _loadedTabModules               @accessors(getter=loadedTabModules);
+    CPDictionary            _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
     CPMenu                  _modulesMenu                    @accessors(property=modulesMenu);
     CPString                _modulesPath                    @accessors(property=modulesPath);
     CPString                _moduleType                     @accessors(property=moduleType);
-    TNiTunesTabView         _mainTabView                    @accessors(property=mainTabView);
     CPTextField             _infoTextField                  @accessors(property=infoTextField);
     CPView                  _mainModuleView                 @accessors(property=mainModuleView);
     id                      _delegate                       @accessors(property=delegate);
     id                      _entity                         @accessors(property=entity);
     int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
+    TNiTunesTabView         _mainTabView                    @accessors(property=mainTabView);
     TNStropheRoster         _roster                         @accessors(property=roster);
     TNToolbar               _mainToolbar                    @accessors(property=mainToolbar);
 
     CPArray                 _bundles;
     CPDictionary            _modulesMenuItems;
-    CPArray                 _loadedTabModules;
-    CPDictionary            _loadedToolbarModules;
     CPString                _previousXMPPShow;
     CPToolbarItem           _currentToolbarItem;
     CPView                  _currentToolbarModule;

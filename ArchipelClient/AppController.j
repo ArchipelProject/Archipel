@@ -46,6 +46,7 @@
 @import "TNSearchField.j";
 @import "TNStepper.j";
 @import "TNSwitch.j";
+@import "TNWindowPreferences.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -140,7 +141,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     @outlet TNAvatarManager     windowAvatarManager;
     @outlet CPTextField         textFieldLoadingModuleTitle;
     @outlet CPTextField         textFieldLoadingModuleLabel;
-
+    @outlet TNWindowPreferences windowPreferences;
+    
     BOOL                        _shouldShowHelpView;
     CPImage                     _imageLedInData;
     CPImage                     _imageLedNoData;
@@ -407,7 +409,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     // Archipel
     [archipelMenu addItemWithTitle:@"About Archipel" action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:@"Preferences" action:nil keyEquivalent:@""];
+    [archipelMenu addItemWithTitle:@"Preferences" action:@selector(showPreferencesWindow:) keyEquivalent:@","];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"Q"];
     [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
@@ -1175,9 +1177,14 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 }
 
 
-- (@action)showAboutWindow:(id)sender
+- (IBAction)showAboutWindow:(id)sender
 {
     [windowAboutArchipel makeKeyAndOrderFront:sender];
+}
+
+- (IBAction)showPreferencesWindow:(id)sender
+{
+    [windowPreferences makeKeyAndOrderFront:sender];
 }
 
 - (void)copyright
