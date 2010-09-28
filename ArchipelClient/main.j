@@ -15,12 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-var a;
-var b;
-
-
-@import <Foundation/Foundation.j>   
+@import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
 @import "AppController.j"
