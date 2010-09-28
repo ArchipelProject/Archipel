@@ -19,6 +19,7 @@
 var a;
 var b;
 
+
 @import <Foundation/Foundation.j>   
 @import <AppKit/AppKit.j>
 
