@@ -1,17 +1,17 @@
-/*  
+/*
  * TNSampleTabModule.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -22,7 +22,7 @@
 
 
 
-TNArchipelTypeVirtualMachineControl  = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
 
 TNArchipelTypeVirtualMachineControlCreate       = @"create";
 TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
@@ -47,29 +47,29 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 */
 @implementation TNGroupManagementController : TNModule
 {
-    @outlet CPTextField             fieldJID                @accessors;
-    @outlet CPTextField             fieldName               @accessors;
+    @outlet CPButtonBar             buttonBarControl;
     @outlet CPScrollView            VMScrollView;
     @outlet CPSearchField           filterField;
-    @outlet CPButtonBar             buttonBarControl;
+    @outlet CPTextField             fieldJID                @accessors;
+    @outlet CPTextField             fieldName               @accessors;
     @outlet CPView                  viewTableContainer;
-    
-    CPTableView             _tableVirtualMachines;
-    TNTableViewDataSource   _datasourceGroupVM;
+
+    CPTableView                     _tableVirtualMachines;
+    TNTableViewDataSource           _datasourceGroupVM;
 }
 
 
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    
+
     _datasourceGroupVM      = [[TNTableViewDataSource alloc] init];
     _tableVirtualMachines   = [[CPTableView alloc] initWithFrame:[VMScrollView bounds]];
-    
+
     [VMScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [VMScrollView setAutohidesScrollers:YES];
     [VMScrollView setDocumentView:_tableVirtualMachines];
-    
+
     [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
     [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableVirtualMachines setAllowsColumnReordering:YES];
@@ -78,63 +78,66 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
     [_tableVirtualMachines setTarget:self];
     [_tableVirtualMachines setDoubleAction:@selector(didVirtualMachineDoubleClick:)];
-    
-    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+
+
+    var vmColumNickname     = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
+        vmColumJID          = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
+        vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
+        imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
     [vmColumNickname setWidth:250];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [vmColumJID setWidth:450];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
-    var vmColumStatusIcon   = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
-    var imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
-    
+
     [_tableVirtualMachines addTableColumn:vmColumStatusIcon];
     [_tableVirtualMachines addTableColumn:vmColumNickname];
     [_tableVirtualMachines addTableColumn:vmColumJID];
 
     [_datasourceGroupVM setTable:_tableVirtualMachines];
     [_datasourceGroupVM setSearchableKeyPaths:[@"nickname", @"JID"]];
-    [_tableVirtualMachines setDataSource:_datasourceGroupVM];            
+    [_tableVirtualMachines setDataSource:_datasourceGroupVM];
 
-    var createButton = [CPButtonBar plusButton];
+    var createButton    = [CPButtonBar plusButton],
+        shutdownButton  = [CPButtonBar plusButton],
+        destroyButton   = [CPButtonBar plusButton],
+        suspendButton   = [CPButtonBar plusButton],
+        resumeButton    = [CPButtonBar plusButton],
+        rebootButton    = [CPButtonBar plusButton];
+        
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
-    
-    var shutdownButton = [CPButtonBar plusButton];
+
     [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
-    
-    var destroyButton = [CPButtonBar plusButton];
+
     [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
-    
-    var suspendButton = [CPButtonBar plusButton];
+
     [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
-    
-    var resumeButton = [CPButtonBar plusButton];
+
     [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
-    
-    var rebootButton = [CPButtonBar plusButton];
+
     [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
 
     [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton]];
-    
+
     [filterField setTarget:_datasourceGroupVM];
     [filterField setAction:@selector(filterObjects:)];
 }
@@ -143,8 +146,9 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 - (void)willLoad
 {
     [super willLoad];
+
+    var center = [CPNotificationCenter defaultCenter];
     
-    var center = [CPNotificationCenter defaultCenter];   
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
@@ -166,18 +170,18 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 - (void)reload:(CPNotification)aNotification
 {
     [fieldName setStringValue:[_entity name]];
-    
+
     [_datasourceGroupVM removeAllObjects];
-    
+
     for (var i = 0; i < [[_entity contacts] count]; i++)
     {
-        var contact = [[_entity contacts] objectAtIndex:i];
-        var vCard   = [contact vCard];
-        
+        var contact = [[_entity contacts] objectAtIndex:i],
+            vCard   = [contact vCard];
+
         if (vCard && ([[vCard firstChildWithName:@"TYPE"] text] == TNArchipelEntityTypeVirtualMachine))
             [_datasourceGroupVM addObject:contact];
     }
-    
+
     [_tableVirtualMachines reloadData];
 }
 
@@ -199,12 +203,11 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
 - (void)didVirtualMachineDoubleClick:(id)sender
 {
-    var selectedIndexes = [_tableVirtualMachines selectedRowIndexes];
-    var contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]];
-    var row             = [[_roster mainOutlineView] rowForItem:contact];
-    
-    var indexes         = [CPIndexSet indexSetWithIndex:row];
-    
+    var selectedIndexes = [_tableVirtualMachines selectedRowIndexes],
+        contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
+        row             = [[_roster mainOutlineView] rowForItem:contact],
+        indexes         = [CPIndexSet indexSetWithIndex:row];
+
     [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
@@ -241,44 +244,45 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 - (void)applyAction:(CPString)aCommand
 {
     var controlType;
-    
-    switch(aCommand)
+
+    switch (aCommand)
     {
         case TNArchipelActionTypeCreate:
             controlType = TNArchipelTypeVirtualMachineControlCreate;
             break;
-        
+
         case TNArchipelActionTypeShutdown:
             controlType = TNArchipelTypeVirtualMachineControlShutdown;
             break;
-        
+
         case TNArchipelActionTypeDestroy:
             controlType = TNArchipelTypeVirtualMachineControlDestroy;
             break;
-        
+
         case TNArchipelActionTypePause:
             controlType = TNArchipelTypeVirtualMachineControlSuspend;
             break;
-            
+
         case TNArchipelActionTypeResume:
             controlType = TNArchipelTypeVirtualMachineControlResume;
             break;
-        
+
         case TNArchipelActionTypeReboot:
             controlType = TNArchipelTypeVirtualMachineControlReboot;
             break;
     }
-    
-    var indexes = [_tableVirtualMachines selectedRowIndexes];
-    var objects = [_datasourceGroupVM objectsAtIndexes:indexes];
+
+    var indexes = [_tableVirtualMachines selectedRowIndexes],
+        objects = [_datasourceGroupVM objectsAtIndexes:indexes];
+
     for (var i = 0; i < [objects count]; i++)
     {
-        var vm = [objects objectAtIndex:i];
-        var controlStanza = [TNStropheStanza iqWithType:@"set"];
-        
+        var vm              = [objects objectAtIndex:i],
+            controlStanza   = [TNStropheStanza iqWithType:@"set"];
+
         [controlStanza addChildName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
         [controlStanza addChildName:@"archipel" andAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl, 
+            "xmlns": TNArchipelTypeVirtualMachineControl,
             "action": controlType}];
 
         [vm sendStanza:controlStanza andRegisterSelector:@selector(didSentAction:) ofObject:self];
@@ -289,15 +293,14 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 - (void)didSentAction:(TNStropheStanza)aStanza
 {
     var sender = [aStanza fromUser];
-    
+
     if ([aStanza type] == @"result")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" state modified"];
-        
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" state modified"];
+
         [_tableVirtualMachines reloadData];
     }
-    
+
 }
 @end
 
