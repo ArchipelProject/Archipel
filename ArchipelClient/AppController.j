@@ -191,7 +191,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     ]];
 
     // register logs
-    CPLogRegister(CPLogConsole, [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"]);
+    CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
 
     [mainHorizontalSplitView setIsPaneSplitter:YES];
