@@ -23,7 +23,7 @@
 @import "TNZoomAnimation.j";
 
 
-/*! @defgroup  virtualmachinevnc Module VirtualMachineVNC 
+/*! @defgroup  virtualmachinevnc Module VirtualMachineVNC
     @desc This module allows to access to virtual machine displays
     using VNC.
 */
@@ -71,7 +71,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     @outlet CPTextField     fieldPreferencesFBURefreshRate;
     @outlet CPTextField     fieldPreferencesCheckRate;
     @outlet TNSwitch        switchPreferencesPreferSSL;
-    
+
     CPString                _url;
     CPString                _VMHost;
     BOOL                    _vncOnlySSL;
@@ -91,7 +91,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [fieldJID setSelectable:YES];
     [imageViewSecureConnection setHidden:YES];
-    
+
     var bundle  = [CPBundle bundleForClass:[self class]],
         defaults    = [TNUserDefaults standardUserDefaults];
 
@@ -101,35 +101,31 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [bundle objectForInfoDictionaryKey:@"NOVNCFBURate"], @"NOVNCFBURate",
             [bundle objectForInfoDictionaryKey:@"NOVNCheckRate"], @"NOVNCheckRate"
     ]];
-    
-    var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]];
+
+    var imageBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]],
+        imageZoomFit = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-fullscreen.png"] size:CPSizeMake(16, 16)],
+        imageZoomReset = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-reset.png"] size:CPSizeMake(16, 16)],
+        imageDirectAccess = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-screen.png"] size:CPSizeMake(16, 16)],
+        imageCtrlAltDel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"skull.png"] size:CPSizeMake(16, 16)],
+        imageSendPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sendPasteBoard.png"] size:CPSizeMake(16, 16)],
+        imageGetPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"getPasteBoard.png"] size:CPSizeMake(16, 16)];
+
+
+
     [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
-    
-    
-    var imageZoomFit = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-fullscreen.png"] size:CPSizeMake(16, 16)]
     [buttonZoomFitToWindow setImage:imageZoomFit];
-    
-    var imageZoomReset = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-reset.png"] size:CPSizeMake(16, 16)]
     [buttonZoomReset setImage:imageZoomReset];
-    
-    var imageDirectAccess = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-screen.png"] size:CPSizeMake(16, 16)]
     [buttonDirectURL setImage:imageDirectAccess];
-    
-    var imageCtrlAltDel = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"skull.png"] size:CPSizeMake(16, 16)]
     [buttonSendCtrlAtlDel setImage:imageCtrlAltDel];
-    
-    var imageSendPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sendPasteBoard.png"] size:CPSizeMake(16, 16)]
     [buttonSendPasteBoard setImage:imageSendPasteBoard];
-    
-    var imageGetPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"getPasteBoard.png"] size:CPSizeMake(16, 16)]
     [buttonGetPasteBoard setImage:imageGetPasteBoard];
-    
+
     [fieldPassword setSecure:YES];
-    
-    _vncView    = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
+
+    _vncView = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [_vncView setBackgroundImage:[bundle pathForResource:@"vncbg.png"]];
-    
+
     [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setDocumentView:_vncView];
     [mainScrollView setAutohidesScrollers:YES];
@@ -143,8 +139,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)willLoad
 {
     [super willLoad];
-    
-    var center = [CPNotificationCenter defaultCenter];   
+
+    var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -153,13 +149,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)willShow
 {
     [super willShow];
-    
+
     [maskingView setFrame:[[self view] bounds]];
-    
+
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
     [self checkIfRunning];
-    
+
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self view] setFrame:[[[self view] superview] bounds]];
 }
@@ -169,16 +165,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [imageViewSecureConnection setHidden:YES];
     if ([windowPassword isVisible])
         [windowPassword close];
-    
-    if (([_vncView state] != TNVNCCappuccinoStateDisconnected) 
+
+    if (([_vncView state] != TNVNCCappuccinoStateDisconnected)
         || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
     {
         [_vncView disconnect:nil];
-        [_vncView clear];
+        [_vncView resetSize];
         [_vncView unfocus];
     }
-    [_vncView invalidate];
-       
+
     [super willHide];
 }
 
@@ -191,7 +186,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+
     [defaults setObject:[fieldPreferencesFBURefreshRate stringValue] forKey:@"NOVNCFBURate"];
     [defaults setObject:[fieldPreferencesCheckRate stringValue] forKey:@"NOVNCheckRate"];
     [defaults setBool:[switchPreferencesPreferSSL isOn] forKey:@"NOVNCPreferSSL"];
@@ -200,7 +195,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)loadPreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+
     [fieldPreferencesFBURefreshRate setStringValue:[defaults objectForKey:@"NOVNCFBURate"]];
     [fieldPreferencesCheckRate setStringValue:[defaults objectForKey:@"NOVNCheckRate"]];
     [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
@@ -238,14 +233,14 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
     else
     {
-        if (([_vncView state] != TNVNCCappuccinoStateDisconnected) 
+        if (([_vncView state] != TNVNCCappuccinoStateDisconnected)
             && ([_vncView state] != TNVNCCappuccinoStateDisconnect))
         {
             [_vncView disconnect:nil];
-            [_vncView clear];
+            [_vncView resetSize];
             [_vncView unfocus];
         }
-        
+
         [maskingView setFrame:[[self view] bounds]];
         [[self view] addSubview:maskingView];
     }
@@ -257,11 +252,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)getVirtualMachineVNCDisplay
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlVNCDisplay}];
-    
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }
 
@@ -278,21 +273,21 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             lastScale   = [defaults objectForKey:key],
             defaults    = [TNUserDefaults standardUserDefaults],
             key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
-        
+
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
         _vncDirectPort  = [displayNode valueForAttribute:@"port"];
         _vncSupportSSL  = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
-        
+
         _useSSL         = NO;
         _preferSSL      = ([defaults boolForKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
         _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
         _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
-        
+
         if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
-            _useSSL = YES;        
-        
+            _useSSL = YES;
+
         if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
         {
             var growl = [TNGrowlCenter defaultCenter];
@@ -307,7 +302,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
                 _useSSL = NO;
             }
         }
-        
+
         if (lastScale)
         {
             [sliderScaling setDoubleValue:lastScale];
@@ -318,7 +313,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [sliderScaling setDoubleValue:100];
             [fieldZoomValue setStringValue:@"100"];
         }
-        
+
         if ([defaults stringForKey:key])
         {
             [fieldPassword setStringValue:[defaults stringForKey:key]];
@@ -329,7 +324,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             [fieldPassword setStringValue:@""];
             [checkboxPasswordRemember setState:CPOffState];
         }
-        
+
         [_vncView setCheckRate:_NOVNCheckRate];
         [_vncView setFrameBufferRequestRate:_NOVNCFBURate];
         [_vncView setHost:_VMHost];
@@ -339,7 +334,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         [_vncView setTrueColor:YES];
         [_vncView setEncrypted:_useSSL];
         [_vncView setDelegate:self];
-        
+
         [_vncView load];
         [_vncView connect:nil];
     }
@@ -362,36 +357,32 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (IBAction)changeScale:(id)sender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var zoom        = [sender intValue];
-    
-    var key = TNArchipelVNCScaleFactor + [[self entity] JID];
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        zoom        = [sender intValue],
+        key = TNArchipelVNCScaleFactor + [[self entity] JID];
+
     [defaults setObject:zoom forKey:key];
-    
+
     [_vncView setZoom:(zoom / 100)];
     [fieldZoomValue setStringValue:parseInt(zoom)];
 }
 
 - (IBAction)fitToScreen:(id)sender
 {
-    var visibleRect     = [_vncView visibleRect];
-    var currentVNCSize  = [_vncView canvasSize];
-    var currentVNCZoom  = [_vncView zoom] * 100;
-    var diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height);
-    
-    if (diffPerc < 0)
-        var newZoom = 100 - (Math.abs(diffPerc) * 100);
-    else
-        var newZoom = 100 + (Math.abs(diffPerc) * 100);
+    var visibleRect     = [_vncView visibleRect],
+        currentVNCSize  = [_vncView canvasSize],
+        currentVNCZoom  = [_vncView zoom] * 100,
+        diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height),
+        newZoom         = (diffPerc < 0) ? 100 - (Math.abs(diffPerc) * 100) : 100 + (Math.abs(diffPerc) * 100);
 
     [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
 }
 
 - (IBAction)resetZoom:(id)sender
 {
-    var visibleRect     = [_vncView visibleRect];
-    var currentVNCSize  = [_vncView canvasSize];
-    var currentVNCZoom  = [_vncView zoom] * 100;
+    var visibleRect     = [_vncView visibleRect],
+        currentVNCSize  = [_vncView canvasSize],
+        currentVNCZoom  = [_vncView zoom] * 100;
 
     [self animateChangeScaleFrom:currentVNCZoom to:100];
 }
@@ -400,18 +391,18 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     CPLog.info("sending ctrl+alt+del to VNCView");
     [_vncView sendCtrlAltDel:sender];
-    
+
     // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
 }
 
 - (IBAction)sendPasteBoard:(id)sender
 {
     CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
-    
+
     [_vncView sendTextToPasteboard:[fieldPasteBoard stringValue]];
-    
+
     [fieldPasteBoard setStringValue:@""];
-    
+
     [windowPasteBoard close];
 }
 
@@ -423,10 +414,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
 {
     var useAnimations = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"];
-    
+
     if (useAnimations)
     {
         var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
+
         [anim setDelegate:self];
         [anim setStartZoomValue:aStartZoom];
         [anim setEndZoomValue:aEndZoom];
@@ -442,7 +434,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (float)animation:(CPAnimation)animation valueForProgress:(float)progress
 {
     [sliderScaling setDoubleValue:[animation currentZoom]];
-    
+
     [_vncView setZoom:([animation currentZoom] / 100)];
     [fieldZoomValue setStringValue:parseInt([animation currentZoom])];
 }
@@ -459,9 +451,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)rememberPassword:(id)sender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
-    
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+
     if ([checkboxPasswordRemember state] == CPOnState)
         [defaults setObject:[fieldPassword stringValue] forKey:key];
     else
@@ -472,7 +464,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [self rememberPassword:nil];
     [windowPassword close];
-    if (([_vncView state] == TNVNCCappuccinoStateDisconnected) 
+    if (([_vncView state] == TNVNCCappuccinoStateDisconnected)
         || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
     {
         [_vncView setPassword:[fieldPassword stringValue]];
@@ -490,7 +482,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
 {
-    switch(aState)
+    switch (aState)
     {
         case TNVNCCappuccinoStateFailed:
             if ([_vncView oldState] == TNVNCCappuccinoStateSecurityResult)
@@ -502,17 +494,16 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             else
             {
                 [imageViewSecureConnection setHidden:YES];
-                var growl = [TNGrowlCenter defaultCenter];
-                [growl pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
+                [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
             }
-            [_vncView clear];
+            [_vncView resetSize];
             break;
-            
+
         case TNVNCCappuccinoStatePassword:
             [windowPassword center];
             [windowPassword makeKeyAndOrderFront:nil];
             break;
-        
+
         case TNVNCCappuccinoStateNormal:
             if (_useSSL)
                 [imageViewSecureConnection setHidden:NO];
@@ -527,29 +518,29 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 - (void)openVNCInNewWindow:(id)sender
 {
-    var widthOffset         = 6;
-    var heightOffset        = 6;
-    
+    var widthOffset         = 6,
+        heightOffset        = 6;
+
     // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
     if (navigator.appVersion.indexOf("Chrome") != -1)
     {
         widthOffset     =   6;
         heightOffset    =   56;
     }
-    
-    var vncSize             = [_vncView canvasSize];
-    var winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset);
-    var pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset);
-    var VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask|CPClosableWindowMask|CPMiniaturizableWindowMask|CPResizableWindowMask|CPBorderlessBridgeWindowMask];
-    var platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
-    
+
+    var vncSize             = [_vncView canvasSize],
+        winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
+        pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
+        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask],
+        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+
     [VNCWindow setPlatformWindow:platformVNCWindow];
     [VNCWindow makeKeyAndOrderFront:nil];
-    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " ("+ [_entity JID] +")"];
-    
+    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
+
     [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
     [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
-    
+
     [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
     [VNCWindow makeKeyWindow];
 }
