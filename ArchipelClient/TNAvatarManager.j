@@ -119,7 +119,7 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
                 data    = [avatar text],
                 img     = [[TNAvatarImage alloc] init];
 
-            [img setBaseEncoded64Data:data];
+            [img setBase64EncodedData:data];
             [img setContentType:ctype];
             [img setSize:TNArchipelAvatarManagerThumbSize];
             [img setAvatarFilename:file];
