@@ -38,11 +38,11 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     @outlet CPPopUpButton   buttonLogLevel;
     @outlet CPScrollView    mainScrollView;
     @outlet CPSearchField   fieldFilter;
-    
-    CPArray         _logs;
-    CPString        _filter;
-    CPTableView     _tableViewLogging;
-    id              _logFunction;
+
+    CPArray                 _logs;
+    CPString                _filter;
+    CPTableView             _tableViewLogging;
+    id                      _logFunction;
 }
 
 - (void)willLoad
@@ -78,23 +78,23 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [fieldFilter setSendsSearchStringImmediately:YES];
     [fieldFilter setTarget:self];
     [fieldFilter setAction:@selector(filterFieldDidChange:)];
-    
+
     _logFunction = function (aMessage, aLevel, aTitle) {
         [self logMessage:aMessage title:aTitle level:aLevel];
     };
-    
+
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setBorderedWithHexColor:@"#C0C7D2"];
     [mainScrollView setAutohidesScrollers:YES];
-    
+
     var defaults = [TNUserDefaults standardUserDefaults];
     maxLogLevel = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
-    
+
     if (!maxLogLevel)
         maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
-    
+
     CPLogRegister(_logFunction, maxLogLevel);
-    
+
     _logs = [self restaure];
 
     _tableViewLogging = [[CPTableView alloc] initWithFrame:[[mainScrollView contentView] frame]];
@@ -103,20 +103,22 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [_tableViewLogging setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewLogging setAllowsColumnResizing:YES];
     [_tableViewLogging setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    
-    var columnMessage = [[CPTableColumn alloc] initWithIdentifier:@"message"];
+
+    var columnMessage = [[CPTableColumn alloc] initWithIdentifier:@"message"],
+        columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"],
+        levelCellPrototype = [[TNCellLogLevel alloc] init],
+        columnLevel = [[CPTableColumn alloc] initWithIdentifier:@"level"];
+
+
     [[columnMessage headerView] setStringValue:@"Message"];
 
-    var columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"];
     [columnDate setWidth:130];
     [[columnDate headerView] setStringValue:@"Date"];
 
-    var levelCellPrototype = [[TNCellLogLevel alloc] init];
-    var columnLevel = [[CPTableColumn alloc] initWithIdentifier:@"level"];
     [columnLevel setWidth:50];
     [columnLevel setDataView:levelCellPrototype];
     [[columnLevel headerView] setStringValue:@"Level"];
-    
+
     [_tableViewLogging addTableColumn:columnLevel];
     [_tableViewLogging addTableColumn:columnDate];
     [_tableViewLogging addTableColumn:columnMessage];
@@ -124,11 +126,11 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [_tableViewLogging setDataSource:self];
 
     [mainScrollView setDocumentView:_tableViewLogging];
-    
+
     [buttonLogLevel removeAllItems];
     [buttonLogLevel addItemsWithTitles:TNLogLevels];
     [buttonLogLevel selectItemWithTitle:maxLogLevel];
-    
+
     theSharedLogger = self;
 }
 
@@ -141,9 +143,9 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (void)save
 {
     // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setObject:JSON.stringify(_logs) forKey:@"TNArchipelLogStored"];    
+    // [defaults setObject:JSON.stringify(_logs) forKey:@"TNArchipelLogStored"];
     // I can't use TNDefault here or Safari hangs. This is weird.
-    
+
     localStorage.setItem("TNArchipelLogStored", JSON.stringify(_logs));
 }
 
@@ -152,9 +154,9 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     // var defaults        = [TNUserDefaults standardUserDefaults];
     // var recoveredLogs   = JSON.parse([defaults objectForKey:@"TNArchipelLogStored"]);
     // I can't use TNDefault here or Safari hangs. This is weird.
-    
+
     var recoveredLogs = JSON.parse(localStorage.getItem("TNArchipelLogStored"));
-    
+
     return (recoveredLogs) ? recoveredLogs : [CPArray array];
 }
 
@@ -163,11 +165,11 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (void)logMessage:(CPString)aMessage title:(CPString)aTitle level:(CPString)aLevel
 {
-    var theDate     = [CPDate dateWithFormat:@"Y-m-d H:i:s"];
-    var logEntry    = {"date": theDate, "message": aMessage, "title": aTitle, "level": aLevel};
-    
+    var theDate     = [CPDate dateWithFormat:@"Y-m-d H:i:s"],
+        logEntry    = {"date": theDate, "message": aMessage, "title": aTitle, "level": aLevel};
+
     [_logs insertObject:logEntry atIndex:0];
-    
+
     [_tableViewLogging reloadData];
 
     [self save];
@@ -185,13 +187,13 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 
 - (IBAction)setLogLevel:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
-    var logLevel = [buttonLogLevel title];
-    
+    var defaults = [TNUserDefaults standardUserDefaults],
+        logLevel = [buttonLogLevel title];
+
     [defaults setObject:logLevel forKey:@"TNArchipelLogStoredMaximumLevel"];
-    
+
     CPLogUnregister(_logFunction);
-    
+
     CPLogRegister(_logFunction, logLevel);
 }
 
@@ -202,12 +204,12 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
         return anArray;
 
     var filteredArray = [CPArray array];
-    
+
     for (var i = 0; i < [anArray count]; i++)
     {
         var entry = [anArray objectAtIndex:i];
 
-        if ((entry["level"].toUpperCase().indexOf([aFilter uppercaseString]) != -1) 
+        if ((entry["level"].toUpperCase().indexOf([aFilter uppercaseString]) != -1)
             || (entry["message"].toUpperCase().indexOf([aFilter uppercaseString]) != -1)
             || (entry["date"].toUpperCase().indexOf([aFilter uppercaseString]) != -1))
             [filteredArray addObject:entry];
@@ -221,7 +223,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     var entry = [self getEntriesInArray:_logs matchingFilter:_filter];
-    
+
     return [entry count];
 }
 
@@ -229,11 +231,10 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPTableColumn)aCol row:(CPNumber)aRow
 {
-    var entry           = [self getEntriesInArray:_logs matchingFilter:_filter];
-    var anIdentifier    = [aCol identifier];
-    var value           = entry[aRow][anIdentifier];
-    
-    return value;
+    var entry           = [self getEntriesInArray:_logs matchingFilter:_filter],
+        anIdentifier    = [aCol identifier];
+
+    return entry[aRow][anIdentifier];
 }
 
 @end
