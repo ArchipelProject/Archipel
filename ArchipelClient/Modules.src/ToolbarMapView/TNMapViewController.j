@@ -254,7 +254,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text],
             longitude   = [[aStanza firstChildWithName:@"Longitude"] text],
-            item        = [_roster contactWithJID:[aStanza fromNode]],
+            item        = [_roster contactWithJID:[aStanza fromBare]],
             loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude],
             marker      = [[MKMarker alloc] initAtLocation:loc];
 
@@ -262,8 +262,6 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         [marker setClickable:YES];
         [marker setDelegate:self];
         [marker setUserInfo:[CPDictionary dictionaryWithObjectsAndKeys:item, @"rosterItem"]];
-
-        //[_mainMapView addMarker:marker atLocation:loc];
         [marker addToMapView:_mainMapView];
         [_mainMapView setCenter:loc];
     }
@@ -281,7 +279,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
-    if (anHypervisor == _originHypervisor)
+    if (anHypervisor === _originHypervisor)
         [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
     else
         [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
@@ -353,21 +351,19 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         alert   = [TNAlert alertWithTitle:@"Define path"
                                 message:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
                                 delegate:self
-                                 actions:[[@"Cancel", nil], ["Destination",  @selector(setDestination:)], ["Origin", @selector(setOrigin:)]]];
+                                 actions:[[@"Cancel", nil], ["Destination",  @selector(setDestinationHypervisor:)], ["Origin", @selector(setOriginHypervisor:)]]];
     [alert setUserInfo:item];
     [alert runModal];
-
-
 }
 
-- (void)setOrigin:(id)anItem
+- (void)setOriginHypervisor:(id)anItem
 {
     _originHypervisor = anItem;
     [textFieldOriginName setStringValue:[anItem nickname]];
     [self rosterOfHypervisor:anItem];
 }
 
-- (void)setDestination:(id)anItem
+- (void)setDestinationHypervisor:(id)anItem
 {
     _destinationHypervisor= anItem;
     [textFieldDestinationName setStringValue:[anItem nickname]];
