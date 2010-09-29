@@ -17,11 +17,10 @@
  */
 
 @import "TNDHCPEntryObject.j";
-@import "TNNetworkObject.j"
+@import "TNNetworkObject.j";
 
 @implementation TNWindowNetworkProperties : CPWindow
 {
-    @outlet CPTabView       tabViewDHCP;
     @outlet CPButtonBar     buttonBarControlDHCPHosts;
     @outlet CPButtonBar     buttonBarControlDHCPRanges;
     @outlet CPCheckBox      checkBoxDHCPEnabled;
@@ -30,25 +29,24 @@
     @outlet CPPopUpButton   buttonForwardMode;
     @outlet CPScrollView    scrollViewDHCPHosts;
     @outlet CPScrollView    scrollViewDHCPRanges;
+    @outlet CPTabView       tabViewDHCP;
     @outlet CPTextField     fieldBridgeDelay;
     @outlet CPTextField     fieldBridgeIP;
     @outlet CPTextField     fieldBridgeName;
     @outlet CPTextField     fieldBridgeNetmask;
     @outlet CPTextField     fieldNetworkName;
-    @outlet CPView          viewTableHostsContainer;
-    @outlet CPView          viewTableRangesContainer;
-    
     @outlet CPView          viewHostsConf;
     @outlet CPView          viewRangesConf;
+    @outlet CPView          viewTableHostsContainer;
+    @outlet CPView          viewTableRangesContainer;
 
     CPTableView             _externalTable              @accessors(property=tableNetwork);
     TNNetwork               _network                    @accessors(property=network);
-    
+
+    CPButton                _minusButtonDHCPHosts;
+    CPButton                _minusButtonDHCPRanges;
     CPButton                _plusButtonDHCPHosts;
     CPButton                _plusButtonDHCPRanges;
-    CPButton                _minusButtonDHCPRanges;
-    CPButton                _minusButtonDHCPHosts;
-    
     CPTableView             _tableViewHosts;
     CPTableView             _tableViewRanges;
     TNTableViewDataSource   _datasourceDHCPHosts;
@@ -61,30 +59,30 @@
     _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
     [_plusButtonDHCPHosts setTarget:self];
-    [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];    
+    [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
-    
+
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
     _minusButtonDHCPRanges = [CPButtonBar minusButton];
     [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
     [_plusButtonDHCPRanges setTarget:self];
-    [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];    
+    [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
-    
-    
+
+
     [viewTableRangesContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewTableHostsContainer setBorderedWithHexColor:@"#C0C7D2"];
-    
+
     [buttonForwardMode removeAllItems];
     [buttonForwardMode addItemsWithTitles:["route", "nat"]];
-    
+
     [buttonForwardDevice removeAllItems];
     [buttonForwardDevice addItemsWithTitles:["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]];
-    
-    
-    
+
+
+
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
     _tableViewRanges        = [[CPTableView alloc] initWithFrame:[scrollViewDHCPRanges bounds]];
@@ -98,13 +96,14 @@
     [_tableViewRanges setAllowsColumnResizing:YES];
     [_tableViewRanges setAllowsEmptySelection:YES];
 
-    var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"];
+    var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"],
+        columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
+
     [[columRangeStart headerView] setStringValue:@"Start"];
     [columRangeStart setWidth:250];
     [columRangeStart setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"start" ascending:YES]];
     [columRangeStart setEditable:YES];
 
-    var columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
     [[columRangeEnd headerView] setStringValue:@"End"];
     [columRangeEnd setWidth:250];
     [columRangeEnd setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"end" ascending:YES]];
@@ -126,20 +125,22 @@
     [_tableViewHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableViewHosts setAllowsColumnResizing:YES];
     [_tableViewHosts setAllowsEmptySelection:YES];
-     
-    var columHostMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"];
+
+
+    var columHostMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"],
+        columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
+        columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
+
     [[columHostMac headerView] setStringValue:@"MAC Address"];
     [columHostMac setWidth:150];
     [columHostMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
     [columHostMac setEditable:YES];
 
-    var columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
     [[columHostName headerView] setStringValue:@"Name"];
     [columHostName setWidth:150];
     [columHostName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     [columHostName setEditable:YES];
 
-    var columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
     [[columHostIP headerView] setStringValue:@"IP"];
     [columHostIP setWidth:150];
     [columHostIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"IP" ascending:YES]];
@@ -156,23 +157,25 @@
     // setting delegate
     [_tableViewHosts setDelegate:self];
     [_tableViewRanges setDelegate:self];
-    
-    var menuRange = [[CPMenu alloc] init];
+
+    var menuRange = [[CPMenu alloc] init],
+        menuHost = [[CPMenu alloc] init];
+
     [menuRange addItemWithTitle:@"Add new range" action:@selector(addDHCPRange:) keyEquivalent:@""];
     [menuRange addItemWithTitle:@"Remove" action:@selector(removeDHCPRange:) keyEquivalent:@""];
     [_tableViewRanges setMenu:menuRange];
-    
-    var menuHost = [[CPMenu alloc] init];
+
     [menuHost addItemWithTitle:@"Add new host reservation" action:@selector(addDHCPHost:) keyEquivalent:@""];
     [menuHost addItemWithTitle:@"Remove" action:@selector(removeDHCPHost:) keyEquivalent:@""];
     [_tableViewHosts setMenu:menuHost];
-    
-    var tabViewDHCPRangesItem = [[CPTabViewItem alloc] initWithIdentifier:@"id1"];
+
+    var tabViewDHCPRangesItem = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
+        tabViewDHCPHostsItem = [[CPTabViewItem alloc] initWithIdentifier:@"id2"];
+
     [tabViewDHCPRangesItem setView:viewRangesConf];
     [tabViewDHCPRangesItem setLabel:@"DHCP Ranges"];
     [tabViewDHCP addTabViewItem:tabViewDHCPRangesItem];
-    
-    var tabViewDHCPHostsItem = [[CPTabViewItem alloc] initWithIdentifier:@"id1"];
+
     [tabViewDHCPHostsItem setView:viewHostsConf];
     [tabViewDHCPHostsItem setLabel:@"DHCP Hosts"];
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
@@ -201,13 +204,13 @@
         [_tableViewHosts reloadData];
 
     }
-    
+
     [super makeKeyAndOrderFront:sender];
-    
+
     // ouais, ben ouais, commentes, tu vas voir...
     var frame = [_tableViewHosts bounds];
     frame.size.width--;
-    
+
     [_tableViewHosts setFrame:frame];
     [_tableViewRanges setFrame:frame];
 }
@@ -227,7 +230,7 @@
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
     [_externalTable reloadData];
-    
+
     [[self delegate] defineNetworkXML:nil];
     [self close];
 }
@@ -243,8 +246,8 @@
 
 - (IBAction)removeDHCPRange:(id)sender
 {
-    var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex];
-    var rangeObject     = [_datasourceDHCPRanges removeObjectAtIndex:selectedIndex];
+    var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex],
+        rangeObject     = [_datasourceDHCPRanges removeObjectAtIndex:selectedIndex];
 
     [_tableViewRanges reloadData];
 
@@ -264,8 +267,8 @@
 
 - (IBAction)removeDHCPHost:(id)sender
 {
-    var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex];
-    var hostsObject     = [_datasourceDHCPHosts removeObjectAtIndex:selectedIndex];
+    var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex],
+        hostsObject     = [_datasourceDHCPHosts removeObjectAtIndex:selectedIndex];
 
     [_tableViewHosts reloadData];
 

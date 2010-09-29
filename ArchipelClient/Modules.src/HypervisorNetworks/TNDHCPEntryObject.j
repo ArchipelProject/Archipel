@@ -24,12 +24,12 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 
 @implementation TNDHCPEntry : CPObject
 {
-    CPString    -name    @accessors(property=name);
-    CPString    _end     @accessors(property=end);
-    CPString    _IP      @accessors(property=IP);
-    CPString    _mac     @accessors(property=mac);
-    CPString    _start   @accessors(property=start);
-    CPString    _type    @accessors(property=type);
+    CPString    -name    @accessors(property = name);
+    CPString    _end     @accessors(property = end);
+    CPString    _IP      @accessors(property = IP);
+    CPString    _mac     @accessors(property = mac);
+    CPString    _start   @accessors(property = start);
+    CPString    _type    @accessors(property = type);
 }
 
 + (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress

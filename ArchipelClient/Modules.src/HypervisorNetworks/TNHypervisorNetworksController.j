@@ -35,11 +35,10 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
 function generateIPForNewNetwork()
 {
-    var dA      = Math.round(Math.random() * 255)
-    var dB      = Math.round(Math.random() * 255)
-    var ipaddress  = dA + "." + dB + ".0.1";
+    var dA      = Math.round(Math.random() * 255),
+        dB      = Math.round(Math.random() * 255);
 
-    return ipaddress;
+    return dA + "." + dB + ".0.1";
 }
 
 @implementation TNHypervisorNetworksController : TNModule
@@ -51,7 +50,7 @@ function generateIPForNewNetwork()
     @outlet CPTextField                 fieldName;
     @outlet CPView                      viewTableContainer;
     @outlet TNWindowNetworkProperties   windowProperties;
-    
+
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;
     CPButton                            _editButton;
@@ -64,9 +63,9 @@ function generateIPForNewNetwork()
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
-    
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    
+
     /* VM table view */
     _datasourceNetworks     = [[TNTableViewDataSource alloc] init];
     _tableViewNetworks      = [[CPTableView alloc] initWithFrame:[scrollViewNetworks bounds]];
@@ -74,7 +73,7 @@ function generateIPForNewNetwork()
     [scrollViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewNetworks setAutohidesScrollers:YES];
     [scrollViewNetworks setDocumentView:_tableViewNetworks];
-    
+
 
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -84,40 +83,42 @@ function generateIPForNewNetwork()
     [_tableViewNetworks setTarget:self];
     [_tableViewNetworks setDelegate:self];
     [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
-    
-    var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"icon"];
-    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
+    var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"icon"],
+        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)],
+        columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"],
+        columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"],
+        columForwardMode = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardMode"],
+        columForwardDevice = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardDevice"],
+        columBridgeIP = [[CPTableColumn alloc] initWithIdentifier:@"bridgeIP"],
+        columBridgeNetmask = [[CPTableColumn alloc] initWithIdentifier:@"bridgeNetmask"];
+
+
     [imgView setImageScaling:CPScaleNone];
     [columNetworkEnabled setDataView:imgView];
     [columNetworkEnabled setWidth:16];
     [[columNetworkEnabled headerView] setStringValue:@""];
-    
-    var columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"];
+
     [[columNetworkName headerView] setStringValue:@"Name"];
     [columNetworkName setWidth:250];
     [columNetworkName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkName" ascending:YES]];
 
-    var columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"];
     [[columBridgeName headerView] setStringValue:@"Bridge"];
     [columBridgeName setWidth:80];
     [columBridgeName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeName" ascending:YES]];
 
-    var columForwardMode = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardMode"];
     [[columForwardMode headerView] setStringValue:@"Forward Mode"];
     [columForwardMode setWidth:120];
     [columForwardMode setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardMode" ascending:YES]];
 
-    var columForwardDevice = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardDevice"];
     [[columForwardDevice headerView] setStringValue:@"Forward Device"];
     [columForwardDevice setWidth:120];
     [columForwardDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardDevice" ascending:YES]];
 
-    var columBridgeIP = [[CPTableColumn alloc] initWithIdentifier:@"bridgeIP"];
     [[columBridgeIP headerView] setStringValue:@"Bridge IP"];
     [columBridgeIP setWidth:90];
     [columBridgeIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeIP" ascending:YES]];
 
-    var columBridgeNetmask = [[CPTableColumn alloc] initWithIdentifier:@"bridgeNetmask"];
     [[columBridgeNetmask headerView] setStringValue:@"Bridge Netmask"];
     [columBridgeNetmask setWidth:150];
     [columBridgeNetmask setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeNetmask" ascending:YES]];
@@ -132,15 +133,15 @@ function generateIPForNewNetwork()
 
     [_datasourceNetworks setTable:_tableViewNetworks];
     [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"bridgeName", @"bridgeForwardMode", @"bridgeForwardDevice", @"bridgeIP", @"bridgeNetmask"]];
-    
+
     [fieldFilterNetworks setTarget:_datasourceNetworks];
     [fieldFilterNetworks setAction:@selector(filterObjects:)];
-    
+
     [_tableViewNetworks setDataSource:_datasourceNetworks];
     [_tableViewNetworks setDelegate:self];
-    
+
     [windowProperties setDelegate:self];
-        
+
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""];
     [menu addItem:[CPMenuItem separatorItem]];
@@ -150,36 +151,36 @@ function generateIPForNewNetwork()
     [menu addItem:[CPMenuItem separatorItem]];
     [menu addItemWithTitle:@"Delete" action:@selector(delNetwork:) keyEquivalent:@""];
     [_tableViewNetworks setMenu:menu];
-    
+
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(addNetwork:)];
-    
+
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(delNetwork:)];
-    
+
     _activateButton = [CPButtonBar plusButton];
     [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)]];
     [_activateButton setTarget:self];
     [_activateButton setAction:@selector(activateNetwork:)];
-    
+
     _deactivateButton = [CPButtonBar plusButton];
     [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)]];
     [_deactivateButton setTarget:self];
     [_deactivateButton setAction:@selector(deactivateNetwork:)];
-    
+
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNetwork:)];
-    
+
     [_minusButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
     [_editButton setEnabled:NO];
-    
-    
+
+
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton]];
 
 }
@@ -189,14 +190,14 @@ function generateIPForNewNetwork()
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    
+
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-    
+
     [_tableViewNetworks setDelegate:nil];
     [_tableViewNetworks setDelegate:self]; // hum....
-    
+
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
 }
@@ -230,12 +231,13 @@ function generateIPForNewNetwork()
 
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
-    var sender  = [somePushInfo objectForKey:@"owner"];
-    var type    = [somePushInfo objectForKey:@"type"];
-    var change  = [somePushInfo objectForKey:@"change"];
-    var date    = [somePushInfo objectForKey:@"date"];
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"];
+
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-    
+
     [self getHypervisorNetworks];
     return YES;
 }
@@ -244,11 +246,11 @@ function generateIPForNewNetwork()
 - (void)getHypervisorNetworks
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGet}];
-    
+
     [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
 }
 
@@ -267,46 +269,44 @@ function generateIPForNewNetwork()
 
         for (var i = 0; i < [allNetworks count]; i++)
         {
-            var network             = [allNetworks objectAtIndex:i];
-            var name                = [[network firstChildWithName:@"name"] text];
-            var uuid                = [[network firstChildWithName:@"uuid"] text];
-            var bridge              = [network firstChildWithName:@"bridge"];
-            var bridgeName          = [bridge valueForAttribute:@"name"];
-            var bridgeSTP           = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO;
-            var bridgeDelay         = [bridge valueForAttribute:@"forwardDelay"];
-            var forward             = [network firstChildWithName:@"forward"];
-            var forwardMode         = [forward valueForAttribute:@"mode"];
-            var forwardDev          = [forward valueForAttribute:@"dev"];
-            var ip                  = [network firstChildWithName:@"ip"];
-            var bridgeIP            = [ip valueForAttribute:@"address"];
-            var bridgeNetmask       = [ip valueForAttribute:@"netmask"];
-            var dhcp                = [ip firstChildWithName:@"dhcp"];
-            var DHCPEnabled         = (dhcp) ? YES : NO;
-            var DHCPRangeEntries    = [dhcp childrenWithName:@"range"];
-            var DHCPHostEntries     = [dhcp childrenWithName:@"host"];
-            var networkActive       = [activeNetworks containsObject:network];
+            var network                 = [allNetworks objectAtIndex:i],
+                name                    = [[network firstChildWithName:@"name"] text],
+                uuid                    = [[network firstChildWithName:@"uuid"] text],
+                bridge                  = [network firstChildWithName:@"bridge"],
+                bridgeName              = [bridge valueForAttribute:@"name"],
+                bridgeSTP               = ([bridge valueForAttribute:@"stp"] == @"on") ? YES : NO,
+                bridgeDelay             = [bridge valueForAttribute:@"forwardDelay"],
+                forward                 = [network firstChildWithName:@"forward"],
+                forwardMode             = [forward valueForAttribute:@"mode"],
+                forwardDev              = [forward valueForAttribute:@"dev"],
+                ip                      = [network firstChildWithName:@"ip"],
+                bridgeIP                = [ip valueForAttribute:@"address"],
+                bridgeNetmask           = [ip valueForAttribute:@"netmask"],
+                dhcp                    = [ip firstChildWithName:@"dhcp"],
+                DHCPEnabled             = (dhcp) ? YES : NO,
+                DHCPRangeEntries        = [dhcp childrenWithName:@"range"],
+                DHCPHostEntries         = [dhcp childrenWithName:@"host"],
+                networkActive           = [activeNetworks containsObject:network],
+                DHCPRangeEntriesArray   = [CPArray array],
+                DHCPHostEntriesArray    = [CPArray array];
 
-            var DHCPRangeEntriesArray = [CPArray array];
             for (var j = 0; DHCPEnabled && j < [DHCPRangeEntries count]; j++)
             {
-                var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j];
-                var randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"];
-                var rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"];
-
-                var DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
+                var DHCPEntry           = [DHCPRangeEntries objectAtIndex:j],
+                    randgeStartAddr     = [DHCPEntry valueForAttribute:@"start"],
+                    rangeEndAddr        = [DHCPEntry valueForAttribute:@"end"],
+                    DHCPEntryObject     = [TNDHCPEntry DHCPRangeWithStartAddress:randgeStartAddr endAddress:rangeEndAddr];
 
                 [DHCPRangeEntriesArray addObject:DHCPEntryObject];
             }
 
-            var DHCPHostEntriesArray = [CPArray array];
             for (var j = 0; DHCPEnabled && j < [DHCPHostEntries count]; j++)
             {
-                var DHCPEntry   = [DHCPHostEntries objectAtIndex:j];
-                var hostsMac    = [DHCPEntry valueForAttribute:@"mac"];
-                var hostName    = [DHCPEntry valueForAttribute:@"name"];
-                var hostIP      = [DHCPEntry valueForAttribute:@"ip"];
-
-                var DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
+                var DHCPEntry       = [DHCPHostEntries objectAtIndex:j],
+                    hostsMac        = [DHCPEntry valueForAttribute:@"mac"],
+                    hostName        = [DHCPEntry valueForAttribute:@"name"],
+                    hostIP          = [DHCPEntry valueForAttribute:@"ip"],
+                    DHCPEntryObject = [TNDHCPEntry DHCPHostWithMac:hostsMac name:hostName ip:hostIP];
 
                 [DHCPHostEntriesArray addObject:DHCPEntryObject];
             }
@@ -323,7 +323,7 @@ function generateIPForNewNetwork()
                                         DHCPEntriesHosts:DHCPHostEntriesArray
                                           networkEnabled:networkActive
                                               STPEnabled:bridgeSTP
-                                             DHCPEnabled:DHCPEnabled]
+                                             DHCPEnabled:DHCPEnabled];
 
             [_datasourceNetworks addObject:newNetwork];
         }
@@ -343,9 +343,9 @@ function generateIPForNewNetwork()
     if (selectedIndex == -1)
         return
 
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
-    
+    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex],
+        stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkDefine}];
@@ -367,12 +367,14 @@ function generateIPForNewNetwork()
     [stanza up];
 
     [stanza addChildWithName:@"ip" andAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
+
     var dhcp = [networkObject isDHCPEnabled];
     if (dhcp)
     {
         [stanza addChildWithName:@"dhcp"];
 
         var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
+
         for (var i = 0; i < [DHCPRangeEntries count]; i++)
         {
             var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
@@ -382,6 +384,7 @@ function generateIPForNewNetwork()
         }
 
         var DHCPHostsEntries = [networkObject DHCPEntriesHosts];
+
         for (var i = 0; i < [DHCPHostsEntries count]; i++)
         {
             var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
@@ -417,7 +420,7 @@ function generateIPForNewNetwork()
 
         [windowProperties setNetwork:networkObject];
         [windowProperties setTableNetwork:_tableViewNetworks];
-        
+
         [windowProperties center];
         [windowProperties makeKeyAndOrderFront:nil];
     }
@@ -442,7 +445,7 @@ function generateIPForNewNetwork()
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkUndefine, 
+        "action": TNArchipelTypeHypervisorNetworkUndefine,
         "uuid": [networkObject UUID]}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
@@ -450,8 +453,8 @@ function generateIPForNewNetwork()
 
 - (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [_connection getUniqueId];
-    var defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
+    var uid             = [_connection getUniqueId],
+        defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
 
     [self sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:) withSpecificID:uid];
 }
@@ -460,8 +463,7 @@ function generateIPForNewNetwork()
 {
     if ([aStanza type] == @"result")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
     }
     else
     {
@@ -471,22 +473,22 @@ function generateIPForNewNetwork()
 
 - (IBAction)activateNetwork:(id)sender
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
-    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
-    
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+
     for (var i = 0; i < [objects count]; i++)
     {
-        var networkObject   = [objects objectAtIndex:i];
-        var stanza          = [TNStropheStanza iqWithType:@"set"];
+        var networkObject   = [objects objectAtIndex:i],
+            stanza          = [TNStropheStanza iqWithType:@"set"];
 
         if (![networkObject isNetworkEnabled])
         {
             [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
             [stanza addChildWithName:@"archipel" andAttributes:{
-                "xmlns": TNArchipelTypeHypervisorNetwork, 
-                "action": TNArchipelTypeHypervisorNetworkCreate, 
+                "xmlns": TNArchipelTypeHypervisorNetwork,
+                "action": TNArchipelTypeHypervisorNetworkCreate,
                 "uuid": [networkObject UUID]}];
-            
+
             [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
             [_tableViewNetworks deselectAll];
         }
@@ -506,19 +508,19 @@ function generateIPForNewNetwork()
 
 - (void)performDeactivateNetwork:(id)someUserInfo
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
-    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
-    
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+
     for (var i = 0; i < [objects count]; i++)
     {
-        var networkObject   = [objects objectAtIndex:i];
-        var stanza          = [TNStropheStanza iqWithType:@"set"];
+        var networkObject   = [objects objectAtIndex:i],
+            stanza          = [TNStropheStanza iqWithType:@"set"];
 
         if ([networkObject isNetworkEnabled])
         {
             [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
             [stanza addChildWithName:@"archipel" andAttributes:{
-                "xmlns": TNArchipelTypeHypervisorNetwork, 
+                "xmlns": TNArchipelTypeHypervisorNetwork,
                 "action": TNArchipelTypeHypervisorNetworkDestroy,
                 "uuid" : [networkObject UUID]}];
 
@@ -532,33 +534,31 @@ function generateIPForNewNetwork()
 
 - (IBAction)addNetwork:(id)sender
 {
-    var uuid            = [CPString UUID];
-    var ip              = generateIPForNewNetwork();
-    var ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2";
-    var ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254";
-    
-    var baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd];
-    
-    var newNetwork = [TNNetwork networkWithName:uuid
-                                            UUID:uuid
-                                      bridgeName:@"br" + Math.round((Math.random() * 42000))
-                                     bridgeDelay:@"0"
-                               bridgeForwardMode:@"nat"
-                             bridgeForwardDevice:@"eth0"
-                                        bridgeIP:ip
-                                   bridgeNetmask:@"255.255.0.0"
-                               DHCPEntriesRanges:[baseDHCPEntry]
-                                DHCPEntriesHosts:[CPArray array]
-                                  networkEnabled:NO
-                                      STPEnabled:NO
-                                     DHCPEnabled:YES];
+    var uuid            = [CPString UUID],
+        ip              = generateIPForNewNetwork(),
+        ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
+        ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
+        baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
+        newNetwork      = [TNNetwork networkWithName:uuid
+                                                UUID:uuid
+                                          bridgeName:@"br" + Math.round((Math.random() * 42000))
+                                         bridgeDelay:@"0"
+                                   bridgeForwardMode:@"nat"
+                                 bridgeForwardDevice:@"eth0"
+                                            bridgeIP:ip
+                                       bridgeNetmask:@"255.255.0.0"
+                                   DHCPEntriesRanges:[baseDHCPEntry]
+                                    DHCPEntriesHosts:[CPArray array]
+                                      networkEnabled:NO
+                                          STPEnabled:NO
+                                         DHCPEnabled:YES];
 
     [_datasourceNetworks addObject:newNetwork];
     [_tableViewNetworks reloadData];
-    
+
     var index = [_datasourceNetworks indexOfObject:newNetwork];
     [_tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    
+
     [self defineNetworkXML:sender];
     [self editNetwork:nil];
 }
@@ -577,12 +577,13 @@ function generateIPForNewNetwork()
 
 - (void)performDelNetwork:(id)someUserInfo
 {
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes];
-    var objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
 
     for (var i = 0; i < [objects count]; i++)
     {
         var networkObject   = [objects objectAtIndex:i];
+
         if ([networkObject isNetworkEnabled])
         {
             [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
@@ -590,13 +591,13 @@ function generateIPForNewNetwork()
         }
 
         var stanza    = [TNStropheStanza iqWithType:@"get"];
-        
+
         [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
         [stanza addChildWithName:@"archipel" andAttributes:{
-            "xmlns": TNArchipelTypeHypervisorNetwork, 
+            "xmlns": TNArchipelTypeHypervisorNetwork,
             "action": TNArchipelTypeHypervisorNetworkUndefine,
             "uuid": [networkObject UUID]}];
-        
+
         [self sendStanza:stanza andRegisterSelector:@selector(didDelNetwork:)];
     }
 }
@@ -605,8 +606,7 @@ function generateIPForNewNetwork()
 {
     if ([aStanza type] == @"result")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
     }
     else
     {
@@ -619,8 +619,7 @@ function generateIPForNewNetwork()
 {
     if ([aStanza type] == @"result")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
     }
     else
     {
@@ -633,24 +632,24 @@ function generateIPForNewNetwork()
 // -(BOOL)windowShouldClose:(id)window
 // {
 //     [self defineNetworkXML:nil];
-// 
+//
 //     return YES;
 // }
 
 - (void)didTableSelectionChange:(CPNotification)aNotification
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-    
+
     [_minusButton setEnabled:NO];
     [_editButton setEnabled:NO];
     [_activateButton setEnabled:NO];
     [_deactivateButton setEnabled:NO];
-    
+
     if ([_tableViewNetworks numberOfSelectedRows] == 0)
         return;
-        
+
     var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-    
+
     if ([networkObject isNetworkEnabled])
     {
         [_deactivateButton setEnabled:YES];
@@ -661,7 +660,7 @@ function generateIPForNewNetwork()
         [_editButton setEnabled:YES];
         [_activateButton setEnabled:YES];
     }
-    
+
     return YES;
 }
 
