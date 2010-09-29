@@ -1,17 +1,17 @@
-/*  
+/*
  * TNSampleTabModule.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,7 +30,7 @@ TNArchipelTypeVirtualMachineVMCastingDetach                 = @"detach";
 TNArchipelTypeVirtualMachineVMCastingPackage                = @"package";
 
 TNArchipelPushNotificationVMCasting                         = @"archipel:push:vmcasting";
-    
+
 /*! @defgroup  virtualmachinepackaging Module VirtualMachinePackaging
     @desc Allow to attach virtual machine from installed appliances
 */
@@ -49,7 +49,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     @outlet CPView                      maskingView;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
-    
+
     CPButton                            _detachButton;
     CPButton                            _attachButton;
     CPButton                            _packageButton;
@@ -61,13 +61,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [fieldJID setSelectable:YES];
-    
+
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
     _tableAppliances         = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
 
     var bundle = [CPBundle bundleForClass:[self class]];
-    
+
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setAutohidesScrollers:YES];
     [mainScrollView setDocumentView:_tableAppliances];
@@ -80,63 +80,58 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [_tableAppliances setDoubleAction:@selector(tableDoubleClicked:)];
     [_tableAppliances setAllowsEmptySelection:YES];
     [_tableAppliances setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    
-    var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
+
+    var columnName      = [[CPTableColumn alloc] initWithIdentifier:@"name"],
+        columnComment   = [[CPTableColumn alloc] initWithIdentifier:@"comment"],
+        columnStatus    = [[CPTableColumn alloc] initWithIdentifier:@"status"],
+        imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
     [columnName setWidth:200]
     [[columnName headerView] setStringValue:@"Name"];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-    
-    var columnComment = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
+
     [columnComment setWidth:250];
     [[columnComment headerView] setStringValue:@"Comment"];
     [columnComment setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
-    
-    var columnUUID = [[CPTableColumn alloc] initWithIdentifier:@"UUID"];
-    [[columnUUID headerView] setStringValue:@"UUID"];
-    [columnUUID setWidth:250];
-    [columnUUID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"UUID" ascending:YES]];
-    
-    var columnStatus    = [[CPTableColumn alloc] initWithIdentifier:@"status"];
-    var imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
     [imgView setImageScaling:CPScaleNone];
     [columnStatus setDataView:imgView];
     [columnStatus setWidth:16];
     [[columnStatus headerView] setStringValue:@" "];
-    
+
     [_tableAppliances addTableColumn:columnStatus];
     [_tableAppliances addTableColumn:columnName];
     [_tableAppliances addTableColumn:columnComment];
-    //[_tableAppliances addTableColumn:columnUUID];
 
     [_appliancesDatasource setTable:_tableAppliances];
     [_appliancesDatasource setSearchableKeyPaths:[@"name", @"path", @"comment"]]
-    
+
     [_tableAppliances setDataSource:_appliancesDatasource];
-    
+
     [fieldFilterAppliance setTarget:_appliancesDatasource];
     [fieldFilterAppliance setAction:@selector(filterObjects:)];
-    
+
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Install" action:@selector(attach:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Detach" action:@selector(detach:) keyEquivalent:@""];
     [_tableAppliances setMenu:menu];
-    
-    _packageButton      = [CPButtonBar plusButton];
+
+    _packageButton  = [CPButtonBar plusButton];
     [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-package.png"] size:CPSizeMake(16, 16)]];
     [_packageButton setTarget:self];
     [_packageButton setAction:@selector(openNewApplianceWindow:)];
-    
-    
+
+
     _attachButton  = [CPButtonBar plusButton];
     [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-lock.png"] size:CPSizeMake(16, 16)]];
     [_attachButton setTarget:self];
     [_attachButton setAction:@selector(attach:)];
-    
+
     _detachButton  = [CPButtonBar plusButton];
     [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unlock.png"] size:CPSizeMake(16, 16)]];
     [_detachButton setTarget:self];
     [_detachButton setAction:@selector(detach:)];
-    
+
     [_attachButton setEnabled:NO];
     [_detachButton setEnabled:NO];
     [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
@@ -145,24 +140,24 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 - (void)willLoad
 {
     [super willLoad];
-    
-    var center = [CPNotificationCenter defaultCenter];   
+
+    var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
-    
+
     [_tableAppliances setDelegate:nil];
     [_tableAppliances setDelegate:self]; // hum....
-    
+
     [self getInstalledAppliances];
 }
 
 - (void)willUnload
 {
     [super willUnload];
-    
+
     [_appliancesDatasource removeAllObjects];
     [_tableAppliances reloadData];
 }
@@ -173,7 +168,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
+
     [self checkIfRunning];
 }
 
@@ -219,16 +214,16 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
-    var sender  = [somePushInfo objectForKey:@"owner"];
-    var type    = [somePushInfo objectForKey:@"type"];
-    var change  = [somePushInfo objectForKey:@"change"];
-    var date    = [somePushInfo objectForKey:@"date"];
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"];
+
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-    
+
     if (change == @"applianceinstalled")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
     }
 
     if ((change != "applianceunpacking") && (change != "applianceunpacked") && (change != @"appliancecopying"))
@@ -249,25 +244,25 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 {
     if ([_tableAppliances numberOfSelectedRows] <= 0)
         return;
-    
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
-    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
-    
+
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+        appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
+
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
         [self detach:sender];
     else
         [self attach:sender];
-    
+
 }
 
 - (void)getInstalledAppliances
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingGet}];
-        
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
 }
 
@@ -281,14 +276,14 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
         for (var i = 0; i < [appliances count]; i++)
         {
-            var appliance   = [appliances objectAtIndex:i];
-            var name        = [appliance valueForAttribute:@"name"];
-            var comment     = [appliance valueForAttribute:@"description"];
-            var path        = [appliance valueForAttribute:@"path"];
-            var uuid        = [appliance valueForAttribute:@"uuid"];
-            var status      = [appliance valueForAttribute:@"status"]
+            var appliance       = [appliances objectAtIndex:i],
+                name            = [appliance valueForAttribute:@"name"],
+                comment         = [appliance valueForAttribute:@"description"],
+                path            = [appliance valueForAttribute:@"path"],
+                uuid            = [appliance valueForAttribute:@"uuid"],
+                status          = [appliance valueForAttribute:@"status"],
+                newAppliance    = [TNInstalledAppliance InstalledApplianceWithName:name UUID:uuid path:path comment:comment status:status];
 
-            var newAppliance = [TNInstalledAppliance InstalledApplianceWithName:name UUID:uuid path:path comment:comment status:status];
             [_appliancesDatasource addObject:newAppliance];
         }
         [_tableAppliances reloadData];
@@ -308,21 +303,21 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
          [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
          return;
     }
-    
+
     var alert = [TNAlert alertWithTitle:@"Attach appliance"
                                 message:@"Are you sure you want to attach this appliance? This will reset all your virtual machine."
                                 delegate:self
                                  actions:[["Attach", @selector(performAttach:)], ["Cancel", nil]]];
     [alert runModal];
-    
+
 }
 
 - (void)performAttach:(id)someUserInfo
 {
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
-    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
-    var stanza          = [TNStropheStanza iqWithType:@"set"];
-    
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+        appliance       = [_appliancesDatasource objectAtIndex:selectedIndex],
+        stanza          = [TNStropheStanza iqWithType:@"set"];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingAttach,
@@ -335,10 +330,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 - (void)didAttach:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {        
-        var growl   = [TNGrowlCenter defaultCenter];
-        var msg     = @"Instanciation has started";
-        [growl pushNotificationWithTitle:@"Appliance" message:msg];
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Instanciation has started"];
     }
     else
     {
@@ -354,7 +347,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
          [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
          return;
     }
-    
+
     var alert = [TNAlert alertWithTitle:@"Detach from appliance"
                                 message:@"Are you sure you want to detach virtual machine from this appliance?"
                                 delegate:self
@@ -364,17 +357,17 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
 - (void)performDetach:(id)someUserInfo
 {
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
-    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
-    
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+        appliance       = [_appliancesDatasource objectAtIndex:selectedIndex],
+        stanza          = [TNStropheStanza iqWithType:@"set"];
+
     if ([appliance statusString] != TNArchipelApplianceStatusInstalled)
         return;
-    
-    var stanza          = [TNStropheStanza iqWithType:@"set"];
+
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineVMCastingDetach}];    
+        "action": TNArchipelTypeVirtualMachineVMCastingDetach}];
 
     [_detachButton setEnabled:NO];
     [_entity sendStanza:stanza andRegisterSelector:@selector(didDetach:) ofObject:self];
@@ -383,11 +376,9 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 - (void)didDetach:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {        
-        var growl   = [TNGrowlCenter defaultCenter];
-        var msg     = @"Appliance has been detached";
-        [growl pushNotificationWithTitle:@"Appliance" message:msg];
-        
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been detached"];
+
         [_attachButton setEnabled:YES];
     }
     else
@@ -404,27 +395,25 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
          [CPAlert alertWithTitle:@"Error" message:@"Virtual machine must not be running to package it."];
          return;
     }
-    
-    var stanza  = [TNStropheStanza iqWithType:@"get"];
-    var name    = [fieldNewApplianceName stringValue];
-    
+
+    var stanza  = [TNStropheStanza iqWithType:@"get"],
+        name    = [fieldNewApplianceName stringValue];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingPackage,
         "name": name}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(didPackageAppliance:) ofObject:self];
-    
+
     [windowNewAppliance close];
 }
 
 - (void)didPackageAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {        
-        var growl   = [TNGrowlCenter defaultCenter];
-        var msg     = @"Virtual machine has been packaged";
-        [growl pushNotificationWithTitle:@"Appliance" message:msg];
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Virtual machine has been packaged"];
     }
     else
     {
@@ -437,21 +426,19 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 {
     [_attachButton setEnabled:NO];
     [_detachButton setEnabled:NO];
-    
+
     if ([_tableAppliances numberOfSelectedRows] <= 0)
         return;
-    
-    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex];
-    var appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
-    
+
+    var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
+        appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
+
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
         [_detachButton setEnabled:YES];
     else
         [_attachButton setEnabled:YES];
-    
+
 }
-
-
 @end
 
 
