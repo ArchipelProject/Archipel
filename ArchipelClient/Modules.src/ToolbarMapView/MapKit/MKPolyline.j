@@ -15,13 +15,15 @@
     return [[MKPolyline alloc] init];
 }
 
-- (id)init {
+- (id)init
+{
     return [self initWithLocations:nil];
 }
 
 - (id)initWithLocations:(CPArray)someLocations
 {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         _locations = someLocations;
         _colorCode = @"#ff0000";
         _lineStroke = 5;
@@ -29,27 +31,33 @@
     return self;
 }
 
-- (void)addLocation:(MKLocation)aLocation {
-    if (!_locations) {
+- (void)addLocation:(MKLocation)aLocation
+{
+    if (!_locations)
+    {
         _locations = [[CPArray alloc] init];
     }
-    
+
     [_locations addObject:aLocation];
 }
 
-- (Polyline)googlePolyline {
-    if (_locations) {
-        var gm = [MKMapView gmNamespace];
-        var locEnum = [_locations objectEnumerator];
-        var loc = nil
-        var lineCoordinates = [];
-        while (loc = [locEnum nextObject]) {
+- (Polyline)googlePolyline
+{
+    if (_locations)
+    {
+        var gm = [MKMapView gmNamespace],
+            locEnum = [_locations objectEnumerator],
+            loc = nil,
+            lineCoordinates = [];
+
+        while (loc = [locEnum nextObject])
+        {
             lineCoordinates.push([loc googleLatLng]);
         }
-        
+
         return new gm.Polyline(lineCoordinates, _colorCode, _lineStroke);
     }
-    
+
     return nil;
 }
 

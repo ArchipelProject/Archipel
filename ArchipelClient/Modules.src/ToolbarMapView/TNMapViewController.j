@@ -37,35 +37,35 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 @implementation TNMapViewController : TNModule
 {
-    @outlet CPScrollView    scrollViewDestination;
-    @outlet CPScrollView    scrollViewOrigin;
-    @outlet CPSplitView     splitViewHorizontal;
-    @outlet CPSplitView     splitViewVertical;
-    @outlet CPTextField     textFieldDestinationName;
-    @outlet CPTextField     textFieldOriginName;
-    @outlet CPTextField     textFieldDestinationNameLabel;
-    @outlet CPTextField     textFieldOriginNameLabel;
-    @outlet CPView          viewOrigin;
-    @outlet CPView          viewDestination;
-    @outlet CPSearchField   filterFieldOrigin;
-    @outlet CPSearchField   filterFieldDestination;
-    @outlet CPView          mapViewContainer;
+    @outlet CPScrollView            scrollViewDestination;
+    @outlet CPScrollView            scrollViewOrigin;
+    @outlet CPSearchField           filterFieldDestination;
+    @outlet CPSearchField           filterFieldOrigin;
+    @outlet CPSplitView             splitViewHorizontal;
+    @outlet CPSplitView             splitViewVertical;
+    @outlet CPTextField             textFieldDestinationName;
+    @outlet CPTextField             textFieldDestinationNameLabel;
+    @outlet CPTextField             textFieldOriginName;
+    @outlet CPTextField             textFieldOriginNameLabel;
+    @outlet CPView                  mapViewContainer;
+    @outlet CPView                  viewDestination;
+    @outlet CPView                  viewOrigin;
 
     CPTableView                     _tableVMDestination;
     CPTableView                     _tableVMOrigin;
     MKMapView                       _mainMapView;
-    TNStropheContact                _destinationHypervisor;
-    TNStropheContact                _originHypervisor;
     TNDragDropTableViewDataSource   _dataSourceVMDestination;
     TNDragDropTableViewDataSource   _dataSourceVMOrigin;
+    TNStropheContact                _destinationHypervisor;
+    TNStropheContact                _originHypervisor;
 }
 
 - (id)awakeFromCib
 {
-    var posy;
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var bundle      = [CPBundle bundleForClass:[self class]];
-    var gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
+    var posy,
+        defaults    = [TNUserDefaults standardUserDefaults],
+        bundle      = [CPBundle bundleForClass:[self class]],
+        gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
     
     [viewOrigin setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
     [viewDestination setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -106,15 +106,16 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableVMOrigin setAllowsColumnResizing:YES];
     [_tableVMOrigin setAllowsEmptySelection:YES];
 
-    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
+        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
+        vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
+        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+        
     [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
-    var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
-    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
     [vmColumStatusIcon setWidth:16];
@@ -147,15 +148,16 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableVMDestination setAllowsColumnResizing:YES];
     [_tableVMDestination setAllowsEmptySelection:YES];
 
-    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
+    var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
+        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
+        vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
+        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+        
     [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
-    var vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
     [[vmColumJID headerView] setStringValue:@"Jabber ID"];
 
-    var vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"];
-    var imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
@@ -250,12 +252,11 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     if ([aStanza type] == @"result")
     {
-        var latitude    = [[aStanza firstChildWithName:@"Latitude"] text];
-        var longitude   = [[aStanza firstChildWithName:@"Longitude"] text];
-        var item        = [_roster contactWithJID:[aStanza fromNode]];
-
-        var loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude];
-        var marker      = [[MKMarker alloc] initAtLocation:loc];
+        var latitude    = [[aStanza firstChildWithName:@"Latitude"] text],
+            longitude   = [[aStanza firstChildWithName:@"Longitude"] text],
+            item        = [_roster contactWithJID:[aStanza fromNode]],
+            loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude],
+            marker      = [[MKMarker alloc] initAtLocation:loc];
 
         [marker setDraggable:NO];
         [marker setClickable:YES];
@@ -291,21 +292,19 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
-        var center      = [CPNotificationCenter defaultCenter];
 
         [_dataSourceVMOrigin removeAllObjects];
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text];
-            var entry   = [_roster contactWithJID:JID];
+            var JID     = [[queryItems objectAtIndex:i] text],
+                entry   = [_roster contactWithJID:JID];
 
             if (entry)
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
                     [_dataSourceVMOrigin addObject:entry];
-                    //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
                }
             }
         }
@@ -322,21 +321,19 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     if ([aStanza type] == @"result")
     {
         var queryItems  = [aStanza childrenWithName:@"item"];
-        var center      = [CPNotificationCenter defaultCenter];
 
         [_dataSourceVMDestination removeAllObjects];
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text];
-            var entry   = [_roster contactWithJID:JID];
+            var JID     = [[queryItems objectAtIndex:i] text],
+                entry   = [_roster contactWithJID:JID];
 
             if (entry)
             {
                if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
                {
                     [_dataSourceVMDestination addObject:entry];
-                    //[center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
                }
             }
         }
@@ -352,8 +349,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 // marker delegate
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
-    var item    = [someUserInfo objectForKey:@"rosterItem"];
-    var alert   = [TNAlert alertWithTitle:@"Define path"
+    var item    = [someUserInfo objectForKey:@"rosterItem"],
+        alert   = [TNAlert alertWithTitle:@"Define path"
                                 message:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
                                 delegate:self
                                  actions:[[@"Cancel", nil], ["Destination",  @selector(setDestination:)], ["Origin", @selector(setOrigin:)]]];
@@ -382,9 +379,9 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 */
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var splitView   = [aNotification object];
-    var newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        splitView   = [aNotification object],
+        newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
     
     [defaults setInteger:newPos forKey:@"mapViewSplitViewPosition"];
 }
@@ -409,12 +406,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     if ([aStanza type] == @"result")
     {
-        // [_tableHypervisorDestination deselectAll];
-        // [_tableHypervisorVirtualMachines deselectAll];
-        // [_tableHypervisorOrigin deselectAll];
-        
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
     }
     else
     {

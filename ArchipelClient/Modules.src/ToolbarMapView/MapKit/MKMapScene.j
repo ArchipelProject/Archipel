@@ -11,7 +11,8 @@
 - (id)initWithMapView:(MKMapView)mapView
 {
 
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         _mapView = mapView;
         _mapItems = [[CPArray alloc] init];
     }
@@ -48,20 +49,26 @@
 
 - (void)connection:(CPURLConnection)aConnection didFailWithError:(CPError)anError
 {
-    if (aConnection == _readConnection) {
+    if (aConnection == _readConnection)
+    {
         alert('Load failed! ' + anError);
         _readConnection = nil;
-    } else {
+    }
+    else
+    {
         alert('Save failed! ' + anError);
     }
 }
 - (void)connection:(CPURLConnection)aConnection didReceiveData:(CPString)aData
 {
-    if (aConnection == _readConnection) {
-        var aData = aData.replace('while(1);', '');
-        var mapItems = CPJSObjectCreateWithJSON(aData);
-        var gm = [MKMapView gmNamespace];
-        for (var i in mapItems) {
+    if (aConnection == _readConnection)
+    {
+        var aData = aData.replace('while(1);', ''),
+            mapItems = CPJSObjectCreateWithJSON(aData),
+            gm = [MKMapView gmNamespace];
+        
+        for (var i in mapItems)
+        {
             var mapItem = mapItems[i];
             [self addMapItem:[[MKMarker alloc] initAtLocation:new gm.LatLng(mapItem.anchor.y, mapItem.anchor.x)]];
         }
@@ -69,10 +76,13 @@
 }
 - (void)connectionDidFinishLoading:(CPURLConnection)aConnection
 {
-    if (aConnection == _readConnection) {
+    if (aConnection == _readConnection)
+    {
         alert('Loaded successfully!');
         _readConnection = nil;
-    } else {
+    }
+    else
+    {
         alert('Saved successfully!');
     }
 }
@@ -82,9 +92,8 @@
 
 - (Object)mapItemsAsJSObject
 {
-    var items = [];
-
-    var enumerator = [_mapItems objectEnumerator],
+    var items = [],
+        enumerator = [_mapItems objectEnumerator],
         item;
 
     while (item = [enumerator nextObject])
@@ -99,7 +108,8 @@
 
 - (id)initWithCoder:(CPCoder)coder
 {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         _mapItems = [coder decodeObjectForKey:@"mapItems"];
     }
     return self;

@@ -18,13 +18,15 @@
     return [[MKPolygon alloc] init];
 }
 
-- (id)init {
+- (id)init
+{
     return [self initWithLocations:nil];
 }
 
 - (id)initWithLocations:(CPArray)someLocations
 {
-    if (self = [super init]) {
+    if (self = [super init])
+    {
         _locations = someLocations;
         _lineColorCode = @"#ff0000";
         _fillColorCode = @"#000000";
@@ -35,21 +37,27 @@
     return self;
 }
 
-- (void)addLocation:(MKLocation)aLocation {
-    if (!_locations) {
+- (void)addLocation:(MKLocation)aLocation
+{
+    if (!_locations)
+    {
         _locations = [[CPArray alloc] init];
     }
 
     [_locations addObject:aLocation];
 }
 
-- (Polygon)googlePolygon {
-    if (_locations) {
-        var gm = [MKMapView gmNamespace];
-        var locEnum = [_locations objectEnumerator];
-        var loc = nil
-        var lineCoordinates = [];
-        while (loc = [locEnum nextObject]) {
+- (Polygon)googlePolygon
+{
+    if (_locations)
+    {
+        var gm = [MKMapView gmNamespace],
+            locEnum = [_locations objectEnumerator],
+            loc = nil,
+            lineCoordinates = [];
+        
+        while (loc = [locEnum nextObject])
+        {
             lineCoordinates.push([loc googleLatLng]);
         }
 

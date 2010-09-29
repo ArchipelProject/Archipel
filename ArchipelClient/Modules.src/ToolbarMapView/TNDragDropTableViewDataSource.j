@@ -53,9 +53,9 @@ TNDragTypeMigration                         = @"TNDragTypeMigration";
 - (BOOL)tableView:(CPTableView)tableView acceptDrop:(id <CPDraggingInfo>)info row:(int)row dropOperation:(CPTableViewDropOperation)operation
 {
     
-    var pboard  = [info draggingPasteboard];
-    var data    = [pboard dataForType:TNDragTypeMigration];
-    var object  = [CPKeyedUnarchiver unarchiveObjectWithData:_draggedItem];
+    var pboard  = [info draggingPasteboard],
+        data    = [pboard dataForType:TNDragTypeMigration],
+        object  = [CPKeyedUnarchiver unarchiveObjectWithData:_draggedItem];
     
     [_content insertObject:object atIndex:row];
     [tableView reloadData];

@@ -14,9 +14,9 @@
     id              _userInfo           @accessors(property=userInfo);
     Marker          _gMarker            @accessors(property=gMarker);
     MKLocation      _location           @accessors(property=location);
-    
+
     CPString        _infoWindowHTML;
-    CPDictionary    _eventHandlers;    
+    CPDictionary    _eventHandlers;
 }
 
 + (MKMarker)marker
@@ -29,13 +29,13 @@
     if (self = [super init])
     {
         var bundle = [CPBundle bundleForClass:[self class]];
-        
+
         _location       = aLocation;
         _withShadow     = NO;
         _draggable      = YES;
         _clickable      = YES;
         _iconUrl        = [bundle pathForResource:@"pin.png"];
-        
+
         [self addEventForName:@"click" withFunction:function(){
             if ([_delegate respondsToSelector:@selector(markerClicked:userInfo:)])
                 [_delegate markerClicked:self userInfo:_userInfo];
@@ -47,7 +47,7 @@
 - (void)updateLocation
 {
     _location = [[MKLocation alloc] initWithLatLng:_gMarker.getLatLng()];
-    
+
     if (_delegate && [_delegate respondsToSelector:@selector(mapMarker:didMoveToLocation:)])
     {
         [_delegate mapMarker:self didMoveToLocation:_location];
@@ -57,11 +57,11 @@
 - (void)setGoogleIcon:(CPString)anIconName withShadow:(BOOL)withShadow
 {
     _withShadow = withShadow;
-    
+
     if (anIconName)
     {
         _iconUrl = "http://maps.google.com/mapfiles/ms/micons/" + anIconName + ".png"
-        
+
         if (withShadow)
         {
             if (anIconName.match(/dot/) || anIconName.match(/(blue|green|lightblue|orange|pink|purple|red|yellow)$/))
@@ -115,7 +115,7 @@
 - (void)setInfoWindowHTML:(CPString)someHTML openOnClick:(BOOL)shouldOpenOnClick
 {
     _infoWindowHTML = someHTML;
-    
+
     if (shouldOpenOnClick)
     {
         [self addEventForName:@"click" withFunction:function() {[self openInfoWindow];}];
@@ -133,10 +133,10 @@
     {
         _eventHandlers = {};
     }
-    
+
     // remember the event handler
     _eventHandlers[anEvent] = aFunction;
-    
+
     // if we have a marker, we can add it right away...
     if (_gMarker)
     {
@@ -147,35 +147,35 @@
 
 - (void)addToMapView:(MKMapView)mapView
 {
-    var googleMap   = [mapView gMap];
-    var gm          = [MKMapView gmNamespace];
-    var icon        = new gm.Icon(gm.DEFAULT_ICON);
-    
+    var googleMap   = [mapView gMap],
+        gm          = [MKMapView gmNamespace],
+        icon        = new gm.Icon(gm.DEFAULT_ICON);
+
     icon.shadow = nil;
     // set a different icon if the _iconUrl is set
-    if (_iconUrl) 
+    if (_iconUrl)
     {
         icon.image = _iconUrl;
         icon.iconSize = new gm.Size(29, 36);
         icon.iconAnchor = new gm.Point(9, 36);
     }
-    
+
     // set the shadow
-    if (_withShadow && _shadowUrl) 
+    if (_withShadow && _shadowUrl)
     {
         icon.shadow = _shadowUrl;
         icon.shadowSize = new gm.Size(59, 32);
     }
-        
-    var markerOptions = { "icon":icon, "clickable":_clickable, "draggable":_draggable };    
+
+    var markerOptions = { "icon":icon, "clickable":_clickable, "draggable":_draggable };
     _gMarker = new gm.Marker([_location googleLatLng], markerOptions);
-    
+
     // add the infowindow html
     if (_infoWindowHTML)
     {
         _gMarker.openInfoWindowHtml(_infoWindowHTML);
     }
-    
+
     // are there events that should be added?
     if (_eventHandlers)
     {
