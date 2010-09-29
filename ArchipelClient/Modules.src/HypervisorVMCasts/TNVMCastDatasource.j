@@ -1,17 +1,17 @@
-/*  
+/*
  * TNVMCastDatasource.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -41,7 +41,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     [source setURL:anURL];
     [source setUUID:anUUID];
     [source setComment:aComment];
-    
+
     return source;
 }
 
@@ -51,7 +51,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     {
         _content = [CPArray array];
     }
-    
+
     return self;
 }
 
@@ -89,7 +89,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
     [vmcast setUUID:anUUID];
     [vmcast setPubDate:aDate];
     [vmcast setStatus:aStatus];
-    
+
     return vmcast;
 }
 
@@ -122,7 +122,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
         _contents           = [CPArray array];
         _filterInstalled    = NO;
     }
-    
+
     return self;
 }
 
@@ -166,8 +166,8 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
         for (var i = 0; i < [anArray count]; i++)
         {
             var object = [anArray objectAtIndex:i];
-            
-            if (([[object name] uppercaseString].indexOf([_filter uppercaseString]) != -1) 
+
+            if (([[object name] uppercaseString].indexOf([_filter uppercaseString]) != -1)
                 || ([[object comment] uppercaseString].indexOf([_filter uppercaseString]) != -1))
                 [array addObject:object];
         }
@@ -181,7 +181,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     anArray = [self filterOnlyInstalled:anArray];
     anArray = [self filterOnlyMatching:anArray];
-    
+
     return anArray;
 }
 
@@ -191,19 +191,19 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 {
     if (!item)
     {
-	    return [_contents count];
-	}
-	else
-	{
+        return [_contents count];
+    }
+    else
+    {
         return [[self applyFilters:[item content]] count];
-	}
+    }
 }
 
 /*! CPOutlineView Delegate
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-	return ([item class] == @"TNVMCastSource") ? YES : NO;
+    return ([item class] == @"TNVMCastSource") ? YES : NO;
 }
 
 /*! CPOutlineView Delegate
@@ -215,7 +215,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
         return [_contents objectAtIndex:index];
     }
     else
-    {   
+    {
         return [[self applyFilters:[item content]] objectAtIndex:index];
     }
 }
@@ -225,7 +225,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 - (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item
 {
     var identifier = [tableColumn identifier];
-    
+
     return [item valueForKey:identifier];
 }
 

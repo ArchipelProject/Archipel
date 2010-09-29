@@ -1,17 +1,17 @@
-/*  
+/*
  * TNCellApplianceStatus.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -23,7 +23,7 @@
     CPImageView     _imageStatus;
     CPTextField     _fieldStatus;
     CPImage         _iconInstalled;
-    CPImage         _iconInstalling;  
+    CPImage         _iconInstalling;
     CPImage         _iconNotInstalled;
     CPImage         _iconError;
 }
@@ -34,20 +34,20 @@
     {
         _imageStatus = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
         _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 200, 100)];
-        
+
         [self addSubview:_imageStatus];
         [self addSubview:_fieldStatus];
-        
+
         [_fieldStatus setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelected];
         [_fieldStatus setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelected];
-        
+
         var bundle          = [CPBundle bundleForClass:[self class]];
         _iconInstalled      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installed.png"]];
         _iconInstalling     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"installing.gif"]];
         _iconNotInstalled   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"notinstalled.png"]];
         _iconError          = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"error.png"]];
     }
-    
+
     return self;
 }
 
@@ -55,7 +55,7 @@
 {
     [_fieldStatus setStringValue:TNArchipelApplianceStatusString[aStatus]];
     [_fieldStatus sizeToFit];
-    
+
     if (aStatus == TNArchipelApplianceInstalled)
         [_imageStatus setImage:_iconInstalled];
     else if (aStatus == TNArchipelApplianceInstalling)
