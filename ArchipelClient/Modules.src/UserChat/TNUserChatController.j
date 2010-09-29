@@ -34,8 +34,8 @@
     @outlet CPTextField     fieldJID;
     @outlet CPTextField     fieldMessage;
     @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldUserJID;
     @outlet CPTextField     fieldPreferencesMaxChatMessage;
+    @outlet CPTextField     fieldUserJID;
 
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
@@ -47,42 +47,41 @@
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        defaults    = [TNUserDefaults standardUserDefaults];
+        mainBundle  = [CPBundle mainBundle],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        frame       = [[messagesScrollView contentView] bounds];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore"
     ]];
-    
-    [fieldJID setSelectable:YES];
-    
-    _messages = [CPArray array];
-     
-     [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];
-     [messagesScrollView setAutoresizingMask:CPViewWidthSizable];
-     [messagesScrollView setAutohidesScrollers:YES];
-     
-     var frame           = [[messagesScrollView contentView] bounds];
-     frame.size.height = 0;
-     _messageBoard = [[TNMessageBoard alloc] initWithFrame:frame];
-     [_messageBoard setAutoresizingMask:CPViewWidthSizable];
 
-     
-     [messagesScrollView setDocumentView:_messageBoard];
-     
-     var mainBundle = [CPBundle mainBundle];
-     
-     [imageSpinnerWriting setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
-     [imageSpinnerWriting setHidden:YES];
-     
-     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
+    [fieldJID setSelectable:YES];
+
+    _messages = [CPArray array];
+
+    [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];
+    [messagesScrollView setAutoresizingMask:CPViewWidthSizable];
+    [messagesScrollView setAutohidesScrollers:YES];
+
+    frame.size.height = 0;
+    _messageBoard = [[TNMessageBoard alloc] initWithFrame:frame];
+    [_messageBoard setAutoresizingMask:CPViewWidthSizable];
+
+    [messagesScrollView setDocumentView:_messageBoard];
+
+
+    [imageSpinnerWriting setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"spinner.gif"]]];
+    [imageSpinnerWriting setHidden:YES];
+
+    [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 }
 
 - (void)menuReady
 {
-    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""];
-    var clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
-    
+    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""],
+        clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
+
     [sendMenu setTarget:self];
     [clearMenu setTarget:self];
 }
@@ -102,17 +101,18 @@
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
-    
+
     [_messageBoard removeAllMessages:nil];
-    
+
     _messages = [CPArray array];
-    
+
     [self restore];
-    
-    var frame = [[messagesScrollView documentView] frame];
-    var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
+
+    var frame = [[messagesScrollView documentView] frame],
+        newScrollOrigin = CPMakePoint(0.0, frame.size.height);
+
     [_messageBoard scrollPoint:newScrollOrigin];
-    
+
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
@@ -122,7 +122,7 @@
 - (void)willUnload
 {
     [super willUnload];
-  
+
     [_messages removeAllObjects];
     [_messageBoard removeAllMessages:nil];
 }
@@ -133,23 +133,23 @@
 {
     [super willShow];
 
-    var messageQueue = [_entity messagesQueue];
-    var stanza;
+    var messageQueue = [_entity messagesQueue],
+        stanza;
 
     while (stanza = [_entity popMessagesQueue])
     {
         if ([stanza containsChildrenWithName:@"body"])
         {
-            var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity nickname];
-            var message = [[stanza firstChildWithName:@"body"] text];
-            var color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity nickname];
+            var from    = ([stanza valueForAttribute:@"from"] == @"me") ? @"me" : [_entity nickname],
+                message = [[stanza firstChildWithName:@"body"] text],
+                color   = ([stanza valueForAttribute:@"from"] == @"me") ? [CPColor ] : [_entity nickname];
 
-            [self appendMessageToBoard:message from:from];            
+            [self appendMessageToBoard:message from:from];
         }
     }
 
     [_entity freeMessagesQueue];
-    
+
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
 }
@@ -157,14 +157,14 @@
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-            
+
     [defaults setInteger:[fieldPreferencesMaxChatMessage stringValue] forKey:@"TNUserChatMaxMessageStore"];
 }
 
 - (void)loadPreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+
     [fieldPreferencesMaxChatMessage setStringValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
 
@@ -176,7 +176,7 @@
         location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
         lenght          = (saveMax <= max) ? saveMax : max,
         messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
-    
+
     CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
 
     [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
@@ -184,19 +184,19 @@
 
 - (void)restore
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
-    var lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
-    
+    var defaults = [TNUserDefaults standardUserDefaults],
+        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
+
     if (lastConversation)
         _messages = lastConversation;
 
     for (var j = 0; j < [lastConversation count]; j++)
     {
-        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"];
-        var message = [[lastConversation objectAtIndex:j] objectForKey:@"message"];
-        var color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"];
-        var date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
-        
+        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"],
+            message = [[lastConversation objectAtIndex:j] objectForKey:@"message"],
+            color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"],
+            date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
+
         [_messageBoard addMessage:message from:author date:date color:color];
     }
 }
@@ -248,18 +248,18 @@
 */
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender
 {
-    var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"];
-    var date            = [CPDate date];
-    var newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"];
-    var frame           = [[messagesScrollView documentView] frame];
-    
+    var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
+        date            = [CPDate date],
+        newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
+        frame           = [[messagesScrollView documentView] frame];
+
     [_messages addObject:newMessageDict];
     [_messageBoard addMessage:aMessage from:aSender date:date color:color];
-    
+
     // scroll to bottom;
     var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
     [_messageBoard scrollPoint:newScrollOrigin];
-    
+
     [self save];
 }
 
@@ -275,6 +275,7 @@
         if ([stanza containsChildrenWithName:@"body"])
         {
             var messageBody = [[stanza firstChildWithName:@"body"] text];
+
             [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
 
@@ -310,7 +311,7 @@
 {
      if (_composingMessageTimer)
             [_composingMessageTimer invalidate];
-    
+
     [_entity sendMessage:[fieldMessage stringValue]];
     [self appendMessageToBoard:[fieldMessage stringValue] from:@"me"];
     [fieldMessage setStringValue:@""];
@@ -322,8 +323,9 @@
 - (IBAction)clearHistory:(id)aSender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
+
     [defaults removeObjectForKey:"communicationWith" + [_entity JID]];
-    
+
     [_messages removeAllObjects];
     [_messageBoard removeAllMessages:nil];
 }
