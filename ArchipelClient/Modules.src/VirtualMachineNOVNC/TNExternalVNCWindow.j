@@ -68,7 +68,7 @@
 
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
 {
-    switch(aState)
+    switch (aState)
     {
         case TNVNCCappuccinoStateFailed:
             [self close];
