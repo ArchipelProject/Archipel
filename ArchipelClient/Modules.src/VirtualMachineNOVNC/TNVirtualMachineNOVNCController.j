@@ -359,7 +359,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
         zoom        = [sender intValue],
-        key = TNArchipelVNCScaleFactor + [[self entity] JID];
+        key         = TNArchipelVNCScaleFactor + [[self entity] JID];
 
     [defaults setObject:zoom forKey:key];
 
