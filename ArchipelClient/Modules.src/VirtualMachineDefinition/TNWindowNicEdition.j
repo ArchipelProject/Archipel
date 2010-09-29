@@ -57,7 +57,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         [fieldMac setStringValue:[_nic mac]];
 
     [buttonSource removeAllItems];
-    
+
     [radioNetworkType setTarget:nil];
     for (var i = 0; i < [[radioNetworkType radios] count]; i++)
     {
@@ -71,7 +71,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
     }
     [radioNetworkType setTarget:self];
-    
+
     [buttonType selectItemWithTitle:[_nic type]];
     [buttonModel selectItemWithTitle:[_nic model]];
     [buttonSource selectItemWithTitle:[_nic source]];
@@ -82,7 +82,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [_nic setMac:[fieldMac stringValue]];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
-    
+
     [_delegate defineXML:sender];
     [_table reloadData];
     [self close];
@@ -91,7 +91,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 - (void)getHypervisorNetworks
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGetNames}];
@@ -103,10 +103,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 {
     if ([aStanza type] == @"result")
     {
-        var names = [aStanza childrenWithName:@"network"]
+        var names = [aStanza childrenWithName:@"network"];
+
         for (var i = 0; i < [names count]; i++)
         {
             var name = [[names objectAtIndex:i] valueForAttribute:@"name"];
+
             [buttonSource addItemWithTitle:name];
         }
         [buttonSource selectItemWithTitle:[_nic source]];
@@ -123,7 +125,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 - (void)getBridges
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkBridges}];
@@ -135,11 +137,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     if ([aStanza type] == @"result")
     {
         var bridges = [aStanza childrenWithName:@"bridge"];
-        
+
         [buttonSource removeAllItems];
         for (var i = 0; i < [bridges count]; i++)
         {
             var bridge = [[bridges objectAtIndex:i] valueForAttribute:@"name"];
+
             [buttonSource addItemWithTitle:bridge];
         }
         [buttonSource selectItemWithTitle:[_nic source]];
@@ -157,26 +160,27 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 {
     var nicType = [[sender selectedRadio] title];
 
-    if (nicType == @"Network")
+    switch (nicType)
     {
-        [buttonSource setEnabled:YES];
-        [buttonSource removeAllItems];
-        [_nic setType:@"network"];
+        case @"Network":
+            [buttonSource setEnabled:YES];
+            [buttonSource removeAllItems];
+            [_nic setType:@"network"];
+            [self getHypervisorNetworks];
+            break;
         
-        [self getHypervisorNetworks];
-    }
-    else if(nicType == @"Bridge")
-    {
-        [buttonSource setEnabled:YES];
-        [buttonSource removeAllItems];
-        [_nic setType:@"bridge"];        
-        [self getBridges];
-    }
-    else if(nicType == @"User")
-    {
-        [_nic setType:@"user"];
-        [buttonSource removeAllItems];
-        [buttonSource setEnabled:NO];
+        case @"Bridge":
+            [buttonSource setEnabled:YES];
+            [buttonSource removeAllItems];
+            [_nic setType:@"bridge"];
+            [self getBridges];
+            break;
+            
+        case @"User":
+            [_nic setType:@"user"];
+            [buttonSource removeAllItems];
+            [buttonSource setEnabled:NO];
+            break;
     }
 }
 
