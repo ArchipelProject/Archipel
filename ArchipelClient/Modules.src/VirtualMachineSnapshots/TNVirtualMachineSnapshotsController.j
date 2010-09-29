@@ -1,17 +1,17 @@
-/*  
+/*
  * TNSampleTabModule.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+
 @import "TNSnapshot.j";
 @import "TNSnapshotsDatasource.j";
 
@@ -53,7 +54,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewSnapshot;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
-    
+
     CPButton                            _minusButton;
     CPButton                            _plusButton;
     CPButton                            _revertButton;
@@ -66,7 +67,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     [fieldJID setSelectable:YES];
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    
+
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
     _outlineViewSnapshots   = [[CPOutlineView alloc] initWithFrame:[scrollViewSnapshots bounds]];
@@ -74,7 +75,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [scrollViewSnapshots setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewSnapshots setAutohidesScrollers:YES];
     [scrollViewSnapshots setDocumentView:_outlineViewSnapshots];
-    
+
     [_outlineViewSnapshots setUsesAlternatingRowBackgroundColors:YES];
     [_outlineViewSnapshots setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_outlineViewSnapshots setAllowsColumnResizing:YES];
@@ -82,33 +83,34 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setAllowsMultipleSelection:NO];
     [_outlineViewSnapshots setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     // [_outlineViewSnapshots setRowHeight:50.0];
-    
-    var outlineColumn = [[CPTableColumn alloc] initWithIdentifier:@"outline"];
+
+    var outlineColumn = [[CPTableColumn alloc] initWithIdentifier:@"outline"],
+        columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
+        columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"description"],
+        columnCreationTime = [[CPTableColumn alloc] initWithIdentifier:@"creationTime"],
+        columnState     = [[CPTableColumn alloc] initWithIdentifier:@"isCurrent"],
+        imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
     [outlineColumn setWidth:16];
-    
-    var columnName = [[CPTableColumn alloc] initWithIdentifier:@"name"];
+
     [[columnName headerView] setStringValue:@"UUID"];
     [columnName setWidth:100];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
-    
-    var columnDescription = [[CPTableColumn alloc] initWithIdentifier:@"description"];
+
     [[columnDescription headerView] setStringValue:@"Description"];
     [columnDescription setWidth:400];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
-    
-    var columnCreationTime = [[CPTableColumn alloc] initWithIdentifier:@"creationTime"];
+
     [[columnCreationTime headerView] setStringValue:@"Creation date"];
     [columnCreationTime setWidth:130];
     [columnCreationTime setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"creationTime" ascending:YES]];
-    
-    var columnState     = [[CPTableColumn alloc] initWithIdentifier:@"isCurrent"];
-    var imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
+
     [imgView setImageScaling:CPScaleNone];
     [columnState setDataView:imgView];
     [columnState setResizingMask:CPTableColumnAutoresizingMask ];
     [columnState setWidth:16];
-    [[columnState headerView] setStringValue:@""];    
-    
+    [[columnState headerView] setStringValue:@""];
+
     // [_outlineViewSnapshots addTableColumn:outlineColumn];
     [_outlineViewSnapshots addTableColumn:columnState];
     [_outlineViewSnapshots addTableColumn:columnDescription];
@@ -116,62 +118,63 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots addTableColumn:columnName];
     [_outlineViewSnapshots setOutlineTableColumn:columnDescription];
     [_outlineViewSnapshots setDelegate:self];
-    
+
     [_datasourceSnapshots setParentKeyPath:@"parent"];
     [_datasourceSnapshots setChildCompKeyPath:@"name"];
     [_datasourceSnapshots setSearchableKeyPaths:[@"name", @"description", @"creationTime"]];
-    
+
     [fieldFilter setTarget:_datasourceSnapshots];
     [fieldFilter setAction:@selector(filterObjects:)];
-    
+
     [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
-    
+
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Create new snapshot" action:@selector(openWindowNewSnapshot:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Delete" action:@selector(deleteSnapshot:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Restore" action:@selector(restoreSnapshot:) keyEquivalent:@""];
     [_outlineViewSnapshots setMenu:menu];
-    
+
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-add.png"] size:CPSizeMake(16, 16)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
-    
+
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-remove.png"] size:CPSizeMake(16, 16)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
-    
+
     _revertButton = [CPButtonBar minusButton];
     [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-revert.png"] size:CPSizeMake(16, 16)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
-    
+
     [_revertButton setEnabled:NO];
     [_minusButton setEnabled:NO];
-    
+
     [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];
 }
 
 - (void)willLoad
 {
     [super willLoad];
-    
+
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
-    
-    var center = [CPNotificationCenter defaultCenter];   
+
+    var center = [CPNotificationCenter defaultCenter];
+
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-    
+
     [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
-    
+
     _currentSnapshot = nil;
-    
+
     [_outlineViewSnapshots setDelegate:nil];
     [_outlineViewSnapshots setDelegate:self];
-    
+
     [self checkIfRunning];
     [self getSnapshots:nil];
 }
@@ -179,7 +182,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)willUnload
 {
     [super willUnload];
-    
+
     [_datasourceSnapshots removeAllObjects];
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots deselectAll];
@@ -217,14 +220,15 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (BOOL)didPushReceive:(CPDictionary)somePushInfo
 {
-    var sender  = [somePushInfo objectForKey:@"owner"];
-    var type    = [somePushInfo objectForKey:@"type"];
-    var change  = [somePushInfo objectForKey:@"change"];
-    var date    = [somePushInfo objectForKey:@"date"];
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"];
+
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
-        
+
     [self getSnapshots:nil];
-    
+
     return YES;
 }
 
@@ -255,13 +259,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
     [windowNewSnapshot makeKeyAndOrderFront:sender];
-    
+
 }
 
 - (IBAction)getSnapshots:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotGet}];
@@ -274,17 +278,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     if ([aStanza type] == @"result")
     {
         var snapshots = [aStanza childrenWithName:@"domainsnapshot"];
-        
+
         [_datasourceSnapshots removeAllObjects];
-        
+
         for (var i = 0; i < [snapshots count]; i++)
         {
-            var snapshot        = [snapshots objectAtIndex:i];
-            var snapshotObject  = [[TNSnapshot alloc] init];
-            var date            = [CPDate dateWithTimeIntervalSince1970:[[snapshot firstChildWithName:@"creationTime"] text]];
+            var snapshot        = [snapshots objectAtIndex:i],
+                snapshotObject  = [[TNSnapshot alloc] init],
+                date            = [CPDate dateWithTimeIntervalSince1970:[[snapshot firstChildWithName:@"creationTime"] text]];
 
             CPLog.debug([[snapshot firstChildWithName:@"domainsnapshot"] text]);
-            
+
             [snapshotObject setUUID:[[snapshot firstChildWithName:@"uuid"] text]];
             [snapshotObject setName:[[snapshot firstChildWithName:@"name"] text]];
             [snapshotObject setDescription:[[snapshot firstChildWithName:@"description"] text]];
@@ -293,10 +297,10 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
             [snapshotObject setParent:[[[snapshot firstChildWithName:@"parent"] firstChildWithName:@"name"] text]];
             [snapshotObject setDomain:[[snapshot firstChildWithName:@"domain"] text]];
             [snapshotObject setCurrent:NO];
-            
+
             [_datasourceSnapshots addObject:snapshotObject];
         }
-        
+
         [self getCurrentSnapshot:nil];
     }
     else
@@ -308,7 +312,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (IBAction)getCurrentSnapshot:(id)sender
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotCurrent}];
@@ -322,20 +326,20 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [fieldInfo setStringValue:@""];
     if ([aStanza type] == @"result")
     {
-        var snapshots   = [aStanza firstChildWithName:@"domainsnapshot"];
-        var name        = [[snapshots firstChildWithName:@"name"] text];
-        
+        var snapshots   = [aStanza firstChildWithName:@"domainsnapshot"],
+            name        = [[snapshots firstChildWithName:@"name"] text];
+
         for (var i = 0; i < [_datasourceSnapshots count]; i++)
         {
             var obj = [_datasourceSnapshots objectAtIndex:i];
-            
+
             if ([obj name] == name)
             {
                 _currentSnapshot = obj;
                 [obj setCurrent:YES];
                 break;
             }
-            
+
         }
     }
     else if ([aStanza type] == @"ignore")
@@ -346,7 +350,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
-    
+
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots recoverExpandedWithBaseKey:TNArchipelSnapshotsOpenedSnapshots itemKeyPath:@"name"];
 
@@ -356,9 +360,9 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 //actions
 - (IBAction)takeSnapshot:(id)sender
 {
-    var stanza  = [TNStropheStanza iqWithType:@"set"];
-    var uuid    = [CPString UUID];
-    
+    var stanza  = [TNStropheStanza iqWithType:@"set"],
+        uuid    = [CPString UUID];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotTake}];
@@ -372,10 +376,10 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [stanza addChildWithName:@"description"];
     [stanza addTextNode:[[fieldNewSnapshotDescription stringValue] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
     //[stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
-    [stanza up];    
-    
+    [stanza up];
+
     [self sendStanza:stanza andRegisterSelector:@selector(didTakeSnapshot:)];
-    
+
     [windowNewSnapshot orderOut:nil];
     [fieldNewSnapshotName setStringValue:nil];
     [fieldNewSnapshotDescription setStringValue:nil];
@@ -385,8 +389,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     if ([aStanza type] == @"result")
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
     }
     else
     {
@@ -397,21 +400,21 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (IBAction)deleteSnapshot:(id)sender
 {
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
-    
+
     if ([selectedIndexes count] > 1)
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+
         return;
     }
-    
+
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+
         return;
     }
-    
+
     var alert = [TNAlert alertWithTitle:@"Delete to snapshot"
                                 message:@"Are you sure you want to destory this snapshot ? this is not reversible."
                                 delegate:self
@@ -422,12 +425,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)performDeleteSnapshot:(id)someUserInfo
 {
-    var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
-    var stanza          = [TNStropheStanza iqWithType:@"set"];
-    var object          = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
-    var name            = [object name];
-    
-    
+    var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes],
+        stanza          = [TNStropheStanza iqWithType:@"set"],
+        object          = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]],
+        name            = [object name];
+
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotDelete,
@@ -440,9 +443,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)didDeleteSnapshot:(id)aStanza
 {
     if ([aStanza type] == @"result")
-    {        
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot deleted"];
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshot deleted"];
     }
     else if ([aStanza type] == @"error")
     {
@@ -455,11 +457,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+
         return;
     }
-    
+
     var alert = [TNAlert alertWithTitle:@"Revert to snapshot"
                                 message:@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost."
                                 delegate:self
@@ -469,33 +471,32 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)performRevertSnapshot:(id)someUserInfo
 {
-    var stanza          = [TNStropheStanza iqWithType:@"set"];
-    var selectedIndexes   = [_outlineViewSnapshots selectedRowIndexes];
-    
+    var stanza          = [TNStropheStanza iqWithType:@"set"],
+        selectedIndexes   = [_outlineViewSnapshots selectedRowIndexes];
+
     if ([selectedIndexes count] > 1)
     {
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+
         return;
     }
-    
-    var object  = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]];
-    var name    = [object name];
-    
+
+    var object  = [_outlineViewSnapshots itemAtRow:[selectedIndexes firstIndex]],
+        name    = [object name];
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorSnapshot}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotRevert,
         "name": name}];
-           
+
     [self sendStanza:stanza andRegisterSelector:@selector(didRevertSnapshot:)];
 }
 
 - (void)didRevertSnapshot:(id)aStanza
 {
     if ([aStanza type] == @"result")
-    {        
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Snapshot" message:@"Snapshot sucessfully reverted"];
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshot sucessfully reverted"];
     }
     else
     {
@@ -509,7 +510,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     [_revertButton setEnabled:NO];
     [_minusButton setEnabled:NO];
-    
+
     if ([_outlineViewSnapshots numberOfSelectedRows] > 0)
     {
         [_minusButton setEnabled:YES];
@@ -525,18 +526,18 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
 {
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
 
     [defaults setObject:"expanded" forKey:key];
 }
 
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
 {
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"];
-    var defaults    = [TNUserDefaults standardUserDefaults];
-    var key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
 
     [defaults setObject:"collapsed" forKey:key];
 }
