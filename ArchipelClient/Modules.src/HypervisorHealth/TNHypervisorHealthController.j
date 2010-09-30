@@ -20,9 +20,9 @@
 @import <AppKit/AppKit.j>
 @import <LPKit/LPKit.j>
 
-@import "TNDatasourceChartView.j"
-@import "TNDatasourcePieChartView.j"
-@import "TNLogEntryObject.j"
+@import "TNDatasourceChartView.j";
+@import "TNDatasourcePieChartView.j";
+@import "TNLogEntryObject.j";
 
 TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health";
 TNArchipelTypeHypervisorHealthInfo          = @"info";
@@ -31,17 +31,21 @@ TNArchipelTypeHypervisorHealthLog           = @"logs";
 
 TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
 
-LPAristo = nil;
-
 @implementation TNHypervisorHealthController : TNModule
 {
     @outlet CPImageView         imageCPULoading;
-    @outlet CPImageView         imageMemoryLoading;
-    @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageDiskLoading;
+    @outlet CPImageView         imageLoadLoading;
+    @outlet CPImageView         imageMemoryLoading;
+    @outlet CPScrollView        scrollViewLogsTable;
+    @outlet CPSearchField       filterLogField;
+    @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
     @outlet CPTextField         fieldJID;
     @outlet CPTextField         fieldName;
+    @outlet CPTextField         fieldPreferencesAutoRefresh;
+    @outlet CPTextField         fieldPreferencesMaxItems;
+    @outlet CPTextField         fieldPreferencesMaxLogEntries;
     @outlet CPTextField         fieldTotalMemory;
     @outlet CPTextField         healthCPUUsage;
     @outlet CPTextField         healthDiskUsage;
@@ -50,48 +54,38 @@ LPAristo = nil;
     @outlet CPTextField         healthMemSwapped;
     @outlet CPTextField         healthMemUsage;
     @outlet CPTextField         healthUptime;
-    @outlet CPView              viewGraphCPU;
-    @outlet CPView              viewGraphMemory;
-    @outlet CPView              viewGraphLoad;
-    @outlet CPView              viewGraphDisk;
-    @outlet TNSwitch            switchRefresh;
-    @outlet CPTextField         fieldPreferencesAutoRefresh;
-    @outlet CPTextField         fieldPreferencesMaxItems;
-    @outlet CPTextField         fieldPreferencesMaxLogEntries;
-    @outlet TNSwitch            switchPreferencesShowColunmMethod;
-    @outlet TNSwitch            switchPreferencesShowColunmFile;
-
-    @outlet CPView              viewGraphCPUContainer;
-    @outlet CPView              viewGraphMemoryContainer;
-    @outlet CPView              viewGraphLoadContainer;
-    @outlet CPView              viewGrapDiskContainer;
-
-    @outlet CPTabView           tabViewInfos;
     @outlet CPView              viewCharts;
+    @outlet CPView              viewGrapDiskContainer;
+    @outlet CPView              viewGraphCPU;
+    @outlet CPView              viewGraphCPUContainer;
+    @outlet CPView              viewGraphDisk;
+    @outlet CPView              viewGraphLoad;
+    @outlet CPView              viewGraphLoadContainer;
+    @outlet CPView              viewGraphMemory;
+    @outlet CPView              viewGraphMemoryContainer;
     @outlet CPView              viewLogs;
     @outlet CPView              viewLogsTableContainer;
-    @outlet CPScrollView        scrollViewLogsTable;
-    @outlet CPSearchField       filterLogField;
+    @outlet TNSwitch            switchPreferencesShowColunmFile;
+    @outlet TNSwitch            switchPreferencesShowColunmMethod;
+    @outlet TNSwitch            switchRefresh;
 
+    BOOL                        _tableLogDisplayFileColumn;
+    BOOL                        _tableLogDisplayMethodColumn;
     CPNumber                    _statsHistoryCollectionSize;
-    CPTimer                     _timerStats;
+    CPTableView                 _tableLogs;
     CPTimer                     _timerLogs;
+    CPTimer                     _timerStats;
     float                       _timerInterval;
     int                         _maxLogEntries;
-    BOOL                        _tableLogDisplayMethodColumn;
-    BOOL                        _tableLogDisplayFileColumn;
     LPChartView                 _chartViewCPU;
-    LPChartView                 _chartViewMemory;
     LPChartView                 _chartViewLoad;
+    LPChartView                 _chartViewMemory;
     LPPieChartView              _chartViewDisk;
     TNDatasourceChartView       _cpuDatasource;
-    TNDatasourceChartView       _memoryDatasource;
     TNDatasourceChartView       _loadDatasource;
-    TNDatasourcePieChartView    _disksDatasource;
-
-    CPTableView                 _tableLogs;
+    TNDatasourceChartView       _memoryDatasource;
+    TNDatasourcePieChartView    _disksDatasource
     TNTableViewDataSource       _datasourceLogs;
-
 }
 
 - (void)awakeFromCib
@@ -378,7 +372,7 @@ LPAristo = nil;
     [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
     [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
     [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
-    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO],
+    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO];
 }
 
 - (void)didNickNameUpdated:(CPNotification)aNotification
@@ -592,9 +586,7 @@ LPAristo = nil;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
-
 }
-
 
 @end
 
