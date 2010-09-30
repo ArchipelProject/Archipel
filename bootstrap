@@ -22,6 +22,19 @@ default values should be ok most of the time.
 
 """
 
+
+MSG_ARCHIPEL_INIT_SUBMODULES = """\
+###############################################################################
+#                                                                             #
+#                        Archipel Submodules                                  #
+#                                                                             #
+###############################################################################
+
+It seems that your local copy hasn't its submodules initialized. Bootstrap
+will initialize it for you. Please wait.
+
+"""
+
 MSG_ARCHIPEL_SERVER_HEADER = """\
 ###############################################################################
 #                                                                             #
@@ -148,6 +161,7 @@ def test_cmd_or_die(cmd, warn=False):
 
 
 def test_basic_cmds():
+    test_cmd_or_die("git")
     test_cmd_or_die("cp")
     test_cmd_or_die("mkdir")
     test_cmd_or_die("mv")
@@ -408,27 +422,40 @@ def clear():
     os.system("clear")
 
 
+def git_init_submodules():
+    if not os.path.exists(".submodules_initialized"):
+        print MSG_ARCHIPEL_INIT_SUBMODULES
+        print "\033[35m"
+        os.system("git submodule update --init --recursive");
+        print "\033[32mSubmodule are initialized.\033[0m\n"
+        os.system("touch .submodules_initialized")
+        confirm = ask("Continue ?", ["y", "n"], "y")
+        
+
 if __name__ == "__main__":
     try:
         clear()
-        print MSG_ARCHIPEL_WELCOME;
+        
+        git_init_submodules()
+        
+        print MSG_ARCHIPEL_WELCOME
         
         install_server = ask_bool("Would you like to install Archipel Server ?")
         install_client = ask_bool("Would you like to install Archipel Client ?")
-    
+        
         print "\n\nWe will now execute the following installation: "
         if install_server: print " - Archipel Server"
         if install_client: print " - Archipel Client"
-    
+        
         print " "
-    
+        
         confirm = ask("Do you confirm ?", ["y", "n"], "y")
         if confirm == "n":
             print " \033[33m* Installation canceled by user\033[0m"
             sys.exit(0)
-    
+        
         if install_server: install_archipelserver()
-    
+        
         if install_client: install_archipelclient()
         
         clear()
