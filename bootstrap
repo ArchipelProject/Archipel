@@ -72,11 +72,12 @@ MSG_ARCHIPEL_END = """\
 All the requested operation have been executed. If you need more help, please
 visit the folowing : 
  * Main project page : http://archipelproject.org
- * Wiki              : http://bitbucket.org/primalmotion/archipel/
- * IRC channel       : irc://freenode.net#archipel
+ * Wiki              : https://github.com/primalmotion/Archipel/wiki
+ * IRC channel       : irc://freenode.net/#archipel
+ * Twitter           : http://twitter.com/ArchipelProject
 
 If you find any bug, please tell us using our tracker :
- * Official tracker  : http://bitbucket.org/primalmotion/archipel/issues
+ * Official tracker  : https://github.org/primalmotion/Archipel/issues
 """
 
 class Spinner(threading.Thread):
@@ -199,6 +200,8 @@ def install_archipelclient():
     inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
     inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
     inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
+    inst_messageboard   = ask_bool("Would you like to build MessageBoard ?")
+    inst_lpkit          = ask_bool("Would you like to build LPKit ?")
     inst_archipel       = ask_bool("Would you like to build Archipel Client ?")
     inst_appcapp        = ask_bool("Would you like to apply Cappuccino Framework ?")
     
@@ -211,6 +214,8 @@ def install_archipelclient():
     print "   - build VNCCappuccino         : %s" % str(inst_vnc)
     print "   - build StropheCappuccino     : %s" % str(inst_strophe)
     print "   - build iTunesTabView         : %s" % str(inst_itunestabview)
+    print "   - build MessageBoard          : %s" % str(inst_messageboard)
+    print "   - build LPKit                 : %s" % str(inst_lpkit)
     print "   - build Archipel Client       : %s" % str(inst_archipel)
     print "   - apply Cappuccino            : %s" % str(inst_appcapp)
     if inst_export: print "   - export to                   : %s" % inst_export
@@ -225,6 +230,8 @@ def install_archipelclient():
     if inst_vnc:            build_vnccappuccino()
     if inst_strophe:        build_strophecappuccino()
     if inst_itunestabview:  build_itunestabview()
+    if inst_messageboard:   build_messageboard()
+    if inst_lpkit:          build_lpkit()
     if inst_appcapp:        apply_cappuccino_frameworks()
     if inst_archipel:       build_archipel()
     if inst_export:         export_archipel(inst_export)
@@ -272,6 +279,28 @@ def build_itunestabview():
         print "\033[31mUnable to build iTunesTabView\033[0m"
         sys.exit(1)
     print "\033[32m * iTunesTabView builded\033[0m"
+
+
+def build_messageboard():
+    print " * Building MessageBoard";
+    s = Spinner();
+    ret = os.system("cd ./MessageBoard && export CONFIG=Debug && jake  > /dev/null 2>&1 && export CONFIG=Release && jake > /dev/null 2>&1")
+    s.stop()
+    if ret != 0:
+        print "\033[31mUnable to build MessageBoard\033[0m"
+        sys.exit(1)
+    print "\033[32m * MessageBoard builded\033[0m"
+
+
+def build_lpkit():
+    print " * Building LPKit";
+    s = Spinner();
+    ret = os.system("cd ./LPKit && export CONFIG=Debug && jake build  > /dev/null 2>&1 && export CONFIG=Release && jake build > /dev/null 2>&1")
+    s.stop()
+    if ret != 0:
+        print "\033[31mUnable to build LPKit\033[0m"
+        sys.exit(1)
+    print "\033[32m * LPKit builded\033[0m"
 
 
 def build_archipel(exportpath=None):
@@ -430,6 +459,7 @@ def git_init_submodules():
         print "\033[32mSubmodule are initialized.\033[0m\n"
         os.system("touch .submodules_initialized")
         confirm = ask("Continue ?", ["y", "n"], "y")
+        clear()
         
 
 if __name__ == "__main__":
