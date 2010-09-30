@@ -130,15 +130,15 @@ def main():
     if opt_should_build:
         build(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
     
+    if opt_should_generate_plist:
+        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths)    
+    
     if (opt_should_build and len(opt_modules_paths) > 0) or opt_should_copy_modules:
         copy_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths)
         
     if opt_should_remove_modules:
         remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths);
-    
-    if opt_should_generate_plist:
-        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths);
-    
+        
     if opt_build_native:
         make_native_app(opt_build_native, opt_build_config);    
     
@@ -208,6 +208,7 @@ def copy_modules(modules_paths, config, ignorepaths):
         print "# copying module : " + module_name 
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
         os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", ""));
+    os.system("cp -a " + GLOBAL_MODULES_PLIST_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
 
 
 def remove_modules(modules_paths, config, ignorepaths):
@@ -259,7 +260,7 @@ def generate_modules_plist(modules_paths, ignorepaths):
     </dict>
 </plist>"""
     
-    f = open(GLOBAL_MODULES_BUILD_PATH + "/modules.plist", "w");
+    f = open(GLOBAL_MODULES_PLIST_PATH, "w");
     f.write(plist);
     f.close();
 
