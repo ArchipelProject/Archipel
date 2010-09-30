@@ -66,10 +66,10 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         defaults    = [TNUserDefaults standardUserDefaults],
         bundle      = [CPBundle bundleForClass:[self class]],
         gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
-    
+
     [viewOrigin setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
     [viewDestination setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
-    
+
     [textFieldOriginNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldDestinationNameLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [textFieldOriginName setTextShadowOffset:CGSizeMake(0.0, 1.0)];
@@ -82,12 +82,12 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [textFieldOriginName setTextColor:[CPColor colorWithHexString:@"00000"]];
     [textFieldDestinationNameLabel setTextColor:[CPColor colorWithHexString:@"00000"]];
     [textFieldDestinationName setTextColor:[CPColor colorWithHexString:@"00000"]];
-    
+
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 
     [splitViewHorizontal setDelegate:self];
-    
+
     [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [splitViewVertical setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [splitViewVertical setIsPaneSplitter:YES];
@@ -110,7 +110,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
         vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
         imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-        
+
     [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
@@ -120,10 +120,10 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [vmColumStatusIcon setDataView:imgView];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
-    
+
     [filterFieldOrigin setTarget:_dataSourceVMOrigin];
     [filterFieldOrigin setAction:@selector(filterObjects:)];
-    
+
     [_dataSourceVMOrigin setTable:_tableVMOrigin];
     [_dataSourceVMOrigin setSearchableKeyPaths:[@"nickname", @"JID"]];
     [_tableVMOrigin addTableColumn:vmColumStatusIcon];
@@ -152,7 +152,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
         vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
         imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
-        
+
     [vmColumNickname setWidth:150];
     [[vmColumNickname headerView] setStringValue:@"Name"];
 
@@ -163,18 +163,18 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [vmColumStatusIcon setResizingMask:CPTableColumnAutoresizingMask ];
     [vmColumStatusIcon setWidth:16];
     [[vmColumStatusIcon headerView] setStringValue:@""];
-    
+
     [filterFieldDestination setTarget:_dataSourceVMDestination];
     [filterFieldDestination setAction:@selector(filterObjects:)];
-    
+
     [_dataSourceVMDestination setTable:_tableVMDestination];
     [_dataSourceVMDestination setSearchableKeyPaths:[@"nickname", @"JID"]];
     [_tableVMDestination addTableColumn:vmColumStatusIcon];
     [_tableVMDestination addTableColumn:vmColumNickname];
     [_tableVMDestination addTableColumn:vmColumJID];
     [_tableVMDestination setDataSource:_dataSourceVMDestination];
-    
-    
+
+
     [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
     [_tableVMOrigin setDraggingSourceOperationMask:CPDragOperationEvery forLocal:NO];
     [_tableVMDestination setDraggingSourceOperationMask:CPDragOperationEvery forLocal:YES];
@@ -192,15 +192,15 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
     [_mainMapView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainMapView setDelegate:self];
-    
+
     [_tableVMOrigin setDelegate:nil];
     [_tableVMOrigin setDelegate:self];
     [_tableVMDestination setDelegate:nil];
     [_tableVMDestination setDelegate:self];
 
     [mapViewContainer addSubview:_mainMapView];
-    
-    
+
+
     var defaults = [TNUserDefaults standardUserDefaults];
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
@@ -274,7 +274,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
@@ -378,7 +378,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     var defaults    = [TNUserDefaults standardUserDefaults],
         splitView   = [aNotification object],
         newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
-    
+
     [defaults setInteger:newPos forKey:@"mapViewSplitViewPosition"];
 }
 
@@ -387,15 +387,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 - (IBAction)migrate:(TNStropheContact)aVirualMachine toHypervisor:(TNStropheContact)aHypervisor
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
-    
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlMigrate,
         "hypervisorjid": [aHypervisor fullJID]}];
-
-
     [aVirualMachine sendStanza:stanza andRegisterSelector:@selector(didMigrate:) ofObject:self];
-    
+
 }
 
 - (void)didMigrate:(TNStropheStanza)aStanza
