@@ -22,7 +22,7 @@ GLOBAL_LAUNCH_PATH          = commands.getoutput("pwd");
 GLOBAL_BASE_PATH            = sys.path[0]
 GLOBAL_MODULES_SRC_PATH     = GLOBAL_BASE_PATH + "/Modules.src/"
 GLOBAL_MODULES_BUILD_PATH   = GLOBAL_BASE_PATH + "/Modules"
-GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_SRC_PATH + "modules.plist";
+GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_BUILD_PATH + "/modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
 GLOBAL_BUILD_NUMBER         = commands.getoutput("git rev-parse --short HEAD")
 
@@ -129,13 +129,13 @@ def main():
     
     if opt_should_build:
         build(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
-    
+        
     if opt_should_generate_plist:
         generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths)    
     
     if (opt_should_build and len(opt_modules_paths) > 0) or opt_should_copy_modules:
         copy_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths)
-        
+    
     if opt_should_remove_modules:
         remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths);
         
@@ -186,7 +186,7 @@ def build(paths, config, ignorepaths):
         print "# Build success."
         print "# get back to " + GLOBAL_BASE_PATH
         os.chdir(GLOBAL_BASE_PATH);
-    
+    os.system("mkdir -p %s" % GLOBAL_MODULES_BUILD_PATH)
     print "# Build #%s success." % (GLOBAL_BUILD_NUMBER)
 
 
@@ -197,8 +197,7 @@ def copy_modules(modules_paths, config, ignorepaths):
             
         if path.lower().find("sample") > -1:
             continue
-            
-        os.system("mkdir -p %s" % GLOBAL_MODULES_BUILD_PATH)
+        
         module_name         = path.split("/")[-1]
         module_dest_path   = GLOBAL_MODULES_BUILD_PATH + "/";
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
