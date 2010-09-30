@@ -115,8 +115,6 @@
     [self setEditable:NO];
     [self setSelectedRange:CPMakeRange(0, 0)];
     [self setTextColor:[CPColor grayColor]];
-
-
 }
 
 @end
