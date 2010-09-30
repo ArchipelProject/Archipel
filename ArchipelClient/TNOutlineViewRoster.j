@@ -97,7 +97,7 @@
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
-- (void)moveLeft:(id)sender
+- (void)moveLeft
 {
     var index = [self selectedRowIndexes];
 
@@ -122,7 +122,7 @@
     }
 }
 
-- (void)moveRight:(id)sender
+- (void)moveRight
 {
     var index = [self selectedRowIndexes];
 
@@ -135,7 +135,6 @@
         [self expandItem:item];
     else
     {
-        //mouarf... crappy mode on..
         var selectedIndex   = [_tabViewModules indexOfTabViewItem:[_tabViewModules selectedTabViewItem]],
             numberOfItems   = [_tabViewModules numberOfTabViewItems];
 
@@ -147,9 +146,10 @@
 }
 
 
-- (void)moveDown:(id)sender
+- (void)moveDown
 {
     var index = [[self selectedRowIndexes] firstIndex];
+
 
     if (index == [self numberOfRows] - 1)
     {
@@ -157,10 +157,12 @@
         [self deselectAll];
     }
     else
-        [super moveDown:sender];
+    {
+        [self selectRowIndexes:[CPIndexSet indexSetWithIndex:(index + 1)] byExtendingSelection:NO];
+    }
 }
 
-- (void)moveUp:(id)sender
+- (void)moveUp
 {
     var index = [[self selectedRowIndexes] firstIndex];
 
@@ -170,37 +172,51 @@
         [self deselectAll];
     }
     else
-        [super moveUp:sender];
+    {
+        [self selectRowIndexes:[CPIndexSet indexSetWithIndex:(index - 1)] byExtendingSelection:NO];
+    }
 }
 
 
 - (void)keyDown:(CPEvent)anEvent
 {
-    // if ([anEvent keyCode] == CPDeleteKeyCode)
-    // {
-    //     var center = [CPNotificationCenter defaultCenter];
-    //     [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
-    //
-    //     return
-    // }
-    //else
-    if ([anEvent keyCode] == CPEscapeKeyCode)
+    switch ([anEvent keyCode])
     {
-        [_searchField _searchFieldCancel:self];
+        // case CPDeleteKeyCode:
+        //     var center = [CPNotificationCenter defaultCenter];
+        //     [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
+        //     break;
 
-        return
+        case CPEscapeKeyCode:
+            [_searchField _searchFieldCancel:self];
+            break;
+
+        case CPReturnKeyCode:
+            [_entityRenameField setPreviousResponder:self];
+            [_entityRenameField mouseDown:nil];
+            [_entityRenameField _inputElement].focus();
+            [[self window] makeFirstResponder:_entityRenameField];
+            break;
+
+        case CPDownArrowKeyCode:
+            [self moveDown];
+            break;
+
+        case CPUpArrowKeyCode:
+            [self moveUp];
+            break;
+
+        case CPLeftArrowKeyCode:
+            [self moveLeft];
+            break;
+
+        case CPRightArrowKeyCode:
+            [self moveRight];
+            break;
+
+        default:
+            [super keyDown:anEvent];
     }
-    else if ([anEvent keyCode] == CPReturnKeyCode)
-    {
-        [_entityRenameField setPreviousResponder:self];
-        [_entityRenameField mouseDown:nil];
-        [_entityRenameField _inputElement].focus();
-        [[self window] makeFirstResponder:_entityRenameField];
-
-        return;
-    }
-
-    [super keyDown:anEvent];
 }
 
 @end
