@@ -13,3 +13,6 @@
 [submodule "iTunesTabView"]
 	path = iTunesTabView
 	url = git@github.com:primalmotion/iTunesTabView.git
+[submodule "LPKit"]
+	path = LPKit
+	url = git@github.com:primalmotion/LPKit.git
