@@ -230,7 +230,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             {
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
                 [[contact resources] addObject:JID.split('/')[1]];
-                
                 [_virtualMachinesDatasource addObject:contact];
             }
         }
