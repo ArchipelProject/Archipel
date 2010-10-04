@@ -228,15 +228,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             }
             else
             {
-                var contact = [[TNStropheContact alloc] initWithConnection:nil];
-
-                [contact setJID:JID];
-                [contact setGroupName:@"nogroup"];
-                [contact setNodeName:JID.split('@')[0]];
-                [contact setNickname:JID.split('@')[0]];
+                var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
                 [[contact resources] addObject:JID.split('/')[1]];
-                [contact setDomain: JID.split('/')[0].split('@')[1]];
-
+                
                 [_virtualMachinesDatasource addObject:contact];
             }
         }
