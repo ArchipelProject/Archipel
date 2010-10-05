@@ -231,7 +231,8 @@ def make_native_app(platform, config):
     print "# generation of the native " + platform + " Application"
     os.system("jake desktop")
     print "# copying modules to the native application"
-    os.system("cp -a ./Modules ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/Archipel")    
+    os.system("mkdir -p ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/Archipel/Modules/")
+    os.system("cp -a ./Modules/* ./Build/Desktop/Archipel/Archipel.app/Contents/Resources/Archipel/Modules/")
 
 
 def generate_modules_plist(modules_paths, ignorepaths):
