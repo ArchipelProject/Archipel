@@ -57,7 +57,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 @implementation TNModule : CPViewController
 {
     @outlet CPView          viewPreferences         @accessors;
-    
+
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
@@ -73,7 +73,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     TNStropheConnection     _connection             @accessors(property=connection);
     TNStropheGroup          _group                  @accessors(property=group);
     TNStropheRoster         _roster                 @accessors(property=roster);
-    
+
     CPArray                 _registredSelectors;
     CPArray                 _pubsubRegistrar;
 }
