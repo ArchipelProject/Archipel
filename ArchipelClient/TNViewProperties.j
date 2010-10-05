@@ -44,6 +44,7 @@
 
     CPImage                 _unknownUserImage;
     CPNumber                _height;
+    BOOL                    _isCollapsed;
 }
 
 /*! init the class
@@ -51,7 +52,8 @@
 */
 - (id)initWithFrame:(CPRect)aRect
 {
-    _height = 180;
+    _height         = 180;
+    _isCollapsed    = YES;
 
     aRect.size.height = _height;
     self = [super initWithFrame:aRect];
@@ -63,7 +65,7 @@
 */
 - (void)awakeFromCib
 {
-    var bundle          = [CPBundle mainBundle],
+    var bundle = [CPBundle mainBundle],
         center = [CPNotificationCenter defaultCenter];
 
     [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
@@ -75,8 +77,6 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
 
-    [self setHidden:YES];
-
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
 
@@ -86,6 +86,8 @@
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:nil];
+
+    [[self superview] setPosition:[[self superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 
@@ -113,12 +115,24 @@
 */
 - (void)hide
 {
-    if ([self superview])
-    {
-        var splitView = [self superview];
+    if (_isCollapsed)
+        return;
 
-        [self setHidden:YES];
-        [splitView setPosition:[splitView bounds].size.height ofDividerAtIndex:0];
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    _isCollapsed = YES;
+    
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
+
+        [anim setDelegate:self];
+        [anim setFrameRate:0.0];
+        [anim startAnimation];
+    }
+    else
+    {
+        [self animation:nil valueForProgress:1.0];
     }
 }
 
@@ -126,10 +140,32 @@
 */
 - (void)show
 {
-    var splitView = [self superview];
+    if (!_isCollapsed)
+        return;
 
-    [self setHidden:NO];
-    [splitView setPosition:([splitView bounds].size.height - _height) ofDividerAtIndex:0];
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    _isCollapsed = NO;
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
+        
+        [anim setDelegate:self];
+        [anim setFrameRate:0.0];
+        [anim startAnimation];
+    }
+    else
+    {
+        [self animation:nil valueForProgress:1.0];
+    }
+}
+
+- (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
+{
+    var position = _isCollapsed ? ([[self superview] bounds].size.height - _height) + (_height * aValue) : ([[self superview] bounds].size.height) - (_height * aValue);
+
+    [[self superview] setPosition:position ofDividerAtIndex:0];
 }
 
 
