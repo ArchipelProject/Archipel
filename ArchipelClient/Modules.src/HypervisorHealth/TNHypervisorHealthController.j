@@ -151,7 +151,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [_chartViewLoad setDrawViewPadding:1.0];
     [_chartViewLoad setLabelViewHeight:0.0];
     [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewLoad setFixedMaxValue:1000];
+    [_chartViewLoad setFixedMaxValue:10];
     [_chartViewLoad setDisplayLabels:YES];
     [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphLoad addSubview:_chartViewLoad];
@@ -409,9 +409,9 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             diskNode    = [aStanza firstChildWithName:@"disk"],
             diskPerc    = [[diskNode valueForAttribute:@"used-percentage"] intValue],
             loadNode    = [aStanza firstChildWithName:@"load"],
-            loadOne     = [[loadNode valueForAttribute:@"one"] floatValue] * 1000,
-            loadFive    = [[loadNode valueForAttribute:@"five"] floatValue] * 1000,
-            loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue] * 1000,
+            loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
+            loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
+            loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue],
             uptimeNode  = [aStanza firstChildWithName:@"uptime"],
             cpuNode     = [aStanza firstChildWithName:@"cpu"],
             cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
@@ -494,9 +494,9 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
                 cpuNode     = [currentNode firstChildWithName:@"cpu"],
                 cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
                 loadNode    = [currentNode firstChildWithName:@"load"],
-                loadOne     = Math.round([[loadNode valueForAttribute:@"one"] floatValue]) * 1000,
-                loadFive    = Math.round([[loadNode valueForAttribute:@"five"] floatValue]) * 1000,
-                loadFifteen = Math.round([[loadNode valueForAttribute:@"fifteen"] floatValue]) * 1000;
+                loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
+                loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
+                loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue];
 
             [healthMemUsage setStringValue:freeMem + " Mo"];
             [healthMemSwapped setStringValue:swapped + " Mo"];
