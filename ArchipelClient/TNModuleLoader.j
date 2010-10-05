@@ -97,17 +97,17 @@ TNArchipelModulesAllReadyNotification       = @"TNArchipelModulesAllReadyNotific
     {
         var center = [CPNotificationCenter defaultCenter];
 
-        _loadedTabModulesScrollViews     = [CPDictionary dictionary];
-        _loadedToolbarModulesScrollViews = [CPDictionary dictionary];
-        _numberOfModulesToLoad  = 0;
-        _numberOfModulesLoaded  = 0;
-        _numberOfActiveModules  = 0;
-        _numberOfReadyModules   = 0;
-        _allModulesReady        = NO;
-        _bundles                = [CPArray array];
-        _loadedTabModules       = [CPArray array];
-        _modulesMenuItems       = [CPDictionary dictionary];
-        _loadedToolbarModules   = [CPDictionary dictionary];
+        _loadedTabModulesScrollViews        = [CPDictionary dictionary];
+        _loadedToolbarModulesScrollViews    = [CPDictionary dictionary];
+        _modulesMenuItems                   = [CPDictionary dictionary];
+        _loadedToolbarModules               = [CPDictionary dictionary];
+        _bundles                            = [CPArray array];
+        _loadedTabModules                   = [CPArray array];
+        _numberOfModulesToLoad              = 0;
+        _numberOfModulesLoaded              = 0;
+        _numberOfActiveModules              = 0;
+        _numberOfReadyModules               = 0;
+        _allModulesReady                    = NO;
     }
 
     return self;
