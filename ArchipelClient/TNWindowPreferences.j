@@ -28,6 +28,7 @@
     @outlet CPTextField     fieldModuleLoadingDelay;
     @outlet CPTextField     fieldBOSHResource;
     @outlet CPPopUpButton   buttonDebugLevel;
+    @outlet TNSwitch        switchUseAnimations;
     
     CPArray                 _modules;
 }
@@ -91,6 +92,7 @@
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
+    [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
     
     for (var i = 0; i < [_modules count]; i++)
     {
@@ -112,6 +114,7 @@
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
+    [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
     
     for (var i = 0; i < [_modules count]; i++)
     {
