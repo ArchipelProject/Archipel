@@ -30,6 +30,13 @@ TNToolBarItemLogout         = @"TNToolBarItemLogout";
 
 /*! @global
     @group TNToolBarItem
+    identifier for item tags
+*/
+TNToolBarItemTags        = @"TNToolBarItemTags";
+
+
+/*! @global
+    @group TNToolBarItem
     identifier for item help
 */
 TNToolBarItemHelp           = @"TNToolBarItemHelp";
@@ -66,9 +73,10 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         var bundle          = [CPBundle bundleForClass:self];
         _toolbarItems       = [CPDictionary dictionary];
         _toolbarItemsOrder  = [CPDictionary dictionary];
-
+        
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
+        [self addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"tags.png"] target:aTarget action:@selector(toolbarItemTagsClick:)];
         
         var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
             availableItem = [[CPMenuItem alloc] init],
@@ -101,8 +109,9 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 
         [_toolbarItemsOrder setObject:CPToolbarFlexibleSpaceItemIdentifier forKey:500];
         [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:901];
-        [_toolbarItemsOrder setObject:TNToolBarItemHelp forKey:902];
-        [_toolbarItemsOrder setObject:TNToolBarItemLogout forKey:903];
+        [_toolbarItemsOrder setObject:TNToolBarItemTags forKey:902];
+        [_toolbarItemsOrder setObject:TNToolBarItemHelp forKey:903];
+        [_toolbarItemsOrder setObject:TNToolBarItemLogout forKey:904];
 
         [self setDelegate:self];
     }

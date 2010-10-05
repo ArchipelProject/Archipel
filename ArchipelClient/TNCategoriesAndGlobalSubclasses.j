@@ -105,8 +105,6 @@
 {
     [super textDidFocus:aNotification];
     [self setTextColor:[CPColor whiteColor]];
-
-
 }
 
 - (void)textDidBlur:(CPNotification)aNotification

@@ -47,6 +47,8 @@
 @import "TNStepper.j";
 @import "TNSwitch.j";
 @import "TNWindowPreferences.j";
+@import "TNAnimation.j";
+@import "TNTagView.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -106,6 +108,8 @@ TNArchipelMainWindow            = nil;
 */
 TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
 
+TNArchipelNotificationRosterSelectionChanged = @"TNArchipelNotificationRosterSelectionChanged";
+
 TNArchipelXMPPNamespace             = "http://archipelproject.org";
 TNArchipelRememberOpenedGroup       = @"TNArchipelRememberOpenedGroup_";
 TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
@@ -122,27 +126,30 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     @outlet CPImageView         ledOut;
     @outlet CPSplitView         leftSplitView;
     @outlet CPSplitView         mainHorizontalSplitView;
+    @outlet CPSplitView         splitViewTagsContents;
     @outlet CPTextField         textFieldAboutVersion;
+    @outlet CPTextField         textFieldLoadingModuleLabel;
+    @outlet CPTextField         textFieldLoadingModuleTitle;
     @outlet CPView              filterView;
     @outlet CPView              leftView;
     @outlet CPView              rightView;
     @outlet CPView              statusBar;
     @outlet CPView              viewLoadingModule;
+    @outlet TNTagView           viewTags;
     @outlet CPWebView           helpView;
     @outlet CPWebView           webViewAboutCredits;
     @outlet CPWindow            theWindow;
     @outlet CPWindow            windowAboutArchipel;
+    @outlet TNAvatarManager     windowAvatarManager;
     @outlet TNSearchField       filterField;
     @outlet TNViewProperties    propertiesView;
     @outlet TNWhiteWindow       windowModuleLoading;
     @outlet TNWindowAddContact  addContactWindow;
     @outlet TNWindowAddGroup    addGroupWindow;
     @outlet TNWindowConnection  connectionWindow;
-    @outlet TNAvatarManager     windowAvatarManager;
-    @outlet CPTextField         textFieldLoadingModuleTitle;
-    @outlet CPTextField         textFieldLoadingModuleLabel;
     @outlet TNWindowPreferences windowPreferences;
-    
+
+    BOOL                        _tagsVisible;
     BOOL                        _shouldShowHelpView;
     CPImage                     _imageLedInData;
     CPImage                     _imageLedNoData;
@@ -193,8 +200,24 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     // register logs
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
-
+    // main split views
     [mainHorizontalSplitView setIsPaneSplitter:YES];
+
+    // tags split views
+    var gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
+    [viewTags setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    [splitViewTagsContents setIsPaneSplitter:YES];
+
+    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
+
+    if (_tagsVisible)
+        [splitViewTagsContents setPosition:33.0 ofDividerAtIndex:0];
+    else
+        [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
+
+    [viewTags setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
+    [viewTags setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:viewTags];
 
     [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
 
@@ -424,7 +447,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [editMenuItem addItemWithTitle:@"Paste" action:@selector(paste:) keyEquivalent:@"v"];
     [editMenuItem addItemWithTitle:@"Select all" action:@selector(selectAll:) keyEquivalent:@"a"];
     [_mainMenu setSubmenu:editMenuItem forItem:editMenu];
-    
+
     // Groups
     [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
     [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
@@ -720,6 +743,34 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 
 /*! Delegate of toolbar imutables toolbar items.
+    Trigger on tags item click
+    To have more information about the toolbar, see TNToolbar
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+
+- (IBAction)toolbarItemTagsClick:(id)sender
+{
+    var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
+
+    [anim setDelegate:self];
+    [anim setFrameRate:0.0];
+    [anim startAnimation];
+
+    _tagsVisible = !_tagsVisible;
+}
+
+- (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
+{
+    var dividerPosition = _tagsVisible ?  (aValue * 32.0) : 32.0 - (aValue * 32.0),
+        defaults        = [TNUserDefaults standardUserDefaults];
+
+    [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
+
+    [defaults setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
+}
+
+
+/*! Delegate of toolbar imutables toolbar items.
     Trigger on add JID item click
     To have more information about the toolbar, see TNToolbar
 
@@ -955,7 +1006,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 {
     var bundle  = [CPBundle mainBundle],
         stanza  = userInfo;
-    
+
     [_mainRoster answerAuthorizationRequest:stanza answer:YES];
 
     // evenually subscribe to event node of the entity
@@ -1143,7 +1194,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     {
         CPLog.info(@"setting the entity as " + item + " of type group");
         [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
-        return;
     }
     else if ([item class] == TNStropheContact)
     {
@@ -1154,6 +1204,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
 
     }
+
+    // post a system wide notification about the changes
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:_mainRoster];
 }
 
 
@@ -1191,7 +1244,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
         copy = document.createElement("div");
-    
+
     copy.style.position = "absolute";
     copy.style.fontSize = "10px";
     copy.style.color = "#6C707F";
