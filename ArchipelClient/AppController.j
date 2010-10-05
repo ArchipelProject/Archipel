@@ -194,7 +194,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations"
     ]];
 
     // register logs
@@ -207,6 +208,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     var gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
     [viewTags setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
     [splitViewTagsContents setIsPaneSplitter:YES];
+    [splitViewTagsContents setValue:0.0 forThemeAttribute:@"pane-divider-thickness"]
 
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
@@ -750,13 +752,22 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 - (IBAction)toolbarItemTagsClick:(id)sender
 {
-    var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
-
-    [anim setDelegate:self];
-    [anim setFrameRate:0.0];
-    [anim startAnimation];
-
+    var defaults = [TNUserDefaults standardUserDefaults];
+    
     _tagsVisible = !_tagsVisible;
+    
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
+
+        [anim setDelegate:self];
+        [anim setFrameRate:0.0];
+        [anim startAnimation];
+    }
+    else
+    {
+        [self animation:nil valueForProgress:1.0];
+    }
 }
 
 - (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
@@ -1110,15 +1121,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
     }
 
-
     [helpView setFrame:[rightView bounds]];
     [rightView addSubview:helpView];
-
-    var animView    = [CPDictionary dictionaryWithObjectsAndKeys:helpView, CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
-        anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-
-    [anim setDuration:0.3];
-    // [anim startAnimation];
 }
 
 /*! Hide the helpView from the rightView
@@ -1180,29 +1184,30 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [self showHelpView];
         [_mainRoster setCurrentItem:nil];
         [propertiesView hide];
-        return;
     }
-
-    var item        = [aTimer userInfo],
-        defaults    = [TNUserDefaults standardUserDefaults];
-
-    [_mainRoster setCurrentItem:item];
-
-    [self hideHelpView];
-
-    if ([item class] == TNStropheGroup)
+    else
     {
-        CPLog.info(@"setting the entity as " + item + " of type group");
-        [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
-    }
-    else if ([item class] == TNStropheContact)
-    {
-        var vCard       = [item vCard],
-            entityType  = [_moduleLoader analyseVCard:vCard];
+        var item        = [aTimer userInfo],
+            defaults    = [TNUserDefaults standardUserDefaults];
 
-        CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-        [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+        [_mainRoster setCurrentItem:item];
 
+        [self hideHelpView];
+
+        switch ([item class])
+        {
+            case TNStropheGroup:
+                CPLog.info(@"setting the entity as " + item + " of type group");
+                [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
+                break;
+        
+            case TNStropheContact:
+                var vCard       = [item vCard],
+                    entityType  = [_moduleLoader analyseVCard:vCard];
+                CPLog.info(@"setting the entity as " + item + " of type " + entityType);
+                [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+                break;
+        }
     }
 
     // post a system wide notification about the changes

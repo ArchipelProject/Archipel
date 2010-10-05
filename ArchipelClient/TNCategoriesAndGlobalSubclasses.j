@@ -312,7 +312,9 @@
 
 - (IBAction)orderFront:(id)sender
 {
-    if (![self isVisible])
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"] && ![self isVisible])
     {
         var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
             anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];

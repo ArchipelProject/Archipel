@@ -413,9 +413,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
 {
-    var useAnimations = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"];
+    var defaults = [TNUserDefaults standardUserDefaults];
 
-    if (useAnimations)
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
     {
         var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
 

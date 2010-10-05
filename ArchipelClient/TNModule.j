@@ -61,7 +61,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     BOOL                    _isActive               @accessors(property=isActive, readonly);
     BOOL                    _isVisible              @accessors(property=isVisible, readonly);
     BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
-    BOOL                    _useAnimations          @accessors(getter=isUseAnimations, setter=setUseAnimations:);
     CPArray                 _supportedEntityTypes   @accessors(property=supportedEntityTypes);
     CPBundle                _bundle                 @accessors(property=bundle);
     CPMenu                  _menu                   @accessors(property=menu);
@@ -181,7 +180,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willLoad
 {
-    _useAnimations      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelUseAnimations"]; // if I put this in init, it won't work.
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _registredSelectors = [CPArray array];
     _pubsubRegistrar    = [CPArray array];
@@ -219,7 +217,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willShow
 {
-    if (_useAnimations == 1)
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
     {
         var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self view], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
             anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
