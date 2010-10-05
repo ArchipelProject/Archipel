@@ -34,6 +34,7 @@ import threading
 import traceback
 import datetime
 import pubsub
+import sqlite3
 
 
 ARCHIPEL_ERROR_CODE_AVATARS       = -1
@@ -89,6 +90,9 @@ class TNArchipelBasicXMPPClient(object):
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
+        self.database_tags_file     = self.configuration.get("GLOBAL", "tags_database_file")
+        self.tags                   = []
+        self.tags_database          = sqlite3.connect(self.database_tags_file, check_same_thread=False)
         
         self.jid.setResource(self.resource)
         
@@ -102,6 +106,8 @@ class TNArchipelBasicXMPPClient(object):
             self.ipaddr = socket.gethostbyname(socket.gethostname())
         else:
             self.ipaddr = ip_conf
+        
+        self.recover_tags();
     
     
     def initialize_modules(self):
@@ -360,6 +366,8 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
+        self.xmppclient.RegisterHandler('iq', self.__process_tags_iq, ns=ARCHIPEL_NS_TAGS)
+        
         log.info("handlers registred")
         
         for method in self.__class__.__dict__:
@@ -955,7 +963,164 @@ class TNArchipelBasicXMPPClient(object):
         return resp
     
     
+    ######################################################################################################
+    ### Tagging
+    ######################################################################################################
+
+    def add_tag(self, tag):
+        """
+        add a tag to the tag array
+        """
+        if not tag in self.tags:
+            self.tags.append(tag)
     
+    
+    def remove_tag(self, tag):
+        """
+        remove a tag from the tag array
+        """
+        if tag in self.tags:
+            del self.tags[tag]
+    
+    
+    def empty_tags(self):
+        """
+        remove all tags
+        """
+        self.tags = []
+        self.save_tags()
+    
+    
+    def save_tags(self):
+        """
+        has to be overriden to save the tags somewhere
+        """
+        c = self.tags_database.cursor()
+        
+        c.execute("delete from tags where jid=?", (str(self.jid),))
+        
+        for tag in self.tags:
+            c.execute("insert into tags values (?, ?)", (str(self.jid), tag,))
+        
+        self.tags_database.commit()
+        c.close()
+        
+    
+    
+    def recover_tags(self):
+        """
+        has to be overriden to save the tags somewhere
+        """
+        self.tags_database.execute("create table if not exists tags (jid text, tag text)")
+        
+        c = self.tags_database.cursor()
+        c.execute("select * from tags where jid=?", (str(self.jid), ))
+        for tag in c:
+            jid, content = tag
+            self.add_tag(content)
+        c.close()
+    
+    
+    def all_tags(self):
+        """
+        return all tags used in database
+        """
+        ret = []
+        c = self.tags_database.cursor()
+        c.execute("select DISTINCT tag from tags")
+        for tag in c:
+            ret.append(tag[0])
+        c.close()
+        return ret
+    
+    
+    def __process_tags_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
+
+        it understands IQ of type:
+            - gettags
+            - settags
+
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        if action == "gettags":
+            reply = self.iq_get_tags(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+
+        elif action == "settags":
+            reply = self.iq_set_tags(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "alltags":
+            reply = self.iq_all_tags(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+    def iq_get_tags(self, iq):
+        """
+        return a list of tags
+        """
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            for tag in self.tags:
+                n = xmpp.Node("tag")
+                n.addData(tag)
+                nodes.append(n)
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
+        return reply
+
+
+    def iq_set_tags(self, iq):
+        """
+        set the current tags
+        """
+        try:
+            reply = iq.buildReply("result")
+            tagsNode = domain_uuid = iq.getTag("query").getTag("archipel").getTags(name="tag")
+            self.empty_tags()
+            
+            for tagNode in tagsNode:
+                self.add_tag(tagNode.getData());
+            
+            self.save_tags();    
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
+        return reply
+    
+    
+    def iq_all_tags(self, iq):
+        """
+        return all used tags. This can be used for autocompletion
+        """
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            for tag in self.all_tags():
+                n = xmpp.Node("tag")
+                n.addData(tag)
+                nodes.append(n)
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
+        return reply
+        
 
 
 
