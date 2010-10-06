@@ -1034,6 +1034,25 @@ class TNArchipelBasicXMPPClient(object):
         return ret
     
     
+    def tags_registry(self):
+        """
+        return all tags used in database
+        """
+        ret = {}
+        c = self.tags_database.cursor()
+        c.execute("select DISTINCT jid from tags")
+        for jid in c:
+            temp = []
+            c2 = self.tags_database.cursor()
+            c2.execute("select DISTINCT tag from tags where jid=?", (jid))
+            for tag in c2:
+                temp.append(tag[0])
+            ret[jid[0]] = temp
+            c2.close()
+        c.close()
+        return ret
+    
+    
     def __process_tags_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
@@ -1041,6 +1060,8 @@ class TNArchipelBasicXMPPClient(object):
         it understands IQ of type:
             - gettags
             - settags
+            - alltags
+            - tagsregistry
 
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -1067,6 +1088,11 @@ class TNArchipelBasicXMPPClient(object):
         
         elif action == "alltags":
             reply = self.iq_all_tags(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "tagsregistry":
+            reply = self.iq_tags_registry(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -1120,7 +1146,25 @@ class TNArchipelBasicXMPPClient(object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
         return reply
-        
-
+    
+    
+    def iq_tags_registry(self, iq):
+        """
+        return all used tags. This can be used for autocompletion
+        """
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            for jid, tags in self.tags_registry().items():
+                n = xmpp.Node("user", attrs={"jid": jid});
+                for tag in tags:
+                    tagNode = n.addChild("tag")
+                    tagNode.addData(tag)
+                nodes.append(n)
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
+        return reply
+    
 
 
