@@ -73,46 +73,61 @@ TNArchipelEntityTypeUser            = @"user";
     @group TNArchipelEntityType
     This represent a group XMPP entity
 */
-TNArchipelEntityTypeGroup            = @"group";
+TNArchipelEntityTypeGroup           = @"group";
 
 
 /*! @global
     @group TNArchipelStatus
     This string represent a status Available
 */
-TNArchipelStatusAvailableLabel  = @"Available";
+TNArchipelStatusAvailableLabel      = @"Available";
 
 /*! @global
     @group TNArchipelStatus
     This string represent a status Away
 */
-TNArchipelStatusAwayLabel       = @"Away";
+TNArchipelStatusAwayLabel           = @"Away";
 
 /*! @global
     @group TNArchipelStatus
     This string represent a status Busy
 */
-TNArchipelStatusBusyLabel       = @"Busy";
+TNArchipelStatusBusyLabel           = @"Busy";
 
 /*! @global
     @group TNArchipelStatus
     This string represent a status DND
 */
-TNArchipelStatusDNDLabel       = @"Do not disturb";
+TNArchipelStatusDNDLabel            = @"Do not disturb";
 
 
-TNArchipelMainWindow            = nil;
 /*! @global
-    @group TNArchipelAction
+    @group TNArchipelNotification
     ask for removing the current roster item
 */
-TNArchipelActionRemoveSelectedRosterEntityNotification = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
+TNArchipelActionRemoveSelectedRosterEntityNotification  = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
 
-TNArchipelNotificationRosterSelectionChanged = @"TNArchipelNotificationRosterSelectionChanged";
+/*! @global
+    @group TNArchipelNotification
+    Sent when two groups has been merged
+*/
+TNArchipelGroupMergedNotification                       = @"TNArchipelGroupMergedNotification";
 
-TNArchipelXMPPNamespace             = "http://archipelproject.org";
-TNArchipelRememberOpenedGroup       = @"TNArchipelRememberOpenedGroup_";
-TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
+
+/*! @global
+    @group TNArchipelAction
+    notification send when item selection changes in roster
+*/
+TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificationRosterSelectionChanged";
+
+/*! @global
+    @group UserDefaultsKeys
+    base key of opened group save. will be TNArchipelRememberOpenedGroup_+JID
+*/
+TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
+
+
+
 
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.
@@ -171,6 +186,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
 }
+
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! This method initialize the content of the GUI when the CIB file
     as finished to load.
@@ -236,7 +255,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
     /* hide main window */
     [theWindow orderOut:nil];
-    TNArchipelMainWindow = theWindow;
 
     /* toolbar */
     CPLog.trace("initializing mianToolbar");
@@ -409,6 +427,8 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     _tempNumberOfReadyModules = -1;
 }
 
+/*! Creates the mainmenu. it called by awakeFromCib
+*/
 - (void)makeMainMenu
 {
     CPLog.trace(@"Creating the main menu");
@@ -462,8 +482,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
     [contactsMenu addItem:[CPMenuItem separatorItem]];
     [contactsMenu addItemWithTitle:@"Rename contact" action:@selector(renameContact:) keyEquivalent:@"R"];
-    [contactsMenu addItem:[CPMenuItem separatorItem]];
-    [contactsMenu addItemWithTitle:@"Reload vCard" action:@selector(reloadContactVCard:) keyEquivalent:@""];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 
     // Status
@@ -508,19 +526,13 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     CPLog.trace(@"Main menu created");
 }
 
-/*! delegate of TNModuleLoader sent when all modules are loaded
+
+#pragma mark -
+#pragma mark Actions
+
+/*! will remove the selected roster item according to its type
+    @param the sender of the action
 */
-- (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
-{
-    CPLog.info(@"All modules have been loaded");
-    CPLog.trace(@"Positionning the connection window");
-
-    [windowModuleLoading orderOut:nil];
-    [connectionWindow center];
-    [connectionWindow makeKeyAndOrderFront:nil];
-    [connectionWindow initCredentials];
-}
-
 - (IBAction)didMinusBouttonClicked:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
@@ -532,6 +544,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [self deleteGroup:sender];
 }
 
+/*! will log out from Archipel
+    @param the sender of the action
+*/
 - (IBAction)logout:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -546,12 +561,18 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [CPMenu setMenuBarVisible:NO];
 }
 
+/*! will opens the add contact window
+    @param the sender of the action
+*/
 - (IBAction)addContact:(id)sender
 {
     [addContactWindow setRoster:_mainRoster];
     [addContactWindow makeKeyAndOrderFront:nil];
 }
 
+/*! will ask for deleting the selected contact
+    @param the sender of the action
+*/
 - (IBAction)deleteContact:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
@@ -573,6 +594,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [alert runModal];
 }
 
+/*! Action for the deleteContact:'s confirmation TNAlert.
+    It will delete the contact
+    @param the sender of the action
+*/
 - (void)performDeleteContact:(id)userInfo
 {
     var growl   = [TNGrowlCenter defaultCenter],
@@ -589,13 +614,18 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [self unregisterFromEventNodeOfJID:[contact JID] ofServer:@"pubsub." + [contact domain]];
 }
 
-
+/*! Opens the add group window
+    @param the sender of the action
+*/
 - (IBAction)addGroup:(id)sender
 {
     [addGroupWindow setRoster:_mainRoster];
     [addGroupWindow makeKeyAndOrderFront:nil];
 }
 
+/*! will ask for deleting the selected group
+    @param the sender of the action
+*/
 - (IBAction)deleteGroup:(id)sender
 {
     var growl       = [TNGrowlCenter defaultCenter],
@@ -624,6 +654,10 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [alert runModal];
 }
 
+/*! Action for the deleteGroup:'s confirmation TNAlert.
+    It will delete the group
+    @param the sender of the action
+*/
 - (void)performDeleteGroup:(id)userInfo
 {
     var group   = userInfo,
@@ -639,6 +673,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_rosterOutlineView deselectAll];
 }
 
+/*! Will select the next entity in Roster
+    @param the sender of the action
+*/
 - (IBAction)selectNextEntity:(id)sender
 {
     var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
@@ -647,6 +684,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_rosterOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:nextIndex] byExtendingSelection:NO];
 }
 
+/*! Will select the previous entity in Roster
+    @param the sender of the action
+*/
 - (IBAction)selectPreviousEntity:(id)sender
 {
     var selectedIndex   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
@@ -656,16 +696,33 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 }
 
+/*! Make the property view rename field active
+    @param the sender of the action
+*/
 - (IBAction)renameContact:(id)sender
 {
     [[propertiesView entryName] mouseDown:nil];
 }
 
+/*! Make the property view rename field active
+    @param the sender of the action
+*/
+- (IBAction)renameGroup:(id)sender
+{
+    [[propertiesView entryName] mouseDown:nil];
+}
+
+/*! simulate a click on the focus filter
+    @param the sender of the action
+*/
 - (IBAction)focusFilter:(id)sender
 {
     [filterField mouseDown:nil];
 }
 
+/*! Expands the current group
+    @param the sender of the action
+*/
 - (IBAction)expandGroup:(id)sender
 {
     var index       = [_rosterOutlineView selectedRowIndexes];
@@ -678,6 +735,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_rosterOutlineView expandItem:item];
 }
 
+/*! Collapses the current group
+    @param the sender of the action
+*/
 - (IBAction)collapseGroup:(id)sender
 {
     var index = [_rosterOutlineView selectedRowIndexes];
@@ -690,41 +750,49 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_rosterOutlineView collapseItem:item];
 }
 
+/*! Expands all groups
+    @param the sender of the action
+*/
 - (IBAction)expandAllGroups:(id)sender
 {
     [_rosterOutlineView expandAll];
 }
 
+/*! Collapses all groups
+    @param the sender of the action
+*/
 - (IBAction)collapseAllGroups:(id)sender
 {
     [_rosterOutlineView collapseAll];
 }
 
-- (IBAction)reloadContactVCard:(id)sender
-{
-    //
-}
-
+/*! Opens the archipel website in a new window
+    @param the sender of the action
+*/
 - (IBAction)openWebsite:(id)sender
 {
     window.open("http://archipelproject.org");
 }
 
+/*! Opens the donation website in a new window
+    @param the sender of the action
+*/
 - (IBAction)openDonationPage:(id)sender
 {
     window.open("http://antoinemercadal.fr/archipelblog/donate/");
 }
 
+/*! Opens the archipel issues website in a new window
+    @param the sender of the action
+*/
 - (IBAction)openBugTracker:(id)sender
 {
-    window.open("http://bitbucket.org/primalmotion/archipel/issues/new");
+    window.open("http://github.org/primalmotion/archipel/issues/new");
 }
 
-- (IBAction)renameGroup:(id)sender
-{
-    [[propertiesView entryName] mouseDown:nil];
-}
-
+/*! hide or show the main menu
+    @param the sender of the action
+*/
 - (IBAction)switchMainMenu:(id)sender
 {
     if ([CPMenu menuBarVisible])
@@ -733,94 +801,25 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
         [CPMenu setMenuBarVisible:YES];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on logout item click
-    To have more information about the toolbar, see TNToolbar
-    @param sender the sender of the action (the CPToolbarItem)
+/*! shows the About window
+    @param the sender of the action
 */
-- (IBAction)toolbarItemLogoutClick:(id)sender
+- (IBAction)showAboutWindow:(id)sender
 {
-    [self logout:sender];
+    [windowAboutArchipel makeKeyAndOrderFront:sender];
 }
 
-
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on tags item click
-    To have more information about the toolbar, see TNToolbar
-    @param sender the sender of the action (the CPToolbarItem)
+/*! shows the Preferences window
+    @param the sender of the action
 */
-
-- (IBAction)toolbarItemTagsClick:(id)sender
+- (IBAction)showPreferencesWindow:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
-    
-    _tagsVisible = !_tagsVisible;
-    
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
-    {
-        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
-
-        [anim setDelegate:self];
-        [anim setFrameRate:0.0];
-        [anim startAnimation];
-    }
-    else
-    {
-        [self animation:nil valueForProgress:1.0];
-    }
-}
-
-- (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
-{
-    var dividerPosition = _tagsVisible ?  (aValue * 32.0) : 32.0 - (aValue * 32.0),
-        defaults        = [TNUserDefaults standardUserDefaults];
-
-    [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
-
-    [defaults setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
+    [windowPreferences makeKeyAndOrderFront:sender];
 }
 
 
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on add JID item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-- (IBAction)toolbarItemAddContactClick:(id)sender
-{
-    [self addContact:sender];
-}
-
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on delete JID item click
-    To have more information about the toolbar, see TNToolbar
-
-    @param sender the sender of the action (the CPToolbarItem)
-*/
-- (IBAction)toolbarItemDeleteContactClick:(id)sender
-{
-    [self deleteContact:sender]
-}
-
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on add group item click
-    To have more information about the toolbar, see TNToolbar
-*/
-- (IBAction)toolbarItemAddGroupClick:(id)sender
-{
-    [self addGroup:sender];
-}
-
-/*! Delegate of toolbar imutables toolbar items.
-    Trigger on delete group item click
-    NOT IMPLEMENTED
-    To have more information about the toolbar, see TNToolbar
-*/
-- (IBAction)toolbarItemDeleteGroupClick:(id)sender
-{
-    [self deleteGroup:sender];
-}
+#pragma mark -
+#pragma mark Toolbar Actions
 
 /*! Delegate of toolbar imutables toolbar items.
     Trigger on delete help item click.
@@ -867,7 +866,6 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     }
 }
 
-
 /*! Delegate of toolbar imutables toolbar items.
     Trigger presence item change.
     This will change your own XMPP status
@@ -907,16 +905,113 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [[_mainRoster connection] send:presence];
 }
 
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on logout item click
+    To have more information about the toolbar, see TNToolbar
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemLogoutClick:(id)sender
+{
+    [self logout:sender];
+}
+
+/*! Delegate of toolbar imutables toolbar items.
+    Trigger on tags item click
+    To have more information about the toolbar, see TNToolbar
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemTagsClick:(id)sender
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    _tagsVisible = !_tagsVisible;
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
+
+        [anim setDelegate:self];
+        [anim setFrameRate:0.0];
+        [anim startAnimation];
+    }
+    else
+    {
+        [self animation:nil valueForProgress:1.0];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
 /*! Delegate for CPWindow.
     Tipically set _helpWindow to nil on closes.
 */
 - (void)windowWillClose:(CPWindow)aWindow
 {
-    if (aWindow == _helpWindow)
+    if (aWindow === _helpWindow)
     {
         _helpWindow = nil;
     }
 }
+
+/*! delegate of CPAnimation
+*/
+- (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
+{
+    var dividerPosition = _tagsVisible ?  (aValue * 32.0) : 32.0 - (aValue * 32.0),
+        defaults        = [TNUserDefaults standardUserDefaults];
+
+    [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
+
+    [defaults setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
+}
+
+/*! Delegate of TNOutlineView
+    will be performed when when item will expands and save this state in TNUserDefaults
+
+    @param aNotification the received notification
+*/
+- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"expanded" forKey:key];
+}
+
+/*! Delegate of TNOutlineView
+    will be performed when when item will collapses and save this state in TNUserDefaults
+
+    @param aNotification the received notification
+*/
+- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"collapsed" forKey:key];
+
+    return YES;
+}
+
+/*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults
+*/
+- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
+{
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        splitView   = [aNotification object],
+        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
+
+    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
+    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
+}
+
+
+#pragma mark -
+#pragma mark Strophe Connection Management
 
 /*! Notification responder of TNStropheConnection
     will be performed on login
@@ -924,52 +1019,25 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    [CPMenu setMenuBarVisible:YES];
     [connectionWindow orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
 
+
     _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
+
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:filterField];
-    [propertiesView setRoster:_mainRoster];
-
-
-    [_mainRoster getRoster];
-
-    [CPMenu setMenuBarVisible:YES];
-
-    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
-
-    var user = [[_mainRoster connection] JID];
-
+    [_mainRoster setTagsRegistry:[viewTags tagsRegistry]];
     [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+    [_mainRoster getRoster];
 
-    var growl = [TNGrowlCenter defaultCenter];
-    [growl pushNotificationWithTitle:@"Welcome" message:@"Welcome back " + user];
-}
+    [propertiesView setRoster:_mainRoster];
 
-- (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
-{
-    [ledIn setImage:_imageLedInData];
+    [windowPreferences setConnection:[aNotification object]];
 
-    if (_ledInTimer)
-        [_ledInTimer invalidate];
-
-    _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
-}
-
-- (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
-{
-    [ledOut setImage:_imageLedOutData];
-
-    if (_ledOutTimer)
-        [_ledOutTimer invalidate];
-    _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
-}
-
-- (void)timeOutDataLed:(CPTimer)aTimer
-{
-    [[aTimer userInfo] setImage:_imageLedNoData];
+    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -982,6 +1050,42 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [connectionWindow makeKeyAndOrderFront:nil];
 }
 
+
+#pragma mark -
+#pragma mark Traffic LED
+
+/*! delegate of StropheCappuccino that will be trigger on Raw input traffic
+    This will light the in traffic light
+*/
+- (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
+{
+    [ledIn setImage:_imageLedInData];
+
+    if (_ledInTimer)
+        [_ledInTimer invalidate];
+
+    _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
+}
+
+/*! delegate of StropheCappuccino that will be trigger on Raw output traffic
+    This will light the out traffic light
+*/
+- (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
+{
+    [ledOut setImage:_imageLedOutData];
+
+    if (_ledOutTimer)
+        [_ledOutTimer invalidate];
+    _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
+}
+
+/*! This will light of traffic LED after a small delay
+*/
+- (void)timeOutDataLed:(CPTimer)aTimer
+{
+    [[aTimer userInfo] setImage:_imageLedNoData];
+}
+
 /*! Notification responder for CPApplicationWillTerminateNotification
 */
 - (void)onApplicationTerminate:(CPNotification)aNotification
@@ -989,6 +1093,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [_mainRoster disconnect];
 }
 
+
+#pragma mark -
+#pragma mark XMPP Subscriptions / PubSub Management
 
 /*! Delegate method of main TNStropheRoster.
     will be performed when a subscription request is sent
@@ -1013,6 +1120,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [alert runModal];
 }
 
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will accept the subscription and try to register to Archipel pubsub nodes
+*/
 - (void)performSubscribe:(id)userInfo
 {
     var bundle  = [CPBundle mainBundle],
@@ -1024,6 +1134,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [self registerToEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
+/*! Action of performSubscribe's confirmation alert.
+    Will register to Archipel pub sub nodes of the new contact
+*/
 - (void)registerToEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
 {
     var pubSubServer        = aServer,
@@ -1045,6 +1158,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 
 }
 
+/*! Message sent by registerToEventNodeOfJID:ofServer: that will
+    log if pubsub subscription is OK
+*/
 - (void)didPubSubSubscribe:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
@@ -1059,6 +1175,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     return NO;
 }
 
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will refuse the subscription and try to unregister to Archipel pubsub nodes
+*/
 - (BOOL)performUnsubscribe:(id)userInfo
 {
     var stanza = userInfo;
@@ -1068,6 +1187,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
    [self unregisterFromEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
 }
 
+/*! Action of performUnsubscribe's confirmation alert.
+    Will unregister from Archipel pubSub nodes of the new contact
+*/
 - (void)unregisterFromEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
 {
     var pubSubServer            = aServer,
@@ -1088,6 +1210,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [[_mainRoster connection] send:nodeUnsubscribeStanza];
 }
 
+/*! Message sent by unregisterFromEventNodeOfJID:ofServer: that will
+    log if pubsub unsubscription is OK
+*/
 - (BOOL)didPubSubUnsubscribe:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
@@ -1103,23 +1228,22 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 }
 
 
+#pragma mark -
+#pragma mark Help view management
 
 /*! Display the helpView in the rightView
 */
 - (void)showHelpView
 {
-    if (![helpView mainFrameURL])
-    {
-        var bundle      = [CPBundle mainBundle],
-            defaults    = [TNUserDefaults standardUserDefaults],
-            url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-            version     = [defaults objectForKey:@"TNArchipelVersion"];
+    var bundle      = [CPBundle mainBundle],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+        version     = [defaults objectForKey:@"TNArchipelVersion"];
 
-        if (!url || (url == @"local"))
-            url = @"help/index.html";
+    if (!url || (url == @"local"))
+        url = @"help/index.html";
 
-        [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
-    }
+    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
 
     [helpView setFrame:[rightView bounds]];
     [rightView addSubview:helpView];
@@ -1132,9 +1256,34 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     [helpView removeFromSuperview];
 }
 
+
+#pragma mark -
+#pragma mark Module Loading
+
+/*! delegate of TNModuleLoader sent when all modules are loaded
+*/
+- (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
+{
+    CPLog.info(@"All modules have been loaded");
+    CPLog.trace(@"Positionning the connection window");
+
+    [windowModuleLoading orderOut:nil];
+    [connectionWindow center];
+    [connectionWindow makeKeyAndOrderFront:nil];
+    [connectionWindow initCredentials];
+}
+
+/*! Triggered when TNModuleLoader send TNArchipelModulesAllReadyNotification.
+*/
+- (void)allModuleReady:(CPNotification)aNotification
+{
+    if ([viewLoadingModule superview])
+        [viewLoadingModule removeFromSuperview];
+}
+
 /*! Delegate of TNOutlineView
     will be performed when selection changes. Tab Modules displaying
-    if managed by this message
+
     @param aNotification the received notification
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
@@ -1155,28 +1304,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
 
-- (void)outlineViewItemWillExpand:(CPNotification)aNotification
-{
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelRememberOpenedGroup + [item name];
-
-    [defaults setObject:"expanded" forKey:key];
-}
-
-- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
-{
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelRememberOpenedGroup + [item name];
-
-    [defaults setObject:"collapsed" forKey:key];
-
-    return YES;
-}
-
-
-
+/*! This method is called by delegate outlineViewSelectionDidChange: after a small delay by a timer
+    in order to really process the modules swappoing. this avoid overloading if up key is maintained for example.
+*/
 - (void)performModuleChange:(CPTimer)aTimer
 {
     if ([_rosterOutlineView numberOfSelectedRows] == 0)
@@ -1200,7 +1330,7 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
                 CPLog.info(@"setting the entity as " + item + " of type group");
                 [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
                 break;
-        
+
             case TNStropheContact:
                 var vCard       = [item vCard],
                     entityType  = [_moduleLoader analyseVCard:vCard];
@@ -1215,35 +1345,9 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
 }
 
 
-/*! Delegate of mainSplitView
-*/
-- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
-{
-    var defaults    = [TNUserDefaults standardUserDefaults],
-        splitView   = [aNotification object],
-        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 
-    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
-}
-
-
-- (void)allModuleReady:(CPNotification)aNotification
-{
-    if ([viewLoadingModule superview])
-        [viewLoadingModule removeFromSuperview];
-}
-
-
-- (IBAction)showAboutWindow:(id)sender
-{
-    [windowAboutArchipel makeKeyAndOrderFront:sender];
-}
-
-- (IBAction)showPreferencesWindow:(id)sender
-{
-    [windowPreferences makeKeyAndOrderFront:sender];
-}
+#pragma mark -
+#pragma mark Divers
 
 - (void)copyright
 {
@@ -1263,4 +1367,5 @@ TNArchipelGroupMergedNotification   = @"TNArchipelGroupMergedNotification";
     document.body.appendChild(copy);
 
 }
+
 @end

@@ -31,13 +31,17 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 @implementation TNDatasourceRoster  : TNStropheRoster
 {
-    CPOutlineView   _mainOutlineView @accessors(property=mainOutlineView);
-    CPSearchField   _filterField     @accessors(property=filterField);
-    CPString        _filter          @accessors(property=filter);
-    id              _currentItem     @accessors(property=currentItem);
-
+    CPOutlineView   _mainOutlineView    @accessors(property=mainOutlineView);
+    CPSearchField   _filterField        @accessors(property=filterField);
+    CPString        _filter             @accessors(property=filter);
+    id              _currentItem        @accessors(property=currentItem);
+    CPDictionary    _tagsRegistry       @accessors(property=tagsRegistry);
     id              _draggedItem;
 }
+
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! init the datasource
     @param aConnection a valid connected TNStropheConnection
@@ -68,6 +72,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return self;
 }
 
+
+#pragma mark -
+#pragma mark Notification handlers
+
 - (void)onUserMessage:(CPNotification)aNotification
 {
     var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
@@ -84,37 +92,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
     [self updateOutlineView:aNotification];
 }
-
-- (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
-{
-    var row     = [_mainOutlineView rowForItem:aContact],
-        indexes = [CPIndexSet indexSetWithIndex:row];
-
-    [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
-}
-
-/*! allow to define a CPSearchField to filter entries
-    @param aField CPSearchField to use for filtering
-*/
-- (void)setFilterField:(CPSearchField)aField
-{
-    _filterField = aField;
-
-    [_filterField setSendsSearchStringImmediately:YES]
-    [_filterField setTarget:self];
-    [_filterField setAction:@selector(filterFieldDidChange:)];
-}
-
-/*! Action that will be plugged to the CPSearchField in order to catch
-    when user changes the value
-*/
-- (IBAction)filterFieldDidChange:(id)sender
-{
-    _filter = [sender stringValue];
-    [self updateOutlineView:nil];
-}
-
-
 
 /*! Reload the content of the datasource
     @param aNotification CPNotification that trigger the message
@@ -141,6 +118,32 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
+#pragma mark -
+#pragma mark Actions
+/*! Action that will be plugged to the CPSearchField in order to catch
+    when user changes the value
+*/
+- (IBAction)filterFieldDidChange:(id)sender
+{
+    _filter = [sender stringValue];
+    [self updateOutlineView:nil];
+}
+
+
+#pragma mark -
+#pragma mark Filering
+
+/*! allow to define a CPSearchField to filter entries
+    @param aField CPSearchField to use for filtering
+*/
+- (void)setFilterField:(CPSearchField)aField
+{
+    _filterField = aField;
+
+    [_filterField setSendsSearchStringImmediately:YES]
+    [_filterField setTarget:self];
+    [_filterField setAction:@selector(filterFieldDidChange:)];
+}
 
 /*! Message use internally for filtering
     @param aFilter CPString containing the filter
@@ -158,8 +161,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var entry = [theEntries objectAtIndex:i];
 
-        if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-            [filteredEntries addObject:entry]
+        if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
+            || [[_tagsRegistry objectForKey:[entry JID]] containsObject:[aFilter uppercaseString]])
+        {
+            [filteredEntries addObject:entry];
+        }
     }
     return filteredEntries;
 }
@@ -180,7 +186,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         var entry = [[aGroup contacts] objectAtIndex:i];
 
-        if ([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
+        if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
+            || [[_tagsRegistry objectForKey:[entry JID]] containsObject:[aFilter lowercaseString]])
             [filteredEntries addObject:entry];
     }
 
@@ -211,7 +218,25 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return filteredGroup;
 }
 
-/*! CPOutlineView Delegate
+
+#pragma mark -
+#pragma mark Delegates
+
+/*! Growl delegate
+*/
+- (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
+{
+    var row     = [_mainOutlineView rowForItem:aContact],
+        indexes = [CPIndexSet indexSetWithIndex:row];
+
+    [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+}
+
+
+#pragma mark -
+#pragma mark Datasource
+
+/*! CPOutlineView Datasource
 */
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
@@ -225,14 +250,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
     return ([item class] == TNStropheGroup) ? YES : NO;
 }
 
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
@@ -246,7 +271,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (id)outlineView:(CPOutlineView)anOutlineView objectValueForTableColumn:(CPTableColumn)tableColumn byItem:(id)item
 {
@@ -258,8 +283,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 }
 
-
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView writeItems:(CPArray)theItems toPasteboard:(CPPasteBoard)thePasteBoard
 {
@@ -271,8 +295,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return YES;
 }
 
-
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
@@ -290,7 +313,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return CPDragOperationNone;
 }
 
-/*! CPOutlineView Delegate
+/*! CPOutlineView Datasource
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {

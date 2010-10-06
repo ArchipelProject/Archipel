@@ -21,10 +21,12 @@
 @import <AppKit/AppKit.j>
 
 
-TNArchipelTypeTags      = @"archipel:tags";
-TNArchipelTypeTagsGet   = @"gettags";
-TNArchipelTypeTagsSet   = @"settags";
-TNArchipelTypeTagsAll   = @"alltags";
+TNArchipelTypeTags          = @"archipel:tags";
+TNArchipelTypeTagsGet       = @"gettags";
+TNArchipelTypeTagsSet       = @"settags";
+TNArchipelTypeTagsAll       = @"alltags";
+TNArchipelTypeTagsRegistry  = @"tagsregistry";
+
 
 @implementation TNTagView : CPView
 {
@@ -32,8 +34,8 @@ TNArchipelTypeTagsAll   = @"alltags";
     CPButton        _buttonSave;
     CPTokenField    _tokenFieldTags;
     id              _currentRosterItem;
+    CPDictionary    _tagsRegistry       @accessors(getter=tagsRegistry);
 }
-
 
 
 #pragma mark -
@@ -44,7 +46,9 @@ TNArchipelTypeTagsAll   = @"alltags";
     var frame = [self frame],
         tokenFrame;
 
-    _allTags = [CPArray array];
+    _allTags            = [CPArray array];
+    _tagsRegistry       = [CPDictionary dictionary];
+    _currentRosterItem  = nil;
 
     _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:frame.size.width - 37];
     tokenFrame = [_tokenFieldTags frame];
@@ -69,7 +73,12 @@ TNArchipelTypeTagsAll   = @"alltags";
     [self addSubview:_buttonSave];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
 }
+
+
+#pragma mark -
+#pragma mark Notifications handlers
 
 - (void)didRosterItemChange:(CPNotification)aNotification
 {
@@ -93,31 +102,48 @@ TNArchipelTypeTagsAll   = @"alltags";
 
         [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
         [_tokenFieldTags setEnabled:YES];
-        [self getTags];
+
+        [self getTags:nil];
         [self getAllTags];
     }
 }
 
+- (void)didRosterRetrieve:(CPNotification)aNotification
+{
+    var roster = [aNotification object];
+
+    CPLog.info("retreiving tags for all items.");
+
+    // setTimeout(function(){
+        for (var i = 0; i < [[roster contacts] count]; i++)
+            [self getTags:[[roster contacts] objectAtIndex:i]];
+        CPLog.info("tags registry populated");
+    // }, 1000);
+}
 
 
 #pragma mark -
 #pragma mark XMPP System
 
-- (void)getTags
+- (void)getTags:(TNStropheContact)aSpecificContact
 {
-    var stanza  = [TNStropheStanza iqWithType:@"get"];
+    var stanza  = [TNStropheStanza iqWithType:@"get"],
+        contact = (aSpecificContact) ? aSpecificContact : _currentRosterItem;
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeTagsGet}];
 
-    [_tokenFieldTags setPlaceholderString:@"Retrieving tags..."];
-    [_currentRosterItem sendStanza:stanza andRegisterSelector:@selector(didGetTags:) ofObject:self];
+    if (_currentRosterItem)
+        [_tokenFieldTags setPlaceholderString:@"Retrieving tags..."];
+
+    [contact sendStanza:stanza andRegisterSelector:@selector(didGetTags:) ofObject:self];
 }
 
 - (void)didGetTags:(TNStropheStanza)aStanza
 {
-    [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
+    if (_currentRosterItem)
+        [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
 
     if ([aStanza type] == @"result")
     {
@@ -127,13 +153,15 @@ TNArchipelTypeTagsAll   = @"alltags";
         for (var i = 0; i < [tags count]; i++)
             [content addObject:[[tags objectAtIndex:i] text]];
 
-        [_tokenFieldTags setObjectValue:content];
+        [_tagsRegistry setObject:content forKey:[aStanza fromBare]];
+
+        if (_currentRosterItem)
+            [_tokenFieldTags setObjectValue:content];
     }
     else
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't get tags"];
     }
-
     return NO;
 }
 
@@ -167,6 +195,50 @@ TNArchipelTypeTagsAll   = @"alltags";
     return NO;
 }
 
+// - (void)getTagsRegistry
+// {
+//     var stanza  = [TNStropheStanza iqWithType:@"get"];
+//
+//     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
+//     [stanza addChildWithName:@"archipel" andAttributes:{
+//         "action": TNArchipelTypeTagsRegistry}];
+//
+//     [_currentRosterItem sendStanza:stanza andRegisterSelector:@selector(didGetTagsRegistry:) ofObject:self];
+// }
+//
+// - (void)didGetTagsRegistry:(TNStropheStanza)aStanza
+// {
+//     if ([aStanza type] == @"result")
+//     {
+//         users = [aStanza childrenWithName:@"user"];
+//
+//         for (var i = 0; i < [users count]; i++)
+//         {
+//             var user = [users objectAtIndex:i],
+//                 tags = [user childrenWithName:@"tag"],
+//                 jid  = [user valueForAttribute:@"jid"].split("/")[0];
+//
+//             CPLog.debug("PARSING INFO FOR USER " + jid);
+//
+//             [_tagsRegistry setObject:[CPArray array] forKey:jid];
+//
+//             for (var j = 0; j < [tags count]; j++)
+//             {
+//                 CPLog.debug("FOUND TAG " + [tags objectAtIndex:j]);
+//                 [[_tagsRegistry objectForKey:jid] addObject:[[tags objectAtIndex:j] text]];
+//             }
+//         }
+//
+//         CPLog.info("FINALLY : " + _tagsRegistry);
+//     }
+//     else
+//     {
+//         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't get all tags"];
+//     }
+//
+//     return NO;
+// }
+
 - (void)setTags
 {
     if ([_currentRosterItem class] != TNStropheContact)
@@ -182,7 +254,7 @@ TNArchipelTypeTagsAll   = @"alltags";
     for (var i = 0; i < [content count]; i++)
     {
         [stanza addChildWithName:@"tag"];
-        [stanza addTextNode:[content objectAtIndex:i]]
+        [stanza addTextNode:[[content objectAtIndex:i] lowercaseString]]
         [stanza up];
     }
 
@@ -193,7 +265,7 @@ TNArchipelTypeTagsAll   = @"alltags";
 {
     if ([aStanza type] == @"result")
     {
-        [self getTags];
+        [self getTags:nil];
     }
     else
     {
