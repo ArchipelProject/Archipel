@@ -20,6 +20,13 @@
 @import <AppKit/AppKit.j>
 
 
+/*! @ingroup archipelcore
+
+    This class is a representation of the preferences window of Archipel
+    it contains the general Archipel application and will be able to load
+    preferences view for each module with a viewPreferences containing a view
+    This view will be inserted into a CPTabView labelized with the module label.
+*/
 @implementation TNWindowPreferences : CPWindow
 {
     @outlet CPTabView       tabViewMain;
@@ -30,9 +37,16 @@
     @outlet CPPopUpButton   buttonDebugLevel;
     @outlet TNSwitch        switchUseAnimations;
 
+    TNStropheConnection     _connection @accessors(setter=setConnection:);
+
     CPArray                 _modules;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+/*! Initialization at CIB awaking
+*/
 - (void)awakeFromCib
 {
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"];
@@ -47,6 +61,13 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
 }
 
+
+#pragma mark -
+#pragma mark Notification handles
+
+/*! triggered when all modules are loaded. it will create the tab view
+    containing the preferences view (if any) as item for each module
+*/
 - (void)didModulesLoadComplete:(CPNotification)aNotification
 {
     _moduleLoader = [aNotification object];
@@ -84,6 +105,13 @@
     }
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
+/*! When window is ordering front, refresh all general preferences
+    and send message loadPreferences to all modules
+*/
 - (IBAction)makeKeyAndOrderFront:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -106,6 +134,9 @@
     [super makeKeyAndOrderFront:sender];
 }
 
+/*! When save button is pressed, saves all general preferences
+    and send message savePreferences to all modules
+*/
 - (IBAction)savePreferences:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
