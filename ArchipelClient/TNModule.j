@@ -41,12 +41,16 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         with another roster and entity.
      - <b>willShow</b>: This message is sent when user will display the GUI of the module.
      - <b>willHide</b>: This message is sent when user displays other module.
+     - <b>menuReady</b>: This message is sent when the the Main Menu is ready. So if module wants to have a menu, it can implement it from its own _menu property
+     - <b>savePreferences</b> this message is sent when user have change the preferences. If module has some, it must save them in the current default.
+     - <b>loadPreferences</b> this message is sent when user call the preferences window. All modules prefs *MUST* be refreshed
 
     A module can perform background task only if it is loaded. Loaded doesn't mean displayed on the screen. For example
-    a statistique module can start collecting data on willLoad message in background. When message willShow is sent,
+    a statistic module can start collecting data on willLoad message in background. When message willShow is sent,
     module can perform operation to display the collected data in background and update this display. When willHide
     message is sent, module can stop to update the UI, but will continue to collect data. On willUnload message, the
-    module *MUST* stop anything.
+    module *MUST* stop anything. willUnload will also remove all registration for this module. So if you have set some delegates
+    (mostly CPTableView delegates) you *MUST* register them again on next willLoad. This avoid to use ressource for useless module.
 
     The root class willUnload will remove all TNStropheConnection handler, and remove the module from any subscription
     to CPNotification and all Archipel Push Notifications.
@@ -78,6 +82,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     CPArray                 _pubsubRegistrar;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
 - (id)init
 {
     if (self = [super init])
@@ -85,11 +93,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
         _isActive           = NO;
         _isVisible          = NO;
         _pubsubRegistrar    = [CPArray array];
-
     }
 
     return self;
 }
+
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
     YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleLoader will do the job for you.
 
@@ -104,9 +112,24 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _connection = aConnection;
 }
 
-/*! this method register the module for pubsub events
+
+#pragma mark -
+#pragma mark Events management
+
+/*! PRIVATE: this method register the module for pubsub events
+    A valid Archipel Push event is under the following form:
+
+    <message from="pubsub.xmppserver" type="headline" to="controller@xmppserver" >
+        <event xmlns="http://jabber.org/protocol/pubsub#event">
+            <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@xmppserver/events" >
+                <item id="DEADBEEF" >
+                    <push xmlns="archipel:push:disk" date="1984-08-18 09:42:00.00000" change="created" />
+                </item>
+            </items>
+        </event>
+    </message>
 */
-- (void)registerToPubSubEvents
+- (void)_registerToPubSubEvents
 {
     var params = [[CPDictionary alloc] init];
 
@@ -114,23 +137,17 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [params setValue:@"headline" forKey:@"type"];
     [params setValue:{"matchBare": YES} forKey:@"options"];
     [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
-    // <message from="pubsub.virt-hyperviseur" type="headline" to="controller@virt-hyperviseur" >
-    // <event xmlns="http://jabber.org/protocol/pubsub#event">
-    // <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events" >
-    // <item id="4FEA5748C038E" >
-    // <push xmlns="archipel:push:disk" date="2010-07-09 14:15:04.749484" change="created" />
-    // </item>
-    // </items>
-    // </event>
-    // <headers xmlns="http://jabber.org/protocol/shim">
-    // <header name="Collection" >/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@virt-hyperviseur/events</header>
-    // </headers>
-    // </message>
 
-    [_registredSelectors addObject:[_connection registerSelector:@selector(onPubSubEvents:) ofObject:self withDict:params]];
+    [_registredSelectors addObject:[_connection registerSelector:@selector(_onPubSubEvents:) ofObject:self withDict:params]];
 }
 
-- (void)onPubSubEvents:(TNStropheStanza)aStanza
+/*! PRIVATE: this message is called when a matching pubsub event is received
+
+    @param aStanza the TNStropheStanza that contains the event
+
+    @return YES in order to continue to listen for events
+*/
+- (void)_onPubSubEvents:(TNStropheStanza)aStanza
 {
     CPLog.trace("Raw (not filtered) pubsub event received from " + [aStanza from]);
 
@@ -156,7 +173,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     return YES;
 }
 
-
 /*! This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
     @param aSelector: Selector to perform on recieve of archipel:push with given type
     @param aPushType: CPString of the push type that will trigger the selector.
@@ -175,6 +191,10 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     }
 }
 
+
+#pragma mark -
+#pragma mark TNModule events implementation
+
 /*! This message is sent when module is loaded. It will
     reinitialize the _registredSelectors dictionnary
 */
@@ -185,7 +205,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _pubsubRegistrar    = [CPArray array];
     _isActive           = YES;
 
-    [self registerToPubSubEvents];
+    [self _registerToPubSubEvents];
     [_menuItem setEnabled:YES];
 }
 
@@ -196,14 +216,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 {
     // unregister all selectors
     for (var i = 0; i < [_registredSelectors count]; i++)
-    {
-        var selector = [_registredSelectors objectAtIndex:i];
-
-        [_connection deleteRegisteredSelector:selector];
-    }
+        [_connection deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
 
     [_pubsubRegistrar removeAllObjects];
-
     [_menuItem setEnabled:NO];
 
     // remove all notification observers
@@ -242,6 +257,34 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     // executed when menu is ready
 }
 
+/*! this method is called when the user changes the preferences. Implement this method to store
+    datas from your eventual viewPreferences
+*/
+- (void)savePreferences
+{
+    // executed when use saves preferences
+}
+
+/*! this method is called when Archipel displays the preferences window.
+    implement this in order to refresh your eventual viewPreferences
+*/
+- (void)loadPreferences
+{
+    // executed when archipel displays preferences panel
+}
+
+/*! this message is sent only in case of a ToolbarItem module when user
+    press the module's toolbar icon.
+*/
+- (IBAction)toolbarItemClicked:(id)sender
+{
+    // executed when users click toolbar item in case of toolbar module
+}
+
+
+#pragma mark -
+#pragma mark Communication utilities
+
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact
     @param aStanza: TNStropheStanza to send to the contact
     @param aSelector: Selector to perform when contact send answer
@@ -264,26 +307,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     [_registredSelectors addObject:selectorID];
 }
 
-/*! this method is called when the user changes the preferences. Implement this method to store
-    datas from your eventual viewPreferences
-*/
-- (void)savePreferences
-{
-    // executed when use saves preferences
-}
-
-/*! this method is called when Archipel displays the preferences window.
-    implement this in order to refresh your eventual viewPreferences
-*/
-- (void)loadPreferences
-{
-    // executed when archipel displays preferences panel
-}
-
-
 /*! This message allow to display an error when stanza type is error
 */
-
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
     var growl   = [TNGrowlCenter defaultCenter],
@@ -299,11 +324,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     }
     else
         CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
-
-}
-
-- (IBAction)toolbarItemClicked:(id)sender
-{
 
 }
 

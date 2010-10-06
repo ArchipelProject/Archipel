@@ -19,6 +19,9 @@
 
 @import <Foundation/Foundation.j>
 
+
+/*! Simple CPAnimation subclass that calls the delegate at each progress
+*/
 @implementation TNAnimation: CPAnimation
 
 - (void)setCurrentProgress:(float)aProgress

@@ -26,13 +26,19 @@ TNArchipelTypeAvatarSetAvatar    = @"setavatar";
 
 TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
-
+/*! Simple TNBase64Image subclass that add a string to get the avatar filename
+*/
 @implementation TNAvatarImage: TNBase64Image
 {
     CPString _avatarFilename @accessors(property=avatarFilename);
 }
 @end
 
+
+#pragma mark -
+
+/*! Prototype of the CPCollectionView that represent an Avatar
+*/
 @implementation TNAvatarView : CPView
 {
     CPImageView         _imageView;
@@ -63,6 +69,11 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 @end
 
+
+#pragma mark -
+
+/*! Subclass of CPWindow that represents  the avatar manager
+*/
 @implementation TNAvatarManager : CPWindow
 {
     @outlet CPCollectionView    collectionViewAvatars;
@@ -71,6 +82,10 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     BOOL                        isReady;
     TNStropheContact            _entity @accessors(property=entity);
 }
+
+
+#pragma mark -
+#pragma mark Initialization
 
 - (void)awakeFromCib
 {
@@ -88,6 +103,12 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [collectionViewAvatars setItemPrototype:itemPrototype];
 }
 
+
+#pragma mark -
+#pragma mark XMPP System
+
+/*! Ask the entity for availables avatars
+*/
 - (void)getAvailableAvatars
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -101,6 +122,9 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceivedAvailableAvatars:) ofObject:self];
 }
 
+/*! this message is sent on avatars reception
+    @param aStanza TNStropheStanza that contains the avatars base64 encoded
+*/
 - (void)didReceivedAvailableAvatars:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
@@ -132,6 +156,10 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [imageSpinner setHidden:YES];
 }
 
+/*! Send to the entity the avatar it should use
+    It send the filename of the avatar as parameter.
+    @param sender the sender of the action
+*/
 - (IBAction)setAvatar:(id)sender
 {
     var stanza          = [TNStropheStanza iqWithType:@"set"],
@@ -147,6 +175,9 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [_entity sendStanza:stanza andRegisterSelector:@selector(didSetAvatar:) ofObject:self];
 }
 
+/*! this message is sent when entity confirm avatar changes
+    @param aStanza TNStropheStanza that contains the result
+*/
 - (void)didSetAvatar:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
@@ -156,11 +187,22 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     }
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
+/*! overide the super makeKeyAndOrderFront in order to getAvailableAvatars on display
+    @param sender the sender of the action
+*/
 - (IBAction)makeKeyAndOrderFront:(id)sender
 {
     [self getAvailableAvatars];
     [super makeKeyAndOrderFront:sender];
 }
+
+
+#pragma mark -
+#pragma mark Collection View delegates
 
 - (void)collectionView:(CPCollectionView)collectionView didDoubleClickOnItemAtIndex:(int)index
 {
