@@ -1125,7 +1125,8 @@ class TNArchipelBasicXMPPClient(object):
             for tagNode in tagsNode:
                 self.add_tag(tagNode.getData());
             
-            self.save_tags();    
+            self.save_tags();
+            self.push_change("tags", "set");   
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
         return reply

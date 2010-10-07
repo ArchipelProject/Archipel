@@ -27,14 +27,16 @@ TNArchipelTypeTagsSet       = @"settags";
 TNArchipelTypeTagsAll       = @"alltags";
 TNArchipelTypeTagsRegistry  = @"tagsregistry";
 
+TNArchipelPushNotificationTags = @"archipel:push:tags";
 
 @implementation TNTagView : CPView
 {
-    CPArray         _allTags;
-    CPButton        _buttonSave;
-    CPTokenField    _tokenFieldTags;
-    id              _currentRosterItem;
-    CPDictionary    _tagsRegistry       @accessors(getter=tagsRegistry);
+    CPArray             _allTags;
+    CPButton            _buttonSave;
+    CPTokenField        _tokenFieldTags;
+    id                  _currentRosterItem;
+    CPDictionary        _tagsRegistry       @accessors(getter=tagsRegistry);
+    TNStropheConnection _connection         @accessors(property=connection);
 }
 
 
@@ -76,6 +78,31 @@ TNArchipelTypeTagsRegistry  = @"tagsregistry";
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
 }
 
+#pragma mark -
+#pragma mark PubSub
+
+- (void)registerForPushTagsNotification
+{
+    var params = [[CPDictionary alloc] init];
+
+   [params setValue:@"message" forKey:@"name"];
+   [params setValue:@"headline" forKey:@"type"];
+   [params setValue:{"matchBare": YES} forKey:@"options"];
+   [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
+
+   [_connection registerSelector:@selector(_onPubSubEvents:) ofObject:self withDict:params];
+}
+
+- (void)_onPubSubEvents:(TNStropheStanza)aStanza
+{
+    var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
+
+    if (pushType == TNArchipelPushNotificationTags)
+        [self getTags:nil];
+
+    return YES;
+}
+
 
 #pragma mark -
 #pragma mark Notifications handlers
@@ -114,11 +141,11 @@ TNArchipelTypeTagsRegistry  = @"tagsregistry";
 
     CPLog.info("retreiving tags for all items.");
 
-    // setTimeout(function(){
-        for (var i = 0; i < [[roster contacts] count]; i++)
-            [self getTags:[[roster contacts] objectAtIndex:i]];
-        CPLog.info("tags registry populated");
-    // }, 1000);
+    for (var i = 0; i < [[roster contacts] count]; i++)
+        [self getTags:[[roster contacts] objectAtIndex:i]];
+    CPLog.info("tags registry populated");
+
+    [self registerForPushTagsNotification];
 }
 
 

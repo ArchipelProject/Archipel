@@ -1033,6 +1033,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
     [_mainRoster getRoster];
 
+    [viewTags setConnection:[aNotification object]];
+
     [propertiesView setRoster:_mainRoster];
 
     [windowPreferences setConnection:[aNotification object]];
