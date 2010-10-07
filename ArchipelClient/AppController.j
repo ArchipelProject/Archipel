@@ -216,9 +216,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations"
     ]];
-    
-    alert([defaults boolForKey:@"TNArchipelUseAnimations"]);
-    
+
     // register logs
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
