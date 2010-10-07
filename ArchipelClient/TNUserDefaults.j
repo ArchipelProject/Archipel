@@ -237,7 +237,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
     if (value === nil)
         return nil;
 
-    return (value == @"YES") || (value == 1) || (value == YES) ? YES : NO;
+    return (value === @"YES") || (value === 1) || (value === YES) ? YES : NO;
 }
 
 - (CPData)dataForKey:(CPString)aKey
