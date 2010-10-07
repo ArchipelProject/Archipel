@@ -205,7 +205,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         columnLogFile       = [[CPTableColumn alloc] initWithIdentifier:@"file"],
         columnLogMethod     = [[CPTableColumn alloc] initWithIdentifier:@"method"],
         columnLogMessage    = [[CPTableColumn alloc] initWithIdentifier:@"message"];
-        
+
     [columnLogLevel setWidth:50];
     [columnLogLevel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"level" ascending:YES]];
     [[columnLogLevel headerView] setStringValue:@"Level"];
@@ -225,7 +225,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     [_tableLogs addTableColumn:columnLogLevel];
     [_tableLogs addTableColumn:columnLogDate];
-    
+
     if (_tableLogDisplayFileColumn)
         [_tableLogs addTableColumn:columnLogFile];
 
@@ -295,7 +295,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     var center      = [CPNotificationCenter defaultCenter],
         defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
+        key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
+        shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
@@ -313,7 +314,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
 
-    [switchRefresh setOn:[defaults boolForKey:key] animated:YES sendAction:NO]; // not really a swicth..
+    [switchRefresh setOn:shouldBeOn animated:YES sendAction:NO]; // not really a swicth..
     [self pauseRefresh:switchRefresh];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -481,7 +482,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     if ([aStanza type] == @"result")
     {
         var stats = [aStanza childrenWithName:@"stat"];
-        
+
         stats.reverse();
 
         for (var i = 0; i < [stats count]; i++)
@@ -561,7 +562,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     if ([aStanza type] == @"result")
     {
         var logNodes = [aStanza childrenWithName:@"log"];
-        
+
         logNodes.reverse();
 
         [_datasourceLogs removeAllObjects];
