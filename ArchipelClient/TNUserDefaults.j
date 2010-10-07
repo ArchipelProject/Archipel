@@ -82,7 +82,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 {
     var rawDataString,
         ret,
-        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + @"_" +_user + @"_"+ aKey;
 
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
@@ -135,7 +135,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (void)synchronizeObject:(id)anObject forKey:(CPString)aKey
 {
     var datas       = [CPKeyedArchiver archivedDataWithRootObject:anObject],
-        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey,
+        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + @"_" +_user + @"_"+ aKey;
         string      = [datas rawString];
 
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
@@ -195,7 +195,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
 - (void)removeObjectForKey:(CPString)aKey
 {
-    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey;
+    var identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + @"_" +_user + @"_"+ aKey;
 
     if (TNUserDefaultStorageType == TNUserDefaultStorageTypeHTML5)
     {
@@ -288,7 +288,7 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 
     var currentDefault = [_defaults objectForKey:_user],
         datas       = [CPKeyedArchiver archivedDataWithRootObject:aValue],
-        identifier  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey,
+        identifier  = ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"CPBundleIdentifier"] + "_" + aKey),
         string      = [datas rawString];
 
     [currentDefault setObject:aValue forKey:aKey];
