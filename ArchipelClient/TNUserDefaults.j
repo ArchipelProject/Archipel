@@ -18,7 +18,8 @@
 
 @import <Foundation/Foundation.j>
 
-standardUserDefaultsInstance = nil;
+standardUserDefaultsInstance    = nil;
+currentUserDefaultsInstance     = nil;
 
 TNUserDefaultsUserStandard      = @"TNUserDefaultsUserStandard";
 
@@ -39,11 +40,17 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 + (TNUserDefaults)standardUserDefaults
 {
     if (!standardUserDefaultsInstance)
-    {
         standardUserDefaultsInstance = [[TNUserDefaults alloc] init];
-    }
 
     return standardUserDefaultsInstance;
+}
+
++ (TNUserDefaults)defaultsForUser:(CPString)aUser
+{
+    if (!currentUserDefaultsInstance)
+        currentUserDefaultsInstance = [[TNUserDefaults alloc] initWithUser:aUser];
+
+    return currentUserDefaultsInstance;
 }
 
 + (void)resetStandardUserDefaults
@@ -85,6 +92,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
         {
             if (rawDataString = localStorage.getItem(identifier))
                 ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:rawDataString]];
+
+            if (typeof(ret) == "undefined")
+                ret = nil;
         }
         catch(e)
         {
@@ -100,6 +110,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
             var decodedString =  [rawDataString value].replace(/__dotcoma__/g, ";").replace(/__dollar__/g, "$");
 
             ret = [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:decodedString]];
+
+            if (typeof(ret) == "undefined")
+                ret = nil;
         }
     }
     else if ( TNUserDefaultStorageType == TNUserDefaultStorageTypeNoStorage)
@@ -220,6 +233,9 @@ TNUserDefaultStorageType            = [[CPBundle mainBundle] objectForInfoDictio
 - (BOOL)boolForKey:(CPString)aKey
 {
     var value = [self objectForKey:aKey];
+
+    if (value === nil)
+        return nil;
 
     return (value == @"YES") ? YES : NO;
 }
