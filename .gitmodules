@@ -16,3 +16,6 @@
 [submodule "LPKit"]
 	path = LPKit
 	url = git@github.com:primalmotion/LPKit.git
+[submodule "Cappuccino"]
+	path = Cappuccino
+	url = git@github.com:primalmotion/cappuccino.git
