@@ -1082,7 +1082,7 @@ function generateMacAddr()
         {
             [switchAPIC setEnabled:NO];
             [switchACPI setEnabled:NO];
-            [swutchPAE setEnabled:NO];
+            [switchPAE setEnabled:NO];
 
             [buttonArchitecture removeAllItems];
             [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
