@@ -177,7 +177,7 @@ def build(paths, config, ignorepaths):
         os.chdir(path);
         
         print "# jaking..."
-        return_code = os.system("export CONFIG=" + config + ";jake");
+        return_code = os.system("export CONFIG=" + config + ";jake build");
                         
         if not str(return_code) == "0":
             print "# Error in build : " + str(return_code)

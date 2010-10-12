@@ -54,4 +54,57 @@ app ("buildmodule", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["buildmodule"]);
+task ("default", ["buildmodule"], function()
+{
+    printResults(configuration);
+});
+
+task ("build", ["default"]);
+
+task ("debug", function()
+{
+    ENV["CONFIGURATION"] = "Debug";
+    JAKE.subjake(["."], "build", ENV);
+});
+
+task ("release", function()
+{
+    ENV["CONFIGURATION"] = "Release";
+    JAKE.subjake(["."], "build", ENV);
+});
+
+task ("run", ["debug"], function()
+{
+    OS.system(["open", FILE.join("Build", "Debug", "buildmodule", "index.html")]);
+});
+
+task ("run-release", ["release"], function()
+{
+    OS.system(["open", FILE.join("Build", "Release", "buildmodule", "index.html")]);
+});
+
+task ("deploy", ["release"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Deployment", "buildmodule"));
+    OS.system(["press", "-f", FILE.join("Build", "Release", "buildmodule"), FILE.join("Build", "Deployment", "buildmodule")]);
+    printResults("Deployment")
+});
+
+task ("desktop", ["release"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Desktop", "buildmodule"));
+    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", "buildmodule"), FILE.join("Build", "Desktop", "buildmodule", "buildmodule.app"));
+    printResults("Desktop")
+});
+
+task ("run-desktop", ["desktop"], function()
+{
+    OS.system([FILE.join("Build", "Desktop", "buildmodule", "buildmodule.app", "Contents", "MacOS", "NativeHost"), "-i"]);
+});
+
+function printResults(configuration)
+{
+    print("----------------------------");
+    print(configuration+" app built at path: "+FILE.join("Build", configuration, "buildmodule"));
+    print("----------------------------");
+}
