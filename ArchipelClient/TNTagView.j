@@ -78,6 +78,7 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
 }
 
+
 #pragma mark -
 #pragma mark PubSub
 
@@ -216,55 +217,11 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
     }
     else
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't get all tags"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"Can't get all tags"];
     }
 
     return NO;
 }
-
-// - (void)getTagsRegistry
-// {
-//     var stanza  = [TNStropheStanza iqWithType:@"get"];
-//
-//     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
-//     [stanza addChildWithName:@"archipel" andAttributes:{
-//         "action": TNArchipelTypeTagsRegistry}];
-//
-//     [_currentRosterItem sendStanza:stanza andRegisterSelector:@selector(didGetTagsRegistry:) ofObject:self];
-// }
-//
-// - (void)didGetTagsRegistry:(TNStropheStanza)aStanza
-// {
-//     if ([aStanza type] == @"result")
-//     {
-//         users = [aStanza childrenWithName:@"user"];
-//
-//         for (var i = 0; i < [users count]; i++)
-//         {
-//             var user = [users objectAtIndex:i],
-//                 tags = [user childrenWithName:@"tag"],
-//                 jid  = [user valueForAttribute:@"jid"].split("/")[0];
-//
-//             CPLog.debug("PARSING INFO FOR USER " + jid);
-//
-//             [_tagsRegistry setObject:[CPArray array] forKey:jid];
-//
-//             for (var j = 0; j < [tags count]; j++)
-//             {
-//                 CPLog.debug("FOUND TAG " + [tags objectAtIndex:j]);
-//                 [[_tagsRegistry objectForKey:jid] addObject:[[tags objectAtIndex:j] text]];
-//             }
-//         }
-//
-//         CPLog.info("FINALLY : " + _tagsRegistry);
-//     }
-//     else
-//     {
-//         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't get all tags"];
-//     }
-//
-//     return NO;
-// }
 
 - (void)setTags
 {
@@ -303,7 +260,6 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
 }
 
 
-
 #pragma mark -
 #pragma mark Actions
 
@@ -311,8 +267,6 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
 {
     [self setTags];
 }
-
-
 
 
 #pragma mark -
