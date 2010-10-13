@@ -19,3 +19,6 @@
 [submodule "Cappuccino"]
 	path = Cappuccino
 	url = git@github.com:primalmotion/cappuccino.git
+[submodule "Libvirt"]
+	path = Libvirt
+	url = git://libvirt.org/libvirt.git
