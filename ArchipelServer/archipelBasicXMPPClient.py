@@ -205,7 +205,7 @@ class TNArchipelBasicXMPPClient(object):
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
 
-        if not self.pubSubNodeEvent.get():
+        if not self.pubSubNodeEvent.recover():
             self.pubSubNodeEvent.create()
         self.pubSubNodeEvent.configure({
             pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
@@ -219,7 +219,7 @@ class TNArchipelBasicXMPPClient(object):
         # creating/getting the log pubsub node
         logNodeName = "/archipel/" + self.jid.getStripped() + "/logs"
         self.pubSubNodeLog = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, logNodeName)
-        if not self.pubSubNodeLog.get():
+        if not self.pubSubNodeLog.recover():
             self.pubSubNodeLog.create()
         self.pubSubNodeLog.configure({
                 pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,

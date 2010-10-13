@@ -64,7 +64,7 @@ class TNArchipelTrigger:
         """
         intialize the pubsubnode. if it doesn't exists, it will be created and configured
         """
-        if not self.pubSubNode.get():
+        if not self.pubSubNode.recover():
             self.pubSubNode.create()                    
         self.pubSubNode.configure({
             pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,

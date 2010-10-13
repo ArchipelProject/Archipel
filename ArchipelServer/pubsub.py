@@ -54,30 +54,32 @@ class TNPubSubNode:
         self.xmppclient     = xmppclient
         self.pubsubserver   = pubsubserver
         self.nodename       = nodename
-        self.node           = None
+        self.recovered      = False
+        self.content        = None
     
-    def get(self):
+    
+    def recover(self):
         """
         get the current pubsub node. If not already recovered, ask to server
         """
-        if self.node: return self.node
+        
         try:
-            disco_pubsubs   = xmpp.Iq(typ="get", to=self.pubsubserver, queryNS=xmpp.protocol.NS_DISCO_ITEMS)
-            resp            = self.xmppclient.SendAndWaitForResponse(disco_pubsubs)
+            disco_pubsubs   = xmpp.Iq(typ="get", to=self.pubsubserver)
+            pubsub_child    = disco_pubsubs.addChild(name='pubsub', namespace="http://jabber.org/protocol/pubsub")
+            pubsub_child.addChild(name="items", attrs={"node": self.nodename})
+            
+            resp = self.xmppclient.SendAndWaitForResponse(disco_pubsubs)
             
             if resp.getType() == "result":
-                items = resp.getTag("query").getTags("item")
-                for item in items:
-                    if item.getAttr("node") == self.nodename:
-                        self.node = item
-                        log.info("PUBSUB: recovered node")
-                        break
-            
-            return self.node
+                self.content = resp.getTag("pubsub").getTag("items").getTags("item")
+                self.recovered = True
+                return self.recovered
+            else:
+                return False;
         
         except Exception as ex:
             log.error("PUBSUB: can't get node %s : %s" % (self.nodename, str(ex)))
-            return self.node
+            return False
     
     
     def create(self):
@@ -86,7 +88,7 @@ class TNPubSubNode:
         """
         log.info("PUBSUB: trying to create pubsub node %s" % self.nodename)
         
-        if self.node: raise Exception("PUBSUB: node %s already exists" % self.nodename)
+        if self.recovered: raise Exception("PUBSUB: node %s already exists" % self.nodename)
         
         try:
             iq      = xmpp.Iq(typ="set", to=self.pubsubserver)
@@ -95,7 +97,7 @@ class TNPubSubNode:
             resp = self.xmppclient.SendAndWaitForResponse(iq)
             if resp.getType() == "result": 
                 log.info("PUBSUB: pubsub node %s has been created" % self.nodename)
-                self.get()
+                self.recover()
             else:
                 log.error("PUBSUB: can't create pubsub: %s" % str(resp))
         except Exception as ex:
@@ -105,10 +107,10 @@ class TNPubSubNode:
     def delete(self, nowait=False):
         """delete the node from server if exists"""
         
-        if not self.node: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
+        if not self.recovered: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
         
         try:
-            iq      = xmpp.Iq(typ="set", to=self.pubsubserver)
+            iq = xmpp.Iq(typ="set", to=self.pubsubserver)
             
             iq.addChild(name="pubsub", namespace=xmpp.protocol.NS_PUBSUB + "#owner").addChild(name="delete", attrs={"node": self.nodename})
             
@@ -127,7 +129,7 @@ class TNPubSubNode:
     
     def configure(self, options):
         """configure the node"""
-        if not self.node: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
+        if not self.recovered: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
         
         
         # ask conf of server
@@ -167,7 +169,7 @@ class TNPubSubNode:
         add a leaf item xmpp.node to the node and will trigger callback if any
         on server answer
         """
-        if not self.node: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
+        if not self.recovered: raise Exception("PUBSUB: node %s doesn't exists" % self.nodename)
         
         iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
         pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
@@ -178,12 +180,13 @@ class TNPubSubNode:
         
         #print "\n\n" + str(iq) + "\n\n"
         resp = self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback})
-        
+    
+    
     def did_publish_item(self, conn, response, callback):
         """
         triggered on response
         """
-        #log.debug("PUBSUB: publish done. Answer is : %s" % str(response.getType()))
+        log.debug("PUBSUB: publish done. Answer is : %s" % str(response))
         if callback: callback(response)
     
     
