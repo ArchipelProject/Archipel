@@ -20,12 +20,13 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-/*! @defgroup userchat Module UserChat
-    @desc this module allows to chat with XMPP entities.
+/*! @defgroup  userchat Module User Chat
+    @desc This module allows to chat with entities
 */
 
+
 /*! @ingroup userchat
-    This is the main module view.
+    The module main controller
 */
 @implementation TNUserChatController : TNModule
 {
@@ -42,7 +43,11 @@
     TNMessageBoard          _messageBoard;
 }
 
-/*! initialize some stuffs at CIB awakening
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awakening
 */
 - (void)awakeFromCib
 {
@@ -77,28 +82,21 @@
     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 }
 
-- (void)menuReady
-{
-    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""],
-        clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
 
-    [sendMenu setTarget:self];
-    [clearMenu setTarget:self];
-}
+#pragma mark -
+#pragma mark TNModule overrides
 
-/*! TNModule implementation.
-    Will register to notification and see if messages are present in queue.
-    Will recover the contents of the localstorage history.
+/*! called when module is loaded
 */
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didReceivedMessage:) name:TNStropheContactMessageReceivedNotification object:_entity];
-    [center addObserver:self selector:@selector(didReceivedMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
-    [center addObserver:self selector:@selector(didReceivedMessagePause:) name:TNStropheContactMessagePaused object:_entity];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveMessagePause:) name:TNStropheContactMessagePaused object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
 
@@ -116,10 +114,8 @@
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
-/*! TNModule implementation
-    Will save the messages to localstorage
-*/
-- (void)willUnload
+/*! called when module is unloaded
+*/- (void)willUnload
 {
     [super willUnload];
 
@@ -127,7 +123,7 @@
     [_messageBoard removeAllMessages:nil];
 }
 
-/*! TNModule implementation
+/*! called when module becomes visible
 */
 - (void)willShow
 {
@@ -154,6 +150,8 @@
     [fieldJID setStringValue:[_entity JID]];
 }
 
+/*! called when user saves preferences
+*/
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -161,6 +159,8 @@
     [defaults setInteger:[fieldPreferencesMaxChatMessage stringValue] forKey:@"TNUserChatMaxMessageStore"];
 }
 
+/*! called when user gets preferences
+*/
 - (void)loadPreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -168,47 +168,71 @@
     [fieldPreferencesMaxChatMessage setStringValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
 
-- (void)save
-{
-    var defaults        = [TNUserDefaults standardUserDefaults],
-        max             = [_messages count],
-        saveMax         = [defaults integerForKey:@"TNUserChatMaxMessageStore"],
-        location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
-        lenght          = (saveMax <= max) ? saveMax : max,
-        messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
-
-    CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
-
-    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
-}
-
-- (void)restore
-{
-    var defaults = [TNUserDefaults standardUserDefaults],
-        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
-
-    if (lastConversation)
-        _messages = lastConversation;
-
-    for (var j = 0; j < [lastConversation count]; j++)
-    {
-        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"],
-            message = [[lastConversation objectAtIndex:j] objectForKey:@"message"],
-            color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"],
-            date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
-
-        [_messageBoard addMessage:message from:author date:date color:color];
-    }
-}
-
-/*! update the nickname if TNStropheContactNicknameUpdatedNotification received from contact
+/*! called when MainMenu is ready
 */
-- (void)didNickNameUpdated:(CPNotification)aNotification
+- (void)menuReady
+{
+    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""],
+        clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
+
+    [sendMenu setTarget:self];
+    [clearMenu setTarget:self];
+}
+
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! triggered when entity's nickname changed
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
        [fieldName setStringValue:[_entity nickname]]
     }
+}
+
+/*! performed when TNStropheContactMessageReceivedNotification is received from current entity.
+    @param aNotification the notification containing the contact that send the notification
+*/
+- (void)_didReceiveMessage:(CPNotification)aNotification
+{
+    if ([[aNotification object] JID] == [_entity JID])
+    {
+        var stanza =  [_entity popMessagesQueue];
+
+        if ([stanza containsChildrenWithName:@"body"])
+        {
+            var messageBody = [[stanza firstChildWithName:@"body"] text];
+
+            [imageSpinnerWriting setHidden:YES];
+            [self appendMessageToBoard:messageBody from:[_entity nickname]];
+
+            CPLog.info(@"message received : " + messageBody);
+        }
+    }
+    else
+    {
+        _audioTagReceive.play();
+    }
+}
+
+/*! performed when TNStropheContactMessageComposing is received from current entity.
+    @param aNotification the notification containing the contact that send the notification
+*/
+- (void)_didReceiveMessageComposing:(CPNotification)aNotification
+{
+    [imageSpinnerWriting setHidden:NO];
+}
+
+/*! performed when TNStropheContactMessagePaused is received from current entity.
+    @param aNotification the notification containing the contact that send the notification
+*/
+- (void)_didReceiveMessagePause:(CPNotification)aNotification
+{
+    [imageSpinnerWriting setHidden:YES];
 }
 
 /*! observe if user is typing. If yes then send the "compose" XMPP status.
@@ -232,6 +256,47 @@
         [_entity sendComposing];
     }
 
+}
+
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! save the chat
+*/
+- (void)save
+{
+    var defaults        = [TNUserDefaults standardUserDefaults],
+        max             = [_messages count],
+        saveMax         = [defaults integerForKey:@"TNUserChatMaxMessageStore"],
+        location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
+        lenght          = (saveMax <= max) ? saveMax : max,
+        messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
+
+    CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
+
+    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+}
+
+/*! restore the chat
+*/
+- (void)restore
+{
+    var defaults = [TNUserDefaults standardUserDefaults],
+        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
+
+    if (lastConversation)
+        _messages = lastConversation;
+
+    for (var j = 0; j < [lastConversation count]; j++)
+    {
+        var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"],
+            message = [[lastConversation objectAtIndex:j] objectForKey:@"message"],
+            color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"],
+            date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
+
+        [_messageBoard addMessage:message from:author date:date color:color];
+    }
 }
 
 /*! this message is sent when user is not typing for some time
@@ -263,46 +328,9 @@
     [self save];
 }
 
-/*! performed when TNStropheContactMessageReceivedNotification is received from current entity.
-    @param aNotification the notification containing the contact that send the notification
-*/
-- (void)didReceivedMessage:(CPNotification)aNotification
-{
-    if ([[aNotification object] JID] == [_entity JID])
-    {
-        var stanza =  [_entity popMessagesQueue];
 
-        if ([stanza containsChildrenWithName:@"body"])
-        {
-            var messageBody = [[stanza firstChildWithName:@"body"] text];
-
-            [imageSpinnerWriting setHidden:YES];
-            [self appendMessageToBoard:messageBody from:[_entity nickname]];
-
-            CPLog.info(@"message received : " + messageBody);
-        }
-    }
-    else
-    {
-        _audioTagReceive.play();
-    }
-}
-
-/*! performed when TNStropheContactMessageComposing is received from current entity.
-    @param aNotification the notification containing the contact that send the notification
-*/
-- (void)didReceivedMessageComposing:(CPNotification)aNotification
-{
-    [imageSpinnerWriting setHidden:NO];
-}
-
-/*! performed when TNStropheContactMessagePaused is received from current entity.
-    @param aNotification the notification containing the contact that send the notification
-*/
-- (void)didReceivedMessagePause:(CPNotification)aNotification
-{
-    [imageSpinnerWriting setHidden:YES];
-}
+#pragma mark -
+#pragma mark Actions
 
 /*! send a message to the contact containing the content of the outlet message CPTextField
     @param aSender the sender of the action

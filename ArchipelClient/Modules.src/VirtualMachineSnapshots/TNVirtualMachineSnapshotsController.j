@@ -26,9 +26,6 @@
 
 TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_";
 
-/*! @defgroup  virtualmachinesnapshoting Module VirtualMachineSnapshoting
-    @desc Module to handle Virtual Machine snapshoting
-*/
 TNArchipelPushNotificationSnapshoting       = @"archipel:push:snapshoting";
 TNArchipelTypeHypervisorSnapshot            = @"archipel:virtualmachine:snapshoting";
 TNArchipelTypeHypervisorSnapshotTake        = @"take";
@@ -39,7 +36,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 
 
-/*! @ingroup virtualmachinesnapshoting
+/*! @defgroup  virtualmachinesnapshoting Module VirtualMachine Snapshots
+    @desc Module to handle Virtual Machine snapshoting
+*/
+
+/*! @ingroup virtualmachinedrives
+    main class of the module
 */
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
@@ -63,6 +65,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     TNSnapshotsDatasource               _datasourceSnapshots;
 }
 
+#pragma mark -
+#pragma mark  Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
@@ -155,6 +162,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];
 }
 
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
@@ -164,11 +177,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
 
     _currentSnapshot = nil;
 
@@ -176,9 +189,11 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setDelegate:self];
 
     [self checkIfRunning];
-    [self getSnapshots:nil];
+    [self getSnapshots];
 }
 
+/*! called when module is unloaded
+*/
 - (void)willUnload
 {
     [super willUnload];
@@ -190,17 +205,23 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_minusButton setEnabled:NO];
 }
 
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
     [self checkIfRunning];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
 }
 
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Take a snapshot" action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
@@ -209,7 +230,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [[_menu addItemWithTitle:@"Delete selected snapshot" action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
 }
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
+
+#pragma mark -
+#pragma mark Notification
+
+/*! called when entity's nickname changes
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -217,8 +245,18 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     }
 }
 
+/*! called if entity changes it presence and call checkIfRunning
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
+{
+    [self checkIfRunning];
+}
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -227,16 +265,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
-    [self getSnapshots:nil];
+    [self getSnapshots];
 
     return YES;
 }
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
-{
-    [self checkIfRunning];
-}
 
+#pragma mark -
+#pragma mark Utilities
+
+/*! checks if virtual machine running. if yes displays the masking view
+*/
 - (void)checkIfRunning
 {
     if ([_entity XMPPShow] == TNStropheContactStatusOnline || [_entity XMPPShow] == TNStropheContactStatusAway)
@@ -251,7 +290,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-- (IBAction)openWindowNewSnapshot:(id)sender
+#pragma mark -
+#pragma mark  Actions
+
+/*! opens the new snapshot window
+    @param aSender the sender of the action
+*/
+- (IBAction)openWindowNewSnapshot:(id)aSender
 {
     [fieldNewSnapshotName setStringValue:@""];
     [fieldNewSnapshotDescription setStringValue:@""];
@@ -259,10 +304,39 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
     [windowNewSnapshot makeKeyAndOrderFront:sender];
-
 }
 
-- (IBAction)getSnapshots:(id)sender
+/*! take a snaphot
+    @param aSender the sender of the action
+*/
+- (IBAction)takeSnapshot:(id)aSender
+{
+    [self takeSnapshot];
+}
+
+/*! delete a snaphot
+    @param aSender the sender of the action
+*/
+- (IBAction)deleteSnapshot:(id)aSender
+{
+    [self deleteSnapshot];
+}
+
+/*! revert to a snaphot
+    @param aSender the sender of the action
+*/
+- (IBAction)revertSnapshot:(id)aSender
+{
+    [self revertSnapshot];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! asks virtual machine for its snapshot
+*/
+- (void)getSnapshots
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
 
@@ -270,10 +344,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotGet}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didGetSnapshots:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didGetSnapshots:)];
 }
 
-- (void)didGetSnapshots:(id)aStanza
+/*! compute virtual machine snapshots
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didGetSnapshots:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -301,15 +378,19 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
             [_datasourceSnapshots addObject:snapshotObject];
         }
 
-        [self getCurrentSnapshot:nil];
+        [self getCurrentSnapshot];
     }
     else
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-- (IBAction)getCurrentSnapshot:(id)sender
+/*! asks virtual machine for its current snapshot
+*/
+- (void)getCurrentSnapshot
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
 
@@ -317,11 +398,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotCurrent}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didGetCurrentSnapshot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didGetCurrentSnapshot:)];
 }
 
-
-- (IBAction)didGetCurrentSnapshot:(TNStropheStanza)aStanza
+/*! compute virtual machine current snapshot
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didGetCurrentSnapshot:(TNStropheStanza)aStanza
 {
     [fieldInfo setStringValue:@""];
     if ([aStanza type] == @"result")
@@ -354,11 +437,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots recoverExpandedWithBaseKey:TNArchipelSnapshotsOpenedSnapshots itemKeyPath:@"name"];
 
+    return NO;
 }
 
-
-//actions
-- (IBAction)takeSnapshot:(id)sender
+/*! asks virtual machine to take a snapshot. but ask confirmation before
+*/
+- (void)takeSnapshot
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"],
         uuid    = [CPString UUID];
@@ -378,14 +462,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     //[stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
     [stanza up];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didTakeSnapshot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didTakeSnapshot:)];
 
     [windowNewSnapshot orderOut:nil];
     [fieldNewSnapshotName setStringValue:nil];
     [fieldNewSnapshotDescription setStringValue:nil];
 }
 
-- (void)didTakeSnapshot:(id)aStanza
+/*! compute virtual machine answer about taking a snapshot
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didTakeSnapshot:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -395,9 +482,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-- (IBAction)deleteSnapshot:(id)sender
+/*! asks virtual machine to delete a snapshot
+*/
+- (void)deleteSnapshot
 {
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes];
 
@@ -422,7 +513,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [alert runModal];
 }
 
-
+/*! asks virtual machine to take a snapshot
+*/
 - (void)performDeleteSnapshot:(id)someUserInfo
 {
     var selectedIndexes = [_outlineViewSnapshots selectedRowIndexes],
@@ -436,11 +528,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         "action": TNArchipelTypeHypervisorSnapshotDelete,
         "name": name}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didDeleteSnapshot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didDeleteSnapshot:)];
 
 }
 
-- (void)didDeleteSnapshot:(id)aStanza
+/*! compute virtual machine answer about deleting a snapshot
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didDeleteSnapshot:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -450,10 +545,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)revertSnapshot:(id)sender
+/*! asks virtual machine to revert to a snapshot. but ask confirmation before
+*/
+- (void)revertSnapshot
 {
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
@@ -469,6 +567,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [alert runModal];
 }
 
+/*! asks virtual machine to revert to a snapshot
+*/
 - (void)performRevertSnapshot:(id)someUserInfo
 {
     var stanza          = [TNStropheStanza iqWithType:@"set"],
@@ -489,10 +589,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         "action": TNArchipelTypeHypervisorSnapshotRevert,
         "name": name}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didRevertSnapshot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didRevertSnapshot:)];
 }
 
-- (void)didRevertSnapshot:(id)aStanza
+/*! compute virtual machine answer about reverting to a snapshot
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didRevertSnapshot:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -502,9 +605,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 
+#pragma mark -
+#pragma mark Delegates
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {
@@ -516,12 +623,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         [_minusButton setEnabled:YES];
         [_revertButton setEnabled:YES];
     }
-}
-
-- (int)tableView:(CPTableView)aTableView heightOfRow:(int)aRow
-{
-    // FIXME : wait for Cappuccino to implement this.
-    return 10.0;
 }
 
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
@@ -542,7 +643,10 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [defaults setObject:"collapsed" forKey:key];
 }
 
+- (int)tableView:(CPTableView)aTableView heightOfRow:(int)aRow
+{
+    // FIXME : wait for Cappuccino to implement this.
+    return 10.0;
+}
+
 @end
-
-
-

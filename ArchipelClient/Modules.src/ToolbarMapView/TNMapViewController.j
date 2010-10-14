@@ -35,6 +35,15 @@ TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
 TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control";
 TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
+
+/*! @defgroup  toolbarmapview Module Toolbar Map View
+    @desc This module display a Map of the world and localize the hypervisor. It can also perform live migration
+*/
+
+
+/*! @ingroup toolbarmapview
+    The module main controller
+*/
 @implementation TNMapViewController : TNModule
 {
     @outlet CPScrollView            scrollViewDestination;
@@ -60,6 +69,11 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     TNStropheContact                _originHypervisor;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (id)awakeFromCib
 {
     var posy,
@@ -182,8 +196,11 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-// TNModule
+#pragma mark -
+#pragma mark TNModule overrides
 
+/*! called when module is loaded
+*/
 - (void)willShow
 {
     [super willShow];
@@ -206,6 +223,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
@@ -218,25 +237,36 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-// mapview delegate
-- (void)mapViewIsReady:(MKMapView)aMapView
+#pragma mark -
+#pragma mark Utilities
+
+/*! set the origin hypervisor
+    @param anItem TNStropheContact representing the hypervisor
+*/
+- (void)setOriginHypervisor:(id)anItem
 {
-    [_mainMapView setZoom:2];
-    [_mainMapView physicalMode];
+    _originHypervisor = anItem;
+    [textFieldOriginName setStringValue:[anItem nickname]];
+    [self rosterOfHypervisor:anItem];
+}
 
-    var rosterItems = [_roster contacts];
-
-    for (var i = 0; i < [rosterItems count]; i++)
-    {
-        var item = [rosterItems objectAtIndex:i];
-
-        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
-            [self locationOfHypervisor:item]
-    }
+/*! set the destination hypervisor
+    @param anItem TNStropheContact representing the hypervisor
+*/
+- (void)setDestinationHypervisor:(id)anItem
+{
+    _destinationHypervisor= anItem;
+    [textFieldDestinationName setStringValue:[anItem nickname]];
+    [self rosterOfHypervisor:anItem];
 }
 
 
-// Archipel
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask given hypervisor for its coordinates
+    @param anHypervisor TNStropheContact representing the hypervisor
+*/
 - (void)locationOfHypervisor:(TNStropheContact)anHypervisor
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -245,10 +275,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorGeolocalizationGet}];
 
-    [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceivedGeolocalization:) ofObject:self];
+    [anHypervisor sendStanza:stanza andRegisterSelector:@selector(_didReceivedGeolocalization:) ofObject:self];
 }
 
-- (void)didReceivedGeolocalization:(id)aStanza
+/*! compute the hypervisor answer about its coordinates
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceivedGeolocalization:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -269,8 +302,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
+/*! ask given hypervisor for its roster
+    @param anHypervisor TNStropheContact representing the hypervisor
+*/
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -280,12 +318,15 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
     if (anHypervisor === _originHypervisor)
-        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveOriginHypervisorRoster:) ofObject:self];
+        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(_didReceiveOriginHypervisorRoster:) ofObject:self];
     else
-        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveDestinationHypervisorRoster:) ofObject:self];
+        [anHypervisor sendStanza:stanza andRegisterSelector:@selector(_didReceiveDestinationHypervisorRoster:) ofObject:self];
 }
 
-- (void)didReceiveOriginHypervisorRoster:(id)aStanza
+/*! compute the origin hypervisor answer about its roster
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveOriginHypervisorRoster:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -312,9 +353,14 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-- (void)didReceiveDestinationHypervisorRoster:(id)aStanza
+/*! compute the destination hypervisor answer about its roster
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveDestinationHypervisorRoster:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -341,10 +387,63 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
+}
+
+/*! ask a virtual machine to migrate to given hypervisor
+    @param aVirualMachine the virtual machine to migrate
+    @param aHypervisor the destination hypervisor
+*/
+- (void)migrate:(TNStropheContact)aVirualMachine toHypervisor:(TNStropheContact)aHypervisor
+{
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlMigrate,
+        "hypervisorjid": [aHypervisor fullJID]}];
+    [aVirualMachine sendStanza:stanza andRegisterSelector:@selector(_didMigrate:) ofObject:self];
+
+}
+
+/*! compute virtual machine answer about its migration
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didMigrate:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
 }
 
 
-// marker delegate
+#pragma mark -
+#pragma mark Delegates
+
+- (void)mapViewIsReady:(MKMapView)aMapView
+{
+    [_mainMapView setZoom:2];
+    [_mainMapView physicalMode];
+
+    var rosterItems = [_roster contacts];
+
+    for (var i = 0; i < [rosterItems count]; i++)
+    {
+        var item = [rosterItems objectAtIndex:i];
+
+        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
+            [self locationOfHypervisor:item]
+    }
+}
+
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
     var item    = [someUserInfo objectForKey:@"rosterItem"],
@@ -356,23 +455,6 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [alert runModal];
 }
 
-- (void)setOriginHypervisor:(id)anItem
-{
-    _originHypervisor = anItem;
-    [textFieldOriginName setStringValue:[anItem nickname]];
-    [self rosterOfHypervisor:anItem];
-}
-
-- (void)setDestinationHypervisor:(id)anItem
-{
-    _destinationHypervisor= anItem;
-    [textFieldDestinationName setStringValue:[anItem nickname]];
-    [self rosterOfHypervisor:anItem];
-}
-
-
-/*! Delegate of SplitView
-*/
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
@@ -383,30 +465,6 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-// Migration
-- (IBAction)migrate:(TNStropheContact)aVirualMachine toHypervisor:(TNStropheContact)aHypervisor
-{
-    var stanza = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlMigrate,
-        "hypervisorjid": [aHypervisor fullJID]}];
-    [aVirualMachine sendStanza:stanza andRegisterSelector:@selector(didMigrate:) ofObject:self];
-
-}
-
-- (void)didMigrate:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
 @end
 
 

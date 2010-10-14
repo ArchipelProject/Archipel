@@ -19,6 +19,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+/*! @ingroup virtualmachinedefinition
+    this object represent a virtual drive
+*/
 @implementation TNDrive : CPObject
 {
     CPString _bus       @accessors(property=bus);
@@ -28,6 +31,18 @@
     CPString _type      @accessors(property=type);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initializes and returns TNDrive with given values
+    @param aType the drive type
+    @param aDevice the drive device
+    @param aSource the drive source
+    @param aTarget the drive target
+    @param aBus the drive bus
+    @return initialized TNDrive
+*/
 + (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus
 {
     var drive = [[TNDrive alloc] init];

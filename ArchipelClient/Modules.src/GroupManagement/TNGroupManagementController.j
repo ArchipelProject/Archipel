@@ -232,7 +232,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)virtualMachineDoubleClick:(id)sender
+- (IBAction)virtualMachineDoubleClick:(id)aSender
 {
     var selectedIndexes = [_tableVirtualMachines selectedRowIndexes],
         contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
@@ -246,7 +246,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)create:(id)sender
+- (IBAction)create:(id)aSender
 {
     [self applyAction:TNArchipelActionTypeCreate];
 }
@@ -255,7 +255,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)shutdown:(id)sender
+- (IBAction)shutdown:(id)aSender
 {
     [self applyAction:TNArchipelActionTypeShutdown];
 }
@@ -264,7 +264,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)destroy:(id)sender
+- (IBAction)destroy:(id)aSender
 {
     [self applyAction:TNArchipelActionTypeDestroy];
 }
@@ -273,7 +273,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)suspend:(id)sender
+- (IBAction)suspend:(id)aSender
 {
     [self applyAction:TNArchipelActionTypePause];
 }
@@ -282,7 +282,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)resume:(id)sender
+- (IBAction)resume:(id)aSender
 {
     [self applyAction:TNArchipelActionTypeResume];
 }
@@ -291,7 +291,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     it will show the content of this virtual machine
     @param sender the sender of the action
 */
-- (IBAction)reboot:(id)sender
+- (IBAction)reboot:(id)aSender
 {
     [self applyAction:TNArchipelActionTypeReboot];
 }
@@ -347,7 +347,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
             "xmlns": TNArchipelTypeVirtualMachineControl,
             "action": controlType}];
 
-        [vm sendStanza:controlStanza andRegisterSelector:@selector(didSendAction:) ofObject:self];
+        [vm sendStanza:controlStanza andRegisterSelector:@selector(_didSendAction:) ofObject:self];
         }
     }
 }
@@ -355,7 +355,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 /*! Notify about the result of the action
     @param aStanza TNStropheStanza containing the result of the request
 */
-- (void)didSendAction:(TNStropheStanza)aStanza
+- (BOOL)_didSendAction:(TNStropheStanza)aStanza
 {
     var sender = [aStanza fromUser];
 
@@ -366,6 +366,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         [_tableVirtualMachines reloadData];
     }
 
+    return NO;
 }
 
 @end

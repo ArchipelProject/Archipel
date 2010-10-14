@@ -59,6 +59,14 @@ TNArchipelTransportBarStop      = 2;
 TNArchipelTransportBarDestroy   = 3
 TNArchipelTransportBarReboot    = 4;
 
+
+/*! @defgroup  virtualmachinecontrols Module VirtualMachine Controls
+    @desc Allow to controls virtual machine
+*/
+
+/*! @ingroup virtualmachinecontrols
+    main class of the module
+*/
 @implementation TNVirtualMachineControlsController : TNModule
 {
     @outlet CPImageView             imageState;
@@ -100,7 +108,11 @@ TNArchipelTransportBarReboot    = 4;
     @outlet     TNSwitch    switchAutoStart;
 }
 
+#pragma mark -
+#pragma mark Initialization
 
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
@@ -228,19 +240,24 @@ TNArchipelTransportBarReboot    = 4;
     [switchAutoStart setAction:@selector(setAutostart:)];
 }
 
-/* TNModule implementation */
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationControl];
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDefinition];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinition];
 
     [self disableAllButtons];
 
@@ -249,6 +266,24 @@ TNArchipelTransportBarReboot    = 4;
     [imageState setImage:[_entity statusIcon]];
 }
 
+/*! called when module is unloaded
+*/
+- (void)willUnload
+{
+    [super willUnload];
+
+    [fieldInfoMem setStringValue:@"..."];
+    [fieldInfoCPUs setStringValue:@"..."];
+    [fieldInfoConsumedCPU setStringValue:@"..."];
+    [fieldInfoState setStringValue:@"..."];
+    [imageState setImage:nil];
+
+    [self disableAllButtons];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+}
+
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -271,25 +306,15 @@ TNArchipelTransportBarReboot    = 4;
     [self populateHypervisorsTable];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
 }
 
-- (void)willUnload
-{
-    [super willUnload];
-
-    [fieldInfoMem setStringValue:@"..."];
-    [fieldInfoCPUs setStringValue:@"..."];
-    [fieldInfoConsumedCPU setStringValue:@"..."];
-    [fieldInfoState setStringValue:@"..."];
-    [imageState setImage:nil];
-
-    [self disableAllButtons];
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
-}
-
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Start" action:@selector(play:) keyEquivalent:@""] setTarget:self];
@@ -299,6 +324,8 @@ TNArchipelTransportBarReboot    = 4;
     [[_menu addItemWithTitle:@"Destroy" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when user saves preferences
+*/
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -306,6 +333,8 @@ TNArchipelTransportBarReboot    = 4;
     [defaults setInteger:[fieldPreferencesMaxCPUs stringValue] forKey:@"TNArchipelControlsMaxVCPUs"];
 }
 
+/*! called when user gets preferences
+*/
 - (void)loadPreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -314,7 +343,31 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity's nickname changes
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
+{
+    [fieldName setStringValue:[_entity nickname]]
+}
+
+/*! called if entity changes it presence and call checkIfRunning
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
+{
+    // [imageState setImage:[_entity statusIcon]];
+    //
+    // [self checkIfRunning];
+}
+
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -328,7 +381,9 @@ TNArchipelTransportBarReboot    = 4;
     return YES;
 }
 
-- (void)didReceiveControlNotification:(CPNotification)aNotification
+/*! called when recieve a control notification
+*/
+- (void)_didReceiveControlNotification:(CPNotification)aNotification
 {
     var command = [aNotification userInfo];
 
@@ -352,19 +407,12 @@ TNArchipelTransportBarReboot    = 4;
     }
 }
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
-{
-    [fieldName setStringValue:[_entity nickname]]
-}
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
-{
-    // [imageState setImage:[_entity statusIcon]];
-    //
-    // [self checkIfRunning];
-}
+#pragma mark -
+#pragma mark Utilities
 
-
+/*! check if virtual machine is running and adapt the GUI
+*/
 - (void)checkIfRunning
 {
     var XMPPShow = [_entity XMPPShow];
@@ -380,9 +428,8 @@ TNArchipelTransportBarReboot    = 4;
         [maskingView removeFromSuperview];
 }
 
-
-/* population messages */
-
+/*! populate the migration table with all hypervisors in roster
+*/
 - (void)populateHypervisorsTable
 {
     [_datasourceHypervisors removeAllObjects];
@@ -403,6 +450,238 @@ TNArchipelTransportBarReboot    = 4;
 
 }
 
+/*! layout segmented controls button according to virtual machine state
+    @pathForResource libvirtState the state of the virtual machine
+*/
+- (void)layoutButtons:(id)libvirtState
+{
+    switch ([libvirtState intValue])
+    {
+        case VIR_DOMAIN_NOSTATE:
+            humanState = @"No status";
+            break;
+        case VIR_DOMAIN_RUNNING:
+            [self enableButtonsForRunning];
+            humanState = @"Running";
+            break;
+        case VIR_DOMAIN_BLOCKED:
+            humanState = @"Blocked";
+            break;
+        case VIR_DOMAIN_PAUSED:
+            [self enableButtonsForPaused]
+            humanState = @"Paused";
+            break;
+        case VIR_DOMAIN_SHUTDOWN:
+            [self enableButtonsForShutdowned]
+            humanState = @"Shutdown";
+            break;
+        case VIR_DOMAIN_SHUTOFF:
+            [self enableButtonsForShutdowned]
+            humanState = @"Shutdown";
+            break;
+        case VIR_DOMAIN_CRASHED:
+            humanState = @"Crashed";
+            break;
+  }
+  [fieldInfoState setStringValue:humanState];
+  [imageState setImage:[_entity statusIcon]];
+}
+
+/*! enable buttons necessary when virtual machine is running
+*/
+- (void)enableButtonsForRunning
+{
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPlay];
+
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+
+    [buttonBarTransport setImage:_imagePlaySelected forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
+
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
+}
+
+/*! enable buttons necessary when virtual machine is paused
+*/
+- (void)enableButtonsForPaused
+{
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPause];
+
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
+
+    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
+}
+
+/*! enable buttons necessary when virtual machine is shutdowned
+*/
+- (void)enableButtonsForShutdowned
+{
+    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarStop];
+
+    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+
+    [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setImage:_imageStopSelected forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
+}
+
+/*! disable all buttons
+*/
+- (void)disableAllButtons
+{
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarReboot];
+
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+
+    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setImage:_imageStopDisabled forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
+}
+
+
+#pragma mark -
+#pragma mark Action
+
+/*! triggered when segmented control is clicked
+    @param aSender the sender of the action
+*/
+- (IBAction)segmentedControlClicked:(id)aSender
+{
+    var segment = [aSender selectedSegment];
+
+    switch (segment)
+    {
+        case TNArchipelTransportBarPlay:
+            [self play];
+            break;
+        case TNArchipelTransportBarPause:
+            [self pause];
+            break;
+        case TNArchipelTransportBarStop:
+            [self stop];
+            break;
+        case TNArchipelTransportBarDestroy:
+            [self destroy];
+            break;
+        case TNArchipelTransportBarReboot:
+            [self reboot];
+            break;
+    }
+}
+
+/*! send play command
+    @param aSender the sender of the action
+*/
+- (IBAction)play:(id)aSender
+{
+    [self play];
+}
+
+/*! send pause command
+    @param aSender the sender of the action
+*/
+- (IBAction)pause:(id)aSender
+{
+    [self pause];
+}
+
+/*! send stop command
+    @param aSender the sender of the action
+*/
+- (IBAction)stop:(id)aSender
+{
+    [self stop];
+}
+
+/*! send destroy command
+    @param aSender the sender of the action
+*/
+- (IBAction)destroy:(id)aSender
+{
+    [self destroy];
+}
+
+/*! send reboot command
+    @param aSender the sender of the action
+*/
+- (IBAction)reboot:(id)aSender
+{
+    [self reboot];
+}
+
+/*! send set autostart command
+    @param sender the sender of the action
+*/
+- (IBAction)setAutostart:(id)aSender
+{
+    [self setAutostart];
+}
+
+/*! send set memory command
+    @param aSender the sender of the action
+*/
+- (IBAction)setMemory:(id)aSender
+{
+    [self setMemory];
+}
+
+/*! send set vCPUs command
+    @param aSender the sender of the action
+*/
+- (IBAction)setVCPUs:(id)aSender
+{
+    [self setVCPUs];
+}
+
+/*! send migrate command
+    @param aSender the sender of the action
+*/
+- (IBAction)migrate:(id)aSender
+{
+    [self migrate];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask virtual machine information
+*/
 - (void)getVirtualMachineInfo
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
@@ -411,10 +690,12 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlInfo}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveVirtualMachineInfo:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveVirtualMachineInfo:)];
 }
 
-- (BOOL)didReceiveVirtualMachineInfo:(id)aStanza
+/*! compute virtual machine answer about its information
+*/
+- (BOOL)_didReceiveVirtualMachineInfo:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -496,43 +777,22 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-/* IBAction */
-- (IBAction)segmentedControlClicked:(id)sender
-{
-    var segment = [sender selectedSegment];
-
-    switch (segment)
-    {
-        case TNArchipelTransportBarPlay:
-            [self play:sender];
-            break;
-        case TNArchipelTransportBarPause:
-            [self pause:sender];
-            break;
-        case TNArchipelTransportBarStop:
-            [self stop:sender];
-            break;
-        case TNArchipelTransportBarDestroy:
-            [self destroy:sender];
-            break;
-        case TNArchipelTransportBarReboot:
-            [self reboot:sender];
-            break;
-    }
-}
-
-- (IBAction)play:(id)sender
+/*! send play command
+*/
+- (void)play
 {
     var stanza = [TNStropheStanza iqWithType:@"set"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineControlCreate}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didPlay:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didPlay:)];
 }
 
-- (BOOL)didPlay:(id)aStanza
+/*! compute the play result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didPlay:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -546,15 +806,16 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-- (IBAction)pause:(id)sender
+/*! send pause or resume command
+*/
+- (void)pause
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"],
         selector;
 
     if (_VMLibvirtStatus == VIR_DOMAIN_PAUSED)
     {
-        selector = @selector(didResume:)
+        selector = @selector(_didResume:)
 
         [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
         [stanza addChildWithName:@"archipel" andAttributes:{
@@ -563,7 +824,7 @@ TNArchipelTransportBarReboot    = 4;
     }
     else
     {
-        selector = @selector(didPause:)
+        selector = @selector(_didPause:)
 
         [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
         [stanza addChildWithName:@"archipel" andAttributes:{
@@ -574,7 +835,10 @@ TNArchipelTransportBarReboot    = 4;
     [self sendStanza:stanza andRegisterSelector:selector];
 }
 
-- (BOOL)didPause:(id)aStanza
+/*! compute the pause result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didPause:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -591,7 +855,10 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-- (BOOL)didResume:(id)aStanza
+/*! compute the resume result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didResume:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -607,8 +874,9 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-- (IBAction)stop:(id)sender
+/*! send stop command
+*/
+- (void)stop
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 
@@ -616,10 +884,13 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlShutdown}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didStop:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didStop:)];
 }
 
-- (BOOL)didStop:(id)aStanza
+/*! compute the stop result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didStop:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -633,8 +904,9 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-- (IBAction)destroy:(id)sender
+/*! send destroy command. but ask for user confirmation
+*/
+- (void)destroy
 {
     var alert = [TNAlert alertWithTitle:@"Unplug Virtual Machine"
                                 message:@"Unplug this virtual machine ?"
@@ -645,6 +917,8 @@ TNArchipelTransportBarReboot    = 4;
     [alert runModal];
 }
 
+/*! send destroy command
+*/
 - (void)performDestroy:(id)someUserInfo
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
@@ -653,15 +927,20 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlDestroy}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didDestroy:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didDestroy:)];
 }
 
+/*! cancel destroy
+*/
 - (void)doNotPerformDestroy:(id)someUserInfo
 {
     [self layoutButtons:_VMLibvirtStatus];
 }
 
-- (BOOL)didDestroy:(id)aStanza
+/*! compute the destroy result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didDestroy:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -675,8 +954,9 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-- (IBAction)reboot:(id)sender
+/*! send reboot command
+*/
+- (void)reboot
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 
@@ -684,10 +964,13 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlReboot}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReboot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReboot:)];
 }
 
-- (BOOL)didReboot:(id)aStanza
+/*! compute the reboot result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didReboot:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -701,8 +984,9 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
-
-- (IBAction)setAutostart:(id)sender
+/*! send autostart command
+*/
+- (void)setAutostart
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"],
         autostart   = [switchAutoStart isOn] ? "1" : "0";
@@ -712,10 +996,13 @@ TNArchipelTransportBarReboot    = 4;
         "action": TNArchipelTypeVirtualMachineControlAutostart,
         "value": autostart}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didSetAutostart:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didSetAutostart:)];
 }
 
-- (void)didSetAutostart:(TNStropheStanza)aStanza
+/*! compute the reboot result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didSetAutostart:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -728,10 +1015,13 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)setMemory:(id)sender
+/*! send memory command
+*/
+- (void)setMemory
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"],
         memory      = [sliderMemory intValue];
@@ -740,20 +1030,26 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlMemory,
         "value": memory}];
-    [self sendStanza:stanza andRegisterSelector:@selector(didSetMemory:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didSetMemory:)];
 }
 
-- (void)didSetMemory:(TNStropheStanza)aStanza
+/*! compute the memory result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didSetMemory:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
     }
+
+    retrun NO;
 }
 
-
-- (IBAction)setVCPUs:(id)sender
+/*! send vCPUs command
+*/
+- (void)setVCPUs
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"],
         cpus        = [stepperCPU value];
@@ -762,22 +1058,26 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlVCPUs,
         "value": cpus}];
-    [self sendStanza:stanza andRegisterSelector:@selector(didSetVCPUs:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didSetVCPUs:)];
 }
 
-- (void)didSetVCPUs:(TNStropheStanza)aStanza
+/*! compute the vCPUs result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didSetVCPUs:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
     }
+
+    return NO;
 }
 
-
-
-
-- (IBAction)migrate:(id)sender
+/*! send migrate command. but ask for a user confirmation
+*/
+- (void)migrate
 {
     var index                   = [[_tableHypervisors selectedRowIndexes] firstIndex],
         destinationHypervisor   = [_datasourceHypervisors objectAtIndex:index];
@@ -799,6 +1099,8 @@ TNArchipelTransportBarReboot    = 4;
 
 }
 
+/*! send migrate command
+*/
 - (void)performMigrate:(id)someUserInfo
 {
     var destinationHypervisor   = someUserInfo,
@@ -809,10 +1111,13 @@ TNArchipelTransportBarReboot    = 4;
         "action": TNArchipelTypeVirtualMachineControlMigrate,
         "hypervisorjid": [destinationHypervisor fullJID]}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didMigrate:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didMigrate:)];
 }
 
-- (void)didMigrate:(TNStropheStanza)aStanza
+/*! compute the migrate result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didMigrate:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -822,121 +1127,13 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-/* button management */
 
-- (void)layoutButtons:(id)libvirtState
-{
-    switch ([libvirtState intValue])
-    {
-        case VIR_DOMAIN_NOSTATE:
-            humanState = @"No status";
-            break;
-        case VIR_DOMAIN_RUNNING:
-            [self enableButtonsForRunning];
-            humanState = @"Running";
-            break;
-        case VIR_DOMAIN_BLOCKED:
-            humanState = @"Blocked";
-            break;
-        case VIR_DOMAIN_PAUSED:
-            [self enableButtonsForPaused]
-            humanState = @"Paused";
-            break;
-        case VIR_DOMAIN_SHUTDOWN:
-            [self enableButtonsForShutdowned]
-            humanState = @"Shutdown";
-            break;
-        case VIR_DOMAIN_SHUTOFF:
-            [self enableButtonsForShutdowned]
-            humanState = @"Shutdown";
-            break;
-        case VIR_DOMAIN_CRASHED:
-            humanState = @"Crashed";
-            break;
-  }
-  [fieldInfoState setStringValue:humanState];
-  [imageState setImage:[_entity statusIcon]];
-}
-
-- (void)enableButtonsForRunning
-{
-    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPlay];
-
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setImage:_imagePlaySelected forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
-
-    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
-    [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
-}
-
-- (void)enableButtonsForPaused
-{
-    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
-    [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
-}
-
-- (void)enableButtonsForShutdowned
-{
-    [buttonBarTransport setSelectedSegment:TNArchipelTransportBarStop];
-
-    [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
-
-    [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopSelected forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
-}
-
-- (void)disableAllButtons
-{
-    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setSelected:NO forSegment:TNArchipelTransportBarReboot];
-
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
-
-    [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setImage:_imageStopDisabled forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
-}
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
@@ -956,7 +1153,5 @@ TNArchipelTransportBarReboot    = 4;
     else
         [_migrateButton setEnabled:NO];
 }
+
 @end
-
-
-

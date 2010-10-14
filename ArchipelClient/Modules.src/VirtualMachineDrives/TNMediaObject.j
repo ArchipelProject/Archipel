@@ -20,7 +20,9 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-
+/*! @ingroup virtualmachinedrives
+    This class represent a media (a drive)
+*/
 @implementation TNMedia : CPObject
 {
     CPString    _diskSize        @accessors(property=diskSize);
@@ -30,6 +32,18 @@
     CPString    _virtualSize     @accessors(property=virtualSize);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initializes and returns TNMedia with given values
+    @param aPath the path of the media
+    @param aName the name of the media
+    @param aFormat the format of the media
+    @param vSize the virtual size of the media
+    @param dSize the real size of the media
+    @return initialized TNMedia
+*/
 + (TNMedia)mediaWithPath:(CPString)aPath name:(CPString)aName format:(CPString)aFormat virtualSize:(CPString)vSize diskSize:(CPString)dSize
 {
     var media = [[TNMedia alloc] init];

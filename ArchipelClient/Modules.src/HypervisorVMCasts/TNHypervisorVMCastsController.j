@@ -270,9 +270,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! update filter
     @param sender the sender of the action
 */
-- (IBAction)fieldFilterDidChange:(id)sender
+- (IBAction)fieldFilterDidChange:(id)aSender
 {
-    [_castsDatasource setFilter:[sender stringValue]];
+    [_castsDatasource setFilter:[fieldFilter stringValue]];
     [_mainOutlineView reloadData];
     [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
 }
@@ -280,7 +280,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! opens the add VMCast window
     @param sender the sender of the action
 */
-- (IBAction)openNewVMCastURLWindow:(id)sender
+- (IBAction)openNewVMCastURLWindow:(id)aSender
 {
     [fieldNewURL setStringValue:@""];
     [windowNewCastURL makeKeyAndOrderFront:nil];
@@ -289,9 +289,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! called when filter checkbox change
     @param sender the sender of the action
 */
-- (IBAction)clickOnFilterCheckBox:(id)sender
+- (IBAction)clickOnFilterCheckBox:(id)aSender
 {
-    if ([sender state] == CPOnState)
+    if ([checkBoxOnlyInstalled state] == CPOnState)
         [_castsDatasource setFilterInstalled:YES];
     else
         [_castsDatasource setFilterInstalled:NO];
@@ -303,7 +303,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! add new VMCast
     @param sender the sender of the action
 */
-- (IBAction)addNewVMCast:(id)sender
+- (IBAction)addNewVMCast:(id)aSender
 {
     [self addNewVMCast];
 }
@@ -311,7 +311,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! remove a thing (VMCast or Appliance)
     @param sender the sender of the action
 */
-- (IBAction)remove:(id)sender
+- (IBAction)remove:(id)aSender
 {
     [self remove];
 }
@@ -319,7 +319,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! remove an Appliance
     @param sender the sender of the action
 */
-- (IBAction)removeAppliance:(id)sender
+- (IBAction)removeAppliance:(id)aSender
 {
     [self removeAppliance];
 }
@@ -335,7 +335,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! starts a download
     @param sender the sender of the action
 */
-- (IBAction)download:(id)sender
+- (IBAction)download:(id)aSender
 {
     [self download];
 }
@@ -343,7 +343,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! show the download queue window
     @param sender the sender of the action
 */
-- (IBAction)showDownloadQueue:(id)sender
+- (IBAction)showDownloadQueue:(id)aSender
 {
     [windowNewCastURL setTitle:@"Download queue for " + [_entity nickname]];
     [windowDownloadQueue makeKeyAndOrderFront:nil];
@@ -368,7 +368,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
 /*! compute the hypervisor answer containing the VMCasts
 */
-- (void)_didReceiveVMCasts:(TNStropheStanza)aStanza
+- (BOOL)_didReceiveVMCasts:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -407,9 +407,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
         [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
     }
     else if ([aStanza type] == @"error")
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
+
+    return NO;
 }
 
 /*! ask hypervisor for progress of downloads
@@ -429,9 +429,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! compute the hypervisor answer containing the VMCasts
     @param aStanza TNStropheStanza that contains the hypervisor answer
 */
-- (void)_didDownloadProgress:(TNStropheStanza)aStanza
+- (BOOL)_didDownloadProgress:(TNStropheStanza)aStanza
 {
-
+    return NO;
 }
 
 /*! ask hypervisor to add VMCasts
@@ -456,16 +456,14 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! compute the hypervisor answer about adding a VMCast
     @param aStanza TNStropheStanza that contains the hypervisor answer
 */
-- (void)_didAddNewVMCast:(TNStropheStanza)aStanza
+- (BOOL)_didAddNewVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred"];
-    }
     else
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
+
+    return NO;
 }
 
 /*! ask hypervisor to add remove a VMCast or an Appliance
@@ -521,16 +519,14 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! compute the hypervisor answer about removing an appliance
     @param aStanza TNStropheStanza that contains the hypervisor answer
 */
-- (void)_didDeleteAppliance:(TNStropheStanza)aStanza
+- (BOOL)_didDeleteAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled"];
-    }
     else
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
+
+    return NO;
 }
 
 
@@ -567,16 +563,14 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! compute the hypervisor answer about removing an vmcast
     @param aStanza TNStropheStanza that contains the hypervisor answer
 */
-- (void)_didRemoveVMCast:(TNStropheStanza)aStanza
+- (BOOL)_didRemoveVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-    {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred"];
-    }
     else
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
+
+    return NO;
 }
 
 /*! ask hypervisor to add download an appliance. but before ask user if he is sure.
@@ -621,9 +615,11 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 /*! compute the hypervisor answer about downloading appliance
     @param aStanza TNStropheStanza that contains the hypervisor answer
 */
-- (void)_didDownload:(TNStropheStanza)aStanza
+- (BOOL)_didDownload:(TNStropheStanza)aStanza
 {
     [windowDownloadQueue makeKeyAndOrderFront:nil];
+
+    return NO;
 }
 
 

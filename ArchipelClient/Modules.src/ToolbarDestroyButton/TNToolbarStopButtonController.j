@@ -20,13 +20,7 @@
 @import <AppKit/AppKit.j>
 
 TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlPlay                           = @"TNArchipelControlPlay";
-TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
-TNArchipelControlResume                         = @"TNArchipelControlResume";
-TNArchipelControlStop                           = @"TNArchipelControlStop";
-TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
-
 
 /*! @defgroup  toolbardestroybutton Module Toolbar Button Destroy
     @desc This module displays a toolbar item that can send destroy action to the current entity
@@ -44,7 +38,7 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 /*! send TNArchipelControlNotification containing command TNArchipelControlDestroy
     to a loaded VirtualMachineControl module instance
 */
-- (IBAction)toolbarItemClicked:(id)sender
+- (IBAction)toolbarItemClicked:(id)aSender
 {
     var center = [CPNotificationCenter defaultCenter];
 

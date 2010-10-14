@@ -318,7 +318,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Open the direct VNC URI using vnc://
     @param sender the sender of the action
 */
-- (IBAction)openDirectURI:(id)sender
+- (IBAction)openDirectURI:(id)aSender
 {
     // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
     [self openVNCInNewWindow:sender];
@@ -327,10 +327,10 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! set the zoom factor
     @param sender the sender of the action
 */
-- (IBAction)changeScale:(id)sender
+- (IBAction)changeScale:(id)aSender
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
-        zoom        = [sender intValue],
+        zoom        = [aSender intValue],
         key         = TNArchipelVNCScaleFactor + [[self entity] JID];
 
     [defaults setObject:zoom forKey:key];
@@ -342,7 +342,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Make the VNCView fitting the maximum amount of space
     @param sender the sender of the action
 */
-- (IBAction)fitToScreen:(id)sender
+- (IBAction)fitToScreen:(id)aSender
 {
     var visibleRect     = [_vncView visibleRect],
         currentVNCSize  = [_vncView canvasSize],
@@ -356,7 +356,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Reset the zoom to 100%
     @param sender the sender of the action
 */
-- (IBAction)resetZoom:(id)sender
+- (IBAction)resetZoom:(id)aSender
 {
     var visibleRect     = [_vncView visibleRect],
         currentVNCSize  = [_vncView canvasSize],
@@ -368,7 +368,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Send CTRL+ALT+DEL key combination to the VNCView
     @param sender the sender of the action
 */
-- (IBAction)sendCtrlAltDel:(id)sender
+- (IBAction)sendCtrlAltDel:(id)aSender
 {
     CPLog.info("sending ctrl+alt+del to VNCView");
     [_vncView sendCtrlAltDel:sender];
@@ -379,7 +379,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Send the content of the pasteboard to the VNCView
     @param sender the sender of the action
 */
-- (IBAction)sendPasteBoard:(id)sender
+- (IBAction)sendPasteBoard:(id)aSender
 {
     CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
 
@@ -393,7 +393,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! remeber the password
     @param sender the sender of the action
 */
-- (IBAction)rememberPassword:(id)sender
+- (IBAction)rememberPassword:(id)aSender
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
         key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
@@ -407,7 +407,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! change the password
     @param sender the sender of the action
 */
-- (IBAction)changePassword:(id)sender
+- (IBAction)changePassword:(id)aSender
 {
     [self rememberPassword:nil];
     [windowPassword close];
@@ -426,7 +426,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 /*! Open the VNCView in a new physical window
     @param sender the sender of the action
 */
-- (IBAction)openVNCInNewWindow:(id)sender
+- (IBAction)openVNCInNewWindow:(id)aSender
 {
     var widthOffset         = 6,
         heightOffset        = 6;

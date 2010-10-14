@@ -25,6 +25,10 @@ TNArchipelTypeHypervisorNetworkBridges      = @"bridges";
 TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
 TNArchipelNICTypes  = ["network", "bridge", "user"];
 
+
+/*! @ingroup virtualmachinedefinition
+    this is the virtual nic editor
+*/
 @implementation TNWindowNicEdition : CPWindow
 {
     @outlet CPPopUpButton   buttonModel;
@@ -39,6 +43,11 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     TNStropheContact        _entity     @accessors(property=entity);
 }
 
+#pragma mark -
+#pragma mark Initilization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [buttonType removeAllItems];
@@ -49,6 +58,12 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
 }
 
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! update the editor according to the current nic to edit
+*/
 - (void)update
 {
     if ([_nic mac] == "00:00:00:00:00:00")
@@ -77,7 +92,14 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [buttonSource selectItemWithTitle:[_nic source]];
 }
 
-- (IBAction)save:(id)sender
+
+#pragma mark -
+#pragma mark Actions
+
+/*! saves the change
+    @param sender the sender of the action
+*/
+- (IBAction)save:(id)aSender
 {
     [_nic setMac:[fieldMac stringValue]];
     [_nic setModel:[buttonModel title]];
@@ -88,6 +110,43 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [self close];
 }
 
+/*! change the type of the network
+    @param sender the sender of the action
+*/
+- (IBAction)performRadioNicTypeChanged:(id)aSender
+{
+    var nicType = [[aSender selectedRadio] title];
+
+    switch (nicType)
+    {
+        case @"Network":
+            [buttonSource setEnabled:YES];
+            [buttonSource removeAllItems];
+            [_nic setType:@"network"];
+            [self getHypervisorNetworks];
+            break;
+
+        case @"Bridge":
+            [buttonSource setEnabled:YES];
+            [buttonSource removeAllItems];
+            [_nic setType:@"bridge"];
+            [self getBridges];
+            break;
+
+        case @"User":
+            [_nic setType:@"user"];
+            [buttonSource removeAllItems];
+            [buttonSource setEnabled:NO];
+            break;
+    }
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask hypervisor for its networks
+*/
 - (void)getHypervisorNetworks
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
@@ -96,10 +155,13 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGetNames}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNetworks:) ofObject:self];
 }
 
-- (void)didReceiveHypervisorNetworks:(id)aStanza
+/*! compute hypervisor networks
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveHypervisorNetworks:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -119,9 +181,13 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
     }
     else
-        CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
+        CPLog.error("Stanza error received in VirtualMachineDefintion _didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.");
+
+    return NO;
 }
 
+/*! ask hypervisor for its bridges
+*/
 - (void)getBridges
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
@@ -129,10 +195,13 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkBridges}];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveBridges:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveBridges:) ofObject:self];
 }
 
-- (void)didReceiveBridges:(id)aStanza
+/*! compute hypervisor bridges
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveBridges:(id)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -153,35 +222,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
     }
     else
-        CPLog.error("Stanza error received in VirtualMachineDefintion didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.")
-}
+        CPLog.error("Stanza error received in VirtualMachineDefintion _didReceiveBridges: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.");
 
-- (IBAction)performRadioNicTypeChanged:(id)sender
-{
-    var nicType = [[sender selectedRadio] title];
-
-    switch (nicType)
-    {
-        case @"Network":
-            [buttonSource setEnabled:YES];
-            [buttonSource removeAllItems];
-            [_nic setType:@"network"];
-            [self getHypervisorNetworks];
-            break;
-        
-        case @"Bridge":
-            [buttonSource setEnabled:YES];
-            [buttonSource removeAllItems];
-            [_nic setType:@"bridge"];
-            [self getBridges];
-            break;
-            
-        case @"User":
-            [_nic setType:@"user"];
-            [buttonSource removeAllItems];
-            [buttonSource setEnabled:NO];
-            break;
-    }
+    return NO;
 }
 
 @end

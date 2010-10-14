@@ -19,6 +19,9 @@
 @import <Foundation/Foundation.j>
 
 
+/*! @ingroup virtualmachinedrives
+    this class represent a snapshot
+*/
 @implementation TNSnapshot : CPObject
 {
     BOOL        _isCurrent      @accessors(getter=isCurrent, setter=setCurrent:);
@@ -33,6 +36,12 @@
     CPImage     _currentIcon;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize the TNSnapshot
+*/
 - (id)init
 {
     if (self = [super init])
@@ -43,6 +52,10 @@
 
     return self;
 }
+
+
+#pragma mark -
+#pragma mark Accessors
 
 - (CPImage)isCurrent
 {

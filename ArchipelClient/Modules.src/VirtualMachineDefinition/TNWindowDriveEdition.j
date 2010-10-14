@@ -50,6 +50,10 @@ TNXMLDescDiskBusSCSI    = @"scsi";
 TNXMLDescDiskBusVIRTIO  = @"virtio";
 TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescDiskBusVIRTIO];
 
+
+/*! @ingroup virtualmachinedefinition
+    this is the virtual drive editor
+*/
 @implementation TNWindowDriveEdition : CPWindow
 {
     @outlet CPPopUpButton   buttonBus;
@@ -66,6 +70,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 }
 
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [buttonType removeAllItems];
@@ -78,6 +87,12 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
 }
 
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! update the editor according to the current drive to edit
+*/
 - (void)update
 {
     [radioDriveType setTarget:nil];
@@ -110,27 +125,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 }
 
 
-- (IBAction)populateTargetButton:(id)sender
-{
-    [buttonTarget removeAllItems];
+#pragma mark -
+#pragma mark Actions
 
-    if ([buttonBus title] == TNXMLDescDiskBusIDE)
-    {
-        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
-    }
-    else if ([buttonBus title] == TNXMLDescDiskBusSCSI)
-    {
-        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsSCSI];
-    }
-    else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
-    {
-        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargets];
-    }
-
-    [buttonTarget selectItemWithTitle:[_drive target]];
-}
-
-- (IBAction)save:(id)sender
+/*! saves the change
+    @param sender the sender of the action
+*/
+- (IBAction)save:(id)aSender
 {
     if ([buttonSource isEnabled] && [buttonSource selectedItem])
     {
@@ -164,7 +165,33 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [self close];
 }
 
-- (IBAction)performRadioDriveTypeChanged:(id)sender
+/*! populate the target button
+    @param sender the sender of the action
+*/
+- (IBAction)populateTargetButton:(id)aSender
+{
+    [buttonTarget removeAllItems];
+
+    if ([buttonBus title] == TNXMLDescDiskBusIDE)
+    {
+        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
+    }
+    else if ([buttonBus title] == TNXMLDescDiskBusSCSI)
+    {
+        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsSCSI];
+    }
+    else if ([buttonBus title] == TNXMLDescDiskBusVIRTIO)
+    {
+        [buttonTarget addItemsWithTitles:TNXMLDescDiskTargets];
+    }
+
+    [buttonTarget selectItemWithTitle:[_drive target]];
+}
+
+/*! change the type of the drive
+    @param sender the sender of the action
+*/
+- (IBAction)performRadioDriveTypeChanged:(id)aSender
 {
     var driveType = [[radioDriveType selectedRadio] title];
 
@@ -192,7 +219,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
 }
 
-- (IBAction)driveTypeDidChange:(id)sender
+/*! hange the type of the drive (file or block)
+    @param sender the sender of the action
+*/
+- (IBAction)driveTypeDidChange:(id)aSender
 {
     if ([buttonType title] == TNXMLDescDriveTypeBlock)
     {
@@ -219,6 +249,12 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
 }
 
+
+#pragma mark -
+#pragma mark  XMPP Controls
+
+/*! ask virtual machine for its drives
+*/
 - (void)getDisksInfo
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -227,10 +263,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDiskGet}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveDisksInfo:) ofObject:self];
 }
 
-- (void)didReceiveDisksInfo:(id)aStanza
+/*! compute virtual machine drives
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveDisksInfo:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -259,10 +298,12 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             }
         }
     }
+
+    return NO;
 }
 
-
-
+/*! ask virtual machine for avaiable ISOs
+*/
 - (void)getISOsInfo
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -273,8 +314,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveISOsInfo:) ofObject:self];
 }
 
-
-- (void)didReceiveISOsInfo:(id)aStanza
+/*! compute virtual machine ISOs
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)didReceiveISOsInfo:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -304,7 +347,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
         }
     }
-}
 
+    return NO;
+}
 
 @end

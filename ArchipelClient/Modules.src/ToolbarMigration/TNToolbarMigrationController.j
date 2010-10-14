@@ -25,13 +25,13 @@ TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control";
 TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
-/*! @defgroup  sampletoolbarmodule Module SampleToolbarModule
+/*! @defgroup  toolbarmigration Module Toolbar Migration
 
-    @desc Development starting point to create a Toolbar module
+    @desc This module offers a general panel to manage virtual machine migrations
 */
 
 
-/*! @ingroup sampletoolbarmodule
+/*! @ingroup toolbarmigration
     Sample toolbar module implementation
 */
 @implementation TNToolbarMigrationController : TNModule
@@ -54,6 +54,12 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     TNTableViewDataSource   _virtualMachinesDatasource;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [scrollViewTableHypervisorOrigin setBorderedWithHexColor:@"#C0C7D2"];
@@ -183,17 +189,27 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableHypervisorDestination setDataSource:_hypervisorDestinationDatasource];
 }
 
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
     // message sent when view will be added from superview;
 }
 
+/*! called when module is unloaded
+*/
 - (void)willUnload
 {
     [super willUnload];
 }
 
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -220,6 +236,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [self populateHypervisorOriginTable];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
@@ -237,6 +255,12 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [self refresh:nil];
 }
 
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! refresh all the tables
+*/
 - (void)refresh:(CPNotification)aNotification
 {
     [_tableHypervisorOrigin reloadData];
@@ -244,6 +268,12 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableHypervisorVirtualMachines reloadData];
 }
 
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! populate the content of the origin table
+*/
 - (void)populateHypervisorOriginTable
 {
     [_hypervisorOriginDatasource removeAllObjects];
@@ -261,6 +291,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 }
 
+/*! populate the content of the destination table
+*/
 - (void)populateHypervisorDestinationTable
 {
     [_hypervisorDestinationDatasource removeAllObjects];
@@ -282,7 +314,25 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableHypervisorDestination reloadData];
 }
 
-- (IBAction)migrate:(id)sender
+
+#pragma mark -
+#pragma mark Actions
+
+/*! perform a live migration
+    @param sender the sender of the action
+*/
+- (IBAction)migrate:(id)aSender
+{
+    [self migrate];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! perform a live migration
+*/
+- (void)migrate
 {
     var virtualMachine          = [_virtualMachinesDatasource objectAtIndex:[[_tableHypervisorVirtualMachines selectedRowIndexes] firstIndex]],
         destinationHypervisor   = [_hypervisorDestinationDatasource objectAtIndex:[[_tableHypervisorDestination selectedRowIndexes] firstIndex]],
@@ -293,12 +343,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         "action": TNArchipelTypeVirtualMachineControlMigrate,
         "hypervisorjid": [destinationHypervisor fullJID]}];
 
-
-    [virtualMachine sendStanza:stanza andRegisterSelector:@selector(didMigrate:) ofObject:self];
-
+    [virtualMachine sendStanza:stanza andRegisterSelector:@selector(_didMigrate:) ofObject:self];
 }
 
-- (void)didMigrate:(TNStropheStanza)aStanza
+/*! compute the migration result
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didMigrate:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -312,8 +363,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
+/*! ask hypervisor's roster
+    @param anHypervisor the hypervisor to ask
+*/
 - (void)rosterOfHypervisor:(TNStropheContact)anHypervisor
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -323,10 +379,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
 
-    [anHypervisor sendStanza:stanza andRegisterSelector:@selector(didReceiveRoster:) ofObject:self];
+    [anHypervisor sendStanza:stanza andRegisterSelector:@selector(_didReceiveRoster:) ofObject:self];
 }
 
-- (void)didReceiveRoster:(id)aStanza
+/*! compute the content of the roster
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveRoster:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -354,8 +413,13 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
+
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {

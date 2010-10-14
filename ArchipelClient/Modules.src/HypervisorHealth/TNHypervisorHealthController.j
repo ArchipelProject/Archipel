@@ -381,7 +381,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 /*! Action that make the auto-refresh on or off
     @param sender the sender of the action
 */
-- (IBAction)pauseRefresh:(id)sender
+- (IBAction)pauseRefresh:(id)aSender
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID];

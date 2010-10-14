@@ -89,19 +89,13 @@ TNXMLDescInputTypeMouse     = @"mouse";
 TNXMLDescInputTypeTablet    = @"tablet";
 TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet];
 
-function generateMacAddr()
-{
-    var hexTab      = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"],
-        dA          = "DE",
-        dB          = "AD",
-        dC          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
-        dD          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
-        dE          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
-        dF          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)];
+/*! @defgroup  virtualmachinedefinition Module VirtualMachine Definition
+    @desc Allow to define virtual machines
+*/
 
-    return dA + ":" + dB + ":" + dC + ":" + dD + ":" + dE + ":" + dF;
-}
-
+/*! @ingroup virtualmachinedefinition
+    main class of the module
+*/
 @implementation VirtualMachineDefinitionController : TNModule
 {
     @outlet CPButton                buttonAddNic;
@@ -173,6 +167,12 @@ function generateMacAddr()
     TNTableViewDataSource           _nicsDatasource;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
@@ -451,18 +451,22 @@ function generateMacAddr()
     [switchHugePages setAction:@selector(defineXML:)];
 }
 
-// TNModule impl.
 
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
@@ -490,6 +494,17 @@ function generateMacAddr()
     [_tableNetworkNics reloadData];
 }
 
+/*! called when module is unloaded
+*/
+- (void)willUnload
+{
+    [super willUnload];
+
+    [self setDefaultValues];
+}
+
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -499,37 +514,15 @@ function generateMacAddr()
     [self checkIfRunning];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
 }
 
-- (void)willUnload
-{
-    [super willUnload];
-
-    [self setDefaultValues];
-}
-
-- (void)loadPreferences
-{
-    var defaults = [TNUserDefaults standardUserDefaults];
-
-    [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
-    [buttonPreferencesNumberOfCPUs selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultNumberCPU"]];
-    [buttonPreferencesBoot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultBoot"]];
-    [buttonPreferencesVNCKeyMap selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultVNCKeymap"]];
-    [buttonPreferencesOnPowerOff selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnPowerOff"]];
-    [buttonPreferencesOnReboot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnReboot"]];
-    [buttonPreferencesOnCrash selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnCrash"]];
-    [buttonPreferencesClockOffset selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultClockOffset"]];
-    [buttonPreferencesInput selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultInputType"]];
-    [switchPreferencesPAE setOn:[defaults boolForKey:@"TNDescDefaultPAE"] animated:YES sendAction:NO];
-    [switchPreferencesACPI setOn:[defaults boolForKey:@"TNDescDefaultACPI"] animated:YES sendAction:NO];
-    [switchPreferencesAPIC setOn:[defaults boolForKey:@"TNDescDefaultAPIC"] animated:YES sendAction:NO];
-    [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
-}
-
+/*! called when users saves preferences
+*/
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -549,6 +542,29 @@ function generateMacAddr()
     [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
 }
 
+/*! called when users gets preferences
+*/
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
+    [buttonPreferencesNumberOfCPUs selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultNumberCPU"]];
+    [buttonPreferencesBoot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultBoot"]];
+    [buttonPreferencesVNCKeyMap selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultVNCKeymap"]];
+    [buttonPreferencesOnPowerOff selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnPowerOff"]];
+    [buttonPreferencesOnReboot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnReboot"]];
+    [buttonPreferencesOnCrash selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnCrash"]];
+    [buttonPreferencesClockOffset selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultClockOffset"]];
+    [buttonPreferencesInput selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultInputType"]];
+    [switchPreferencesPAE setOn:[defaults boolForKey:@"TNDescDefaultPAE"] animated:YES sendAction:NO];
+    [switchPreferencesACPI setOn:[defaults boolForKey:@"TNDescDefaultACPI"] animated:YES sendAction:NO];
+    [switchPreferencesAPIC setOn:[defaults boolForKey:@"TNDescDefaultAPIC"] animated:YES sendAction:NO];
+    [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
+}
+
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Undefine" action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
@@ -562,7 +578,14 @@ function generateMacAddr()
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity's nickname changes
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -570,7 +593,18 @@ function generateMacAddr()
     }
 }
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+/*! called if entity changes it presence
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
+{
+    [self checkIfRunning];
+}
+
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -584,11 +618,28 @@ function generateMacAddr()
     return YES;
 }
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! generate a random Mac address.
+    @return CPString containing a random Mac address
+*/
+- (CPString)generateMacAddr
 {
-    [self checkIfRunning];
+    var hexTab      = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"],
+        dA          = "DE",
+        dB          = "AD",
+        dC          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
+        dD          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
+        dE          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)],
+        dF          = hexTab[Math.round(Math.random() * 15)] + hexTab[Math.round(Math.random() * 15)];
+
+    return dA + ":" + dB + ":" + dC + ":" + dD + ":" + dE + ":" + dF;
 }
 
+/*! set the default value of all widgets
+*/
 - (void)setDefaultValues
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
@@ -633,6 +684,8 @@ function generateMacAddr()
 
 }
 
+/*! checks if virtual machine is running. if yes, display the masking view
+*/
 - (void)checkIfRunning
 {
     var XMPPShow = [_entity XMPPShow];
@@ -649,14 +702,162 @@ function generateMacAddr()
         [maskingView removeFromSuperview];
 }
 
+/*! check if given hypervisor is in given list (hum I think this will be throw away...)
+    @param anHypervisor an Hypervisor type
+    @param anArray an array of string
+*/
 - (BOOL)isHypervisor:(CPString)anHypervisor inList:(CPArray)anArray
 {
     return [anArray containsObject:anHypervisor];
 }
 
 
+#pragma mark -
+#pragma mark Actions
 
-// XML Capabilities
+/*! open the manual XML editor
+    @param sender the sender of the action
+*/
+- (IBAction)openXMLEditor:(id)aSender
+{
+    [windowXMLEditor center];
+    [windowXMLEditor makeKeyAndOrderFront:sender];
+}
+
+/*! define XML
+    @param sender the sender of the action
+*/
+- (IBAction)defineXML:(id)aSender
+{
+    [self defineXML];
+}
+
+/*! define XML from the manual editor
+    @param sender the sender of the action
+*/
+- (IBAction)defineXMLString:(id)aSender
+{
+    [self defineXMLString];
+}
+
+/*! undefine virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)undefineXML:(id)aSender
+{
+    [self undefineXML];
+}
+
+/*! add a network card
+    @param sender the sender of the action
+*/
+- (IBAction)addNetworkCard:(id)aSender
+{
+    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:[self generateMacAddr] source:@"virbr0"];
+
+    [_nicsDatasource addObject:defaultNic];
+    [_tableNetworkNics reloadData];
+    [self defineXML];
+}
+
+/*! open the network editor
+    @param sender the sender of the action
+*/
+- (IBAction)editNetworkCard:(id)aSender
+{
+    if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
+    {
+         //[CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
+         [self addNetworkCard:sender];
+         return;
+    }
+    var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex],
+        nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
+
+    [windowNicEdition setNic:nicObject];
+    [windowNicEdition update];
+    [windowNicEdition center];
+    [windowNicEdition makeKeyAndOrderFront:nil];
+}
+
+/*! delete a network card
+    @param sender the sender of the action
+*/
+- (IBAction)deleteNetworkCard:(id)aSender
+{
+    if ([_tableNetworkNics numberOfSelectedRows] <= 0)
+    {
+         [CPAlert alertWithTitle:@"Error" message:@"You must select a network interface"];
+         return;
+    }
+
+     var selectedIndexes = [_tableNetworkNics selectedRowIndexes];
+
+     [_nicsDatasource removeObjectsAtIndexes:selectedIndexes];
+
+     [_tableNetworkNics reloadData];
+     [_tableNetworkNics deselectAll];
+     [self defineXML];
+}
+
+/*! add a drive
+    @param sender the sender of the action
+*/
+- (IBAction)addDrive:(id)aSender
+{
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"];
+
+    [_drivesDatasource addObject:defaultDrive];
+    [_tableDrives reloadData];
+    [self defineXML];
+}
+
+/*! open the drive editor
+    @param sender the sender of the action
+*/
+- (IBAction)editDrive:(id)aSender
+{
+    if ([[_tableDrives selectedRowIndexes] count] != 1)
+    {
+         [self addDrive:sender];
+         return;
+    }
+
+    var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex],
+        driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
+
+    [windowDriveEdition setDrive:driveObject];
+    [windowDriveEdition update];
+    [windowDriveEdition center];
+    [windowDriveEdition makeKeyAndOrderFront:nil];
+}
+
+/*! delete a drive
+    @param sender the sender of the action
+*/
+- (IBAction)deleteDrive:(id)aSender
+{
+    if ([_tableDrives numberOfSelectedRows] <= 0)
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
+        return;
+    }
+
+     var selectedIndexes = [_tableDrives selectedRowIndexes];
+
+     [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
+
+     [_tableDrives reloadData];
+     [_tableDrives deselectAll];
+     [self defineXML];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask hypervisor for its capabilities
+*/
 - (void)getCapabilities
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
@@ -665,10 +866,13 @@ function generateMacAddr()
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionCapabilities}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLCapabilities:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveXMLCapabilities:) ofObject:self];
 }
 
-- (void)didReceiveXMLCapabilities:(TNStropheStanza)aStanza
+/*! compute hypervisor capabilities
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveXMLCapabilities:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -756,10 +960,12 @@ function generateMacAddr()
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-//  XML Desc
+/*! ask hypervisor for its description
+*/
 - (void)getXMLDesc
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
@@ -768,10 +974,13 @@ function generateMacAddr()
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveXMLDesc:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveXMLDesc:) ofObject:self];
 }
 
-- (void)didReceiveXMLDesc:(TNStropheStanza)aStanza
+/*! compute hypervisor description
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveXMLDesc:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -1115,11 +1324,13 @@ function generateMacAddr()
             [self handleIqErrorFromStanza:aStanza];
         }
     }
+
+    return NO;
 }
 
-
-// XML Auto Definition
-- (IBAction)defineXML:(id)sender
+/*! ask hypervisor to define XML
+*/
+- (void)defineXML
 {
     var uid             = [_connection getUniqueId],
         memory          = "" + [fieldMemory intValue] * 1024 + "",
@@ -1346,12 +1557,31 @@ function generateMacAddr()
     //devices up
     [stanza up];
 
-
     // send stanza
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didDefineXML:) ofObject:self withSpecificID:uid];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
-- (void)didDefineXML:(TNStropheStanza)aStanza
+/*! ask hypervisor to define XML from string
+*/
+- (void)defineXMLString
+{
+    var desc    = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0],
+        stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    desc = document.importNode(desc, true);
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
+    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
+    [stanza addNode:desc];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
+    [windowXMLEditor close];
+}
+
+/*! compute hypervisor answer about the definition
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didDefineXML:(TNStropheStanza)aStanza
 {
     var responseType    = [aStanza type],
         responseFrom    = [aStanza from];
@@ -1364,35 +1594,13 @@ function generateMacAddr()
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-// XML Manual definition
-- (IBAction)openXMLEditor:(id)sender
-{
-    [windowXMLEditor center];
-    [windowXMLEditor makeKeyAndOrderFront:sender];
-
-}
-
-- (IBAction)defineXMLString:(id)sender
-{
-    var desc    = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0],
-        stanza  = [TNStropheStanza iqWithType:@"get"];
-
-    desc = document.importNode(desc, true);
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
-    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    [stanza addNode:desc];
-
-    [self sendStanza:stanza andRegisterSelector:@selector(didDefineXML:)];
-    [windowXMLEditor close];
-}
-
-
-// Undeinfition
-- (IBAction)undefineXML:(id)sender
+/*! ask hypervisor to undefine virtual machine. but before ask for a confirmation
+*/
+- (void)undefineXML
 {
         var alert = [TNAlert alertWithTitle:@"Undefine virtual machine"
                                     message:@"Are you sure you want to undefine this virtual machine ?"
@@ -1400,8 +1608,10 @@ function generateMacAddr()
                                     delegate:self
                                      actions:[["Undefine", @selector(performUndefineXML:)], ["Cancel", nil]]];
         [alert runModal];
-    }
+}
 
+/*! ask hypervisor to undefine virtual machine
+*/
 - (void)performUndefineXML:(id)someUserInfo
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
@@ -1412,7 +1622,10 @@ function generateMacAddr()
     [_entity sendStanza:stanza andRegisterSelector:@selector(didUndefineXML:) ofObject:self];
 }
 
-- (void)didUndefineXML:(TNStropheStanza)aStanza
+/*! compute hypervisor answer about the undefinition
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)didUndefineXML:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -1423,98 +1636,13 @@ function generateMacAddr()
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 
-
-- (IBAction)addNetworkCard:(id)sender
-{
-    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:generateMacAddr() source:@"virbr0"];
-
-    [_nicsDatasource addObject:defaultNic];
-    [_tableNetworkNics reloadData];
-    [self defineXML:nil];
-}
-
-- (IBAction)editNetworkCard:(id)sender
-{
-    if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
-    {
-         //[CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
-         [self addNetworkCard:sender];
-         return;
-    }
-    var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex],
-        nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
-
-    [windowNicEdition setNic:nicObject];
-    [windowNicEdition update];
-    [windowNicEdition center];
-    [windowNicEdition makeKeyAndOrderFront:nil];
-}
-
-
-- (IBAction)deleteNetworkCard:(id)sender
-{
-    if ([_tableNetworkNics numberOfSelectedRows] <= 0)
-    {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a network interface"];
-         return;
-    }
-
-     var selectedIndexes = [_tableNetworkNics selectedRowIndexes];
-
-     [_nicsDatasource removeObjectsAtIndexes:selectedIndexes];
-
-     [_tableNetworkNics reloadData];
-     [_tableNetworkNics deselectAll];
-     [self defineXML:nil];
-}
-
-- (IBAction)addDrive:(id)sender
-{
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"];
-
-    [_drivesDatasource addObject:defaultDrive];
-    [_tableDrives reloadData];
-    [self defineXML:nil];
-}
-
-- (IBAction)editDrive:(id)sender
-{
-    if ([[_tableDrives selectedRowIndexes] count] != 1)
-    {
-         [self addDrive:sender];
-         return;
-    }
-
-    var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex],
-        driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
-
-    [windowDriveEdition setDrive:driveObject];
-    [windowDriveEdition update];
-    [windowDriveEdition center];
-    [windowDriveEdition makeKeyAndOrderFront:nil];
-}
-
-- (IBAction)deleteDrive:(id)sender
-{
-    if ([_tableDrives numberOfSelectedRows] <= 0)
-    {
-        [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
-        return;
-    }
-
-     var selectedIndexes = [_tableDrives selectedRowIndexes];
-
-     [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
-
-     [_tableDrives reloadData];
-     [_tableDrives deselectAll];
-     [self defineXML:nil];
-}
-
-
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
@@ -1543,6 +1671,3 @@ function generateMacAddr()
 }
 
 @end
-
-
-

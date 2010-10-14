@@ -486,7 +486,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! add a network
     @param sender the sender of the action
 */
-- (IBAction)addNetwork:(id)sender
+- (IBAction)addNetwork:(id)aSender
 {
     var uuid            = [CPString UUID],
         ip              = [self generateIPForNewNetwork],
@@ -521,7 +521,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! delete a network
     @param sender the sender of the action
 */
-- (IBAction)delNetwork:(id)sender
+- (IBAction)delNetwork:(id)aSender
 {
     [self delNetwork];
 }
@@ -529,7 +529,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! open network edition panel
     @param sender the sender of the action
 */
-- (IBAction)editNetwork:(id)sender
+- (IBAction)editNetwork:(id)aSender
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
@@ -554,7 +554,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! define a network
     @param sender the sender of the action
 */
-- (IBAction)defineNetworkXML:(id)sender
+- (IBAction)defineNetworkXML:(id)aSender
 {
     [self defineNetworkXML];
 }
@@ -562,7 +562,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! activate a network
     @param sender the sender of the action
 */
-- (IBAction)activateNetwork:(id)sender
+- (IBAction)activateNetwork:(id)aSender
 {
     [self activateNetwork];
 }
@@ -570,7 +570,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 /*! deactivate a network
     @param sender the sender of the action
 */
-- (IBAction)deactivateNetwork:(id)sender
+- (IBAction)deactivateNetwork:(id)aSender
 {
     [self deactivateNetwork];
 }
@@ -767,7 +767,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     @param aStanza TNStropheStanza containing the answer
     @return NO to unregister selector
 */
-- (void)_didDelNetwork:(TNStropheStanza)aStanza
+- (BOOL)_didDelNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -777,6 +777,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 @end

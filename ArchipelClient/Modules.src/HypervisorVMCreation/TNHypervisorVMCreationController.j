@@ -258,7 +258,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! add double clicked vm to roster if not present or go to virtual machine
     @param sender the sender of the action
 */
-- (IBAction)didDoubleClick:(id)sender
+- (IBAction)didDoubleClick:(id)aSender
 {
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index];
@@ -284,7 +284,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! open the new virtual machine window
     @param sender the sender of the action
 */
-- (IBAction)addVirtualMachine:(id)sender
+- (IBAction)addVirtualMachine:(id)aSender
 {
     [fieldNewVMRequestedName setStringValue:@""];
     [windowNewVirtualMachine center];
@@ -294,7 +294,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! alloc a new virtual machine
     @param sender the sender of the action
 */
-- (IBAction)alloc:(id)sender
+- (IBAction)alloc:(id)aSender
 {
     [self alloc];
 }
@@ -302,7 +302,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! delete selected virtual machines
     @param sender the sender of the action
 */
-- (IBAction)deleteVirtualMachine:(id)sender
+- (IBAction)deleteVirtualMachine:(id)aSender
 {
     [self deleteVirtualMachine];
 }
@@ -310,7 +310,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! clone selected virtual machine
     @param sender the sender of the action
 */
-- (IBAction)cloneVirtualMachine:(id)sender
+- (IBAction)cloneVirtualMachine:(id)aSender
 {
     [self cloneVirtualMachine]
 }
@@ -347,7 +347,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! compute the answer of the hypervisor about its roster
     @param aStanza TNStropheStanza containing hypervisor answer
 */
-- (void)_didReceiveHypervisorRoster:(id)aStanza
+- (BOOL)_didReceiveHypervisorRoster:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -383,6 +383,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 /*! alloc a new virtual machine
@@ -405,7 +407,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! compute the answer of the hypervisor about its allocing a VM
     @param aStanza TNStropheStanza containing hypervisor answer
 */
-- (void)_didAllocVirtualMachine:(id)aStanza
+- (BOOL)_didAllocVirtualMachine:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -418,6 +420,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 /*! delete a virtual machine. but ask user if he is sure before
@@ -478,7 +482,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 /*! compute the answer of the hypervisor about its deleting a VM
     @param aStanza TNStropheStanza containing hypervisor answer
 */
-- (void)_didDeleteVirtualMachine:(id)aStanza
+- (BOOL)_didDeleteVirtualMachine:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -490,6 +494,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 /*! remove a virtual machine from the roster
@@ -534,13 +540,13 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         "action": TNArchipelTypeHypervisorControlClone,
         "jid": [vm JID]}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didCloneVirtualMachine:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
 }
 
 /*! compute the answer of the hypervisor about its cloning a VM
     @param aStanza TNStropheStanza containing hypervisor answer
 */
-- (void)didCloneVirtualMachine:(id)aStanza
+- (BOOL)_didCloneVirtualMachine:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -552,9 +558,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
 @end
-
-

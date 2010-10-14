@@ -31,7 +31,7 @@ TNArchipelTypeVirtualMachineVMCastingPackage                = @"package";
 
 TNArchipelPushNotificationVMCasting                         = @"archipel:push:vmcasting";
 
-/*! @defgroup  virtualmachinepackaging Module VirtualMachinePackaging
+/*! @defgroup  virtualmachinepackaging Module VirtualMachine Appliances
     @desc Allow to attach virtual machine from installed appliances
 */
 
@@ -57,6 +57,12 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     TNTableViewDataSource               _appliancesDatasource;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -137,16 +143,22 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
 }
 
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
 
     [_tableAppliances setDelegate:nil];
     [_tableAppliances setDelegate:self]; // hum....
@@ -154,6 +166,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [self getInstalledAppliances];
 }
 
+/*! called when module is unloaded
+*/
 - (void)willUnload
 {
     [super willUnload];
@@ -162,6 +176,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [_tableAppliances reloadData];
 }
 
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -172,11 +188,15 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [self checkIfRunning];
 }
 
+/*! called when module becomes unvisible
+*/
 - (void)willHide
 {
     [super willHide];
 }
 
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Attach selected appliance" action:@selector(attach:) keyEquivalent:@""] setTarget:self];
@@ -185,26 +205,14 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [[_menu addItemWithTitle:@"Create appliance from this virtual machine" action:@selector(package:) keyEquivalent:@""] setTarget:self];
 }
 
-- (void)checkIfRunning
-{
-    if ([_entity XMPPShow] == TNStropheContactStatusBusy)
-    {
-        [maskingView removeFromSuperview];
-    }
-    else
-    {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
-    }
-}
 
+#pragma mark -
+#pragma mark Notification handlers
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
-{
-    [self checkIfRunning];
-}
-
-- (void)didNickNameUpdated:(CPNotification)aNotification
+/*! called when entity's nickname changes
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -212,7 +220,18 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     }
 }
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+/*! called if entity changes it presence and call checkIfRunning
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
+{
+    [self checkIfRunning];
+}
+
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -233,14 +252,43 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-- (IBAction)openNewApplianceWindow:(id)sender
+#pragma mark -
+#pragma mark Utilities
+
+/*! Checks if virtualmacine is not running otherwise displays the masking view
+*/
+- (void)checkIfRunning
+{
+    if ([_entity XMPPShow] == TNStropheContactStatusBusy)
+    {
+        [maskingView removeFromSuperview];
+    }
+    else
+    {
+        [maskingView setFrame:[[self view] bounds]];
+        [[self view] addSubview:maskingView];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! Open the new appliance window
+    @param sender the sender of the action
+*/
+- (IBAction)openNewApplianceWindow:(id)aSender
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
     [windowNewAppliance makeFirstResponder:fieldNewApplianceName];
     [windowNewAppliance makeKeyAndOrderFront:nil];
 }
 
-- (IBAction)tableDoubleClicked:(id)sender
+/*! performed when we double click on package from table view.
+    it will attach or detach
+    @param sender the sender of the action
+*/
+- (IBAction)tableDoubleClicked:(id)aSender
 {
     if ([_tableAppliances numberOfSelectedRows] <= 0)
         return;
@@ -249,12 +297,42 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
     if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
-        [self detach:sender];
+        [self detach];
     else
-        [self attach:sender];
+        [self attach];
 
 }
 
+/*! attach the selected appliance
+    @param sender the sender of the action
+*/
+- (IBAction)attach:(id)aSender
+{
+    [self attach];
+}
+
+/*! detach the selected appliance
+    @param sender the sender of the action
+*/
+- (IBAction)detach:(id)aSender
+{
+    [self detach];
+}
+
+/*! package the selected appliance
+    @param sender the sender of the action
+*/
+- (IBAction)package:(id)aSender
+{
+    [self package];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask for installed appliances
+*/
 - (void)getInstalledAppliances
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -263,10 +341,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingGet}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveInstalledAppliances:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveInstalledAppliances:) ofObject:self];
 }
 
-- (void)didReceiveInstalledAppliances:(TNStropheStanza)aStanza
+/*! compute the answer containing the appliances
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveInstalledAppliances:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -292,11 +373,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-
-- (IBAction)attach:(id)sender
+/*! attach the selected appliance. but before ask user confirmation
+*/
+- (void)attach
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
@@ -310,8 +393,11 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
                                  actions:[["Attach", @selector(performAttach:)], ["Cancel", nil]]];
     [alert runModal];
 
+
 }
 
+/*! attach the selected appliance
+*/
 - (void)performAttach:(id)someUserInfo
 {
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
@@ -324,10 +410,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         "uuid": [appliance UUID]}];
 
     [_attachButton setEnabled:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didAttach:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didAttach:) ofObject:self];
 }
 
-- (void)didAttach:(TNStropheStanza)aStanza
+/*! compute the attachement results
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didAttach:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -337,10 +426,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)detach:(id)sender
+/*! detach the selected appliance. but before ask user confirmation
+*/
+- (void)detach
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
@@ -355,6 +447,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [alert runModal];
 }
 
+/*! detach the selected appliance
+*/
 - (void)performDetach:(id)someUserInfo
 {
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
@@ -370,10 +464,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         "action": TNArchipelTypeVirtualMachineVMCastingDetach}];
 
     [_detachButton setEnabled:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didDetach:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didDetach:) ofObject:self];
 }
 
-- (void)didDetach:(TNStropheStanza)aStanza
+/*! compute the detachment results
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didDetach:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -385,10 +482,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)package:(id)sender
+/*! package the selected appliance
+*/
+- (void)package
 {
     if ([_entity XMPPShow] != TNStropheContactStatusBusy)
     {
@@ -404,12 +504,15 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         "action": TNArchipelTypeVirtualMachineVMCastingPackage,
         "name": name}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didPackageAppliance:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didPackageAppliance:) ofObject:self];
 
     [windowNewAppliance close];
 }
 
-- (void)didPackageAppliance:(TNStropheStanza)aStanza
+/*! compute the packaging results
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didPackageAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -419,8 +522,13 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
+
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
@@ -439,7 +547,5 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         [_attachButton setEnabled:YES];
 
 }
+
 @end
-
-
-

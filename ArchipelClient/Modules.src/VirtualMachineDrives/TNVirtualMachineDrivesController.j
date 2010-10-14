@@ -32,6 +32,14 @@ TNArchipelPushNotificationDisk           = @"archipel:push:disk";
 TNArchipelPushNotificationAppliance      = @"archipel:push:vmcasting";
 TNArchipelPushNotificationDiskCreated    = @"created";
 
+
+/*! @defgroup  virtualmachinedrives Module VirtualMachine Drives
+    @desc Allows to create and manage virtual drives
+*/
+
+/*! @ingroup virtualmachinedrives
+    main class of the module
+*/
 @implementation TNVirtualMachineDrivesController : TNModule
 {
     @outlet CPButton        buttonConvert;
@@ -62,6 +70,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     TNTableViewDataSource   _mediasDatasource;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
@@ -171,6 +184,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
@@ -180,11 +198,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     var params = [[CPDictionary alloc] init],
         center = [CPNotificationCenter defaultCenter];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationDisk]
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationAppliance]
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDisk]
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationAppliance]
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [_tableMedias setDelegate:nil];
@@ -193,6 +211,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [self getDisksInfo];
 }
 
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -204,6 +224,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [self getDisksInfo];
 }
 
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Create a drive" action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
@@ -213,7 +235,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity's nickname changes
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -221,7 +249,10 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
+/*! called if entity changes it presence and call checkIfRunning
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -229,7 +260,10 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+/*! called when an Archipel push is received
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -251,6 +285,12 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     return YES;
 }
 
+
+#pragma mark -
+#pragma mark  Utilities
+
+/*! checks if virtual machine is running. if yes, display ythe masking view
+*/
 - (void)checkIfRunning
 {
     var XMPPShow = [_entity XMPPShow];
@@ -268,6 +308,90 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     }
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
+/*! opens the new disk window
+    @param aSender the sender of the action
+*/
+- (IBAction)openNewDiskWindow:(id)aSender
+{
+    [fieldNewDiskName setStringValue:@""];
+    [fieldNewDiskSize setStringValue:@""];
+    [buttonNewDiskFormat selectItemWithTitle:@"qcow2"];
+    [windowNewDisk makeFirstResponder:fieldNewDiskName];
+    [windowNewDisk center];
+    [windowNewDisk makeKeyAndOrderFront:nil];
+}
+
+/*! opens the rename window
+    @param aSender the sender of the action
+*/
+- (IBAction)openRenamePanel:(id)aSender
+{
+    if (_isActive)
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
+    else
+    {
+        if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
+             return;
+
+        if ([_tableMedias numberOfSelectedRows] > 1)
+        {
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit multiple disk" icon:TNGrowlIconError];
+            return;
+        }
+
+        var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
+            diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
+
+        [windowDiskProperties center];
+        [windowDiskProperties makeKeyAndOrderFront:nil];
+        [fieldEditDiskName setStringValue:[diskObject name]];
+
+        _currentEditedDisk = diskObject;
+    }
+}
+
+/*! creates a disk
+    @param aSender the sender of the action
+*/
+- (IBAction)createDisk:(id)aSender
+{
+    [self createDisk];
+}
+
+/*! converts a disk
+    @param aSender the sender of the action
+*/
+- (IBAction)convert:(id)aSender
+{
+    [self convert];
+}
+
+/*! rename a disk
+    @param aSender the sender of the action
+*/
+- (IBAction)rename:(id)aSender
+{
+    [self rename];
+}
+
+/*! remove a disk
+    @param aSender the sender of the action
+*/
+- (IBAction)removeDisk:(id)aSender
+{
+    [self removeDisk];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! ask virtual machine for its disks
+*/
 - (void)getDisksInfo
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -276,10 +400,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDiskGet}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveDisksInfo:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveDisksInfo:) ofObject:self];
 }
 
-- (void)didReceiveDisksInfo:(id)aStanza
+/*! compute virtual machine disk
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didReceiveDisksInfo:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -305,66 +432,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-
-- (IBAction)openNewDiskWindow:(id)sender
-{
-    [fieldNewDiskName setStringValue:@""];
-    [fieldNewDiskSize setStringValue:@""];
-    [buttonNewDiskFormat selectItemWithTitle:@"qcow2"];
-    [windowNewDisk makeFirstResponder:fieldNewDiskName];
-    [windowNewDisk center];
-    [windowNewDisk makeKeyAndOrderFront:nil];
-}
-
-- (IBAction)convertFormatChange:(id)sender
-{
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
-    {
-         return;
-    }
-
-    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
-        diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
-}
-
-- (IBAction)openRenamePanel:(id)sender
-{
-    if (_isActive)
-    {
-        var growl   = [TNGrowlCenter defaultCenter];
-
-        [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
-    }
-    else
-    {
-        if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
-             return;
-
-        if ([_tableMedias numberOfSelectedRows] > 1)
-        {
-            var growl   = [TNGrowlCenter defaultCenter];
-
-            [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit multiple disk" icon:TNGrowlIconError];
-
-            return;
-        }
-
-        var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
-            diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
-
-        [windowDiskProperties center];
-        [windowDiskProperties makeKeyAndOrderFront:nil];
-        [fieldEditDiskName setStringValue:[diskObject name]];
-
-        _currentEditedDisk = diskObject;
-    }
-}
-
-
-- (IBAction)createDisk:(id)sender
+/*! asks virtual machine to create a new disk
+*/
+- (void)createDisk
 {
     var dUnit,
         dName       = [fieldNewDiskName stringValue],
@@ -405,23 +479,29 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         "unit": dUnit,
         "format": format}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didCreateDisk:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didCreateDisk:) ofObject:self];
 
     [windowNewDisk orderOut:nil];
     [fieldNewDiskName setStringValue:@""];
     [fieldNewDiskSize setStringValue:@""];
 }
 
-- (void)didCreateDisk:(id)aStanza
+/*! compute virtual machine disk creation results
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didCreateDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)convert:(id)sender
+/*! asks virtual machine to connvert a disk
+*/
+- (void)convert
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
@@ -449,10 +529,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [windowDiskProperties orderOut:nil];
 
     [imageViewConverting setHidden:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didConvertDisk:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didConvertDisk:) ofObject:self];
 }
 
-- (void)didConvertDisk:(id)aStanza
+/*! compute virtual machine disk conversion results
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didConvertDisk:(TNStropheStanza)aStanza
 {
     [imageViewConverting setHidden:YES];
 
@@ -465,10 +548,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)rename:(id)sender
+/*! asks virtual machine to rename a disk
+*/
+- (void)rename
 {
     [windowDiskProperties orderOut:nil];
 
@@ -495,13 +581,16 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             "path": [_currentEditedDisk path],
             "newname": [_currentEditedDisk name]}];
 
-        [_entity sendStanza:stanza andRegisterSelector:@selector(didRename:) ofObject:self];
+        [_entity sendStanza:stanza andRegisterSelector:@selector(_didRename:) ofObject:self];
 
         _currentEditedDisk = nil;
     }
 }
 
-- (void)didRename:(id)aStanza
+/*! compute virtual machine disk renaming results
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didRename:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -512,10 +601,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
-
-- (IBAction)removeDisk:(id)sender
+/*! asks virtual machine to remove a disk. but before ask a confirmation
+*/
+- (void)removeDisk
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
@@ -530,6 +622,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [alert runModal];
 }
 
+/*! asks virtual machine to remove a disk
+*/
 - (void)performRemoveDisk:(id)someUserInfo
 {
     var selectedIndexes = [_tableMedias selectedRowIndexes],
@@ -548,19 +642,26 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             "format": [buttonEditDiskFormat title],
             "undefine": "yes"}];
 
-        [_entity sendStanza:stanza andRegisterSelector:@selector(didRemoveDisk:) ofObject:self];
+        [_entity sendStanza:stanza andRegisterSelector:@selector(_didRemoveDisk:) ofObject:self];
     }
 }
 
-- (void)didRemoveDisk:(id)aStanza
+/*! compute virtual machine disk removing results
+    @param aStanza TNStropheStanza that contains the answer
+*/
+- (BOOL)_didRemoveDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
