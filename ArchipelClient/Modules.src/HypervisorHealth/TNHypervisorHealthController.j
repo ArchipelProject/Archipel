@@ -31,6 +31,13 @@ TNArchipelTypeHypervisorHealthLog           = @"logs";
 
 TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
 
+/*! @defgroup  hypervisorhealth Module Hypervisor Health
+    @desc This module display statistics about the hypervisor health
+*/
+
+/*! @ingroup hypervisorhealth
+    The main module controller
+*/
 @implementation TNHypervisorHealthController : TNModule
 {
     @outlet CPImageView         imageCPULoading;
@@ -88,6 +95,12 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     TNTableViewDataSource       _datasourceLogs;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! triggered at cib awaking
+*/
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
@@ -246,7 +259,127 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
+#pragma mark -
+#pragma mark TNModule overrides
 
+/*! called when module is loaded
+*/
+- (void)willLoad
+{
+    [super willLoad];
+
+    var center      = [CPNotificationCenter defaultCenter],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
+        shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
+
+    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+
+    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
+    _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
+    _disksDatasource    = [[TNDatasourcePieChartView alloc] init];
+
+    [_chartViewMemory setDataSource:_memoryDatasource];
+    [_chartViewCPU setDataSource:_cpuDatasource];
+    [_chartViewLoad setDataSource:_loadDatasource];
+    [_chartViewDisk setDataSource:_disksDatasource];
+    [_tableLogs setDataSource:_datasourceLogs];
+
+    [self getHypervisorLog:nil];
+    [self getHypervisorHealthHistory];
+
+    [switchRefresh setOn:shouldBeOn animated:YES sendAction:NO]; // not really a swicth..
+    [self pauseRefresh:switchRefresh];
+
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+}
+
+/*! called when module is unloaded
+*/
+- (void)willUnload
+{
+    [super willUnload];
+
+    if (_timerStats)
+    {
+        [_timerStats invalidate];
+        CPLog.debug("timer for stats invalidated");
+        _timerStats = nil;
+    }
+
+
+    if (_timerLogs)
+    {
+        [_timerLogs invalidate];
+        CPLog.debug("timer for logs invalidated");
+        _timerLogs = nil;
+    }
+
+    [_cpuDatasource removeAllObjects];
+    [_memoryDatasource removeAllObjects];
+    [_loadDatasource removeAllObjects];
+    [_disksDatasource removeAllObjects];
+    [_datasourceLogs removeAllObjects];
+}
+
+/*! called when module becomes visible
+*/
+- (void)willShow
+{
+    [super willShow];
+
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity JID]];
+}
+
+/*! called when user saves preferences
+*/
+- (void)savePreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    [defaults setInteger:[fieldPreferencesAutoRefresh intValue] forKey:@"TNArchipelHealthRefreshStatsInterval"];
+    [defaults setInteger:[fieldPreferencesMaxItems intValue] forKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
+    [defaults setInteger:[fieldPreferencesMaxLogEntries intValue] forKey:@"TNArchipelHealthMaxLogEntry"];
+    [defaults setBool:[switchPreferencesShowColunmMethod isOn] forKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
+    [defaults setBool:[switchPreferencesShowColunmFile isOn] forKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
+}
+
+/*! called when user gets preferences
+*/
+- (void)loadPreferences
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    [fieldPreferencesAutoRefresh setIntValue:[defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"]];
+    [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
+    [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
+    [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
+    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO];
+}
+
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when contact nickname has been updated
+*/
+- (void)didNickNameUpdated:(CPNotification)aNotification
+{
+    if ([aNotification object] == _entity)
+    {
+       [fieldName setStringValue:[_entity nickname]]
+    }
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! Action that make the auto-refresh on or off
+    @param sender the sender of the action
+*/
 - (IBAction)pauseRefresh:(id)sender
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
@@ -288,102 +421,14 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
 }
 
-// Modules implementation
-- (void)willLoad
-{
-    [super willLoad];
 
-    var center      = [CPNotificationCenter defaultCenter],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
-        shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
+#pragma mark -
+#pragma mark XMPP Management
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-
-    _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
-    _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
-    _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
-    _disksDatasource    = [[TNDatasourcePieChartView alloc] init];
-
-    [_chartViewMemory setDataSource:_memoryDatasource];
-    [_chartViewCPU setDataSource:_cpuDatasource];
-    [_chartViewLoad setDataSource:_loadDatasource];
-    [_chartViewDisk setDataSource:_disksDatasource];
-    [_tableLogs setDataSource:_datasourceLogs];
-
-    [self getHypervisorLog:nil];
-    [self getHypervisorHealthHistory];
-
-    [switchRefresh setOn:shouldBeOn animated:YES sendAction:NO]; // not really a swicth..
-    [self pauseRefresh:switchRefresh];
-
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-}
-
-- (void)willUnload
-{
-    [super willUnload];
-
-    if (_timerStats)
-    {
-        [_timerStats invalidate];
-        CPLog.debug("timer for stats invalidated");
-        _timerStats = nil;
-    }
-
-
-    if (_timerLogs)
-    {
-        [_timerLogs invalidate];
-        CPLog.debug("timer for logs invalidated");
-        _timerLogs = nil;
-    }
-
-    [_cpuDatasource removeAllObjects];
-    [_memoryDatasource removeAllObjects];
-    [_loadDatasource removeAllObjects];
-    [_disksDatasource removeAllObjects];
-    [_datasourceLogs removeAllObjects];
-}
-
-- (void)willShow
-{
-    [super willShow];
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-}
-
-- (void)savePreferences
-{
-    var defaults = [TNUserDefaults standardUserDefaults];
-
-    [defaults setInteger:[fieldPreferencesAutoRefresh intValue] forKey:@"TNArchipelHealthRefreshStatsInterval"];
-    [defaults setInteger:[fieldPreferencesMaxItems intValue] forKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
-    [defaults setInteger:[fieldPreferencesMaxLogEntries intValue] forKey:@"TNArchipelHealthMaxLogEntry"];
-    [defaults setBool:[switchPreferencesShowColunmMethod isOn] forKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
-    [defaults setBool:[switchPreferencesShowColunmFile isOn] forKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
-}
-
-- (void)loadPreferences
-{
-    var defaults = [TNUserDefaults standardUserDefaults];
-
-    [fieldPreferencesAutoRefresh setIntValue:[defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"]];
-    [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
-    [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
-    [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
-    [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO];
-}
-
-- (void)didNickNameUpdated:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
-
+/*! get the hypervisor health
+    it is launched by a timer every X seconds, as defined in the info.plist
+    @param aTimer the timer that sent the message
+*/
 - (void)getHypervisorHealth:(CPTimer)aTimer
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
@@ -396,10 +441,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageLoadLoading setHidden:NO];
     [imageDiskLoading setHidden:NO];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealth:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorHealth:)];
 }
 
-- (void)didReceiveHypervisorHealth:(TNStropheStanza)aStanza
+/*! compute the hypervisor health info received
+    @param aStanza the stanza containing the answer of the request
+*/
+- (BOOL)_didReceiveHypervisorHealth:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -457,9 +505,12 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageMemoryLoading setHidden:YES];
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
+
+    return NO;
 }
 
-
+/*! get the hypervisor health history
+*/
 - (void)getHypervisorHealthHistory
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
@@ -474,10 +525,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageLoadLoading setHidden:NO];
     [imageDiskLoading setHidden:NO];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorHealthHistory:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorHealthHistory:)];
 }
 
-- (BOOL)didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza
+/*! compute the hypervisor health history info received
+    @param aStanza the stanza containing the answer of the request
+*/
+- (BOOL)_didReceiveHypervisorHealthHistory:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -543,7 +597,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     return NO;
 }
 
-
+/*! get the hypervisor logs
+*/
 - (void)getHypervisorLog:(CPTimer)aTimer
 {
     var stanza    = [TNStropheStanza iqWithType:@"get"];
@@ -554,10 +609,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         "action": TNArchipelTypeHypervisorHealthLog,
         "limit": _maxLogEntries}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorLog:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorLog:)];
 }
 
-- (void)didReceiveHypervisorLog:(TNStropheStanza)aStanza
+/*! compute the hypervisor logs info received
+    @param aStanza the stanza containing the answer of the request
+*/
+- (BOOL)_didReceiveHypervisorLog:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -587,8 +645,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     {
         [self handleIqErrorFromStanza:aStanza];
     }
+
+    return NO;
 }
 
 @end
-
-

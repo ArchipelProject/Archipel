@@ -1,23 +1,26 @@
-/*  
+/*
  * TNLogEntryObject.j
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 @import <Foundation/Foundation.j>
 
+/*! @ingroup hypervisorhealth
+    represent a log entry
+*/
 @implementation TNLogEntry : CPObject
 {
     CPString    _level      @accessors(setter=setLevel:);
@@ -27,6 +30,17 @@
     CPString    _message    @accessors(property=message);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! create, initialize and return a TNLogEntry
+    @param aLevel the level of the log
+    @param aDate date of the log
+    @param aFile file of the log
+    @param aMethod method of the log
+    @param aMessage message of the log
+*/
 + (TNLogEntry)logEntryWithLevel:(CPString)aLevel date:(CPString)aDate file:(CPString)aFile method:(CPString)aMethod message:(CPString)aMessage;
 {
     var log = [[TNLogEntry alloc] init];
@@ -35,10 +49,16 @@
     [log setFile:aFile];
     [log setMethod:aMethod];
     [log setMessage:aMessage];
-    
+
     return log;
 }
 
+
+#pragma mark -
+#pragma mark Accessors
+/*! will clean up log message from eventual colors
+    @return cleaned level string
+*/
 - (CPString)level
 {
     var ret = _level;
@@ -48,9 +68,8 @@
     ret = ret.replace("[33m", "");
     ret = ret.replace("[35m", "");
     ret = ret.replace("[37m", "");
-    
+
     return ret;
 }
-
 
 @end

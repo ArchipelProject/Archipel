@@ -19,11 +19,16 @@
 @import <Foundation/Foundation.j>
 @import <LPKit/LPKit.j>
 
+/*! @ingroup hypervisorhealth
+    Datasource for LPPieChartView
+*/
 @implementation TNDatasourcePieChartView : CPObject
 {
     CPArray     _datas;
 }
 
+/*! initialize the datasource
+*/
 - (void)init
 {
     if (self = [super init])
@@ -33,6 +38,9 @@
     return self;
 }
 
+
+#pragma mark -
+#pragma mark Datasource implementation
 
 - (int)numberOfItemsInPieChartView:(LPPieChartView)aPieChartView
 {
@@ -44,11 +52,20 @@
     return _datas[anIndex];
 }
 
+
+#pragma mark -
+#pragma mark Content controls
+
+/*! Add the given data to the datasource
+    @param aData the data to push into the datasource
+*/
 - (void)pushData:(id)aData
 {
     [_datas addObject:aData];
 }
 
+/*! remove all object from the datasource
+*/
 - (void)removeAllObjects
 {
     [_datas removeAllObjects];
@@ -58,7 +75,9 @@
 
 
 
-
+/*! @ingroup hypervisorhealth
+    override LPPieChartDrawView in order to theme it and not having dealing with theme
+*/
 @implementation TNPieChartDrawView : LPPieChartDrawView
 
 - (void)drawInContext:(CGContext)context paths:(CPArray)paths
@@ -68,7 +87,7 @@
     */
     CGContextSetLineWidth(context, 1.3);
     CGContextSetStrokeColor(context, [CPColor whiteColor]);
-    
+
     //var fillColors = [[CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"75B886"]];
     var fillColors = [
                         [CPColor colorWithHexString:@"4379ca"],
@@ -79,7 +98,7 @@
                         [CPColor colorWithHexString:@"af43ca"],
                         [CPColor colorWithHexString:@"43afca"]
                     ];
-    
+
     for (var i = 0; i < paths.length; i++)
     {
         CGContextBeginPath(context);

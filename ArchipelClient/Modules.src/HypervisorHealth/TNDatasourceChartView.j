@@ -15,34 +15,49 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 @import <Foundation/Foundation.j>
 @import <LPKit/LPKit.j>
 
+/*! @ingroup hypervisorhealth
+    Datasource for LPChartView
+*/
 @implementation TNDatasourceChartView : CPObject
 {
     CPArray     _datas;
     int         _maxNumberOfPoints;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! initializes the datasource with the given number of set
+    @param numberOfSets the number of different data set to use
+*/
 - (void)initWithNumberOfSets:(int)numberOfSets
 {
     if (self = [super init])
     {
         _datas = [CPArray array];
-        
+
         for (var i = 0 ; i < numberOfSets; i++)
             [_datas addObject:[CPArray array]];
-        
+
         _maxNumberOfPoints = 100;
     }
     return self;
 }
 
+/*! initializes the datasource with 1 data sat
+*/
 - (void)init
 {
     return [self initWithSets:1];
 }
+
+
+#pragma mark -
+#pragma mark Datasource implementation
 
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
 {
@@ -67,6 +82,14 @@
     return @"";
 }
 
+
+#pragma mark -
+#pragma mark Content controls
+
+/*! Add the given data to the datasource in the given dataset
+    @param aData the data to push into the datasource
+    @param setIndex the index of set in which you want to push the data
+*/
 - (void)pushData:(id)data inSet:(CPNumber)setIndex
 {
     if ([[_datas objectAtIndex:setIndex] count] >= _maxNumberOfPoints)
@@ -75,6 +98,8 @@
     [_datas objectAtIndex:setIndex].push(parseInt(data));
 }
 
+/*! remove all object from the datasource
+*/
 - (void)removeAllObjects
 {
     _datas = [];
@@ -83,14 +108,16 @@
 @end
 
 
-
+/*! @ingroup hypervisorhealth
+    override LPChartDrawView in order to theme it and not having dealing with theme
+*/
 @implementation TNChartDrawView : LPChartDrawView
 
 - (void)drawSetWithFrames:(CPArray)aFramesSet inContext:(CGContext)context
 {
     // Overwrite this method in your subclass
     // to get complete control of the drawing.
-    
+
     var fillColors = [
                         [CPColor colorWithHexString:@"4379ca"],
                         [CPColor colorWithHexString:@"7fca43"],
@@ -100,35 +127,35 @@
                         [CPColor colorWithHexString:@"af43ca"],
                         [CPColor colorWithHexString:@"43afca"]
                     ];
-    
+
     CGContextSetLineWidth(context, 1.6);
-    
+
     for (var setIndex = 0; setIndex < aFramesSet.length; setIndex++)
     {
         CGContextSetStrokeColor(context, fillColors[setIndex]);
-        
+
         var items = aFramesSet[setIndex];
-        
+
         // Start path
         CGContextBeginPath(context);
-        
+
         for (var itemIndex = 0; itemIndex < items.length; itemIndex++)
         {
             var itemFrame = items[itemIndex],
                 point = CGPointMake(CGRectGetMidX(itemFrame), CGRectGetMinY(itemFrame));
-            
+
             // Begin path
             if (itemIndex == 0)
                 CGContextMoveToPoint(context, point.x, point.y);
-            
+
             // Add point
             else
                 CGContextAddLineToPoint(context, point.x, point.y);
         }
-        
+
         // Stroke path
         CGContextStrokePath(context);
-        
+
         // Close path
         CGContextClosePath(context);
     }
