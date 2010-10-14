@@ -80,6 +80,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 
     CPArray                 _registredSelectors;
     CPArray                 _pubsubRegistrar;
+    TNPubSubNode            _pubsubEvents;
 }
 
 
@@ -116,30 +117,6 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 #pragma mark -
 #pragma mark Events management
 
-/*! PRIVATE: this method register the module for pubsub events
-    A valid Archipel Push event is under the following form:
-
-    <message from="pubsub.xmppserver" type="headline" to="controller@xmppserver" >
-        <event xmlns="http://jabber.org/protocol/pubsub#event">
-            <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@xmppserver/events" >
-                <item id="DEADBEEF" >
-                    <push xmlns="archipel:push:disk" date="1984-08-18 09:42:00.00000" change="created" />
-                </item>
-            </items>
-        </event>
-    </message>
-*/
-- (void)_registerToPubSubEvents
-{
-    var params = [[CPDictionary alloc] init];
-
-    [params setValue:@"message" forKey:@"name"];
-    [params setValue:@"headline" forKey:@"type"];
-    [params setValue:{"matchBare": YES} forKey:@"options"];
-    [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
-
-    [_registredSelectors addObject:[_connection registerSelector:@selector(_onPubSubEvents:) ofObject:self withDict:params]];
-}
 
 /*! PRIVATE: this message is called when a matching pubsub event is received
 
@@ -174,6 +151,18 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 /*! This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
+
+    A valid Archipel Push is following the form:
+    <message from="pubsub.xmppserver" type="headline" to="controller@xmppserver" >
+        <event xmlns="http://jabber.org/protocol/pubsub#event">
+            <items node="/archipel/09c206aa-8829-11df-aa46-0016d4e6adab@xmppserver/events" >
+                <item id="DEADBEEF" >
+                    <push xmlns="archipel:push:disk" date="1984-08-18 09:42:00.00000" change="created" />
+                </item>
+            </items>
+        </event>
+    </message>
+
     @param aSelector: Selector to perform on recieve of archipel:push with given type
     @param aPushType: CPString of the push type that will trigger the selector.
 */
@@ -205,8 +194,9 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     _pubsubRegistrar    = [CPArray array];
     _isActive           = YES;
 
-    [self _registerToPubSubEvents];
     [_menuItem setEnabled:YES];
+
+    [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:)  ofObject:self forPubSubEventWithConnection:_connection]];
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
