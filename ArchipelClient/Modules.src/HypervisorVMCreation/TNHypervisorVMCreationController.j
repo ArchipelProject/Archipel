@@ -25,9 +25,15 @@ TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 TNArchipelTypeHypervisorControlClone        = @"clone";
 
-
 TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
+/*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
+    @desc This module allow to create and delete virtual machines
+*/
+
+/*! @ingroup hypervisorvmcreation
+    Main controller of the module
+*/
 @implementation TNHypervisorVMCreationController : TNModule
 {
     @outlet CPButton        buttonAlloc;
@@ -48,6 +54,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     TNTableViewDataSource   _virtualMachinesDatasource;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
@@ -126,16 +138,22 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 }
 
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheRosterAddedContactNotification object:nil];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_reload:) name:TNStropheRosterAddedContactNotification object:nil];
+    [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [_tableVirtualMachines setDelegate:nil];
@@ -144,14 +162,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [self getHypervisorRoster];
 }
 
-- (void)willShow
-{
-    [super willShow];
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-}
-
+/*! called when module is unloaded
+*/
 - (void)willUnload
 {
     [_virtualMachinesDatasource removeAllObjects];
@@ -160,6 +172,18 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [super willUnload];
 }
 
+/*! called when module become visible
+*/
+- (void)willShow
+{
+    [super willShow];
+
+    [fieldName setStringValue:[_entity nickname]];
+    [fieldJID setStringValue:[_entity JID]];
+}
+
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Create new virtual machine" action:@selector(addVirtualMachine:) keyEquivalent:@""] setTarget:self];
@@ -168,7 +192,22 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [[_menu addItemWithTitle:@"Clone this virtual machine" action:@selector(cloneVirtualMachine:) keyEquivalent:@""] setTarget:self];
 }
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity's nickname changed
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
+{
+    [fieldName setStringValue:[_entity nickname]]
+}
+
+/*! called when an Archipel push is recieved
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -182,74 +221,43 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     return YES;
 }
 
-- (void)reload:(CPNotification)aNotification
+/*! reload the content of the table when contact add or presence changes
+    @param aNotification the notification
+*/
+- (void)_reload:(CPNotification)aNotification
 {
     if ([_entity XMPPShow] != TNStropheContactStatusOffline)
         [self getHypervisorRoster];
 }
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
-{
-    [fieldName setStringValue:[_entity nickname]]
-}
-
-- (void)getHypervisorRoster
-{
-    var stanza = [TNStropheStanza iqWithType:@"get"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorControlRosterVM}];
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorRoster:) ofObject:self];
-}
-
-- (void)didReceiveHypervisorRoster:(id)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        var queryItems  = [aStanza childrenWithName:@"item"],
-            center      = [CPNotificationCenter defaultCenter];
-
-        [_virtualMachinesDatasource removeAllObjects];
-
-        for (var i = 0; i < [queryItems count]; i++)
-        {
-            var JID     = [[queryItems objectAtIndex:i] text],
-                entry   = [_roster contactWithJID:JID];
-
-            if (entry)
-            {
-               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-               {
-                   [_virtualMachinesDatasource addObject:entry];
-                   [center addObserver:self selector:@selector(didVirtualMachineChangesStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
-               }
-            }
-            else
-            {
-                var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
-                [[contact resources] addObject:JID.split('/')[1]];
-                [_virtualMachinesDatasource addObject:contact];
-            }
-        }
-
-        [_tableVirtualMachines reloadData];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-- (void)didVirtualMachineChangesStatus:(CPNotification)aNotif
+/*! reoload the table when a VM change it's status
+    @param aNotification the notification
+*/
+- (void)_didChangeVMStatus:(CPNotification)aNotif
 {
     [_tableVirtualMachines reloadData];
 }
 
+/*! update the GUI according to the selected entity in table
+    @param aNotification the notification
+*/
+- (void)tableViewSelectionDidChange:(CPNotification)aNotification
+{
+    [_minusButton setEnabled:NO];
 
-//actions
+    if ([[aNotification object] numberOfSelectedRows] > 0)
+    {
+        [_minusButton setEnabled:YES];
+    }
+}
 
+
+#pragma mark -
+#pragma mark Actions
+
+/*! add double clicked vm to roster if not present or go to virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)didDoubleClick:(id)sender
 {
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
@@ -273,6 +281,47 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     }
 }
 
+/*! open the new virtual machine window
+    @param sender the sender of the action
+*/
+- (IBAction)addVirtualMachine:(id)sender
+{
+    [fieldNewVMRequestedName setStringValue:@""];
+    [windowNewVirtualMachine center];
+    [windowNewVirtualMachine makeKeyAndOrderFront:nil];
+}
+
+/*! alloc a new virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)alloc:(id)sender
+{
+    [self alloc];
+}
+
+/*! delete selected virtual machines
+    @param sender the sender of the action
+*/
+- (IBAction)deleteVirtualMachine:(id)sender
+{
+    [self deleteVirtualMachine];
+}
+
+/*! clone selected virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)cloneVirtualMachine:(id)sender
+{
+    [self cloneVirtualMachine]
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! add given given virtual machine to roster
+    @param someUserInfo info from TNAlert
+*/
 - (void)performAddToRoster:(id)someUserInfo
 {
     var vm      = someUserInfo;
@@ -282,15 +331,63 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_roster authorizeJID:[vm JID]];
 }
 
-
-- (IBAction)addVirtualMachine:(id)sender
+/*! get the hypervisor roster content
+*/
+- (void)getHypervisorRoster
 {
-    [fieldNewVMRequestedName setStringValue:@""];
-    [windowNewVirtualMachine center];
-    [windowNewVirtualMachine makeKeyAndOrderFront:nil];
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorControlRosterVM}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:) ofObject:self];
 }
 
-- (IBAction)alloc:(id)sender
+/*! compute the answer of the hypervisor about its roster
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (void)_didReceiveHypervisorRoster:(id)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var queryItems  = [aStanza childrenWithName:@"item"],
+            center      = [CPNotificationCenter defaultCenter];
+
+        [_virtualMachinesDatasource removeAllObjects];
+
+        for (var i = 0; i < [queryItems count]; i++)
+        {
+            var JID     = [[queryItems objectAtIndex:i] text],
+                entry   = [_roster contactWithJID:JID];
+
+            if (entry)
+            {
+               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+               {
+                   [_virtualMachinesDatasource addObject:entry];
+                   [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
+               }
+            }
+            else
+            {
+                var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
+                [[contact resources] addObject:JID.split('/')[1]];
+                [_virtualMachinesDatasource addObject:contact];
+            }
+        }
+
+        [_tableVirtualMachines reloadData];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
+
+/*! alloc a new virtual machine
+*/
+- (void)alloc
 {
     var stanza  = [TNStropheStanza iqWithType:@"set"];
 
@@ -301,10 +398,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         "action": TNArchipelTypeHypervisorControlAlloc,
         "name": [fieldNewVMRequestedName stringValue]}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didAllocVirtualMachine:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didAllocVirtualMachine:)];
+
 }
 
-- (void)didAllocVirtualMachine:(id)aStanza
+/*! compute the answer of the hypervisor about its allocing a VM
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (void)_didAllocVirtualMachine:(id)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -319,9 +420,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     }
 }
 
-
-
-- (IBAction)deleteVirtualMachine:(id)sender
+/*! delete a virtual machine. but ask user if he is sure before
+*/
+- (void)deleteVirtualMachine
 {
     if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
     {
@@ -348,6 +449,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [alert runModal];
 }
 
+/*! delete a virtual machine
+*/
 - (void)performDeleteVirtualMachine:(id)someUserInfo
 {
     var indexes = someUserInfo,
@@ -368,11 +471,14 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
         [_roster removeContact:vm];
 
-        [_entity sendStanza:stanza andRegisterSelector:@selector(didFreeVirtualMachine:) ofObject:self];
+        [_entity sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
     }
 }
 
-- (void)didFreeVirtualMachine:(id)aStanza
+/*! compute the answer of the hypervisor about its deleting a VM
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (void)_didDeleteVirtualMachine:(id)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -386,13 +492,16 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     }
 }
 
+/*! remove a virtual machine from the roster
+*/
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
     [_roster removeContactWithJID:[someUserInfo JID]];
 }
 
-
-- (IBAction)cloneVirtualMachine:(id)sender
+/*! clone a virtual machine. but ask user if he is sure before
+*/
+- (void)cloneVirtualMachine
 {
     if (([_tableVirtualMachines numberOfRows] == 0)
         || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
@@ -407,8 +516,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
                                 delegate:self
                                  actions:[["Clone", @selector(performCloneVirtualMachine:)], ["Cancel", nil]]];
     [alert runModal];
+
 }
 
+/*! delete a virtual machine
+*/
 - (void)performCloneVirtualMachine:(id)someUserInfo
 {
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
@@ -425,6 +537,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_entity sendStanza:stanza andRegisterSelector:@selector(didCloneVirtualMachine:) ofObject:self];
 }
 
+/*! compute the answer of the hypervisor about its cloning a VM
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
 - (void)didCloneVirtualMachine:(id)aStanza
 {
     if ([aStanza type] == @"result")
@@ -439,19 +554,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     }
 }
 
-
-
-
-
-- (void)tableViewSelectionDidChange:(CPNotification)aNotification
-{
-    [_minusButton setEnabled:NO];
-
-    if ([[aNotification object] numberOfSelectedRows] > 0)
-    {
-        [_minusButton setEnabled:YES];
-    }
-}
 
 @end
 
