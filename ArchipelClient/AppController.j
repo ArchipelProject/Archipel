@@ -1031,7 +1031,6 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
     [_mainRoster setDelegate:self];
     [_mainRoster setFilterField:filterField];
-    [_mainRoster setTagsRegistry:[viewTags tagsRegistry]];
     [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
     [_mainRoster getRoster];

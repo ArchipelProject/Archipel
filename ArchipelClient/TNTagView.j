@@ -20,23 +20,14 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-
-TNArchipelTypeTags          = @"archipel:tags";
-TNArchipelTypeTagsGet       = @"gettags";
-TNArchipelTypeTagsSet       = @"settags";
-TNArchipelTypeTagsAll       = @"alltags";
-TNArchipelTypeTagsRegistry  = @"tagsregistry";
-
-TNArchipelPushNotificationTags = @"archipel:push:tags";
-
 @implementation TNTagView : CPView
 {
-    CPArray             _allTags;
+    TNStropheConnection _connection         @accessors(property=connection);
+
+    TNPubSub            _pubsub;
     CPButton            _buttonSave;
     CPTokenField        _tokenFieldTags;
     id                  _currentRosterItem;
-    CPDictionary        _tagsRegistry       @accessors(getter=tagsRegistry);
-    TNStropheConnection _connection         @accessors(property=connection);
 }
 
 
@@ -48,8 +39,6 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
     var frame = [self frame],
         tokenFrame;
 
-    _allTags            = [CPArray array];
-    _tagsRegistry       = [CPDictionary dictionary];
     _currentRosterItem  = nil;
 
     _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:frame.size.width - 37];
@@ -80,28 +69,38 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
 
 
 #pragma mark -
-#pragma mark PubSub
+#pragma mark Utility methods
 
-- (void)registerForPushTagsNotification
+- (void)getTagsForJID:(CPString)aJID
 {
-    var params = [[CPDictionary alloc] init];
+    var ret = [CPArray array];
 
-   [params setValue:@"message" forKey:@"name"];
-   [params setValue:@"headline" forKey:@"type"];
-   [params setValue:{"matchBare": YES} forKey:@"options"];
-   [params setValue:"http://jabber.org/protocol/pubsub#event" forKey:@"namespace"];
+    for (var i = 0; i < [[_pubsub content] count]; i++)
+    {
+        var tag = [[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"];
 
-   [_connection registerSelector:@selector(_onPubSubEvents:) ofObject:self withDict:params];
+        if ([tag valueForAttribute:@"jid"] == aJID)
+            [ret addObject:[tag valueForAttribute:@"name"]];
+    }
+
+    return ret;
 }
 
-- (void)_onPubSubEvents:(TNStropheStanza)aStanza
+- (void)removeAllTagsForJID:(CPString)aJID
 {
-    var pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
+    for (var i = 0; i < [[_pubsub content] count]; i++)
+    {
+        var item    = [[_pubsub content] objectAtIndex:i],
+            tag     = [item firstChildWithName:@"tag"];
 
-    if (pushType == TNArchipelPushNotificationTags)
-        [self getTags:nil];
+        if ([tag valueForAttribute:@"jid"] == aJID)
+            [_pubsub retractItemWithID:[item valueForAttribute:@"id"]];
+    }
+}
 
-    return YES;
+- (void)getCurrentTags
+{
+    return [[_pubsub content] childrenWithName:@"tag"];
 }
 
 
@@ -131,8 +130,9 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
         [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
         [_tokenFieldTags setEnabled:YES];
 
-        [self getTags:nil];
-        [self getAllTags];
+        if (_currentRosterItem)
+            [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+
     }
 }
 
@@ -140,123 +140,12 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
 {
     var roster = [aNotification object];
 
-    CPLog.info("retreiving tags for all items.");
-
-    for (var i = 0; i < [[roster contacts] count]; i++)
-        [self getTags:[[roster contacts] objectAtIndex:i]];
-    CPLog.info("tags registry populated");
-
-    [self registerForPushTagsNotification];
-}
-
-
-#pragma mark -
-#pragma mark XMPP System
-
-- (void)getTags:(TNStropheContact)aSpecificContact
-{
-    var stanza  = [TNStropheStanza iqWithType:@"get"],
-        contact = (aSpecificContact) ? aSpecificContact : _currentRosterItem;
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeTagsGet}];
-
-    if (_currentRosterItem)
-        [_tokenFieldTags setPlaceholderString:@"Retrieving tags..."];
-
-    [contact sendStanza:stanza andRegisterSelector:@selector(didGetTags:) ofObject:self];
-}
-
-- (void)didGetTags:(TNStropheStanza)aStanza
-{
-    if (_currentRosterItem)
-        [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
-
-    if ([aStanza type] == @"result")
-    {
-        var tags    = [aStanza childrenWithName:@"tag"],
-            content = [CPArray array];
-
-        for (var i = 0; i < [tags count]; i++)
-            [content addObject:[[tags objectAtIndex:i] text]];
-
-        [_tagsRegistry setObject:content forKey:[aStanza fromBare]];
-
-        if (_currentRosterItem)
-            [_tokenFieldTags setObjectValue:content];
-    }
-    else
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't get tags"];
-    }
-    return NO;
-}
-
-- (void)getAllTags
-{
-    var stanza  = [TNStropheStanza iqWithType:@"get"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeTagsAll}];
-
-    [_currentRosterItem sendStanza:stanza andRegisterSelector:@selector(didGetAllTags:) ofObject:self];
-}
-
-- (void)didGetAllTags:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        var tags    = [aStanza childrenWithName:@"tag"];
-
-        [_allTags removeAllObjects];
-
-        for (var i = 0; i < [tags count]; i++)
-            [_allTags addObject:[[tags objectAtIndex:i] text]];
-    }
-    else
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"Can't get all tags"];
-    }
-
-    return NO;
-}
-
-- (void)setTags
-{
-    if ([_currentRosterItem class] != TNStropheContact)
-        return;
-
-    var stanza  = [TNStropheStanza iqWithType:@"set"],
-        content = [_tokenFieldTags objectValue];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeTagsSet}];
-
-    for (var i = 0; i < [content count]; i++)
-    {
-        [stanza addChildWithName:@"tag"];
-        [stanza addTextNode:[[content objectAtIndex:i] lowercaseString]]
-        [stanza up];
-    }
-
-    [_currentRosterItem sendStanza:stanza andRegisterSelector:@selector(didSetTags:) ofObject:self];
-}
-
-- (void)didSetTags:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [self getTags:nil];
-    }
-    else
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Tags" message:@"can't set tags"];
-    }
-
-    return NO;
+    _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
+                                        connection:_connection
+                                      pubSubServer:@"pubsub." + [_connection JID].split("@")[1].split("/")[0]];
+    [_pubsub subscribe];
+    [_pubsub setDelegate:self];
+    [_pubsub recover];
 }
 
 
@@ -265,26 +154,43 @@ TNArchipelPushNotificationTags = @"archipel:push:tags";
 
 - (IBAction)performSetTags:(id)sender
 {
-    [self setTags];
+    if ([_currentRosterItem class] != TNStropheContact)
+        return;
+
+    [self removeAllTagsForJID:[_currentRosterItem JID]];
+
+    var content = [_tokenFieldTags objectValue];
+
+    for (var i = 0; i < [content count]; i++)
+    {
+        var tag = [content objectAtIndex:i];
+
+        [_pubsub publishItem:[TNXMLNode nodeWithName:@"tag" andAttributes:{@"jid": [_currentRosterItem JID], @"name": tag}]]
+    }
 }
 
 
 #pragma mark -
-#pragma mark CPTokenField delegate
+#pragma mark Delegates
 
 - (void)tokenField:(CPTokenField)aTokenField completionsForSubstring:(CPString)aSubstring indexOfToken:(int)anIndex indexOfSelectedItem:(int)anIndex
 {
     var availableTags = [CPArray array];
 
-    for (var i = 0; i < [_allTags count]; i++)
+    for (var i = 0; i < [[_pubsub content] count]; i++)
     {
-        var tag = [_allTags objectAtIndex:i];
+        var tag = [[[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"name"];
 
-        if (tag.indexOf(aSubstring) != -1)
+        if ((tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag])
             [availableTags addObject:tag];
     }
 
     return availableTags;
+}
+
+- (void)pubsubNode:(TNPubSub)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
+{
+    [_pubsub recover];
 }
 
 
