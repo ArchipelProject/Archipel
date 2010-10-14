@@ -34,6 +34,8 @@
 #pragma mark -
 #pragma mark Initialization
 
+/*! Configure the view at cib awaking
+*/
 - (void)awakeFromCib
 {
     var frame = [self frame],
@@ -71,7 +73,11 @@
 #pragma mark -
 #pragma mark Utility methods
 
-- (void)getTagsForJID:(CPString)aJID
+/*! return all tags used for the given JID
+    @param aJID the JID to match
+    @return CPArray containings the tags associated to the JID
+*/
+- (CPArray)getTagsForJID:(CPString)aJID
 {
     var ret = [CPArray array];
 
@@ -86,6 +92,9 @@
     return ret;
 }
 
+/*! send retract for all given tags items of a JID
+    @param aJID the JID to match
+*/
 - (void)removeAllTagsForJID:(CPString)aJID
 {
     for (var i = 0; i < [[_pubsub content] count]; i++)
@@ -98,15 +107,14 @@
     }
 }
 
-- (void)getCurrentTags
-{
-    return [[_pubsub content] childrenWithName:@"tag"];
-}
-
 
 #pragma mark -
 #pragma mark Notifications handlers
 
+/*! this handler is triggered when user changes the selected item in roster
+    It will populate the content of the CPTokenField with entity tags
+    @param aNotification CPNotification the notification that triggers the message
+*/
 - (void)didRosterItemChange:(CPNotification)aNotification
 {
     var roster = [aNotification object];
@@ -136,6 +144,10 @@
     }
 }
 
+/*! this handler is triggered when roster is retreived
+    it will initialize the pubsub object and recover it
+    @param aNotification CPNotification the notification that triggers the message
+*/
 - (void)didRosterRetrieve:(CPNotification)aNotification
 {
     var roster = [aNotification object];
@@ -152,6 +164,9 @@
 #pragma mark -
 #pragma mark Actions
 
+/*! Action that will remove all tags of the current entity, and readd the new ones
+    @param sender the sender of the action
+*/
 - (IBAction)performSetTags:(id)sender
 {
     if ([_currentRosterItem class] != TNStropheContact)
@@ -173,6 +188,8 @@
 #pragma mark -
 #pragma mark Delegates
 
+/*! delegate of CPTokenField that will return the list of available tags
+*/
 - (void)tokenField:(CPTokenField)aTokenField completionsForSubstring:(CPString)aSubstring indexOfToken:(int)anIndex indexOfSelectedItem:(int)anIndex
 {
     var availableTags = [CPArray array];
@@ -188,11 +205,11 @@
     return availableTags;
 }
 
-- (void)pubsubNode:(TNPubSub)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
+/*! delegate of TNPubSubNode that will recover the content of the node after an event
+*/
+- (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
     [_pubsub recover];
 }
-
-
 
 @end
