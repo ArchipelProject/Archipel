@@ -331,19 +331,6 @@ class TNArchipelBasicXMPPClient(object):
         Do a in-band unregistration
         """
         self.loop_status = ARCHIPEL_XMPP_LOOP_REMOVE_USER
-        # self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-        # 
-        # self.remove_pubsubs()
-        # 
-        # log.info("trying to unregister")
-        # iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
-        # iq.setQueryNS("jabber:iq:register")
-        # 
-        # remove_node = xmpp.Node(tag="remove")
-        # 
-        # iq.setQueryPayload([remove_node])
-        # log.info("unregistration information sent. waiting for response")
-        # resp_iq = self.xmppclient.send(iq)
     
     
     def process_inband_unregistration(self):
@@ -376,7 +363,6 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
-        self.xmppclient.RegisterHandler('iq', self.__process_tags_iq, ns=ARCHIPEL_NS_TAGS)
         
         log.info("handlers registred")
         
@@ -971,123 +957,3 @@ class TNArchipelBasicXMPPClient(object):
                 resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
         
         return resp
-    
-    
-    ######################################################################################################
-    ### Tagging
-    ######################################################################################################
-    
-    
-    def __process_tags_iq(self, conn, iq):
-        """
-        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
-
-        it understands IQ of type:
-            - gettags
-            - settags
-            - alltags
-
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-
-        if action == "gettags":
-            reply = self.iq_get_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-
-        elif action == "settags":
-            reply = self.iq_set_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "alltags":
-            reply = self.iq_all_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-    
-    
-    def iq_get_tags(self, iq):
-        """
-        return a list of tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            nodes = []
-            for item in self.pubSubNodeTags.content:
-                if item.getTag("tag").getAttr("jid") == str(self.jid):
-                    n = xmpp.Node("tag")
-                    n.addData(item.getTag("tag").getAttr("name"))
-                    nodes.append(n)
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-
-
-    def iq_set_tags(self, iq):
-        """
-        set the current tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            tagsNode = domain_uuid = iq.getTag("query").getTag("archipel").getTags(name="tag")
-            
-            self.remove_all_tags(self.jid)
-            
-            for tagNode in tagsNode:
-                tag = tagNode.getData();
-                if not self.contains_tag_for_jid(tag, self.jid):
-                    item = xmpp.Node("tag", attrs={"name": tag, "jid": str(self.jid)})
-                    self.pubSubNodeTags.add_item(item)
-            
-            self.push_change("tags", "set");   
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-    
-    def contains_tag_for_jid(self, tag, jid):
-        """return true if tag pubsub node contains the tag for the given JID"""
-        for item in self.pubSubNodeTags.content:
-            if item.getTag("tag").getAttr("name") == tag and item.getTag("tag").getAttr("jid") == str(jid):
-                return True
-        return False
-    
-    
-    def remove_all_tags(self, jid):
-        """remove all tags from given JID"""
-        for item in self.pubSubNodeTags.content:
-            if item.getTag("tag").getAttr("jid") == str(jid):
-                self.pubSubNodeTags.remove_item(item.getAttr("id"))
-    
-    
-    def iq_all_tags(self, iq):
-        """
-        return all used tags. This can be used for autocompletion
-        
-        DEPRECATED. Use direct access to pubsub node
-        """
-        try:
-            reply = iq.buildReply("result")
-            nodes = []
-            for item in self.pubSubNodeTags.content:
-                n = xmpp.Node("tag")
-                n.addData(item.getTag("tag").getAttr("name"))
-                nodes.append(n)
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-
-
