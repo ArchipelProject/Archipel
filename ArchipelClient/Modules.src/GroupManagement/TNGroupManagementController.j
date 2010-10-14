@@ -38,12 +38,12 @@ TNArchipelActionTypeDestroy                     = @"Destroy";
 TNArchipelActionTypeResume                      = @"Resume";
 TNArchipelActionTypeReboot                      = @"Reboot";
 
-/*! @defgroup  sampletabmodule Module SampleTabModule
-    @desc Development starting point to create a Tab module
+/*! @defgroup  groupmanagement Module Group Management
+    @desc This module allows to send controls to a list a virtual machine present in a Roster group
 */
 
-/*! @ingroup sampletabmodule
-    Sample tabbed module implementation
+/*! @ingroup groupmanagement
+    The main module controller
 */
 @implementation TNGroupManagementController : TNModule
 {
@@ -59,6 +59,11 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! triggered at cib waking
+*/
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -77,7 +82,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [_tableVirtualMachines setAllowsEmptySelection:YES];
     [_tableVirtualMachines setAllowsMultipleSelection:YES];
     [_tableVirtualMachines setTarget:self];
-    [_tableVirtualMachines setDoubleAction:@selector(didVirtualMachineDoubleClick:)];
+    [_tableVirtualMachines setDoubleAction:@selector(virtualMachineDoubleClick:)];
 
 
     var vmColumNickname     = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
@@ -111,7 +116,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         suspendButton   = [CPButtonBar plusButton],
         resumeButton    = [CPButtonBar plusButton],
         rebootButton    = [CPButtonBar plusButton];
-        
+
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
@@ -143,23 +148,32 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    
+
     [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactGroupUpdatedNotification object:nil];
     [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
+/*! called when module is unloaded
+*/
 - (void)willUnload
 {
     [super willUnload];
 }
 
+/*! called when module become visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -167,6 +181,31 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [self reload:nil];
 }
 
+/*! called when module become unvisible
+*/
+- (void)willHide
+{
+    [super willHide];
+}
+
+/*! called by module loader when MainMenu is ready
+*/
+- (void)menuReady
+{
+    [[_menu addItemWithTitle:@"Start selected virtual machines" action:@selector(create:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Shutdown selected virtual machines" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Pause selected virtual machines" action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Resume selected virtual machines" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Reboot selected virtual machines" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Destroy selected virtual machines" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+}
+
+
+#pragma mark -
+#pragma mark Notification hanlders
+
+/*! reload the content of the table when something happens (status changes etc..)
+*/
 - (void)reload:(CPNotification)aNotification
 {
     [fieldName setStringValue:[_entity name]];
@@ -185,23 +224,15 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [_tableVirtualMachines reloadData];
 }
 
-- (void)willHide
-{
-    [super willHide];
-}
 
-- (void)menuReady
-{
-    [[_menu addItemWithTitle:@"Start selected virtual machines" action:@selector(create:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Shutdown selected virtual machines" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Pause selected virtual machines" action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Resume selected virtual machines" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Reboot selected virtual machines" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Destroy selected virtual machines" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
-}
+#pragma mark -
+#pragma mark Actions
 
-
-- (void)didVirtualMachineDoubleClick:(id)sender
+/*! Action that is sent when user double click on a machine
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)virtualMachineDoubleClick:(id)sender
 {
     var selectedIndexes = [_tableVirtualMachines selectedRowIndexes],
         contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
@@ -211,36 +242,67 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
+/*! Action that is sent when user click the create button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)create:(id)sender
 {
     [self applyAction:TNArchipelActionTypeCreate];
 }
 
+/*! Action that is sent when user click the shutdown button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)shutdown:(id)sender
 {
     [self applyAction:TNArchipelActionTypeShutdown];
 }
 
+/*! Action that is sent when user click the destroy button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)destroy:(id)sender
 {
     [self applyAction:TNArchipelActionTypeDestroy];
 }
 
+/*! Action that is sent when user click the suspend button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)suspend:(id)sender
 {
     [self applyAction:TNArchipelActionTypePause];
 }
 
+/*! Action that is sent when user click the resume button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)resume:(id)sender
 {
     [self applyAction:TNArchipelActionTypeResume];
 }
 
+/*! Action that is sent when user click the reboot button
+    it will show the content of this virtual machine
+    @param sender the sender of the action
+*/
 - (IBAction)reboot:(id)sender
 {
     [self applyAction:TNArchipelActionTypeReboot];
 }
 
+
+#pragma mark -
+#pragma mark XMPP Management
+
+/*! prepare and send the action stanza
+    @param aCommand the command to send to entities
+*/
 - (void)applyAction:(CPString)aCommand
 {
     var controlType;
@@ -285,12 +347,15 @@ TNArchipelActionTypeReboot                      = @"Reboot";
             "xmlns": TNArchipelTypeVirtualMachineControl,
             "action": controlType}];
 
-        [vm sendStanza:controlStanza andRegisterSelector:@selector(didSentAction:) ofObject:self];
+        [vm sendStanza:controlStanza andRegisterSelector:@selector(didSendAction:) ofObject:self];
         }
     }
 }
 
-- (void)didSentAction:(TNStropheStanza)aStanza
+/*! Notify about the result of the action
+    @param aStanza TNStropheStanza containing the result of the request
+*/
+- (void)didSendAction:(TNStropheStanza)aStanza
 {
     var sender = [aStanza fromUser];
 
@@ -302,7 +367,5 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     }
 
 }
+
 @end
-
-
-
