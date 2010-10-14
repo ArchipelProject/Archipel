@@ -18,6 +18,9 @@
 
 @import <Foundation/Foundation.j>
 
+/*! @ingroup hypervisorvmcasts
+    View that that represent the datacell for column status
+*/
 @implementation TNCellApplianceStatus : CPView
 {
     CPImageView     _imageStatus;
@@ -28,6 +31,11 @@
     CPImage         _iconError;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize the view
+*/
 - (id)init
 {
     if (self = [super init])
@@ -51,6 +59,9 @@
     return self;
 }
 
+/*! set the object value of the cell
+    @pathForResource aStatus the status to display
+*/
 - (void)setObjectValue:(id)aStatus
 {
     [_fieldStatus setStringValue:TNArchipelApplianceStatusString[aStatus]];
@@ -68,6 +79,8 @@
         [_imageStatus setImage:nil];
 }
 
+#pragma mark -
+#pragma mark Theming
 /*! implement theming in order to allow change color of selected item
 */
 - (void)setThemeState:(id)aState
@@ -86,8 +99,10 @@
     [_fieldStatus sizeToFit];
 }
 
-/*! CPCoder compliance
-*/
+
+#pragma mark -
+#pragma mark CPCoding compliance
+
 - (id)initWithCoder:(CPCoder)aCoder
 {
     if (self = [super initWithCoder:aCoder])
@@ -103,8 +118,6 @@
     return self;
 }
 
-/*! CPCoder compliance
-*/
 - (void)encodeWithCoder:(CPCoder)aCoder
 {
     [super encodeWithCoder:aCoder];
@@ -116,4 +129,5 @@
     [aCoder encodeObject:_iconInstalling forKey:@"_iconInstalling"];
     [aCoder encodeObject:_iconError forKey:@"_iconError"];
 }
+
 @end

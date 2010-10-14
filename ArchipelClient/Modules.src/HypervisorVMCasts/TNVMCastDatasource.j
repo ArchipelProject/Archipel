@@ -25,6 +25,9 @@ TNArchipelApplianceInstallationError    = 4;
 
 TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"Not installed", @"Installation error"];
 
+/*! @ingroup hypervisorvmcasts
+    This object represent a vmcast source
+*/
 @implementation TNVMCastSource : CPObject
 {
     CPArray     _content         @accessors(property=content);
@@ -67,6 +70,10 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 
 @end
 
+
+/*! @ingroup hypervisorvmcasts
+    This object represent a VMCast
+*/
 @implementation TNVMCast : CPObject
 {
     CPString    _comment         @accessors(property=comment);
@@ -104,7 +111,9 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 }
 @end
 
-
+/*! @ingroup hypervisorvmcasts
+    This object represent a datasource for the outline view
+*/
 @implementation TNVMCastDatasource : CPObject
 {
     BOOL        _filterInstalled    @accessors(setter=setFilterInstalled:, getter=isFilterInstalled);

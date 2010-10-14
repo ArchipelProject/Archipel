@@ -22,6 +22,9 @@ TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmca
 TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 
+/*! @ingroup hypervisorvmcasts
+    Download  progress window
+*/
 @implementation TNWindowDownloadQueue : CPWindow
 {
     @outlet CPScrollView            mainScrollView;
@@ -33,6 +36,10 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     TNTableViewDataSource           _dlDatasource;
 }
 
+#pragma mark -
+#pragma mark Initialization
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     _dlDatasource = [[TNTableViewDataSource alloc] init];
@@ -67,6 +74,8 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [_mainTableView reloadData];
 }
 
+#pragma mark -
+#pragma mark CPWindow overrides
 - (void)makeKeyAndOrderFront:(id)sender
 {
     [self getDownloadQueue:nil];
@@ -75,13 +84,18 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [super makeKeyAndOrderFront:sender];
 }
 
-- (void)performClose:(id)sender
+- (IBAction)performClose:(id)sender
 {
     [_timer invalidate];
     _timer = nil;
     [super performClose:sender];
 }
 
+#pragma mark -
+#pragma mark XMPP Controls
+/*! get the progress of downloads
+    @param aTimer the timere that have triggered the message
+*/
 - (void)getDownloadQueue:(CPTimer)aTimer
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
@@ -91,10 +105,13 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
         "action": TNArchipelTypeHypervisorVMCastingDownloadQueue}];
 
 
-    [[self entity] sendStanza:stanza andRegisterSelector:@selector(didReceiveDownloadQueue:) ofObject:self];
+    [[self entity] sendStanza:stanza andRegisterSelector:@selector(_didReceiveDownloadQueue:) ofObject:self];
 }
 
-- (void)didReceiveDownloadQueue:(TNStropheStanza)aStanza
+/*! compute the answer containng the download progresses
+    @param aStanza TNStropheStanza that contains the hypervisor answer
+*/
+- (void)_didReceiveDownloadQueue:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -117,4 +134,5 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
         [_mainTableView reloadData];
     }
 }
+
 @end
