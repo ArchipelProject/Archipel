@@ -586,7 +586,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
         return;
     }
 
-    alert = [TNAlert alertWithTitle:@"Delete contact"
+    var alert = [TNAlert alertWithTitle:@"Delete contact"
                                 message:@"Are you sure you want to delete this contact?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
@@ -611,7 +611,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [propertiesView hide];
     [_rosterOutlineView deselectAll];
 
-    [self unregisterFromEventNodeOfJID:[contact JID] ofServer:@"pubsub." + [contact domain]];
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [contact JID] + "/events"
+                                               connection:[_mainRoster connection]
+                                             pubSubServer:@"pubsub." + [contact domain]];
+    [pubsub unsubscribe];
 }
 
 /*! Opens the add group window
@@ -646,7 +649,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
         return;
     }
 
-    alert = [TNAlert alertWithTitle:@"Delete group"
+    var alert = [TNAlert alertWithTitle:@"Delete group"
                                 message:@"Are you sure you want to delete this group?"
                                 delegate:self
                                  actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
@@ -1132,49 +1135,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
     [_mainRoster answerAuthorizationRequest:stanza answer:YES];
 
-    // evenually subscribe to event node of the entity
-    [self registerToEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
-}
-
-/*! Action of performSubscribe's confirmation alert.
-    Will register to Archipel pub sub nodes of the new contact
-*/
-- (void)registerToEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
-{
-    var pubSubServer        = aServer,
-        uid                 = [[_mainRoster connection] getUniqueId],
-        nodeSubscribeStanza = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}],
-        params              = [[CPDictionary alloc] init];
-
-    [nodeSubscribeStanza setTo:pubSubServer];
-    [nodeSubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
-    [nodeSubscribeStanza addChildWithName:@"subscribe" andAttributes:{
-        "node": "/archipel/" + aJID.split("/")[0] + "/events",
-        "jid": [[_mainRoster connection] JID],
-    }];
-
-    [params setValue:uid forKey:@"id"];
-
-    [[_mainRoster connection] registerSelector:@selector(didPubSubSubscribe:) ofObject:self withDict:params]
-    [[_mainRoster connection] send:nodeSubscribeStanza];
-
-}
-
-/*! Message sent by registerToEventNodeOfJID:ofServer: that will
-    log if pubsub subscription is OK
-*/
-- (void)didPubSubSubscribe:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info("Sucessfully subscribed to pubsub event node of " + [aStanza from]);
-    }
-    else
-    {
-        CPLog.error("unable to subscribe to pubsub");
-    }
-
-    return NO;
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
+                                           connection:[_mainRoster connection]
+                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
+    [pubsub subscribe];
 }
 
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
@@ -1185,48 +1149,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     var stanza = userInfo;
     [_mainRoster answerAuthorizationRequest:stanza answer:NO];
 
-    // evenually unsubscribe to event node of the entity
-   [self unregisterFromEventNodeOfJID:[stanza from] ofServer:@"pubsub." + [stanza fromDomain]];
-}
-
-/*! Action of performUnsubscribe's confirmation alert.
-    Will unregister from Archipel pubSub nodes of the new contact
-*/
-- (void)unregisterFromEventNodeOfJID:(CPString)aJID ofServer:(CPString)aServer
-{
-    var pubSubServer            = aServer,
-        uid                     = [[_mainRoster connection] getUniqueId],
-        nodeUnsubscribeStanza   = [TNStropheStanza iqWithAttributes:{"type": "set", "id": uid}],
-        params                  = [[CPDictionary alloc] init];
-
-    [nodeUnsubscribeStanza setTo:pubSubServer];
-    [nodeUnsubscribeStanza addChildWithName:@"pubsub" andAttributes:{"xmlns": "http://jabber.org/protocol/pubsub"}];
-    [nodeUnsubscribeStanza addChildWithName:@"unsubscribe" andAttributes:{
-        "node": "/archipel/" + aJID.split("/")[0] + "/events",
-        "jid": [[_mainRoster connection] JID],
-    }];
-
-    [params setValue:uid forKey:@"id"];
-
-    [[_mainRoster connection] registerSelector:@selector(didPubSubUnsubscribe:) ofObject:self withDict:params]
-    [[_mainRoster connection] send:nodeUnsubscribeStanza];
-}
-
-/*! Message sent by unregisterFromEventNodeOfJID:ofServer: that will
-    log if pubsub unsubscription is OK
-*/
-- (BOOL)didPubSubUnsubscribe:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        CPLog.info("Sucessfully unsubscribed from pubsub event node of " + [aStanza from]);
-    }
-    else
-    {
-        CPLog.error("unable to unsubscribe to pubsub");
-    }
-
-    return NO;
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
+                                           connection:[_mainRoster connection]
+                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
+    [pubsub unsubscribe];
 }
 
 
