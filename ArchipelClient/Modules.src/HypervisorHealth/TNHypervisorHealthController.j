@@ -273,7 +273,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
         shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
@@ -364,8 +364,9 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 #pragma mark Notification handlers
 
 /*! called when contact nickname has been updated
+    @param aNotification the notification
 */
-- (void)didNickNameUpdated:(CPNotification)aNotification
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {

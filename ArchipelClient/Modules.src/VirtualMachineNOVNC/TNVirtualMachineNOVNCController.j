@@ -35,16 +35,22 @@
 */
 TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
 
-/*! @ingroup virtualmachinevnc
+/*! @ingroup virtualmachinenovnc
     @group TNArchipelTypeVirtualMachineControl
     get vnc display
 */
 TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 
+
+
+/*! @ingroup virtualmachinenovnc
+    @group TNArchipelTypeVirtualMachineControl
+    identifier prefix of zoom scaling
+*/
 TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 
-/*! @ingroup virtualmachinevnc
+/*! @ingroup virtualmachinenovnc
     module that allow to access virtual machine console using VNC
 */
 @implementation TNVirtualMachineNOVNCController : TNModule
@@ -84,6 +90,10 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     int                     _NOVNCheckRate;
     int                     _NOVNCFBURate;
 }
+
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize some value at CIB awakening
 */
@@ -134,18 +144,32 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [sliderScaling setMaxValue:200];
 }
 
-/*! TNModule implementation
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
 */
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-    [center addObserver:self selector:@selector(didPresenceUpdated:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 }
 
+/*! called when module is unloaded
+*/
+- (void)willUnload
+{
+    [fieldPassword setStringValue:@""];
+    [super willUnload];
+}
+
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -160,6 +184,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [[self view] setFrame:[[[self view] superview] bounds]];
 }
 
+/*! called when module become unvisible
+*/
 - (void)willHide
 {
     [imageViewSecureConnection setHidden:YES];
@@ -177,12 +203,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [super willHide];
 }
 
-- (void)willUnload
-{
-    [fieldPassword setStringValue:@""];
-    [super willUnload];
-}
-
+/*! call when user saves preferences
+*/
 - (void)savePreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -192,6 +214,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [defaults setBool:[switchPreferencesPreferSSL isOn] forKey:@"NOVNCPreferSSL"];
 }
 
+/*! call when user gets preferences
+*/
 - (void)loadPreferences
 {
     var defaults = [TNUserDefaults standardUserDefaults];
@@ -201,6 +225,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
 }
 
+/*! call when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Fit screen to window" action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
@@ -210,7 +236,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when contact nickname has been updated
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == _entity)
     {
@@ -218,11 +250,20 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
 }
 
-- (void)didPresenceUpdated:(CPNotification)aNotification
+/*! called when contact presence has changed
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
 {
     [self checkIfRunning];
 }
 
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! Check if virtual machine is running. if not displays the masking view
+*/
 - (void)checkIfRunning
 {
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
@@ -246,6 +287,177 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
 }
 
+/*! create a zoom animation between two zoom factor
+    @param aStartZoom float containing the initial zoom factor
+    @param aEndZoom float containing the final zoom factor
+*/
+- (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
+{
+    var defaults = [TNUserDefaults standardUserDefaults];
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
+
+        [anim setDelegate:self];
+        [anim setStartZoomValue:aStartZoom];
+        [anim setEndZoomValue:aEndZoom];
+        [anim startAnimation];
+    }
+    else
+    {
+        [sliderScaling setDoubleValue:aEndZoom];
+        [self changeScale:nil];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! Open the direct VNC URI using vnc://
+    @param sender the sender of the action
+*/
+- (IBAction)openDirectURI:(id)sender
+{
+    // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
+    [self openVNCInNewWindow:sender];
+}
+
+/*! set the zoom factor
+    @param sender the sender of the action
+*/
+- (IBAction)changeScale:(id)sender
+{
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        zoom        = [sender intValue],
+        key         = TNArchipelVNCScaleFactor + [[self entity] JID];
+
+    [defaults setObject:zoom forKey:key];
+
+    [_vncView setZoom:(zoom / 100)];
+    [fieldZoomValue setStringValue:parseInt(zoom)];
+}
+
+/*! Make the VNCView fitting the maximum amount of space
+    @param sender the sender of the action
+*/
+- (IBAction)fitToScreen:(id)sender
+{
+    var visibleRect     = [_vncView visibleRect],
+        currentVNCSize  = [_vncView canvasSize],
+        currentVNCZoom  = [_vncView zoom] * 100,
+        diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height),
+        newZoom         = (diffPerc < 0) ? 100 - (Math.abs(diffPerc) * 100) : 100 + (Math.abs(diffPerc) * 100);
+
+    [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
+}
+
+/*! Reset the zoom to 100%
+    @param sender the sender of the action
+*/
+- (IBAction)resetZoom:(id)sender
+{
+    var visibleRect     = [_vncView visibleRect],
+        currentVNCSize  = [_vncView canvasSize],
+        currentVNCZoom  = [_vncView zoom] * 100;
+
+    [self animateChangeScaleFrom:currentVNCZoom to:100];
+}
+
+/*! Send CTRL+ALT+DEL key combination to the VNCView
+    @param sender the sender of the action
+*/
+- (IBAction)sendCtrlAltDel:(id)sender
+{
+    CPLog.info("sending ctrl+alt+del to VNCView");
+    [_vncView sendCtrlAltDel:sender];
+
+    // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
+}
+
+/*! Send the content of the pasteboard to the VNCView
+    @param sender the sender of the action
+*/
+- (IBAction)sendPasteBoard:(id)sender
+{
+    CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
+
+    [_vncView sendTextToPasteboard:[fieldPasteBoard stringValue]];
+
+    [fieldPasteBoard setStringValue:@""];
+
+    [windowPasteBoard close];
+}
+
+/*! remeber the password
+    @param sender the sender of the action
+*/
+- (IBAction)rememberPassword:(id)sender
+{
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+
+    if ([checkboxPasswordRemember state] == CPOnState)
+        [defaults setObject:[fieldPassword stringValue] forKey:key];
+    else
+        [defaults setObject:@"" forKey:key];
+}
+
+/*! change the password
+    @param sender the sender of the action
+*/
+- (IBAction)changePassword:(id)sender
+{
+    [self rememberPassword:nil];
+    [windowPassword close];
+    if (([_vncView state] == TNVNCCappuccinoStateDisconnected)
+        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
+    {
+        [_vncView setPassword:[fieldPassword stringValue]];
+        [_vncView connect:nil];
+    }
+    else
+    {
+        [_vncView sendPassword:[fieldPassword stringValue]];
+    }
+}
+
+/*! Open the VNCView in a new physical window
+    @param sender the sender of the action
+*/
+- (IBAction)openVNCInNewWindow:(id)sender
+{
+    var widthOffset         = 6,
+        heightOffset        = 6;
+
+    // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
+    if (navigator.appVersion.indexOf("Chrome") != -1)
+    {
+        widthOffset     =   6;
+        heightOffset    =   56;
+    }
+
+    var vncSize             = [_vncView canvasSize],
+        winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
+        pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
+        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask],
+        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+
+    [VNCWindow setPlatformWindow:platformVNCWindow];
+    [VNCWindow makeKeyAndOrderFront:nil];
+    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
+
+    [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+    [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
+    [VNCWindow makeKeyWindow];
+}
+
+
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! send stanza to get the current virtual machine VNC display
 */
@@ -345,92 +557,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
+#pragma mark -
+#pragma mark Delegates
 
-/*
-    Controls
+/*! TNZoomAnimation delegate
 */
-- (IBAction)openDirectURI:(id)sender
-{
-    // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
-    [self openVNCInNewWindow:sender];
-}
-
-- (IBAction)changeScale:(id)sender
-{
-    var defaults    = [TNUserDefaults standardUserDefaults],
-        zoom        = [sender intValue],
-        key         = TNArchipelVNCScaleFactor + [[self entity] JID];
-
-    [defaults setObject:zoom forKey:key];
-
-    [_vncView setZoom:(zoom / 100)];
-    [fieldZoomValue setStringValue:parseInt(zoom)];
-}
-
-- (IBAction)fitToScreen:(id)sender
-{
-    var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView canvasSize],
-        currentVNCZoom  = [_vncView zoom] * 100,
-        diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height),
-        newZoom         = (diffPerc < 0) ? 100 - (Math.abs(diffPerc) * 100) : 100 + (Math.abs(diffPerc) * 100);
-
-    [self animateChangeScaleFrom:currentVNCZoom to:newZoom];
-}
-
-- (IBAction)resetZoom:(id)sender
-{
-    var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView canvasSize],
-        currentVNCZoom  = [_vncView zoom] * 100;
-
-    [self animateChangeScaleFrom:currentVNCZoom to:100];
-}
-
-- (IBAction)sendCtrlAltDel:(id)sender
-{
-    CPLog.info("sending ctrl+alt+del to VNCView");
-    [_vncView sendCtrlAltDel:sender];
-
-    // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
-}
-
-- (IBAction)sendPasteBoard:(id)sender
-{
-    CPLog.info("sending the content of Pasteboard to VNCView: " + [fieldPasteBoard stringValue]);
-
-    [_vncView sendTextToPasteboard:[fieldPasteBoard stringValue]];
-
-    [fieldPasteBoard setStringValue:@""];
-
-    [windowPasteBoard close];
-}
-
-
-
-/*
-    Zoom animation
-*/
-- (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
-{
-    var defaults = [TNUserDefaults standardUserDefaults];
-
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
-    {
-        var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
-
-        [anim setDelegate:self];
-        [anim setStartZoomValue:aStartZoom];
-        [anim setEndZoomValue:aEndZoom];
-        [anim startAnimation];
-    }
-    else
-    {
-        [sliderScaling setDoubleValue:aEndZoom];
-        [self changeScale:nil];
-    }
-}
-
 - (float)animation:(CPAnimation)animation valueForProgress:(float)progress
 {
     [sliderScaling setDoubleValue:[animation currentZoom]];
@@ -439,47 +570,13 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [fieldZoomValue setStringValue:parseInt([animation currentZoom])];
 }
 
+/*! TNZoomAnimation delegate
+*/
 - (void)animationDidEnd:(CPAnimation)animation
 {
     [self changeScale:sliderScaling];
 }
 
-
-
-/*
-    Password management
-*/
-- (IBAction)rememberPassword:(id)sender
-{
-    var defaults    = [TNUserDefaults standardUserDefaults],
-        key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
-
-    if ([checkboxPasswordRemember state] == CPOnState)
-        [defaults setObject:[fieldPassword stringValue] forKey:key];
-    else
-        [defaults setObject:@"" forKey:key];
-}
-
-- (IBAction)changePassword:(id)sender
-{
-    [self rememberPassword:nil];
-    [windowPassword close];
-    if (([_vncView state] == TNVNCCappuccinoStateDisconnected)
-        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
-    {
-        [_vncView setPassword:[fieldPassword stringValue]];
-        [_vncView connect:nil];
-    }
-    else
-    {
-        [_vncView sendPassword:[fieldPassword stringValue]];
-    }
-}
-
-
-/*
-    VNCView delegate
-*/
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
 {
     switch (aState)
@@ -516,34 +613,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     alert(aText);
 }
 
-- (void)openVNCInNewWindow:(id)sender
-{
-    var widthOffset         = 6,
-        heightOffset        = 6;
-
-    // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
-    if (navigator.appVersion.indexOf("Chrome") != -1)
-    {
-        widthOffset     =   6;
-        heightOffset    =   56;
-    }
-
-    var vncSize             = [_vncView canvasSize],
-        winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
-        pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
-        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask],
-        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
-
-    [VNCWindow setPlatformWindow:platformVNCWindow];
-    [VNCWindow makeKeyAndOrderFront:nil];
-    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
-
-    [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
-    [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
-
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
-    [VNCWindow makeKeyWindow];
-}
 @end
 
 

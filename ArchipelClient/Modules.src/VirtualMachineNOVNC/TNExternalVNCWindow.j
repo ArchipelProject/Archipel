@@ -19,6 +19,9 @@
 
 @import <AppKit/AppKit.j>
 
+/*! @ingroup virtualmachinenovnc
+    Category that enable the set the title of a physical window
+*/
 @implementation CPPlatformWindow (cool)
 
 - (void)setTitle:(CPString)aTitle
@@ -32,11 +35,28 @@
 }
 @end
 
+
+/*! @ingroup virtualmachinenovnc
+    CPWindow that contains the external VNCView
+*/
 @implementation TNExternalVNCWindow : CPWindow
 {
     TNVNCView       _vncView;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! Initialize the window with given parameters
+    @param aHost VNC host
+    @param aPort VNC port
+    @param aPassword VNC password
+    @param isEncrypted set encrypted or not
+    @param isTrueColor set true color or not
+    @param aCheckRate the check rate
+    @param aFBURate the FBU rate
+*/
 - (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor checkRate:(int)aCheckRate FBURate:(int)aFBURate
 {
     [[self platformWindow] setTitle:[self title]];
@@ -66,6 +86,12 @@
     };
 }
 
+
+#pragma mark -
+#pragma mark Delegate
+
+/*! VNCView delegate
+*/
 - (void)vncView:(TNVNCView)aVNCView updateState:(CPString)aState message:(CPString)aMessage
 {
     switch (aState)
@@ -80,6 +106,9 @@
     }
 }
 
+
+#pragma mark -
+#pragma mark CPWindow overrides
 - (void)close
 {
     CPLog.info("disconnecting windowed noVNC client")
@@ -91,4 +120,5 @@
     }
     [super close];
 }
+
 @end
