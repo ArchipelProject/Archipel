@@ -58,17 +58,21 @@ class TNPubSubNode:
         self.content        = None
     
     
+    ######################################################################################################
+    ### Node management
+    ###################################################################################################### 
+    
     def recover(self):
         """
         get the current pubsub node. If not already recovered, ask to server
         """
         
         try:
-            disco_pubsubs   = xmpp.Iq(typ="get", to=self.pubsubserver)
-            pubsub_child    = disco_pubsubs.addChild(name='pubsub', namespace="http://jabber.org/protocol/pubsub")
-            pubsub_child.addChild(name="items", attrs={"node": self.nodename})
+            iq   = xmpp.Iq(typ="get", to=self.pubsubserver)
+            iq_pubsub    = iq.addChild(name='pubsub', namespace="http://jabber.org/protocol/pubsub")
+            iq_pubsub.addChild(name="items", attrs={"node": self.nodename})
             
-            resp = self.xmppclient.SendAndWaitForResponse(disco_pubsubs)
+            resp = self.xmppclient.SendAndWaitForResponse(iq)
             
             if resp.getType() == "result":
                 self.content = resp.getTag("pubsub").getTag("items").getTags("item")
@@ -164,6 +168,17 @@ class TNPubSubNode:
             log.error("PUBSUB: unable to configure pubsub node: %s" % str(ex))
     
     
+    
+    
+    ######################################################################################################
+    ### Item management
+    ###################################################################################################### 
+    
+    def get_items(self):
+        """return an array of all items"""
+        return self.content
+    
+    
     def add_item(self, itemcontentnode, callback=None):
         """
         add a leaf item xmpp.node to the node and will trigger callback if any
@@ -178,23 +193,51 @@ class TNPubSubNode:
         
         item.addChild(node=itemcontentnode)
         
-        #print "\n\n" + str(iq) + "\n\n"
-        resp = self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback})
+        self.xmppclient.SendAndCallForResponse(iq, func=self.did_publish_item, args={"callback": callback, "item": item})
     
     
-    def did_publish_item(self, conn, response, callback):
+    def did_publish_item(self, conn, response, callback, item):
         """
         triggered on response
         """
         log.debug("PUBSUB: publish done. Answer is : %s" % str(response))
+        
+        if response.getType() == "result":
+            item.setAttr("id", response.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))
+            self.content.append(item)
         if callback: callback(response)
     
     
-    def subscribe(self, jid, subscribe_callback):
+    def remove_item(self, item_id, callback=None):
+        """remove an item according to its ID"""
+        iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
+        pubsub      = iq.addChild("pubsub", namespace=xmpp.protocol.NS_PUBSUB)
+        retract     = pubsub.addChild("retract", attrs={"node": self.nodename})
+        item        = retract.addChild("item", attrs={"id": item_id})
+        
+        for item in self.content:
+            if item.getAttr("id") == item_id:
+                self.content.remove(item)
+                break
+            
+        self.xmppclient.SendAndCallForResponse(iq, func=self.did_remove_item, args={"callback": callback})
+    
+    
+    def did_remove_item(self, conn, response, callback):
+        """
+        triggered on response
+        """
+        log.debug("PUBSUB: retract done. Answer is : %s" % str(response))
+        if callback: callback(response)
+    
+    
+    
+        
+    def subscribe(self, jid, event_callback):
         """
         subscribe to the node
         """
-        self.subscriber_callback = subscribe_callback
+        self.subscriber_callback = event_callback
         self.subscriber_jid      = jid
         
         iq          = xmpp.Iq(typ="set", to=self.pubsubserver)
@@ -205,6 +248,8 @@ class TNPubSubNode:
         
         self.xmppclient.send(iq)
 
+    
+    
     def on_pubsub_event(self, conn, event):
         """
         trigger the callback for subscription

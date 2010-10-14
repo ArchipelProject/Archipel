@@ -35,8 +35,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPSearchField   _filterField        @accessors(property=filterField);
     CPString        _filter             @accessors(property=filter);
     id              _currentItem        @accessors(property=currentItem);
-    CPDictionary    _tagsRegistry       @accessors(property=tagsRegistry);
     id              _draggedItem;
+    CPDictionary    _tagsRegistry;
+    TNPubSubNode    _pubsub;
 }
 
 
@@ -56,6 +57,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
 
+        [center addObserver:self selector:@selector(initializePubSubTags:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
@@ -117,6 +119,43 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
+- (void)initializePubSubTags:(CPNotification)aNotification
+{
+    var roster = [aNotification object];
+
+    _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
+                                        connection:[roster connection]
+                                      pubSubServer:@"pubsub." + [[roster connection] JID].split("@")[1].split("/")[0]];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRecoveredNotification object:_pubsub];
+
+    [_pubsub subscribe];
+    [_pubsub setDelegate:self];
+    [_pubsub recover];
+}
+
+- (void)pubsubNode:(TNPubSub)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
+{
+    [_pubsub recover];
+}
+
+- (void)_didTagsRecovered:(CPNotification)aNotification
+{
+    _tagsRegistry = [CPDictionary dictionary];
+
+    for (var i = 0; i < [[_pubsub content] count]; i++)
+    {
+        var tag     = [[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"],
+            jid     = [tag valueForAttribute:@"jid"],
+            name    = [tag valueForAttribute:@"name"];
+
+        if (![_tagsRegistry containsKey:jid])
+            [_tagsRegistry setObject:[CPArray array] forKey:jid];
+
+        [[_tagsRegistry objectForKey:jid] addObject:name];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Actions
@@ -132,6 +171,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 #pragma mark -
 #pragma mark Filering
+
 
 /*! allow to define a CPSearchField to filter entries
     @param aField CPSearchField to use for filtering

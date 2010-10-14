@@ -86,13 +86,11 @@ class TNArchipelBasicXMPPClient(object):
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None
         self.pubSubNodeLog          = None
+        self.pubSubNodeTags         = None
         self.hooks                  = {}
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
-        self.database_tags_file     = self.configuration.get("GLOBAL", "tags_database_file")
-        self.tags                   = []
-        self.tags_database          = sqlite3.connect(self.database_tags_file, check_same_thread=False)
         
         self.jid.setResource(self.resource)
         
@@ -106,8 +104,6 @@ class TNArchipelBasicXMPPClient(object):
             self.ipaddr = socket.gethostbyname(socket.gethostname())
         else:
             self.ipaddr = ip_conf
-        
-        self.recover_tags();
     
     
     def initialize_modules(self):
@@ -229,8 +225,22 @@ class TNArchipelBasicXMPPClient(object):
                 pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
                 pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         })
-            
-        logpubSubNode = self.pubSubNodeLog
+        
+        # creating/getting the tag pubsub node
+        tagNodeName = "/archipel/tags"
+        self.pubSubNodeTags = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagNodeName)
+        if not self.pubSubNodeTags.recover():
+            self.pubSubNodeTags.create()
+        self.pubSubNodeTags.configure({
+                pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
+                pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+                pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
+        })
+        
     
     
     def remove_pubsubs(self):
@@ -321,19 +331,6 @@ class TNArchipelBasicXMPPClient(object):
         Do a in-band unregistration
         """
         self.loop_status = ARCHIPEL_XMPP_LOOP_REMOVE_USER
-        # self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-        # 
-        # self.remove_pubsubs()
-        # 
-        # log.info("trying to unregister")
-        # iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
-        # iq.setQueryNS("jabber:iq:register")
-        # 
-        # remove_node = xmpp.Node(tag="remove")
-        # 
-        # iq.setQueryPayload([remove_node])
-        # log.info("unregistration information sent. waiting for response")
-        # resp_iq = self.xmppclient.send(iq)
     
     
     def process_inband_unregistration(self):
@@ -366,7 +363,6 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
-        self.xmppclient.RegisterHandler('iq', self.__process_tags_iq, ns=ARCHIPEL_NS_TAGS)
         
         log.info("handlers registred")
         
@@ -961,211 +957,3 @@ class TNArchipelBasicXMPPClient(object):
                 resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
         
         return resp
-    
-    
-    ######################################################################################################
-    ### Tagging
-    ######################################################################################################
-
-    def add_tag(self, tag):
-        """
-        add a tag to the tag array
-        """
-        if not tag in self.tags:
-            self.tags.append(tag)
-    
-    
-    def remove_tag(self, tag):
-        """
-        remove a tag from the tag array
-        """
-        if tag in self.tags:
-            del self.tags[tag]
-    
-    
-    def empty_tags(self):
-        """
-        remove all tags
-        """
-        self.tags = []
-        self.save_tags()
-    
-    
-    def save_tags(self):
-        """
-        has to be overriden to save the tags somewhere
-        """
-        c = self.tags_database.cursor()
-        
-        c.execute("delete from tags where jid=?", (str(self.jid),))
-        
-        for tag in self.tags:
-            c.execute("insert into tags values (?, ?)", (str(self.jid), tag,))
-        
-        self.tags_database.commit()
-        c.close()
-        
-    
-    
-    def recover_tags(self):
-        """
-        has to be overriden to save the tags somewhere
-        """
-        self.tags_database.execute("create table if not exists tags (jid text, tag text)")
-        
-        c = self.tags_database.cursor()
-        c.execute("select * from tags where jid=?", (str(self.jid), ))
-        for tag in c:
-            jid, content = tag
-            self.add_tag(content)
-        c.close()
-    
-    
-    def all_tags(self):
-        """
-        return all tags used in database
-        """
-        ret = []
-        c = self.tags_database.cursor()
-        c.execute("select DISTINCT tag from tags")
-        for tag in c:
-            ret.append(tag[0])
-        c.close()
-        return ret
-    
-    
-    def tags_registry(self):
-        """
-        return all tags used in database
-        """
-        ret = {}
-        c = self.tags_database.cursor()
-        c.execute("select DISTINCT jid from tags")
-        for jid in c:
-            temp = []
-            c2 = self.tags_database.cursor()
-            c2.execute("select DISTINCT tag from tags where jid=?", (jid))
-            for tag in c2:
-                temp.append(tag[0])
-            ret[jid[0]] = temp
-            c2.close()
-        c.close()
-        return ret
-    
-    
-    def __process_tags_iq(self, conn, iq):
-        """
-        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
-
-        it understands IQ of type:
-            - gettags
-            - settags
-            - alltags
-            - tagsregistry
-
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-
-        if action == "gettags":
-            reply = self.iq_get_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-
-        elif action == "settags":
-            reply = self.iq_set_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "alltags":
-            reply = self.iq_all_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "tagsregistry":
-            reply = self.iq_tags_registry(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-    
-    def iq_get_tags(self, iq):
-        """
-        return a list of tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            nodes = []
-            for tag in self.tags:
-                n = xmpp.Node("tag")
-                n.addData(tag)
-                nodes.append(n)
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-
-
-    def iq_set_tags(self, iq):
-        """
-        set the current tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            tagsNode = domain_uuid = iq.getTag("query").getTag("archipel").getTags(name="tag")
-            self.empty_tags()
-            
-            for tagNode in tagsNode:
-                self.add_tag(tagNode.getData());
-            
-            self.save_tags();
-            self.push_change("tags", "set");   
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-    
-    def iq_all_tags(self, iq):
-        """
-        return all used tags. This can be used for autocompletion
-        """
-        try:
-            reply = iq.buildReply("result")
-            nodes = []
-            for tag in self.all_tags():
-                n = xmpp.Node("tag")
-                n.addData(tag)
-                nodes.append(n)
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-    
-    def iq_tags_registry(self, iq):
-        """
-        return all used tags. This can be used for autocompletion
-        """
-        try:
-            reply = iq.buildReply("result")
-            nodes = []
-            for jid, tags in self.tags_registry().items():
-                n = xmpp.Node("user", attrs={"jid": jid});
-                for tag in tags:
-                    tagNode = n.addChild("tag")
-                    tagNode.addData(tag)
-                nodes.append(n)
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-
-
