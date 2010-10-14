@@ -20,6 +20,7 @@
 @import <AppKit/AppKit.j>
 
 @import "TNCellLogLevel.j";
+@import "TNArchipelClientLog.j";
 
 TNLogLevelFatal = @"fatal";
 TNLogLevelError = @"error";
@@ -30,8 +31,13 @@ TNLogLevelTrace = @"trace";
 
 TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelWarn, TNLogLevelError, TNLogLevelFatal];
 
-/*! @ingroup archipelcore
-    provides a logging facility. Logs are store using HTML5 storage.
+/*! @defgroup  toolbarlogs Module Toolbar Logs
+    @desc This module displays Archipel Client logs
+*/
+
+
+/*! @ingroup toolbarlogs
+    The module main controller
 */
 @implementation TNToolbarLogsController: TNModule
 {
@@ -39,63 +45,46 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     @outlet CPScrollView    mainScrollView;
     @outlet CPSearchField   fieldFilter;
 
-    CPArray                 _logs;
     CPString                _filter;
     CPTableView             _tableViewLogging;
+    TNTableViewDataSource   _datasourceLogs;
     id                      _logFunction;
+    CPString                _logLevel;
+    int                     _maxLogEntries;
 }
 
-- (void)willLoad
-{
-    [super willLoad];
-    // message sent when view will be added from superview;
-}
 
-- (void)willUnload
-{
-    [super willUnload];
-   // message sent when view will be removed from superview;
-}
+#pragma mark -
+#pragma mark Initialization
 
-- (void)willShow
-{
-    [super willShow];
-    // message sent when the tab is clicked
-}
-
-- (void)willHide
-{
-    [super willHide];
-    // message sent when the tab is changed
-}
-
-/*! init the class with a rect
-    @param aFrame a CPRect containing the frame information
+/*! called at cib awaking
 */
 - (void)awakeFromCib
 {
-    // search field
-    [fieldFilter setSendsSearchStringImmediately:YES];
-    [fieldFilter setTarget:self];
-    [fieldFilter setAction:@selector(filterFieldDidChange:)];
+    _datasourceLogs = [[TNTableViewDataSource alloc] init];
 
     _logFunction = function (aMessage, aLevel, aTitle) {
         [self logMessage:aMessage title:aTitle level:aLevel];
     };
+
+    [self restaure];
+
+    [fieldFilter setTarget:_datasourceLogs];
+    [fieldFilter setAction:@selector(filterObjects:)];
 
     [mainScrollView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setBorderedWithHexColor:@"#C0C7D2"];
     [mainScrollView setAutohidesScrollers:YES];
 
     var defaults = [TNUserDefaults standardUserDefaults];
-    maxLogLevel = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
+    _logLevel       = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
 
-    if (!maxLogLevel)
-        maxLogLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
+    if (!_logLevel)
+        _logLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];
 
-    CPLogRegister(_logFunction, maxLogLevel);
+    _maxLogEntries  = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNMaxLogsEntries"];
 
-    _logs = [self restaure];
+    CPLogRegister(_logFunction, _logLevel);
 
     _tableViewLogging = [[CPTableView alloc] initWithFrame:[[mainScrollView contentView] frame]];
 
@@ -104,10 +93,10 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [_tableViewLogging setAllowsColumnResizing:YES];
     [_tableViewLogging setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
 
-    var columnMessage = [[CPTableColumn alloc] initWithIdentifier:@"message"],
-        columnDate = [[CPTableColumn alloc] initWithIdentifier:@"date"],
-        levelCellPrototype = [[TNCellLogLevel alloc] init],
-        columnLevel = [[CPTableColumn alloc] initWithIdentifier:@"level"];
+    var columnMessage       = [[CPTableColumn alloc] initWithIdentifier:@"message"],
+        columnDate          = [[CPTableColumn alloc] initWithIdentifier:@"date"],
+        levelCellPrototype  = [[TNCellLogLevel alloc] init],
+        columnLevel         = [[CPTableColumn alloc] initWithIdentifier:@"level"];
 
 
     [[columnMessage headerView] setStringValue:@"Message"];
@@ -123,42 +112,20 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [_tableViewLogging addTableColumn:columnDate];
     [_tableViewLogging addTableColumn:columnMessage];
 
-    [_tableViewLogging setDataSource:self];
+    [_tableViewLogging setDataSource:_datasourceLogs];
+    [_datasourceLogs setTable:_tableViewLogging];
+    [_datasourceLogs setSearchableKeyPaths:[@"message", @"date", @"level"]];
 
     [mainScrollView setDocumentView:_tableViewLogging];
 
     [buttonLogLevel removeAllItems];
     [buttonLogLevel addItemsWithTitles:TNLogLevels];
-    [buttonLogLevel selectItemWithTitle:maxLogLevel];
-
-    theSharedLogger = self;
+    [buttonLogLevel selectItemWithTitle:_logLevel];
 }
 
-- (IBAction)filterFieldDidChange:(id)sender
-{
-    _filter = [sender stringValue];
-    [_tableViewLogging reloadData];
-}
 
-- (void)save
-{
-    // var defaults = [TNUserDefaults standardUserDefaults];
-    // [defaults setObject:JSON.stringify(_logs) forKey:@"TNArchipelLogStored"];
-    // I can't use TNDefault here or Safari hangs. This is weird.
-
-    localStorage.setItem("TNArchipelLogStored", JSON.stringify(_logs));
-}
-
-- (CPArray)restaure
-{
-    // var defaults        = [TNUserDefaults standardUserDefaults];
-    // var recoveredLogs   = JSON.parse([defaults objectForKey:@"TNArchipelLogStored"]);
-    // I can't use TNDefault here or Safari hangs. This is weird.
-
-    var recoveredLogs = JSON.parse(localStorage.getItem("TNArchipelLogStored"));
-
-    return (recoveredLogs) ? recoveredLogs : [CPArray array];
-}
+#pragma mark -
+#pragma mark Utilities
 
 /*! write log to the logger
     @param aString CPString containing the log message
@@ -166,77 +133,70 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (void)logMessage:(CPString)aMessage title:(CPString)aTitle level:(CPString)aLevel
 {
     var theDate     = [CPDate dateWithFormat:@"Y-m-d H:i:s"],
-        logEntry    = {"date": theDate, "message": aMessage, "title": aTitle, "level": aLevel};
+        logEntry    = [TNArchipelClientLog archipelLogWithDate:theDate message:aMessage title:aTitle level:aLevel];
 
-    [_logs insertObject:logEntry atIndex:0];
+    if ([_datasourceLogs count] > _maxLogEntries)
+        [_datasourceLogs removeLastObject];
 
+    [_datasourceLogs insertObject:logEntry atIndex:0];
     [_tableViewLogging reloadData];
 
     [self save];
 }
 
+/*! save the logs into localStorage
+*/
+- (void)save
+{
+    CPLogUnregister(_logFunction);
+
+    var defaults = [TNUserDefaults standardUserDefaults];
+    [defaults setObject:[_datasourceLogs content] forKey:@"TNArchipelLogStored"];
+
+    CPLogRegister(_logFunction, _logLevel);
+}
+
+/*! recover and returns the stored logs
+*/
+- (void)restaure
+{
+    CPLogUnregister(_logFunction);
+
+    var defaults        = [TNUserDefaults standardUserDefaults],
+        recoveredLogs   = [defaults objectForKey:@"TNArchipelLogStored"];
+
+    CPLogRegister(_logFunction, _logLevel);
+    [_datasourceLogs setContent:recoveredLogs ? recoveredLogs : [CPArray array]];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
 /*! remove all previous stored logs
+    @param sender the sender of the action
 */
 - (IBAction)clearLog:(id)sender
 {
-    [_logs removeAllObjects];
+    [_datasourceLogs removeAllObjects];
     [_tableViewLogging reloadData];
 
     [self save];
 }
 
+/*! set the minimum log level
+    @param sender the sender of the action
+*/
 - (IBAction)setLogLevel:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults],
-        logLevel = [buttonLogLevel title];
+    var defaults = [TNUserDefaults standardUserDefaults];
 
-    [defaults setObject:logLevel forKey:@"TNArchipelLogStoredMaximumLevel"];
+    _logLevel = [buttonLogLevel title];
+
+    [defaults setObject:_logLevel forKey:@"TNArchipelLogStoredMaximumLevel"];
 
     CPLogUnregister(_logFunction);
-
-    CPLogRegister(_logFunction, logLevel);
-}
-
-
-- (CPArray)getEntriesInArray:(CPArray)anArray matchingFilter:(CPString)aFilter
-{
-    if (!aFilter)
-        return anArray;
-
-    var filteredArray = [CPArray array];
-
-    for (var i = 0; i < [anArray count]; i++)
-    {
-        var entry = [anArray objectAtIndex:i];
-
-        if ((entry["level"].toUpperCase().indexOf([aFilter uppercaseString]) != -1)
-            || (entry["message"].toUpperCase().indexOf([aFilter uppercaseString]) != -1)
-            || (entry["date"].toUpperCase().indexOf([aFilter uppercaseString]) != -1))
-            [filteredArray addObject:entry];
-    }
-
-    return filteredArray;
-}
-
-/*! CPTableView delegate
-*/
-- (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
-{
-    var entry = [self getEntriesInArray:_logs matchingFilter:_filter];
-
-    return [entry count];
-}
-
-/*! CPTableView delegate
-*/
-- (id)tableView:(CPTableView)aTable objectValueForTableColumn:(CPTableColumn)aCol row:(CPNumber)aRow
-{
-    var entry           = [self getEntriesInArray:_logs matchingFilter:_filter],
-        anIdentifier    = [aCol identifier];
-
-    return entry[aRow][anIdentifier];
+    CPLogRegister(_logFunction, _logLevel);
 }
 
 @end
-
-

@@ -32,5 +32,7 @@
         <string>ToolbarLogs</string>
         <key>TNDefaultLogLevel</key>
         <string>info</string>
+		<key>TNMaxLogsEntries</key>
+        <string>50</string>
     </dict>
 </plist>
