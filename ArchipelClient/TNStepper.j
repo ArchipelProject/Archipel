@@ -19,6 +19,9 @@
 
 @import <AppKit/AppKit.j>
 
+/*! @ingroup archipelcore
+    Simple implementation of NSStepper
+*/
 @implementation TNStepper: CPView
 {
     id          _target     @accessors(property=target);
@@ -30,7 +33,6 @@
     CPButton    _buttonUp;
     CPButton    _buttonDown;
 }
-
 
 - (id)initWithFrame:(CPRect)aFrame
 {
@@ -107,7 +109,6 @@
     }
     return self;
 }
-
 
 - (IBAction)buttonDidClick:(id)sender
 {

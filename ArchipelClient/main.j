@@ -31,9 +31,6 @@
     @htmlonly <pre>@endhtmlonly
     @htmlinclude ./LICENSE
     @htmlonly </pre>@endhtmlonly
-
-    @defgroup archipelmodules Archipel Modules
-    @defgroup utils Archipel Utilities
 */
 
 function main(args, namedArgs)

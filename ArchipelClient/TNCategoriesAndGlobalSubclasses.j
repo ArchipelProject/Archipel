@@ -20,7 +20,14 @@
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPBox.j>
 
+/*! @defgroup utils Archipel Utilities
+    @desc Simples categories or subclass in order to live ina better world
+*/
 
+
+/*! @ingroup utils
+    Make CPTabView border editable
+*/
 @implementation CPTabView (borderEditable)
 
 - (void)setBorderColor:(CPColor)aColor
@@ -28,8 +35,9 @@
     [box setBorderColor:aColor];
 }
 
-
 @end
+
+
 /*! @ingroup utils
     Categories that allows CPView with border
 */
@@ -173,6 +181,10 @@
 }
 @end
 
+
+/*! @ingroup utils
+    A very cool CPAlert
+*/
 @implementation TNAlert : CPObject
 {
     id      _delegate   @accessors(property=delegate);
@@ -244,6 +256,10 @@
 }
 @end
 
+
+/*! @ingroup utils
+    add expandAll to CPOutlineView
+*/
 @implementation CPOutlineView (expandAll)
 
 /*! Expand all items in the view
@@ -293,6 +309,9 @@
 }
 @end
 
+/*! @ingroup utils
+    CPDate with format
+*/
 @implementation CPDate (withFormat)
 
 + (CPString)dateWithFormat:(CPString)aFormat
@@ -307,6 +326,10 @@
 }
 @end
 
+
+/*! @ingroup utils
+    CPWindow that fade in and fade out
+*/
 @implementation CPWindow (fadeInWindow)
 
 - (IBAction)orderFront:(id)sender
@@ -336,6 +359,9 @@
 }
 @end
 
+/*! @ingroup utils
+    Groups name are uppercase
+*/
 @implementation TNStropheGroup (majName)
 - (CPString)description
 {
@@ -343,6 +369,9 @@
 }
 @end
 
+/*! @ingroup utils
+    implement Cmd+A in CPTableView
+*/
 @implementation CPTableView (PommeA)
 
 - (void)keyDown:(CPEvent)anEvent
@@ -358,6 +387,9 @@
 }
 @end
 
+/*! @ingroup utils
+    herrr... I don't know what is this :)
+*/
 @implementation TNButtonBarPopUpButton: CPButton
 
 - (void)mouseDown:(CPEvent)anEvent
@@ -379,6 +411,9 @@
 }
 @end
 
+/*! @ingroup utils
+    some cool stuff in CPSearchField
+*/
 @implementation CPSearchField (cancelButton)
 
 - (CPButton)cancelButton
@@ -395,7 +430,9 @@
 }
 @end
 
-
+/*! @ingroup utils
+    a white CPWindow
+*/
 @implementation TNWhiteWindow: CPWindow
 
 - (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask

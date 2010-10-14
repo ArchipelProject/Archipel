@@ -128,6 +128,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
 
 
+/*! @defgroup  archipelcore Archipel Core
+    @desc Core contains all basic and low level Archipel classes
+*/
+
 
 /*! @ingroup archipelcore
     This is the main application controller. It is loaded from MainMenu.cib.

@@ -19,6 +19,10 @@
 @import <Foundation/Foundation.j>;
 @import <AppKit/AppKit.j>
 
+
+/*! @ingroup archipelcore
+    CPSearchField with shortcuts
+*/
 @implementation TNSearchField : CPSearchField
 {
     CPOutlineView   _outlineView @accessors(property=outlineView);

@@ -20,6 +20,9 @@
 @import <LPKit/LPSwitch.j>
 
 
+/*! @ingroup archipelcore
+    Themed LPSwitch
+*/
 @implementation TNSwitch : LPSwitch
 
 + (id)themeAttributes

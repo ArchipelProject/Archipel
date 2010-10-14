@@ -26,7 +26,8 @@ TNArchipelTypeAvatarSetAvatar    = @"setavatar";
 
 TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
-/*! Simple TNBase64Image subclass that add a string to get the avatar filename
+/*! @ingroup archipelcore
+    Simple TNBase64Image subclass that add a string to get the avatar filename
 */
 @implementation TNAvatarImage: TNBase64Image
 {

@@ -21,6 +21,9 @@
 
 TNQuickEditViewPadding = 20.0;
 
+/*! @ingroup archipelcore
+    Simple editable label
+*/
 @implementation TNQuickEditView : CPWindow
 {
     CPImageView     _cursorView;

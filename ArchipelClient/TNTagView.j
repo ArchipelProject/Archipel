@@ -20,6 +20,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+
+/*! @ingroup archipelcore
+    Tagging view
+*/
 @implementation TNTagView : CPView
 {
     TNStropheConnection _connection         @accessors(property=connection);
