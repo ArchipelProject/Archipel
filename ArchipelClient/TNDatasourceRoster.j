@@ -119,6 +119,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
+/*! initializes the TNPubSubNode when roster is retreived
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)initializePubSubTags:(CPNotification)aNotification
 {
     var roster = [aNotification object];
@@ -134,11 +137,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [_pubsub recover];
 }
 
-- (void)pubsubNode:(TNPubSub)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
-{
-    [_pubsub recover];
-}
-
+/*! will update the content of _tagsRegistry that will be use to filter matching tags
+    @param aNotification CPNotification that trigger the message
+*/
 - (void)_didTagsRecovered:(CPNotification)aNotification
 {
     _tagsRegistry = [CPDictionary dictionary];
@@ -383,6 +384,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
     }
 
     return NO;
+}
+
+/*! delegate of TNPubSubNode that will be sent when an pubsub event is recieved
+    it will simply recover the content
+*/
+- (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
+{
+    [_pubsub recover];
 }
 
 @end
