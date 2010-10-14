@@ -35,8 +35,6 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 @end
 
 
-#pragma mark -
-
 /*! Prototype of the CPCollectionView that represent an Avatar
 */
 @implementation TNAvatarView : CPView
@@ -69,8 +67,6 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 @end
 
-
-#pragma mark -
 
 /*! Subclass of CPWindow that represents  the avatar manager
 */

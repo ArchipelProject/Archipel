@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+/*! @ingroup archipelcore
+    Simple table view datasource with filtering support
+*/
 @implementation TNTableViewDataSource: CPObject
 {
     CPArray         _content                @accessors(property=content);
@@ -27,6 +29,9 @@
     CPSearchField   _searchField;
     CPString        _filter;
 }
+
+#pragma mark -
+#pragma mark  Initialization
 
 - (id)init
 {
@@ -40,6 +45,10 @@
     }
     return self;
 }
+
+
+#pragma mark -
+#pragma mark Filtering
 
 - (IBAction)filterObjects:(id)sender
 {
@@ -77,7 +86,107 @@
     [_table reloadData];
 }
 
-// Datasource impl.
+
+#pragma mark -
+#pragma mark Content management
+
+- (void)setContent:(CPArray)aContent
+{
+    _filter = @"";
+    if (_searchField)
+        [_searchField setStringValue:@""];
+
+    _content = [aContent copy];
+    _filteredContent = [aContent copy];
+}
+
+- (void)addObject:(id)anObject
+{
+    _filter = @"";
+
+    if (_searchField)
+        [_searchField setStringValue:@""];
+
+    [_content addObject:anObject];
+    [_filteredContent addObject:anObject];
+}
+
+- (void)insertObject:(id)anObject atIndex:(int)anIndex
+{
+    _filter = @"";
+
+    if (_searchField)
+        [_searchField setStringValue:@""];
+
+    [_content insertObject:anObject atIndex:anIndex];
+    [_filteredContent insertObject:anObject atIndex:anIndex];
+}
+
+- (void)objectAtIndex:(int)index
+{
+    return [_filteredContent objectAtIndex:index];
+}
+
+- (CPArray)objectsAtIndexes:(CPIndexSet)aSet
+{
+    return [_filteredContent objectsAtIndexes:aSet];
+}
+
+- (void)removeObjectAtIndex:(int)index
+{
+    var object = [_filteredContent objectAtIndex:index];
+
+    [_filteredContent removeObjectAtIndex:index];
+    [_content removeObject:object];
+}
+
+- (void)removeObjectsAtIndexes:(CPIndexSet)aSet
+{
+    try
+    {
+        var objects = [_filteredContent objectsAtIndexes:aSet];
+
+        [_filteredContent removeObjectsAtIndexes:aSet];
+        [_content removeObjectsInArray:objects];
+    }
+    catch(e)
+    {
+        CPLog.error(e);
+    }
+}
+
+- (void)removeAllObjects
+{
+    [_content removeAllObjects];
+    [_filteredContent removeAllObjects];
+}
+
+- (void)removeLastObject
+{
+    [_content removeLastObject];
+    [_filteredContent removeLastObject];
+}
+
+- (void)removeFirstObject
+{
+    [_content removeFirstObject];
+    [_filteredContent removeFirstObject];
+}
+
+- (void)indexOfObject:(id)anObject
+{
+    return [_filteredContent indexOfObject:anObject];
+}
+
+- (int)count
+{
+    return [_filteredContent count];
+}
+
+
+#pragma mark -
+#pragma mark Datasource implementation
+
 - (CPNumber)numberOfRowsInTableView:(CPTableView)aTable
 {
     return [_filteredContent count];
@@ -118,97 +227,6 @@
     [[_filteredContent objectAtIndex:aRow] setValue:aValue forKey:identifier];
 }
 
-- (void)addObject:(id)anObject
-{
-    _filter = @"";
 
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
-    [_content addObject:anObject];
-    [_filteredContent addObject:anObject];
-}
-
-- (void)insertObject:(id)anObject atIndex:(int)anIndex
-{
-    _filter = @"";
-
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
-    [_content insertObject:anObject atIndex:anIndex];
-    [_filteredContent insertObject:anObject atIndex:anIndex];
-}
-
-- (void)objectAtIndex:(int)index
-{
-    return [_filteredContent objectAtIndex:index];
-}
-
-- (void)removeObjectAtIndex:(int)index
-{
-    var object = [_filteredContent objectAtIndex:index];
-
-    [_filteredContent removeObjectAtIndex:index];
-    [_content removeObject:object];
-}
-
-- (void)removeAllObjects
-{
-    [_content removeAllObjects];
-    [_filteredContent removeAllObjects];
-}
-
-- (void)removeLastObject
-{
-    [_content removeLastObject];
-    [_filteredContent removeLastObject];
-}
-
-- (void)removeFirstObject
-{
-    [_content removeFirstObject];
-    [_filteredContent removeFirstObject];
-}
-
-- (int)count
-{
-    return [_filteredContent count];
-}
-
-- (void)setContent:(CPArray)aContent
-{
-    _filter = @"";
-    if (_searchField)
-        [_searchField setStringValue:@""];
-
-    _content = [aContent copy];
-    _filteredContent = [aContent copy];
-}
-
-- (void)removeObjectsAtIndexes:(CPIndexSet)aSet
-{
-    try
-    {
-        var objects = [_filteredContent objectsAtIndexes:aSet];
-
-        [_filteredContent removeObjectsAtIndexes:aSet];
-        [_content removeObjectsInArray:objects];
-    }
-    catch(e)
-    {
-        CPLog.error(e);
-    }
-}
-
-- (CPArray)objectsAtIndexes:(CPIndexSet)aSet
-{
-    return [_filteredContent objectsAtIndexes:aSet];
-}
-
-- (void)indexOfObject:(id)anObject
-{
-    return [_filteredContent indexOfObject:anObject];
-}
 
 @end
