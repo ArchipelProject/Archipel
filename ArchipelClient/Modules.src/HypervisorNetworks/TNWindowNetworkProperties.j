@@ -19,6 +19,9 @@
 @import "TNDHCPEntryObject.j";
 @import "TNNetworkObject.j";
 
+/*! @ingroup hypervisornetworks
+    The newtork window edition
+*/
 @implementation TNWindowNetworkProperties : CPWindow
 {
     @outlet CPButtonBar     buttonBarControlDHCPHosts;
@@ -52,6 +55,9 @@
     TNTableViewDataSource   _datasourceDHCPHosts;
     TNTableViewDataSource   _datasourceDHCPRanges;
 }
+
+#pragma mark -
+#pragma mark  Initialization
 
 - (void)awakeFromCib
 {
@@ -181,6 +187,10 @@
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
 }
 
+
+#pragma mark -
+#pragma mark CPWindow override
+
 - (void)makeKeyAndOrderFront:(id)sender
 {
     if (![self isVisible])
@@ -215,6 +225,13 @@
     [_tableViewRanges setFrame:frame];
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
+/*! save the changes
+    @param sender the sender of the action
+*/
 - (IBAction)save:(id)sender
 {
     [_network setNetworkName:[fieldNetworkName stringValue]];
@@ -235,6 +252,9 @@
     [self close];
 }
 
+/*! add a new DCHP range
+    @param sender the sender of the action
+*/
 - (IBAction)addDHCPRange:(id)sender
 {
     var newRange = [TNDHCPEntry DHCPRangeWithStartAddress:@"0.0.0.0"  endAddress:@"0.0.0.0"];
@@ -244,6 +264,9 @@
     [_tableViewRanges reloadData];
 }
 
+/*! remove a DHCP range
+    @param sender the sender of the action
+*/
 - (IBAction)removeDHCPRange:(id)sender
 {
     var selectedIndex   = [[_tableViewRanges selectedRowIndexes] firstIndex],
@@ -256,6 +279,9 @@
 
 }
 
+/*! add a new DHCP host
+    @param sender the sender of the action
+*/
 - (IBAction)addDHCPHost:(id)sender
 {
     var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:"domain.com" ip:@"0.0.0.0"];
@@ -265,6 +291,9 @@
     [_tableViewHosts reloadData];
 }
 
+/*! remove a DHCP host
+    @param sender the sender of the action
+*/
 - (IBAction)removeDHCPHost:(id)sender
 {
     var selectedIndex   = [[_tableViewHosts selectedRowIndexes] firstIndex],

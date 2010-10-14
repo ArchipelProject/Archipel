@@ -19,6 +19,10 @@
 @import <AppKit/AppKit.j>
 @import <Foundation/Foundation.j>
 
+
+/*! @ingroup hypervisornetworks
+    this class represent a network object
+*/
 @implementation TNNetwork : CPObject
 {
     BOOL        _isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
@@ -39,6 +43,11 @@
     CPString    _UUID                    @accessors(property=UUID);
 }
 
+#pragma mark -
+#pragma mark  Initialization
+
+/*! initialize the TNNetwork
+*/
 - (id)init
 {
     if (self = [super init])
@@ -47,10 +56,25 @@
         _imageNetworkActive     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkActive.png"]];
         _imageNetworkUnactive   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"networkUnactive.png"]];
     }
-    
+
     return self;
 }
 
+/*! create, initializes and return a new TNNetwork
+    @param aName the name
+    @param anUUID the UUID
+    @param aBridgeName the bridge name
+    @param aBridgeDelay the bridge delay
+    @param aForwardDevice the forward device name
+    @param anIP the bridge IP
+    @param aNetmask the bridge netwask
+    @param someRangeEntries CPArray containing the list of TNDHCPEntry for ranges
+    @param someHostsEntries CPArray containing the list of TNDHCPEntry for hosts
+    @param networkEnabled flag is enabled
+    @param STPEnabled flag STP enabled
+    @param DHCPEnabled flag DCHP enabled
+    @return initialized TNNetwork object
+*/
 + (TNNetwork)networkWithName:(CPString)aName
                         UUID:(CPString)anUUID
                   bridgeName:(CPString)aBridgeName
@@ -72,7 +96,7 @@
     [net setBridgeName:aBridgeName];
     [net setBridgeDelay:aBridgeDelay];
     [net setBridgeForwardMode:aForwardMode];
-    
+
     if (aForwardDevice)
         [net setBridgeForwardDevice:aForwardDevice];
     else
@@ -84,12 +108,12 @@
     [net setNetworkEnabled:networkEnabled];
     [net setSTPEnabled:STPEnabled];
     [net setDHCPEnabled:DHCPEnabled];
-    
+
     if (networkEnabled)
         [net setIcon:[net imageNetworkActive]];
     else
         [net setIcon:[net imageNetworkUnactive]];
-    
+
     return net;
 }
 

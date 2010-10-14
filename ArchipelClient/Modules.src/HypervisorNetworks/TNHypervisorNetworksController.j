@@ -33,14 +33,13 @@ TNArchipelTypeHypervisorNetworkCreate       = @"create";
 TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
 
-function generateIPForNewNetwork()
-{
-    var dA      = Math.round(Math.random() * 255),
-        dB      = Math.round(Math.random() * 255);
+/*! @defgroup  hypervisornetworks Module Hypervisor Networks
+    @desc This manages hypervisors' virtual networks
+*/
 
-    return dA + "." + dB + ".0.1";
-}
-
+/*! @ingroup hypervisornetworks
+    The main module controller
+*/
 @implementation TNHypervisorNetworksController : TNModule
 {
     @outlet CPButtonBar                 buttonBarControl;
@@ -60,6 +59,11 @@ function generateIPForNewNetwork()
     TNTableViewDataSource               _datasourceNetworks;
 }
 
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awaking
+*/
 - (void)awakeFromCib
 {
     [fieldJID setSelectable:YES];
@@ -185,23 +189,31 @@ function generateIPForNewNetwork()
 
 }
 
+
+#pragma mark -
+#pragma mark TNModule overrides
+
+/*! called when module is loaded
+*/
 - (void)willLoad
 {
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(didNickNameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
-    [center addObserver:self selector:@selector(didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
+    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
+    [center addObserver:self selector:@selector(_didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [_tableViewNetworks setDelegate:nil];
     [_tableViewNetworks setDelegate:self]; // hum....
 
-    [self registerSelector:@selector(didPushReceive:) forPushNotificationType:TNArchipelPushNotificationNetworks];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
 }
 
+/*! called when module becomes visible
+*/
 - (void)willShow
 {
     [super willShow];
@@ -210,6 +222,8 @@ function generateIPForNewNetwork()
     [fieldJID setStringValue:[[self entity] JID]];
 }
 
+/*! called when MainMenu is ready
+*/
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
@@ -221,7 +235,13 @@ function generateIPForNewNetwork()
 }
 
 
-- (void)didNickNameUpdated:(CPNotification)aNotification
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity's name has change
+    @param aNotification the notification
+*/
+- (void)_didUpdateNickName:(CPNotification)aNotification
 {
     if ([aNotification object] == [self entity])
     {
@@ -229,7 +249,10 @@ function generateIPForNewNetwork()
     }
 }
 
-- (BOOL)didPushReceive:(CPDictionary)somePushInfo
+/*! called when an Archipel push is recieved
+    @param somePushInfo CPDictionary containing push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
 {
     var sender  = [somePushInfo objectForKey:@"owner"],
         type    = [somePushInfo objectForKey:@"type"],
@@ -242,7 +265,125 @@ function generateIPForNewNetwork()
     return YES;
 }
 
+/*! triggered when the main table selection changes. it will update GUI
+*/
+- (void)_didTableSelectionChange:(CPNotification)aNotification
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
+    [_minusButton setEnabled:NO];
+    [_editButton setEnabled:NO];
+    [_activateButton setEnabled:NO];
+    [_deactivateButton setEnabled:NO];
+
+    if ([_tableViewNetworks numberOfSelectedRows] == 0)
+        return;
+
+    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
+
+    if ([networkObject isNetworkEnabled])
+    {
+        [_deactivateButton setEnabled:YES];
+    }
+    else
+    {
+        [_minusButton setEnabled:YES];
+        [_editButton setEnabled:YES];
+        [_activateButton setEnabled:YES];
+    }
+
+    return YES;
+}
+
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! Generate a stanza containing libvirt valid network description
+    @param anUid the ID to use for the stanza
+    @return ready to send generate stanza
+*/
+- (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(id)anUid
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex == -1)
+        return
+
+    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex],
+        stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkDefine}];
+
+    [stanza addChildWithName:@"network"];
+
+    [stanza addChildWithName:@"name"];
+    [stanza addTextNode:[networkObject networkName]];
+    [stanza up];
+
+    [stanza addChildWithName:@"uuid"];
+    [stanza addTextNode:[networkObject UUID]];
+    [stanza up];
+
+    [stanza addChildWithName:@"forward" andAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
+    [stanza up];
+
+    [stanza addChildWithName:@"bridge" andAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
+    [stanza up];
+
+    [stanza addChildWithName:@"ip" andAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
+
+    var dhcp = [networkObject isDHCPEnabled];
+    if (dhcp)
+    {
+        [stanza addChildWithName:@"dhcp"];
+
+        var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
+
+        for (var i = 0; i < [DHCPRangeEntries count]; i++)
+        {
+            var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
+
+            [stanza addChildWithName:@"range" andAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
+            [stanza up];
+        }
+
+        var DHCPHostsEntries = [networkObject DHCPEntriesHosts];
+
+        for (var i = 0; i < [DHCPHostsEntries count]; i++)
+        {
+            var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
+
+            [stanza addChildWithName:@"host" andAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
+            [stanza up];
+        }
+
+        [stanza up];
+    }
+
+    [stanza up];
+
+    return stanza;
+}
+
+/*! generate a random MAC Address
+    @return CPString containing a random mac address
+*/
+- (CPString)generateIPForNewNetwork
+{
+    var dA      = Math.round(Math.random() * 255),
+        dB      = Math.round(Math.random() * 255);
+
+    return dA + "." + dB + ".0.1";
+}
+
+#pragma mark -
+#pragma mark XMPP Controls
+
+/*! asks networks to the hypervisor
+*/
 - (void)getHypervisorNetworks
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
@@ -251,10 +392,12 @@ function generateIPForNewNetwork()
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGet}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(didReceiveHypervisorNetworks:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNetworks:)];
 }
 
-- (void)didReceiveHypervisorNetworks:(id)aStanza
+/*! compute the answer containing the network information
+*/
+- (void)_didReceiveHypervisorNetworks:(id)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -336,206 +479,17 @@ function generateIPForNewNetwork()
     }
 }
 
-- (TNStropheStanza)generateXMLNetworkStanzaWithUniqueID:(id)anUid
-{
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
-    if (selectedIndex == -1)
-        return
+#pragma mark -
+#pragma mark Action
 
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex],
-        stanza          = [TNStropheStanza iqWithAttributes:{"type": "set", "id": anUid}];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkDefine}];
-
-    [stanza addChildWithName:@"network"];
-
-    [stanza addChildWithName:@"name"];
-    [stanza addTextNode:[networkObject networkName]];
-    [stanza up];
-
-    [stanza addChildWithName:@"uuid"];
-    [stanza addTextNode:[networkObject UUID]];
-    [stanza up];
-
-    [stanza addChildWithName:@"forward" andAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
-    [stanza up];
-
-    [stanza addChildWithName:@"bridge" andAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
-    [stanza up];
-
-    [stanza addChildWithName:@"ip" andAttributes:{"address": [networkObject bridgeIP], "netmask": [networkObject bridgeNetmask]}];
-
-    var dhcp = [networkObject isDHCPEnabled];
-    if (dhcp)
-    {
-        [stanza addChildWithName:@"dhcp"];
-
-        var DHCPRangeEntries = [networkObject DHCPEntriesRanges];
-
-        for (var i = 0; i < [DHCPRangeEntries count]; i++)
-        {
-            var DHCPEntry = [DHCPRangeEntries objectAtIndex:i];
-
-            [stanza addChildWithName:@"range" andAttributes:{"start" : [DHCPEntry start], "end": [DHCPEntry end]}];
-            [stanza up];
-        }
-
-        var DHCPHostsEntries = [networkObject DHCPEntriesHosts];
-
-        for (var i = 0; i < [DHCPHostsEntries count]; i++)
-        {
-            var DHCPEntry = [DHCPHostsEntries objectAtIndex:i];
-
-            [stanza addChildWithName:@"host" andAttributes:{"mac" : [DHCPEntry mac], "name": [DHCPEntry name], "ip": [DHCPEntry IP]}];
-            [stanza up];
-        }
-
-        [stanza up];
-    }
-
-    [stanza up];
-
-    return stanza;
-}
-
-
-
-
-- (IBAction)editNetwork:(id)sender
-{
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    if (selectedIndex != -1)
-    {
-        var networkObject = [_datasourceNetworks objectAtIndex:selectedIndex];
-
-        if ([networkObject isNetworkEnabled])
-        {
-            [CPAlert alertWithTitle:@"Error" message:@"You can't edit a running network" style:CPCriticalAlertStyle];
-            return
-        }
-
-        [windowProperties setNetwork:networkObject];
-        [windowProperties setTableNetwork:_tableViewNetworks];
-
-        [windowProperties center];
-        [windowProperties makeKeyAndOrderFront:nil];
-    }
-}
-
-- (IBAction)defineNetworkXML:(id)sender
-{
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    if (selectedIndex == -1)
-        return
-
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-
-    if ([networkObject isNetworkEnabled])
-    {
-        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
-        return
-    }
-
-    var stanza = [TNStropheStanza iqWithType:@"get"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorNetworkUndefine,
-        "uuid": [networkObject UUID]}];
-
-    [self sendStanza:stanza andRegisterSelector:@selector(didNetworkUndefinedBeforeDefining:)];
-}
-
-- (void)didNetworkUndefinedBeforeDefining:(TNStropheStanza)aStanza
-{
-    var uid             = [_connection getUniqueId],
-        defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
-
-    [self sendStanza:defineStanza andRegisterSelector:@selector(didDefineNetwork:) withSpecificID:uid];
-}
-
-- (void)didDefineNetwork:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-- (IBAction)activateNetwork:(id)sender
-{
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
-        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
-
-    for (var i = 0; i < [objects count]; i++)
-    {
-        var networkObject   = [objects objectAtIndex:i],
-            stanza          = [TNStropheStanza iqWithType:@"set"];
-
-        if (![networkObject isNetworkEnabled])
-        {
-            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-            [stanza addChildWithName:@"archipel" andAttributes:{
-                "xmlns": TNArchipelTypeHypervisorNetwork,
-                "action": TNArchipelTypeHypervisorNetworkCreate,
-                "uuid": [networkObject UUID]}];
-
-            [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
-            [_tableViewNetworks deselectAll];
-        }
-    }
-}
-
-
-- (IBAction)deactivateNetwork:(id)sender
-{
-    var alert = [TNAlert alertWithTitle:@"Deactivate Network"
-                                message:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
-                                delegate:self
-                                 actions:[["Deactivate", @selector(performDeactivateNetwork:)], ["Cancel", nil]]];
-
-    [alert runModal];
-}
-
-- (void)performDeactivateNetwork:(id)someUserInfo
-{
-    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
-        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
-
-    for (var i = 0; i < [objects count]; i++)
-    {
-        var networkObject   = [objects objectAtIndex:i],
-            stanza          = [TNStropheStanza iqWithType:@"set"];
-
-        if ([networkObject isNetworkEnabled])
-        {
-            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
-            [stanza addChildWithName:@"archipel" andAttributes:{
-                "xmlns": TNArchipelTypeHypervisorNetwork,
-                "action": TNArchipelTypeHypervisorNetworkDestroy,
-                "uuid" : [networkObject UUID]}];
-
-            [self sendStanza:stanza andRegisterSelector:@selector(didNetworkStatusChange:)];
-            [_tableViewNetworks deselectAll];
-        }
-    }
-}
-
-
-
+/*! add a network
+    @param sender the sender of the action
+*/
 - (IBAction)addNetwork:(id)sender
 {
     var uuid            = [CPString UUID],
-        ip              = generateIPForNewNetwork(),
+        ip              = [self generateIPForNewNetwork],
         ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
         ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
         baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
@@ -559,13 +513,218 @@ function generateIPForNewNetwork()
     var index = [_datasourceNetworks indexOfObject:newNetwork];
     [_tableViewNetworks selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
 
-    [self defineNetworkXML:sender];
+    [self defineNetworkXML];
     [self editNetwork:nil];
+
+}
+
+/*! delete a network
+    @param sender the sender of the action
+*/
+- (IBAction)delNetwork:(id)sender
+{
+    [self delNetwork];
+}
+
+/*! open network edition panel
+    @param sender the sender of the action
+*/
+- (IBAction)editNetwork:(id)sender
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex != -1)
+    {
+        var networkObject = [_datasourceNetworks objectAtIndex:selectedIndex];
+
+        if ([networkObject isNetworkEnabled])
+        {
+            [CPAlert alertWithTitle:@"Error" message:@"You can't edit a running network" style:CPCriticalAlertStyle];
+            return
+        }
+
+        [windowProperties setNetwork:networkObject];
+        [windowProperties setTableNetwork:_tableViewNetworks];
+
+        [windowProperties center];
+        [windowProperties makeKeyAndOrderFront:nil];
+    }
+}
+
+/*! define a network
+    @param sender the sender of the action
+*/
+- (IBAction)defineNetworkXML:(id)sender
+{
+    [self defineNetworkXML];
+}
+
+/*! activate a network
+    @param sender the sender of the action
+*/
+- (IBAction)activateNetwork:(id)sender
+{
+    [self activateNetwork];
+}
+
+/*! deactivate a network
+    @param sender the sender of the action
+*/
+- (IBAction)deactivateNetwork:(id)sender
+{
+    [self deactivateNetwork];
 }
 
 
+#pragma mark -
+#pragma mark XMPP Controls
 
-- (IBAction)delNetwork:(id)sender
+/*! ask hypervisor to define a network. It will indefine it before.
+*/
+- (void)defineNetworkXML
+{
+    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
+
+    if (selectedIndex == -1)
+        return
+
+    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
+
+    if ([networkObject isNetworkEnabled])
+    {
+        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+        return
+    }
+
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkUndefine,
+        "uuid": [networkObject UUID]}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkUndefinBeforeDefining:)];
+
+}
+
+/*! if hypervisor sucessfullty deactivate the network. it will then define it
+    @param aStanza TNStropheStanza containing the answer
+    @return NO to unregister selector
+*/
+- (BOOL)_didNetworkUndefinBeforeDefining:(TNStropheStanza)aStanza
+{
+    var uid             = [_connection getUniqueId],
+        defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
+
+    [self sendStanza:defineStanza andRegisterSelector:@selector(_didDefineNetwork:) withSpecificID:uid];
+
+    return NO;
+}
+
+/*! compute if hypervisor has defined the network
+    @param aStanza TNStropheStanza containing the answer
+    @return NO to unregister selector
+*/
+- (BOOL)_didDefineNetwork:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+/*! ask hypervisor to activate a network
+*/
+- (void)activateNetwork
+{
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+
+    for (var i = 0; i < [objects count]; i++)
+    {
+        var networkObject   = [objects objectAtIndex:i],
+            stanza          = [TNStropheStanza iqWithType:@"set"];
+
+        if (![networkObject isNetworkEnabled])
+        {
+            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildWithName:@"archipel" andAttributes:{
+                "xmlns": TNArchipelTypeHypervisorNetwork,
+                "action": TNArchipelTypeHypervisorNetworkCreate,
+                "uuid": [networkObject UUID]}];
+
+            [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkStatusChange:)];
+            [_tableViewNetworks deselectAll];
+        }
+    }
+}
+
+/*! ask hypervisor to deactivate a network. but before ask use if he is sure with an alert
+*/
+- (void)deactivateNetwork
+{
+    var alert = [TNAlert alertWithTitle:@"Deactivate Network"
+                                message:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
+                                delegate:self
+                                 actions:[["Deactivate", @selector(_performDeactivateNetwork:)], ["Cancel", nil]]];
+
+    [alert runModal];
+
+}
+
+/*! ask hypervisor to deactivate a network
+*/
+- (void)_performDeactivateNetwork:(id)someUserInfo
+{
+    var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
+        objects         = [_datasourceNetworks objectsAtIndexes:selectedIndexes];
+
+    for (var i = 0; i < [objects count]; i++)
+    {
+        var networkObject   = [objects objectAtIndex:i],
+            stanza          = [TNStropheStanza iqWithType:@"set"];
+
+        if ([networkObject isNetworkEnabled])
+        {
+            [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+            [stanza addChildWithName:@"archipel" andAttributes:{
+                "xmlns": TNArchipelTypeHypervisorNetwork,
+                "action": TNArchipelTypeHypervisorNetworkDestroy,
+                "uuid" : [networkObject UUID]}];
+
+            [self sendStanza:stanza andRegisterSelector:@selector(_didNetworkStatusChange:)];
+            [_tableViewNetworks deselectAll];
+        }
+    }
+}
+
+/*! compute the answer of hypervisor after activating/deactivating a network
+    @param aStanza TNStropheStanza containing the answer
+    @return NO to unregister selector
+*/
+- (BOOL)_didNetworkStatusChange:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+/*! ask hypervisor to undefine a network. but before ask use if he is sure with an alert
+*/
+- (void)delNetwork
 {
     var alert = [TNAlert alertWithTitle:@"Delete Network"
                                 message:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
@@ -575,6 +734,8 @@ function generateIPForNewNetwork()
     [alert runModal];
 }
 
+/*! ask hypervisor to undefine a network.
+*/
 - (void)performDelNetwork:(id)someUserInfo
 {
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
@@ -598,11 +759,15 @@ function generateIPForNewNetwork()
             "action": TNArchipelTypeHypervisorNetworkUndefine,
             "uuid": [networkObject UUID]}];
 
-        [self sendStanza:stanza andRegisterSelector:@selector(didDelNetwork:)];
+        [self sendStanza:stanza andRegisterSelector:@selector(_didDelNetwork:)];
     }
 }
 
-- (void)didDelNetwork:(TNStropheStanza)aStanza
+/*! compute if hypervisor has undefined the network
+    @param aStanza TNStropheStanza containing the answer
+    @return NO to unregister selector
+*/
+- (void)_didDelNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -614,57 +779,4 @@ function generateIPForNewNetwork()
     }
 }
 
-
-- (void)didNetworkStatusChange:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-}
-
-
-
-// -(BOOL)windowShouldClose:(id)window
-// {
-//     [self defineNetworkXML:nil];
-//
-//     return YES;
-// }
-
-- (void)didTableSelectionChange:(CPNotification)aNotification
-{
-    var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
-
-    [_minusButton setEnabled:NO];
-    [_editButton setEnabled:NO];
-    [_activateButton setEnabled:NO];
-    [_deactivateButton setEnabled:NO];
-
-    if ([_tableViewNetworks numberOfSelectedRows] == 0)
-        return;
-
-    var networkObject   = [_datasourceNetworks objectAtIndex:selectedIndex];
-
-    if ([networkObject isNetworkEnabled])
-    {
-        [_deactivateButton setEnabled:YES];
-    }
-    else
-    {
-        [_minusButton setEnabled:YES];
-        [_editButton setEnabled:YES];
-        [_activateButton setEnabled:YES];
-    }
-
-    return YES;
-}
-
 @end
-
-
-

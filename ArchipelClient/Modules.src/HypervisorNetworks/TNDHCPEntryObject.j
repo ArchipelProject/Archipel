@@ -22,6 +22,9 @@
 TNDHCPEntryTypeRange    = @"TNDHCPEntryTypeRange";
 TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 
+/*! @ingroup hypervisornetworks
+    this class represents a DHCP entry
+*/
 @implementation TNDHCPEntry : CPObject
 {
     CPString    -name    @accessors(property = name);
@@ -32,6 +35,15 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     CPString    _type    @accessors(property = type);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize a TNDHCPEntry as a range
+    @param aStartAddr range intial addr
+    @param aStartAddr range final addr
+    @return initialized TNDHCPEntry
+*/
 + (TNDHCPEntry)DHCPRangeWithStartAddress:(CPString)aStartAddr  endAddress:(CPString)aEndAddress
 {
     var entry = [[TNDHCPEntry alloc] init];
@@ -43,6 +55,12 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
     return entry;
 }
 
+/*! initialize a TNDHCPEntry as a host
+    @param aMac the mac address of the host
+    @param aName the domain name of the host
+    @param anIP the IP of th e host
+    @return initialized TNDHCPEntry
+*/
 + (TNDHCPEntry)DHCPHostWithMac:(CPString)aMac  name:(CPString)aName ip:(CPString)anIP
 {
     var entry = [[TNDHCPEntry alloc] init];
@@ -54,4 +72,5 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 
     return entry;
 }
+
 @end
