@@ -129,6 +129,17 @@
     [_filteredContent addObject:anObject];
 }
 
+- (void)insertObject:(id)anObject atIndex:(int)anIndex
+{
+    _filter = @"";
+
+    if (_searchField)
+        [_searchField setStringValue:@""];
+
+    [_content insertObject:anObject atIndex:anIndex];
+    [_filteredContent insertObject:anObject atIndex:anIndex];
+}
+
 - (void)objectAtIndex:(int)index
 {
     return [_filteredContent objectAtIndex:index];
@@ -146,6 +157,18 @@
 {
     [_content removeAllObjects];
     [_filteredContent removeAllObjects];
+}
+
+- (void)removeLastObject
+{
+    [_content removeLastObject];
+    [_filteredContent removeLastObject];
+}
+
+- (void)removeFirstObject
+{
+    [_content removeFirstObject];
+    [_filteredContent removeFirstObject];
 }
 
 - (int)count
