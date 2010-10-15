@@ -71,6 +71,7 @@
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecoverPubSub:) name:TNStrophePubSubNodeRecoveredNotification object:_pubsub];
 }
 
 
@@ -111,6 +112,13 @@
     }
 }
 
+/*! called when pubsub is recovered
+*/
+- (void)didRecoverPubSub:(CPNotification)aNotification
+{
+    if (_currentRosterItem)
+        [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+}
 
 #pragma mark -
 #pragma mark Notifications handlers
