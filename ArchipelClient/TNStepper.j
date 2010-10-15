@@ -29,20 +29,82 @@
     int         _value      @accessors(property=value);
     int         _maxValue   @accessors(property=maxValue);
     int         _minValue   @accessors(property=minValue);
+    int         _increment  @accessors(property=increment);
 
     CPButton    _buttonUp;
     CPButton    _buttonDown;
 }
 
++ (CPString)themeClass
+{
+    return @"stepper";
+}
+
++ (id)themeAttributes
+{
+    return [CPDictionary dictionaryWithObjectsAndKeys:  nil, @"bezel-color-up-button",
+                                                        nil, @"bezel-color-down-button"];
+}
+
+
 - (id)initWithFrame:(CPRect)aFrame
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var bundle = [CPBundle mainBundle];
+        var bundle = [CPBundle bundleForClass:[self class]];
 
         _value      = 0;
         _maxValue   = 10;
         _minValue   = -10;
+        _increment  = 1;
+
+        _buttonUp = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, 15, 12)];
+        [_buttonUp setTarget:self];
+        [_buttonUp setAction:@selector(buttonDidClick:)];
+        [self addSubview:_buttonUp];
+
+
+        _buttonDown = [[CPButton alloc] initWithFrame:CPRectMake(0, 12, 15, 12)];
+        [_buttonDown setTarget:self];
+        [_buttonDown setAction:@selector(buttonDidClick:)];
+        [self addSubview:_buttonDown];
+    }
+    return self;
+}
+
+- (IBAction)buttonDidClick:(id)sender
+{
+    if (sender == _buttonUp)
+        _value = (_value + _increment > _maxValue) ? _maxValue : _value + _increment;
+    else
+        _value = (_value - _increment < _minValue) ? _minValue : _value - _increment;
+
+    if (_target && _action && [_target respondsToSelector:_action])
+        [_target performSelector:_action withObject:self];
+}
+
+- (void)setEnabled:(BOOL)isEnabled
+{
+    [_buttonUp setEnabled:isEnabled];
+    [_buttonDown setEnabled:isEnabled];
+}
+
+@end
+
+
+
+@implementation TNStepper (Themed)
+
+- (id)initWithFrame:(CPRect)aFrame
+{
+    if (self = [super initWithFrame:aFrame])
+    {
+        var bundle = [CPBundle bundleForClass:[self class]];
+
+        _value      = 0;
+        _maxValue   = 10;
+        _minValue   = -10;
+        _increment  = 1;
 
         _buttonUp = [[CPButton alloc] initWithFrame:CPRectMake(0, 0, 15, 12)];
         [_buttonUp setTarget:self];
@@ -109,20 +171,4 @@
     }
     return self;
 }
-
-- (IBAction)buttonDidClick:(id)sender
-{
-    if (sender == _buttonUp)
-        _value = (_value + 1 > _maxValue) ? _maxValue : _value + 1;
-    else
-        _value = (_value - 1 < _minValue) ? _minValue : _value - 1;
-
-    if (_target && _action && [_target respondsToSelector:_action])
-        [_target performSelector:_action withObject:self];
-}
-
-- (void)setEnabled:(BOOL)isEnabled
-{
-    [_buttonUp setEnabled:isEnabled];
-    [_buttonDown setEnabled:isEnabled];
-}
+@end

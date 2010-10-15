@@ -451,3 +451,67 @@
 }
 
 @end
+
+// @implementation AristoThemeDescriptor (TNStepper)
+// 
+// + (TNStepper)themedStepper
+// {
+//     var stepper = [[TNStepper alloc] initWithFrame:CGRectMake(0.0, 0.0, 15.0, 24.0)];
+// 
+//     var bezelUp = PatternColor(
+//             [
+//                 [@"stepper-up-bezel-left.png", 3.0, 12.0],
+//                 [@"stepper-up-bezel-center.png", 9.0, 12.0],
+//                 [@"stepper-up-bezel-right.png", 3.0, 12.0],
+//             ]),
+//         
+//         bezelDown = PatternColor(
+//                 [
+//                     [@"stepper-down-bezel-left.png", 3.0, 12.0],
+//                     [@"stepper-down-bezel-center.png", 9.0, 12.0],
+//                     [@"stepper-down-bezel-right.png", 3.0, 12.0],
+//                 ]),
+//         bezelUpDisabled = PatternColor(
+//                 [
+//                     [@"stepper-up-bezel-left-disabled.png", 3.0, 12.0],
+//                     [@"stepper-up-bezel-center-disabled.png", 9.0, 12.0],
+//                     [@"stepper-up-bezel-right-disabled.png", 3.0, 12.0],
+//                 ]),
+// 
+//         bezelDownDisabled = PatternColor(
+//                 [
+//                     [@"stepper-down-bezel-left-disabled.png", 3.0, 12.0],
+//                     [@"stepper-down-bezel-center-disabled.png", 9.0, 12.0],
+//                     [@"stepper-down-bezel-right-disabled.png", 3.0, 12.0],
+//                 ]),
+//         
+//         bezelUpHighlighted = PatternColor(
+//                 [
+//                     [@"stepper-up-bezel-left-highlight.png", 3.0, 12.0],
+//                     [@"stepper-up-bezel-center-highlight.png", 9.0, 12.0],
+//                     [@"stepper-up-bezel-right-highlight.png", 3.0, 12.0],
+//                 ]),
+// 
+//         bezelDownHighlighted = PatternColor(
+//                 [
+//                     [@"stepper-down-bezel-left-highlight.png", 3.0, 12.0],
+//                     [@"stepper-down-bezel-center-highlight.png", 9.0, 12.0],
+//                     [@"stepper-down-bezel-right-highlight.png", 3.0, 12.0],
+//                 ]);
+//     
+//     var themedStepperValues =
+//         [
+//             [@"bezel-color-up-button", bezelUp, CPThemeStateBordered],
+//             [@"bezel-color-down-button", bezelDown, CPThemeStateBordered],
+//             [@"bezel-color-up-button", bezelUpDisabled, CPThemeStateBordered | CPThemeStateDisabled],
+//             [@"bezel-color-down-button", bezelDownDisabled, CPThemeStateBordered | CPThemeStateDisabled],
+//             [@"bezel-color-up-button", bezelUpHighlighted, CPThemeStateBordered | CPThemeStateHighlighted],
+//             [@"bezel-color-down-button", bezelDownHighlighted, CPThemeStateBordered | CPThemeStateHighlighted]
+//         ];
+// 
+//     [self registerThemeValues:themedStepperValues forView:scrollView];
+// 
+//     return stepper;
+// }
+
+@end
