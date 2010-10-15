@@ -721,7 +721,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 - (IBAction)openXMLEditor:(id)aSender
 {
     [windowXMLEditor center];
-    [windowXMLEditor makeKeyAndOrderFront:sender];
+    [windowXMLEditor makeKeyAndOrderFront:aSender];
 }
 
 /*! define XML
