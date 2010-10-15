@@ -155,17 +155,21 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         [[_tagsRegistry objectForKey:jid] addObject:name];
     }
+
+    if ([_filterField stringValue] != @"")
+        [self filterFieldDidChange:_filterField];
 }
 
 
 #pragma mark -
 #pragma mark Actions
+
 /*! Action that will be plugged to the CPSearchField in order to catch
     when user changes the value
 */
-- (IBAction)filterFieldDidChange:(id)sender
+- (IBAction)filterFieldDidChange:(id)aSender
 {
-    _filter = [sender stringValue];
+    _filter = [aSender stringValue];
     [self updateOutlineView:nil];
 }
 
