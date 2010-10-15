@@ -44,7 +44,6 @@
 @import "TNUserDefaults.j";
 @import "TNTableViewDataSource.j";
 @import "TNSearchField.j";
-@import "TNStepper.j";
 @import "TNSwitch.j";
 @import "TNWindowPreferences.j";
 @import "TNAnimation.j";
