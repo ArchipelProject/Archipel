@@ -1044,7 +1044,7 @@ TNArchipelTransportBarReboot    = 4;
         [self getVirtualMachineInfo];
     }
 
-    retrun NO;
+    return NO;
 }
 
 /*! send vCPUs command
