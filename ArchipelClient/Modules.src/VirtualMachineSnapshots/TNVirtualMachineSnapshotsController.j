@@ -303,7 +303,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [windowNewSnapshot center];
     [windowNewSnapshot makeFirstResponder:fieldNewSnapshotDescription];
     [fieldNewSnapshotName setStringValue:[CPString UUID]];
-    [windowNewSnapshot makeKeyAndOrderFront:sender];
+    [windowNewSnapshot makeKeyAndOrderFront:aSender];
 }
 
 /*! take a snaphot
