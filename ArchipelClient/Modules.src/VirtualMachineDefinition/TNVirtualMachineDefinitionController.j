@@ -178,6 +178,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     var bundle      = [CPBundle bundleForClass:[self class]],
         defaults    = [TNUserDefaults standardUserDefaults];
 
+    // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
+    [fieldStringXMLDesc setFrameSize:CPSizeMake(591, 378)];
+
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultNumberCPU"], @"TNDescDefaultNumberCPU",

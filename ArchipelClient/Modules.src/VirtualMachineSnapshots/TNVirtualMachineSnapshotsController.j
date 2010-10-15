@@ -75,6 +75,9 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [fieldJID setSelectable:YES];
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
+    // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
+    [fieldNewSnapshotDescription setFrameSize:CPSizeMake(366, 120)];
+
     // VM table view
     _datasourceSnapshots    = [[TNSnapshotsDatasource alloc] init];
     _outlineViewSnapshots   = [[CPOutlineView alloc] initWithFrame:[scrollViewSnapshots bounds]];
