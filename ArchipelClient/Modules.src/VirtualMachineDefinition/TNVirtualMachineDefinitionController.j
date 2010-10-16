@@ -111,7 +111,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonInputType;
     @outlet CPPopUpButton           buttonMachines;
-    @outlet CPPopUpButton           buttonNumberCPUs;
+    @outlet CPStepper               stepperNumberCPUs;
+    @outlet CPTextField             fieldNumberCPUs;
     @outlet CPPopUpButton           buttonOSType;
     @outlet CPPopUpButton           buttonPreferencesBoot;
     @outlet CPPopUpButton           buttonPreferencesClockOffset;
@@ -373,7 +374,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     // others..
     [buttonBoot removeAllItems];
-    [buttonNumberCPUs removeAllItems];
     [buttonArchitecture removeAllItems];
     [buttonHypervisor removeAllItems];
     [buttonVNCKeymap removeAllItems];
@@ -396,7 +396,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
     [buttonPreferencesBoot addItemsWithTitles:TNXMLDescBoots];
 
-    [buttonNumberCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
     [buttonPreferencesNumberOfCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
 
     [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
@@ -452,6 +451,15 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [switchPAE setAction:@selector(defineXML:)];
     [switchHugePages setTarget:self];
     [switchHugePages setAction:@selector(defineXML:)];
+
+
+    //CPUStepper
+    [stepperNumberCPUs setMaxValue:4];
+    [stepperNumberCPUs setMinValue:1];
+    [stepperNumberCPUs setValue:1];
+    [stepperNumberCPUs setTarget:self];
+    [stepperNumberCPUs setAction:@selector(performCPUStepperClick:)];
+    [fieldNumberCPUs setStringValue:@"1 vCPU"];
 }
 
 
@@ -661,7 +669,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     _supportedCapabilities = [CPDictionary dictionary];
 
-    [buttonNumberCPUs selectItemWithTitle:cpu];
+    [stepperNumberCPUs setValue:cpu];
+    [fieldNumberCPUs setStringValue:(cpu == 1) ? @"1 vCPU" : cpu + @" vCPUs"];
     [fieldMemory setStringValue:@""];
     [fieldVNCPassword setStringValue:@""];
     [buttonVNCKeymap selectItemWithTitle:vnck];
@@ -855,6 +864,15 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
      [self defineXML];
 }
 
+/*! called when CPU stepper is clicked. it will update the text field value and defineXML
+*/
+- (IBAction)performCPUStepperClick:(id)aSender
+{
+    var cpu = [stepperNumberCPUs value];
+
+    [fieldNumberCPUs setStringValue:(cpu == 1) ? @"1 vCPU" : cpu + @" vCPUs"];
+    [self defineXML];
+}
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -1015,7 +1033,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
 
         // CPUs
-        [buttonNumberCPUs selectItemWithTitle:vcpu];
+        [stepperNumberCPUs setValue:[vcpu intValue]];
+        [fieldNumberCPUs setStringValue:(vcpu == 1) ? @"1 vCPU" : vcpu + @" vCPUs"];
 
         // button architecture
         [buttonArchitecture removeAllItems];
@@ -1340,7 +1359,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         arch            = [buttonArchitecture title],
         machine         = [buttonMachines title],
         hypervisor      = [buttonHypervisor title],
-        nCPUs           = [buttonNumberCPUs title],
+        nCPUs           = [stepperNumberCPUs value],
         boot            = [buttonBoot title],
         nics            = [_nicsDatasource content],
         drives          = [_drivesDatasource content],
@@ -1390,7 +1409,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     // cpu
     [stanza addChildWithName:@"vcpu"];
-    [stanza addTextNode:nCPUs];
+    [stanza addTextNode:@"" + nCPUs + @""];
     [stanza up];
 
     //////////////////////////////////////////
