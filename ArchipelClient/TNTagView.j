@@ -71,7 +71,7 @@
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecoverPubSub:) name:TNStrophePubSubNodeRecoveredNotification object:_pubsub];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecoverPubSub:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsub];
 }
 
 
@@ -169,7 +169,7 @@
                                       pubSubServer:@"pubsub." + [_connection JID].split("@")[1].split("/")[0]];
     [_pubsub subscribe];
     [_pubsub setDelegate:self];
-    [_pubsub recover];
+    [_pubsub retrieveItems];
 }
 
 
@@ -221,7 +221,7 @@
 */
 - (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
-    [_pubsub recover];
+    [_pubsub retrieveItems];
 }
 
 @end

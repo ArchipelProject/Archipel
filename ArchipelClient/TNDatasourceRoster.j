@@ -130,11 +130,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
                                         connection:[roster connection]
                                       pubSubServer:@"pubsub." + [[roster connection] JID].split("@")[1].split("/")[0]];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRecoveredNotification object:_pubsub];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsub];
 
     [_pubsub subscribe];
     [_pubsub setDelegate:self];
-    [_pubsub recover];
+    [_pubsub retrieveItems];
 }
 
 /*! will update the content of _tagsRegistry that will be use to filter matching tags
@@ -395,7 +395,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
-    [_pubsub recover];
+    [_pubsub retrieveItems];
 }
 
 @end
