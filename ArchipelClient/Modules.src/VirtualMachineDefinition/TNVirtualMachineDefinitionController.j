@@ -111,8 +111,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonInputType;
     @outlet CPPopUpButton           buttonMachines;
-    @outlet CPStepper               stepperNumberCPUs;
-    @outlet CPTextField             fieldNumberCPUs;
+    @outlet CPTextFieldStepper      stepperNumberCPUs;
     @outlet CPPopUpButton           buttonOSType;
     @outlet CPPopUpButton           buttonPreferencesBoot;
     @outlet CPPopUpButton           buttonPreferencesClockOffset;
@@ -459,7 +458,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stepperNumberCPUs setValue:1];
     [stepperNumberCPUs setTarget:self];
     [stepperNumberCPUs setAction:@selector(performCPUStepperClick:)];
-    [fieldNumberCPUs setStringValue:@"1 vCPU"];
 }
 
 
@@ -670,7 +668,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     _supportedCapabilities = [CPDictionary dictionary];
 
     [stepperNumberCPUs setValue:cpu];
-    [fieldNumberCPUs setStringValue:(cpu == 1) ? @"1 vCPU" : cpu + @" vCPUs"];
     [fieldMemory setStringValue:@""];
     [fieldVNCPassword setStringValue:@""];
     [buttonVNCKeymap selectItemWithTitle:vnck];
@@ -870,7 +867,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     var cpu = [stepperNumberCPUs value];
 
-    [fieldNumberCPUs setStringValue:(cpu == 1) ? @"1 vCPU" : cpu + @" vCPUs"];
     [self defineXML];
 }
 
@@ -1034,7 +1030,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         // CPUs
         [stepperNumberCPUs setValue:[vcpu intValue]];
-        [fieldNumberCPUs setStringValue:(vcpu == 1) ? @"1 vCPU" : vcpu + @" vCPUs"];
 
         // button architecture
         [buttonArchitecture removeAllItems];

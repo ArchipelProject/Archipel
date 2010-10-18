@@ -83,7 +83,7 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet CPSlider                sliderMemory;
-    @outlet CPStepper               stepperCPU;
+    @outlet CPTextFieldStepper      stepperCPU;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
 
     CPTableView             _tableHypervisors;
