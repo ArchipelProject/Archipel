@@ -26,9 +26,11 @@ var AUTHOR		= "Antoine Mercadal",
 
 
 
-
+require("./common.jake")
+    
 /* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
 var ENV = require("system").env,
+    stream = require("narwhal/term").stream,
     FILE = require("file"),
     JAKE = require("jake"),
     task = require("jake").task,
@@ -37,6 +39,7 @@ var ENV = require("system").env,
     configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
     OS = require("os");
 
+$DOCUMENTATION_BUILD = FILE.join("Build", "Documentation");
 
 app ("Archipel", function(task)
 {
@@ -105,6 +108,47 @@ task ("desktop", ["release"], function()
 task ("run-desktop", ["desktop"], function()
 {
     OS.system([FILE.join("Build", "Desktop", "Archipel", "Archipel.app", "Contents", "MacOS", "NativeHost"), "-i"]);
+});
+
+task ("docs", ["documentation"])
+
+task ("documentation", function()
+{
+    // try to find a doxygen executable in the PATH;
+    var doxygen = executableExists("doxygen");
+
+    // If the Doxygen application is installed on Mac OS X, use that
+    if (!doxygen && executableExists("mdfind"))
+    {
+        var p = OS.popen(["mdfind", "kMDItemContentType == 'com.apple.application-bundle' && kMDItemCFBundleIdentifier == 'org.doxygen'"]);
+        if (p.wait() === 0)
+        {
+            var doxygenApps = p.stdout.read().split("\n");
+            if (doxygenApps[0])
+                doxygen = FILE.join(doxygenApps[0], "Contents/Resources/doxygen");
+        }
+    }
+
+    if (doxygen && FILE.exists(doxygen))
+    {
+        stream.print("\0green(Using " + doxygen + " for doxygen binary.\0)");
+
+        var documentationDir = FILE.join("Doxygen");
+
+        if (OS.system([FILE.join(documentationDir, "make_headers.sh")]))
+            OS.exit(1); //rake abort if ($? != 0)
+
+        if (!OS.system([doxygen, FILE.join(documentationDir, "Archipel.doxygen")]))
+        {
+            rm_rf($DOCUMENTATION_BUILD);
+            // mv("debug.txt", FILE.join("Documentation", "debug.txt"));
+            mv("Documentation", $DOCUMENTATION_BUILD);
+        }
+
+        OS.system(["ruby", FILE.join(documentationDir, "cleanup_headers")]);
+    }
+    else
+        stream.print("\0yellow(Doxygen not installed, skipping documentation generation.\0)");
 });
 
 function printResults(configuration)

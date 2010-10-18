@@ -25,7 +25,7 @@ DOXYFILE_ENCODING      = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME           = "Archipel Client"
+PROJECT_NAME           = "Archipel API"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
@@ -302,15 +302,6 @@ SYMBOL_CACHE_SIZE      = 0
 #---------------------------------------------------------------------------
 # Build related configuration options
 #---------------------------------------------------------------------------
-
-# The HTML_STYLESHEET tag can be used to specify a user-defined cascading
-# style sheet that is used by each HTML page. It can be used to
-# fine-tune the look of the HTML output. If the tag is left blank doxygen
-# will generate a default style sheet. Note that doxygen will try to copy
-# the style sheet file to the HTML output directory, so don't put your own
-# stylesheet in the HTML output directory as well, or it will be erased!
-
-HTML_STYLESHEET        = doxygen.css
 
 # If the EXTRACT_ALL tag is set to YES doxygen will assume all entities in 
 # documentation are documented, even if no documentation was available. 
@@ -599,7 +590,7 @@ WARN_LOGFILE           = debug.txt
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = .
+INPUT                  = /tmp/tempDoc.doc
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
@@ -659,13 +650,13 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a 
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = AppKit.doc/Themes
+EXCLUDE                = /tmp/tempDoc.doc/Test
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
 # from the input.
 
-EXCLUDE_SYMLINKS       = YES
+EXCLUDE_SYMLINKS       = NO
 
 # If the value of the INPUT tag contains directories, you can use the 
 # EXCLUDE_PATTERNS tag to specify one or more wildcard patterns to exclude 
@@ -673,7 +664,7 @@ EXCLUDE_SYMLINKS       = YES
 # against the file with absolute path, so to exclude all test directories 
 # for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       = _* */Build/* */Frameworks/* */build/* */Documentation/*
+EXCLUDE_PATTERNS       = _*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names 
 # (namespaces, classes, functions, etc.) that should be excluded from the 
