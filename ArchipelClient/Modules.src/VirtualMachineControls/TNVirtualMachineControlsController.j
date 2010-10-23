@@ -83,7 +83,7 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet CPSlider                sliderMemory;
-    @outlet CPTextFieldStepper      stepperCPU;
+    @outlet TNTextFieldStepper      stepperCPU;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
 
     CPTableView             _tableHypervisors;
@@ -130,6 +130,8 @@ TNArchipelTransportBarReboot    = 4;
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
+    [stepperCPU setValueWraps:NO];
+    [stepperCPU setAutorepeat:NO];
 
 
 
@@ -715,7 +717,7 @@ TNArchipelTransportBarReboot    = 4;
         [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
 
-        [stepperCPU setValue:[nvCPUs intValue]];
+        [stepperCPU setDoubleValue:[nvCPUs intValue]];
 
         if ([_entity XMPPShow] == TNStropheContactStatusOnline)
         {
@@ -1052,7 +1054,7 @@ TNArchipelTransportBarReboot    = 4;
 - (void)setVCPUs
 {
     var stanza      = [TNStropheStanza iqWithType:@"set"],
-        cpus        = [stepperCPU value];
+        cpus        = [stepperCPU doubleValue];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{

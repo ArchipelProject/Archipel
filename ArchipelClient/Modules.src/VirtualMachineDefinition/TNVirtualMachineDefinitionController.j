@@ -111,7 +111,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonInputType;
     @outlet CPPopUpButton           buttonMachines;
-    @outlet CPTextFieldStepper      stepperNumberCPUs;
+    @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet CPPopUpButton           buttonOSType;
     @outlet CPPopUpButton           buttonPreferencesBoot;
     @outlet CPPopUpButton           buttonPreferencesClockOffset;
@@ -455,7 +455,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     //CPUStepper
     [stepperNumberCPUs setMaxValue:4];
     [stepperNumberCPUs setMinValue:1];
-    [stepperNumberCPUs setValue:1];
+    [stepperNumberCPUs setDoubleValue:1];
+    [stepperNumberCPUs setValueWraps:NO];
+    [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
     [stepperNumberCPUs setAction:@selector(performCPUStepperClick:)];
 }
@@ -667,7 +669,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     _supportedCapabilities = [CPDictionary dictionary];
 
-    [stepperNumberCPUs setValue:cpu];
+    [stepperNumberCPUs setDoubleValue:cpu];
     [fieldMemory setStringValue:@""];
     [fieldVNCPassword setStringValue:@""];
     [buttonVNCKeymap selectItemWithTitle:vnck];
@@ -865,7 +867,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)performCPUStepperClick:(id)aSender
 {
-    var cpu = [stepperNumberCPUs value];
+    var cpu = [stepperNumberCPUs doubleValue];
 
     [self defineXML];
 }
@@ -1029,7 +1031,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [fieldMemory setStringValue:(parseInt(memory) / 1024)];
 
         // CPUs
-        [stepperNumberCPUs setValue:[vcpu intValue]];
+        [stepperNumberCPUs setDoubleValue:[vcpu intValue]];
 
         // button architecture
         [buttonArchitecture removeAllItems];
@@ -1354,7 +1356,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         arch            = [buttonArchitecture title],
         machine         = [buttonMachines title],
         hypervisor      = [buttonHypervisor title],
-        nCPUs           = [stepperNumberCPUs value],
+        nCPUs           = [stepperNumberCPUs doubleValue],
         boot            = [buttonBoot title],
         nics            = [_nicsDatasource content],
         drives          = [_drivesDatasource content],
