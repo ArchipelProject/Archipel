@@ -342,10 +342,10 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         var vm              = [objects objectAtIndex:i],
             controlStanza   = [TNStropheStanza iqWithType:@"set"];
 
-        [controlStanza addChildName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
-        [controlStanza addChildName:@"archipel" andAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineControl,
-            "action": controlType}];
+        [controlStanza addChildWithName:@"query" andAttributes:{@"xmlns": TNArchipelTypeVirtualMachineControl}];
+        [controlStanza addChildWithName:@"archipel" andAttributes:{
+            @"xmlns": TNArchipelTypeVirtualMachineControl,
+            @"action": controlType}];
 
         [vm sendStanza:controlStanza andRegisterSelector:@selector(_didSendAction:) ofObject:self];
         }
