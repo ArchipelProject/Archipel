@@ -106,11 +106,11 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     @param aConnection : TNStropheConnection general connection
     @param aRoster : TNStropheRoster general roster
 */
-- (void)initializeWithEntity:(id)anEntity connection:(TNStropheConnection)aConnection andRoster:(TNStropheRoster)aRoster
+- (void)initializeWithEntity:(id)anEntity andRoster:(TNStropheRoster)aRoster
 {
     _entity     = anEntity;
     _roster     = aRoster;
-    _connection = aConnection;
+    _connection = [_roster connection];
 }
 
 

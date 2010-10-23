@@ -139,7 +139,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     @param aType a type of entity. Can be virtualmachine, hypervisor, user or group
     @param aRoster TNStropheRoster the roster where the TNStropheContact besides
 */
-- (BOOL)setEntity:(id)anEntity ofType:(CPString)aType andRoster:(TNStropheRoster)aRoster
+- (BOOL)setEntity:(id)anEntity ofType:(CPString)aType
 {
     if (anEntity == _entity)
         return NO;
@@ -149,15 +149,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:_entity];
 
     _numberOfActiveModules = 0;
-    // [self rememberLastSelectedTabIndex];
-
 
     [self _removeAllTabsFromModulesTabView];
+    
     _numberOfReadyModules = 0;
     _allModulesReady = NO;
 
     _entity     = anEntity;
-    _roster     = aRoster;
     _moduleType = aType;
 
     [center removeObserver:self];
@@ -208,7 +206,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     {
         var module = [[_loadedToolbarModules allValues] objectAtIndex:i];
 
-        [module initializeWithEntity:nil connection:aConnection andRoster:aRoster];
+        [module initializeWithEntity:nil andRoster:aRoster];
     }
 
 }
@@ -433,8 +431,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var frame           = [_mainModuleView bounds],
         newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]],
         theEntity       = _entity,
-        theConnection   = [_entity connection],
-        theRoster       = _roster,
         scrollView      = [[CPScrollView alloc] initWithFrame:frame];
 
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -448,7 +444,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [newViewItem setLabel:[aModule label]];
     [newViewItem setView:scrollView];
 
-    [aModule initializeWithEntity:theEntity connection:theConnection andRoster:theRoster];
+    [aModule initializeWithEntity:theEntity andRoster:_roster];
     [aModule willLoad];
 
     [scrollView setDocumentView:[aModule view]];

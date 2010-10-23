@@ -48,6 +48,7 @@
 @import "TNWindowPreferences.j";
 @import "TNAnimation.j";
 @import "TNTagView.j";
+@import "TNTextFieldStepper.j";
 
 /*! @global
     @group TNArchipelEntityType
@@ -1041,6 +1042,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [viewTags setConnection:[aNotification object]];
 
     [propertiesView setRoster:_mainRoster];
+    [_moduleLoader setRoster:_mainRoster];
 
     [windowPreferences setConnection:[aNotification object]];
 
@@ -1258,14 +1260,14 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
         {
             case TNStropheGroup:
                 CPLog.info(@"setting the entity as " + item + " of type group");
-                [_moduleLoader setEntity:item ofType:@"group" andRoster:_mainRoster];
+                [_moduleLoader setEntity:item ofType:@"group"];
                 break;
 
             case TNStropheContact:
                 var vCard       = [item vCard],
                     entityType  = [_moduleLoader analyseVCard:vCard];
                 CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-                [_moduleLoader setEntity:item ofType:entityType andRoster:_mainRoster];
+                [_moduleLoader setEntity:item ofType:entityType];
                 break;
         }
     }
