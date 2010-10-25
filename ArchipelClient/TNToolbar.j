@@ -69,45 +69,45 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     {
         // not implemented in Cappuccino
         //[self setDisplayMode:CPToolbarDisplayModeIconOnly];
-        
+
         var bundle          = [CPBundle bundleForClass:self];
         _toolbarItems       = [CPDictionary dictionary];
         _toolbarItemsOrder  = [CPDictionary dictionary];
-        
+
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
         [self addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"tags.png"] target:aTarget action:@selector(toolbarItemTagsClick:)];
-        
+
         var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
             availableItem = [[CPMenuItem alloc] init],
             awayItem = [[CPMenuItem alloc] init],
             busyItem = [[CPMenuItem alloc] init],
             DNDItem = [[CPMenuItem alloc] init],
             statusItem = [self addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:aTarget action:@selector(toolbarItemPresenceStatusClick:)];
-            
+
         [availableItem setTitle:TNArchipelStatusAvailableLabel];
         [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Available.png"]]];
         [statusSelector addItem:availableItem];
-        
+
         [awayItem setTitle:TNArchipelStatusAwayLabel];
         [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Away.png"]]];
         [statusSelector addItem:awayItem];
-        
+
         [busyItem setTitle:TNArchipelStatusBusyLabel];
         [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
         [statusSelector addItem:busyItem];
-        
+
         [DNDItem setTitle:TNArchipelStatusDNDLabel];
         [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"DND.png"]]];
         [statusSelector addItem:DNDItem];
-        
+
         [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
         [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
-                
+
         [_toolbarItemsOrder setObject:TNToolBarItemStatus forKey:0];
         [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:1];
 
-        [_toolbarItemsOrder setObject:CPToolbarFlexibleSpaceItemIdentifier forKey:500];
+        [_toolbarItemsOrder setObject:CPToolbarFlexibleSpaceItemIdentifier forKey:499];
         [_toolbarItemsOrder setObject:CPToolbarSeparatorItemIdentifier forKey:901];
         [_toolbarItemsOrder setObject:TNToolBarItemTags forKey:902];
         [_toolbarItemsOrder setObject:TNToolBarItemHelp forKey:903];
@@ -156,15 +156,15 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
                 return CPOrderedSame;
         },
         sortedKeys = [[_toolbarItemsOrder allKeys] sortedArrayUsingFunction:sortFunction];
-    
+
     _sortedToolbarItems = [CPArray array];
-    
+
     for (var i = 0; i < [sortedKeys count]; i++)
     {
         var key = [sortedKeys objectAtIndex:i];
         [_sortedToolbarItems addObject:[_toolbarItemsOrder objectForKey:key]];
     }
-    
+
     [super _reloadToolbarItems];
 }
 
@@ -179,17 +179,17 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 - (CPToolbarItem)addItemWithIdentifier:(CPString)anIdentifier label:(CPString)aLabel view:(CPView)aView target:(id)aTarget action:(SEL)anAction
 {
     var newItem = [[CPToolbarItem alloc] initWithItemIdentifier:anIdentifier];
-    
+
     //[newItem setMinSize:CGSizeMake(120.0, 24.0)];
     //[newItem setMaxSize:CGSizeMake(120.0, 24.0)]
-            
+
     [newItem setLabel:aLabel];
     [newItem setView:aView];
     [newItem setTarget:aTarget];
     [newItem setAction:anAction];
 
     [_toolbarItems setObject:newItem forKey:anIdentifier];
-    
+
     return newItem
 }
 
@@ -198,7 +198,7 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
 */
 - (void)setPosition:(CPNumber)aPosition forToolbarItemIdentifier:(CPString)anIndentifier
 {
-    
+
     [_toolbarItemsOrder setObject:anIndentifier forKey:aPosition];
 }
 

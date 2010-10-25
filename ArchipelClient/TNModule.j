@@ -77,6 +77,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     TNStropheConnection     _connection             @accessors(property=connection);
     TNStropheGroup          _group                  @accessors(property=group);
     TNStropheRoster         _roster                 @accessors(property=roster);
+    CPToolbarItem           _toolbarItem            @accessors(property=toolbarItem);
+    CPToolbar               _toolbar                @accessors(property=toolbar);
 
     CPArray                 _registredSelectors;
     CPArray                 _pubsubRegistrar;

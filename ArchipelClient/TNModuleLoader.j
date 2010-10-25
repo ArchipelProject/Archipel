@@ -151,7 +151,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     _numberOfActiveModules = 0;
 
     [self _removeAllTabsFromModulesTabView];
-    
+
     _numberOfReadyModules = 0;
     _allModulesReady = NO;
 
@@ -287,7 +287,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     {
         var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
 
-        if ((itemType == TNArchipelEntityTypeVirtualMachine) || (itemType == TNArchipelEntityTypeHypervisor)
+        if ((itemType == TNArchipelEntityTypeVirtualMachine)
+            || (itemType == TNArchipelEntityTypeHypervisor)
             || (itemType == TNArchipelEntityTypeGroup))
             return itemType;
         else
@@ -515,7 +516,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
 
     [moduleToolbarItem setLabel:moduleLabel];
-    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)]];
+    [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
 
     // if toolbar item only, no cib
     if (toolbarOnly)
@@ -532,10 +533,15 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
 
         [currentModuleController setToolbarItemOnly:NO];
+        [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
 
         [moduleToolbarItem setTarget:self];
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
+
+    [currentModuleController setToolbarItem:moduleToolbarItem];
+    [currentModuleController setToolbar:_mainToolbar];
+    [currentModuleController setLabel:moduleLabel];
 
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
