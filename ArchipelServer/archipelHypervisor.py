@@ -392,6 +392,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
             vm.domain.destroy()
             vm.domain.undefine()
         
+        log.info("launch %s's terminate method" % (str(jid)))
+        vm.terminate();
+        
         log.info("removing the xmpp vm %s from my roster" % (str(jid)))
         self.remove_jid(jid)
         

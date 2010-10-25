@@ -104,6 +104,8 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.create_hook("HOOK_VM_RESUME");
         self.create_hook("HOOK_VM_UNDEFINE");
         self.create_hook("HOOK_VM_DEFINE");
+        self.create_hook("HOOK_VM_INITIALIZE");
+        self.create_hook("HOOK_VM_TERMINATE");
         
         if not os.path.isdir(self.folder): os.mkdir(self.folder)
         log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
@@ -234,14 +236,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
-                
+            self.perform_hooks("HOOK_VM_INITIALIZE")
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
                 log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
-        
     
     
     def connect_domain(self):
@@ -332,7 +333,10 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
             if not event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED and not event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
-                self.libvirt_status = self.info()["state"]
+                try:
+                    self.libvirt_status = self.info()["state"]
+                except:
+                    pass # the VM has been freed.
             self.unlock()
     
     
@@ -624,9 +628,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     def info(self):
-        dominfo     = self.domain.info()
+        dominfo = self.domain.info()
         try:
-            autostart   = self.domain.autostart()
+            autostart = self.domain.autostart()
         except:
             autostart = 0
         
@@ -882,6 +886,11 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         del self.watchers[name]
         
         
+    
+    
+    def terminate(self):
+        """this method is called by hypervisor when VM is freed"""
+        self.perform_hooks("HOOK_VM_TERMINATE")
     
     
     ######################################################################################################

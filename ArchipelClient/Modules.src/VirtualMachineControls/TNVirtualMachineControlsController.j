@@ -267,6 +267,8 @@ TNArchipelTransportBarReboot    = 4;
 
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
@@ -373,9 +375,10 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (void)_didUpdatePresence:(CPNotification)aNotification
 {
-    // [imageState setImage:[_entity statusIcon]];
-    //
-    // [self checkIfRunning];
+    [imageState setImage:[_entity statusIcon]];
+
+    [self checkIfRunning];
+    [self getOOMKiller];
 }
 
 /*! called when an Archipel push is received

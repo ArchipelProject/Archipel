@@ -290,8 +290,11 @@ class TNArchipelBasicXMPPClient(object):
     def perform_hooks(self, hookname, args=None):
         log.info("HOOK: going to run methods for hook %s" % hookname)
         for m in self.hooks[hookname]:
-            log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
-            m(self, args)
+            try:
+                log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
+                m(self, args)
+            except Exception as ex:
+                log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
     
     ######################################################################################################
     ### Server registration
