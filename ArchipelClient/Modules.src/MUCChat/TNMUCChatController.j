@@ -20,13 +20,13 @@
 @import <AppKit/AppKit.j>
 
 
-/*! @defgroup  sampletoolbarmodule Module SampleToolbarModule
-    @desc Development starting point to create a Toolbar module
+/*! @defgroup  mucchat Module Conference
+    @desc This module handles MUC for all Archipel users
 */
 
 
 /*! @ingroup mucchat
-    Sample toolbar module implementation
+    Main module controller
 
     Please respect the pragma marks as musch as possible.
 */
@@ -50,6 +50,8 @@
 #pragma mark -
 #pragma mark Initialization
 
+/*! call at cib awaking
+*/
 - (void)awakeFromCib
 {
     [scrollViewMessageContainer setBorderedWithHexColor:@"#C0C7D2"];
@@ -181,6 +183,10 @@
 #pragma mark -
 #pragma mark Notification handlers
 
+/*! triggered when main stropheconnection is connected
+    it will connect to the room
+    @param aNotification the notification that triggers the message
+*/
 - (void)stropheConnected:(CPNotification)aNotification
 {
     var center = [CPNotificationCenter defaultCenter],
@@ -198,6 +204,10 @@
     [_session join];
 }
 
+/*! triggered when main stropheconnection is disconnecting
+    it will connect to the room
+    @param aNotification the notification that triggers the message
+*/
 - (void)stropheDiconnecting:(CPNotification)aNotification
 {
     [_session leave];
@@ -207,6 +217,9 @@
 #pragma mark -
 #pragma mark Utilities
 
+/*! reload the content of the MessageBoard
+    @param aNotification the notification that triggers the message
+*/
 - (void)reload:(CPNotification)aNotification
 {
     [_peopleDatasource removeAllObjects];
@@ -216,6 +229,8 @@
     [_tableViewPeople reloadData];
 }
 
+/*! scrolls the MessageBoard to the bottom
+*/
 - (void)scrollToBottom
 {
     if (!_messageBoard)
@@ -230,25 +245,27 @@
 #pragma mark -
 #pragma mark Actions
 
-- (IBAction)sendMessageToMuc:(id)sender
+/*! send a message to the MUC
+    @param aSender the sender of the object
+*/
+- (IBAction)sendMessageToMuc:(id)aSender
 {
-    [_session sayToRoom:[textFieldMessage stringValue]];
-    [textFieldMessage setStringValue:@""];
+    if ([textFieldMessage stringValue] != @"")
+    {
+        [_session sayToRoom:[textFieldMessage stringValue]];
+        [textFieldMessage setStringValue:@""];
+    }
 }
 
+/*! will add the user from table in the roster if not already present. but ask confirmation before
+    @param aSender the sender of the object
+*/
 - (IBAction)didDoubleClick:(id)aSender
 {
     var index   = [[_tableViewPeople selectedRowIndexes] firstIndex],
         member  = [_peopleDatasource objectAtIndex:index];
 
-    if ([_roster containsJID:[member JID]])
-    {
-        var row     = [[_roster mainOutlineView] rowForItem:member],
-            indexes = [CPIndexSet indexSetWithIndex:row];
-
-        [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
-    }
-    else
+    if (![_roster containsJID:[member JID]])
     {
         var alert = [TNAlert alertWithTitle:@"Adding contact"
                                     message:@"Would you like to add " + [member nickname] + @" to your roster"
@@ -259,7 +276,10 @@
     }
 }
 
-- (IBAction)performAddToRoster:(id)someUserInfo
+/*! will add the user from table in the roster if not already present.
+    @param someUserInfo userInfo of the TNAlert
+*/
+- (void)performAddToRoster:(id)someUserInfo
 {
     var member  = someUserInfo;
 
@@ -272,6 +292,10 @@
 #pragma mark -
 #pragma mark Delegates
 
+/*! TNStropheMUCRoom delegate triggered on new message
+    @param aRoom the TNStropheMUCRoom that send the message
+    @param aMessage CPDictionary containing the message information
+*/
 - (void)mucRoom:(TNStropheMUCRoom)aRoom receivedMessage:(CPDictionary)aMessage
 {
     var color = ([aMessage valueForKey:@"from"] == [_connection JID]) ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
