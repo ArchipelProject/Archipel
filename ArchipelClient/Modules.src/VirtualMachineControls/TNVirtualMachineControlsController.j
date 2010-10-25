@@ -23,6 +23,7 @@
 
 TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition";
 TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
+TNArchipelPushNotificationOOM                   = @"archipel:push:virtualmachine:oom";
 
 TNArchipelControlNotification                   = @"TNArchipelControlNotification";
 TNArchipelControlPlay                           = @"TNArchipelControlPlay";
@@ -33,6 +34,7 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 
 TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineOOM                 = @"archipel:vm:oom";
 TNArchipelTypeVirtualMachineControlInfo         = @"info";
 TNArchipelTypeVirtualMachineControlCreate       = @"create";
 TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
@@ -44,6 +46,8 @@ TNArchipelTypeVirtualMachineControlMigrate      = @"migrate";
 TNArchipelTypeVirtualMachineControlAutostart    = @"autostart";
 TNArchipelTypeVirtualMachineControlMemory       = @"memory";
 TNArchipelTypeVirtualMachineControlVCPUs        = @"setvcpus";
+TNArchipelTypeVirtualMachineOOMSetAdjust        = @"setadjust";
+TNArchipelTypeVirtualMachineOOMGetAdjust        = @"getadjust";
 
 VIR_DOMAIN_NOSTATE  = 0;
 VIR_DOMAIN_RUNNING  = 1;
@@ -77,6 +81,8 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldOOMAdjust;
+    @outlet CPTextField             fieldOOMScore;
     @outlet CPView                  maskingView;
     @outlet CPScrollView            scrollViewTableHypervisors;
     @outlet CPSearchField           filterHypervisors;
@@ -85,6 +91,8 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPSlider                sliderMemory;
     @outlet TNTextFieldStepper      stepperCPU;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
+    @outlet TNSwitch                switchAutoStart;
+    @outlet TNSwitch                switchPreventOOMKiller;
 
     CPTableView             _tableHypervisors;
     TNTableViewDataSource   _datasourceHypervisors;
@@ -105,7 +113,6 @@ TNArchipelTransportBarReboot    = 4;
     CPImage     _imageRebootDisabled;
     CPImage     _imagePlaySelected;
     CPImage     _imageStopSelected;
-    @outlet     TNSwitch    switchAutoStart;
 }
 
 #pragma mark -
@@ -240,6 +247,10 @@ TNArchipelTransportBarReboot    = 4;
 
     [switchAutoStart setTarget:self];
     [switchAutoStart setAction:@selector(setAutostart:)];
+
+    [switchPreventOOMKiller setTarget:self];
+    [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
+
 }
 
 
@@ -260,6 +271,7 @@ TNArchipelTransportBarReboot    = 4;
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinition];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationOOM];
 
     [self disableAllButtons];
 
@@ -420,6 +432,8 @@ TNArchipelTransportBarReboot    = 4;
     var XMPPShow = [_entity XMPPShow];
 
     [self getVirtualMachineInfo];
+    [self getOOMKiller];
+
 
     if ((XMPPShow == TNStropheContactStatusDND))
     {
@@ -510,6 +524,8 @@ TNArchipelTransportBarReboot    = 4;
 
     var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
     [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
+
+    [switchPreventOOMKiller setEnabled:YES];
 }
 
 /*! enable buttons necessary when virtual machine is paused
@@ -530,6 +546,8 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imageDestroy forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
+
+    [switchPreventOOMKiller setEnabled:YES];
 }
 
 /*! enable buttons necessary when virtual machine is shutdowned
@@ -550,6 +568,8 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
+
+    [switchPreventOOMKiller setEnabled:NO];
 }
 
 /*! disable all buttons
@@ -573,6 +593,8 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imageDestroyDisabled forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
+
+    [switchPreventOOMKiller setEnabled:NO];
 }
 
 
@@ -652,6 +674,14 @@ TNArchipelTransportBarReboot    = 4;
 - (IBAction)setAutostart:(id)aSender
 {
     [self setAutostart];
+}
+
+/*! send disable or enable the OOM killer for this virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)setPreventOOMKiller:(id)aSender
+{
+    [self setPreventOOMKiller];
 }
 
 /*! send set memory command
@@ -1021,6 +1051,85 @@ TNArchipelTransportBarReboot    = 4;
     return NO;
 }
 
+
+/*! get OOM killer adjust value
+*/
+- (void)getOOMKiller
+{
+    var stanza      = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineOOM}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineOOMGetAdjust}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didGetOOMKiller:)];
+}
+
+/*! compute the oom prevention result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didGetOOMKiller:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var adjustValue = [[[aStanza firstChildWithName:@"oom"] valueForAttribute:@"adjust"] intValue],
+            scoreValue  = [[[aStanza firstChildWithName:@"oom"] valueForAttribute:@"score"] intValue];
+
+        if (adjustValue == -17)
+            [switchPreventOOMKiller setOn:YES animated:YES sendAction:NO];
+        else
+            [switchPreventOOMKiller setOn:NO animated:YES sendAction:NO];
+
+        [fieldOOMScore setStringValue:scoreValue];
+        [fieldOOMAdjust setStringValue:(adjustValue == -17) ? @"Prevented" : adjustValue];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+/*! send prevent OOM killer command
+*/
+- (void)setPreventOOMKiller
+{
+    var stanza      = [TNStropheStanza iqWithType:@"set"],
+        prevent     = [switchPreventOOMKiller isOn] ? "-17" : "0";
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineOOM}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineOOMSetAdjust,
+        "adjust": prevent}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didSetPreventOOMKiller:)];
+}
+
+/*! compute the oom prevention result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didSetPreventOOMKiller:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        if ([switchPreventOOMKiller isOn])
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"OOM" message:@"OOM Killer cannot kill this virtual machine"];
+        else
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"OOM Killer can kill this virtual machine"];
+
+        [self getOOMKiller];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+
+
 /*! send memory command
 */
 - (void)setMemory
@@ -1044,6 +1153,7 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
+        [self getOOMKiller];
     }
 
     return NO;
@@ -1072,6 +1182,7 @@ TNArchipelTransportBarReboot    = 4;
     {
         [self handleIqErrorFromStanza:aStanza];
         [self getVirtualMachineInfo];
+        [self getOOMKiller];
     }
 
     return NO;
