@@ -271,11 +271,16 @@
         saveMax         = [defaults integerForKey:@"TNUserChatMaxMessageStore"],
         location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
         lenght          = (saveMax <= max) ? saveMax : max,
-        messagesToSave  = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
+        messagesToSave;
 
-    CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
+    if ((location > 0) && (lenght < [_messages count]))
+    {
+        messagesToSave = [_messages subarrayWithRange:CPMakeRange(location, lenght)];
 
-    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+        CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
+
+        [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+    }
 }
 
 /*! restore the chat
