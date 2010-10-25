@@ -155,6 +155,12 @@
     }
 }
 
+- (void)removeObject:(id)anObject
+{
+    [_content removeObject:anObject];
+    [_filteredContent removeObject:anObject];
+}
+
 - (void)removeAllObjects
 {
     [_content removeAllObjects];
