@@ -321,7 +321,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (IBAction)openDirectURI:(id)aSender
 {
     // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
-    [self openVNCInNewWindow:sender];
+    [self openVNCInNewWindow:aSender];
 }
 
 /*! set the zoom factor
@@ -371,7 +371,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 - (IBAction)sendCtrlAltDel:(id)aSender
 {
     CPLog.info("sending ctrl+alt+del to VNCView");
-    [_vncView sendCtrlAltDel:sender];
+    [_vncView sendCtrlAltDel:aSender];
 
     // [_vncView sendTextToPasteboard:@"HELLO MOTO"];
 }
