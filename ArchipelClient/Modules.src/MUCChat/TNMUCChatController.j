@@ -55,7 +55,6 @@
 - (void)awakeFromCib
 {
     [scrollViewMessageContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [scrollViewPeople setBorderedWithHexColor:@"#C0C7D2"];
 
     _messageBoard = [[TNMessageBoard alloc] initWithFrame:[scrollViewMessageContainer bounds]];
     [scrollViewMessageContainer setDocumentView:_messageBoard];
@@ -108,6 +107,7 @@
     _numberOfNotices = 0;
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheConnected:) name:TNStropheConnectionStatusConnected object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheWillDisconnect:) name:TNStropheConnectionStatusWillDisconnect object:nil];
 
     var defaults = [TNUserDefaults standardUserDefaults];
 
@@ -208,7 +208,7 @@
     it will connect to the room
     @param aNotification the notification that triggers the message
 */
-- (void)stropheDiconnecting:(CPNotification)aNotification
+- (void)stropheWillDisconnect:(CPNotification)aNotification
 {
     [_session leave];
 }
@@ -302,7 +302,7 @@
         isNotice = ([aMessage valueForKey:"body"].indexOf([_connection JID].split("@")[0]) != -1)
 
     if (isNotice)
-        color = [CPColor colorWithHexString:@"ECBF7D"];
+        color = [CPColor colorWithHexString:@"D1E28B"];
 
     [_messageBoard addMessage:[aMessage valueForKey:"body"]
                          from:[[aMessage valueForKey:"from"] nickname]

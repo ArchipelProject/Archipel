@@ -43,13 +43,13 @@
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
-        <string>Chat Room</string>
+        <string>Conference</string>
         
         <!--
             This value will be displayed when module is activate as the toolbat item title
         -->
         <key>AlternativePluginDisplayName</key>
-        <string>Chat Room</string>
+        <string>Conference</string>
         
         <!--
             The type of the module. It can be
