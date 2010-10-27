@@ -57,6 +57,8 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     CPArray         _sortedToolbarItems;
     CPDictionary    _toolbarItems;
     CPDictionary    _toolbarItemsOrder;
+    CPImageView     _imageViewSelection;
+    BOOL            _iconSelected;
 }
 
 /*! initialize the class with a target
@@ -71,8 +73,19 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
         //[self setDisplayMode:CPToolbarDisplayModeIconOnly];
 
         var bundle          = [CPBundle bundleForClass:self];
+
         _toolbarItems       = [CPDictionary dictionary];
         _toolbarItemsOrder  = [CPDictionary dictionary];
+        _imageViewSelection = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 60.0, 60.0)];
+        _iconSelected       = NO
+
+        var selectedBgImage     = [[CPThreePartImage alloc] initWithImageSlices:[
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-left.png"] size:CPSizeMake(2.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-center.png"] size:CPSizeMake(1.0, 60.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNToolbar/toolbar-item-selected-right.png"] size:CPSizeMake(2.0, 60.0)]
+            ] isVertical:NO];
+
+        [_imageViewSelection setBackgroundColor:[CPColor colorWithPatternImage:selectedBgImage]];
 
         [self addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:aTarget action:@selector(toolbarItemLogoutClick:)];
         [self addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:aTarget action:@selector(toolbarItemHelpClick:)];
@@ -166,6 +179,9 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     }
 
     [super _reloadToolbarItems];
+
+    if (_iconSelected)
+        [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
 }
 
 
@@ -223,6 +239,33 @@ TNToolBarItemAvatar             = @"TNToolBarItemAvatar";
     var toolbarItem = [[CPToolbarItem alloc] initWithItemIdentifier:anItemIdentifier];
 
     return ([_toolbarItems objectForKey:anItemIdentifier]) ? [_toolbarItems objectForKey:anItemIdentifier] : toolbarItem;
+}
+
+- (void)selectToolbarItem:(CPToolbarItem)aToolbarItem
+{
+    var toolbarItemView;
+
+    for (var i = 0; i < [[_toolbarView subviews] count]; i++)
+    {
+        toolbarItemView = [[_toolbarView subviews] objectAtIndex:i];
+
+        if ([toolbarItemView._toolbarItem itemIdentifier] === [aToolbarItem itemIdentifier])
+            break;
+    }
+    var frame = [toolbarItemView convertRect:[toolbarItemView bounds] toView:_toolbarView],
+        labelFrame = [[aToolbarItem label] sizeWithFont:[CPFont boldSystemFontOfSize:12]];
+    _iconSelected = YES;
+
+    [_imageViewSelection setFrameSize:CGSizeMake(MAX(labelFrame.width + 4, 50.0), 60.0)];
+    [_imageViewSelection setFrameOrigin:CGPointMake(CGRectGetMinX(frame) + (CGRectGetWidth(frame) - CGRectGetWidth([_imageViewSelection frame])) / 2.0, 0.0)];
+
+    [_toolbarView addSubview:_imageViewSelection positioned:CPWindowBelow relativeTo:nil];
+}
+
+- (void)deselectToolbarItem
+{
+    _iconSelected = NO;
+    [_imageViewSelection removeFromSuperview];
 }
 
 

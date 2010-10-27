@@ -767,6 +767,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [[_currentToolbarModule view] removeFromSuperview];
         _currentToolbarModule   = nil;
         _currentToolbarItem     = nil;
+
+        [_mainToolbar deselectToolbarItem];
     }
 
     if (module != oldModule)
@@ -784,6 +786,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         _currentToolbarModule   = module;
         _currentToolbarItem     = sender;
+
+        [_mainToolbar selectToolbarItem:sender];
     }
 }
 
