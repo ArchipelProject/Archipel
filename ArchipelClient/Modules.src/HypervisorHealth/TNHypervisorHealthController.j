@@ -452,50 +452,57 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 {
     if ([aStanza type] == @"result")
     {
-        var memNode     = [aStanza firstChildWithName:@"memory"],
-            freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-            swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-            memUsed     = [[memNode valueForAttribute:@"used"] intValue],
-            diskNode    = [aStanza firstChildWithName:@"disk"],
-            diskPerc    = [[diskNode valueForAttribute:@"used-percentage"] intValue],
-            loadNode    = [aStanza firstChildWithName:@"load"],
-            loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
-            loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
-            loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue],
-            uptimeNode  = [aStanza firstChildWithName:@"uptime"],
-            cpuNode     = [aStanza firstChildWithName:@"cpu"],
-            cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-            infoNode    = [aStanza firstChildWithName:@"uname"];
+        try
+        {
+            var memNode     = [aStanza firstChildWithName:@"memory"],
+                freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
+                swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
+                memUsed     = [[memNode valueForAttribute:@"used"] intValue],
+                diskNode    = [aStanza firstChildWithName:@"disk"],
+                diskPerc    = [[diskNode valueForAttribute:@"used-percentage"] intValue],
+                loadNode    = [aStanza firstChildWithName:@"load"],
+                loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
+                loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
+                loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue],
+                uptimeNode  = [aStanza firstChildWithName:@"uptime"],
+                cpuNode     = [aStanza firstChildWithName:@"cpu"],
+                cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
+                infoNode    = [aStanza firstChildWithName:@"uname"];
 
-        [healthMemUsage setStringValue:freeMem + " Mo"];
-        [healthMemSwapped setStringValue:swapped + " Mo"];
+            [healthMemUsage setStringValue:freeMem + " Mo"];
+            [healthMemSwapped setStringValue:swapped + " Mo"];
 
-        [healthDiskUsage setStringValue:diskPerc];
+            [healthDiskUsage setStringValue:diskPerc];
 
-        [healthLoad setStringValue:loadFive];
+            [healthLoad setStringValue:loadFive];
 
-        [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
+            [healthUptime setStringValue:[uptimeNode valueForAttribute:@"up"]];
 
-        [healthCPUUsage setStringValue:cpuFree + @"%"];
+            [healthCPUUsage setStringValue:cpuFree + @"%"];
 
-        [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
+            [healthInfo setStringValue:[infoNode valueForAttribute:@"os"] + " " + [infoNode valueForAttribute:@"kname"] + " " + [infoNode valueForAttribute:@"machine"]];
 
-        [_cpuDatasource pushData:cpuFree inSet:0];
-        [_memoryDatasource pushData:memUsed inSet:0];
-        [_loadDatasource pushData:loadOne inSet:0];
-        [_loadDatasource pushData:loadFive inSet:1];
-        [_loadDatasource pushData:loadFifteen inSet:2];
+            [_cpuDatasource pushData:cpuFree inSet:0];
+            [_memoryDatasource pushData:memUsed inSet:0];
+            [_loadDatasource pushData:loadOne inSet:0];
+            [_loadDatasource pushData:loadFive inSet:1];
+            [_loadDatasource pushData:loadFifteen inSet:2];
 
-        [_disksDatasource removeAllObjects];
-        [_disksDatasource pushData:diskPerc];
-        [_disksDatasource pushData:(100 - diskPerc)];
+            [_disksDatasource removeAllObjects];
+            [_disksDatasource pushData:diskPerc];
+            [_disksDatasource pushData:(100 - diskPerc)];
 
-        /* reload the charts view */
-        [_chartViewMemory reloadData];
-        [_chartViewCPU reloadData];
-        [_chartViewLoad reloadData];
-        [_chartViewDisk reloadData];
-        CPLog.debug("current stats recovered");
+            /* reload the charts view */
+            [_chartViewMemory reloadData];
+            [_chartViewCPU reloadData];
+            [_chartViewLoad reloadData];
+            [_chartViewDisk reloadData];
+            CPLog.debug("current stats recovered");
+        }
+        catch(e)
+        {
+            CPLog.warn("populating the charts has been interupted");
+        }
     }
     else if ([aStanza type] == @"error")
     {
@@ -536,52 +543,60 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 {
     if ([aStanza type] == @"result")
     {
-        var stats = [aStanza childrenWithName:@"stat"];
-
-        stats.reverse();
-
-        for (var i = 0; i < [stats count]; i++)
+        try
         {
-            var currentNode = [stats objectAtIndex:i],
-                memNode     = [currentNode firstChildWithName:@"memory"],
-                freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-                memUsed     = [[memNode valueForAttribute:@"used"] intValue],
-                swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-                cpuNode     = [currentNode firstChildWithName:@"cpu"],
-                cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-                loadNode    = [currentNode firstChildWithName:@"load"],
-                loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
-                loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
-                loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue];
+            var stats = [aStanza childrenWithName:@"stat"];
 
-            [healthMemUsage setStringValue:freeMem + " Mo"];
-            [healthMemSwapped setStringValue:swapped + " Mo"];
+            stats.reverse();
 
-            [healthCPUUsage setStringValue:cpuFree + @"%"];
+            for (var i = 0; i < [stats count]; i++)
+            {
+                var currentNode = [stats objectAtIndex:i],
+                    memNode     = [currentNode firstChildWithName:@"memory"],
+                    freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
+                    memUsed     = [[memNode valueForAttribute:@"used"] intValue],
+                    swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
+                    cpuNode     = [currentNode firstChildWithName:@"cpu"],
+                    cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
+                    loadNode    = [currentNode firstChildWithName:@"load"],
+                    loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
+                    loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
+                    loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue];
 
-            [_cpuDatasource pushData:cpuFree inSet:0];
-            [_memoryDatasource pushData:memUsed inSet:0];
-            [_loadDatasource pushData:loadOne inSet:0];
-            [_loadDatasource pushData:loadFive inSet:1];
-            [_loadDatasource pushData:loadFifteen inSet:2];
+                [healthMemUsage setStringValue:freeMem + " Mo"];
+                [healthMemSwapped setStringValue:swapped + " Mo"];
+
+                [healthCPUUsage setStringValue:cpuFree + @"%"];
+
+                [_cpuDatasource pushData:cpuFree inSet:0];
+                [_memoryDatasource pushData:memUsed inSet:0];
+                [_loadDatasource pushData:loadOne inSet:0];
+                [_loadDatasource pushData:loadFive inSet:1];
+                [_loadDatasource pushData:loadFifteen inSet:2];
+            }
+
+            var maxMem      = Math.round([[memNode valueForAttribute:@"total"] floatValue] / 1024 / 1024),
+                diskNode    = [aStanza firstChildWithName:@"disk"];
+
+            [fieldTotalMemory setStringValue:maxMem + "G"];
+            [fieldHalfMemory setStringValue:Math.round(maxMem / 2) + "G"];
+            [_chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
+
+            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+
+            /* reload the charts view */
+            [_chartViewMemory reloadData];
+            [_chartViewCPU reloadData];
+            [_chartViewLoad reloadData];
+            [_chartViewDisk reloadData];
+
+            CPLog.debug("Stats history recovered");
+        }
+        catch(e)
+        {
+            CPLog.warn("populating the charts has been interupted");
         }
 
-        var maxMem      = Math.round([[memNode valueForAttribute:@"total"] floatValue] / 1024 / 1024),
-            diskNode    = [aStanza firstChildWithName:@"disk"];
-
-        [fieldTotalMemory setStringValue:maxMem + "G"];
-        [fieldHalfMemory setStringValue:Math.round(maxMem / 2) + "G"];
-        [_chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
-
-        [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
-
-        /* reload the charts view */
-        [_chartViewMemory reloadData];
-        [_chartViewCPU reloadData];
-        [_chartViewLoad reloadData];
-        [_chartViewDisk reloadData];
-
-        CPLog.debug("Stats history recovered");
     }
     else if ([aStanza type] == @"error")
     {
