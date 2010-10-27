@@ -62,12 +62,11 @@ app ("Archipel", function(task)
         task.setCompilerFlags("-O");
 });
 
-task ("default", ["Archipel"], function()
+task ("build", ["Archipel"], function()
 {
     printResults(configuration);
 });
 
-task ("build", ["default"]);
 
 task ("debug", function()
 {
