@@ -1039,7 +1039,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if ([buttonArchitecture indexOfItemWithTitle:arch] == -1)
         {
             [buttonArchitecture selectItemAtIndex:0];
-            shouldRefresh = YES;
+            //shouldRefresh = YES;
         }
         else
             [buttonArchitecture selectItemWithTitle:arch];
@@ -1140,7 +1140,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if ([buttonHypervisor indexOfItemWithTitle:hypervisor] == -1)
         {
             [buttonHypervisor selectItemAtIndex:0];
-            shouldRefresh = YES;
+            //shouldRefresh = YES;
         }
         else
             [buttonHypervisor selectItemWithTitle:hypervisor];
@@ -1155,7 +1155,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             if ([buttonMachines indexOfItemWithTitle:machine] == -1)
             {
                 [buttonMachines selectItemAtIndex:0];
-                shouldRefresh = YES;
+                //shouldRefresh = YES;
             }
             else
             {
@@ -1331,7 +1331,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
             [buttonMachines setEnabled:NO];
             [buttonMachines removeAllItems];
-            if ([capabilities containsKey:@"domains"] && [[[capabilities objectForKey:@"domains"] objectForKey:@"machines"] count] > 0)
+            if ([capabilities containsKey:@"domains"] && [[[[capabilities objectForKey:@"domains"]  objectForKey:[buttonHypervisor title]] objectForKey:@"machines"] count] > 0)
             {
                 [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
                 [buttonMachines selectItemAtIndex:0];
