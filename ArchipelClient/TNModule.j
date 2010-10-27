@@ -206,16 +206,18 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willUnload
 {
+    // remove all notification observers
+    [[CPNotificationCenter defaultCenter] removeObserver:self];
+
     // unregister all selectors
     for (var i = 0; i < [_registredSelectors count]; i++)
         [_connection deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
 
+    // flush any outgoing stanza
+    [_connection flush];
+
     [_pubsubRegistrar removeAllObjects];
     [_menuItem setEnabled:NO];
-
-    // remove all notification observers
-    var center  = [CPNotificationCenter defaultCenter];
-    [center removeObserver:self];
 
     _isActive = NO;
 }
