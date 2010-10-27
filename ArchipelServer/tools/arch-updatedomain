@@ -15,11 +15,20 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import sqlite3, os, sys, getopt
 
+HELP = """\
+update_xmpp_domain (c) 2010 Antoine Mercadal
+This tool allows you to quicky change the domain of all virtual machines in a hypervisor database.
 
-import sqlite3, os, sys
+usage: 
+    update_xmpp_domain --file aFile --domain aDomain
 
+    --file      : the sqlite3 file of hypervisor
+    --domain    : the new domain to use
+    --help, -h  : displays this message
 
+"""
 
 
 def update(dbfile, newdomain):
@@ -33,16 +42,29 @@ def update(dbfile, newdomain):
         
         db.execute("UPDATE virtualmachines SET jid='%s' WHERE jid='%s'" % (newjid, jid))
     db.commit()
+    print "domain has been updated to %s in file %s" % (newdomain, dbfile)
     
     
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print """\
-update_xmpp_domain (c) 2010 Antoine Mercadal
-This tool allows you to quicky change the domain of all virtual machines in a hypervisor database.
-usage: update_xmpp_domain databasefile.sqlite3 newjabberdomain
-
-example: update_xmpp_domain hypervisor.sqlite3 jabber.org"""
-        sys.exit(0)
-    update(sys.argv[1], sys.argv[2])
+    dbfile = None
+    domain = None
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "h", ["file=", "domain=", "help"])
+    
+        for o, a in opts:
+            if o in ("--file"):
+                dbfile = a;
+            if o in ("--domain"):
+                domain = a
+            if o in ("-h", "--help"):
+                print HELP
+                sys.exit(0)
+    except Exception as ex:
+        print "ERROR: %s \n" % str(ex)
+    
+    if not dbfile or not domain :
+        print HELP
+        sys.exit(-1)
+    
+    update(dbfile, domain)
     
