@@ -86,7 +86,6 @@ class TNArchipelBasicXMPPClient(object):
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None
         self.pubSubNodeLog          = None
-        self.pubSubNodeTags         = None
         self.hooks                  = {}
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
@@ -209,7 +208,8 @@ class TNArchipelBasicXMPPClient(object):
             pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 10,
             pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
             pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-            pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
+            pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+            pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: 0
         })
         
         # creating/getting the log pubsub node
@@ -223,24 +223,9 @@ class TNArchipelBasicXMPPClient(object):
                 pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
                 pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
                 pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-                pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
+                pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: 0
         })
-        
-        # creating/getting the tag pubsub node
-        tagNodeName = "/archipel/tags"
-        self.pubSubNodeTags = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagNodeName)
-        if not self.pubSubNodeTags.recover():
-            self.pubSubNodeTags.create()
-        self.pubSubNodeTags.configure({
-                pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-                pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
-                pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
-                pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-                pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
-        })
-        
     
     
     def remove_pubsubs(self):
