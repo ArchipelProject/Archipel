@@ -23,7 +23,7 @@
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
 */
-@implementation TNViewOutlineViewContact : CPView
+@implementation TNRosterDataViewContact : CPView
 {
     CPImageView _avatar      @accessors(property=avatar);
     CPImageView _statusIcon  @accessors(property=statusIcon);
@@ -43,8 +43,12 @@
     TNStropheContact    _contact;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
 /*! initialize the class
-    @return a initialized instance of TNViewOutlineViewContact
+    @return a initialized instance of TNRosterDataViewContact
 */
 - (id)init
 {
@@ -52,7 +56,7 @@
     {
         var bundle = [CPBundle mainBundle];
 
-        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33, 3, 16, 16)];
+        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33, 1, 16, 16)];
         _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
@@ -83,6 +87,10 @@
         [_events setFont:[CPFont boldSystemFontOfSize:11]];
         [_events setTextColor:[CPColor whiteColor]];
         [_events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_events setValue:_normalStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
+        [_events setValue:_selectedStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateSelectedDataView];
+        [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"content-inset"];
+        [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
         [_events setHidden:YES];
 
         [_name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
@@ -105,47 +113,9 @@
     return self;
 }
 
-- (void)sendPlayCommand:(id)sender
-{
-    [self sendCommand:TNArchipelControlPlay];
-}
 
-- (void)sendPauseCommand:(id)sender
-{
-    [self sendCommand:TNArchipelControlSuspend];
-}
-
-- (void)sendStopCommand:(id)sender
-{
-    [self sendCommand:TNArchipelControlShutdown];
-}
-
-- (void)sendCommand:(CPString)aCommand
-{
-    var center  = [CPNotificationCenter defaultCenter],
-        info    = [CPDictionary dictionaryWithObjectsAndKeys:_contact, @"entity", aCommand, @"command"];
-
-    [center postNotificationName:TNArchipelControlNotification object:nil userInfo:info]
-}
-
-- (CPString)analyseEntity:(TNStropheContact)aContact
-{
-    var aVCard = [aContact vCard];
-
-    if (aVCard)
-    {
-        var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
-
-        if ((itemType == TNArchipelEntityTypeVirtualMachine)
-            || (itemType == TNArchipelEntityTypeHypervisor)
-            || (itemType == TNArchipelEntityTypeGroup))
-            return itemType;
-        else
-            return TNArchipelEntityTypeUser;
-    }
-
-    return TNArchipelEntityTypeUser;
-}
+#pragma mark -
+#pragma mark Overrides
 
 /*! Message used by CPOutlineView to set the value of the object
     @param aContact TNStropheContact to represent
@@ -209,22 +179,9 @@
     }
 }
 
-- (IBAction)askVCardToEntity:(id)sender
-{
-    var center  = [CPNotificationCenter defaultCenter];
 
-    [_contact getVCard];
-    [center addObserver:self selector:@selector(didReceivedVCard:) name:TNStropheContactVCardReceivedNotification object:_contact];
-}
-
-- (void)didReceivedVCard:(CPNotification)aNotification
-{
-    var bundle  = [CPBundle mainBundle],
-        center  = [CPNotificationCenter defaultCenter];
-
-    [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:_contact];
-}
-
+#pragma mark -
+#pragma mark Theming
 
 /*! implement theming in order to allow change color of selected item
 */
@@ -235,11 +192,6 @@
     [_name setThemeState:aState];
     [_status setThemeState:aState];
     [_events setThemeState:aState];
-
-    if (aState == CPThemeStateSelectedDataView )
-           [_events setBackgroundColor:_selectedStateCartoucheColor];
-    if (aState == CPThemeStateNormal)
-           [_events setBackgroundColor:_normalStateCartoucheColor];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -251,17 +203,11 @@
     [_name unsetThemeState:aState];
     [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
-
-    if (aState == CPThemeStateSelectedDataView)
-    {
-        [_events setBackgroundColor:_normalStateCartoucheColor];
-    }
-    else
-    {
-        [_events setBackgroundColor:_selectedStateCartoucheColor];
-    }
-
 }
+
+
+#pragma mark -
+#pragma mark CPCoding compliance
 
 /*! CPCoder compliance
 */
@@ -313,67 +259,32 @@
 
 @end
 
-
-/*! @ingroup archipelcore
-    Subclass of CPTableColumn. This is used to define the content of the TNOutlineViewRoster
+/*! this is a simple subclass of CPTextField that configure itself to
+    be sexy for CPOutlineView groups
 */
-@implementation TNOutlineTableColumnLabel  : CPTableColumn
-{
-    CPOutlineView       _outlineView;
-    CPView              _dataViewForOther;
-    CPView              _dataViewForRoot;
-}
+@implementation TNRosterDataViewGroup : CPTextField
 
-/*! init the class
-    @param anIdentifier CPString containing the CPTableColumn identifier
-    @param anOutlineView CPOutlineView the outlineView where the column will be insered. This is used to know the level
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize the class
+    @return a initialized instance of TNRosterDataViewGroup
 */
-- (id)initWithIdentifier:(CPString)anIdentifier outlineView:(CPOutlineView)anOutlineView
+- (id)init
 {
-    if (self = [super initWithIdentifier:anIdentifier])
+    if (self = [super init])
     {
-        _outlineView = anOutlineView;
-
-        _dataViewForRoot = [[CPTextField alloc] init];
-
-        [_dataViewForRoot setFont:[CPFont boldSystemFontOfSize:12]];
-        [_dataViewForRoot setTextColor:[CPColor colorWithHexString:@"5F676F"]];
-        [_dataViewForRoot setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_dataViewForRoot setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
-
-        [_dataViewForRoot setAutoresizingMask: CPViewWidthSizable];
-        [_dataViewForRoot setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-
-        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-        [_dataViewForRoot setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
-
-        [_dataViewForRoot setVerticalAlignment:CPCenterVerticalTextAlignment];
-
-        _dataViewForOther = [[TNViewOutlineViewContact alloc] init];
+        [self setFont:[CPFont boldSystemFontOfSize:12]];
+        [self setTextColor:[CPColor colorWithHexString:@"5F676F"]];
+        [self setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [self setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
+        [self setAutoresizingMask: CPViewWidthSizable];
+        [self setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+        [self setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [self setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
+        [self setVerticalAlignment:CPCenterVerticalTextAlignment];
     }
 
     return self;
-}
-
-/*! Return a dataview for item can be a CPTextField for groups or TNViewOutlineViewContact for TNStropheContact
-    @return the dataview
-*/
-- (id)dataViewForRow:(int)aRowIndex
-{
-    var outlineViewItem = [_outlineView itemAtRow:aRowIndex],
-        itemLevel       = [_outlineView levelForItem:outlineViewItem];
-
-    if (itemLevel == 0)
-        return _dataViewForRoot;
-    else
-    {
-        var bounds = [_dataViewForOther bounds];
-
-        bounds.size.width = [_outlineView bounds].size.width;
-        [_dataViewForOther setBounds:bounds];
-
-        return _dataViewForOther;
-    }
-
 }
 @end

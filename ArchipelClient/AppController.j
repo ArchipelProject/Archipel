@@ -49,6 +49,7 @@
 @import "TNAnimation.j";
 @import "TNTagView.j";
 @import "TNTextFieldStepper.j";
+@import "TNRosterDataViews.j"
 
 /*! @global
     @group TNArchipelEntityType
@@ -189,6 +190,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     TNOutlineViewRoster         _rosterOutlineView;
     TNToolbar                   _mainToolbar;
     TNViewHypervisorControl     _currentRightViewContent;
+    TNRosterDataViewGroup       _rosterDataViewForGroups;
+    TNRosterDataViewContact     _rosterDataViewForContacts;
 }
 
 
@@ -409,8 +412,12 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
     [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
 
-    /* notifications */
+    /* dataviews for roster */
+    _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
+    _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
 
+
+    /* notifications */
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
 
@@ -1002,6 +1009,19 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [defaults setObject:"collapsed" forKey:key];
 
     return YES;
+}
+
+/*! called the roster outlineView to ask the dataView it should use for given item.
+*/
+- (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
+{
+    switch ([anItem class])
+    {
+        case TNStropheGroup:
+            return _rosterDataViewForGroups;
+        case TNStropheContact:
+            return _rosterDataViewForContacts;
+    }
 }
 
 /*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults

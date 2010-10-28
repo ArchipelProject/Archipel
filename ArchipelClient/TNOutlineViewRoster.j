@@ -18,9 +18,6 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <AppKit/CPOutlineView.j>
-
-@import "TNOutlineTableColumn.j"
 
 /*! @ingroup archipelcore
     Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
@@ -39,7 +36,7 @@
     if (self = [super initWithFrame:aFrame])
     {
         var center      = [CPNotificationCenter defaultCenter],
-            columnLabel = [[TNOutlineTableColumnLabel alloc] initWithIdentifier:"nickname" outlineView:self];
+            columnLabel = [[CPTableColumn alloc] initWithIdentifier:"nickname"];
 
         [center addObserver:self selector:@selector(_populateOutlineViewFromRoster:) name:TNStropheRosterRetrievedNotification object:nil];
 
