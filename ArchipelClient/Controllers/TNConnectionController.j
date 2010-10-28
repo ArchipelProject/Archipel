@@ -25,20 +25,21 @@
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
 */
-@implementation TNWindowConnection: TNWhiteWindow
+@implementation TNConnectionController : CPObject
 {
-    @outlet CPButton    connectButton;
-    @outlet TNSwitch    credentialRemember;
-    @outlet CPImageView spinning;
-    @outlet CPTextField boshService;
-    @outlet CPTextField JID;
-    @outlet CPTextField message;
-    @outlet CPTextField password;
-    @outlet CPTextField labelPassword;
-    @outlet CPTextField labelBoshService;
-    @outlet CPTextField labelJID;
-    @outlet CPTextField labelRemeber;
-    @outlet CPTextField labelTitle;
+    @outlet CPButton        connectButton;
+    @outlet TNSwitch        credentialRemember;
+    @outlet CPImageView     spinning;
+    @outlet CPTextField     boshService;
+    @outlet CPTextField     JID;
+    @outlet CPTextField     message;
+    @outlet CPTextField     password;
+    @outlet CPTextField     labelPassword;
+    @outlet CPTextField     labelBoshService;
+    @outlet CPTextField     labelJID;
+    @outlet CPTextField     labelRemeber;
+    @outlet CPTextField     labelTitle;
+    @outlet TNWhiteWindow   mainWindow @accessors(readonly);
 
     
 
@@ -50,10 +51,10 @@
 - (void)awakeFromCib
 {
     [password setSecure:YES];
-    [self setShowsResizeIndicator:NO];
+    [mainWindow setShowsResizeIndicator:NO];
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
-    [self setDefaultButton:connectButton];
+    [mainWindow setDefaultButton:connectButton];
     
     [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];

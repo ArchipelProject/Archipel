@@ -24,8 +24,10 @@
 /*! @ingroup archipelcore
     Tagging view
 */
-@implementation TNTagView : CPView
+@implementation TNTagsController : CPObject
 {
+    @outlet CPView      mainView    @accessors(readonly);
+
     TNStropheConnection _connection         @accessors(property=connection);
 
     TNPubSub            _pubsub;
@@ -42,8 +44,13 @@
 */
 - (void)awakeFromCib
 {
-    var frame = [self frame],
+    var frame = [mainView frame],
+        bundle = [CPBundle bundleForClass:[self class]],
+        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]],
         tokenFrame;
+
+    [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
+    [mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
     _currentRosterItem  = nil;
 
@@ -56,7 +63,7 @@
     [_tokenFieldTags setEnabled:NO];
     [_tokenFieldTags setDelegate:self];
 
-    [self addSubview:_tokenFieldTags];
+    [mainView addSubview:_tokenFieldTags];
 
 
     _buttonSave = [CPButton buttonWithTitle:@"Tag"];
@@ -67,7 +74,7 @@
     [_buttonSave setAction:@selector(performSetTags:)];
     [_buttonSave setEnabled:NO];
 
-    [self addSubview:_buttonSave];
+    [mainView addSubview:_buttonSave];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
@@ -129,9 +136,7 @@
 */
 - (void)didRosterItemChange:(CPNotification)aNotification
 {
-    var roster = [aNotification object];
-
-    _currentRosterItem = [roster currentItem];
+    _currentRosterItem = [aNotification object];
 
     [_tokenFieldTags setObjectValue:[]];
 

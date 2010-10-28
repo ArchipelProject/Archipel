@@ -31,10 +31,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 @implementation TNDatasourceRoster  : TNStropheRoster
 {
-    CPOutlineView               _mainOutlineView    @accessors(property=mainOutlineView);
     CPSearchField               _filterField        @accessors(property=filterField);
     CPString                    _filter             @accessors(property=filter);
-    id                          _currentItem        @accessors(property=currentItem);
+    
     id                          _draggedItem;
     CPDictionary                _tagsRegistry;
     TNPubSubNode                _pubsub;
@@ -56,7 +55,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
-
+        
         [center addObserver:self selector:@selector(initializePubSubTags:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
@@ -65,10 +64,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
-        [center addObserver:self selector:@selector(onUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheGroupRenamedNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedGroupNotification object:nil];
     }
 
     return self;
@@ -78,45 +77,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
 #pragma mark -
 #pragma mark Notification handlers
 
-- (void)onUserMessage:(CPNotification)aNotification
-{
-    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
-        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
-        growl           = [TNGrowlCenter defaultCenter],
-        bundle          = [CPBundle mainBundle],
-        customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
-        currentContact  = [aNotification object];
-
-    if ([_mainOutlineView selectedRow] != [_mainOutlineView rowForItem:currentContact])
-    {
-            [growl pushNotificationWithTitle:user message:message customIcon:customIcon target:self action:@selector(growlNotification:clickedWithUser:) actionParameters:currentContact];
-    }
-
-    [self updateOutlineView:aNotification];
-}
 
 /*! Reload the content of the datasource
     @param aNotification CPNotification that trigger the message
 */
 - (void)updateOutlineView:(CPNotification)aNotification
 {
-    var index   = -1;//[[self _mainOutlineView] rowForItem:[aNotification object]];
-
-    [_mainOutlineView reloadData];
-
-    if ((_currentItem) && ([_mainOutlineView rowForItem:_currentItem] != -1))
-    {
-        var index = [_mainOutlineView rowForItem:_currentItem];
-        [_mainOutlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:index] byExtendingSelection:NO];
-    }
-    else
-    {
-        _currentItem = nil;
-        if ([_mainOutlineView numberOfSelectedRows] > 0)
-            [_mainOutlineView deselectAll];
-    }
-
-    [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
 }
 
 /*! initializes the TNPubSubNode when roster is retreived
@@ -267,58 +234,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
 #pragma mark -
 #pragma mark Delegates
 
-/*! Growl delegate
+/*! delegate of TNPubSubNode that will be sent when an pubsub event is recieved
+    it will simply recover the content
 */
-- (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
+- (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
-    var row     = [_mainOutlineView rowForItem:aContact],
-        indexes = [CPIndexSet indexSetWithIndex:row];
-
-    [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
+    [_pubsub retrieveItems];
 }
 
-/*! Delegate of TNOutlineView
-    will be performed when when item will expands and save this state in TNUserDefaults
-
-    @param aNotification the received notification
-*/
-- (void)outlineViewItemWillExpand:(CPNotification)aNotification
-{
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelRememberOpenedGroup + [item name];
-
-    [defaults setObject:"expanded" forKey:key];
-}
-
-/*! Delegate of TNOutlineView
-    will be performed when when item will collapses and save this state in TNUserDefaults
-
-    @param aNotification the received notification
-*/
-- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
-{
-    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        key         = TNArchipelRememberOpenedGroup + [item name];
-
-    [defaults setObject:"collapsed" forKey:key];
-
-    return YES;
-}
-
-/*! called the roster outlineView to ask the dataView it should use for given item.
-*/
-- (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
-{
-    switch ([anItem class])
-    {
-        case TNStropheGroup:
-            return _rosterDataViewForGroups;
-        case TNStropheContact:
-            return _rosterDataViewForContacts;
-    }
-}
 
 #pragma mark -
 #pragma mark Datasource
@@ -432,12 +355,5 @@ TNDragTypeContact   = @"TNDragTypeContact";
     return NO;
 }
 
-/*! delegate of TNPubSubNode that will be sent when an pubsub event is recieved
-    it will simply recover the content
-*/
-- (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
-{
-    [_pubsub retrieveItems];
-}
 
 @end

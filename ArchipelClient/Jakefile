@@ -52,7 +52,7 @@ app ("Archipel", function(task)
     task.setAuthor(AUTHOR);
     task.setEmail(EMAIL);
     task.setSummary(SUMMARY);
-    task.setSources(new FileList("*.j"));
+    task.setSources(new FileList("*.j", "Controllers/*.j", "Views/*.j", "Others/*.j"));
     task.setResources(new FileList("Resources/*"));
     task.setInfoPlistPath("Info.plist");
 

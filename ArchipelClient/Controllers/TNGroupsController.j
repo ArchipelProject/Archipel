@@ -24,9 +24,10 @@
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add grou in roster
 */
-@implementation TNWindowAddGroup: CPWindow
+@implementation TNGroupsController: CPObject
 {
     @outlet CPTextField newGroupName;
+    @outlet CPWindow    mainWindow;
 
     TNStropheRoster     roster  @accessors;
 }
@@ -34,12 +35,12 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (void)makeKeyAndOrderFront:(id)sender
+- (IBAction)showWindow:(id)sender
 {
     [newGroupName setStringValue:@""];
 
-    [self center];
-    [super makeKeyAndOrderFront:sender];
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:sender];
 }
 
 /*! add a group according to the outlets
@@ -62,18 +63,53 @@
         var growl = [TNGrowlCenter defaultCenter];
         [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
 
-        [self performClose:nil];
+        [mainWindow performClose:nil];
     }
 }
 
-- (void)keyDown:(CPEvent)anEvent
+
+/*! will ask for deleting the selected group
+    @param the sender of the action
+*/
+- (void)deleteGroup:(TNStropheGroup)aGroup
 {
-    if ([anEvent keyCode] == CPEscapeKeyCode)
+    var defaults = [TNUserDefaults standardUserDefaults],
+        alert;
+
+    if ([aGroup class] != TNStropheGroup)
     {
-        [self close];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError];
         return;
     }
-    [super keyDown:anEvent];
+
+    if ([[aGroup contacts] count] != 0)
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
+        return;
+    }
+
+    var alert = [TNAlert alertWithTitle:@"Delete group"
+                                message:@"Are you sure you want to delete this group?"
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
+    [alert setUserInfo:aGroup];
+    [alert runModal];
+}
+
+/*! Action for the deleteGroup:'s confirmation TNAlert.
+    It will delete the group
+    @param the sender of the action
+*/
+- (void)performDeleteGroup:(id)userInfo
+{
+    var group   = userInfo,
+        defaults = [TNUserDefaults standardUserDefaults],
+        key     = TNArchipelRememberOpenedGroup + [group name];
+
+    [roster removeGroup:group];
+    [defaults removeObjectForKey:key];
+    
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
 }
 
 @end

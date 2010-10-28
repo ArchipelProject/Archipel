@@ -27,7 +27,7 @@
     preferences view for each module with a viewPreferences containing a view
     This view will be inserted into a CPTabView labelized with the module label.
 */
-@implementation TNWindowPreferences : CPWindow
+@implementation TNPreferencesController : CPObject
 {
     @outlet CPTabView       tabViewMain;
     @outlet CPView          viewPreferencesGeneral;
@@ -36,9 +36,8 @@
     @outlet CPTextField     fieldBOSHResource;
     @outlet CPPopUpButton   buttonDebugLevel;
     @outlet TNSwitch        switchUseAnimations;
-
-    TNStropheConnection     _connection @accessors(setter=setConnection:);
-
+    @outlet CPWindow        mainWindow @accessors(readonly);
+    
     CPArray                 _modules;
 }
 
@@ -71,7 +70,7 @@
 - (void)didModulesLoadComplete:(CPNotification)aNotification
 {
     _moduleLoader = [aNotification object];
-
+    
     var tabModules      = [_moduleLoader loadedTabModules],
         toolbarModules  = [[_moduleLoader loadedToolbarModules] allValues],
         notSortedModules = [tabModules arrayByAddingObjectsFromArray:toolbarModules];
@@ -88,7 +87,6 @@
             return CPOrderedSame;
     },
     _modules = [notSortedModules sortedArrayUsingFunction:sortFunction];
-
 
     for (var i = 0; i < [_modules count]; i++)
     {
@@ -112,7 +110,7 @@
 /*! When window is ordering front, refresh all general preferences
     and send message loadPreferences to all modules
 */
-- (IBAction)makeKeyAndOrderFront:(id)sender
+- (IBAction)showWindow:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
 
@@ -121,17 +119,17 @@
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
-
+    
     for (var i = 0; i < [_modules count]; i++)
     {
         var module = [_modules objectAtIndex:i];
-
+    
         if ([module viewPreferences] !== nil)
             [module loadPreferences];
     }
 
-    [self center];
-    [super makeKeyAndOrderFront:sender];
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:sender];
 }
 
 /*! When save button is pressed, saves all general preferences
@@ -159,7 +157,7 @@
     }
 
 
-    [self close];
+    [mainWindow close];
 }
 
 

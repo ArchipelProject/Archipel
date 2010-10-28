@@ -19,16 +19,16 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add a TNStropheContact
 */
-@implementation TNWindowAddContact: CPWindow
+@implementation TNContactsController: CPObject
 {
     @outlet CPPopUpButton   newContactGroup;
     @outlet CPTextField     newContactJID;
     @outlet CPTextField     newContactName;
+    @outlet CPWindow        mainWindow @accessors(readonly);
 
     TNStropheRoster         _roster         @accessors(property=roster);
 }
@@ -36,7 +36,7 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (IBAction)makeKeyAndOrderFront:(id)sender
+- (IBAction)showWindow:(id)sender
 {
     var groups = [_roster groups];
 
@@ -58,10 +58,9 @@
     }
 
     [newContactGroup selectItemWithTitle:@"General"];
-
-    [self center];
-
-    [super makeKeyAndOrderFront:sender];
+    
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:sender];
 }
 
 /*! add a contact according to the values of the outlets
@@ -82,11 +81,50 @@
     [_roster askAuthorizationTo:JID];
     [_roster authorizeJID:JID];
 
-    [self performClose:nil];
+    [mainWindow performClose:nil];
 
     CPLog.info(@"added contact " + JID);
 
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
+}
+
+
+/*! will ask for deleting the selected contact
+    @param the sender of the action
+*/
+- (void)deleteContact:(TNStropheContact)aContact
+{
+    if ([aContact class] != TNStropheContact)
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
+        return;
+    }
+
+    var alert = [TNAlert alertWithTitle:@"Delete contact"
+                                message:@"Are you sure you want to delete this contact?"
+                                delegate:self
+                                 actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
+    [alert setUserInfo:aContact];
+    [alert runModal];
+}
+
+/*! Action for the deleteContact:'s confirmation TNAlert.
+    It will delete the contact
+    @param the sender of the action
+*/
+- (void)performDeleteContact:(id)userInfo
+{
+    var contact = userInfo;
+
+    [_roster removeContactWithJID:[contact JID]];
+
+    CPLog.info(@"contact " + [contact JID] + "removed");
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
+
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [contact JID] + "/events"
+                                               connection:[_roster connection]
+                                             pubSubServer:@"pubsub." + [contact domain]];
+    [pubsub unsubscribe];
 }
 
 @end

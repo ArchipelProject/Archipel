@@ -25,8 +25,10 @@
     subclass of CPView that represent the bottom-left property panel.
     it allows to change nickname of a TNStropheContact and give informations about it.
 */
-@implementation TNViewProperties: CPView
+@implementation TNPropertiesController: CPObject
 {
+    @outlet CPView          mainView            @accessors(readonly);
+    @outlet TNEditableLabel entryName           @accessors(readonly);
     @outlet CPButton        entryAvatar;
     @outlet CPImageView     entryStatusIcon;
     @outlet CPTextField     entryDomain;
@@ -36,11 +38,11 @@
     @outlet CPTextField     labelResource;
     @outlet CPTextField     labelStatus;
     @outlet CPTextField     newNickName;
-    @outlet TNEditableLabel entryName       @accessors;
+    
 
-    TNStropheContact        _entity         @accessors(property=entity);
+    TNStropheContact        _entity         @accessors(getter=entity);
     TNStropheRoster         _roster         @accessors(property=roster);
-    TNAvatarManager         _avatarManager  @accessors(getter=avatarManager);
+    TNAvatarController      _avatarManager  @accessors(getter=avatarManager);
 
     CPImage                 _unknownUserImage;
     CPNumber                _height;
@@ -51,31 +53,19 @@
 #pragma mark -
 #pragma mark Initialization
 
-/*! init the class
-    @param aRect CPRect containing frame informations
-*/
-- (id)initWithFrame:(CPRect)aRect
-{
-    _height         = 180;
-    _isCollapsed    = YES;
-
-    aRect.size.height = _height;
-    self = [super initWithFrame:aRect];
-
-    return self;
-}
-
 /*! initialize some values on CIB awakening
 */
 - (void)awakeFromCib
 {
     var bundle = [CPBundle mainBundle],
         center = [CPNotificationCenter defaultCenter];
-
+    
+    _height         = 180;
+    _isCollapsed    = YES;
     _unknownUserImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
 
-    [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [mainView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
@@ -88,10 +78,6 @@
     [entryAvatar setImage:_unknownUserImage];
 
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
-    [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:nil];
-
-    [[self superview] setPosition:[[self superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 
@@ -102,7 +88,8 @@
 */
 - (void)reload:(CPNotification)aNotification
 {
-    [self reload];
+    //setTimeout(function(){[self reload]}, 1000);
+    [self reload]
 }
 
 /*! triggered when contact change the nickname
@@ -125,6 +112,29 @@
     }
 }
 
+#pragma mark -
+#pragma mark Setters
+
+- (void)setEntity:(id)anEntity
+{
+    var center      = [CPNotificationCenter defaultCenter],
+        oldEntity   = _entity;
+    
+    if (oldEntity && ([oldEntity class] == TNStropheContact))
+    {
+        [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:oldEntity];
+        [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:oldEntity];
+    }
+    
+    _entity = anEntity;
+    
+    if (_entity && ([_entity class] == TNStropheContact))
+    {        
+        [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:_entity];
+        [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Utilities
@@ -139,7 +149,7 @@
 
 /*! hide the panel
 */
-- (void)hide
+- (void)hideView
 {
     if (_isCollapsed)
         return;
@@ -148,12 +158,12 @@
 
     _isCollapsed = YES;
 
-    [[self superview] setPosition:[[self superview] bounds].size.height ofDividerAtIndex:0];
+    [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 /*! show the panel
 */
-- (void)show
+- (void)showView
 {
     if (!_isCollapsed)
         return;
@@ -162,7 +172,7 @@
 
     _isCollapsed = NO;
 
-    [[self superview] setPosition:([[self superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
 
 }
 
@@ -172,7 +182,7 @@
 {
     if (!_entity)
     {
-        [self hide];
+        [self hideView];
         return;
     }
 
@@ -213,7 +223,7 @@
         [entryStatus setStringValue:@""];
     }
 
-    [self show];
+    [self showView];
 }
 
 
@@ -227,8 +237,7 @@
 {
     if (_avatarManager)
     {
-        [_avatarManager center];
-        [_avatarManager makeKeyAndOrderFront:sender];
+        [_avatarManager showWindow:sender];
     }
     else
         CPLog.warn("no avatar manager set.");
@@ -239,7 +248,7 @@
 */
 - (IBAction)changeNickName:(id)sender
 {
-    [[self window] makeFirstResponder:[entryName previousResponder]];
+    [[mainView window] makeFirstResponder:[entryName previousResponder]];
 }
 
 

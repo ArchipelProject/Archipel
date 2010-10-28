@@ -71,10 +71,11 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 
 /*! Subclass of CPWindow that represents  the avatar manager
 */
-@implementation TNAvatarManager : CPWindow
+@implementation TNAvatarController : CPObject
 {
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
+    @outlet CPWindow            mainWindow          @accessors(readonly);
 
     BOOL                        isReady;
     TNStropheContact            _entity @accessors(property=entity);
@@ -180,7 +181,7 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     if ([aStanza type] == @"result")
     {
         CPLog.info("Avatar changed for entity " + [_entity JID]);
-        [self close];
+        [mainWindow close];
     }
 }
 
@@ -191,10 +192,11 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 /*! overide the super makeKeyAndOrderFront in order to getAvailableAvatars on display
     @param sender the sender of the action
 */
-- (IBAction)makeKeyAndOrderFront:(id)sender
+- (IBAction)showWindow:(id)sender
 {
     [self getAvailableAvatars];
-    [super makeKeyAndOrderFront:sender];
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:sender];
 }
 
 

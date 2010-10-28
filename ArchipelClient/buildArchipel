@@ -39,7 +39,7 @@ def main():
         usage()
         sys.exit(2);
     
-    opt_build_config            = "Debug";
+    opt_build_config            = "debug";
     opt_should_build            = False;
     opt_should_copy_modules     = False;
     opt_should_remove_modules   = False;
@@ -177,7 +177,7 @@ def build(paths, config, ignorepaths):
         os.chdir(path);
         
         print "# jaking..."
-        return_code = os.system("export CONFIG=" + config + ";jake build");
+        return_code = os.system("jake %s" % config);
                         
         if not str(return_code) == "0":
             print "# Error in build : " + str(return_code)

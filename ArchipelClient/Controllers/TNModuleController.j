@@ -21,8 +21,6 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <iTunesTabView/iTunesTabView.j>
 
-@import "TNCategoriesAndGlobalSubclasses.j";
-
 /*! @global
     @group TNArchipelModuleType
     type for tab module
@@ -75,7 +73,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
      - moduleLoader:willLoadBundle: is sent when a module will be loaded
      - moduleLoaderLoadingComplete: is sent when all modules has been loaded
 */
-@implementation TNModuleLoader: CPObject
+@implementation TNModuleController: CPObject
 {
     BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
     CPArray                 _loadedTabModules               @accessors(getter=loadedTabModules);

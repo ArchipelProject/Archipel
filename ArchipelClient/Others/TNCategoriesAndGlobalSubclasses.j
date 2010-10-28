@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import "Resources/dateFormat.js";
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPBox.j>
+
+@import "../Resources/dateFormat.js"
 
 /*! @defgroup utils Archipel Utilities
     @desc Simples categories or subclass in order to live ina better world

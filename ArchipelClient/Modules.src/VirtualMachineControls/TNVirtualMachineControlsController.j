@@ -19,7 +19,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNExtendedContactObject.j";
+@import "TNExtendedContactObject.j"
 
 TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition";
 TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";

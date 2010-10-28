@@ -22,34 +22,38 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <VNCCappuccino/VNCCappuccino.j>
-@import <LPKit/LPKit.j>
-@import <LPKit/LPMultiLineTextField.j>
 @import <iTunesTabView/iTunesTabView.j>
 @import <MessageBoard/MessageBoard.j>
+@import <LPKit/LPKit.j>
+@import <LPKit/LPMultiLineTextField.j>
 
 //@import <LPKit/LPCrashReporter.j>
 
-@import "TNAvatarManager.j";
-@import "TNCategoriesAndGlobalSubclasses.j";
-@import "TNDatasourceRoster.j";
-@import "TNOutlineViewRoster.j";
-@import "TNToolbar.j";
-@import "TNModuleLoader.j";
-@import "TNViewProperties.j";
-@import "TNWindowAddContact.j";
-@import "TNWindowAddGroup.j";
-@import "TNWindowConnection.j";
-@import "TNModule.j";
-@import "TNViewLineable.j";
-@import "TNUserDefaults.j";
-@import "TNTableViewDataSource.j";
-@import "TNSearchField.j";
-@import "TNSwitch.j";
-@import "TNWindowPreferences.j";
-@import "TNAnimation.j";
-@import "TNTagView.j";
-@import "TNTextFieldStepper.j";
-@import "TNRosterDataViews.j"
+@import "Controllers/TNAvatarController.j"
+@import "Controllers/TNConnectionController.j"
+@import "Controllers/TNContactsController.j"
+@import "Controllers/TNGroupsController.j"
+@import "Controllers/TNModuleController.j"
+@import "Controllers/TNPreferencesController.j"
+@import "Controllers/TNPropertiesController.j"
+@import "Controllers/TNTagsController.j"
+@import "Others/TNAnimation.j"
+@import "Others/TNCategoriesAndGlobalSubclasses.j"
+@import "Others/TNDatasourceRoster.j"
+@import "Others/TNModule.j"
+@import "Others/TNTableViewDataSource.j"
+@import "Others/TNOutlineViewDataSource.j"
+@import "Others/TNUserDefaults.j"
+@import "Views/TNOutlineViewRoster.j"
+@import "Views/TNRosterDataViews.j"
+@import "Views/TNSearchField.j"
+@import "Views/TNSwitch.j"
+@import "Views/TNTextFieldStepper.j"
+@import "Views/TNToolbar.j"
+
+
+
+
 
 /*! @global
     @group TNArchipelEntityType
@@ -141,57 +145,58 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 @implementation AppController : CPObject
 {
-    @outlet CPButtonBar         buttonBarLeft;
-    @outlet CPImageView         ledIn;
-    @outlet CPImageView         ledOut;
-    @outlet CPSplitView         leftSplitView;
-    @outlet CPSplitView         mainHorizontalSplitView;
-    @outlet CPSplitView         splitViewTagsContents;
-    @outlet CPTextField         textFieldAboutVersion;
-    @outlet CPTextField         textFieldLoadingModuleLabel;
-    @outlet CPTextField         textFieldLoadingModuleTitle;
-    @outlet CPView              filterView;
-    @outlet CPView              leftView;
-    @outlet CPView              rightView;
-    @outlet CPView              statusBar;
-    @outlet CPView              viewLoadingModule;
-    @outlet TNTagView           viewTags;
-    @outlet CPWebView           helpView;
-    @outlet CPWebView           webViewAboutCredits;
-    @outlet CPWindow            theWindow;
-    @outlet CPWindow            windowAboutArchipel;
-    @outlet TNAvatarManager     windowAvatarManager;
-    @outlet TNSearchField       filterField;
-    @outlet TNViewProperties    propertiesView;
-    @outlet TNWhiteWindow       windowModuleLoading;
-    @outlet TNWindowAddContact  addContactWindow;
-    @outlet TNWindowAddGroup    addGroupWindow;
-    @outlet TNWindowConnection  connectionWindow;
-    @outlet TNWindowPreferences windowPreferences;
+    @outlet CPButtonBar             buttonBarLeft;
+    @outlet CPImageView             ledIn;
+    @outlet CPImageView             ledOut;
+    @outlet CPSplitView             leftSplitView;
+    @outlet CPSplitView             mainHorizontalSplitView;
+    @outlet CPSplitView             splitViewTagsContents;
+    @outlet CPTextField             textFieldAboutVersion;
+    @outlet CPTextField             textFieldLoadingModuleLabel;
+    @outlet CPTextField             textFieldLoadingModuleTitle;
+    @outlet CPView                  filterView;
+    @outlet CPView                  leftView;
+    @outlet CPView                  rightView;
+    @outlet CPView                  statusBar;
+    @outlet CPView                  viewLoadingModule;
+    @outlet CPWebView               helpView;
+    @outlet CPWebView               webViewAboutCredits;
+    @outlet CPWindow                theWindow;
+    @outlet CPWindow                windowAboutArchipel;
+    @outlet TNAvatarController      avatarController;
+    @outlet TNConnectionController  connectionController;
+    @outlet TNContactsController    contactsController;
+    @outlet TNGroupsController      groupsController;
+    @outlet TNPreferencesController preferencesController;
+    @outlet TNPropertiesController  propertiesController;
+    @outlet TNSearchField           filterField;
+    @outlet TNTagsController        tagsController;
+    @outlet TNWhiteWindow           windowModuleLoading;
 
-    BOOL                        _tagsVisible;
-    BOOL                        _shouldShowHelpView;
-    CPImage                     _imageLedInData;
-    CPImage                     _imageLedNoData;
-    CPImage                     _imageLedOutData;
-    CPMenu                      _mainMenu;
-    CPMenu                      _modulesMenu;
-    CPPlatformWindow            _platformHelpWindow;
-    CPScrollView                _outlineScrollView;
-    TNiTunesTabView             _moduleTabView;
-    CPTextField                 _rightViewTextField;
-    CPTimer                     _ledInTimer;
-    CPTimer                     _ledOutTimer;
-    CPTimer                     _moduleLoadingDelay;
-    CPWindow                    _helpWindow;
-    int                         _tempNumberOfReadyModules;
-    TNDatasourceRoster          _mainRoster;
-    TNModuleLoader              _moduleLoader;
-    TNOutlineViewRoster         _rosterOutlineView;
-    TNToolbar                   _mainToolbar;
-    TNViewHypervisorControl     _currentRightViewContent;
-    TNRosterDataViewGroup       _rosterDataViewForGroups;
-    TNRosterDataViewContact     _rosterDataViewForContacts;
+    BOOL                            _shouldShowHelpView;
+    BOOL                            _tagsVisible;
+    CPImage                         _imageLedInData;
+    CPImage                         _imageLedNoData;
+    CPImage                         _imageLedOutData;
+    CPMenu                          _mainMenu;
+    CPMenu                          _modulesMenu;
+    CPPlatformWindow                _platformHelpWindow;
+    CPScrollView                    _outlineScrollView;
+    CPTextField                     _rightViewTextField;
+    CPTimer                         _ledInTimer;
+    CPTimer                         _ledOutTimer;
+    CPTimer                         _moduleLoadingDelay;
+    CPWindow                        _helpWindow;
+    int                             _tempNumberOfReadyModules;
+    TNDatasourceRoster              _mainRoster;
+    TNiTunesTabView                 _moduleTabView;
+    TNModuleController              _moduleController;
+    TNOutlineViewRoster             _rosterOutlineView;
+    TNRosterDataViewContact         _rosterDataViewForContacts;
+    TNRosterDataViewGroup           _rosterDataViewForGroups;
+    TNToolbar                       _mainToolbar;
+    TNViewHypervisorControl         _currentRightViewContent;
+
 }
 
 
@@ -203,7 +208,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (void)awakeFromCib
 {
-    [connectionWindow orderOut:nil];
+    [[connectionController mainWindow] orderOut:nil];
 
     var bundle      = [CPBundle mainBundle],
         defaults    = [TNUserDefaults standardUserDefaults],
@@ -231,8 +236,6 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [mainHorizontalSplitView setIsPaneSplitter:YES];
 
     // tags split views
-    var gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
-    [viewTags setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
     [splitViewTagsContents setIsPaneSplitter:YES];
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"pane-divider-thickness"]
 
@@ -243,9 +246,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
-    [viewTags setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
-    [viewTags setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:viewTags];
+    [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
+    [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
 
     [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
 
@@ -268,14 +270,14 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
     [theWindow setToolbar:_mainToolbar];
 
-    /* properties view */
+    /* properties controller */
     CPLog.trace(@"initializing the leftSplitView");
     [leftSplitView setIsPaneSplitter:YES];
     [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[leftSplitView subviews][1] removeFromSuperview];
-    [leftSplitView addSubview:propertiesView];
+    [leftSplitView addSubview:[propertiesController mainView]];
     [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
-    [propertiesView setAvatarManager:windowAvatarManager];
+    [propertiesController setAvatarManager:avatarController];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -283,7 +285,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [_rosterOutlineView setDelegate:self];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
-    [_rosterOutlineView setEntityRenameField:[propertiesView entryName]];
+    [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
     [filterField setOutlineView:_rosterOutlineView];
 
     /* init scroll view of the outline view */
@@ -339,21 +341,24 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [textFieldLoadingModuleLabel setTextColor:[CPColor colorWithHexString:@"6A7087"]];
 
 
-    CPLog.trace(@"initializing _moduleLoader");
-    _moduleLoader = [[TNModuleLoader alloc] init]
+    CPLog.trace(@"initializing _moduleController");
+    _tempNumberOfReadyModules = -1;
 
-    [_moduleLoader setDelegate:self];
-    [_moduleTabView setDelegate:_moduleLoader];
-    [_moduleLoader setMainToolbar:_mainToolbar];
-    [_moduleLoader setMainTabView:_moduleTabView];
-    [_moduleLoader setInfoTextField:_rightViewTextField];
-    [_moduleLoader setModulesPath:@"Modules/"]
-    [_moduleLoader setMainModuleView:rightView];
-    [_moduleLoader setModulesMenu:_modulesMenu];
+    _moduleController = [[TNModuleController alloc] init]
+    
+    [_moduleController setDelegate:self];
+    [_moduleController setMainToolbar:_mainToolbar];
+    [_moduleController setMainTabView:_moduleTabView];
+    [_moduleController setInfoTextField:_rightViewTextField];
+    [_moduleController setModulesPath:@"Modules/"]
+    [_moduleController setMainModuleView:rightView];
+    [_moduleController setModulesMenu:_modulesMenu];
+    
+    [_moduleTabView setDelegate:_moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
     CPLog.trace(@"Starting loading all modules");
-    [_moduleLoader load];
+    [_moduleController load];
 
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
@@ -416,7 +421,6 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
     _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
 
-
     /* notifications */
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
@@ -433,9 +437,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     CPLog.trace(@"registering for notification TNArchipelActionRemoveSelectedRosterEntityNotification");
     [center addObserver:self selector:@selector(didMinusBouttonClicked:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
 
-    CPLog.info(@"Initialization of AppController OK");
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 
-    _tempNumberOfReadyModules = -1;
+    CPLog.info(@"Initialization of AppController OK");
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -548,9 +553,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 - (void)loginStrophe:(CPNotification)aNotification
 {
     [CPMenu setMenuBarVisible:YES];
-    [connectionWindow orderOut:nil];
+    [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
-
 
     _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
 
@@ -560,14 +564,16 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
     [_mainRoster getRoster];
 
-    [viewTags setConnection:[aNotification object]];
+    [tagsController setConnection:[aNotification object]];
+    [propertiesController setRoster:_mainRoster];
+    [contactsController setRoster:_mainRoster];
+    [groupsController setRoster:_mainRoster];
 
-    [propertiesView setRoster:_mainRoster];
-    [_moduleLoader setRoster:_mainRoster];
+    [_rosterOutlineView setDataSource:_mainRoster];
+    [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [windowPreferences setConnection:[aNotification object]];
-
-    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+    [_moduleController setRoster:_mainRoster];
+    [_moduleController setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -577,7 +583,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 - (void)logoutStrophe:(CPNotification)aNotification
 {
     [theWindow orderOut:nil];
-    [connectionWindow makeKeyAndOrderFront:nil];
+    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -587,13 +593,34 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [_mainRoster disconnect];
 }
 
-/*! Triggered when TNModuleLoader send TNArchipelModulesAllReadyNotification.
+/*! Triggered when TNModuleController send TNArchipelModulesAllReadyNotification.
 */
 - (void)allModuleReady:(CPNotification)aNotification
 {
     if ([viewLoadingModule superview])
         [viewLoadingModule removeFromSuperview];
 }
+
+
+- (void)didReceiveUserMessage:(CPNotification)aNotification
+{
+    var user            = [[[aNotification userInfo] objectForKey:@"stanza"] fromUser],
+        message         = [[[[aNotification userInfo] objectForKey:@"stanza"] firstChildWithName:@"body"] text],
+        bundle          = [CPBundle bundleForClass:[self class]],
+        customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
+        currentContact  = [aNotification object];
+
+    if ([_rosterOutlineView selectedRow] != [_rosterOutlineView rowForItem:currentContact])
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:user
+                                                         message:message
+                                                      customIcon:customIcon
+                                                          target:self
+                                                          action:@selector(growlNotification:clickedWithUser:)
+                                                actionParameters:currentContact];
+
+    [_rosterOutlineView reloadData];
+}
+
 
 
 #pragma mark -
@@ -685,8 +712,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)addContact:(id)sender
 {
-    [addContactWindow setRoster:_mainRoster];
-    [addContactWindow makeKeyAndOrderFront:nil];
+    [contactsController showWindow:sender];
 }
 
 /*! will ask for deleting the selected contact
@@ -695,45 +721,9 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 - (IBAction)deleteContact:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        item    = [_rosterOutlineView itemAtRow:index],
-        growl   = [TNGrowlCenter defaultCenter];
-        alert;
+        contact = [_rosterOutlineView itemAtRow:index];
 
-    if ([item class] != TNStropheContact)
-    {
-        [growl pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
-        return;
-    }
-
-    var alert = [TNAlert alertWithTitle:@"Delete contact"
-                                message:@"Are you sure you want to delete this contact?"
-                                delegate:self
-                                 actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
-    [alert setUserInfo:item];
-    [alert runModal];
-}
-
-/*! Action for the deleteContact:'s confirmation TNAlert.
-    It will delete the contact
-    @param the sender of the action
-*/
-- (void)performDeleteContact:(id)userInfo
-{
-    var growl   = [TNGrowlCenter defaultCenter],
-        contact = userInfo;
-
-    [_mainRoster removeContactWithJID:[contact JID]];
-
-    CPLog.info(@"contact " + [contact JID] + "removed");
-    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
-
-    [propertiesView hide];
-    [_rosterOutlineView deselectAll];
-
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [contact JID] + "/events"
-                                               connection:[_mainRoster connection]
-                                             pubSubServer:@"pubsub." + [contact domain]];
-    [pubsub unsubscribe];
+    [contactsController deleteContact:contact];
 }
 
 /*! Opens the add group window
@@ -741,8 +731,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)addGroup:(id)sender
 {
-    [addGroupWindow setRoster:_mainRoster];
-    [addGroupWindow makeKeyAndOrderFront:nil];
+    [groupsController showWindow:sender];
 }
 
 /*! will ask for deleting the selected group
@@ -750,49 +739,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)deleteGroup:(id)sender
 {
-    var growl       = [TNGrowlCenter defaultCenter],
-        index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
-        item        = [_rosterOutlineView itemAtRow:index],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        alert;
+    var index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
+        group       = [_rosterOutlineView itemAtRow:index];
 
-    if ([item class] != TNStropheGroup)
-    {
-        [growl pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError];
-        return;
-    }
-
-    if ([[item contacts] count] != 0)
-    {
-        [growl pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
-        return;
-    }
-
-    var alert = [TNAlert alertWithTitle:@"Delete group"
-                                message:@"Are you sure you want to delete this group?"
-                                delegate:self
-                                 actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
-    [alert setUserInfo:item]
-    [alert runModal];
-}
-
-/*! Action for the deleteGroup:'s confirmation TNAlert.
-    It will delete the group
-    @param the sender of the action
-*/
-- (void)performDeleteGroup:(id)userInfo
-{
-    var group   = userInfo,
-        key     = TNArchipelRememberOpenedGroup + [group name];
-
-    [_mainRoster removeGroup:group];
-    [_rosterOutlineView reloadData];
-    [growl pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
-
-    [defaults removeObjectForKey:key];
-
-    [propertiesView hide];
-    [_rosterOutlineView deselectAll];
+    [groupsController deleteGroup:group];
 }
 
 /*! Will select the next entity in Roster
@@ -823,7 +773,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)renameContact:(id)sender
 {
-    [[propertiesView entryName] mouseDown:nil];
+    [[propertiesController entryName] mouseDown:nil];
 }
 
 /*! Make the property view rename field active
@@ -831,7 +781,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)renameGroup:(id)sender
 {
-    [[propertiesView entryName] mouseDown:nil];
+    [[propertiesController entryName] mouseDown:nil];
 }
 
 /*! simulate a click on the focus filter
@@ -936,7 +886,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 */
 - (IBAction)showPreferencesWindow:(id)sender
 {
-    [windowPreferences makeKeyAndOrderFront:sender];
+    [preferencesController showWindow:sender];
 }
 
 
@@ -1148,8 +1098,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
     [viewLoadingModule setFrame:[rightView bounds]];
 
-    [propertiesView setEntity:item];
-    [propertiesView reload];
+    [propertiesController setEntity:item];
+    [propertiesController reload];
 
     _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
@@ -1162,15 +1112,15 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     if ([_rosterOutlineView numberOfSelectedRows] == 0)
     {
         [self showHelpView];
-        [_mainRoster setCurrentItem:nil];
-        [propertiesView hide];
+        //[_mainRoster setCurrentItem:nil];
+        [propertiesController hideView];
     }
     else
     {
         var item        = [aTimer userInfo],
             defaults    = [TNUserDefaults standardUserDefaults];
 
-        [_mainRoster setCurrentItem:item];
+        //[_mainRoster setCurrentItem:item];
 
         [self hideHelpView];
 
@@ -1178,20 +1128,20 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
         {
             case TNStropheGroup:
                 CPLog.info(@"setting the entity as " + item + " of type group");
-                [_moduleLoader setEntity:item ofType:@"group"];
+                [_moduleController setEntity:item ofType:@"group"];
                 break;
 
             case TNStropheContact:
                 var vCard       = [item vCard],
-                    entityType  = [_moduleLoader analyseVCard:vCard];
+                    entityType  = [_moduleController analyseVCard:vCard];
                 CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-                [_moduleLoader setEntity:item ofType:entityType];
+                [_moduleController setEntity:item ofType:entityType];
                 break;
         }
     }
 
     // post a system wide notification about the changes
-    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:_mainRoster];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:item];
 }
 
 /*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults
@@ -1206,17 +1156,17 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
-/*! delegate of TNModuleLoader sent when all modules are loaded
+/*! delegate of TNModuleController sent when all modules are loaded
 */
-- (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
+- (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
     CPLog.trace(@"Positionning the connection window");
 
     [windowModuleLoading orderOut:nil];
-    [connectionWindow center];
-    [connectionWindow makeKeyAndOrderFront:nil];
-    [connectionWindow initCredentials];
+    [[connectionController mainWindow] center];
+    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
+    [connectionController initCredentials];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
@@ -1302,6 +1252,16 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
                                            connection:[_mainRoster connection]
                                          pubSubServer:@"pubsub." + [stanza fromDomain]];
     [pubsub unsubscribe];
+}
+
+/*! Growl delegate
+*/
+- (void)growlNotification:(id)sender clickedWithUser:(TNStropheContact)aContact
+{
+    var row     = [_rosterOutlineView rowForItem:aContact],
+        indexes = [CPIndexSet indexSetWithIndex:row];
+
+    [_rosterOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
 

@@ -17,96 +17,11 @@
  */
 
 /* enter the following information about you and your module */ 
-var AUTHOR		= "Antoine Mercadal";
-var EMAIL		= "feedback @nospam@ yourcompany.com";
-var COMPANY		= "org.archipelproject";
-var NAME 		= "ToolbarPlayButton";
-var SUMMARY		= "A short description of your module";
-var VERSION		= "1.0";
+AUTHOR		= "Antoine Mercadal";
+EMAIL		= "feedback @nospam@ yourcompany.com";
+COMPANY		= "org.archipelproject";
+NAME 		= "ToolbarPlayButton";
+SUMMARY		= "A short description of your module";
+VERSION		= "1.0";
 
-
-
-
-/* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
-var ENV = require("system").env,
-    FILE = require("file"),
-    task = require("jake").task,
-    FileList = require("jake").FileList,
-    app = require("cappuccino/jake").app,
-    configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug";
-
-app ("buildmodule", function(task)
-{
-    task.setBuildIntermediatesPath(FILE.join("Build", NAME + ".build", configuration));
-    task.setBuildPath(FILE.join("Build", configuration));
-
-    task.setProductName(NAME);
-    task.setIdentifier( COMPANY + "." + NAME);
-    task.setVersion(VERSION);
-    task.setAuthor(AUTHOR);
-    task.setEmail(EMAIL);
-    task.setSummary(SUMMARY);
-    task.setSources(new FileList("*.j"));
-    task.setResources(new FileList("Resources/*"));
-    task.setInfoPlistPath("Info.plist");
-
-    if (configuration === "Debug")
-        task.setCompilerFlags("-DDEBUG -g");
-    else
-        task.setCompilerFlags("-O");
-});
-
-task ("default", ["buildmodule"], function()
-{
-    printResults(configuration);
-});
-
-task ("build", ["default"]);
-
-task ("debug", function()
-{
-    ENV["CONFIGURATION"] = "Debug";
-    JAKE.subjake(["."], "build", ENV);
-});
-
-task ("release", function()
-{
-    ENV["CONFIGURATION"] = "Release";
-    JAKE.subjake(["."], "build", ENV);
-});
-
-task ("run", ["debug"], function()
-{
-    OS.system(["open", FILE.join("Build", "Debug", "buildmodule", "index.html")]);
-});
-
-task ("run-release", ["release"], function()
-{
-    OS.system(["open", FILE.join("Build", "Release", "buildmodule", "index.html")]);
-});
-
-task ("deploy", ["release"], function()
-{
-    FILE.mkdirs(FILE.join("Build", "Deployment", "buildmodule"));
-    OS.system(["press", "-f", FILE.join("Build", "Release", "buildmodule"), FILE.join("Build", "Deployment", "buildmodule")]);
-    printResults("Deployment")
-});
-
-task ("desktop", ["release"], function()
-{
-    FILE.mkdirs(FILE.join("Build", "Desktop", "buildmodule"));
-    require("cappuccino/nativehost").buildNativeHost(FILE.join("Build", "Release", "buildmodule"), FILE.join("Build", "Desktop", "buildmodule", "buildmodule.app"));
-    printResults("Desktop")
-});
-
-task ("run-desktop", ["desktop"], function()
-{
-    OS.system([FILE.join("Build", "Desktop", "buildmodule", "buildmodule.app", "Contents", "MacOS", "NativeHost"), "-i"]);
-});
-
-function printResults(configuration)
-{
-    print("----------------------------");
-    print(configuration+" app built at path: "+FILE.join("Build", configuration, "buildmodule"));
-    print("----------------------------");
-}
+require("../modulescommon.jake")
