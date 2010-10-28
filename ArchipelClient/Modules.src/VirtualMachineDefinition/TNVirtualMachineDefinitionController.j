@@ -1624,7 +1624,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         var alert = [TNAlert alertWithTitle:@"Undefine virtual machine"
                                     message:@"Are you sure you want to undefine this virtual machine ?"
                          informativeMessage:@"All your changes will be definitly lost."
-                                    delegate:self
+                                     target:self
                                      actions:[["Undefine", @selector(performUndefineXML:)], ["Cancel", nil]]];
         [alert runModal];
 }

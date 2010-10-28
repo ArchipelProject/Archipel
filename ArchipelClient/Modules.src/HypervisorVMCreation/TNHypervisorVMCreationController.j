@@ -274,7 +274,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     {
         var alert = [TNAlert alertWithTitle:@"Adding contact"
                                     message:@"Would you like to add " + [vm nickname] + @" to your roster"
-                                    delegate:self
+                                     target:self
                                      actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
         [alert setUserInfo:vm];
         [alert runModal];
@@ -445,7 +445,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
     var alert = [TNAlert alertWithTitle:title
                                 message:msg
-                                delegate:self
+                                 target:self
                                  actions:[["Delete", @selector(performDeleteVirtualMachine:)], ["Cancel", nil]]];
 
     [alert setUserInfo:[_tableVirtualMachines selectedRowIndexes]];
@@ -519,7 +519,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
     var alert = [TNAlert alertWithTitle:@"Cloning a Virtual Machine"
                                 message:@"Are you sure you want to clone this virtual machine ?"
-                                delegate:self
+                                 target:self
                                  actions:[["Clone", @selector(performCloneVirtualMachine:)], ["Cancel", nil]]];
     [alert runModal];
 

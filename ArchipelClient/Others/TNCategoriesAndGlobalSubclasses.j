@@ -38,7 +38,6 @@
 
 @end
 
-
 /*! @ingroup utils
     Categories that allows CPView with border
 */
@@ -60,7 +59,6 @@
 }
 @end
 
-
 /*! @ingroup utils
     Menu item with userInfo
 */
@@ -70,7 +68,6 @@
     id          objectValue @accessors;
 }
 @end
-
 
 /*! @ingroup utils
     Categories that allows CPString to generate UUID rfc4122 compliant
@@ -91,7 +88,6 @@
     return g;
 }
 @end
-
 
 /*! @ingroup utils
     A Label that is editable on click
@@ -126,142 +122,10 @@
 
 @end
 
-
-/*! @ingroup utils
-    Categories that allows to create CPAlert quickly.
-*/
-@implementation CPAlert (CPAlertWithQuickModal)
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle
-{
-    var alert = [[CPAlert alloc] init];
-
-    [alert setTitle:aTitle];
-    [alert setMessageText:aMessage];
-    // [alert setWindowStyle:CPHUDBackgroundWindowMask];
-    [alert setAlertStyle:aStyle];
-    [alert addButtonWithTitle:@"OK"];
-
-    [alert runModal];
-}
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage
-{
-    [CPAlert alertWithTitle:aTitle message:aMessage style:CPInformationalAlertStyle];
-}
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle delegate:(id)aDelegate buttons:(CPArray)someButtons
-{
-    var alert = [[CPAlert alloc] init];
-
-    [alert setTitle:aTitle];
-    [alert setMessageText:aMessage];
-    [alert setAlertStyle:aStyle];
-    [alert setDelegate:aDelegate];
-
-    for (var i = 0; i < [someButtons count]; i++)
-        [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
-
-    [alert runModal];
-}
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage style:(CPNumber)aStyle delegate:(id)aDelegate buttons:(CPArray)someButtons tag:(int)aTag
-{
-    var alert = [[CPAlert alloc] init];
-
-    [alert setTitle:aTitle];
-    [alert setMessageText:aMessage];
-    [alert setAlertStyle:aStyle];
-    [alert setDelegate:aDelegate];
-
-    for (var i = 0; i < [someButtons count]; i++)
-        [alert addButtonWithTitle:[someButtons objectAtIndex:i]];
-
-    [alert runModal];
-
-}
-@end
-
-
-/*! @ingroup utils
-    A very cool CPAlert
-*/
-@implementation TNAlert : CPObject
-{
-    id      _delegate   @accessors(property=delegate);
-    id      _userInfo   @accessors(property=userInfo);
-    CPAlert _alert      @accessors(getter=alert);
-    CPArray _actions;
-}
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage delegate:(id)aDelegate actions:(CPArray)someActions
-{
-    var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage delegate:aDelegate actions:someActions];
-
-    return tnalert;
-}
-
-+ (void)alertWithTitle:(CPString)aTitle message:(CPString)aMessage informativeMessage:(CPString)anInfo delegate:(id)aDelegate actions:(CPArray)someActions
-{
-    var tnalert = [[TNAlert alloc] initWithTitle:aTitle message:aMessage informativeMessage:anInfo delegate:aDelegate actions:someActions];
-
-    return tnalert;
-}
-
-- (TNAlert)initWithTitle:(CPString)aTitle message:(CPString)aMessage delegate:(id)aDelegate actions:(CPArray)someActions
-{
-    if (self = [super init])
-    {
-        _alert      = [[CPAlert alloc] init];
-        _actions    = someActions;
-        _delegate   = aDelegate;
-
-        [_alert setTitle:aTitle];
-        [_alert setMessageText:aMessage];
-        [_alert setDelegate:self];
-
-        for (var i = 0; i < [_actions count]; i++)
-            [_alert addButtonWithTitle:[[_actions objectAtIndex:i] objectAtIndex:0]];
-    }
-
-    return self;
-}
-
-- (TNAlert)initWithTitle:(CPString)aTitle message:(CPString)aMessage informativeMessage:(CPString)anInfo delegate:(id)aDelegate actions:(CPArray)someActions
-{
-    if (self = [self initWithTitle:aTitle message:aMessage delegate:aDelegate actions:someActions])
-    {
-        [_alert setInformativeText:anInfo];
-    }
-
-    return self;
-}
-
-- (void)runModal
-{
-    [_alert runModal];
-}
-
-- (void)beginSheetModalForWindow:(CPWindow)aWindow
-{
-    [_alert beginSheetModalForWindow:aWindow];
-}
-
-- (void)alertDidEnd:(CPAlert)theAlert returnCode:(int)returnCode
-{
-    var selector = [[_actions objectAtIndex:returnCode] objectAtIndex:1];
-
-    CPLog.debug(selector);
-    if ([_delegate respondsToSelector:selector])
-        [_delegate performSelector:selector withObject:_userInfo];
-}
-@end
-
-
 /*! @ingroup utils
     add expandAll to CPOutlineView
 */
-@implementation CPOutlineView (expandAll)
+@implementation CPOutlineView (TNKit)
 
 /*! Expand all items in the view
 */
@@ -296,7 +160,6 @@
     }
 }
 
-
 - (void)collapseAll
 {
     for (var count = 0; [self itemAtRow:count]; count++)
@@ -313,7 +176,7 @@
 /*! @ingroup utils
     CPDate with format
 */
-@implementation CPDate (withFormat)
+@implementation CPDate (TNKit)
 
 + (CPString)dateWithFormat:(CPString)aFormat
 {
@@ -327,11 +190,10 @@
 }
 @end
 
-
 /*! @ingroup utils
     CPWindow that fade in and fade out
 */
-@implementation CPWindow (fadeInWindow)
+@implementation CPWindow (TNKit)
 
 - (IBAction)orderFront:(id)sender
 {
@@ -363,7 +225,7 @@
 /*! @ingroup utils
     Groups name are uppercase
 */
-@implementation TNStropheGroup (majName)
+@implementation TNStropheGroup (TNKit)
 - (CPString)description
 {
     return [_name uppercaseString];
@@ -373,7 +235,7 @@
 /*! @ingroup utils
     implement Cmd+A in CPTableView
 */
-@implementation CPTableView (PommeA)
+@implementation CPTableView (TNKit)
 
 - (void)keyDown:(CPEvent)anEvent
 {
@@ -450,69 +312,5 @@
 
     return self;
 }
-
-@end
-
-// @implementation AristoThemeDescriptor (TNStepper)
-// 
-// + (TNStepper)themedStepper
-// {
-//     var stepper = [[TNStepper alloc] initWithFrame:CGRectMake(0.0, 0.0, 15.0, 24.0)];
-// 
-//     var bezelUp = PatternColor(
-//             [
-//                 [@"stepper-up-bezel-left.png", 3.0, 12.0],
-//                 [@"stepper-up-bezel-center.png", 9.0, 12.0],
-//                 [@"stepper-up-bezel-right.png", 3.0, 12.0],
-//             ]),
-//         
-//         bezelDown = PatternColor(
-//                 [
-//                     [@"stepper-down-bezel-left.png", 3.0, 12.0],
-//                     [@"stepper-down-bezel-center.png", 9.0, 12.0],
-//                     [@"stepper-down-bezel-right.png", 3.0, 12.0],
-//                 ]),
-//         bezelUpDisabled = PatternColor(
-//                 [
-//                     [@"stepper-up-bezel-left-disabled.png", 3.0, 12.0],
-//                     [@"stepper-up-bezel-center-disabled.png", 9.0, 12.0],
-//                     [@"stepper-up-bezel-right-disabled.png", 3.0, 12.0],
-//                 ]),
-// 
-//         bezelDownDisabled = PatternColor(
-//                 [
-//                     [@"stepper-down-bezel-left-disabled.png", 3.0, 12.0],
-//                     [@"stepper-down-bezel-center-disabled.png", 9.0, 12.0],
-//                     [@"stepper-down-bezel-right-disabled.png", 3.0, 12.0],
-//                 ]),
-//         
-//         bezelUpHighlighted = PatternColor(
-//                 [
-//                     [@"stepper-up-bezel-left-highlight.png", 3.0, 12.0],
-//                     [@"stepper-up-bezel-center-highlight.png", 9.0, 12.0],
-//                     [@"stepper-up-bezel-right-highlight.png", 3.0, 12.0],
-//                 ]),
-// 
-//         bezelDownHighlighted = PatternColor(
-//                 [
-//                     [@"stepper-down-bezel-left-highlight.png", 3.0, 12.0],
-//                     [@"stepper-down-bezel-center-highlight.png", 9.0, 12.0],
-//                     [@"stepper-down-bezel-right-highlight.png", 3.0, 12.0],
-//                 ]);
-//     
-//     var themedStepperValues =
-//         [
-//             [@"bezel-color-up-button", bezelUp, CPThemeStateBordered],
-//             [@"bezel-color-down-button", bezelDown, CPThemeStateBordered],
-//             [@"bezel-color-up-button", bezelUpDisabled, CPThemeStateBordered | CPThemeStateDisabled],
-//             [@"bezel-color-down-button", bezelDownDisabled, CPThemeStateBordered | CPThemeStateDisabled],
-//             [@"bezel-color-up-button", bezelUpHighlighted, CPThemeStateBordered | CPThemeStateHighlighted],
-//             [@"bezel-color-down-button", bezelDownHighlighted, CPThemeStateBordered | CPThemeStateHighlighted]
-//         ];
-// 
-//     [self registerThemeValues:themedStepperValues forView:scrollView];
-// 
-//     return stepper;
-// }
 
 @end

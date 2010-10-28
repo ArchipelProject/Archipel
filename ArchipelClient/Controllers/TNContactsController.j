@@ -58,7 +58,7 @@
     }
 
     [newContactGroup selectItemWithTitle:@"General"];
-    
+
     [mainWindow center];
     [mainWindow makeKeyAndOrderFront:sender];
 }
@@ -102,7 +102,7 @@
 
     var alert = [TNAlert alertWithTitle:@"Delete contact"
                                 message:@"Are you sure you want to delete this contact?"
-                                delegate:self
+                                 target:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
     [alert setUserInfo:aContact];
     [alert runModal];

@@ -269,7 +269,7 @@
     {
         var alert = [TNAlert alertWithTitle:@"Adding contact"
                                     message:@"Would you like to add " + [member nickname] + @" to your roster"
-                                   delegate:self
+                                     target:self
                                     actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
         [alert setUserInfo:member];
         [alert runModal];

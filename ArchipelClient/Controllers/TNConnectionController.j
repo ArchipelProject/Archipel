@@ -41,7 +41,7 @@
     @outlet CPTextField     labelTitle;
     @outlet TNWhiteWindow   mainWindow @accessors(readonly);
 
-    
+
 
     TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
 }
@@ -55,7 +55,7 @@
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
     [mainWindow setDefaultButton:connectButton];
-    
+
     [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
@@ -68,8 +68,8 @@
     [labelRemeber setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [message setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    
-    
+
+
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
     [labelJID setTextColor:[CPColor colorWithHexString:@"6A7087"]];
     [labelPassword setTextColor:[CPColor colorWithHexString:@"6A7087"]];
@@ -90,7 +90,7 @@
 
     if (lastBoshService)
         [boshService setStringValue:lastBoshService];
-    
+
     if (lastRememberCred)
     {
         [JID setStringValue:lastJID];
@@ -110,7 +110,7 @@
 - (IBAction)connect:(id)sender
 {
     var defaults    = [TNUserDefaults standardUserDefaults];
-    
+
     if ([credentialRemember state] == CPOnState)
     {
         [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
@@ -124,9 +124,9 @@
     {
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
-    
+
     _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]];
-    
+
     [_stropheConnection setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [_stropheConnection setDelegate:self];
     [_stropheConnection connect];
@@ -135,12 +135,12 @@
 - (IBAction)rememberCredentials:(id)sender
 {
     var defaults = [TNUserDefaults standardUserDefaults];
-    
+
     if ([sender state] == CPOnState)
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     else
         [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
-        
+
     CPLog.debug("credential remember set");
 }
 
@@ -160,7 +160,7 @@
 {
     [message setStringValue:@"Connected."];
     [spinning setHidden:YES];
-    
+
     CPLog.info(@"Strophe is now connected using JID " + [JID stringValue]);
 }
 
@@ -228,7 +228,7 @@
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [message setStringValue:@"Disconnected."];
-    
+
     CPLog.info(@"XMPP connection is now disconnected");
 }
 @end

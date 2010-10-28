@@ -19,6 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <TNKit/TNKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <GrowlCappuccino/GrowlCappuccino.j>
 @import <VNCCappuccino/VNCCappuccino.j>
@@ -37,18 +38,13 @@
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
-@import "Others/TNAnimation.j"
 @import "Others/TNCategoriesAndGlobalSubclasses.j"
 @import "Others/TNDatasourceRoster.j"
 @import "Others/TNModule.j"
-@import "Others/TNTableViewDataSource.j"
-@import "Others/TNOutlineViewDataSource.j"
-@import "Others/TNUserDefaults.j"
 @import "Views/TNOutlineViewRoster.j"
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
-@import "Views/TNTextFieldStepper.j"
 @import "Views/TNToolbar.j"
 
 
@@ -345,7 +341,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     _tempNumberOfReadyModules = -1;
 
     _moduleController = [[TNModuleController alloc] init]
-    
+
     [_moduleController setDelegate:self];
     [_moduleController setMainToolbar:_mainToolbar];
     [_moduleController setMainTabView:_moduleTabView];
@@ -353,7 +349,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [_moduleController setModulesPath:@"Modules/"]
     [_moduleController setMainModuleView:rightView];
     [_moduleController setModulesMenu:_modulesMenu];
-    
+
     [_moduleTabView setDelegate:_moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
@@ -1216,7 +1212,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
     var alert = [TNAlert alertWithTitle:@"Subscription request"
                                 message:nick + " is asking you subscription. Do you want to add it ?"
-                                delegate:self
+                                 target:self
                                  actions:[["Accept", @selector(performSubscribe:)],
                                             ["Decline", @selector(performUnsubscribe:)]]];
 

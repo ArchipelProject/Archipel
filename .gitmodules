@@ -22,3 +22,6 @@
 [submodule "Libvirt"]
 	path = Libvirt
 	url = git://libvirt.org/libvirt.git
+[submodule "TNKit"]
+	path = TNKit
+	url = git@github.com:primalmotion/TNKit.git

@@ -90,7 +90,7 @@
 
     var alert = [TNAlert alertWithTitle:@"Delete group"
                                 message:@"Are you sure you want to delete this group?"
-                                delegate:self
+                                 target:self
                                  actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
     [alert setUserInfo:aGroup];
     [alert runModal];
@@ -108,7 +108,7 @@
 
     [roster removeGroup:group];
     [defaults removeObjectForKey:key];
-    
+
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
 }
 

@@ -671,7 +671,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 {
     var alert = [TNAlert alertWithTitle:@"Deactivate Network"
                                 message:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
-                                delegate:self
+                                 target:self
                                  actions:[["Deactivate", @selector(_performDeactivateNetwork:)], ["Cancel", nil]]];
 
     [alert runModal];
@@ -728,7 +728,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 {
     var alert = [TNAlert alertWithTitle:@"Delete Network"
                                 message:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
-                                delegate:self
+                                 target:self
                                  actions:[["Delete", @selector(performDelNetwork:)], ["Cancel", nil]]];
 
     [alert runModal];

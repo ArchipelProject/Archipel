@@ -946,7 +946,7 @@ TNArchipelTransportBarReboot    = 4;
     var alert = [TNAlert alertWithTitle:@"Unplug Virtual Machine"
                                 message:@"Unplug this virtual machine ?"
                                 informativeMessage:@"Destroying virtual machine is dangerous. It is equivalent to remove power plug of a real computer"
-                                delegate:self
+                                 target:self
                                  actions:[["Unplug", @selector(performDestroy:)], ["Cancel", @selector(doNotPerformDestroy:)]]];
 
     [alert runModal];
@@ -1207,7 +1207,7 @@ TNArchipelTransportBarReboot    = 4;
     var alert = [TNAlert alertWithTitle:@"Migrate Virtual Machine"
                                 message:@"Are you sure you want to migrate this virtual machine ?"
                                 informativeMessage:@"You may continue to use this machine while migrating"
-                                delegate:self
+                                 target:self
                                  actions:[["Migrate", @selector(performMigrate:)], ["Cancel", nil]]];
 
     [alert setUserInfo:destinationHypervisor]
