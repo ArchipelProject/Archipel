@@ -31,13 +31,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 @implementation TNDatasourceRoster  : TNStropheRoster
 {
-    CPOutlineView   _mainOutlineView    @accessors(property=mainOutlineView);
-    CPSearchField   _filterField        @accessors(property=filterField);
-    CPString        _filter             @accessors(property=filter);
-    id              _currentItem        @accessors(property=currentItem);
-    id              _draggedItem;
-    CPDictionary    _tagsRegistry;
-    TNPubSubNode    _pubsub;
+    CPOutlineView               _mainOutlineView    @accessors(property=mainOutlineView);
+    CPSearchField               _filterField        @accessors(property=filterField);
+    CPString                    _filter             @accessors(property=filter);
+    id                          _currentItem        @accessors(property=currentItem);
+    id                          _draggedItem;
+    CPDictionary                _tagsRegistry;
+    TNPubSubNode                _pubsub;
 }
 
 
@@ -175,7 +175,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 
 #pragma mark -
-#pragma mark Filering
+#pragma mark Filtering
 
 
 /*! allow to define a CPSearchField to filter entries
@@ -277,6 +277,48 @@ TNDragTypeContact   = @"TNDragTypeContact";
     [_mainOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
+/*! Delegate of TNOutlineView
+    will be performed when when item will expands and save this state in TNUserDefaults
+
+    @param aNotification the received notification
+*/
+- (void)outlineViewItemWillExpand:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"expanded" forKey:key];
+}
+
+/*! Delegate of TNOutlineView
+    will be performed when when item will collapses and save this state in TNUserDefaults
+
+    @param aNotification the received notification
+*/
+- (void)outlineViewItemWillCollapse:(CPNotification)aNotification
+{
+    var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        key         = TNArchipelRememberOpenedGroup + [item name];
+
+    [defaults setObject:"collapsed" forKey:key];
+
+    return YES;
+}
+
+/*! called the roster outlineView to ask the dataView it should use for given item.
+*/
+- (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
+{
+    switch ([anItem class])
+    {
+        case TNStropheGroup:
+            return _rosterDataViewForGroups;
+        case TNStropheContact:
+            return _rosterDataViewForContacts;
+    }
+}
 
 #pragma mark -
 #pragma mark Datasource

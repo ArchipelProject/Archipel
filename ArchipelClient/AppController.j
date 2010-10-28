@@ -539,6 +539,114 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
 
 #pragma mark -
+#pragma mark Notifications handlers
+
+/*! Notification responder of TNStropheConnection
+    will be performed on login
+    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
+*/
+- (void)loginStrophe:(CPNotification)aNotification
+{
+    [CPMenu setMenuBarVisible:YES];
+    [connectionWindow orderOut:nil];
+    [theWindow makeKeyAndOrderFront:nil];
+
+
+    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
+
+    [_mainRoster setDelegate:self];
+    [_mainRoster setFilterField:filterField];
+    [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
+    [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+    [_mainRoster getRoster];
+
+    [viewTags setConnection:[aNotification object]];
+
+    [propertiesView setRoster:_mainRoster];
+    [_moduleLoader setRoster:_mainRoster];
+
+    [windowPreferences setConnection:[aNotification object]];
+
+    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+}
+
+/*! Notification responder of TNStropheConnection
+    will be performed on logout
+    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
+*/
+- (void)logoutStrophe:(CPNotification)aNotification
+{
+    [theWindow orderOut:nil];
+    [connectionWindow makeKeyAndOrderFront:nil];
+}
+
+/*! Notification responder for CPApplicationWillTerminateNotification
+*/
+- (void)onApplicationTerminate:(CPNotification)aNotification
+{
+    [_mainRoster disconnect];
+}
+
+/*! Triggered when TNModuleLoader send TNArchipelModulesAllReadyNotification.
+*/
+- (void)allModuleReady:(CPNotification)aNotification
+{
+    if ([viewLoadingModule superview])
+        [viewLoadingModule removeFromSuperview];
+}
+
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! Display the helpView in the rightView
+*/
+- (void)showHelpView
+{
+    var bundle      = [CPBundle mainBundle],
+        defaults    = [TNUserDefaults standardUserDefaults],
+        url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+        version     = [defaults objectForKey:@"TNArchipelVersion"];
+
+    if (!url || (url == @"local"))
+        url = @"help/index.html";
+
+    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
+
+    [helpView setFrame:[rightView bounds]];
+    [rightView addSubview:helpView];
+}
+
+/*! Hide the helpView from the rightView
+*/
+- (void)hideHelpView
+{
+    [helpView removeFromSuperview];
+}
+
+/*! display the copyright notice
+*/
+- (void)copyright
+{
+    var defaults    = [TNUserDefaults standardUserDefaults],
+        copy = document.createElement("div");
+
+    copy.style.position = "absolute";
+    copy.style.fontSize = "10px";
+    copy.style.color = "#6C707F";
+    copy.style.width = "700px";
+    copy.style.bottom = "8px";
+    copy.style.left = "50%";
+    copy.style.textAlign = "center";
+    copy.style.marginLeft = "-350px";
+    // copy.style.textShadow = "0px 1px 0px #C6CAD9";
+    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
+    document.body.appendChild(copy);
+
+}
+
+
+#pragma mark -
 #pragma mark Actions
 
 /*! will remove the selected roster item according to its type
@@ -1024,218 +1132,8 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     }
 }
 
-/*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults
-*/
-- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
-{
-    var defaults    = [TNUserDefaults standardUserDefaults],
-        splitView   = [aNotification object],
-        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
-
-    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
-}
-
-
-#pragma mark -
-#pragma mark Strophe Connection Management
-
-/*! Notification responder of TNStropheConnection
-    will be performed on login
-    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
-*/
-- (void)loginStrophe:(CPNotification)aNotification
-{
-    [CPMenu setMenuBarVisible:YES];
-    [connectionWindow orderOut:nil];
-    [theWindow makeKeyAndOrderFront:nil];
-
-
-    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
-
-    [_mainRoster setDelegate:self];
-    [_mainRoster setFilterField:filterField];
-    [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
-    [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
-    [_mainRoster getRoster];
-
-    [viewTags setConnection:[aNotification object]];
-
-    [propertiesView setRoster:_mainRoster];
-    [_moduleLoader setRoster:_mainRoster];
-
-    [windowPreferences setConnection:[aNotification object]];
-
-    [_moduleLoader setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
-}
-
-/*! Notification responder of TNStropheConnection
-    will be performed on logout
-    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
-*/
-- (void)logoutStrophe:(CPNotification)aNotification
-{
-    [theWindow orderOut:nil];
-    [connectionWindow makeKeyAndOrderFront:nil];
-}
-
-
-#pragma mark -
-#pragma mark Traffic LED
-
-/*! delegate of StropheCappuccino that will be trigger on Raw input traffic
-    This will light the in traffic light
-*/
-- (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
-{
-    [ledIn setImage:_imageLedInData];
-
-    if (_ledInTimer)
-        [_ledInTimer invalidate];
-
-    _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
-}
-
-/*! delegate of StropheCappuccino that will be trigger on Raw output traffic
-    This will light the out traffic light
-*/
-- (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
-{
-    [ledOut setImage:_imageLedOutData];
-
-    if (_ledOutTimer)
-        [_ledOutTimer invalidate];
-    _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
-}
-
-/*! This will light of traffic LED after a small delay
-*/
-- (void)timeOutDataLed:(CPTimer)aTimer
-{
-    [[aTimer userInfo] setImage:_imageLedNoData];
-}
-
-/*! Notification responder for CPApplicationWillTerminateNotification
-*/
-- (void)onApplicationTerminate:(CPNotification)aNotification
-{
-    [_mainRoster disconnect];
-}
-
-
-#pragma mark -
-#pragma mark XMPP Subscriptions / PubSub Management
-
-/*! Delegate method of main TNStropheRoster.
-    will be performed when a subscription request is sent
-    @param requestStanza TNStropheStanza cotainining the subscription request
-*/
-- (void)didReceiveSubscriptionRequest:(id)requestStanza
-{
-    var nick;
-
-    if ([requestStanza firstChildWithName:@"nick"])
-        nick = [[requestStanza firstChildWithName:@"nick"] text];
-    else
-        nick = [requestStanza from];
-
-    var alert = [TNAlert alertWithTitle:@"Subscription request"
-                                message:nick + " is asking you subscription. Do you want to add it ?"
-                                delegate:self
-                                 actions:[["Accept", @selector(performSubscribe:)],
-                                            ["Decline", @selector(performUnsubscribe:)]]];
-
-    [alert setUserInfo:requestStanza]
-    [alert runModal];
-}
-
-/*! Action of didReceiveSubscriptionRequest's confirmation alert.
-    Will accept the subscription and try to register to Archipel pubsub nodes
-*/
-- (void)performSubscribe:(id)userInfo
-{
-    var bundle  = [CPBundle mainBundle],
-        stanza  = userInfo;
-
-    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
-
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
-                                           connection:[_mainRoster connection]
-                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
-    [pubsub subscribe];
-}
-
-/*! Action of didReceiveSubscriptionRequest's confirmation alert.
-    Will refuse the subscription and try to unregister to Archipel pubsub nodes
-*/
-- (BOOL)performUnsubscribe:(id)userInfo
-{
-    var stanza = userInfo;
-    [_mainRoster answerAuthorizationRequest:stanza answer:NO];
-
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
-                                           connection:[_mainRoster connection]
-                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
-    [pubsub unsubscribe];
-}
-
-
-#pragma mark -
-#pragma mark Help view management
-
-/*! Display the helpView in the rightView
-*/
-- (void)showHelpView
-{
-    var bundle      = [CPBundle mainBundle],
-        defaults    = [TNUserDefaults standardUserDefaults],
-        url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-        version     = [defaults objectForKey:@"TNArchipelVersion"];
-
-    if (!url || (url == @"local"))
-        url = @"help/index.html";
-
-    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
-
-    [helpView setFrame:[rightView bounds]];
-    [rightView addSubview:helpView];
-}
-
-/*! Hide the helpView from the rightView
-*/
-- (void)hideHelpView
-{
-    [helpView removeFromSuperview];
-}
-
-
-#pragma mark -
-#pragma mark Module Loading
-
-/*! delegate of TNModuleLoader sent when all modules are loaded
-*/
-- (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
-{
-    CPLog.info(@"All modules have been loaded");
-    CPLog.trace(@"Positionning the connection window");
-
-    [windowModuleLoading orderOut:nil];
-    [connectionWindow center];
-    [connectionWindow makeKeyAndOrderFront:nil];
-    [connectionWindow initCredentials];
-}
-
-/*! Triggered when TNModuleLoader send TNArchipelModulesAllReadyNotification.
-*/
-- (void)allModuleReady:(CPNotification)aNotification
-{
-    if ([viewLoadingModule superview])
-        [viewLoadingModule removeFromSuperview];
-}
-
 /*! Delegate of TNOutlineView
     will be performed when selection changes. Tab Modules displaying
-
     @param aNotification the received notification
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
@@ -1296,28 +1194,115 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:_mainRoster];
 }
 
-
-
-#pragma mark -
-#pragma mark Divers
-
-- (void)copyright
+/*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults
+*/
+- (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
     var defaults    = [TNUserDefaults standardUserDefaults],
-        copy = document.createElement("div");
+        splitView   = [aNotification object],
+        newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 
-    copy.style.position = "absolute";
-    copy.style.fontSize = "10px";
-    copy.style.color = "#6C707F";
-    copy.style.width = "700px";
-    copy.style.bottom = "8px";
-    copy.style.left = "50%";
-    copy.style.textAlign = "center";
-    copy.style.marginLeft = "-350px";
-    // copy.style.textShadow = "0px 1px 0px #C6CAD9";
-    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
-    document.body.appendChild(copy);
-
+    CPLog.info(@"setting the mainSplitViewPosition value in defaults");
+    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
+
+/*! delegate of TNModuleLoader sent when all modules are loaded
+*/
+- (void)moduleLoaderLoadingComplete:(TNModuleLoader)aLoader
+{
+    CPLog.info(@"All modules have been loaded");
+    CPLog.trace(@"Positionning the connection window");
+
+    [windowModuleLoading orderOut:nil];
+    [connectionWindow center];
+    [connectionWindow makeKeyAndOrderFront:nil];
+    [connectionWindow initCredentials];
+}
+
+/*! delegate of StropheCappuccino that will be trigger on Raw input traffic
+    This will light the in traffic light
+*/
+- (void)stropheConnectionRawIn:(TNStropheStanza)aStanza
+{
+    [ledIn setImage:_imageLedInData];
+
+    if (_ledInTimer)
+        [_ledInTimer invalidate];
+
+    _ledInTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledIn repeats:NO];
+}
+
+/*! delegate of StropheCappuccino that will be trigger on Raw output traffic
+    This will light the out traffic light
+*/
+- (void)stropheConnectionRawOut:(TNStropheStanza)aStanza
+{
+    [ledOut setImage:_imageLedOutData];
+
+    if (_ledOutTimer)
+        [_ledOutTimer invalidate];
+    _ledOutTimer = [CPTimer scheduledTimerWithTimeInterval:0.5 target:self selector:@selector(timeOutDataLed:) userInfo:ledOut repeats:NO];
+}
+
+/*! This will light of traffic LED after a small delay
+*/
+- (void)timeOutDataLed:(CPTimer)aTimer
+{
+    [[aTimer userInfo] setImage:_imageLedNoData];
+}
+
+/*! Delegate method of main TNStropheRoster.
+    will be performed when a subscription request is sent
+    @param requestStanza TNStropheStanza cotainining the subscription request
+*/
+- (void)didReceiveSubscriptionRequest:(id)requestStanza
+{
+    var nick;
+
+    if ([requestStanza firstChildWithName:@"nick"])
+        nick = [[requestStanza firstChildWithName:@"nick"] text];
+    else
+        nick = [requestStanza from];
+
+    var alert = [TNAlert alertWithTitle:@"Subscription request"
+                                message:nick + " is asking you subscription. Do you want to add it ?"
+                                delegate:self
+                                 actions:[["Accept", @selector(performSubscribe:)],
+                                            ["Decline", @selector(performUnsubscribe:)]]];
+
+    [alert setUserInfo:requestStanza]
+    [alert runModal];
+}
+
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will accept the subscription and try to register to Archipel pubsub nodes
+*/
+- (void)performSubscribe:(id)userInfo
+{
+    var bundle  = [CPBundle mainBundle],
+        stanza  = userInfo;
+
+    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
+
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
+                                           connection:[_mainRoster connection]
+                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
+    [pubsub subscribe];
+}
+
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will refuse the subscription and try to unregister to Archipel pubsub nodes
+*/
+- (BOOL)performUnsubscribe:(id)userInfo
+{
+    var stanza = userInfo;
+    [_mainRoster answerAuthorizationRequest:stanza answer:NO];
+
+    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
+                                           connection:[_mainRoster connection]
+                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
+    [pubsub unsubscribe];
+}
+
 
 @end
