@@ -6,3 +6,4 @@
 *Frameworks
 *ArchipelClient/Modules.src/**/Build
 *ArchipelClient/Modules/**
+*.submodules_initialized
