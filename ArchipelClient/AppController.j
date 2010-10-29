@@ -49,8 +49,6 @@
 
 
 
-
-
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
