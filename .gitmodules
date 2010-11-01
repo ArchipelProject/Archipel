@@ -1,27 +1,27 @@
 [submodule "VNCCappuccino"]
 	path = VNCCappuccino
-	url = git@github.com:primalmotion/VNCCappuccino.git
+	url = git://github.com/primalmotion/VNCCappuccino.git
 [submodule "StropheCappuccino"]
 	path = StropheCappuccino
-	url = git@github.com:primalmotion/StropheCappuccino.git
+	url = git://github.com/primalmotion/StropheCappuccino.git
 [submodule "GrowlCappuccino"]
 	path = GrowlCappuccino
-	url = git@github.com:primalmotion/GrowlCappuccino.git
+	url = git://github.com/primalmotion/GrowlCappuccino.git
 [submodule "MessageBoard"]
 	path = MessageBoard
-	url = git@github.com:primalmotion/MessageBoard.git
+	url = git://github.com/primalmotion/MessageBoard.git
 [submodule "iTunesTabView"]
 	path = iTunesTabView
-	url = git@github.com:primalmotion/iTunesTabView.git
+	url = git://github.com/primalmotion/iTunesTabView.git
 [submodule "LPKit"]
 	path = LPKit
-	url = git@github.com:primalmotion/LPKit.git
+	url = git://github.com/primalmotion/LPKit.git
 [submodule "Cappuccino"]
 	path = Cappuccino
-	url = git@github.com:primalmotion/cappuccino.git
+	url = git://github.com/primalmotion/cappuccino.git
 [submodule "Libvirt"]
 	path = Libvirt
 	url = git://libvirt.org/libvirt.git
 [submodule "TNKit"]
 	path = TNKit
-	url = git@github.com:primalmotion/TNKit.git
+	url = git://github.com/primalmotion/TNKit.git
