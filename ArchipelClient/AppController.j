@@ -45,8 +45,6 @@
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
-@import "Views/TNToolbar.j"
-
 
 
 /*! @global
@@ -125,6 +123,32 @@ TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificati
 */
 TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
 
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item logout
+*/
+TNToolBarItemLogout         = @"TNToolBarItemLogout";
+
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item tags
+*/
+TNToolBarItemTags        = @"TNToolBarItemTags";
+
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item help
+*/
+TNToolBarItemHelp           = @"TNToolBarItemHelp";
+
+/*! @global
+    @group TNToolBarItem
+    identifier for item status
+*/
+TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
 
 /*! @defgroup  archipelcore Archipel Core
@@ -263,6 +287,7 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     CPLog.trace("initializing mianToolbar");
     _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
     [theWindow setToolbar:_mainToolbar];
+    [self makeToolbar];
 
     /* properties controller */
     CPLog.trace(@"initializing the leftSplitView");
@@ -536,6 +561,50 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
     CPLog.trace(@"Main menu created");
 }
 
+/*! initialize the toolbar with default items
+*/
+- (void)makeToolbar
+{
+    var bundle          = [CPBundle bundleForClass:self];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:self action:@selector(toolbarItemHelpClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
+
+    var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
+        availableItem = [[CPMenuItem alloc] init],
+        awayItem = [[CPMenuItem alloc] init],
+        busyItem = [[CPMenuItem alloc] init],
+        DNDItem = [[CPMenuItem alloc] init],
+        statusItem = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
+
+    [availableItem setTitle:TNArchipelStatusAvailableLabel];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Available.png"]]];
+    [statusSelector addItem:availableItem];
+
+    [awayItem setTitle:TNArchipelStatusAwayLabel];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Away.png"]]];
+    [statusSelector addItem:awayItem];
+
+    [busyItem setTitle:TNArchipelStatusBusyLabel];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
+    [statusSelector addItem:busyItem];
+
+    [DNDItem setTitle:TNArchipelStatusDNDLabel];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"DND.png"]]];
+    [statusSelector addItem:DNDItem];
+
+    [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
+    [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
+
+    [_mainToolbar setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
+    [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+    [_mainToolbar setPosition:499 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+    [_mainToolbar setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+    [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
+    [_mainToolbar setPosition:903 forToolbarItemIdentifier:TNToolBarItemHelp];
+    [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
+}
 
 #pragma mark -
 #pragma mark Notifications handlers
