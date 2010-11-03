@@ -285,7 +285,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     /* toolbar */
     CPLog.trace("initializing mianToolbar");
-    _mainToolbar = [[TNToolbar alloc] initWithTarget:self];
+    _mainToolbar = [[TNToolbar alloc] init];
     [theWindow setToolbar:_mainToolbar];
     [self makeToolbar];
 
@@ -565,7 +565,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (void)makeToolbar
 {
-    var bundle          = [CPBundle bundleForClass:self];
+    var bundle  = [CPBundle bundleForClass:self];
 
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:self action:@selector(toolbarItemHelpClick:)];
