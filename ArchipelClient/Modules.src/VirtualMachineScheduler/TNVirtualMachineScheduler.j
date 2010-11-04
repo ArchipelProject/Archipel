@@ -20,8 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-/*! @defgroup  sampletabmodule Module SampleTabModule
-    @desc Development starting point to create a Tab module
+/*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
+    @desc Scheduler control for virtual machines
 */
 TNArchipelPushNotificationScheduler             = @"archipel:push:scheduler";
 
@@ -32,45 +32,43 @@ TNArchipelTypeVirtualMachineScheduleJobs        = @"jobs";
 
 TNArchipelJobsActions                           = [@"create", @"shutdown", @"destroy", @"suspend", @"resume", @"pause", @"reboot", @"migrate"];
 
-/*! @ingroup sampletabmodule
-    Sample tabbed module implementation
-    Please respect the pragma marks as musch as possible.
+/*! @ingroup virtualmachinescheduler
+    Main controller of the module
 */
 @implementation TNVirtualMachineScheduler : TNModule
 {
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
-    @outlet CPScrollView            scrollViewTableJobs;
     @outlet CPButtonBar             buttonBarJobs;
-    @outlet CPWindow                windowNewJob;
-    @outlet CPSearchField           filterFieldJobs;
-    @outlet CPView                  viewTableContainer;
-    @outlet CPTextField             fieldNewJobComment;
-    @outlet CPPopUpButton           buttonNewJobAction;
-    @outlet TNCalendarView          calendarViewNewJob;
-    @outlet TNTextFieldStepper      stepperHour;
-    @outlet TNTextFieldStepper      stepperMinute;
-    @outlet TNTextFieldStepper      stepperSecond;
-    @outlet CPTabView               tabViewJobSchedule;
-    @outlet CPView                  viewNewJobOneShot;
-    @outlet CPView                  viewNewJobRecurent;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobMonth;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobDay;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobHour;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobMinute;
-    @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
-    @outlet CPCheckBox              checkBoxEveryYear;
-    @outlet CPCheckBox              checkBoxEveryMonth;
     @outlet CPCheckBox              checkBoxEveryDay;
     @outlet CPCheckBox              checkBoxEveryHour;
     @outlet CPCheckBox              checkBoxEveryMinute;
+    @outlet CPCheckBox              checkBoxEveryMonth;
     @outlet CPCheckBox              checkBoxEverySecond;
+    @outlet CPCheckBox              checkBoxEveryYear;
+    @outlet CPPopUpButton           buttonNewJobAction;
+    @outlet CPScrollView            scrollViewTableJobs;
+    @outlet CPSearchField           filterFieldJobs;
+    @outlet CPTabView               tabViewJobSchedule;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldNewJobComment;
+    @outlet CPView                  viewNewJobOneShot;
+    @outlet CPView                  viewNewJobRecurent;
+    @outlet CPView                  viewTableContainer;
+    @outlet CPWindow                windowNewJob;
+    @outlet TNCalendarView          calendarViewNewJob;
+    @outlet TNTextFieldStepper      stepperHour;
+    @outlet TNTextFieldStepper      stepperMinute;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobDay;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobHour;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobMinute;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobMonth;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
+    @outlet TNTextFieldStepper      stepperSecond;
 
-
+    CPDate                          _scheduledDate;
     CPTableView                     _tableJobs;
     TNTableViewDataSource           _datasourceJobs;
-    CPDate                          _scheduledDate;
 }
 
 
@@ -80,7 +78,6 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
     _tableJobs          = [[CPTableView alloc] initWithFrame:[scrollViewTableJobs bounds]];
@@ -141,9 +138,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [buttonNewJobAction removeAllItems];
     [buttonNewJobAction addItemsWithTitles:TNArchipelJobsActions];
 
-
     //tabview
-
     var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];
     [itemOneShot setLabel:@"Unique"];
     [itemOneShot setView:viewNewJobOneShot];
@@ -184,13 +179,6 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [self getJobs];
 }
 
-/*! called when module is unloaded
-*/
-- (void)willUnload
-{
-    [super willUnload];
-}
-
 /*! called when module becomes visible
 */
 - (void)willShow
@@ -214,8 +202,8 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Schedule new action" action:@selector(schedule:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Unschedule selected action" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Schedule new action" action:@selector(openNewJobWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Unschedule selected action" action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
 }
 
 
@@ -249,13 +237,6 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 
     return YES;
 }
-
-
-
-#pragma mark -
-#pragma mark Utilities
-
-// put your utilities here
 
 
 #pragma mark -
