@@ -30,7 +30,7 @@ TNArchipelTypeVirtualMachineScheduleSchedule    = @"schedule";
 TNArchipelTypeVirtualMachineScheduleUnschedule  = @"unschedule";
 TNArchipelTypeVirtualMachineScheduleJobs        = @"jobs";
 
-TNArchipelJobsActions                           = [@"create", @"shutdown", @"destroy", @"suspend", @"resume", @"reboot", @"migrate"];
+TNArchipelJobsActions                           = [@"create", @"shutdown", @"destroy", @"suspend", @"resume", @"pause", @"reboot", @"migrate"];
 
 /*! @ingroup sampletabmodule
     Sample tabbed module implementation
@@ -45,12 +45,27 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     @outlet CPWindow                windowNewJob;
     @outlet CPSearchField           filterFieldJobs;
     @outlet CPView                  viewTableContainer;
-    @outlet LPMultiLineTextField    fieldNewJobComment;
+    @outlet CPTextField             fieldNewJobComment;
     @outlet CPPopUpButton           buttonNewJobAction;
     @outlet TNCalendarView          calendarViewNewJob;
     @outlet TNTextFieldStepper      stepperHour;
     @outlet TNTextFieldStepper      stepperMinute;
     @outlet TNTextFieldStepper      stepperSecond;
+    @outlet CPTabView               tabViewJobSchedule;
+    @outlet CPView                  viewNewJobOneShot;
+    @outlet CPView                  viewNewJobRecurent;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobMonth;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobDay;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobHour;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobMinute;
+    @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
+    @outlet CPCheckBox              checkBoxEveryYear;
+    @outlet CPCheckBox              checkBoxEveryMonth;
+    @outlet CPCheckBox              checkBoxEveryDay;
+    @outlet CPCheckBox              checkBoxEveryHour;
+    @outlet CPCheckBox              checkBoxEveryMinute;
+    @outlet CPCheckBox              checkBoxEverySecond;
 
 
     CPTableView                     _tableJobs;
@@ -125,6 +140,29 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 
     [buttonNewJobAction removeAllItems];
     [buttonNewJobAction addItemsWithTitles:TNArchipelJobsActions];
+
+
+    //tabview
+
+    var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];
+    [itemOneShot setLabel:@"Unique"];
+    [itemOneShot setView:viewNewJobOneShot];
+    [tabViewJobSchedule addTabViewItem:itemOneShot];
+
+    var itemRecurrent = [[CPTabViewItem alloc] initWithIdentifier:@"itemRecurrent"];
+    [itemRecurrent setLabel:@"Recurent"];
+    [itemRecurrent setView:viewNewJobRecurent];
+    [tabViewJobSchedule addTabViewItem:itemRecurrent];
+
+    var date = [CPDate date];
+    [stepperNewRecurrentJobYear setMaxValue:[[date format:@"Y"] intValue] + 100];
+    [stepperNewRecurrentJobYear setMinValue:[date format:@"Y"]];
+    [stepperNewRecurrentJobMonth setMaxValue:12];
+    [stepperNewRecurrentJobMonth setMinValue:1];
+    [stepperNewRecurrentJobDay setMaxValue:31];
+    [stepperNewRecurrentJobDay setMinValue:1];
+    [stepperNewRecurrentJobHour setMaxValue:23];
+    [stepperNewRecurrentJobHour setMinValue:0];
 }
 
 
@@ -168,6 +206,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 - (void)willHide
 {
     [super willHide];
+    [windowNewJob close];
 }
 
 
@@ -229,20 +268,29 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 {
     var date = [CPDate date];
 
+    [fieldNewJobComment setStringValue:@""];
     [stepperHour setDoubleValue:[date format:@"H"]]
     [stepperMinute setDoubleValue:[date format:@"i"]]
     [stepperSecond setDoubleValue:0.0];
     [calendarViewNewJob makeSelectionWithDate:date end:date];
 
+    [stepperNewRecurrentJobYear setDoubleValue:[date format:@"Y"]];
+    [stepperNewRecurrentJobMonth setDoubleValue:[date format:@"m"]];
+    [stepperNewRecurrentJobDay setDoubleValue:[date format:@"d"]];
+    [stepperNewRecurrentJobHour setDoubleValue:[date format:@"H"]];
+    [stepperNewRecurrentJobMinute setDoubleValue:[date format:@"i"]];
+    [stepperNewRecurrentJobSecond setDoubleValue:0.0];
+
     [windowNewJob center];
     [windowNewJob makeKeyAndOrderFront:nil];
+
+    [buttonNewJobAction selectItemWithTitle:@"create"];
 }
 
 /*! schedule a new job
 */
 - (IBAction)schedule:(id)sender
 {
-    [fieldNewJobComment setStringValue:@""];
     [windowNewJob close];
     [self schedule];
 }
@@ -254,6 +302,32 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [self unschedule];
 }
 
+/*! handle every checkbox event
+*/
+- (IBAction)checkboxClicked:(id)aSender
+{
+    switch ([aSender tag])
+    {
+        case "1":
+            [stepperNewRecurrentJobYear setEnabled:![aSender state]];
+            break;
+        case "2":
+            [stepperNewRecurrentJobMonth setEnabled:![aSender state]];
+            break;
+        case "3":
+            [stepperNewRecurrentJobDay setEnabled:![aSender state]];
+            break;
+        case "4":
+            [stepperNewRecurrentJobHour setEnabled:![aSender state]];
+            break;
+        case "5":
+            [stepperNewRecurrentJobMinute setEnabled:![aSender state]];
+            break;
+        case "6":
+            [stepperNewRecurrentJobSecond setEnabled:![aSender state]];
+            break;
+    }
+}
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -315,21 +389,45 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
         return;
     }
 
-
-
     var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    var year,
+        month,
+        day,
+        hour,
+        minute,
+        second;
+
+    if ([[tabViewJobSchedule selectedTabViewItem] identifier] == @"itemOneShot")
+    {
+        year    = [_scheduledDate format:@"Y"];
+        month   = [_scheduledDate format:@"m"];
+        day     = [_scheduledDate format:@"d"];
+        hour    = [stepperHour doubleValue];
+        minute  = [stepperMinute doubleValue];
+        second  = [stepperSecond doubleValue];
+    }
+    else if ([[tabViewJobSchedule selectedTabViewItem] identifier] == @"itemRecurrent")
+    {
+        year    = (![checkBoxEveryYear state]) ? [stepperNewRecurrentJobYear doubleValue] : "*";
+        month   = (![checkBoxEveryMonth state]) ? [stepperNewRecurrentJobMonth doubleValue] : "*";
+        day     = (![checkBoxEveryDay state]) ? [stepperNewRecurrentJobDay doubleValue] : "*";
+        hour    = (![checkBoxEveryHour state]) ? [stepperNewRecurrentJobHour doubleValue] : "*";
+        minute  = (![checkBoxEveryMinute state]) ? [stepperNewRecurrentJobMinute doubleValue] : "*";
+        second  = (![checkBoxEverySecond state]) ? [stepperNewRecurrentJobSecond doubleValue] : "*";
+    }
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineSchedule}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineScheduleSchedule,
         "comment": [fieldNewJobComment stringValue],
         "job": [buttonNewJobAction title],
-        "year": [_scheduledDate format:@"Y"],
-        "month": [_scheduledDate format:@"m"],
-        "day": [_scheduledDate format:@"d"],
-        "hour": [stepperHour doubleValue],
-        "minute": [stepperMinute doubleValue],
-        "second": [stepperSecond doubleValue]}];
+        "year": year,
+        "month": month,
+        "day": day,
+        "hour": hour,
+        "minute": minute,
+        "second": second}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didScheduleJob:) ofObject:self];
 }
