@@ -33,7 +33,7 @@ class TNActionScheduler:
         self.scheduler.start()
         
         self.database = sqlite3.connect(db_file, check_same_thread=False);
-        self.database.execute("create table if not exists scheduler (entity_uuid text, job_uuid text, action text, year integer, month integer, day integer, hour integer, minute integer, second integer, comment text, params text)")
+        self.database.execute("create table if not exists scheduler (entity_uuid text, job_uuid text, action text, year text, month text, day text, hour text, minute text, second text, comment text, params text)")
         self.database.commit()
         self.cursor = self.database.cursor()
         self.restore_jobs()
