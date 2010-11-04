@@ -102,7 +102,9 @@ class TNActionScheduler:
             self.entity.resume()
         elif action == "migrate":
             pass
-    
+        self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
+        self.database.commit()
+        self.entity.push_change("scheduler", "jobexecuted");
     
     def iq_schedule(self, iq):
         """
