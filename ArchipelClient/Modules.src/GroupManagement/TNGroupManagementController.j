@@ -77,6 +77,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
     [_tableVirtualMachines setUsesAlternatingRowBackgroundColors:YES];
     [_tableVirtualMachines setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableVirtualMachines setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_tableVirtualMachines setAllowsColumnReordering:YES];
     [_tableVirtualMachines setAllowsColumnResizing:YES];
     [_tableVirtualMachines setAllowsEmptySelection:YES];
