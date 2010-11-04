@@ -71,6 +71,7 @@
         <key>SupportedEntityTypes</key>
         <array>
             <string>virtualmachine</string>
+			<string>hypervisor</string>
         </array>
         
         <!--

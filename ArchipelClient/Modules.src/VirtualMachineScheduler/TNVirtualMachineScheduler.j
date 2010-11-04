@@ -23,14 +23,13 @@
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
 */
-TNArchipelPushNotificationScheduler             = @"archipel:push:scheduler";
+TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler";
 
-TNArchipelTypeVirtualMachineSchedule            = @"archipel:vm:scheduler";
-TNArchipelTypeVirtualMachineScheduleSchedule    = @"schedule";
-TNArchipelTypeVirtualMachineScheduleUnschedule  = @"unschedule";
-TNArchipelTypeVirtualMachineScheduleJobs        = @"jobs";
-
-TNArchipelJobsActions                           = [@"create", @"shutdown", @"destroy", @"suspend", @"resume", @"pause", @"reboot", @"migrate"];
+TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler";
+TNArchipelTypeEntityScheduleSchedule    = @"schedule";
+TNArchipelTypeEntityScheduleUnschedule  = @"unschedule";
+TNArchipelTypeEntityScheduleJobs        = @"jobs";
+TNArchipelTypeEntityScheduleActions     = @"actions";
 
 /*! @ingroup virtualmachinescheduler
     Main controller of the module
@@ -135,9 +134,6 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [calendarViewNewJob setBorderedWithHexColor:@"#C0C7D2"];
     [calendarViewNewJob setDelegate:self];
 
-    [buttonNewJobAction removeAllItems];
-    [buttonNewJobAction addItemsWithTitles:TNArchipelJobsActions];
-
     //tabview
     var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];
     [itemOneShot setLabel:@"Unique"];
@@ -177,6 +173,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationScheduler];
 
     [self getJobs];
+    [self getActions];
 }
 
 /*! called when module becomes visible
@@ -202,7 +199,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Schedule new action" action:@selector(openNewJobWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Schedule new action" action:@selector(openNewJobWindowq:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Unschedule selected action" action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
 }
 
@@ -265,7 +262,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     [windowNewJob center];
     [windowNewJob makeKeyAndOrderFront:nil];
 
-    [buttonNewJobAction selectItemWithTitle:@"create"];
+    [buttonNewJobAction selectItemAtIndex:0];
 }
 
 /*! schedule a new job
@@ -313,15 +310,50 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 #pragma mark -
 #pragma mark XMPP Controls
 
+/*! ask for supported actions
+*/
+- (void)getActions
+{
+    var stanza = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeEntityScheduleActions}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveActions:) ofObject:self];
+}
+
+/*! compute the answer containing the actions
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (BOOL)_didReceiveActions:(TNStropheStanza)aStanza
+{
+    [buttonNewJobAction removeAllItems];
+
+    if ([aStanza type] == @"result")
+    {
+        var actions = [aStanza childrenWithName:@"action"];
+
+        for (var i = 0; i < [actions count]; i++)
+            [buttonNewJobAction addItemWithTitle:[[actions objectAtIndex:i] text]];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
 /*! ask for existing jobs
 */
 - (void)getJobs
 {
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineSchedule}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineScheduleJobs}];
+        "action": TNArchipelTypeEntityScheduleJobs}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveJobs:) ofObject:self];
 }
@@ -398,9 +430,9 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
         second  = (![checkBoxEverySecond state]) ? [stepperNewRecurrentJobSecond doubleValue] : "*";
     }
 
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineSchedule}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineScheduleSchedule,
+        "action": TNArchipelTypeEntityScheduleSchedule,
         "comment": [fieldNewJobComment stringValue],
         "job": [buttonNewJobAction title],
         "year": year,
@@ -474,9 +506,9 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
         var job             = [objects objectAtIndex:i],
             stanza          = [TNStropheStanza iqWithType:@"set"];
 
-        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineSchedule}];
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeEntitySchedule}];
         [stanza addChildWithName:@"archipel" andAttributes:{
-            "action": TNArchipelTypeVirtualMachineScheduleUnschedule,
+            "action": TNArchipelTypeEntityScheduleUnschedule,
             "uid": [job objectForKey:@"uid"]}];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didUnscheduleJobs:) ofObject:self];

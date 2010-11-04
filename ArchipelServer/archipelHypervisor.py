@@ -317,7 +317,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     ###  Hypervisor controls
     ######################################################################################################
     
-    def alloc(self, requester, requested_name=None):
+    def alloc(self, requester=None, requested_name=None):
         """
         Alloc a new XMPP entity
         """
@@ -337,8 +337,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         log.info("starting xmpp threaded virtual machine")
         vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
         
-        log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
-        vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+        if requester:
+            log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
+            vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
         
         log.info("registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
