@@ -76,6 +76,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 
     [_tableJobs setUsesAlternatingRowBackgroundColors:YES];
     [_tableJobs setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableJobs setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
     [_tableJobs setAllowsColumnReordering:YES];
     [_tableJobs setAllowsColumnResizing:YES];
     [_tableJobs setAllowsEmptySelection:YES];
@@ -85,13 +86,12 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
         columnDate      = [[CPTableColumn alloc] initWithIdentifier:@"date"],
         columnComment   = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
 
-    [columnAction setWidth:250];
+    [columnAction setWidth:120];
     [[columnAction headerView] setStringValue:@"Action"];
 
-    [columnDate setWidth:250];
+    [columnDate setWidth:150];
     [[columnDate headerView] setStringValue:@"Date"];
 
-    [columnComment setWidth:250];
     [[columnComment headerView] setStringValue:@"Comment"];
 
     [_tableJobs addTableColumn:columnAction];
@@ -229,12 +229,12 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 {
     var date = [CPDate date];
 
-    [windowNewJob makeFirstResponder:fieldNewJobComment];
-
     [stepperHour setDoubleValue:[date format:@"H"]]
     [stepperMinute setDoubleValue:[date format:@"i"]]
     [stepperSecond setDoubleValue:0.0];
+    [calendarViewNewJob makeSelectionWithDate:date end:date];
 
+    [windowNewJob center];
     [windowNewJob makeKeyAndOrderFront:nil];
 }
 
@@ -342,7 +342,6 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
     if ([aStanza type] == @"result")
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Scheduler" message:@"Action has been scheduled"];
-        [self getJobs];
     }
     else
     {
@@ -410,9 +409,7 @@ TNArchipelJobsActions                           = [@"create", @"shutdown", @"des
 */
 - (BOOL)_didUnscheduleJobs:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-        [self getJobs];
-    else
+    if ([aStanza type] != @"result")
         [self handleIqErrorFromStanza:aStanza];
 
     return NO;
