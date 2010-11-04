@@ -43,6 +43,9 @@ class TNActionScheduler:
         self.cursor.execute("INSERT INTO scheduler VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (self.entity.uuid, uid, action, year, month, day, hour, minute, second, comment, params,))
         self.database.commit()
     
+    def delete_job(self, uid):
+        self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
+        self.database.commit()
     
     def restore_jobs(self):
         self.cursor.execute("SELECT * FROM scheduler WHERE entity_uuid=?", (self.entity.uuid,))
@@ -102,8 +105,7 @@ class TNActionScheduler:
             self.entity.resume()
         elif action == "migrate":
             pass
-        self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
-        self.database.commit()
+        self.delete_job(uid);
         self.entity.push_change("scheduler", "jobexecuted");
     
     def iq_schedule(self, iq):
@@ -186,6 +188,7 @@ class TNActionScheduler:
             if not the_job:
                 raise Exception("job with uid %s doesn't exists" % uid)
             
+            self.delete_job(uid);
             self.scheduler.unschedule_job(the_job);
             self.entity.push_change("scheduler", "unscheduled")
         except Exception as ex:
