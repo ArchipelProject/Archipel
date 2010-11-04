@@ -103,6 +103,9 @@ class TNActionScheduler:
             self.entity.suspend()
         elif action == "resume":
             self.entity.resume()
+        elif action == "pause":
+            if self.entity.libvirt_status == 1: self.entity.suspend()
+            elif self.entity.libvirt_status == 3: self.entity.resume()
         elif action == "migrate":
             pass
         self.delete_job(uid);
@@ -122,8 +125,8 @@ class TNActionScheduler:
             reply = iq.buildReply("result")
             job = iq.getTag("query").getTag("archipel").getAttr("job")
             
-            if not job in ("create", "shutdown", "destroy", "suspend", "resume", "reboot", "migrate"):
-                raise Exception("job is not valid")
+            if not job in ("create", "shutdown", "destroy", "suspend", "resume", "reboot", "migrate", "pause"):
+                raise Exception("action %s is not valid" % job)
             
             year = iq.getTag("query").getTag("archipel").getAttr("year")
             month = iq.getTag("query").getTag("archipel").getAttr("month")
