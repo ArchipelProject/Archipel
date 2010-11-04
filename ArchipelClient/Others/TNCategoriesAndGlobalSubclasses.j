@@ -184,6 +184,12 @@
 
     return theDate.dateFormat(aFormat);
 }
+
+- (CPString)format:(CPString)aFormat
+{
+    return self.dateFormat(aFormat);
+}
+
 - (CPString)description
 {
     return self.dateFormat(@"Y-m-d H:i:s");

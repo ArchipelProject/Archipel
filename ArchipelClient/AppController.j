@@ -45,6 +45,7 @@
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
+@import "Views/TNCalendarView.j"
 
 
 /*! @global
