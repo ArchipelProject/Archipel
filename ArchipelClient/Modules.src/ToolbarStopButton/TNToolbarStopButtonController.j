@@ -34,8 +34,8 @@ TNArchipelControlStop                           = @"TNArchipelControlStop";
 @implementation TNToolbarStopButtonController : TNModule
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! send TNArchipelControlNotification containing command TNArchipelControlStop
     to a loaded VirtualMachineControl module instance

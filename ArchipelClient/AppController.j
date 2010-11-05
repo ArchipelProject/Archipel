@@ -177,7 +177,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     @outlet CPView                  leftView;
     @outlet CPView                  rightView;
     @outlet CPView                  statusBar;
-    @outlet CPView                  viewLoadingModule;
     @outlet CPWebView               helpView;
     @outlet CPWebView               webViewAboutCredits;
     @outlet CPWindow                theWindow;
@@ -219,8 +218,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! This method initialize the content of the GUI when the CIB file
     as finished to load.
@@ -268,7 +267,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
 
-    [viewLoadingModule setBackgroundColor:[CPColor colorWithHexString:@"D3DADF"]];
 
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
@@ -607,8 +605,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 }
 
-#pragma mark -
-#pragma mark Notifications handlers
+//#pragma mark -
+//#pragma mark Notifications handlers
 
 /*! Notification responder of TNStropheConnection
     will be performed on login
@@ -661,8 +659,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (void)allModuleReady:(CPNotification)aNotification
 {
-    if ([viewLoadingModule superview])
-        [viewLoadingModule removeFromSuperview];
 }
 
 
@@ -687,8 +683,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! Display the helpView in the rightView
 */
@@ -737,8 +733,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! will remove the selected roster item according to its type
     @param the sender of the action
@@ -954,8 +950,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-#pragma mark -
-#pragma mark Toolbar Actions
+//#pragma mark -
+//#pragma mark Toolbar Actions
 
 /*! Delegate of toolbar imutables toolbar items.
     Trigger on delete help item click.
@@ -1077,8 +1073,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 /*! Delegate for CPWindow.
     Tipically set _helpWindow to nil on closes.
@@ -1159,8 +1155,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     if (_moduleLoadingDelay)
         [_moduleLoadingDelay invalidate];
-
-    [viewLoadingModule setFrame:[rightView bounds]];
 
     [propertiesController setEntity:item];
     [propertiesController reload];

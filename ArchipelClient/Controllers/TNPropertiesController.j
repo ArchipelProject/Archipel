@@ -50,8 +50,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize some values on CIB awakening
 */
@@ -81,8 +81,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! message performed when contact update its presence in order to update information
 */
@@ -112,8 +112,8 @@
     }
 }
 
-#pragma mark -
-#pragma mark Setters
+//#pragma mark -
+//#pragma mark Setters
 
 - (void)setEntity:(id)anEntity
 {
@@ -136,8 +136,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 - (void)setAvatarManager:(TNAvatarManager)anAvatarManager
 {
@@ -227,8 +227,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! opens the avatar manager window if any
     @param sender the sender

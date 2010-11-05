@@ -35,14 +35,14 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 // put your initializations here
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -80,8 +80,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! called when entity' nickname changed
     @param aNotification the notification
@@ -95,26 +95,26 @@
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 // put your utilities here
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 // put your IBAction here
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 // put your IBActions here
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 // put your delegates here
 

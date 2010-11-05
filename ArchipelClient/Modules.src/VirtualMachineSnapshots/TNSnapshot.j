@@ -37,8 +37,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize the TNSnapshot
 */
@@ -54,8 +54,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Accessors
+//#pragma mark -
+//#pragma mark Accessors
 
 - (CPImage)isCurrent
 {

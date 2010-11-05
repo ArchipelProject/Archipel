@@ -36,8 +36,8 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     TNTableViewDataSource           _dlDatasource;
 }
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 /*! called at cib awaking
 */
 - (void)awakeFromCib
@@ -74,8 +74,8 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [_mainTableView reloadData];
 }
 
-#pragma mark -
-#pragma mark CPWindow overrides
+//#pragma mark -
+//#pragma mark CPWindow overrides
 - (void)makeKeyAndOrderFront:(id)sender
 {
     [self getDownloadQueue:nil];
@@ -91,8 +91,8 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [super performClose:sender];
 }
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 /*! get the progress of downloads
     @param aTimer the timere that have triggered the message
 */

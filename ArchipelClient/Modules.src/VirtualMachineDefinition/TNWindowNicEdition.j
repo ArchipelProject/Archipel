@@ -43,8 +43,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     TNStropheContact        _entity     @accessors(property=entity);
 }
 
-#pragma mark -
-#pragma mark Initilization
+//#pragma mark -
+//#pragma mark Initilization
 
 /*! called at cib awaking
 */
@@ -59,8 +59,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! update the editor according to the current nic to edit
 */
@@ -93,8 +93,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! saves the change
     @param sender the sender of the action
@@ -142,8 +142,8 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 }
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! ask hypervisor for its networks
 */

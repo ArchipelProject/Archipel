@@ -44,8 +44,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! called at cib awakening
 */
@@ -83,8 +83,8 @@
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -180,8 +180,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! triggered when entity's nickname changed
     @param aNotification the notification
@@ -259,8 +259,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! save the chat
 */
@@ -331,8 +331,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! send a message to the contact containing the content of the outlet message CPTextField
     @param aSender the sender of the action

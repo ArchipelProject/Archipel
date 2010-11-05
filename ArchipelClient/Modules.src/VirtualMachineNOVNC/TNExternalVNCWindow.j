@@ -45,8 +45,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! Initialize the window with given parameters
     @param aHost VNC host
@@ -87,8 +87,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Delegate
+//#pragma mark -
+//#pragma mark Delegate
 
 /*! VNCView delegate
 */
@@ -107,8 +107,8 @@
 }
 
 
-#pragma mark -
-#pragma mark CPWindow overrides
+//#pragma mark -
+//#pragma mark CPWindow overrides
 - (void)close
 {
     CPLog.info("disconnecting windowed noVNC client")

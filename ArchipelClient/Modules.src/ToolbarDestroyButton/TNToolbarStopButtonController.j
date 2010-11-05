@@ -32,8 +32,8 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 */
 @implementation TNToolbarDestroyButtonController : TNModule
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! send TNArchipelControlNotification containing command TNArchipelControlDestroy
     to a loaded VirtualMachineControl module instance

@@ -34,8 +34,8 @@ TNArchipelControlPlay                           = @"TNArchipelControlPlay";
 @implementation TNToolbarPlayButtonController : TNModule
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! send TNArchipelControlNotification containing command TNArchipelControlPlay
     to a loaded VirtualMachineControl module instance

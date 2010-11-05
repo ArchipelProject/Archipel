@@ -37,8 +37,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! Configure the view at cib awaking
 */
@@ -82,8 +82,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Utility methods
+//#pragma mark -
+//#pragma mark Utility methods
 
 /*! return all tags used for the given JID
     @param aJID the JID to match
@@ -127,8 +127,8 @@
         [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
 }
 
-#pragma mark -
-#pragma mark Notifications handlers
+//#pragma mark -
+//#pragma mark Notifications handlers
 
 /*! this handler is triggered when user changes the selected item in roster
     It will populate the content of the CPTokenField with entity tags
@@ -178,8 +178,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! Action that will remove all tags of the current entity, and readd the new ones
     @param sender the sender of the action
@@ -202,8 +202,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 /*! delegate of CPTokenField that will return the list of available tags
 */

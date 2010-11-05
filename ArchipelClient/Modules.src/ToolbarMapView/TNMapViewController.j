@@ -69,8 +69,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     TNStropheContact                _originHypervisor;
 }
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -196,8 +196,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -237,8 +237,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! set the origin hypervisor
     @param anItem TNStropheContact representing the hypervisor
@@ -261,8 +261,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! ask given hypervisor for its coordinates
     @param anHypervisor TNStropheContact representing the hypervisor
@@ -425,8 +425,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 - (void)mapViewIsReady:(MKMapView)aMapView
 {

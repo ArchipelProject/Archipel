@@ -31,8 +31,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! create, initialize and return a TNLogEntry
     @param aLevel the level of the log
@@ -54,8 +54,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Accessors
+//#pragma mark -
+//#pragma mark Accessors
 /*! will clean up log message from eventual colors
     @return cleaned level string
 */

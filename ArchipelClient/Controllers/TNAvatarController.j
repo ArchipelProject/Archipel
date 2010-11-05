@@ -82,8 +82,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 - (void)awakeFromCib
 {
@@ -102,8 +102,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 }
 
 
-#pragma mark -
-#pragma mark XMPP System
+//#pragma mark -
+//#pragma mark XMPP System
 
 /*! Ask the entity for availables avatars
 */
@@ -186,8 +186,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! overide the super makeKeyAndOrderFront in order to getAvailableAvatars on display
     @param sender the sender of the action
@@ -200,8 +200,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 }
 
 
-#pragma mark -
-#pragma mark Collection View delegates
+//#pragma mark -
+//#pragma mark Collection View delegates
 
 - (void)collectionView:(CPCollectionView)collectionView didDoubleClickOnItemAtIndex:(int)index
 {

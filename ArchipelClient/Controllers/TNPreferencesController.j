@@ -42,8 +42,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 /*! Initialization at CIB awaking
 */
 - (void)awakeFromCib
@@ -61,8 +61,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Notification handles
+//#pragma mark -
+//#pragma mark Notification handles
 
 /*! triggered when all modules are loaded. it will create the tab view
     containing the preferences view (if any) as item for each module
@@ -104,8 +104,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! When window is ordering front, refresh all general preferences
     and send message loadPreferences to all modules

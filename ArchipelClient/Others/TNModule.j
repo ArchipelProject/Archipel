@@ -35,10 +35,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     it *MUST* call the super method or the module can make all archipel unstable.
 
     Modules events are the following :
-     - <b>willLoad</b>: This message is sent when module will be called by changing selection in roster.
-        This assert than the module has its roster and entity properties sets.
-     - <b>willUnload</b>: This message is sent when user change roster selection. It can be reloaded instant later,
-        with another roster and entity.
+     - <b>willLoad</b>: This message is sent when module will be called by changing selection in roster. This assert than the module has its roster and entity properties sets.
+     - <b>willUnload</b>: This message is sent when user change roster selection. It can be reloaded instant later, with another roster and entity.
      - <b>willShow</b>: This message is sent when user will display the GUI of the module.
      - <b>willHide</b>: This message is sent when user displays other module.
      - <b>menuReady</b>: This message is sent when the the Main Menu is ready. So if module wants to have a menu, it can implement it from its own _menu property
@@ -86,8 +84,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 - (id)init
 {
@@ -116,8 +114,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-#pragma mark -
-#pragma mark Events management
+//#pragma mark -
+//#pragma mark Events management
 
 
 /*! PRIVATE: this message is called when a matching pubsub event is received
@@ -183,8 +181,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-#pragma mark -
-#pragma mark TNModule events implementation
+//#pragma mark -
+//#pragma mark TNModule events implementation
 
 /*! This message is sent when module is loaded. It will
     reinitialize the _registredSelectors dictionnary
@@ -276,8 +274,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-#pragma mark -
-#pragma mark Communication utilities
+//#pragma mark -
+//#pragma mark Communication utilities
 
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact
     @param aStanza: TNStropheStanza to send to the contact

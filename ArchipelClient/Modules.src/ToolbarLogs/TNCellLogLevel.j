@@ -25,8 +25,8 @@
     CPTextField _fieldLevel;
 }
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initializes an instance of TNCellLogLevel
 */
@@ -45,8 +45,8 @@
     return self;
 }
 
-#pragma mark -
-#pragma mark TNView overrides
+//#pragma mark -
+//#pragma mark TNView overrides
 
 /*! set the object value
     @param aLevel the value of the level
@@ -90,8 +90,8 @@
 }
 
 
-#pragma mark -
-#pragma mark CPCoding compliance
+//#pragma mark -
+//#pragma mark CPCoding compliance
 
 - (id)initWithCoder:(CPCoder)aCoder
 {

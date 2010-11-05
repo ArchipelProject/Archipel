@@ -58,8 +58,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -144,8 +144,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -206,8 +206,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! called when entity's nickname changes
     @param aNotification the notification
@@ -252,8 +252,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! Checks if virtualmacine is not running otherwise displays the masking view
 */
@@ -271,8 +271,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! Open the new appliance window
     @param sender the sender of the action
@@ -328,8 +328,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! ask for installed appliances
 */
@@ -527,8 +527,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {

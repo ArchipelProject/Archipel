@@ -36,8 +36,8 @@ TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize a TNDHCPEntry as a range
     @param aStartAddr range intial addr

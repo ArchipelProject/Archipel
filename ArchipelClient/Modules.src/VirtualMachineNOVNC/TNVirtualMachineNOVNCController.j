@@ -92,8 +92,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize some value at CIB awakening
 */
@@ -145,8 +145,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -236,8 +236,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! called when contact nickname has been updated
     @param aNotification the notification
@@ -259,8 +259,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! Check if virtual machine is running. if not displays the masking view
 */
@@ -312,8 +312,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! Open the direct VNC URI using vnc://
     @param sender the sender of the action
@@ -456,8 +456,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! send stanza to get the current virtual machine VNC display
 */
@@ -557,8 +557,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 /*! TNZoomAnimation delegate
 */

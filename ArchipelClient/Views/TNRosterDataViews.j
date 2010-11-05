@@ -44,8 +44,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize the class
     @return a initialized instance of TNRosterDataViewContact
@@ -114,8 +114,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Overrides
+//#pragma mark -
+//#pragma mark Overrides
 
 /*! Message used by CPOutlineView to set the value of the object
     @param aContact TNStropheContact to represent
@@ -180,8 +180,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Theming
+//#pragma mark -
+//#pragma mark Theming
 
 /*! implement theming in order to allow change color of selected item
 */
@@ -206,8 +206,8 @@
 }
 
 
-#pragma mark -
-#pragma mark CPCoding compliance
+//#pragma mark -
+//#pragma mark CPCoding compliance
 
 /*! CPCoder compliance
 */
@@ -264,8 +264,8 @@
 */
 @implementation TNRosterDataViewGroup : CPTextField
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initialize the class
     @return a initialized instance of TNRosterDataViewGroup

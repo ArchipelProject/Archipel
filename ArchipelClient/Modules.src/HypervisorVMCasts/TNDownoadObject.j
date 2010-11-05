@@ -48,8 +48,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Accessors
+//#pragma mark -
+//#pragma mark Accessors
 
 /*! format the percentage property
     @return formatted percentage

@@ -71,8 +71,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 - (void)awakeFromCib
 {
@@ -157,8 +157,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -204,8 +204,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! called when entity' nickname changed
     @param aNotification the notification
@@ -236,8 +236,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! Open the new job window
     @param sender the sender of the action
@@ -307,8 +307,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     }
 }
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! ask for supported actions
 */
@@ -527,8 +527,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 - (void)calendarView:(LPCalendarView)aCalendarView didMakeSelection:(CPDate)aStartDate end:(CPDate)anEndDate
 {

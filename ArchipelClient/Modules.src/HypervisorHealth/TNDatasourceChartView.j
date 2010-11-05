@@ -28,8 +28,8 @@
     int         _maxNumberOfPoints;
 }
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! initializes the datasource with the given number of set
     @param numberOfSets the number of different data set to use
@@ -56,8 +56,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Datasource implementation
+//#pragma mark -
+//#pragma mark Datasource implementation
 
 - (CPNumber)numberOfSetsInChart:(LPChartView)aCharView
 {
@@ -83,8 +83,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Content controls
+//#pragma mark -
+//#pragma mark Content controls
 
 /*! Add the given data to the datasource in the given dataset
     @param aData the data to push into the datasource

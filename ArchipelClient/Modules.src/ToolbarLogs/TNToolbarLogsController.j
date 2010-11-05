@@ -54,8 +54,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -124,8 +124,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 }
 
 
-#pragma mark -
-#pragma mark Utilities
+//#pragma mark -
+//#pragma mark Utilities
 
 /*! write log to the logger
     @param aString CPString containing the log message
@@ -148,30 +148,31 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (void)save
 {
-    CPLogUnregister(_logFunction);
-
-    var defaults = [CPUserDefaults standardUserDefaults];
-    [defaults setObject:[_datasourceLogs content] forKey:@"TNArchipelLogStored"];
-
-    CPLogRegister(_logFunction, _logLevel);
+    // CPLogUnregister(_logFunction);
+    // 
+    // var defaults = [CPUserDefaults standardUserDefaults];
+    // [defaults setObject:[_datasourceLogs content] forKey:@"TNArchipelLogStored"];
+    // 
+    // CPLogRegister(_logFunction, _logLevel);
 }
 
 /*! recover and returns the stored logs
 */
 - (void)restaure
 {
-    CPLogUnregister(_logFunction);
-
-    var defaults        = [CPUserDefaults standardUserDefaults],
-        recoveredLogs   = [defaults objectForKey:@"TNArchipelLogStored"];
-
-    CPLogRegister(_logFunction, _logLevel);
-    [_datasourceLogs setContent:recoveredLogs ? recoveredLogs : [CPArray array]];
+    // CPLogUnregister(_logFunction);
+    // 
+    // var defaults        = [CPUserDefaults standardUserDefaults],
+    //     recoveredLogs   = [defaults objectForKey:@"TNArchipelLogStored"];
+    // 
+    // CPLogRegister(_logFunction, _logLevel);
+    //[_datasourceLogs setContent:recoveredLogs ? recoveredLogs : [CPArray array]];
+    [_datasourceLogs setContent:[CPArray array]];
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! remove all previous stored logs
     @param sender the sender of the action

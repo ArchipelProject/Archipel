@@ -70,8 +70,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     TNTableViewDataSource   _mediasDatasource;
 }
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -184,8 +184,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -235,8 +235,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark Notification handlers
+//#pragma mark -
+//#pragma mark Notification handlers
 
 /*! called when entity's nickname changes
     @param aNotification the notification
@@ -286,8 +286,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark  Utilities
+//#pragma mark -
+//#pragma mark  Utilities
 
 /*! checks if virtual machine is running. if yes, display ythe masking view
 */
@@ -309,8 +309,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! opens the new disk window
     @param aSender the sender of the action
@@ -387,8 +387,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark XMPP Controls
+//#pragma mark -
+//#pragma mark XMPP Controls
 
 /*! ask virtual machine for its disks
 */
@@ -660,8 +660,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 }
 
 
-#pragma mark -
-#pragma mark Delegates
+//#pragma mark -
+//#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {

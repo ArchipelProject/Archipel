@@ -59,8 +59,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
-#pragma mark -
-#pragma mark Initialization
+//#pragma mark -
+//#pragma mark Initialization
 
 /*! triggered at cib waking
 */
@@ -149,8 +149,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
-#pragma mark -
-#pragma mark TNModule overrides
+//#pragma mark -
+//#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -202,8 +202,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
-#pragma mark -
-#pragma mark Notification hanlders
+//#pragma mark -
+//#pragma mark Notification hanlders
 
 /*! reload the content of the table when something happens (status changes etc..)
 */
@@ -226,8 +226,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
-#pragma mark -
-#pragma mark Actions
+//#pragma mark -
+//#pragma mark Actions
 
 /*! Action that is sent when user double click on a machine
     it will show the content of this virtual machine
@@ -298,8 +298,8 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 }
 
 
-#pragma mark -
-#pragma mark XMPP Management
+//#pragma mark -
+//#pragma mark XMPP Management
 
 /*! prepare and send the action stanza
     @param aCommand the command to send to entities
