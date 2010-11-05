@@ -77,7 +77,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 - (id)awakeFromCib
 {
     var posy,
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         bundle      = [CPBundle bundleForClass:[self class]],
         gradBG      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]];
 
@@ -218,7 +218,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [mapViewContainer addSubview:_mainMapView];
 
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
 }
@@ -457,7 +457,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         splitView   = [aNotification object],
         newPos      = [splitView rectOfDividerAtIndex:0].origin.y;
 

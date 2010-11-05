@@ -176,7 +176,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        defaults    = [TNUserDefaults standardUserDefaults];
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
     [fieldStringXMLDesc setFrameSize:CPSizeMake(591, 378)];
@@ -536,7 +536,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)savePreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setObject:[fieldPreferencesMemory intValue] forKey:@"TNDescDefaultMemory"];
     [defaults setObject:[buttonPreferencesNumberOfCPUs title] forKey:@"TNDescDefaultNumberCPU"];
@@ -557,7 +557,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
     [buttonPreferencesNumberOfCPUs selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultNumberCPU"]];
@@ -653,7 +653,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)setDefaultValues
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         cpu         = [defaults integerForKey:@"TNDescDefaultNumberCPU"],
         mem         = [defaults integerForKey:@"TNDescDefaultMemory"],
         vnck        = [defaults objectForKey:@"TNDescDefaultVNCKeymap"],

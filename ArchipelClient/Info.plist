@@ -26,16 +26,7 @@
     -->
     <key>LPCrashReporterLoggingURL</key>
     <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
-    
-    <!-- 
-        Local storage information. It can be 
-            - TNUserDefaultStorageTypeHTML5
-            - TNUserDefaultStorageTypeCookie
-            - TNUserDefaultStorageTypeNoStorage
-    -->
-    <key>TNUserDefaultStorageType</key>
-    <string>TNUserDefaultStorageTypeHTML5</string>
-    
+        
     <!--
         Url of the welcome page. It can be any URL (online) or "local" to 
         display the defaut welcome page (offline)

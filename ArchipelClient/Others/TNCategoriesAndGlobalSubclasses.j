@@ -144,7 +144,7 @@
 
 - (void)recoverExpandedWithBaseKey:(CPString)aBaseKey itemKeyPath:(CPString)aKeyPath
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
+    var defaults    = [CPUserDefaults standardUserDefaults];
 
     for (var count = 0; [self itemAtRow:count]; count++)
     {
@@ -203,7 +203,7 @@
 
 - (IBAction)orderFront:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([defaults boolForKey:@"TNArchipelUseAnimations"] && ![self isVisible])
     {

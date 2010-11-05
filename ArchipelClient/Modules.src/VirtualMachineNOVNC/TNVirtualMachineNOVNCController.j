@@ -103,7 +103,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
-        defaults    = [TNUserDefaults standardUserDefaults];
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -207,7 +207,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)savePreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setObject:[fieldPreferencesFBURefreshRate stringValue] forKey:@"NOVNCFBURate"];
     [defaults setObject:[fieldPreferencesCheckRate stringValue] forKey:@"NOVNCheckRate"];
@@ -218,7 +218,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesFBURefreshRate setStringValue:[defaults objectForKey:@"NOVNCFBURate"]];
     [fieldPreferencesCheckRate setStringValue:[defaults objectForKey:@"NOVNCheckRate"]];
@@ -293,7 +293,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([defaults boolForKey:@"TNArchipelUseAnimations"])
     {
@@ -329,7 +329,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)changeScale:(id)aSender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         zoom        = [aSender intValue],
         key         = TNArchipelVNCScaleFactor + [[self entity] JID];
 
@@ -395,7 +395,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)rememberPassword:(id)aSender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
 
     if ([checkboxPasswordRemember state] == CPOnState)
@@ -479,11 +479,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     if ([aStanza type] == @"result")
     {
-        var defaults    = [TNUserDefaults standardUserDefaults],
+        var defaults    = [CPUserDefaults standardUserDefaults],
             displayNode = [aStanza firstChildWithName:@"vncdisplay"],
             key         = TNArchipelVNCScaleFactor + [[self entity] JID],
             lastScale   = [defaults objectForKey:key],
-            defaults    = [TNUserDefaults standardUserDefaults],
+            defaults    = [CPUserDefaults standardUserDefaults],
             key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
 
         _VMHost         = [displayNode valueForAttribute:@"host"];

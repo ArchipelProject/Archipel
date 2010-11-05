@@ -37,7 +37,7 @@
     @outlet CPPopUpButton   buttonDebugLevel;
     @outlet TNSwitch        switchUseAnimations;
     @outlet CPWindow        mainWindow @accessors(readonly);
-    
+
     CPArray                 _modules;
 }
 
@@ -70,7 +70,7 @@
 - (void)didModulesLoadComplete:(CPNotification)aNotification
 {
     _moduleLoader = [aNotification object];
-    
+
     var tabModules      = [_moduleLoader loadedTabModules],
         toolbarModules  = [[_moduleLoader loadedToolbarModules] allValues],
         notSortedModules = [tabModules arrayByAddingObjectsFromArray:toolbarModules];
@@ -112,18 +112,18 @@
 */
 - (IBAction)showWindow:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldWelcomePageUrl setStringValue:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
-    
+
     for (var i = 0; i < [_modules count]; i++)
     {
         var module = [_modules objectAtIndex:i];
-    
+
         if ([module viewPreferences] !== nil)
             [module loadPreferences];
     }
@@ -137,7 +137,7 @@
 */
 - (IBAction)savePreferences:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setObject:[fieldWelcomePageUrl stringValue] forKey:@"TNArchipelHelpWindowURL"];
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];

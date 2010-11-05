@@ -76,7 +76,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
     [mainScrollView setBorderedWithHexColor:@"#C0C7D2"];
     [mainScrollView setAutohidesScrollers:YES];
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
     _logLevel       = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
 
     if (!_logLevel)
@@ -150,7 +150,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 {
     CPLogUnregister(_logFunction);
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
     [defaults setObject:[_datasourceLogs content] forKey:@"TNArchipelLogStored"];
 
     CPLogRegister(_logFunction, _logLevel);
@@ -162,7 +162,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 {
     CPLogUnregister(_logFunction);
 
-    var defaults        = [TNUserDefaults standardUserDefaults],
+    var defaults        = [CPUserDefaults standardUserDefaults],
         recoveredLogs   = [defaults objectForKey:@"TNArchipelLogStored"];
 
     CPLogRegister(_logFunction, _logLevel);
@@ -189,7 +189,7 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 */
 - (IBAction)setLogLevel:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     _logLevel = [buttonLogLevel title];
 

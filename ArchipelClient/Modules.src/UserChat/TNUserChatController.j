@@ -53,7 +53,7 @@
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         frame       = [[messagesScrollView contentView] bounds];
 
     // register defaults defaults
@@ -154,7 +154,7 @@
 */
 - (void)savePreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setInteger:[fieldPreferencesMaxChatMessage stringValue] forKey:@"TNUserChatMaxMessageStore"];
 }
@@ -163,7 +163,7 @@
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesMaxChatMessage setStringValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
@@ -266,7 +266,7 @@
 */
 - (void)save
 {
-    var defaults        = [TNUserDefaults standardUserDefaults],
+    var defaults        = [CPUserDefaults standardUserDefaults],
         max             = [_messages count],
         saveMax         = [defaults integerForKey:@"TNUserChatMaxMessageStore"],
         location        = ((max - saveMax) > 0) ? (max - saveMax) : 0,
@@ -284,7 +284,7 @@
 */
 - (void)restore
 {
-    var defaults = [TNUserDefaults standardUserDefaults],
+    var defaults = [CPUserDefaults standardUserDefaults],
         lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
 
     if (lastConversation)
@@ -352,7 +352,7 @@
 */
 - (IBAction)clearHistory:(id)aSender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults removeObjectForKey:"communicationWith" + [_entity JID]];
 

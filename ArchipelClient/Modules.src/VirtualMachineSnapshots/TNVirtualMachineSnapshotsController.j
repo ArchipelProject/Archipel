@@ -631,7 +631,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
 
     [defaults setObject:"expanded" forKey:key];
@@ -640,7 +640,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelSnapshotsOpenedSnapshots + [item name];
 
     [defaults setObject:"collapsed" forKey:key];

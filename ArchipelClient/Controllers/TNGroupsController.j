@@ -73,7 +73,7 @@
 */
 - (void)deleteGroup:(TNStropheGroup)aGroup
 {
-    var defaults = [TNUserDefaults standardUserDefaults],
+    var defaults = [CPUserDefaults standardUserDefaults],
         alert;
 
     if ([aGroup class] != TNStropheGroup)
@@ -103,7 +103,7 @@
 - (void)performDeleteGroup:(id)userInfo
 {
     var group   = userInfo,
-        defaults = [TNUserDefaults standardUserDefaults],
+        defaults = [CPUserDefaults standardUserDefaults],
         key     = TNArchipelRememberOpenedGroup + [group name];
 
     [roster removeGroup:group];

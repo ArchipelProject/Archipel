@@ -230,7 +230,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [[connectionController mainWindow] orderOut:nil];
 
     var bundle      = [CPBundle mainBundle],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         growl       = [TNGrowlCenter defaultCenter],
         center      = [CPNotificationCenter defaultCenter],
         posx;
@@ -695,7 +695,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 - (void)showHelpView
 {
     var bundle      = [CPBundle mainBundle],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
         version     = [defaults objectForKey:@"TNArchipelVersion"];
 
@@ -719,7 +719,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (void)copyright
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         copy = document.createElement("div");
 
     copy.style.position = "absolute";
@@ -759,7 +759,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (IBAction)logout:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
     [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
@@ -977,7 +977,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         [_helpWindow setDelegate:self];
 
         var bundle          = [CPBundle mainBundle],
-            defaults        = [TNUserDefaults standardUserDefaults],
+            defaults        = [CPUserDefaults standardUserDefaults],
             newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
             url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
             version         = [defaults objectForKey:@"TNArchipelVersion"];
@@ -1058,7 +1058,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (IBAction)toolbarItemTagsClick:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     _tagsVisible = !_tagsVisible;
 
@@ -1096,7 +1096,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 - (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
 {
     var dividerPosition = _tagsVisible ?  (aValue * 32.0) : 32.0 - (aValue * 32.0),
-        defaults        = [TNUserDefaults standardUserDefaults];
+        defaults        = [CPUserDefaults standardUserDefaults];
 
     [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
 
@@ -1104,28 +1104,28 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 /*! Delegate of TNOutlineView
-    will be performed when when item will expands and save this state in TNUserDefaults
+    will be performed when when item will expands and save this state in CPUserDefaults
 
     @param aNotification the received notification
 */
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
     [defaults setObject:"expanded" forKey:key];
 }
 
 /*! Delegate of TNOutlineView
-    will be performed when when item will collapses and save this state in TNUserDefaults
+    will be performed when when item will collapses and save this state in CPUserDefaults
 
     @param aNotification the received notification
 */
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
     [defaults setObject:"collapsed" forKey:key];
@@ -1152,7 +1152,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (void)outlineViewSelectionDidChange:(CPNotification)notification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
         item        = [_rosterOutlineView itemAtRow:index],
         loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
@@ -1182,7 +1182,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     else
     {
         var item        = [aTimer userInfo],
-            defaults    = [TNUserDefaults standardUserDefaults];
+            defaults    = [CPUserDefaults standardUserDefaults];
 
         //[_mainRoster setCurrentItem:item];
 
@@ -1208,11 +1208,11 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:item];
 }
 
-/*! Delegate of mainSplitView. This will save the positionning of splitview in TNUserDefaults
+/*! Delegate of mainSplitView. This will save the positionning of splitview in CPUserDefaults
 */
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         splitView   = [aNotification object],
         newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 

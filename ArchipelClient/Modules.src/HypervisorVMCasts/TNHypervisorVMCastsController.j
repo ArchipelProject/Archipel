@@ -652,7 +652,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 - (void)outlineViewItemWillExpand:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelVMCastsOpenedVMCasts + [item name];
 
     [defaults setObject:"expanded" forKey:key];
@@ -661,7 +661,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
 {
     var item        = [[aNotification userInfo] valueForKey:@"CPObject"],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelVMCastsOpenedVMCasts + [item name];
 
     [defaults setObject:"collapsed" forKey:key];

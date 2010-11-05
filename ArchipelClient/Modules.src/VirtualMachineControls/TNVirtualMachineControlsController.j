@@ -123,7 +123,7 @@ TNArchipelTransportBarReboot    = 4;
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        defaults    = [TNUserDefaults standardUserDefaults];
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -344,7 +344,7 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (void)savePreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setInteger:[fieldPreferencesMaxCPUs stringValue] forKey:@"TNArchipelControlsMaxVCPUs"];
 }
@@ -353,7 +353,7 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesMaxCPUs setStringValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
 }

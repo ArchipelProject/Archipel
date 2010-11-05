@@ -33,7 +33,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     CPSearchField               _filterField        @accessors(property=filterField);
     CPString                    _filter             @accessors(property=filter);
-    
+
     id                          _draggedItem;
     CPDictionary                _tagsRegistry;
     TNPubSubNode                _pubsub;
@@ -55,7 +55,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
-        
+
         [center addObserver:self selector:@selector(initializePubSubTags:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];

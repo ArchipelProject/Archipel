@@ -107,7 +107,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     var bundle      = [CPBundle bundleForClass:[self class]],
         spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
-        defaults    = [TNUserDefaults standardUserDefaults];
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -269,7 +269,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [super willLoad];
 
     var center      = [CPNotificationCenter defaultCenter],
-        defaults    = [TNUserDefaults standardUserDefaults],
+        defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
         shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
@@ -337,7 +337,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (void)savePreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setInteger:[fieldPreferencesAutoRefresh intValue] forKey:@"TNArchipelHealthRefreshStatsInterval"];
     [defaults setInteger:[fieldPreferencesMaxItems intValue] forKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
@@ -350,7 +350,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesAutoRefresh setIntValue:[defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"]];
     [fieldPreferencesMaxItems setIntValue:[defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]];
@@ -383,7 +383,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (IBAction)pauseRefresh:(id)aSender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
 
     if (![switchRefresh isOn])

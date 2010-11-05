@@ -38,7 +38,7 @@
     @outlet CPTextField     labelResource;
     @outlet CPTextField     labelStatus;
     @outlet CPTextField     newNickName;
-    
+
 
     TNStropheContact        _entity         @accessors(getter=entity);
     TNStropheRoster         _roster         @accessors(property=roster);
@@ -59,7 +59,7 @@
 {
     var bundle = [CPBundle mainBundle],
         center = [CPNotificationCenter defaultCenter];
-    
+
     _height         = 180;
     _isCollapsed    = YES;
     _unknownUserImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
@@ -103,7 +103,7 @@
     }
     else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
     {
-        var defaults    = [TNUserDefaults standardUserDefaults],
+        var defaults    = [CPUserDefaults standardUserDefaults],
             oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
 
         [_entity changeName:[entryName stringValue]];
@@ -119,17 +119,17 @@
 {
     var center      = [CPNotificationCenter defaultCenter],
         oldEntity   = _entity;
-    
+
     if (oldEntity && ([oldEntity class] == TNStropheContact))
     {
         [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:oldEntity];
         [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:oldEntity];
     }
-    
+
     _entity = anEntity;
-    
+
     if (_entity && ([_entity class] == TNStropheContact))
-    {        
+    {
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:_entity];
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     }
@@ -154,7 +154,7 @@
     if (_isCollapsed)
         return;
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     _isCollapsed = YES;
 
@@ -168,7 +168,7 @@
     if (!_isCollapsed)
         return;
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     _isCollapsed = NO;
 

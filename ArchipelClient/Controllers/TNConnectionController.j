@@ -82,7 +82,7 @@
 */
 - (void)initCredentials
 {
-    var defaults            = [TNUserDefaults standardUserDefaults],
+    var defaults            = [CPUserDefaults standardUserDefaults],
         lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"],
         lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"],
         lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"],
@@ -109,7 +109,7 @@
 */
 - (IBAction)connect:(id)sender
 {
-    var defaults    = [TNUserDefaults standardUserDefaults];
+    var defaults    = [CPUserDefaults standardUserDefaults];
 
     if ([credentialRemember state] == CPOnState)
     {
@@ -134,7 +134,7 @@
 
 - (IBAction)rememberCredentials:(id)sender
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([sender state] == CPOnState)
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];

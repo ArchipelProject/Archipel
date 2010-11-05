@@ -213,7 +213,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark -
 #pragma mark Storage
 
-/*! store in TNUserDefaults last selected tab index for entity
+/*! store in CPUserDefaults last selected tab index for entity
 */
 - (void)rememberLastSelectedTabIndex
 {
@@ -234,7 +234,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     {
         var identifier,
             memid,
-            defaults                = [TNUserDefaults standardUserDefaults],
+            defaults                = [CPUserDefaults standardUserDefaults],
             currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem];
 
         if ([_entity class] == TNStropheContact)
@@ -261,7 +261,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     else
         identifier = [_entity name];
 
-    var defaults            = [TNUserDefaults standardUserDefaults],
+    var defaults            = [CPUserDefaults standardUserDefaults],
         memid               = @"selectedTabIndexFor" + identifier,
         oldSelectedIndex    = [defaults integerForKey:memid],
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];

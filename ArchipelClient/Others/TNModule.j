@@ -226,7 +226,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 */
 - (void)willShow
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([defaults boolForKey:@"TNArchipelUseAnimations"])
     {

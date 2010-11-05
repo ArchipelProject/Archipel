@@ -109,7 +109,7 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheConnected:) name:TNStropheConnectionStatusConnected object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(stropheWillDisconnect:) name:TNStropheConnectionStatusWillDisconnect object:nil];
 
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultService"], @"TNArchipelMUCDefaultService",
@@ -139,7 +139,7 @@
 */
 - (void)savePreferences
 {
-    var defaults    = [TNUserDefaults standardUserDefaults],
+    var defaults    = [CPUserDefaults standardUserDefaults],
         center      = [CPNotificationCenter defaultCenter],
         oldService  = [defaults objectForKey:@"TNArchipelMUCDefaultService"],
         oldRoom     = [defaults objectForKey:@"TNArchipelMUCDefaultRoom"];
@@ -173,7 +173,7 @@
 */
 - (void)loadPreferences
 {
-    var defaults = [TNUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesDefaultService setStringValue:[defaults objectForKey:@"TNArchipelMUCDefaultService"]];
     [fieldPreferencesDefaultRoom setStringValue:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]];
@@ -190,7 +190,7 @@
 - (void)stropheConnected:(CPNotification)aNotification
 {
     var center = [CPNotificationCenter defaultCenter],
-        defaults = [TNUserDefaults standardUserDefaults];
+        defaults = [CPUserDefaults standardUserDefaults];
 
     _session = [TNStropheMUCRoom joinRoom:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]
                                 onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
