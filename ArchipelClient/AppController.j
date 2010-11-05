@@ -28,7 +28,7 @@
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
 
-//@import <LPKit/LPCrashReporter.j>
+@import <LPKit/LPCrashReporter.j>
 
 @import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
