@@ -92,10 +92,14 @@
 */
 - (void)pushData:(id)data inSet:(CPNumber)setIndex
 {
+    if (setIndex >= [_datas count])
+        return;
+
     if ([[_datas objectAtIndex:setIndex] count] >= _maxNumberOfPoints)
         [[_datas objectAtIndex:setIndex] removeObjectAtIndex:0];
 
     [_datas objectAtIndex:setIndex].push(parseInt(data));
+
 }
 
 /*! remove all object from the datasource
