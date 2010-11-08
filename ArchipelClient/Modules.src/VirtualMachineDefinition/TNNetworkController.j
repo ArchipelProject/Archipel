@@ -29,8 +29,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 /*! @ingroup virtualmachinedefinition
     this is the virtual nic editor
 */
-@implementation TNWindowNicEdition : CPWindow
+@implementation TNNetworkController : CPObject
 {
+    @outlet CPWindow        mainWindow;
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonType;
@@ -105,9 +106,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
 
-    [_delegate defineXML:sender];
+    [_delegate defineXML:aSender];
     [_table reloadData];
-    [self close];
+    [mainWindow close];
 }
 
 /*! change the type of the network
@@ -139,6 +140,14 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
             [buttonSource setEnabled:NO];
             break;
     }
+}
+
+- (IBAction)showWindow:(id)aSender
+{
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:aSender];
+
+    [self update];
 }
 
 

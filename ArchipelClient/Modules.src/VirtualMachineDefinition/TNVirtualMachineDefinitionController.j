@@ -22,8 +22,8 @@
 
 @import "TNDriveObject.j";
 @import "TNNetworkInterfaceObject.j"
-@import "TNWindowDriveEdition.j";
-@import "TNWindowNicEdition.j";
+@import "TNDriveController.j";
+@import "TNNetworkController.j";
 
 TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control";
 TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition";
@@ -147,8 +147,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet TNSwitch                switchPreferencesAPIC;
     @outlet TNSwitch                switchPreferencesHugePages;
     @outlet TNSwitch                switchPreferencesPAE;
-    @outlet TNWindowDriveEdition    windowDriveEdition;
-    @outlet TNWindowNicEdition      windowNicEdition;
+    @outlet TNDriveController       driveController;
+    @outlet TNNetworkController     networkController;
 
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
@@ -165,6 +165,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     CPTableView                     _tableNetworkNics;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
+
 }
 
 
@@ -248,8 +249,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    [windowNicEdition setDelegate:self];
-    [windowDriveEdition setDelegate:self];
+    [networkController setDelegate:self];
+    [networkController setDelegate:self];
 
     //drives
     _drivesDatasource       = [[TNTableViewDataSource alloc] init];
@@ -438,8 +439,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     _supportedCapabilities = [CPDictionary dictionary];
 
-    [windowDriveEdition setTable:_tableDrives];
-    [windowNicEdition setTable:_tableNetworkNics];
+    [driveController setTable:_tableDrives];
+    [networkController setTable:_tableNetworkNics];
 
     // switch
     [switchAPIC setTarget:self];
@@ -486,13 +487,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [_tableNetworkNics setDelegate:nil];
     [_tableNetworkNics setDelegate:self];
 
-    [windowDriveEdition setDelegate:nil];
-    [windowDriveEdition setDelegate:self];
-    [windowDriveEdition setEntity:_entity];
+    [driveController setDelegate:nil];
+    [driveController setDelegate:self];
+    [driveController setEntity:_entity];
 
-    [windowNicEdition setDelegate:nil];
-    [windowNicEdition setDelegate:self];
-    [windowNicEdition setEntity:_entity];
+    [networkController setDelegate:nil];
+    [networkController setDelegate:self];
+    [networkController setEntity:_entity];
 
     [self setDefaultValues];
 
@@ -778,17 +779,14 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
     {
-         //[CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
          [self addNetworkCard:aSender];
          return;
     }
     var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex],
         nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
-    [windowNicEdition setNic:nicObject];
-    [windowNicEdition update];
-    [windowNicEdition center];
-    [windowNicEdition makeKeyAndOrderFront:nil];
+    [networkController setNic:nicObject];
+    [networkController showWindow:aSender];
 }
 
 /*! delete a network card
@@ -837,10 +835,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex],
         driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
 
-    [windowDriveEdition setDrive:driveObject];
-    [windowDriveEdition update];
-    [windowDriveEdition center];
-    [windowDriveEdition makeKeyAndOrderFront:nil];
+    [driveController setDrive:driveObject];
+    [driveController showWindow:aSender];
 }
 
 /*! delete a drive
