@@ -779,7 +779,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
     {
          //[CPAlert alertWithTitle:@"Error" message:@"You must select one network interface"];
-         [self addNetworkCard:sender];
+         [self addNetworkCard:aSender];
          return;
     }
     var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex],
@@ -830,7 +830,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     if ([[_tableDrives selectedRowIndexes] count] != 1)
     {
-         [self addDrive:sender];
+         [self addDrive:aSender];
          return;
     }
 
