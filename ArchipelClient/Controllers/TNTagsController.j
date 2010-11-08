@@ -26,8 +26,7 @@
 */
 @implementation TNTagsController : CPObject
 {
-    @outlet CPView      mainView    @accessors(readonly);
-
+    @outlet CPView      mainView            @accessors(readonly);
     TNStropheConnection _connection         @accessors(property=connection);
 
     TNPubSub            _pubsub;
@@ -56,7 +55,6 @@
 
     _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:frame.size.width - 37];
     tokenFrame = [_tokenFieldTags frame];
-    tokenFrame.size.height += 2;
     tokenFrame.origin = CPPointMake(0, -1);
     [_tokenFieldTags setFrame:tokenFrame];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
