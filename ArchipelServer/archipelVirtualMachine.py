@@ -1171,7 +1171,13 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         try:
             i = self.info()
-            return "I'm in state %s, I use %d Ko of memory. I've got %d CPU(s) and I've consumed %dsecond of my hypervisor (%s)" % (i["state"], i["memory"], i["nrVirtCpu"], i["cpuTime"], i["hypervisor"])
+            states = ("no state", "running", "blocked", "paused", "shutdowned", "shut off", "crashed")
+            state = states[i["state"]]
+            mem = int(i["memory"]) / 1024
+            time = int(i["cpuTime"]) / 1000000000
+            if i["nrVirtCpu"] < 2: cpuorth = "CPU"
+            else: cpuorth = "CPUs" 
+            return "I'm in state %s, I use %d Mo of memory. I've got %d %s and I've consumed %d second of my hypervisor (%s)" % (state, mem, i["nrVirtCpu"], cpuorth, time, i["hypervisor"])
         except Exception as ex:
             return build_error_message(self, ex)
     
