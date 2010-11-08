@@ -22,8 +22,9 @@
 /*! @ingroup hypervisornetworks
     The newtork window edition
 */
-@implementation TNWindowNetworkProperties : CPWindow
+@implementation TNNetworkController : CPObject
 {
+    @outlet CPWindow        mainWindow;
     @outlet CPButtonBar     buttonBarControlDHCPHosts;
     @outlet CPButtonBar     buttonBarControlDHCPRanges;
     @outlet CPCheckBox      checkBoxDHCPEnabled;
@@ -45,6 +46,7 @@
 
     CPTableView             _externalTable              @accessors(property=tableNetwork);
     TNNetwork               _network                    @accessors(property=network);
+    id                      _delegate                   @accessors(property=delegate);
 
     CPButton                _minusButtonDHCPHosts;
     CPButton                _minusButtonDHCPRanges;
@@ -86,8 +88,6 @@
 
     [buttonForwardDevice removeAllItems];
     [buttonForwardDevice addItemsWithTitles:["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]];
-
-
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
@@ -191,38 +191,32 @@
 //#pragma mark -
 //#pragma mark CPWindow override
 
-- (void)makeKeyAndOrderFront:(id)sender
+- (void)update;
 {
-    if (![self isVisible])
-    {
-        [fieldNetworkName setStringValue:[_network networkName]];
-        [fieldBridgeName setStringValue:[_network bridgeName]];
-        [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
-        [fieldBridgeIP setStringValue:[_network bridgeIP]];
-        [fieldBridgeNetmask setStringValue:[_network bridgeNetmask]];
+    [fieldNetworkName setStringValue:[_network networkName]];
+    [fieldBridgeName setStringValue:[_network bridgeName]];
+    [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
+    [fieldBridgeIP setStringValue:[_network bridgeIP]];
+    [fieldBridgeNetmask setStringValue:[_network bridgeNetmask]];
 
-        [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
-        [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
+    [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
+    [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
 
-        [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
-        [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
+    [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
+    [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
 
-        [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
-        [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
+    [_datasourceDHCPRanges setContent:[_network DHCPEntriesRanges]];
+    [_datasourceDHCPHosts setContent:[_network DHCPEntriesHosts]];
 
-        [_tableViewRanges reloadData];
-        [_tableViewHosts reloadData];
+    [_tableViewRanges reloadData];
+    [_tableViewHosts reloadData];
 
-    }
-
-    [super makeKeyAndOrderFront:sender];
-
-    // ouais, ben ouais, commentes, tu vas voir...
-    var frame = [_tableViewHosts bounds];
-    frame.size.width--;
-
-    [_tableViewHosts setFrame:frame];
-    [_tableViewRanges setFrame:frame];
+    // // ouais, ben ouais, commentes, tu vas voir...
+    // var frame = [_tableViewHosts bounds];
+    // frame.size.width--;
+    //
+    // [_tableViewHosts setFrame:frame];
+    // [_tableViewRanges setFrame:frame];
 }
 
 
@@ -248,8 +242,8 @@
 
     [_externalTable reloadData];
 
-    [[self delegate] defineNetworkXML:nil];
-    [self close];
+    [_delegate defineNetworkXML:nil];
+    [mainWindow close];
 }
 
 /*! add a new DCHP range
@@ -303,6 +297,12 @@
 
     if (([_tableViewRanges numberOfRows] == 0) && ([_tableViewHosts numberOfRows] == 0))
       [checkBoxDHCPEnabled setState:CPOffState];
+}
+
+- (IBAction)showWindow:(id)aSender
+{
+    [self update];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 @end

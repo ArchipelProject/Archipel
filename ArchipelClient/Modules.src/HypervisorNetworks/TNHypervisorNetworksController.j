@@ -22,7 +22,7 @@
 
 @import "TNNetworkObject.j"
 @import "TNDHCPEntryObject.j"
-@import "TNWindowNetworkProperties.j"
+@import "TNNetworkController.j"
 
 TNArchipelPushNotificationNetworks          = @"archipel:push:network";
 TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
@@ -48,7 +48,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     @outlet CPTextField                 fieldJID;
     @outlet CPTextField                 fieldName;
     @outlet CPView                      viewTableContainer;
-    @outlet TNWindowNetworkProperties   windowProperties;
+    @outlet TNNetworkController         networkController;
 
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;
@@ -144,7 +144,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     [_tableViewNetworks setDataSource:_datasourceNetworks];
     [_tableViewNetworks setDelegate:self];
 
-    [windowProperties setDelegate:self];
+    [networkController setDelegate:self];
 
     var menu = [[CPMenu alloc] init];
     [menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""];
@@ -184,9 +184,9 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     [_deactivateButton setEnabled:NO];
     [_editButton setEnabled:NO];
 
-
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton, _activateButton, _deactivateButton]];
 
+    [networkController setTableNetwork:_tableViewNetworks];
 }
 
 
@@ -539,15 +539,12 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
         if ([networkObject isNetworkEnabled])
         {
-            [CPAlert alertWithTitle:@"Error" message:@"You can't edit a running network" style:CPCriticalAlertStyle];
-            return
+            [TNAlert showAlertWithTitle:@"Error" message:@"You can't edit a running network"];
+            return;
         }
 
-        [windowProperties setNetwork:networkObject];
-        [windowProperties setTableNetwork:_tableViewNetworks];
-
-        [windowProperties center];
-        [windowProperties makeKeyAndOrderFront:nil];
+        [networkController setNetwork:networkObject];
+        [networkController showWindow:aSender];
     }
 }
 
