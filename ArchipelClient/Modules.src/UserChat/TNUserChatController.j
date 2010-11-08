@@ -19,6 +19,7 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+@import <AppKit/CPSound.j>
 
 /*! @defgroup  userchat Module User Chat
     @desc This module allows to chat with entities
@@ -41,6 +42,7 @@
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
     TNMessageBoard          _messageBoard;
+    CPSound                 _soundMessage;
 }
 
 
@@ -80,6 +82,10 @@
     [imageSpinnerWriting setHidden:YES];
 
     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
+
+    _soundMessage = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.mp3"] byReference:NO];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 }
 
 
@@ -93,7 +99,6 @@
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
     [center addObserver:self selector:@selector(_didReceiveMessagePause:) name:TNStropheContactMessagePaused object:_entity];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -115,12 +120,15 @@
 }
 
 /*! called when module is unloaded
-*/- (void)willUnload
+*/
+- (void)willUnload
 {
     [super willUnload];
 
     [_messages removeAllObjects];
     [_messageBoard removeAllMessages:nil];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 }
 
 /*! called when module becomes visible
@@ -199,6 +207,12 @@
 */
 - (void)_didReceiveMessage:(CPNotification)aNotification
 {
+    if (![self isVisible])
+    {
+        [_soundMessage play];
+        return;
+    }
+
     if ([[aNotification object] JID] == [_entity JID])
     {
         var stanza =  [_entity popMessagesQueue];
@@ -209,13 +223,12 @@
 
             [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
-
             CPLog.info(@"message received : " + messageBody);
         }
     }
     else
     {
-        _audioTagReceive.play();
+        [_soundMessage play];
     }
 }
 
