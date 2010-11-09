@@ -55,12 +55,9 @@
 
     _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:frame.size.width - 37];
     tokenFrame = [_tokenFieldTags frame];
-    tokenFrame.origin = CPPointMake(0, -1);
+    tokenFrame.origin = CPPointMake(0, 0);
     [_tokenFieldTags setFrame:tokenFrame];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
-    [_tokenFieldTags setEnabled:NO];
-    [_tokenFieldTags setDelegate:self];
-
     [mainView addSubview:_tokenFieldTags];
 
 

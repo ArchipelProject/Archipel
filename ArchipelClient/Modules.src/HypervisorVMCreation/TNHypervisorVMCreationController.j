@@ -272,8 +272,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     }
     else
     {
-        var alert = [TNAlert alertWithTitle:@"Adding contact"
-                                    message:@"Would you like to add " + [vm nickname] + @" to your roster"
+        var alert = [TNAlert alertWithMessage:@"Adding contact"
+                                    informative:@"Would you like to add " + [vm nickname] + @" to your roster"
                                      target:self
                                      actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
         [alert setUserInfo:vm];
@@ -443,8 +443,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         title   = @"Destroying a Virtual Machine";
     }
 
-    var alert = [TNAlert alertWithTitle:title
-                                message:msg
+    var alert = [TNAlert alertWithMessage:title
+                                informative:msg
                                  target:self
                                  actions:[["Delete", @selector(performDeleteVirtualMachine:)], ["Cancel", nil]]];
 
@@ -517,8 +517,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
          return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Cloning a Virtual Machine"
-                                message:@"Are you sure you want to clone this virtual machine ?"
+    var alert = [TNAlert alertWithMessage:@"Cloning a Virtual Machine"
+                                informative:@"Are you sure you want to clone this virtual machine ?"
                                  target:self
                                  actions:[["Clone", @selector(performCloneVirtualMachine:)], ["Cancel", nil]]];
     [alert runModal];

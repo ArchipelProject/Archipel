@@ -539,7 +539,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
         if ([networkObject isNetworkEnabled])
         {
-            [TNAlert showAlertWithTitle:@"Error" message:@"You can't edit a running network"];
+            [TNAlert showAlertWithMessage:@"Error" informative:@"You can't edit a running network"];
             return;
         }
 
@@ -666,8 +666,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 */
 - (void)deactivateNetwork
 {
-    var alert = [TNAlert alertWithTitle:@"Deactivate Network"
-                                message:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
+    var alert = [TNAlert alertWithMessage:@"Deactivate Network"
+                                informative:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
                                  target:self
                                  actions:[["Deactivate", @selector(_performDeactivateNetwork:)], ["Cancel", nil]]];
 
@@ -723,8 +723,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 */
 - (void)delNetwork
 {
-    var alert = [TNAlert alertWithTitle:@"Delete Network"
-                                message:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
+    var alert = [TNAlert alertWithMessage:@"Delete Network"
+                                informative:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
                                  target:self
                                  actions:[["Delete", @selector(performDelNetwork:)], ["Cancel", nil]]];
 

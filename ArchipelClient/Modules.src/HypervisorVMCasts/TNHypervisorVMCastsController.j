@@ -491,8 +491,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 */
 - (void)removeAppliance
 {
-    var alert = [TNAlert alertWithTitle:@"Delete appliance"
-                                message:@"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template."
+    var alert = [TNAlert alertWithMessage:@"Delete appliance"
+                                informative:@"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template."
                                  target:self
                                  actions:[["Delete", @selector(performRemoveAppliance:)], ["Cancel", nil]]];
 
@@ -534,8 +534,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 */
 - (void)removeVMCast
 {
-    var alert = [TNAlert alertWithTitle:@"Delete VMCast"
-                                message:@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted."
+    var alert = [TNAlert alertWithMessage:@"Delete VMCast"
+                                informative:@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted."
                                  target:self
                                  actions:[["Unregister", @selector(performRemoveVMCast:)], ["Cancel", nil]]];
 
@@ -587,8 +587,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
         return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Download"
-                                message:@"Are you sure you want to download this appliance?"
+    var alert = [TNAlert alertWithMessage:@"Download"
+                                informative:@"Are you sure you want to download this appliance?"
                                  target:self
                                  actions:[["Download", @selector(performDownload:)], ["Cancel", nil]]];
 

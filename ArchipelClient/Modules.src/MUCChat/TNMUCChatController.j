@@ -267,8 +267,8 @@
 
     if (![_roster containsJID:[member JID]])
     {
-        var alert = [TNAlert alertWithTitle:@"Adding contact"
-                                    message:@"Would you like to add " + [member nickname] + @" to your roster"
+        var alert = [TNAlert alertWithMessage:@"Adding contact"
+                                    informative:@"Would you like to add " + [member nickname] + @" to your roster"
                                      target:self
                                     actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
         [alert setUserInfo:member];

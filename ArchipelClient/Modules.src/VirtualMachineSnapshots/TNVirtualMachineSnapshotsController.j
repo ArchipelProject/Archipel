@@ -509,8 +509,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Delete to snapshot"
-                                message:@"Are you sure you want to destory this snapshot ? this is not reversible."
+    var alert = [TNAlert alertWithMessage:@"Delete to snapshot"
+                                informative:@"Are you sure you want to destory this snapshot ? this is not reversible."
                                  target:self
                                  actions:[["Delete", @selector(performDeleteSnapshot:)], ["Cancel", nil]]];
     [alert runModal];
@@ -563,8 +563,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
         return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Revert to snapshot"
-                                message:@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost."
+    var alert = [TNAlert alertWithMessage:@"Revert to snapshot"
+                                informative:@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost."
                                  target:self
                                  actions:[["Revert", @selector(performRevertSnapshot:)], ["Cancel", nil]]];
     [alert runModal];

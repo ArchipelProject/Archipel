@@ -1272,8 +1272,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     else
         nick = [requestStanza from];
 
-    var alert = [TNAlert alertWithTitle:@"Subscription request"
-                                message:nick + " is asking you subscription. Do you want to add it ?"
+    var alert = [TNAlert alertWithMessafe:@"Subscription request"
+                                informative:nick + @" is asking you subscription. Do you want to add it ?"
                                  target:self
                                  actions:[["Accept", @selector(performSubscribe:)],
                                             ["Decline", @selector(performUnsubscribe:)]]];

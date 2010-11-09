@@ -615,8 +615,8 @@ TNArchipelPushNotificationDiskCreated    = @"created";
          return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Delete to drive"
-                                message:@"Are you sure you want to destroy this drive ? this is not reversible."
+    var alert = [TNAlert alertWithMessage:@"Delete to drive"
+                                informative:@"Are you sure you want to destroy this drive ? this is not reversible."
                                  target:self
                                  actions:[["Delete", @selector(performRemoveDisk:)], ["Cancel", nil]]];
     [alert runModal];

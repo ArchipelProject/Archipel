@@ -100,8 +100,8 @@
         return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Delete contact"
-                                message:@"Are you sure you want to delete this contact?"
+    var alert = [TNAlert alertWithMessage:@"Delete contact"
+                                informative:@"Are you sure you want to delete this contact?"
                                  target:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
     [alert setUserInfo:aContact];

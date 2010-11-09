@@ -482,8 +482,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
         msg   = @"Are you sure you want to unschedule this job ?";
     }
 
-    var alert = [TNAlert alertWithTitle:title
-                                message:msg
+    var alert = [TNAlert alertWithMessage:title
+                                informative:msg
                                  target:self
                                  actions:[["Unschedule", @selector(performUnschedule:)], ["Cancel", nil]]];
 

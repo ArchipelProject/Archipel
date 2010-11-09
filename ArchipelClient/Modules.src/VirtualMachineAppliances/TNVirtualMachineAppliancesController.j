@@ -387,8 +387,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
          return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Attach appliance"
-                                message:@"Are you sure you want to attach this appliance? This will reset all your virtual machine."
+    var alert = [TNAlert alertWithMessage:@"Attach appliance"
+                                informative:@"Are you sure you want to attach this appliance? This will reset all your virtual machine."
                                  target:self
                                  actions:[["Attach", @selector(performAttach:)], ["Cancel", nil]]];
     [alert runModal];
@@ -440,8 +440,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
          return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Detach from appliance"
-                                message:@"Are you sure you want to detach virtual machine from this appliance?"
+    var alert = [TNAlert alertWithMessage:@"Detach from appliance"
+                                informative:@"Are you sure you want to detach virtual machine from this appliance?"
                                  target:self
                                  actions:[["Detach", @selector(performDetach:)], ["Cancel", nil]]];
     [alert runModal];

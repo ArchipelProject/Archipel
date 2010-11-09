@@ -88,8 +88,8 @@
         return;
     }
 
-    var alert = [TNAlert alertWithTitle:@"Delete group"
-                                message:@"Are you sure you want to delete this group?"
+    var alert = [TNAlert alertWithMessage:@"Delete group"
+                                informative:@"Are you sure you want to delete this group?"
                                  target:self
                                  actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
     [alert setUserInfo:aGroup];

@@ -1617,9 +1617,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)undefineXML
 {
-        var alert = [TNAlert alertWithTitle:@"Undefine virtual machine"
-                                    message:@"Are you sure you want to undefine this virtual machine ?"
-                         informativeMessage:@"All your changes will be definitly lost."
+        var alert = [TNAlert alertWithMessage:@"Are you sure you want to undefine this virtual machine ?"
+                                informative:@"All your changes will be definitly lost."
                                      target:self
                                      actions:[["Undefine", @selector(performUndefineXML:)], ["Cancel", nil]]];
         [alert runModal];

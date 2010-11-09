@@ -447,8 +447,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
     var item    = [someUserInfo objectForKey:@"rosterItem"],
-        alert   = [TNAlert alertWithTitle:@"Define path"
-                                message:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
+        alert   = [TNAlert alertWithMessage:@"Define path"
+                                informative:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
                                  target:self
                                  actions:[[@"Cancel", nil], ["Destination",  @selector(setDestinationHypervisor:)], ["Origin", @selector(setOriginHypervisor:)]]];
     [alert setUserInfo:item];
