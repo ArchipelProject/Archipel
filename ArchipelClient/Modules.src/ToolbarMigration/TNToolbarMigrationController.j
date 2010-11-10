@@ -341,7 +341,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlMigrate,
-        "hypervisorjid": [destinationHypervisor fullJID]}];
+        "hypervisorjid": [[destinationHypervisor JID] full]}];
 
     [virtualMachine sendStanza:stanza andRegisterSelector:@selector(_didMigrate:) ofObject:self];
 }
@@ -396,7 +396,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text],
+            var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [_roster contactWithJID:JID];
 
             if (entry)

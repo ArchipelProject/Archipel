@@ -69,13 +69,13 @@
 - (IBAction)addContact:(id)sender
 {
     var group   = [newContactGroup title],
-        JID     = [[newContactJID stringValue] lowercaseString],
+        JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
         name    = [newContactName stringValue],
         growl   = [TNGrowlCenter defaultCenter],
         msg     = @"Presence subsciption has been sent to " + JID + ".";
 
     if (name == "")
-        name = [[JID componentsSeparatedByString:@"@"] objectAtIndex:0];
+        name = [JID node];
 
     [_roster addContact:JID withName:name inGroupWithName:group];
     [_roster askAuthorizationTo:JID];
@@ -114,17 +114,35 @@
 */
 - (void)performDeleteContact:(id)userInfo
 {
-    var contact = userInfo;
+    var contact = userInfo,
+        nodeName = "/archipel/" + [[contact JID] bare] + "/events";
 
-    [_roster removeContactWithJID:[contact JID]];
+    if (([contact vCard])
+        && [[contact vCard] firstChildWithName:@"TYPE"]
+        && (([[[contact vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+        || ([[[contact vCard] firstChildWithName:@"TYPE"] text] == "hypervisor")))
+    {
+        var pubsub = [TNPubSubController pubSubControllerWithConnection:[_roster connection] pubSubServer:@"pubsub." + [[contact JID] domain]],
+            eventNode = [pubsub findOrCreateNodeWithName:nodeName];
+
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPubSubSubscriptionsRetrieved:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:pubsub];
+
+        [pubsub retrieveSubscriptionsForNode:eventNode];
+    }
+
+    [_roster removeContact:contact];
 
     CPLog.info(@"contact " + [contact JID] + "removed");
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
+}
 
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [contact JID] + "/events"
-                                               connection:[_roster connection]
-                                             pubSubServer:@"pubsub." + [contact domain]];
-    [pubsub unsubscribe];
+- (void)_didPubSubSubscriptionsRetrieved:(TNStropheStanza)aNotification
+{
+    var eventNode = [[[aNotification object] nodes] objectAtIndex:0];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubSubscriptionsRetrievedNotification object:[aNotification object]];
+
+    [eventNode unsubscribe];
 }
 
 @end

@@ -358,7 +358,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text],
+            var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [_roster contactWithJID:JID];
 
             if (entry)
@@ -372,7 +372,6 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             else
             {
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
-                [[contact resources] addObject:JID.split('/')[1]];
                 [_virtualMachinesDatasource addObject:contact];
             }
         }
@@ -538,7 +537,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlClone,
-        "jid": [vm JID]}];
+        "jid": [[vm JID] bare]}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
 }

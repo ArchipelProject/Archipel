@@ -95,7 +95,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
     _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
                                         connection:[roster connection]
-                                      pubSubServer:@"pubsub." + [[roster connection] JID].split("@")[1].split("/")[0]];
+                                      pubSubServer:@"pubsub." + [[[roster connection] JID] domain]];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsub];
 

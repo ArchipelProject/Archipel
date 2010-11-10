@@ -195,7 +195,7 @@
     _session = [TNStropheMUCRoom joinRoom:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]
                                 onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
                           usingConnection:[aNotification object]
-                                 withNick:[[aNotification object] JID]];
+                                 withNick:[[[aNotification object] JID] node]];
 
     [_session setDelegate:self];
     [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];

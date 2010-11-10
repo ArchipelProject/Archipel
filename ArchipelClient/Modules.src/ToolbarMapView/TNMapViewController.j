@@ -287,7 +287,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         var latitude    = [[aStanza firstChildWithName:@"Latitude"] text],
             longitude   = [[aStanza firstChildWithName:@"Longitude"] text],
-            item        = [_roster contactWithJID:[aStanza fromBare]],
+            item        = [_roster contactWithJID:[aStanza from]],
             loc         = [[MKLocation alloc] initWithLatitude:latitude andLongitude:longitude],
             marker      = [[MKMarker alloc] initAtLocation:loc];
 
@@ -336,7 +336,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text],
+            var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [_roster contactWithJID:JID];
 
             if (entry)
@@ -370,7 +370,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
         for (var i = 0; i < [queryItems count]; i++)
         {
-            var JID     = [[queryItems objectAtIndex:i] text],
+            var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [_roster contactWithJID:JID];
 
             if (entry)

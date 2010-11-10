@@ -69,13 +69,14 @@
     [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [message setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
     [labelJID setTextColor:[CPColor colorWithHexString:@"6A7087"]];
     [labelPassword setTextColor:[CPColor colorWithHexString:@"6A7087"]];
     [labelBoshService setTextColor:[CPColor colorWithHexString:@"6A7087"]];
     [labelRemeber setTextColor:[CPColor colorWithHexString:@"6A7087"]];
     [message setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+
+    [connectButton setBezelStyle:CPRoundedBezelStyle];
 }
 
 /*! Initialize credentials informations according to the Application Defaults
@@ -84,7 +85,7 @@
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
         lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"],
-        lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"],
+        lastJID             = [TNStropheJID stropheJIDWithString:[defaults stringForKey:@"TNArchipelBOSHJID"]],
         lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"],
         lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
 
@@ -93,7 +94,7 @@
 
     if (lastRememberCred)
     {
-        [JID setStringValue:lastJID];
+        [JID setStringValue:[lastJID bare]];
         [password setStringValue:lastPassword];
         [credentialRemember setState:CPOnState];
     }
@@ -125,9 +126,9 @@
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
-    _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[JID stringValue] password:[password stringValue]];
+    _stropheConnection = [TNStropheConnection connectionWithService:[boshService stringValue] JID:[TNStropheJID stropheJIDWithString:[JID stringValue]] password:[password stringValue]];
 
-    [_stropheConnection setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
+    [[_stropheConnection JID] setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [_stropheConnection setDelegate:self];
     [_stropheConnection connect];
 }

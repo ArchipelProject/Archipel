@@ -195,7 +195,7 @@
 
         [entryStatusIcon setImage:[_entity statusIcon]];
         [entryName setStringValue:[_entity nickname]];
-        [entryDomain setStringValue:[_entity domain]];
+        [entryDomain setStringValue:[[_entity JID] domain]];
         [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatus setStringValue:[_entity XMPPStatus]];
 

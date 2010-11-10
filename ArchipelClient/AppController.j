@@ -28,7 +28,7 @@
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
 
-@import <LPKit/LPCrashReporter.j>
+// @import <LPKit/LPCrashReporter.j>
 
 @import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
@@ -258,11 +258,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"pane-divider-thickness"]
 
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
-
-    if (_tagsVisible)
-        [splitViewTagsContents setPosition:33.0 ofDividerAtIndex:0];
-    else
-        [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
@@ -636,6 +631,12 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     [_moduleController setRoster:_mainRoster];
     [_moduleController setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+
+    if (_tagsVisible)
+        [splitViewTagsContents setPosition:32.0 ofDividerAtIndex:0];
+    else
+        [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
+
 }
 
 /*! Notification responder of TNStropheConnection
@@ -1272,7 +1273,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     else
         nick = [requestStanza from];
 
-    var alert = [TNAlert alertWithMessafe:@"Subscription request"
+    var alert = [TNAlert alertWithMessage:@"Subscription request"
                                 informative:nick + @" is asking you subscription. Do you want to add it ?"
                                  target:self
                                  actions:[["Accept", @selector(performSubscribe:)],

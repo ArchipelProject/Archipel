@@ -460,7 +460,7 @@ TNArchipelTransportBarReboot    = 4;
 
         if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
         {
-            var o = [[TNExtendedContact alloc] initWithNickName:[item nickname] fullJID:[item fullJID]];
+            var o = [[TNExtendedContact alloc] initWithNickName:[item nickname] fullJID:[[item JID] full]];
 
             [_datasourceHypervisors addObject:o];
         }

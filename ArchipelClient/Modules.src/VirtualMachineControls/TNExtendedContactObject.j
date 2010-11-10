@@ -20,6 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+// TODO: this class is useless
+
 /*! @ingroup virtualmachinecontrols
     represents an contact with a selection
 */

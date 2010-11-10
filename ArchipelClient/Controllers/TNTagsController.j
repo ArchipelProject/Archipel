@@ -45,7 +45,7 @@
 {
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
-        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientbg.png"]],
+        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray2.png"]],
         tokenFrame;
 
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -53,18 +53,17 @@
 
     _currentRosterItem  = nil;
 
-    _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:frame.size.width - 37];
+    _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:CPRectGetWidth(frame) - 45];
     tokenFrame = [_tokenFieldTags frame];
-    tokenFrame.origin = CPPointMake(0, 0);
+    tokenFrame.origin = CPPointMake(0.0, 1.0);
     [_tokenFieldTags setFrame:tokenFrame];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [mainView addSubview:_tokenFieldTags];
 
 
-    _buttonSave = [CPButton buttonWithTitle:@"Tag"];
-    [_buttonSave setBezelStyle:CPHUDBezelStyle];
+    _buttonSave = [CPButton buttonWithTitle:@"Tag" bezelStyle:CPRoundedBezelStyle];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
-    [_buttonSave setFrameOrigin:CPPointMake(frame.size.width - [_buttonSave frame].size.width - 3, 3)];
+    [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 3, 3)];
     [_buttonSave setTarget:self];
     [_buttonSave setAction:@selector(performSetTags:)];
     [_buttonSave setEnabled:NO];
@@ -166,7 +165,7 @@
 
     _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
                                         connection:_connection
-                                      pubSubServer:@"pubsub." + [_connection JID].split("@")[1].split("/")[0]];
+                                      pubSubServer:@"pubsub." + [[_connection JID] domain]];
     [_pubsub subscribe];
     [_pubsub setDelegate:self];
     [_pubsub retrieveItems];
