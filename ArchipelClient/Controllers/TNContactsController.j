@@ -28,15 +28,32 @@
     @outlet CPPopUpButton   newContactGroup;
     @outlet CPTextField     newContactJID;
     @outlet CPTextField     newContactName;
-    @outlet CPWindow        mainWindow @accessors(readonly);
 
-    TNStropheRoster         _roster         @accessors(property=roster);
+    @outlet CPWindow        mainWindow          @accessors(readonly);
+    TNStropheRoster         _roster             @accessors(property=roster);
+    TNPubSubController      _pubsubController   @accessors(property=pubSubController);
 }
 
+#pragma mark -
+#pragma mark Notification handlers
+
+- (void)_didPubSubSubscriptionsRetrieved:(TNStropheStanza)aNotification
+{
+    var eventNode = [[[aNotification object] nodes] objectAtIndex:0];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubSubscriptionsRetrievedNotification object:[aNotification object]];
+
+    [eventNode unsubscribe];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
 /*! overide of the orderFront
-    @param sender the sender
+    @param aSender the sender
 */
-- (IBAction)showWindow:(id)sender
+- (IBAction)showWindow:(id)aSender
 {
     var groups = [_roster groups];
 
@@ -60,13 +77,13 @@
     [newContactGroup selectItemWithTitle:@"General"];
 
     [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:sender];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! add a contact according to the values of the outlets
-    @param sender the sender
+    @param aSender the sender
 */
-- (IBAction)addContact:(id)sender
+- (IBAction)addContact:(id)aSender
 {
     var group   = [newContactGroup title],
         JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
@@ -88,9 +105,8 @@
     [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
 }
 
-
 /*! will ask for deleting the selected contact
-    @param the sender of the action
+    @param aSender the sender of the action
 */
 - (void)deleteContact:(TNStropheContact)aContact
 {
@@ -104,45 +120,90 @@
                                 informative:@"Are you sure you want to delete this contact?"
                                  target:self
                                  actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
+
+    [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
     [alert setUserInfo:aContact];
     [alert runModal];
 }
 
 /*! Action for the deleteContact:'s confirmation TNAlert.
     It will delete the contact
-    @param the sender of the action
+    @param aSender the sender of the action
 */
 - (void)performDeleteContact:(id)userInfo
 {
     var contact = userInfo,
-        nodeName = "/archipel/" + [[contact JID] bare] + "/events";
-
-    if (([contact vCard])
-        && [[contact vCard] firstChildWithName:@"TYPE"]
-        && (([[[contact vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-        || ([[[contact vCard] firstChildWithName:@"TYPE"] text] == "hypervisor")))
-    {
-        var pubsub = [TNPubSubController pubSubControllerWithConnection:[_roster connection] pubSubServer:@"pubsub." + [[contact JID] domain]],
-            eventNode = [pubsub findOrCreateNodeWithName:nodeName];
-
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPubSubSubscriptionsRetrieved:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:pubsub];
-
-        [pubsub retrieveSubscriptionsForNode:eventNode];
-    }
+        nodeName = "/archipel/" + [[contact JID] bare] + "/events",
+        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[contact JID] domain]];
 
     [_roster removeContact:contact];
+    [_pubsubController unsubscribeFromNodeWithName:nodeName server:server]
 
     CPLog.info(@"contact " + [contact JID] + "removed");
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
 }
 
-- (void)_didPubSubSubscriptionsRetrieved:(TNStropheStanza)aNotification
+/*! action sent by alert to show help for subscription
+    @param aSender the sender of the action
+*/
+- (IBAction)showHelpForSubscription:(id)aSender
 {
-    var eventNode = [[[aNotification object] nodes] objectAtIndex:0];
-
-    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubSubscriptionsRetrievedNotification object:[aNotification object]];
-
-    [eventNode unsubscribe];
+    window.open("http://www.google.fr/search?q=XMPP subscription request", "_new");
 }
 
+/*! action sent by alert to show help for subscription
+    @param aSender the sender of the action
+*/
+- (IBAction)showHelpForDelete:(id)aSender
+{
+    window.open("http://www.google.fr/search?q=XMPP delete contact", "_new");
+}
+
+
+#pragma mark -
+#pragma mark Delegate
+
+/*! Delegate method of main TNStropheRoster.
+    will be performed when a subscription request is sent
+    @param requestStanza TNStropheStanza cotainining the subscription request
+*/
+- (void)roster:(TNStropheRoster)aRoster receiveSubscriptionRequest:(id)requestStanza
+{
+    var nick;
+
+    if ([requestStanza firstChildWithName:@"nick"])
+        nick = [[requestStanza firstChildWithName:@"nick"] text];
+    else
+        nick = [requestStanza from];
+
+    var alert = [TNAlert alertWithMessage:@"Subscription request"
+                                informative:nick + @" is asking you subscription. Do you want to authorize it ?"
+                                 target:self
+                                 actions:[["Accept", @selector(performSubscribe:)],
+                                            ["Decline", @selector(performUnsubscribe:)]]];
+
+    [alert setHelpTarget:self action:@selector(showHelpForSubscription:)];
+    [alert setUserInfo:requestStanza]
+    [alert runModal];
+}
+
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will accept the subscription and try to register to Archipel pubsub nodes
+*/
+- (void)performSubscribe:(id)aRequestStanza
+{
+    var nodeName = @"/archipel/" + [aRequestStanza fromBare] + @"/events",
+        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aRequestStanza fromDomain]];
+
+    [_roster answerAuthorizationRequest:aRequestStanza answer:YES];
+    [_pubsubController subscribeToNodeWithName:nodeName server:server];
+}
+
+/*! Action of didReceiveSubscriptionRequest's confirmation alert.
+    Will refuse the subscription and try to unregister to Archipel pubsub nodes
+*/
+- (void)performUnsubscribe:(id)aRequestStanza
+{
+    [_roster answerAuthorizationRequest:aRequestStanza answer:NO];
+}
 @end

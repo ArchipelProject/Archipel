@@ -299,7 +299,7 @@
 - (void)mucRoom:(TNStropheMUCRoom)aRoom receivedMessage:(CPDictionary)aMessage
 {
     var color = ([aMessage valueForKey:@"from"] == [_connection JID]) ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
-        isNotice = ([aMessage valueForKey:"body"].indexOf([_connection JID].split("@")[0]) != -1)
+        isNotice = ([aMessage valueForKey:"body"].indexOf([[_connection JID] node]) != -1)
 
     if (isNotice)
         color = [CPColor colorWithHexString:@"D1E28B"];

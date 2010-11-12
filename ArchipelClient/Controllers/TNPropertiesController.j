@@ -31,6 +31,7 @@
     @outlet TNEditableLabel entryName           @accessors(readonly);
     @outlet CPButton        entryAvatar;
     @outlet CPImageView     entryStatusIcon;
+    @outlet CPImageView     imageEventSubscription;
     @outlet CPTextField     entryDomain;
     @outlet CPTextField     entryResource;
     @outlet CPTextField     entryStatus;
@@ -40,11 +41,14 @@
     @outlet CPTextField     newNickName;
 
 
-    TNStropheContact        _entity         @accessors(getter=entity);
-    TNStropheRoster         _roster         @accessors(property=roster);
-    TNAvatarController      _avatarManager  @accessors(getter=avatarManager);
+    TNStropheContact        _entity             @accessors(getter=entity);
+    TNStropheRoster         _roster             @accessors(property=roster);
+    TNAvatarController      _avatarManager      @accessors(getter=avatarManager);
+    TNPubSubController      _pubSubController   @accessors(property=pubSubController);
 
     CPImage                 _unknownUserImage;
+    CPImage                 _antennaImage;
+    CPImage                 _antennaDisabledImage;
     CPNumber                _height;
     BOOL                    _isCollapsed;
 }
@@ -60,10 +64,12 @@
     var bundle = [CPBundle mainBundle],
         center = [CPNotificationCenter defaultCenter];
 
-    _height         = 180;
-    _isCollapsed    = YES;
-    _unknownUserImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
-    _groupUserImage     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
+    _height                 = 180;
+    _isCollapsed            = YES;
+    _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
+    _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
+    _antennaImage           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"antenna.png"]];
+    _antennaDisabledImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"antenna-disabled.png"]];
 
     [mainView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
@@ -76,13 +82,17 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     [entryAvatar setImage:_unknownUserImage];
+    [imageEventSubscription setToolTip:@"Click on avatar to change it."];
+
+    [imageEventSubscription setImageScaling:CPScaleProportionally];
+    [imageEventSubscription setHidden:YES];
 
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+// #pragma mark -
+// #pragma mark Notification handlers
 
 /*! message performed when contact update its presence in order to update information
 */
@@ -186,12 +196,13 @@
         return;
     }
 
-    if ([_entity class] == TNStropheContact)
+    if ([_entity class] === TNStropheContact)
     {
         [labelResource setStringValue:@"Resource :"];
         [labelStatus setHidden:NO];
         [labelDomain setHidden:NO];
         [entryAvatar setHidden:NO];
+        [imageEventSubscription setHidden:NO];
 
         [entryStatusIcon setImage:[_entity statusIcon]];
         [entryName setStringValue:[_entity nickname]];
@@ -206,6 +217,18 @@
 
         if (_avatarManager)
             [_avatarManager setEntity:_entity];
+
+        if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
+        {
+            [imageEventSubscription setImage:_antennaImage];
+            [imageEventSubscription setToolTip:@"You are registred to the entity events."];
+        }
+        else
+        {
+            [imageEventSubscription setImage:_antennaDisabledImage];
+            [imageEventSubscription setToolTip:@"You are not registred to the entity events."];
+        }
+
     }
     else if ([_entity class] == TNStropheGroup)
     {
@@ -215,6 +238,7 @@
         [labelStatus setHidden:YES];
         [labelDomain setHidden:YES];
         [entryAvatar setHidden:YES];
+        [imageEventSubscription setHidden:YES];
 
         [entryStatusIcon setImage:_groupUserImage];
         [entryName setStringValue:[_entity name]];

@@ -20,6 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification";
 
 /*! @ingroup archipelcore
     Tagging view
@@ -27,9 +28,11 @@
 @implementation TNTagsController : CPObject
 {
     @outlet CPView      mainView            @accessors(readonly);
-    TNStropheConnection _connection         @accessors(property=connection);
 
-    TNPubSub            _pubsub;
+    TNStropheConnection _connection         @accessors(property=connection);
+    TNPubSubController  _pubsubController   @accessors(property=pubSubController);
+    TNPubSubNode        _pubsubTagsNode;
+
     CPButton            _buttonSave;
     CPTokenField        _tokenFieldTags;
     id                  _currentRosterItem;
@@ -58,6 +61,7 @@
     tokenFrame.origin = CPPointMake(0.0, 1.0);
     [_tokenFieldTags setFrame:tokenFrame];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
+    [_tokenFieldTags setDelegate:self];
     [mainView addSubview:_tokenFieldTags];
 
 
@@ -71,8 +75,7 @@
     [mainView addSubview:_buttonSave];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterRetrieve:) name:TNStropheRosterRetrievedNotification object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRecoverPubSub:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsub];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRetrieveSubscriptions:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:nil];
 }
 
 
@@ -87,9 +90,9 @@
 {
     var ret = [CPArray array];
 
-    for (var i = 0; i < [[_pubsub content] count]; i++)
+    for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var tag = [[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"];
+        var tag = [[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"];
 
         if ([tag valueForAttribute:@"jid"] == aJID)
             [ret addObject:[tag valueForAttribute:@"name"]];
@@ -103,22 +106,33 @@
 */
 - (void)removeAllTagsForJID:(CPString)aJID
 {
-    for (var i = 0; i < [[_pubsub content] count]; i++)
+    for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var item    = [[_pubsub content] objectAtIndex:i],
+        var item    = [[_pubsubTagsNode content] objectAtIndex:i],
             tag     = [item firstChildWithName:@"tag"];
 
         if ([tag valueForAttribute:@"jid"] == aJID)
-            [_pubsub retractItemWithID:[item valueForAttribute:@"id"]];
+            [_pubsubTagsNode retractItemWithID:[item valueForAttribute:@"id"]];
     }
 }
 
 /*! called when pubsub is recovered
 */
-- (void)didRecoverPubSub:(CPNotification)aNotification
+- (void)didRetrieveSubscriptions:(CPNotification)aNotification
 {
-    if (_currentRosterItem)
-        [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+    var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[_connection JID] domain]],
+        nodeName = @"/archipel/tags";
+
+    _pubsubTagsNode = [_pubsubController nodeWithName:nodeName];
+
+    if (!_pubsubTagsNode)
+        [_pubsubController subscribeToNodeWithName:nodeName server:server nodeDelegate:self];
+    else
+    {
+        [_pubsubTagsNode setDelegate:self];
+        [_pubsubTagsNode retrieveItems];
+    }
+
 }
 
 //#pragma mark -
@@ -155,22 +169,6 @@
     }
 }
 
-/*! this handler is triggered when roster is retreived
-    it will initialize the pubsub object and recover it
-    @param aNotification CPNotification the notification that triggers the message
-*/
-- (void)didRosterRetrieve:(CPNotification)aNotification
-{
-    var roster = [aNotification object];
-
-    _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
-                                        connection:_connection
-                                      pubSubServer:@"pubsub." + [[_connection JID] domain]];
-    [_pubsub subscribe];
-    [_pubsub setDelegate:self];
-    [_pubsub retrieveItems];
-}
-
 
 //#pragma mark -
 //#pragma mark Actions
@@ -191,7 +189,7 @@
     {
         var tag = [content objectAtIndex:i];
 
-        [_pubsub publishItem:[TNXMLNode nodeWithName:@"tag" andAttributes:{@"jid": [_currentRosterItem JID], @"name": tag}]]
+        [_pubsubTagsNode publishItem:[TNXMLNode nodeWithName:@"tag" andAttributes:{@"jid": [_currentRosterItem JID], @"name": tag}]]
     }
 }
 
@@ -205,9 +203,9 @@
 {
     var availableTags = [CPArray array];
 
-    for (var i = 0; i < [[_pubsub content] count]; i++)
+    for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var tag = [[[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"name"];
+        var tag = [[[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"name"];
 
         if ((tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag])
             [availableTags addObject:tag];
@@ -218,9 +216,22 @@
 
 /*! delegate of TNPubSubNode that will recover the content of the node after an event
 */
-- (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
+- (void)pubSubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
-    [_pubsub retrieveItems];
+    [_pubsubTagsNode retrieveItems];
 }
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubMode subscribed:(BOOL)isSubscribed
+{
+    if (isSubscribed)
+        [_pubsubTagsNode retrieveItems];
+}
+
+- (void)pubSubNode:(TNPubSubNode)aPubSubMode retrievedItems:(BOOL)isRetrieved
+{
+    if (isRetrieved)
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNTagsControllerNodeReadyNotification object:aPubSubMode];
+}
+
 
 @end
