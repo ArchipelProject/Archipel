@@ -34,9 +34,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPSearchField               _filterField        @accessors(property=filterField);
     CPString                    _filter             @accessors(property=filter);
 
+    TNPubSubNode                _pubsubTagsNode;
     id                          _draggedItem;
     CPDictionary                _tagsRegistry;
-    TNPubSubNode                _pubsub;
 }
 
 
@@ -56,7 +56,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
 
-        [center addObserver:self selector:@selector(initializePubSubTags:) name:TNStropheRosterRetrievedNotification object:nil];
+        [center addObserver:self selector:@selector(didTagsNodeReady:) name:TNTagsControllerNodeReadyNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRetrievedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedContactNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
@@ -89,19 +89,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 /*! initializes the TNPubSubNode when roster is retreived
     @param aNotification CPNotification that trigger the message
 */
-- (void)initializePubSubTags:(CPNotification)aNotification
+- (void)didTagsNodeReady:(CPNotification)aNotification
 {
-    var roster = [aNotification object];
-
-    _pubsub = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/tags"
-                                        connection:[roster connection]
-                                      pubSubServer:@"pubsub." + [[[roster connection] JID] domain]];
-
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsub];
-
-    [_pubsub subscribe];
-    [_pubsub setDelegate:self];
-    [_pubsub retrieveItems];
+    _pubsubTagsNode = [aNotification object];
+    [self _didTagsRecovered:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didTagsRecovered:) name:TNStrophePubSubNodeRetrievedNotification object:_pubsubTagsNode];
 }
 
 /*! will update the content of _tagsRegistry that will be use to filter matching tags
@@ -111,9 +103,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     _tagsRegistry = [CPDictionary dictionary];
 
-    for (var i = 0; i < [[_pubsub content] count]; i++)
+    for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var tag     = [[[_pubsub content] objectAtIndex:i] firstChildWithName:@"tag"],
+        var tag     = [[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"],
             jid     = [tag valueForAttribute:@"jid"],
             name    = [tag valueForAttribute:@"name"];
 
@@ -239,7 +231,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (void)pubsubNode:(TNPubSubNode)aPubSubMode receivedEvent:(TNStropheStanza)aStanza
 {
-    [_pubsub retrieveItems];
+    [_pubsubTagsNode retrieveItems];
 }
 
 
