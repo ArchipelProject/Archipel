@@ -214,7 +214,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     TNRosterDataViewGroup           _rosterDataViewForGroups;
     TNToolbar                       _mainToolbar;
     TNViewHypervisorControl         _currentRightViewContent;
-
+    TNPubSubController              _pubSubController;
 }
 
 
@@ -609,28 +609,39 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    var connection = [aNotification object];
+
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
 
-    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:[aNotification object]];
+    _pubSubController = [TNPubSubController pubSubControllerWithConnection:connection];
+    [_pubSubController retrieveSubscriptions];
 
-    [_mainRoster setDelegate:self];
+    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:connection];
+
+    [_mainRoster setDelegate:contactsController];
     [_mainRoster setFilterField:filterField];
     [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
     [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
     [_mainRoster getRoster];
 
-    [tagsController setConnection:[aNotification object]];
+    [tagsController setConnection:connection];
+    [tagsController setPubSubController:_pubSubController];
+
     [propertiesController setRoster:_mainRoster];
+    [propertiesController setPubSubController:_pubSubController];
+
     [contactsController setRoster:_mainRoster];
+    [contactsController setPubSubController:_pubSubController];
+
     [groupsController setRoster:_mainRoster];
 
     [_rosterOutlineView setDataSource:_mainRoster];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
     [_moduleController setRoster:_mainRoster];
-    [_moduleController setRosterForToolbarItems:_mainRoster andConnection:[aNotification object]];
+    [_moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:32.0 ofDividerAtIndex:0];
@@ -1260,58 +1271,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [[aTimer userInfo] setImage:_imageLedNoData];
 }
 
-/*! Delegate method of main TNStropheRoster.
-    will be performed when a subscription request is sent
-    @param requestStanza TNStropheStanza cotainining the subscription request
-*/
-- (void)didReceiveSubscriptionRequest:(id)requestStanza
-{
-    var nick;
-
-    if ([requestStanza firstChildWithName:@"nick"])
-        nick = [[requestStanza firstChildWithName:@"nick"] text];
-    else
-        nick = [requestStanza from];
-
-    var alert = [TNAlert alertWithMessage:@"Subscription request"
-                                informative:nick + @" is asking you subscription. Do you want to add it ?"
-                                 target:self
-                                 actions:[["Accept", @selector(performSubscribe:)],
-                                            ["Decline", @selector(performUnsubscribe:)]]];
-
-    [alert setUserInfo:requestStanza]
-    [alert runModal];
-}
-
-/*! Action of didReceiveSubscriptionRequest's confirmation alert.
-    Will accept the subscription and try to register to Archipel pubsub nodes
-*/
-- (void)performSubscribe:(id)userInfo
-{
-    var bundle  = [CPBundle mainBundle],
-        stanza  = userInfo;
-
-    [_mainRoster answerAuthorizationRequest:stanza answer:YES];
-
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
-                                           connection:[_mainRoster connection]
-                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
-    [pubsub subscribe];
-}
-
-/*! Action of didReceiveSubscriptionRequest's confirmation alert.
-    Will refuse the subscription and try to unregister to Archipel pubsub nodes
-*/
-- (BOOL)performUnsubscribe:(id)userInfo
-{
-    var stanza = userInfo;
-    [_mainRoster answerAuthorizationRequest:stanza answer:NO];
-
-    var pubsub = [TNPubSubNode pubSubNodeWithNodeName:"/archipel/" + [stanza fromBare] + "/events"
-                                           connection:[_mainRoster connection]
-                                         pubSubServer:@"pubsub." + [stanza fromDomain]];
-    [pubsub unsubscribe];
-}
 
 /*! Growl delegate
 */
@@ -1322,6 +1281,5 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     [_rosterOutlineView selectRowIndexes:indexes byExtendingSelection:NO];
 }
-
 
 @end
