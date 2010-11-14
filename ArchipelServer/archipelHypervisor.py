@@ -391,6 +391,8 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
             vm.domain.destroy()
+        
+        if vm.domain:
             vm.domain.undefine()
         
         log.info("launch %s's terminate method" % (str(jid)))
