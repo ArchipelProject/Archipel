@@ -153,7 +153,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheRosterAddedContactNotification object:nil];
-    [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [_tableVirtualMachines setDelegate:nil];
@@ -359,7 +359,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
-                entry   = [_roster contactWithJID:JID];
+                entry   = [_roster firstContactWithBareJID:JID];
 
             if (entry)
             {
