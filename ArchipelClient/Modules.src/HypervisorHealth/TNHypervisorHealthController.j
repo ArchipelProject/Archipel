@@ -96,8 +96,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! triggered at cib awaking
 */
@@ -256,8 +256,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -358,8 +358,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when contact nickname has been updated
     @param aNotification the notification
@@ -373,8 +373,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! Action that make the auto-refresh on or off
     @param sender the sender of the action
@@ -415,8 +415,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Management
+#pragma mark -
+#pragma mark XMPP Management
 
 /*! get the hypervisor health
     it is launched by a timer every X seconds, as defined in the info.plist

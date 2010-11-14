@@ -58,8 +58,8 @@
     TNTableViewDataSource   _datasourceDHCPRanges;
 }
 
-//#pragma mark -
-//#pragma mark  Initialization
+#pragma mark -
+#pragma mark  Initialization
 
 - (void)awakeFromCib
 {
@@ -188,8 +188,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark CPWindow override
+#pragma mark -
+#pragma mark CPWindow override
 
 - (void)update;
 {
@@ -220,8 +220,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! save the changes
     @param sender the sender of the action

@@ -115,8 +115,8 @@ TNArchipelTransportBarReboot    = 4;
     CPImage     _imageStopSelected;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -254,8 +254,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -359,8 +359,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when entity's nickname changes
     @param aNotification the notification
@@ -425,8 +425,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! check if virtual machine is running and adapt the GUI
 */
@@ -601,8 +601,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark Action
+#pragma mark -
+#pragma mark Action
 
 /*! triggered when segmented control is clicked
     @param aSender the sender of the action
@@ -712,8 +712,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! ask virtual machine information
 */
@@ -1246,8 +1246,8 @@ TNArchipelTransportBarReboot    = 4;
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {

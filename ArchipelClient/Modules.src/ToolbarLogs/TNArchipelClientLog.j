@@ -30,8 +30,8 @@
     CPString _level     @accessors(property=level);
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initializes and returns a new TNArchipelClientLog with given values
     @param aDate the date of the log
@@ -52,8 +52,8 @@
     return log;
 }
 
-//#pragma mark -
-//#pragma mark CPCoding compliance
+#pragma mark -
+#pragma mark CPCoding compliance
 
 - (id)initWithCoder:(CPCoder)aCoder
 {

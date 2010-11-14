@@ -33,8 +33,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initializes and returns TNMedia with given values
     @param aPath the path of the media

@@ -65,8 +65,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     TNSnapshotsDatasource               _datasourceSnapshots;
 }
 
-//#pragma mark -
-//#pragma mark  Initialization
+#pragma mark -
+#pragma mark  Initialization
 
 /*! called at cib awaking
 */
@@ -166,8 +166,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -234,8 +234,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark Notification
+#pragma mark -
+#pragma mark Notification
 
 /*! called when entity's nickname changes
     @param aNotification the notification
@@ -274,8 +274,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! checks if virtual machine running. if yes displays the masking view
 */
@@ -293,8 +293,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark  Actions
+#pragma mark -
+#pragma mark  Actions
 
 /*! opens the new snapshot window
     @param aSender the sender of the action
@@ -334,8 +334,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! asks virtual machine for its snapshot
 */
@@ -613,8 +613,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {

@@ -59,8 +59,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     TNTableViewDataSource               _datasourceNetworks;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -190,8 +190,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -235,8 +235,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when entity's name has change
     @param aNotification the notification
@@ -296,8 +296,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! Generate a stanza containing libvirt valid network description
     @param anUid the ID to use for the stanza
@@ -379,8 +379,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     return dA + "." + dB + ".0.1";
 }
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! asks networks to the hypervisor
 */
@@ -480,8 +480,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 }
 
 
-//#pragma mark -
-//#pragma mark Action
+#pragma mark -
+#pragma mark Action
 
 /*! add a network
     @param sender the sender of the action
@@ -573,8 +573,8 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! ask hypervisor to define a network. It will indefine it before.
 */

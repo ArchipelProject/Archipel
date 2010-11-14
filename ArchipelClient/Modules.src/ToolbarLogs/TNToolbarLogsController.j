@@ -54,8 +54,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -124,8 +124,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! write log to the logger
     @param aString CPString containing the log message
@@ -171,8 +171,8 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! remove all previous stored logs
     @param sender the sender of the action

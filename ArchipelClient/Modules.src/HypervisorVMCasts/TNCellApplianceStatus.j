@@ -31,8 +31,8 @@
     CPImage         _iconError;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize the view
 */
@@ -79,8 +79,8 @@
         [_imageStatus setImage:nil];
 }
 
-//#pragma mark -
-//#pragma mark Theming
+#pragma mark -
+#pragma mark Theming
 /*! implement theming in order to allow change color of selected item
 */
 - (void)setThemeState:(id)aState
@@ -100,8 +100,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark CPCoding compliance
+#pragma mark -
+#pragma mark CPCoding compliance
 
 - (id)initWithCoder:(CPCoder)aCoder
 {

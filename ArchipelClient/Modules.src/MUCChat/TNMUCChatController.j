@@ -47,8 +47,8 @@
     DOMElement                  _audioTagReceive;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! call at cib awaking
 */
@@ -119,8 +119,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! this message is called when module becomes visible
 */
@@ -180,8 +180,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! triggered when main stropheconnection is connected
     it will connect to the room
@@ -214,8 +214,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! reload the content of the MessageBoard
     @param aNotification the notification that triggers the message
@@ -242,8 +242,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! send a message to the MUC
     @param aSender the sender of the object
@@ -289,8 +289,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 /*! TNStropheMUCRoom delegate triggered on new message
     @param aRoom the TNStropheMUCRoom that send the message

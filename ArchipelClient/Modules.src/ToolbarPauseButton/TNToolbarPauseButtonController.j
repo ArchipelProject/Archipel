@@ -34,8 +34,8 @@ TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
 @implementation TNToolbarPauseButtonController : TNModule
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! send TNArchipelControlNotification containing command TNArchipelControlSuspend
     to a loaded VirtualMachineControl module instance

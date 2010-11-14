@@ -169,8 +169,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -464,8 +464,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -591,8 +591,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when entity's nickname changes
     @param aNotification the notification
@@ -631,8 +631,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! generate a random Mac address.
     @return CPString containing a random Mac address
@@ -724,8 +724,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! open the manual XML editor
     @param sender the sender of the action
@@ -868,8 +868,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [self defineXML];
 }
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! ask hypervisor for its capabilities
 */
@@ -1655,8 +1655,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {

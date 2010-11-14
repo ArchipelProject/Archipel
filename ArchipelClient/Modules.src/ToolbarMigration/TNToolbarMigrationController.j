@@ -55,8 +55,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -190,8 +190,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -256,8 +256,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! refresh all the tables
 */
@@ -269,8 +269,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! populate the content of the origin table
 */
@@ -315,8 +315,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! perform a live migration
     @param sender the sender of the action
@@ -327,8 +327,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! perform a live migration
 */
@@ -418,8 +418,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {

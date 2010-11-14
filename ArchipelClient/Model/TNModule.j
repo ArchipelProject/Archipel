@@ -85,8 +85,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 - (id)init
 {
@@ -115,8 +115,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-//#pragma mark -
-//#pragma mark Events management
+#pragma mark -
+#pragma mark Events management
 
 
 /*! PRIVATE: this message is called when a matching pubsub event is received
@@ -182,8 +182,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule events implementation
+#pragma mark -
+#pragma mark TNModule events implementation
 
 /*! This message is sent when module is loaded. It will
     reinitialize the _registredSelectors dictionnary
@@ -275,8 +275,8 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
 }
 
 
-//#pragma mark -
-//#pragma mark Communication utilities
+#pragma mark -
+#pragma mark Communication utilities
 
 /*! this message simplify the sending and the post-management of TNStropheStanza to the contact
     @param aStanza: TNStropheStanza to send to the contact

@@ -39,8 +39,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Datasource implementation
+#pragma mark -
+#pragma mark Datasource implementation
 
 - (int)numberOfItemsInPieChartView:(LPPieChartView)aPieChartView
 {
@@ -53,8 +53,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Content controls
+#pragma mark -
+#pragma mark Content controls
 
 /*! Add the given data to the datasource
     @param aData the data to push into the datasource

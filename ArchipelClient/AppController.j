@@ -218,8 +218,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! This method initialize the content of the GUI when the CIB file
     as finished to load.
@@ -600,8 +600,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 }
 
-//#pragma mark -
-//#pragma mark Notifications handlers
+#pragma mark -
+#pragma mark Notifications handlers
 
 /*! Notification responder of TNStropheConnection
     will be performed on login
@@ -695,8 +695,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
 
 
-//#pragma mark -
-//#pragma mark Utilities
+#pragma mark -
+#pragma mark Utilities
 
 /*! Display the helpView in the rightView
 */
@@ -745,8 +745,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! will remove the selected roster item according to its type
     @param the sender of the action
@@ -962,8 +962,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-//#pragma mark -
-//#pragma mark Toolbar Actions
+#pragma mark -
+#pragma mark Toolbar Actions
 
 /*! Delegate of toolbar imutables toolbar items.
     Trigger on delete help item click.
@@ -1085,8 +1085,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 /*! Delegate for CPWindow.
     Tipically set _helpWindow to nil on closes.

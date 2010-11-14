@@ -101,11 +101,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     int                     _numberOfModulesToLoad;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize the module loader
     @return an initialized instance of TNModuleLoader
@@ -210,8 +210,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 
-//#pragma mark -
-//#pragma mark Storage
+#pragma mark -
+#pragma mark Storage
 
 /*! store in CPUserDefaults last selected tab index for entity
 */
@@ -297,8 +297,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 
-//#pragma mark -
-//#pragma mark Modules loading
+#pragma mark -
+#pragma mark Modules loading
 /*! will start to load all the bundles describe in modules.plist
 */
 - (void)load
@@ -587,8 +587,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 
-//#pragma mark -
-//#pragma mark Notifications handlers
+#pragma mark -
+#pragma mark Notifications handlers
 
 /*! triggered on TNStropheContactPresenceUpdatedNotification receiption. This will sent _removeAllTabsFromModulesTabView
     to self if presence if Offline. If presence was Offline and bacame online, it will ask for the vCard to
@@ -658,8 +658,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 /*! TNiTunesTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
     @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
@@ -742,8 +742,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! Action that respond on Toolbar TNModules to display the view of the module.
     @param sender the CPToolbarItem that sent the message

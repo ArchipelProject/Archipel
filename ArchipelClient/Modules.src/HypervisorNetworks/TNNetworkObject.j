@@ -43,8 +43,8 @@
     CPString    _UUID                    @accessors(property=UUID);
 }
 
-//#pragma mark -
-//#pragma mark  Initialization
+#pragma mark -
+#pragma mark  Initialization
 
 /*! initialize the TNNetwork
 */

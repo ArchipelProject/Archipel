@@ -40,8 +40,8 @@ TNArchipelApplianceStatusNone       = @"none";
     CPImage     _usedIcon;
 }
 
-//#pragma mark -
-//#pragma mark  Initialization
+#pragma mark -
+#pragma mark  Initialization
 
 /*! initializes and return a TNInstalledAppliance with given values
     @param aName the name of the appliance
@@ -79,8 +79,8 @@ TNArchipelApplianceStatusNone       = @"none";
 }
 
 
-//#pragma mark -
-//#pragma mark Accessors
+#pragma mark -
+#pragma mark Accessors
 
 - (CPImage)status
 {

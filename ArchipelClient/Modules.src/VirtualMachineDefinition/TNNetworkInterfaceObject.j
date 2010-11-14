@@ -31,8 +31,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initializes and returns TNNetworkInterface with given values
     @param aType the network card type

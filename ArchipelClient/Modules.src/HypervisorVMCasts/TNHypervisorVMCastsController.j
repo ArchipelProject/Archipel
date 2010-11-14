@@ -65,8 +65,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     TNVMCastDatasource          _castsDatasource;
 }
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -160,8 +160,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
 }
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -231,8 +231,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when entity nickname's changed
     @param aNotification the notification
@@ -264,8 +264,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! update filter
     @param sender the sender of the action
@@ -350,8 +350,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! ask hypervisor VMCasts
 */
@@ -623,8 +623,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {

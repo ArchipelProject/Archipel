@@ -40,8 +40,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! init the datasource
     @param aConnection a valid connected TNStropheConnection
@@ -74,8 +74,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 
 /*! Reload the content of the datasource
@@ -120,8 +120,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! Action that will be plugged to the CPSearchField in order to catch
     when user changes the value
@@ -133,8 +133,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Filtering
+#pragma mark -
+#pragma mark Filtering
 
 
 /*! allow to define a CPSearchField to filter entries
@@ -223,8 +223,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Delegates
+#pragma mark -
+#pragma mark Delegates
 
 /*! delegate of TNPubSubNode that will be sent when an pubsub event is recieved
     it will simply recover the content
@@ -235,8 +235,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
-//#pragma mark -
-//#pragma mark Datasource
+#pragma mark -
+#pragma mark Datasource
 
 /*! CPOutlineView Datasource
 */

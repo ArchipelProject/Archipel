@@ -55,8 +55,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! called at cib awaking
 */
@@ -139,8 +139,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 }
 
 
-//#pragma mark -
-//#pragma mark TNModule overrides
+#pragma mark -
+#pragma mark TNModule overrides
 
 /*! called when module is loaded
 */
@@ -193,8 +193,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 }
 
 
-//#pragma mark -
-//#pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! called when entity's nickname changed
     @param aNotification the notification
@@ -252,8 +252,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 }
 
 
-//#pragma mark -
-//#pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! add double clicked vm to roster if not present or go to virtual machine
     @param sender the sender of the action
@@ -316,8 +316,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 }
 
 
-//#pragma mark -
-//#pragma mark XMPP Controls
+#pragma mark -
+#pragma mark XMPP Controls
 
 /*! add given given virtual machine to roster
     @param someUserInfo info from TNAlert

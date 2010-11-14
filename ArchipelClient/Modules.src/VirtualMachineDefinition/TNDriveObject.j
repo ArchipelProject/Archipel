@@ -32,8 +32,8 @@
 }
 
 
-//#pragma mark -
-//#pragma mark Initialization
+#pragma mark -
+#pragma mark Initialization
 
 /*! initializes and returns TNDrive with given values
     @param aType the drive type
