@@ -47,8 +47,8 @@
     TNPubSubController      _pubSubController   @accessors(property=pubSubController);
 
     CPImage                 _unknownUserImage;
-    CPImage                 _antennaImage;
-    CPImage                 _antennaDisabledImage;
+    CPImage                 _pubsubImage;
+    CPImage                 _pubsubDisabledImage;
     CPNumber                _height;
     BOOL                    _isCollapsed;
 }
@@ -68,8 +68,8 @@
     _isCollapsed            = YES;
     _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
     _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
-    _antennaImage           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"antenna.png"]];
-    _antennaDisabledImage   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"antenna-disabled.png"]];
+    _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
+    _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
     [mainView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
@@ -220,12 +220,12 @@
 
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
         {
-            [imageEventSubscription setImage:_antennaImage];
+            [imageEventSubscription setImage:_pubsubImage];
             [imageEventSubscription setToolTip:@"You are registred to the entity events."];
         }
         else
         {
-            [imageEventSubscription setImage:_antennaDisabledImage];
+            [imageEventSubscription setImage:_pubsubDisabledImage];
             [imageEventSubscription setToolTip:@"You are not registred to the entity events."];
         }
 
