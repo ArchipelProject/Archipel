@@ -1360,7 +1360,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         VNCKeymap       = [buttonVNCKeymap title],
         VNCPassword     = [fieldVNCPassword stringValue],
         capabilities    = [_supportedCapabilities objectForKey:arch],
-        stanza          = [TNStropheStanza iqWithAttributes:{"to": [_entity fullJID], "id": uid, "type": "set"}];
+        stanza          = [TNStropheStanza iqWithAttributes:{"to": [[_entity JID] full], "id": uid, "type": "set"}];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildWithName:@"archipel" andAttributes:{
@@ -1374,12 +1374,12 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     // name
     [stanza addChildWithName:@"name"];
-    [stanza addTextNode:[_entity nodeName]];
+    [stanza addTextNode:[[_entity JID] node]];
     [stanza up];
 
     // uuid
     [stanza addChildWithName:@"uuid"];
-    [stanza addTextNode:[_entity nodeName]];
+    [stanza addTextNode:[[_entity JID] node]];
     [stanza up];
 
     //memory
