@@ -210,13 +210,6 @@
 
     [_tableViewRanges reloadData];
     [_tableViewHosts reloadData];
-
-    // // ouais, ben ouais, commentes, tu vas voir...
-    // var frame = [_tableViewHosts bounds];
-    // frame.size.width--;
-    //
-    // [_tableViewHosts setFrame:frame];
-    // [_tableViewRanges setFrame:frame];
 }
 
 
@@ -302,6 +295,7 @@
 - (IBAction)showWindow:(id)aSender
 {
     [self update];
+    [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
 }
 
