@@ -29,7 +29,7 @@ import random
 
 class TNApplianceDecompresser(Thread):
     
-    def __init__(self, working_dir, disk_exts, xvm2_package_path, entity, finish_callback, package_uuid, requester):
+    def __init__(self, working_dir, disk_exts, xvm2_package_path, entity, finish_callback, error_callback, package_uuid, requester):
         """
         initialize a TNApplianceDecompresser
         
@@ -43,6 +43,7 @@ class TNApplianceDecompresser(Thread):
         self.xvm2_package_path  = xvm2_package_path
         self.entity             = entity
         self.finish_callback    = finish_callback
+        self.error_callback     = error_callback
         self.package_uuid       = package_uuid
         self.requester          = requester
         self.install_path       = entity.folder
@@ -55,28 +56,33 @@ class TNApplianceDecompresser(Thread):
     
     
     def run(self):
-        log.info("unpacking to %s" % self.working_dir)
-        self.unpack()
+        try:
+            log.info("unpacking to %s" % self.working_dir)
+            self.unpack()
         
-        log.info("defining UUID in description file as %s" % self.entity.uuid)
-        self.update_description()
+            log.info("defining UUID in description file as %s" % self.entity.uuid)
+            if not self.update_description():
+                raise Exception("cannot update description because update_description returned False (mainly means than description is empty). Content of description prop is %s" % self.description)
         
-        log.info("installing package in %s" % self.install_path)
-        self.install()
+            log.info("installing package in %s" % self.install_path)
+            self.install()
         
-        log.info("cleaning...")
-        self.clean()
+            log.info("cleaning...")
+            self.clean()
         
-        log.info("Defining the virtual machine")
-        self.entity.define(self.description_node)
+            log.info("Defining the virtual machine")
+            self.entity.define(self.description_node)
         
-        # This doesn;t work. we have to wait libvirt to handle snapshot recovering.
-        # anyway, everything is ready, snapshots desc are stored in xvm2 packages, XML desc
-        # are stored into self.snapshots_desc.
-        # log.info("Recovering any snapshots")
-        # self.recover_snapshots()
+            # This doesn;t work. we have to wait libvirt to handle snapshot recovering.
+            # anyway, everything is ready, snapshots desc are stored in xvm2 packages, XML desc
+            # are stored into self.snapshots_desc.
+            # log.info("Recovering any snapshots")
+            # self.recover_snapshots()
         
-        self.finish_callback()
+            self.finish_callback()
+        except Exception as ex:
+            self.error_callback(ex)
+            log.error(str(ex))
         
     
     def unpack(self):
@@ -117,15 +123,16 @@ class TNApplianceDecompresser(Thread):
                     self.description_file = o.read()
                     o.close()
                     
-                if aFile.find("snapshot-") > -1:
-                    log.debug("found snapshot file : %s" % full_path)
-                    o = open(full_path, 'r')
-                    snapXML = o.read()
-                    o.close()
-                    self.snapshots_desc.append(snapXML)
+                # if aFile.find("snapshot-") > -1:
+                #     log.debug("found snapshot file : %s" % full_path)
+                #     o = open(full_path, 'r')
+                #     snapXML = o.read()
+                #     o.close()
+                #     self.snapshots_desc.append(snapXML)
                 
         except Exception as ex:
-            log.error( str(ex))
+            self.error_callback(ex)
+            log.error(str(ex))
     
     
     def update_description(self):
@@ -155,7 +162,10 @@ class TNApplianceDecompresser(Thread):
         nics_nodes = xml_desc.getTag("devices").getTags("interface")
         for nic in nics_nodes:
             mac = nic.getTag("mac")
-            mac.setAttr("address", self.generate_new_mac())
+            if mac:
+                mac.setAttr("address", self.generate_new_mac())
+            else:
+                nic.addChild(name="mac", attrs={"address" : self.generate_new_mac()})
             
         name_node.setData(self.entity.uuid)
         uuid_node.setData(self.entity.uuid)

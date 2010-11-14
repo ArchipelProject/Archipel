@@ -161,7 +161,7 @@ class TNVMApplianceManager:
             
             log.debug("Supported extensions : %s " % str(self.disks_extensions))
             log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, uuid, requester)
+            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, self.error_installing, uuid, requester)
             
             self.old_status  = self.entity.xmppstatus
             self.old_show    = self.entity.xmppstatusshow
@@ -257,6 +257,14 @@ class TNVMApplianceManager:
         self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
         self.entity.change_status("Off")
         self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
+    
+    def error_installing(self, exception):
+        self.is_installed = False
+        self.is_installing = False
+        self.installing_media_uuid = None
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+        self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
+        self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
         
         
     def finish_packaging(self):
