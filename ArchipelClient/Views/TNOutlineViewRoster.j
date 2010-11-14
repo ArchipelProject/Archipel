@@ -37,23 +37,26 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var columnLabel = [[CPTableColumn alloc] initWithIdentifier:"nickname"];
-        
+        var columnLabel = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
+            columnOutline = [[CPTableColumn alloc] initWithIdentifier:"outline"];
+
         [columnLabel setWidth:aFrame.size.width];
-        
+        [columnOutline setWidth:12.0];
+
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(reload:) name:TNArchipelRosterOutlineViewReload object:nil];
-                
+
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         [self setRowHeight:35];
-        [self setIndentationPerLevel:13];
+        // [self setIndentationPerLevel:2];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+        [self addTableColumn:columnOutline];
         [self addTableColumn:columnLabel];
-        [self setOutlineTableColumn:columnLabel];
+        [self setOutlineTableColumn:columnOutline];
         [self setTarget:self];
-        [self setDoubleAction:@selector(onDoubleAction:)];
+        // [self setDoubleAction:@selector(onDoubleAction:)];
     }
 
     return self;
