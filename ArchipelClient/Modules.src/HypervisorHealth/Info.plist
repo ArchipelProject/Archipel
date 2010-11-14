@@ -17,19 +17,22 @@
         <key>PluginDisplayName</key>
         <string>Health</string>
         <key>InsertionType</key>
-		<string>tab</string>
-		<key>TabIndex</key>
-		<integer>0</integer>
-		<key>SupportedEntityTypes</key>
-		<array>
-			<string>hypervisor</string>
-		</array>
-		<key>UseModuleMenu</key>
-		<integer>0</integer>
+				<string>tab</string>
+				<key>TabIndex</key>
+				<integer>0</integer>
+				<key>SupportedEntityTypes</key>
+				<array>
+					<string>hypervisor</string>
+				</array>
+				<key>UseModuleMenu</key>
+				<integer>0</integer>
         <key>CibName</key>
         <string>HypervisorHealth</string>
+
         <key>TNArchipelHealthRefreshStatsInterval</key>
         <real>5.0</real>
+				<key>TNArchipelHealthAutoRefreshStats</key>
+				<integer>1</integer>
         <key>TNArchipelHealthStatsHistoryCollectionSize</key>
         <integer>100</integer>
         <key>TNArchipelHealthMaxLogEntry</key>

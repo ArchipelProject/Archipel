@@ -74,7 +74,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     @outlet CPView              viewLogsTableContainer;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
-    @outlet TNSwitch            switchRefresh;
+    @outlet TNSwitch            switchPreferencesAutoRefresh;
 
     BOOL                        _tableLogDisplayFileColumn;
     BOOL                        _tableLogDisplayMethodColumn;
@@ -115,7 +115,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthMaxLogEntry"], @"TNArchipelHealthMaxLogEntry",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayMethodColumn"], @"TNArchipelHealthTableLogDisplayMethodColumn",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"], @"TNArchipelHealthTableLogDisplayFileColumn"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthTableLogDisplayFileColumn"], @"TNArchipelHealthTableLogDisplayFileColumn",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelHealthAutoRefreshStats"], @"TNArchipelHealthAutoRefreshStats"
     ]];
 
     [imageCPULoading setImage:spinner];
@@ -252,10 +253,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     [filterLogField setTarget:_datasourceLogs];
     [filterLogField setAction:@selector(filterObjects:)];
-
-    // refresh switch
-    [switchRefresh setTarget:self];
-    [switchRefresh setAction:@selector(pauseRefresh:)];
 }
 
 
@@ -288,9 +285,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
-
-    [switchRefresh setOn:shouldBeOn animated:YES sendAction:NO]; // not really a swicth..
-    [self pauseRefresh:switchRefresh];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
@@ -344,6 +338,9 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [defaults setInteger:[fieldPreferencesMaxLogEntries intValue] forKey:@"TNArchipelHealthMaxLogEntry"];
     [defaults setBool:[switchPreferencesShowColunmMethod isOn] forKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
     [defaults setBool:[switchPreferencesShowColunmFile isOn] forKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
+    [defaults setBool:[switchPreferencesAutoRefresh isOn] forKey:@"TNArchipelHealthAutoRefreshStats"];
+
+    [self handleAutoRefresh];
 }
 
 /*! called when user gets preferences
@@ -357,6 +354,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [fieldPreferencesMaxLogEntries setIntValue:[defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]];
     [switchPreferencesShowColunmMethod setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"] animated:YES sendAction:NO];
     [switchPreferencesShowColunmFile setOn:[defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"] animated:YES sendAction:NO];
+    [switchPreferencesAutoRefresh setOn:[defaults boolForKey:@"TNArchipelHealthAutoRefreshStats"] animated:YES sendAction:NO];
 }
 
 
@@ -381,12 +379,11 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 /*! Action that make the auto-refresh on or off
     @param sender the sender of the action
 */
-- (IBAction)pauseRefresh:(id)aSender
+- (IBAction)handleAutoRefresh
 {
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        key         = TNArchipelHealthRefreshBaseKey + [_entity JID];
+    var defaults    = [CPUserDefaults standardUserDefaults];
 
-    if (![switchRefresh isOn])
+    if (![defaults boolForKey:@"TNArchipelHealthAutoRefreshStats"])
     {
         if (_timerStats)
         {
@@ -401,8 +398,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             CPLog.debug("timer for logs invalidated");
             _timerLogs = nil;
         }
-
-        [defaults setBool:NO forKey:key];
     }
     else
     {
@@ -416,9 +411,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
             CPLog.debug("timer for logs started from switch action");
         }
-
-
-        [defaults setBool:YES forKey:key];
     }
 }
 
@@ -609,6 +601,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageDiskLoading setHidden:YES];
 
     [self getHypervisorHealth:nil];
+    [self handleAutoRefresh];
 
     return NO;
 }
