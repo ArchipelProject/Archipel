@@ -38,6 +38,7 @@
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
 @import "Views/TNCalendarView.j"
+!import "Views/NTModalWindow.j"
 @import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
@@ -189,7 +190,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     @outlet TNPropertiesController  propertiesController;
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
-    @outlet TNWhiteWindow           windowModuleLoading;
+    @outlet TNModalWindow           windowModuleLoading;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -346,12 +347,11 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [windowModuleLoading center];
     [windowModuleLoading makeKeyAndOrderFront:nil];
     [textFieldLoadingModuleTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [textFieldLoadingModuleTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [textFieldLoadingModuleTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [textFieldLoadingModuleTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
 
     [textFieldLoadingModuleLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [textFieldLoadingModuleLabel setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [textFieldLoadingModuleLabel setTextColor:[CPColor colorWithHexString:@"6A7087"]];
+    [textFieldLoadingModuleLabel setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
 
     CPLog.trace(@"initializing _moduleController");

@@ -298,25 +298,3 @@
     [super keyDown:anEvent];
 }
 @end
-
-/*! @ingroup utils
-    a white CPWindow
-*/
-@implementation TNWhiteWindow: CPWindow
-
-- (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
-{
-    if (self = [super initWithContentRect:CPRectMake(0,0,478,261) styleMask:CPBorderlessWindowMask])
-    {
-        var bundle  = [CPBundle mainBundle],
-            frame   = [[self contentView] frame],
-            size    = CPSizeMake(frame.size.width -100, frame.size.height -100),
-            bgImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loginbg.png"] size:size];
-
-        [self setBackgroundColor:[CPColor colorWithPatternImage:bgImage]];
-    }
-
-    return self;
-}
-
-@end
