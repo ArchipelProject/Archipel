@@ -38,7 +38,7 @@
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
 @import "Views/TNCalendarView.j"
-@import "Views/NTModalWindow.j"
+@import "Views/TNModalWindow.j"
 @import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
