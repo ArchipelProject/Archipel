@@ -1237,6 +1237,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [[connectionController mainWindow] center];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [connectionController initCredentials];
+
+    [_mainToolbar reloadToolbarItems];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
