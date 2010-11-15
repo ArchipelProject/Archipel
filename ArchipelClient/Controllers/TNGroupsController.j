@@ -50,7 +50,7 @@
 {
     if ([newGroupName stringValue] == "")
     {
-        [CPAlert alertWithTitle:@"Group addition error" message:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:@"Group addition error" informative:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
     }
     else
     {
