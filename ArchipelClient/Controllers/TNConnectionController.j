@@ -39,7 +39,7 @@
     @outlet CPTextField     labelJID;
     @outlet CPTextField     labelRemeber;
     @outlet CPTextField     labelTitle;
-    @outlet TNWhiteWindow   mainWindow @accessors(readonly);
+    @outlet TNModalWindow   mainWindow @accessors(readonly);
 
 
 
@@ -50,31 +50,28 @@
 */
 - (void)awakeFromCib
 {
-    [password setSecure:YES];
     [mainWindow setShowsResizeIndicator:NO];
-    [credentialRemember setTarget:self];
-    [credentialRemember setAction:@selector(rememberCredentials:)];
     [mainWindow setDefaultButton:connectButton];
 
+    [password setSecure:YES];
+    [credentialRemember setTarget:self];
+    [credentialRemember setAction:@selector(rememberCredentials:)];
+
+
     [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelTitle setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelJID setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelPassword setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelPassword setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelBoshService setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelBoshService setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelRemeber setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [labelRemeber setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [labelRemeber setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [message setValue:[CPColor colorWithHexString:@"C4CAD6"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+    [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
-    [labelJID setTextColor:[CPColor colorWithHexString:@"6A7087"]];
-    [labelPassword setTextColor:[CPColor colorWithHexString:@"6A7087"]];
-    [labelBoshService setTextColor:[CPColor colorWithHexString:@"6A7087"]];
-    [labelRemeber setTextColor:[CPColor colorWithHexString:@"6A7087"]];
-    [message setTextColor:[CPColor colorWithHexString:@"6A7087"]];
 
     [connectButton setBezelStyle:CPRoundedBezelStyle];
 }
@@ -85,7 +82,7 @@
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
         lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"],
-        lastJID             = [TNStropheJID stropheJIDWithString:[defaults stringForKey:@"TNArchipelBOSHJID"]],
+        lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"],
         lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"],
         lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
 
@@ -94,7 +91,8 @@
 
     if (lastRememberCred)
     {
-        [JID setStringValue:[lastJID bare]];
+        if (lastJID && lastJID != @"")
+            [JID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]];
         [password setStringValue:lastPassword];
         [credentialRemember setState:CPOnState];
     }
