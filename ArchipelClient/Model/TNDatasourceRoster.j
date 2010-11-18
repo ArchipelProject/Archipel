@@ -105,14 +105,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
     for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var tag     = [[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"],
-            jid     = [tag valueForAttribute:@"jid"],
-            name    = [tag valueForAttribute:@"name"];
+        var tagItem = [[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"],
+            jid     = [tagItem valueForAttribute:@"jid"],
+            tags    = [tagItem valueForAttribute:@"tags"];
 
         if (![_tagsRegistry containsKey:jid])
             [_tagsRegistry setObject:[CPArray array] forKey:jid];
 
-        [[_tagsRegistry objectForKey:jid] addObject:name];
+        [[_tagsRegistry objectForKey:jid] addObjectsFromArray:tags.split(";;")];
     }
 
     if ([_filterField stringValue] != @"")
@@ -166,7 +166,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         var entry = [theEntries objectAtIndex:i];
 
         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-            || [[_tagsRegistry objectForKey:[entry JID]] containsObject:[aFilter uppercaseString]])
+            || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter uppercaseString]])
         {
             [filteredEntries addObject:entry];
         }
@@ -191,7 +191,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
         var entry = [[aGroup contacts] objectAtIndex:i];
 
         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-            || [[_tagsRegistry objectForKey:[entry JID]] containsObject:[aFilter lowercaseString]])
+            || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter lowercaseString]])
             [filteredEntries addObject:entry];
     }
 
