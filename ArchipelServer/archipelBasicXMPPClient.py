@@ -86,6 +86,7 @@ class TNArchipelBasicXMPPClient(object):
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None
         self.pubSubNodeLog          = None
+        self.pubSubNodeTags         = None
         self.hooks                  = {}
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
@@ -199,7 +200,7 @@ class TNArchipelBasicXMPPClient(object):
         # creating/gettingthe event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
-
+        
         if not self.pubSubNodeEvent.recover():
             self.pubSubNodeEvent.create()
         self.pubSubNodeEvent.configure({
@@ -226,6 +227,12 @@ class TNArchipelBasicXMPPClient(object):
                 pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: 0
         })
+        
+        # creating/getting the tags pubsub node
+        tagsNodeName = "/archipel/tags"
+        self.pubSubNodeTags = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
+        if not self.pubSubNodeTags.recover():
+            Exception("the pubsub node /archipel/tags must have been created. You can use arch-tagnode tool to create it.")        
     
     
     def remove_pubsubs(self):
@@ -351,6 +358,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('presence', self.process_presence_subscribe, typ="subscribe")
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
+        self.xmppclient.RegisterHandler('iq', self.__process_tags_iq, ns=ARCHIPEL_NS_TAGS)
         
         log.info("handlers registred")
         
@@ -731,6 +739,38 @@ class TNArchipelBasicXMPPClient(object):
         return photo_data
     
     
+    def __process_avatar_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
+        
+        it understands IQ of type:
+            - alloc
+            - free
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "getavatars":
+            reply = self.iq_get_available_avatars(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "setavatar":
+            reply = self.iq_set_available_avatars(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+    
     def iq_get_available_avatars(self, iq):
         """
         return a list of availables avatars
@@ -755,37 +795,6 @@ class TNArchipelBasicXMPPClient(object):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
         return reply
     
-    
-    def __process_avatar_iq(self, conn, iq):
-        """
-        this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
-        
-        it understands IQ of type:
-            - alloc
-            - free
-            
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        if action == "getavatars":
-            reply = self.iq_get_available_avatars(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "setavatar":
-            reply = self.iq_set_available_avatars(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
     
     
     ######################################################################################################
@@ -834,9 +843,87 @@ class TNArchipelBasicXMPPClient(object):
             self.xmppclient.disconnect()
     
     
+    
+    ######################################################################################################
+    ### Tags
+    ######################################################################################################
+    
+    def iq_set_tags(self, iq):
+        """
+        set the current tags
+        """
+        try:
+            reply = iq.buildReply("result")
+            tags = iq.getTag("query").getTag("archipel").getAttr("tags")
+            self.set_tags(tags)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
+    
+    
+    def __process_tags_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
+        
+        it understands IQ of type:
+            - settags
+            
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "settags":
+            reply = self.iq_set_tags(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+    
+    def set_tags(self, tags):
+        """
+        set the tags of the current entity
+        
+        @type tags String
+        @param tags the string containing tags separated by ';;'
+        """
+        current_id = None;
+        for item in self.pubSubNodeTags.get_items():
+            if item.getTag("tag") and item.getTag("tag").getAttr("jid") == self.jid.getStripped():
+                current_id = item.getAttr("id");
+        if current_id:
+            self.pubSubNodeTags.remove_item(current_id, callback=self.did_clean_old_tags, user_info=tags)
+        else:
+            tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": tags})
+            self.pubSubNodeTags.add_item(tagNode);
+    
+    
+    def did_clean_old_tags(self, resp, user_info):
+        """
+        callback called when old tags has been removed if any
+        """
+        if resp.getType() == "result":
+            tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})
+            self.pubSubNodeTags.add_item(tagNode);
+        else
+            raise Exception("Tags unable to set tags. answer is: " + str(resp))
+        
     ######################################################################################################
     ### XMPP Message registrars
     ###################################################################################################### 
+    
+    
+    
+    ######################################################################################################
+    ### XMPP Message registrars
+    ######################################################################################################
     
     def add_message_registrar_item(self, item):
         """
@@ -945,3 +1032,6 @@ class TNArchipelBasicXMPPClient(object):
                 resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
         
         return resp
+    
+
+

@@ -20,6 +20,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNArchipelTypeTags              = @"archipel:tags";
+TNArchipelTypeTagsSetTags       = @"settags";
+
+
 TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification";
 
 /*! @ingroup archipelcore
@@ -33,6 +37,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     TNPubSubController  _pubsubController   @accessors(property=pubSubController);
     TNPubSubNode        _pubsubTagsNode;
 
+    BOOL                _alreadyReady;
     CPButton            _buttonSave;
     CPTokenField        _tokenFieldTags;
     id                  _currentRosterItem;
@@ -55,6 +60,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
     _currentRosterItem  = nil;
+    _alreadyReady       = NO;
 
     _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:CPRectGetWidth(frame) - 45];
     tokenFrame = [_tokenFieldTags frame];
@@ -87,34 +93,22 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     @param aJID the JID to match
     @return CPArray containings the tags associated to the JID
 */
-- (CPArray)getTagsForJID:(CPString)aJID
+- (CPArray)getTagsForJID:(TNStropheJID)aJID
 {
     var ret = [CPArray array];
 
     for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
         var tag = [[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"];
-
-        if ([tag valueForAttribute:@"jid"] == aJID)
-            [ret addObject:[tag valueForAttribute:@"name"]];
+        if ([tag valueForAttribute:@"jid"] == [aJID bare])
+        {
+            if ([[tag valueForAttribute:@"tags"] length] > 0)
+                [ret addObjectsFromArray:[tag valueForAttribute:@"tags"].split(";;")];
+            break;
+        }
     }
 
     return ret;
-}
-
-/*! send retract for all given tags items of a JID
-    @param aJID the JID to match
-*/
-- (void)removeAllTagsForJID:(CPString)aJID
-{
-    for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
-    {
-        var item    = [[_pubsubTagsNode content] objectAtIndex:i],
-            tag     = [item firstChildWithName:@"tag"];
-
-        if ([tag valueForAttribute:@"jid"] == aJID)
-            [_pubsubTagsNode retractItemWithID:[item valueForAttribute:@"id"]];
-    }
 }
 
 /*! called when pubsub is recovered
@@ -182,16 +176,20 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     if ([_currentRosterItem class] != TNStropheContact)
         return;
 
-    [self removeAllTagsForJID:[_currentRosterItem JID]];
-
-    var content = [_tokenFieldTags objectValue];
+    var stanza      = [TNStropheStanza iqWithType:@"set"],
+        content     = [_tokenFieldTags objectValue],
+        tagsString  = @"";
 
     for (var i = 0; i < [content count]; i++)
-    {
-        var tag = [content objectAtIndex:i];
+        tagsString += [content objectAtIndex:i] + ";;";
+    tagsString = tagsString.slice(0,tagsString.length - 2);
 
-        [_pubsubTagsNode publishItem:[TNXMLNode nodeWithName:@"tag" andAttributes:{@"jid": [_currentRosterItem JID], @"name": tag}]]
-    }
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeTagsSetTags,
+        "tags": tagsString}];
+
+    [_currentRosterItem sendStanza:stanza andRegisterSelector:nil ofObject:nil];
 }
 
 
@@ -208,7 +206,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     {
         var tag = [[[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"name"];
 
-        if ((tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag])
+        if (tag && (tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag])
             [availableTags addObject:tag];
     }
 
@@ -230,8 +228,14 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
 - (void)pubSubNode:(TNPubSubNode)aPubSubMode retrievedItems:(BOOL)isRetrieved
 {
-    if (isRetrieved)
+    if (isRetrieved && !_alreadyReady)
+    {
+        _alreadyReady = YES;
         [[CPNotificationCenter defaultCenter] postNotificationName:TNTagsControllerNodeReadyNotification object:aPubSubMode];
+    }
+
+    if (_currentRosterItem)
+        [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
 }
 
 
