@@ -912,7 +912,7 @@ class TNArchipelBasicXMPPClient(object):
         if resp.getType() == "result":
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})
             self.pubSubNodeTags.add_item(tagNode);
-        else
+        else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
         
     ######################################################################################################
