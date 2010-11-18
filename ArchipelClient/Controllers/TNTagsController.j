@@ -65,7 +65,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [mainView addSubview:_tokenFieldTags];
 
 
-    _buttonSave = [CPButton buttonWithTitle:@"Tag" bezelStyle:CPRoundedBezelStyle];
+    _buttonSave = [CPButton buttonWithTitle:@"Tag"];
+    [_buttonSave setBezelStyle:CPRoundedBezelStyle];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
     [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 3, 3)];
     [_buttonSave setTarget:self];
