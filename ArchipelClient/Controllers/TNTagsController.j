@@ -204,10 +204,17 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     for (var i = 0; i < [[_pubsubTagsNode content] count]; i++)
     {
-        var tag = [[[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"name"];
+        var tags = [[[[_pubsubTagsNode content] objectAtIndex:i] firstChildWithName:@"tag"] valueForAttribute:@"tags"].split(";;");
 
-        if (tag && (tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag])
-            [availableTags addObject:tag];
+        for (var j = 0; j < [tags count]; j++)
+        {
+            var tag = [tags objectAtIndex:j];
+            if (tag
+                && (tag.indexOf(aSubstring) != -1)
+                && ![availableTags containsObject:tag]
+                && ![[_tokenFieldTags objectValue] containsObject:tag])
+                [availableTags addObjectsFromArray:tag];
+        }
     }
 
     return availableTags;
