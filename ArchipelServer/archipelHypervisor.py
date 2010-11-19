@@ -154,7 +154,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     def update_presence(self, params=None):
         count   = len(self.virtualmachines)
         nup     = 0
-        status = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
+        status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
         self.change_presence(self.xmppstatusshow, status)
     
     
@@ -266,14 +266,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
+        action = self.check_acp(conn, iq)        
+        self.check_perm(conn, iq, action, -1)
+        
         if action == "alloc":
             reply = self.iq_alloc(iq)
             conn.send(reply)
@@ -410,7 +405,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         del self.virtualmachines[uuid]
         
         log.info("unregistering vm from jabber server")
-        vm._inband_unregistration()
+        vm.inband_unregistration()
         self.perform_hooks("HOOK_HYPERVISOR_FREE", vm)
         self.update_presence()
     

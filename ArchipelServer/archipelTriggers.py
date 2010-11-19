@@ -114,9 +114,8 @@ class TNArchipelTriggerWatcher:
         self.triggeronaction    = triggeronaction
         self.triggeroffaction   = triggeroffaction
         self.state              = ARCHIPEL_WATCHER_STATE_OFF
-        
-        self.nodename       = "/archipel/trigger/%s/%s" % (targetjid.getStripped(), self.triggername)
-        self.pubsubNode     = pubsub.TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, self.nodename)
+        self.nodename           = "/archipel/trigger/%s/%s" % (targetjid.getStripped(), self.triggername)
+        self.pubsubNode         = pubsub.TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, self.nodename)
     
     
     def watch(self):

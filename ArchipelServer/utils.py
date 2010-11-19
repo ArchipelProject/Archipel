@@ -18,6 +18,7 @@ ARCHIPEL_XMPP_GROUP_CONTROLLER                  = "controllers"
 
 # Namespaces
 ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR               = "libvirt:error:generic"
+ARCHIPEL_NS_PERMISSION_ERROR                    = "archipel:error:permission"
 ARCHIPEL_NS_GENERIC_ERROR                       = "archipel:error:generic"
 ARCHIPEL_NS_IQ_PUSH                             = "archipel:push"
 ARCHIPEL_NS_SERVICE_MESSAGE                     = "headline"

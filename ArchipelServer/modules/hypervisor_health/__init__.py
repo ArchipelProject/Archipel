@@ -17,7 +17,7 @@ def __module_init__health_module(self):
     max_cached_rows         = self.configuration.getint("HEALTH", "max_cached_rows")
     log_file                = self.configuration.get("LOGGING", "logging_file_path")
     
-    self.module_health = health.TNHypervisorHealth(db_file, collection_interval, max_rows_before_purge, max_cached_rows, log_file)
+    self.module_health = health.TNHypervisorHealth(self, db_file, collection_interval, max_rows_before_purge, max_cached_rows, log_file)
 
 
 def __module_register_stanza__heatlh_module(self):

@@ -1,12 +1,12 @@
 #!/bin/sh
 #
-# archipel - this script starts and stops the archipel daemon
+# chkconfig: - 01 99
+# description: Archipel Server Daemon
+# processname: runarchipel.py
+# config: /etc/archipel/archipel.conf
+# pidfile: /var/run/archipel.pid
 #
-# chkconfig:   - 85 15
-# description:  Archipel is a XMPP based orchestrator for virtualization
-# processname: archipel
-# config:      /etc/archipel/archipel.conf
-# pidfile:     /var/run/archipel.pid
+# archipel - this script starts and stops the archipel daemon
 
 # Source function library.
 . /etc/rc.d/init.d/functions
@@ -19,7 +19,6 @@ lockfile=/var/lock/subsys/archipel
 
 start() {
     [ -x $archipel ] || exit 5
-    #[ -f $NGINX_CONF_FILE ] || exit 6
     echo -n $"Starting $prog: "
     daemon $archipel --config="$ARCHIPEL_CONF_FILE" 2>&1 /dev/null
     retval=$?

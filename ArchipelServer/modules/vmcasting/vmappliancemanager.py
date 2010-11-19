@@ -60,13 +60,8 @@ class TNVMApplianceManager:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1)
         
         if self.entity.is_migrating and (not action in ("get")):
             reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)

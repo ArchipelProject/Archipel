@@ -35,6 +35,7 @@ import traceback
 import datetime
 import pubsub
 import sqlite3
+import archipelPermissionCenter
 
 
 ARCHIPEL_ERROR_CODE_AVATARS       = -1
@@ -91,8 +92,11 @@ class TNArchipelBasicXMPPClient(object):
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
+        self.permission_center      = archipelPermissionCenter.TNArchipelPermissionCenter("dummydb", []);
         
         self.jid.setResource(self.resource)
+        
+        self.permission_center.recover_permissions()
         
         if self.name == "auto":
             self.name = self.resource
@@ -107,25 +111,45 @@ class TNArchipelBasicXMPPClient(object):
     
     
     def initialize_modules(self):
+        """
+        this will initializes all loaded modules
+        """
         for method in self.__class__.__dict__:
             if not method.find("__module_init__") == -1:
                 m = getattr(self, method)
                 m()
     
     
+    def check_perm(self, conn, stanza, action_name, error_code=-1):
+        """wrapper to check permission"""
+        if not self.permission_center.check_permission(stanza.getFrom(), action_name):
+            conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, iq, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
+            raise xmpp.protocol.NodeProcessed
+    
+    def check_acp(self, conn, iq):
+        """check is iq is a valid ACP and return action"""
+        try:
+            action = iq.getTag("query").getTag("archipel").getAttr("action")
+            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            return action
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+    
     
     ######################################################################################################
     ### Server connection
     ###################################################################################################### 
     
-    def _connect_xmpp(self):
+    def connect_xmpp(self):
         """
         Initialize the connection to the the XMPP server
         
         exit on any error.
         """
-        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #['dispatcher', 'nodebuilder']
-        
+        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #debug=['dispatcher', 'nodebuilder', 'protocol'])
         if self.xmppclient.connect() == "":
             log.error("unable to connect to XMPP server")
             if self.auto_reconnect:
@@ -139,7 +163,7 @@ class TNArchipelBasicXMPPClient(object):
         return True
     
     
-    def _auth_xmpp(self):
+    def auth_xmpp(self):
         """
         Authentify the client to the XMPP server
         """
@@ -148,24 +172,20 @@ class TNArchipelBasicXMPPClient(object):
             self.isAuth = False
             if (self.auto_register):
                 log.info("starting registration, according to propertie auto_register")
-                self._inband_registration()
+                self.inband_registration()
                 return
             log.error("bad authentication. exiting")
             sys.exit(0)
         
         self.recover_pubsubs()
-        logxmppclient = self.xmppclient
         self.register_handler()
         self.xmppclient.sendInitPresence()
         self.roster = self.xmppclient.getRoster()
-        self.get_vcard()
         self.isAuth = True
+        self.get_vcard()
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         log.info("sucessfully authenticated")
-        
-        
-        
     
     
     def connect(self):
@@ -175,17 +195,14 @@ class TNArchipelBasicXMPPClient(object):
         if self.xmppclient and self.xmppclient.isConnected():
             return
         
-        if self._connect_xmpp():
-            self._auth_xmpp()
-        
-        # self.loop()
+        if self.connect_xmpp():
+            self.auth_xmpp()
     
     
     def disconnect(self):
         """Close the connections from XMPP server"""
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False
-            #self.xmppclient.disconnect()
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
     
     
@@ -293,58 +310,7 @@ class TNArchipelBasicXMPPClient(object):
     ###################################################################################################### 
     
     
-    def _inband_registration(self):
-        """
-        Do a in-band registration if auth fail
-        """    
-        if not self.auto_register:    
-            return
         
-        log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
-        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
-        payload_username = xmpp.Node(tag="username")
-        payload_username.addData(self.jid.getNode())
-        payload_password = xmpp.Node(tag="password")
-        payload_password.addData(self.password)
-        iq.setQueryNS("jabber:iq:register")
-        iq.setQueryPayload([payload_username, payload_password])
-        
-        log.info("registration information sent. wait for response")
-        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
-        
-        if resp_iq.getType() == "error":
-            log.error("unable to register : %s" % str(resp_iq))
-            sys.exit(-1)
-            
-        elif resp_iq.getType() == "result":
-            log.info("the registration complete")
-            self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
-    
-    
-    def _inband_unregistration(self):
-        """
-        Do a in-band unregistration
-        """
-        self.loop_status = ARCHIPEL_XMPP_LOOP_REMOVE_USER
-    
-    
-    def process_inband_unregistration(self):
-        self.remove_pubsubs()
-        
-        log.info("trying to unregister")
-        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
-        iq.setQueryNS("jabber:iq:register")
-        
-        remove_node = xmpp.Node(tag="remove")
-        
-        iq.setQueryPayload([remove_node])
-        log.info("unregistration information sent. waiting for response")
-        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
-        log.info("account removed!")
-        self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-        
-    
-    
     ######################################################################################################
     ### Basic handlers
     ###################################################################################################### 
@@ -384,7 +350,10 @@ class TNArchipelBasicXMPPClient(object):
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
-        """        
+        """       
+        
+        self.check_perm(conn, presence, "presence", -1)
+         
         log.info("Subscription Presence ask by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
         self.roster = self.xmppclient.getRoster()
         
@@ -412,12 +381,15 @@ class TNArchipelBasicXMPPClient(object):
         """
         log.info("Unubscription Presence received from {0} with type {1}".format(presence.getFrom(), presence.getType()))
         
+        self.check_perm(conn, presence, "presence", -1)
+        
         self.remove_jid(presence.getFrom())
         raise xmpp.NodeProcessed
     
     
+    
     ######################################################################################################
-    ### Public method
+    ### Register actions on auth
     ######################################################################################################
         
     def register_actions_to_perform_on_auth(self, method_name, args=[], persistant=True):
@@ -477,7 +449,15 @@ class TNArchipelBasicXMPPClient(object):
         log.debug("all registred actions have been done")
     
     
+    
+    ######################################################################################################
+    ### XMPP Utilities
+    ###################################################################################################### 
+    
     def change_presence(self, presence_show=None, presence_status=None):
+        """
+        change the presence of the entity
+        """
         self.xmppstatus     = presence_status
         self.xmppstatusshow = presence_show
         
@@ -488,28 +468,10 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.send(pres) 
     
     
-    def __process_message(self, conn, msg):
-        """
-        Handler for incoming message.
-
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
-        @type msg: xmpp.Protocol.Message
-        @param msg: the received message 
-        """
-        log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
-
-        reply_stanza = self.__filter_message(msg)
-        if reply_stanza:
-            conn.send(self.__build_reply(reply_stanza, msg))
-    
-    
-    
-    ######################################################################################################
-    ### XMPP Utilities
-    ###################################################################################################### 
-    
     def change_status(self, presence_status):
+        """
+        change only the status of the entity
+        """
         self.xmppstatus = presence_status
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         #self.mass_sender.stanzas.append(pres)
@@ -610,18 +572,22 @@ class TNArchipelBasicXMPPClient(object):
     
     
     def get_vcard(self):
-        
+        """
+        retrieve vCard from server
+        """
         log.info("asking for own vCard")
         node_iq = xmpp.Iq(typ='get', frm=self.jid)
         node_iq.addChild(name="vCard", namespace="vcard-temp")
-        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)        
+        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)
     
     
     def did_receive_vcard(self, conn, vcard):
+        """
+        callback of get_vcard()
+        """
         self.vCard = vcard.getTag("vCard")
         if self.vCard and self.vCard.getTag("PHOTO"):
             self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
-        
         log.info("own vcard retrieved")
     
     
@@ -696,6 +662,57 @@ class TNArchipelBasicXMPPClient(object):
         log.info("vcard update presence sent") 
     
     
+    def inband_registration(self):
+        """
+        Do a in-band registration if auth fail
+        """
+        if not self.auto_register:
+            return
+        
+        log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
+        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))    
+        payload_username = xmpp.Node(tag="username")
+        payload_username.addData(self.jid.getNode())
+        payload_password = xmpp.Node(tag="password")
+        payload_password.addData(self.password)
+        iq.setQueryNS("jabber:iq:register")
+        iq.setQueryPayload([payload_username, payload_password])
+        
+        log.info("registration information sent. wait for response")
+        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        
+        if resp_iq.getType() == "error":
+            log.error("unable to register : %s" % str(resp_iq))
+            sys.exit(-1)
+            
+        elif resp_iq.getType() == "result":
+            log.info("the registration complete")
+            self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
+    
+    
+    def inband_unregistration(self):
+        """
+        Do a in-band unregistration
+        """
+        self.loop_status = ARCHIPEL_XMPP_LOOP_REMOVE_USER
+    
+    
+    def processinband_unregistration(self):
+        self.remove_pubsubs()
+        
+        log.info("trying to unregister")
+        iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
+        iq.setQueryNS("jabber:iq:register")
+        
+        remove_node = xmpp.Node(tag="remove")
+        
+        iq.setQueryPayload([remove_node])
+        log.info("unregistration information sent. waiting for response")
+        resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
+        log.info("account removed!")
+        self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+    
+    
     
     ######################################################################################################
     ### Avatars
@@ -752,13 +769,8 @@ class TNArchipelBasicXMPPClient(object):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        action = self.check_acp(conn, iq)        
+        self.check_perm(conn, iq, action, -1)
         
         if action == "getavatars":
             reply = self.iq_get_available_avatars(iq)
@@ -808,7 +820,7 @@ class TNArchipelBasicXMPPClient(object):
         while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_REMOVE_USER:
-                    self.process_inband_unregistration()
+                    self.processinband_unregistration()
                     return
                     
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
@@ -873,17 +885,12 @@ class TNArchipelBasicXMPPClient(object):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        action = self.check_acp(conn, iq)        
+        self.check_perm(conn, iq, action, -1)
         
         if action == "settags":
             reply = self.iq_set_tags(iq)
-            conn.send(reply)
+            conn.send(reply);
             raise xmpp.protocol.NodeProcessed
     
     
@@ -914,16 +921,30 @@ class TNArchipelBasicXMPPClient(object):
             self.pubSubNodeTags.add_item(tagNode);
         else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
+    
         
-    ######################################################################################################
-    ### XMPP Message registrars
-    ###################################################################################################### 
-    
-    
     
     ######################################################################################################
     ### XMPP Message registrars
     ######################################################################################################
+    
+    def __process_message(self, conn, msg):
+        """
+        Handler for incoming message.
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the message
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message 
+        """
+        log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
+        
+        self.check_perm(conn, msg, "message", -1)
+        
+        reply_stanza = self.__filter_message(msg)
+        if reply_stanza:
+            conn.send(self.__build_reply(reply_stanza, msg))
+    
     
     def add_message_registrar_item(self, item):
         """

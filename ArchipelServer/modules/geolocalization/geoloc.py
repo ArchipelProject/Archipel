@@ -80,13 +80,8 @@ class TNHypervisorGeolocalization:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1)
         
         if action == "get":
             reply = self.__get(iq)

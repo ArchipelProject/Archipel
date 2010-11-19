@@ -30,11 +30,12 @@ ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
 ARCHIPEL_ERROR_CODE_HEALTH_LOG      = -8003
 
 class TNHypervisorHealth:
-    def __init__(self, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file): #, snmp_agent, snmp_community, snmp_version, snmp_port):
+    def __init__(self, entity, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file): #, snmp_agent, snmp_community, snmp_version, snmp_port):
         self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)#, snmp_agent, snmp_community, snmp_version, snmp_port)
         # self.collector.daemon = True
         self.logfile = log_file
         self.collector.start()
+        self.entity = entity
     
         
     def process_iq(self, conn, iq):
@@ -50,14 +51,9 @@ class TNHypervisorHealth:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        try:
-            action = iq.getTag("query").getTag("archipel").getAttr("action")
-            log.info("IQ RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1)
+        
         if action == "history":
             reply = self.__healthinfo_history(iq)
             conn.send(reply)
