@@ -177,6 +177,8 @@ class TNArchipelPermissionCenter:
             trans = self.connection.transaction()
             user.removeTNArchipelPermission(perm)
             trans.commit()
+            self.TNArchipelUser.expired = True
+            self.TNArchipelPermission.expired = True
             return True
         else:
             return False
