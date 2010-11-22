@@ -120,8 +120,8 @@ class TNArchipelBasicXMPPClient(object):
     
     def check_perm(self, conn, stanza, action_name, error_code=-1):
         """wrapper to check permission"""
-        if not self.permission_center.check_permission(stanza.getFrom(), action_name):
-            conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, iq, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
+        if not self.permission_center.check_permission(str(stanza.getFrom().getStripped()), action_name):
+            conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, stanza, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
             raise xmpp.protocol.NodeProcessed
     
     
@@ -136,6 +136,24 @@ class TNArchipelBasicXMPPClient(object):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
+    
+    
+    ######################################################################################################
+    ### Permissions
+    ###################################################################################################### 
+    
+    def init_permissions(self):
+        """
+        Initializes the permissions
+        overrides this to add custom permissions
+        """
+        self.permission_center.create_permission("all", "All permissions are granted", False);
+        self.permission_center.create_permission("presence", "Authorizes users to request presences", False);
+        self.permission_center.create_permission("message", "Authorizes users to send messages", False);
+        self.permission_center.create_permission("permission", "Authorizes users to set permissions", False);
+        self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False);
+        self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False);
+        self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False);
     
     
     ######################################################################################################
@@ -324,6 +342,7 @@ class TNArchipelBasicXMPPClient(object):
         self.xmppclient.RegisterHandler('message', self.__process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.__process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
         self.xmppclient.RegisterHandler('iq', self.__process_tags_iq, ns=ARCHIPEL_NS_TAGS)
+        self.xmppclient.RegisterHandler('iq', self.__process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         
         log.info("handlers registred")
         
@@ -859,18 +878,6 @@ class TNArchipelBasicXMPPClient(object):
     ### Tags
     ######################################################################################################
     
-    def iq_set_tags(self, iq):
-        """
-        set the current tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            tags = iq.getTag("query").getTag("archipel").getAttr("tags")
-            self.set_tags(tags)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
-        return reply
-    
     
     def __process_tags_iq(self, conn, iq):
         """
@@ -921,7 +928,18 @@ class TNArchipelBasicXMPPClient(object):
         else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
     
-        
+    
+    def iq_set_tags(self, iq):
+        """
+        set the current tags
+        """
+        try:
+            reply = iq.buildReply("result")
+            tags = iq.getTag("query").getTag("archipel").getAttr("tags")
+            self.set_tags(tags)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
     
     ######################################################################################################
     ### XMPP Message registrars
@@ -1053,5 +1071,114 @@ class TNArchipelBasicXMPPClient(object):
         
         return resp
     
+    
+    
+    ######################################################################################################
+    ### Permission IQ
+    ######################################################################################################
 
+    def __process_permission_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_PERMISSIONS IQ is received.
+        
+        it understands IQ of type:
+            - list
+            - get
+            - set
+            
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        action = self.check_acp(conn, iq)        
+        self.check_perm(conn, iq, action, -1)
+        
+        if action == "list":
+            reply = self.iq_list_permission(iq)
+            conn.send(reply);
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "set":
+            reply = self.iq_set_permission(iq)
+            conn.send(reply);
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "get":
+            reply = self.iq_get_permission(iq)
+            conn.send(reply);
+            raise xmpp.protocol.NodeProcessed
+    
+    
+    def iq_set_permission(self, iq):
+        try:
+            reply = iq.buildReply("result")
+        
+            perm_type   = iq.getTag("query").getTag("archipel").getAttr("permission_type")
+            perm_target = iq.getTag("query").getTag("archipel").getAttr("permission_target")
+            perm_name   = iq.getTag("query").getTag("archipel").getAttr("permission_name")
+            perm_value  = iq.getTag("query").getTag("archipel").getAttr("permission_value")
+            error = None
+            if perm_type == "role":
+                if perm_value.upper() in ("1", "TRUE", "YES", "Y"):
+                    if not self.permission_center.grant_permission_to_role(perm_name, perm_target):
+                        error = "cannot grant permission %s on role %s" % (perm_name, perm_target)
+                else:
+                    if not self.permission_center.revoke_permission_to_role(perm_name, perm_target):
+                        error = "cannot revoke permission %s on role %s" % (perm_name, perm_target)
+            
+            elif perm_type == "user":
+                if perm_value.upper() in ("1", "TRUE", "YES", "Y"):
+                    log.info("granting permission %s to user %s" % (perm_name, perm_target))
+                    if not self.permission_center.grant_permission_to_user(perm_name, perm_target):
+                        error = "cannot grant permission %s on user %s" % (perm_name, perm_target)
+                else:
+                    log.info("revoking permission %s to user %s" % (perm_name, perm_target))
+                    if not self.permission_center.revoke_permission_to_user(perm_name, perm_target):
+                        error = "cannot revoke permission %s on user %s" % (perm_name, perm_target)
+            else:
+                reply = build_error_iq(self, "perm_type must be 'role' or 'user'", iq, ARCHIPEL_NS_PERMISSION_ERROR)
+            
+            if error:
+                reply = build_error_iq(self, error, iq, ARCHIPEL_NS_PERMISSION_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
+    
+    
+    def iq_get_permission(self, iq):
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            perm_type   = iq.getTag("query").getTag("archipel").getAttr("permission_type")
+            perm_target = iq.getTag("query").getTag("archipel").getAttr("permission_target")
+            
+            if perm_type == "user":
+                permissions = self.permission_center.get_user_permissions(perm_target)
+                if permissions:
+                    for perm in permissions:
+                        nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name}))
+            reply.setQueryPayload(nodes);
+            
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
+    
+    
+    def iq_list_permission(self, iq):
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+                        
+            permissions = self.permission_center.get_permissions()
+            if permissions:
+                for perm in permissions:
+                    nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name, "default": perm.defaultValue, "description": perm.description}))
+            reply.setQueryPayload(nodes);
+            
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+        return reply
+        
+        
 

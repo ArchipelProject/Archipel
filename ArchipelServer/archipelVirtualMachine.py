@@ -95,7 +95,12 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.watchers                   = {};
         self.entity_type                = "virtualmachine";
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
-        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path"));
+        
+        # permissions
+        permission_db_file              = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
+        permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
+        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name);
+        self.init_permissions()
         
         self.create_hook("HOOK_VM_CREATE");
         self.create_hook("HOOK_VM_SHUTOFF");
@@ -198,7 +203,28 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
                                 "description": "I'll show my network stats" },
                         ]
         self.add_message_registrar_items(registrar_items)
-        
+    
+    
+    def init_permissions(self):
+        """initialize the permssions"""
+        TNArchipelBasicXMPPClient.init_permissions(self)
+        self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False);
+        self.permission_center.create_permission("create", "Authorizes users to create (start) virtual machine", False);
+        self.permission_center.create_permission("shutdown", "Authorizes users to shutdown virtual machine", False);
+        self.permission_center.create_permission("destroy", "Authorizes users to destroy virtual machine", False);
+        self.permission_center.create_permission("reboot", "Authorizes users to reboot virtual machine", False);
+        self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False);
+        self.permission_center.create_permission("resume", "Authorizes users to resume virtual machine", False);
+        self.permission_center.create_permission("vncdisplay", "Authorizes users to access the vnc display port", False);
+        self.permission_center.create_permission("xmldesc", "Authorizes users to access the XML description of the virtual machine", False);
+        self.permission_center.create_permission("migrate", "Authorizes users to perform live migration", False);
+        self.permission_center.create_permission("autostart", "Authorizes users to set the virtual machine autostart", False);
+        self.permission_center.create_permission("memory", "Authorizes users to change memory in live", False);
+        self.permission_center.create_permission("setvcpus", "Authorizes users to set the number of virtual CPU in live", False);
+        self.permission_center.create_permission("networkinfo", "Authorizes users to access virtual machine's network informations", False);
+        self.permission_center.create_permission("define", "Authorizes users to define virtual machine", False);
+        self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False);
+        self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False);
     
     
     def register_handler(self):

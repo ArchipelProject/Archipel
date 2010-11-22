@@ -112,7 +112,12 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None;
-        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path"));
+        
+        # permissions
+        permission_db_file              = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
+        permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
+        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name);
+        self.init_permissions()
         
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
         self.generated_names = names_file.readlines();
@@ -166,7 +171,17 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         TNArchipelBasicXMPPClient.register_handler(self)
         
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
-        
+    
+    def init_permissions(self):
+        """initialize the permssions"""
+        TNArchipelBasicXMPPClient.init_permissions(self)
+        self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False);
+        self.permission_center.create_permission("free", "Authorizes users to free allocated virtual machines", False);
+        self.permission_center.create_permission("rostervm", "Authorizes users to access the hypervisor's roster", False);
+        self.permission_center.create_permission("clone", "Authorizes users to clone virtual machines", False);
+        self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False);
+        self.permission_center.create_permission("uri", "Authorizes users to get the hypervisor's libvirt URI", False);
+        self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False);
     
     
     def manage_persistance(self):
@@ -448,10 +463,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", xmppvm)
         
     
+    
     def get_capabilities(self):
         """return hypervisor's capabilities"""
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp;
+    
+    
     
     ######################################################################################################
     ###  Hypervisor IQs
