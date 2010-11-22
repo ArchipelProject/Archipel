@@ -25,7 +25,13 @@ import httplib
 ARCHIPEL_ERROR_CODE_LOCALIZATION_GET  = -9001
 
 class TNHypervisorGeolocalization:
+    
     def __init__(self, conf, entity):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         mode = conf.get("GEOLOCALIZATION", "localization_mode");
         self.entity = entity
         lat = ""
@@ -49,24 +55,19 @@ class TNHypervisorGeolocalization:
         
         registrar_item = {  "commands" : ["where are you", "localize"], 
                             "parameters": {}, 
-                            "method": self.__get_string,
+                            "method": self.message_get,
                             "description": "give my the latitude and longitude." }
         
         self.entity.add_message_registrar_item(registrar_item)
+        
+        # permissions
+        self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False);        
     
     
-    def __get(self, iq):
-        reply = iq.buildReply("result")
-        try:
-            reply.setQueryPayload([self.localization_information])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LOCALIZATION_GET)
-        return reply
     
-    def __get_string(self, msg):
-        lat = self.localization_information.getTagData("Latitude")
-        lon = self.localization_information.getTagData("Longitude")
-        return "I'm localized at longitude: %s latitude: %s" % (lon, lat)
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
     
     def process_iq(self, conn, iq):
         """
@@ -84,9 +85,25 @@ class TNHypervisorGeolocalization:
         self.entity.check_perm(conn, iq, action, -1)
         
         if action == "get":
-            reply = self.__get(iq)
+            reply = self.iq_get(iq)
             conn.send(reply)
             log.debug("geolocalization information sent. Node processed")
             raise xmpp.protocol.NodeProcessed
     
-
+    
+    def iq_get(self, iq):
+        reply = iq.buildReply("result")
+        try:
+            reply.setQueryPayload([self.localization_information])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LOCALIZATION_GET)
+        return reply
+    
+    
+    def message_get(self, msg):
+        lat = self.localization_information.getTagData("Latitude")
+        lon = self.localization_information.getTagData("Longitude")
+        return "I'm localized at longitude: %s latitude: %s" % (lon, lat)
+    
+    
+    

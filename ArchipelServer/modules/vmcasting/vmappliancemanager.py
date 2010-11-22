@@ -36,6 +36,19 @@ ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE    = -4004
 class TNVMApplianceManager:
     
     def __init__(self, database_path, temp_directory, disks_extensions, hypervisor_repo_path, entity):
+        """
+        initialize the class
+        @type database_path: string
+        @param database_path: the path of the sqlite3 database to use
+        @type temp_directory: string
+        @param temp_directory: the path of the working repository 
+        @type disks_extensions: array
+        @param disks_extensions: list of authorized file extensions
+        @type hypervisor_repo_path: string
+        @param hypervisor_repo_path: destination of newly created packages
+        @type entity: TNArchipelVirtualMachine
+        @param entity: the entity of the module
+        """
         self.entity = entity
         self.disks_extensions = disks_extensions.split(";")
         self.temp_directory = temp_directory
@@ -45,6 +58,49 @@ class TNVMApplianceManager:
         self.installing_media_uuid = None
         self.is_installed = False
         self.hypervisor_repo_path = hypervisor_repo_path
+        
+        # permissions 
+        self.entity.permission_center.create_permission("appliance_get", "Authorizes user to get installed appliances", False);
+        self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False);
+        self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False);
+        self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False);
+        
+    
+    
+    ######################################################################################################
+    ### Callbacks
+    ######################################################################################################
+    
+    def finish_installing(self):
+        self.is_installed = True
+        self.is_installing = False
+        self.installing_media_uuid = None
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+        self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
+        self.entity.change_status("Off")
+        self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
+    
+    
+    def error_installing(self, exception):
+        self.is_installed = False
+        self.is_installing = False
+        self.installing_media_uuid = None
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+        self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
+        self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
+    
+    
+    def finish_packaging(self):
+        self.is_installing = False
+        self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
+        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False);
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+    
+    
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
     
     def process_iq(self, conn, iq):
         """
@@ -69,26 +125,27 @@ class TNVMApplianceManager:
             raise xmpp.protocol.NodeProcessed
         
         if action == "get":
-            reply = self.__get(iq)
+            reply = self.iq_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "attach":
-            reply = self.__attach(iq)
+            reply = self.iq_attach(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
                 
         elif action == "detach":
-            reply = self.__detach(iq)
+            reply = self.iq_detach(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "package":
-            reply = self.__package(iq)
+            reply = self.iq_package(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-    def __get(self, iq):
+    
+    def iq_get(self, iq):
         """
         get all installed appliances
         
@@ -131,7 +188,7 @@ class TNVMApplianceManager:
         return reply
     
     
-    def __attach(self, iq):
+    def iq_attach(self, iq):
         """
         instanciate a new virtualmachine from an installed appliance
         @type iq: xmpp.Protocol.Iq
@@ -171,8 +228,9 @@ class TNVMApplianceManager:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
             
         return reply
-
-    def __detach(self, iq):
+    
+  
+    def iq_detach(self, iq):
         """
         detach an installed appliance from a virtualmachine 
         @type iq: xmpp.Protocol.Iq
@@ -192,8 +250,9 @@ class TNVMApplianceManager:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
-        
-    def __package(self, iq):
+    
+    
+    def iq_package(self, iq):
         """
         package the current virtual machine
         @type iq: xmpp.Protocol.Iq
@@ -243,29 +302,6 @@ class TNVMApplianceManager:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)
         return reply
-
-    def finish_installing(self):
-        self.is_installed = True
-        self.is_installing = False
-        self.installing_media_uuid = None
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
-        self.entity.change_status("Off")
-        self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
     
-    def error_installing(self, exception):
-        self.is_installed = False
-        self.is_installing = False
-        self.installing_media_uuid = None
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
-        self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
-        
-        
-    def finish_packaging(self):
-        self.is_installing = False
-        self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
-        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False);
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-            
+    
         

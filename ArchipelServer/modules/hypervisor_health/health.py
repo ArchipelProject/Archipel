@@ -30,14 +30,29 @@ ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
 ARCHIPEL_ERROR_CODE_HEALTH_LOG      = -8003
 
 class TNHypervisorHealth:
-    def __init__(self, entity, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file): #, snmp_agent, snmp_community, snmp_version, snmp_port):
-        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)#, snmp_agent, snmp_community, snmp_version, snmp_port)
-        # self.collector.daemon = True
+    
+    def __init__(self, entity, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
+        self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)
         self.logfile = log_file
         self.collector.start()
         self.entity = entity
-    
         
+        # permissions
+        self.entity.permission_center.create_permission("health_history", "Authorizes user to get the health history", False);
+        self.entity.permission_center.create_permission("health_info", "Authorizes user to get entity information", False);
+        self.entity.permission_center.create_permission("health_logs", "Authorizes user to get entity logs", False);
+    
+    
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
+    
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_HYPERVISOR_HEALTH IQ is received.
@@ -55,22 +70,22 @@ class TNHypervisorHealth:
         self.entity.check_perm(conn, iq, action, -1)
         
         if action == "history":
-            reply = self.__healthinfo_history(iq)
+            reply = self.iq_health_info_history(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "info":
-            reply = self.__healthinfo(iq)
+            reply = self.iq_health_info(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "logs":
-            reply = self.__get_logs(iq)
+            reply = self.iq_get_logs(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
-    def __healthinfo_history(self, iq):
+    def iq_health_info_history(self, iq):
         """
         get a range of old stat history according to the limit parameters in iq node
         
@@ -105,7 +120,7 @@ class TNHypervisorHealth:
         return reply
 
 
-    def __healthinfo(self, iq):
+    def health_info(self, iq):
         """
         send information about the hypervisor health info
         
@@ -149,7 +164,7 @@ class TNHypervisorHealth:
     
     
     
-    def __get_logs(self, iq):
+    def iq_get_logs(self, iq):
         """
         read the hypervisor's log file
         

@@ -29,6 +29,11 @@ ARCHIPEL_SCHED_HYPERVISOR_UID = "schedule-hypervisor-uid"
 class TNActionScheduler:
     
     def __init__(self, entity, db_file):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity
         self.scheduler = Scheduler()
         self.scheduler.start()
@@ -40,6 +45,11 @@ class TNActionScheduler:
         self.restore_jobs()
         self.supported_actions_for_vm = ("create", "shutdown", "destroy", "suspend", "resume", "reboot", "migrate", "pause")
         self.supported_actions_for_hypervisor = ("alloc", "free")
+        
+        # permissions
+        self.entity.permission_center.create_permission("scheduler_jos", "Authorizes user to get the list of task", False);
+        self.entity.permission_center.create_permission("scheduler_schedule", "Authorizes user to schedule a task", False);
+        self.entity.permission_center.create_permission("scheduler_unschedule", "Authorizes user to unschedule a task", False);
     
     
     def save_jobs(self, uid, action, year, month, day, hour, minute, second, comment, params=None):
@@ -110,8 +120,9 @@ class TNActionScheduler:
         
         self.entity.push_change("scheduler", "jobexecuted");
     
-
+    
     def __do_job_for_hypervisor(self, action, uid, str_date, comment, param):
+        
         if action == "alloc":
             self.entity.alloc()
         elif action == "free":
@@ -123,8 +134,8 @@ class TNActionScheduler:
         
         self.entity.push_change("scheduler", "jobexecuted");
     
-
-
+    
+    
     ######################################################################################################
     ### Process IQ
     ###################################################################################################### 
@@ -292,5 +303,6 @@ class TNActionScheduler:
             reply = build_error_iq(self, ex, iq)
         return reply
     
-        
-        
+    
+
+

@@ -147,6 +147,7 @@ class TNHypervisorRepoManager:
     """
     Implementation of the module
     """
+    
     def __init__(self, database_path, repository_path, entity, own_repo_params):
         """
         initialize the class
@@ -180,9 +181,23 @@ class TNHypervisorRepoManager:
         self.cursor = self.database_connection.cursor()
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
         self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status int, source text not null, save_path text)")
-        
         log.info("Database ready.")
+        
+        # permissions 
+        self.entity.permission_center.create_permission("vmcasting_get", "Authorizes user to get registered VMCast feeds", False);
+        self.entity.permission_center.create_permission("vmcasting_register", "Authorizes user to register to a VMCast feed", False);
+        self.entity.permission_center.create_permission("vmcasting_unregister", "Authorizes user to unregister from a VMCast feed", False);
+        self.entity.permission_center.create_permission("vmcasting_downloadappliance", "Authorizes user to download an appliance from a feed", False);
+        self.entity.permission_center.create_permission("vmcasting_downloadqueue", "Authorizes user to see the download queue", False);
+        self.entity.permission_center.create_permission("vmcasting_getappliances", "Authorizes user to get all availables appliances", False);
+        self.entity.permission_center.create_permission("vmcasting_deleteappliance", "Authorizes user to delete an installed appliance", False);
+        self.entity.permission_center.create_permission("vmcasting_getinstalledappliances", "Authorizes user to get all installed appliances", False);
+        
     
+    
+    ######################################################################################################
+    ### RSS Utilities
+    ######################################################################################################
     
     def parse_own_repo(self, loop=True):
         while True:
@@ -211,299 +226,6 @@ class TNHypervisorRepoManager:
           self.entity.change_status(self.old_entity_status)
     
     
-    def process_iq(self, conn, iq):
-        """
-        process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
-        it understands IQ of type:
-            - get
-            - register
-            - unregister
-            - downloadappliance
-            - downloadqueue
-            - getappliances
-            - deleteappliance
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
-        
-        if action == "get":
-            reply = self.get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "register":
-            reply = self.register(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "unregister":
-            reply = self.unregister(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "downloadappliance":
-            reply = self.download(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "downloadqueue":
-            reply = self.get_download_queue(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getappliances":
-            reply = self.get_appliance(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed   
-        
-        elif action == "deleteappliance":
-            reply = self.delete_appliance(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getinstalledappliances":
-            reply = self.get_installed_appliances(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-    
-    
-    def get(self, iq):
-        """
-        get the sources and appliances. Replay parseRSS at each time to be up to date
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results"""
-        reply = iq.buildReply("result")
-        try:
-            nodes = self.parseRSS()
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GET)
-        return reply
-    
-        
-    def register(self, iq):
-        """
-        register to a new VMCast
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply       = iq.buildReply("result")
-        url         = iq.getTag("query").getTag("archipel").getAttr("url")
-        
-        try:
-            if not url or url=="":
-                raise Exception("IncorrectStanza", "Stanza must have url")
-            
-            try:
-                f = urllib.urlopen(url)
-            except:
-                raise Exception("The given url doesn't exist. Can't register")
-            
-            try:
-                self.getFeed(f.read())
-            except:
-                raise Exception("The given url doesn't contains a valid VMCast feed. Can't register")
-                
-            self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
-            self.database_connection.commit()
-            
-            self.parseRSS();
-            
-            self.entity.push_change("vmcasting", "register")
-            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()), excludedgroups=['vitualmachines'])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER)
-        return reply
-    
-    
-    def unregister(self, iq):
-        """
-        unregister from a VMCasts and remove all its appliances (not the files)
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result")
-        
-        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-        
-        try:
-            self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid)
-            self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid)
-            self.database_connection.commit()
-            self.entity.push_change("vmcasting", "unregister")
-            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER)
-        return reply
-    
-    
-    def download(self, iq):
-        """
-        start a download of appliance according to its uuid
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result")
-        
-        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-        
-        try:
-            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
-            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
-            self.database_connection.commit()
-            
-            self.entity.push_change("vmcasting", "download_start")
-            
-            for values in self.cursor:
-                name, description, url, uuid, status, source, path = values
-                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete)
-                self.download_queue[uuid] = downloader
-                downloader.daemon  = True
-                downloader.start()
-            self.old_entity_status = self.entity.xmppstatus
-            self.entity.change_status("Downloading appliance...")
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE)
-        return reply
-    
-    
-    def get_download_queue(self, iq):
-        """
-        get the state of the download queue.
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result") 
-        nodes = []
-        
-        try:
-            for uuid, download in self.download_queue.items():
-                dl = xmpp.Node(tag="download", attrs={"uuid": download.get_uuid(), "name": download.get_name(), "percentage": download.get_progress(), "total": download.get_total_size()})
-                nodes.append(dl)
-            
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADQUEUE)
-        return reply
-    
-    
-    def stop_download(self, iq):
-        """
-        stop a download according to its uuid
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result")
-        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-        self.download_queue[dl_uuid].stop()
-        return reply
-    
-    
-    def get_appliance(self, iq):
-        """
-        get the info about an appliances according to its uuid
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result")
-        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-        
-        try:
-            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
-            for values in self.cursor:
-                path = values[0]
-                name = values[1]
-                description = values[2]
-            
-            node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
-            reply.setQueryPayload([node])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETAPPLIANCES)
-        return reply
-    
-    
-    def get_installed_appliances(self, iq):
-        """
-        get all installed appliances
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        reply = iq.buildReply("result")
-        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-        nodes = []
-        try:
-            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
-            for values in self.cursor:
-                path = values[0]
-                name = values[1]
-                description = values[2]    
-                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
-                nodes.append(node)
-            
-            reply.setQueryPayload(nodes)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED)
-        return reply
-    
-    
-    def delete_appliance(self, iq):
-        """
-        delete an appliance according to its uuid
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready-to-send IQ containing the results
-        """
-        
-        try:
-            reply = iq.buildReply("result")
-            uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
-            
-            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid)
-            for values in self.cursor:
-                path = values[0]
-                
-            os.remove(path)
-            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid))
-            self.database_connection.commit()
-            
-            self.entity.push_change("vmcasting", "appliancedeleted")
-            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
-            
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE)
-        return reply
-    
     
     def getFeed(self, data):
         feed_content        = xmpp.simplexml.NodeBuilder(data=str(data)).getDom()
@@ -513,13 +235,13 @@ class TNHypervisorRepoManager:
         items               = feed_content.getTag("channel").getTags("item")
         return (feed_content, feed_uuid, feed_description, feed_name, items)
     
+    
     def parseRSS(self):
         """
         parse the content of the database, update the feed, create the answer node.
         """
         sources = self.cursor.execute("SELECT * FROM vmcastsources")
         nodes = []
-        
         tmp_cursor = self.database_connection.cursor()
         
         for values in sources:
@@ -567,11 +289,311 @@ class TNHypervisorRepoManager:
                         status = values[0]
                     if status == ARCHIPEL_APPLIANCES_INSTALLING and not self.download_queue.has_key(uuid):
                         status = ARCHIPEL_APPLIANCES_INSTALLATION_ERROR
-                    
+                
                 new_node = xmpp.Node(tag="appliance", attrs={"name": name, "description": description, "url": url, "size": size, "date": pubdate, "uuid": uuid, "status": str(status)})
                 content_nodes.append(new_node)
             
             source_node.setPayload(content_nodes)
             nodes.append(source_node)
         return nodes
+    
+    
+    
+    ######################################################################################################
+    ### XMPP handlers
+    ######################################################################################################
+    
+    def process_iq(self, conn, iq):
+        """
+        process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
+        it understands IQ of type:
+            - get
+            - register
+            - unregister
+            - downloadappliance
+            - downloadqueue
+            - getappliances
+            - deleteappliance
+        
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1)
+        
+        if action == "get":
+            reply = self.iq_get(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "register":
+            reply = self.iq_register(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "unregister":
+            reply = self.iq_unregister(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+            
+        elif action == "downloadappliance":
+            reply = self.iq_download(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "downloadqueue":
+            reply = self.iq_get_download_queue(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "getappliances":
+            reply = self.iq_get_appliance(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed   
+        
+        elif action == "deleteappliance":
+            reply = self.iq_delete_appliance(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "getinstalledappliances":
+            reply = self.iq_get_installed_appliances(iq)
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
+    
+    
+    def iq_get(self, iq):
+        """
+        get the sources and appliances. Replay parseRSS at each time to be up to date
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results"""
+        reply = iq.buildReply("result")
+        try:
+            nodes = self.parseRSS()
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GET)
+        return reply
+    
+        
+    def iq_register(self, iq):
+        """
+        register to a new VMCast
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply       = iq.buildReply("result")
+        url         = iq.getTag("query").getTag("archipel").getAttr("url")
+        
+        try:
+            if not url or url=="":
+                raise Exception("IncorrectStanza", "Stanza must have url")
+            
+            try:
+                f = urllib.urlopen(url)
+            except:
+                raise Exception("The given url doesn't exist. Can't register")
+            
+            try:
+                self.getFeed(f.read())
+            except:
+                raise Exception("The given url doesn't contains a valid VMCast feed. Can't register")
+                
+            self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
+            self.database_connection.commit()
+            
+            self.parseRSS();
+            
+            self.entity.push_change("vmcasting", "register")
+            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()), excludedgroups=['vitualmachines'])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER)
+        return reply
+    
+    
+    def iq_unregister(self, iq):
+        """
+        unregister from a VMCasts and remove all its appliances (not the files)
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result")
+        
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+        
+        try:
+            self.cursor.execute("DELETE FROM vmcastsources WHERE uuid='%s'" % uuid)
+            self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid)
+            self.database_connection.commit()
+            self.entity.push_change("vmcasting", "unregister")
+            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER)
+        return reply
+    
+    
+    def iq_download(self, iq):
+        """
+        start a download of appliance according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result")
+        
+        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+        
+        try:
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
+            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
+            self.database_connection.commit()
+            
+            self.entity.push_change("vmcasting", "download_start")
+            
+            for values in self.cursor:
+                name, description, url, uuid, status, source, path = values
+                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete)
+                self.download_queue[uuid] = downloader
+                downloader.daemon  = True
+                downloader.start()
+            self.old_entity_status = self.entity.xmppstatus
+            self.entity.change_status("Downloading appliance...")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE)
+        return reply
+    
+    
+    def iq_get_download_queue(self, iq):
+        """
+        get the state of the download queue.
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result") 
+        nodes = []
+        
+        try:
+            for uuid, download in self.download_queue.items():
+                dl = xmpp.Node(tag="download", attrs={"uuid": download.get_uuid(), "name": download.get_name(), "percentage": download.get_progress(), "total": download.get_total_size()})
+                nodes.append(dl)
+            
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADQUEUE)
+        return reply
+    
+    
+    def iq_stop_download(self, iq):
+        """
+        stop a download according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result")
+        dl_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+        self.download_queue[dl_uuid].stop()
+        return reply
+    
+    
+    def iq_get_appliance(self, iq):
+        """
+        get the info about an appliances according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result")
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+        
+        try:
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
+            for values in self.cursor:
+                path = values[0]
+                name = values[1]
+                description = values[2]
+            
+            node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
+            reply.setQueryPayload([node])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETAPPLIANCES)
+        return reply
+    
+    
+    def iq_get_installed_appliances(self, iq):
+        """
+        get all installed appliances
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        reply = iq.buildReply("result")
+        uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+        nodes = []
+        try:
+            self.cursor.execute("SELECT save_path, name, description FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
+            for values in self.cursor:
+                path = values[0]
+                name = values[1]
+                description = values[2]    
+                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description})
+                nodes.append(node)
+            
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED)
+        return reply
+    
+    
+    def iq_delete_appliance(self, iq):
+        """
+        delete an appliance according to its uuid
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the sender request IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready-to-send IQ containing the results
+        """
+        
+        try:
+            reply = iq.buildReply("result")
+            uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
+            
+            self.cursor.execute("SELECT save_path FROM vmcastappliances WHERE uuid='%s'" % uuid)
+            for values in self.cursor:
+                path = values[0]
+                
+            os.remove(path)
+            self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_NOT_INSTALLED, uuid))
+            self.database_connection.commit()
+            
+            self.entity.push_change("vmcasting", "appliancedeleted")
+            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
+            
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE)
+        return reply
+    
     

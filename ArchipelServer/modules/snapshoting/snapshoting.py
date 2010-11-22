@@ -33,9 +33,25 @@ ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE   = -2006
 class TNSnapshoting:
     
     def __init__(self, entity):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity
-        pass
+        
+        # permissions
+        self.entity.permission_center.create_permission("snapshot_take", "Authorizes user to get take a snapshot", False);
+        self.entity.permission_center.create_permission("snapshot_delete", "Authorizes user to delete a snapshot", False);
+        self.entity.permission_center.create_permission("snapshot_get", "Authorizes user to get all snapshots", False);
+        self.entity.permission_center.create_permission("snapshot_current", "Authorizes user to get current used snapshot", False);
+        self.entity.permission_center.create_permission("snapshot_revert", "Authorizes user to revert to a snapshot", False);
+        
     
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
     
     def process_iq(self, conn, iq):
         """
@@ -65,32 +81,32 @@ class TNSnapshoting:
             raise xmpp.protocol.NodeProcessed
         
         elif action == "take":
-            reply = self.take_snapshot(iq)
+            reply = self.iq_take(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "delete":
-            reply = self.delete(iq)
+            reply = self.iq_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "get":
-            reply = self.get(iq)
+            reply = self.iq_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "current":
-            reply = self.getcurrent(iq)
+            reply = self.iq_getcurrent(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "revert":
-            reply = self.revert(iq)
+            reply = self.iq_revert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
-    def take_snapshot(self, iq):
+    def iq_take(self, iq):
         """
         creating a snapshot
         
@@ -144,7 +160,7 @@ class TNSnapshoting:
         return reply
     
     
-    def get(self, iq):
+    def iq_get(self, iq):
         """
         list all a snapshot
         
@@ -172,7 +188,7 @@ class TNSnapshoting:
         return reply
     
     
-    def getcurrent(self, iq):
+    def iq_getcurrent(self, iq):
         """
         return current snapshot
         
@@ -199,7 +215,7 @@ class TNSnapshoting:
         return reply
     
     
-    def delete(self, iq):
+    def iq_delete(self, iq):
         """
         return current snapshot
         
@@ -236,7 +252,7 @@ class TNSnapshoting:
         return reply
     
     
-    def revert(self, iq):
+    def iq_revert(self, iq):
         """
         return current snapshot
         

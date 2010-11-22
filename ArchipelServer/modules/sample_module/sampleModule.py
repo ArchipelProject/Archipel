@@ -26,9 +26,17 @@ import archipel
 class TNSampleModule:
     
     def __init__(self, entity):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity
-        pass
-
+        
+        # permissions
+        self.entity.permission_center.create_permission("sample_do-something", "Authorizes user to do something", False);
+    
+    
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_SAMPLE IQ is received.
@@ -45,18 +53,22 @@ class TNSampleModule:
         self.entity.check_perm(conn, iq, action, -1)
         
         if action == "do-something":
-            reply = self.__do_something(iq)
+            reply = self.iq_do_something(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
-
-    def __do_something(self, iq):
+    
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
+    
+    def iq_do_something(self, iq):
         """
         Do something.
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -68,3 +80,4 @@ class TNSampleModule:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
+    

@@ -1131,7 +1131,7 @@ class TNArchipelBasicXMPPClient(object):
                             errors.append("cannot revoke permission %s on role %s" % (perm_name, perm_target))
                 
                 elif perm_type == "user":
-                    if perm_value.upper() in ("1", "TRUE", "YES", "Y"):
+                    if perm_value.upper() in ("1", "TRUE", "YES", "Y", "OUI", "O"):
                         log.info("granting permission %s to user %s" % (perm_name, perm_target))
                         if not self.permission_center.grant_permission_to_user(perm_name, perm_target):
                             errors.append("cannot grant permission %s on user %s" % (perm_name, perm_target))
@@ -1139,11 +1139,9 @@ class TNArchipelBasicXMPPClient(object):
                         log.info("revoking permission %s to user %s" % (perm_name, perm_target))
                         if not self.permission_center.revoke_permission_to_user(perm_name, perm_target):
                             errors.append("cannot revoke permission %s on user %s" % (perm_name, perm_target))
-                else:
-                    build_error_iq(self, "perm_type must be 'role' or 'user'", iq, ARCHIPEL_NS_PERMISSION_ERROR)
                 
-                if len(errors) > 0:
-                    reply =  build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
+            if len(errors) > 0:
+                reply =  build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
                 
             self.push_change("permissions", "set")
             

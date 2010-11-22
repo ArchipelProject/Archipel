@@ -34,9 +34,26 @@ ARCHIPEL_ERROR_CODE_DRIVES_RENAME       = -3006
 class TNMediaManagement:
     
     def __init__(self, shared_isos_folder, entity):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity
         self.shared_isos_folder =  shared_isos_folder
+        
+        # permissions 
+        self.entity.permission_center.create_permission("drives_create", "Authorizes user to get create a drive", False);
+        self.entity.permission_center.create_permission("drives_delete", "Authorizes user to delete a drive", False);
+        self.entity.permission_center.create_permission("drives_get", "Authorizes user to get all drives", False);
+        self.entity.permission_center.create_permission("drives_getiso", "Authorizes user to get existing ISO images", False);
+        self.entity.permission_center.create_permission("drives_convert", "Authorizes user to convert a drive", False);
+        self.entity.permission_center.create_permission("drives_rename", "Authorizes user to rename a drive", False);
     
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
     
     def process_iq(self, conn, iq):
         """
@@ -64,43 +81,43 @@ class TNMediaManagement:
             raise xmpp.protocol.NodeProcessed
         
         if action == "create":
-            reply = self.__create(iq)
+            reply = self.iq_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "delete":
-            reply = self.__delete(iq)
+            reply = self.iq_delete(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "get":
-            reply = self.__get(iq)
+            reply = self.iq_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "getiso":
-            reply = self.__getisos(iq)
+            reply = self.iq_getisos(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "convert":
-            reply = self.__convert(iq)
+            reply = self.iq_convert(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "rename":
-            reply = self.__rename(iq)
+            reply = self.iq_rename(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-
-    def __create(self, iq):
+    
+    def iq_create(self, iq):
         """
         Create a disk in given format
-    
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-    
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -134,13 +151,13 @@ class TNMediaManagement:
         return reply
     
     
-    def __convert(self, iq):
+    def iq_convert(self, iq):
         """
         Convert a disk from a format to another
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -171,14 +188,15 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CONVERT)
         return reply
-        
-    def __rename(self, iq):
+    
+    
+    def iq_rename(self, iq):
         """
         Rename a disk
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -204,7 +222,7 @@ class TNMediaManagement:
         return reply
     
     
-    def __delete(self, iq):
+    def iq_delete(self, iq):
         """
         delete a virtual hard drive
         
@@ -238,7 +256,7 @@ class TNMediaManagement:
                     if path == secure_disk_path:
                         devices_node.delChild(disk_node)
                         have_undefined_at_least_on_disk = True;
-            
+                
                 if have_undefined_at_least_on_disk:
                     xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
                     self.entity.libvirt_connection.defineXML(xml)
@@ -253,9 +271,9 @@ class TNMediaManagement:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_DELETE)
         return reply
-
-
-    def __get(self, iq):
+    
+    
+    def iq_get(self, iq):
         """
         Get the virtual hatd drives of the virtual machine
         
@@ -294,8 +312,8 @@ class TNMediaManagement:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply
     
-
-    def __getisos(self, iq):
+    
+    def iq_getisos(self, iq):
         """
         Get the virtual cdrom ISO of the virtual machine
         

@@ -27,12 +27,21 @@ import sqlite3
 class TNOOMKiller:
     
     def __init__(self, entity, db_file):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity;
         self.database = sqlite3.connect(db_file, check_same_thread=False);
         self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
         self.database.commit()
         self.cursor = self.database.cursor()
         log.info("module oom killer initialized")
+        
+        # permissions
+        self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False);
+        self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False);
     
     
     ######################################################################################################
@@ -117,17 +126,17 @@ class TNOOMKiller:
         self.entity.check_perm(conn, iq, action, -1)
         
         if action == "getadjust":
-            reply = self.__oom_get_adjust(iq)
+            reply = self.iq_oom_get_adjust(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "setadjust":
-            reply = self.__oom_set_adjust(iq)
+            reply = self.iq_oom_set_adjust(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed    
     
     
-    def __oom_get_adjust(self, iq):
+    def iq_oom_get_adjust(self, iq):
         """
         return the value of the oom_adjust of the virtual machine
         
@@ -147,7 +156,7 @@ class TNOOMKiller:
         return reply
     
     
-    def __oom_set_adjust(self, iq):
+    def iq_oom_set_adjust(self, iq):
         """
         set the adjust value of oom killer from -16:15 plus special -17 value that disable oom killer for the process
         the lower the value his the higher the likelihood of killing the process

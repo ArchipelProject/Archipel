@@ -35,13 +35,35 @@ ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES   = -7007
 class TNHypervisorNetworks:
     
     def __init__(self, entity):
+        """
+        initialize the module
+        @type entity TNArchipelBasicXMPPClient
+        @param entity the module entity
+        """
         self.entity = entity
         self.libvirt_connection = libvirt.open(self.entity.configuration.get("GLOBAL", "libvirt_uri"))
         if self.libvirt_connection == None:
             log.error("unable to connect libvirt")
             sys.exit(0) 
         log.info("connected to  libvirt")
+        
+        # permissions
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False);
+            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False);
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.permission_center.create_permission("network_define",   "Authorizes user to define a network", False);
+            self.entity.permission_center.create_permission("network_undefine", "Authorizes user to undefine a network", False);
+            self.entity.permission_center.create_permission("network_create",   "Authorizes user to create (start) a network", False);
+            self.entity.permission_center.create_permission("network_destroy",  "Authorizes user to destroy (stop) a network", False);
+            self.entity.permission_center.create_permission("network_get",      "Authorizes user to get all networks informations", False);
+            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False);
+            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False);            
     
+    
+    ######################################################################################################
+    ### XMPP Processing
+    ######################################################################################################
     
     def process_iq_for_hypervisor(self, conn, iq):
         """
@@ -65,37 +87,37 @@ class TNHypervisorNetworks:
         self.entity.check_perm(conn, iq, action, -1)
         
         if action == "define":
-            reply = self.__define(iq)
+            reply = self.iq_define(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "undefine":
-            reply = self.__undefine(iq)
+            reply = self.iq_undefine(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "create":
-            reply = self.__create(iq)
+            reply = self.iq_create(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "destroy":
-            reply = self.__destroy(iq)
+            reply = self.iq_destroy(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "get":
-            reply = self.__get(iq)
+            reply = self.iq_get(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "bridges":
-            reply = self.__bridges(iq)
+            reply = self.iq_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "getnames":
-            reply = self.__get_names(iq)
+            reply = self.iq_get_names(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -116,17 +138,17 @@ class TNHypervisorNetworks:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1)
         if action == "getnames":
-            reply = self.__get_names(iq)
+            reply = self.iq_get_names(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-
+        
         elif action == "bridges":
-            reply = self.__bridges(iq)
+            reply = self.iq_bridges(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-
-    def __define(self, iq):
+    
+    def iq_define(self, iq):
         """
         Define a virtual network in the libvirt according to the XML data
         network passed in argument
@@ -150,8 +172,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE)
         return reply
     
-
-    def __undefine(self, iq):
+    
+    def iq_undefine(self, iq):
         """
         undefine a virtual network in the libvirt according to name passed in argument
         
@@ -175,8 +197,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE)
         return reply
     
-
-    def __create(self, iq):
+    
+    def iq_create(self, iq):
         """
         Create a network using libvirt connection
         
@@ -201,8 +223,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_CREATE)
         return reply
     
-
-    def __destroy(self, iq):
+    
+    def iq_destroy(self, iq):
         """
         Destroy a network using libvirt connection
         
@@ -227,8 +249,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY)
         return reply
     
-
-    def __get(self, iq):
+    
+    def iq_get(self, iq):
         """
         list all virtual networks
         
@@ -267,8 +289,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GET)
         return reply
     
-
-    def __get_names(self, iq):
+    
+    def iq_get_names(self, iq):
         """
         list all virtual networks name
         
@@ -292,8 +314,8 @@ class TNHypervisorNetworks:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES)
         return reply
     
-
-    def __bridges(self, iq):
+    
+    def iq_bridges(self, iq):
         """
         list all virtual networks name
         
