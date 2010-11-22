@@ -112,6 +112,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None;
+        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path"));
         
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
         self.generated_names = names_file.readlines();

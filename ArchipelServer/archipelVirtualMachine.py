@@ -95,6 +95,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.watchers                   = {};
         self.entity_type                = "virtualmachine";
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path"));
         
         self.create_hook("HOOK_VM_CREATE");
         self.create_hook("HOOK_VM_SHUTOFF");

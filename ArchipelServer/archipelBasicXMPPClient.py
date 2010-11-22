@@ -92,11 +92,9 @@ class TNArchipelBasicXMPPClient(object):
         self.b64Avatar              = None
         self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
-        self.permission_center      = archipelPermissionCenter.TNArchipelPermissionCenter("dummydb", []);
+        self.permission_center      = None
         
         self.jid.setResource(self.resource)
-        
-        self.permission_center.recover_permissions()
         
         if self.name == "auto":
             self.name = self.resource
@@ -125,6 +123,7 @@ class TNArchipelBasicXMPPClient(object):
         if not self.permission_center.check_permission(stanza.getFrom(), action_name):
             conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, iq, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
             raise xmpp.protocol.NodeProcessed
+    
     
     def check_acp(self, conn, iq):
         """check is iq is a valid ACP and return action"""
