@@ -351,6 +351,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         if requester:
             log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
             vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+            vm.permission_center.grant_permission_to_user("all", requester.getStripped())
         
         log.info("registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
