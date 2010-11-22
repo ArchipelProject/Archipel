@@ -282,7 +282,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = self.check_acp(conn, iq)        
+        action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
         
         if action == "alloc":

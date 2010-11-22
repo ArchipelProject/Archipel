@@ -96,12 +96,20 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.entity_type                = "virtualmachine";
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         
+        # folder
+        if not os.path.isdir(self.folder): os.mkdir(self.folder)
+        
+        # triggers
+        log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
+        self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
+        
         # permissions
         permission_db_file              = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
         permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
         self.permission_center          = archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name);
         self.init_permissions()
         
+        # hooks
         self.create_hook("HOOK_VM_CREATE");
         self.create_hook("HOOK_VM_SHUTOFF");
         self.create_hook("HOOK_VM_STOP");
@@ -113,16 +121,15 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.create_hook("HOOK_VM_INITIALIZE");
         self.create_hook("HOOK_VM_TERMINATE");
         
-        if not os.path.isdir(self.folder): os.mkdir(self.folder)
-        log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
-        self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
-        
+        # actions on auth
         self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
         self.register_actions_to_perform_on_auth("connect_domain", None)
         self.register_actions_to_perform_on_auth("set_vcard")
         
+        # messages
         self.register_for_messages()
         
+        # modules
         self.initialize_modules()
     
     
