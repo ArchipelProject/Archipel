@@ -118,9 +118,9 @@ class TNHypervisorHealth:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_HISTORY)
         return reply
-
-
-    def health_info(self, iq):
+    
+    
+    def iq_health_info(self, iq):
         """
         send information about the hypervisor health info
         

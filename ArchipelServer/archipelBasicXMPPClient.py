@@ -1091,8 +1091,9 @@ class TNArchipelBasicXMPPClient(object):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = self.check_acp(conn, iq)        
-        self.check_perm(conn, iq, "permission", -1)
+        action = self.check_acp(conn, iq)
+        if not action == "get":
+            self.check_perm(conn, iq, "permission", -1)
         
         if action == "list":
             reply = self.iq_list_permission(iq)
@@ -1115,13 +1116,13 @@ class TNArchipelBasicXMPPClient(object):
             reply   = iq.buildReply("result")
             errors  = []
             perms   = iq.getTag("query").getTag("archipel").getTags(name="permission")
-            
+        
             for perm in perms:
                 perm_type   = perm.getAttr("permission_type")
                 perm_target = perm.getAttr("permission_target")
                 perm_name   = perm.getAttr("permission_name")
                 perm_value  = perm.getAttr("permission_value")
-                
+            
                 if perm_type == "role":
                     if perm_value.upper() in ("1", "TRUE", "YES", "Y"):
                         if not self.permission_center.grant_permission_to_role(perm_name, perm_target):
@@ -1129,7 +1130,7 @@ class TNArchipelBasicXMPPClient(object):
                     else:
                         if not self.permission_center.revoke_permission_to_role(perm_name, perm_target):
                             errors.append("cannot revoke permission %s on role %s" % (perm_name, perm_target))
-                
+            
                 elif perm_type == "user":
                     if perm_value.upper() in ("1", "TRUE", "YES", "Y", "OUI", "O"):
                         log.info("granting permission %s to user %s" % (perm_name, perm_target))
@@ -1139,13 +1140,11 @@ class TNArchipelBasicXMPPClient(object):
                         log.info("revoking permission %s to user %s" % (perm_name, perm_target))
                         if not self.permission_center.revoke_permission_to_user(perm_name, perm_target):
                             errors.append("cannot revoke permission %s on user %s" % (perm_name, perm_target))
-                
+            
             if len(errors) > 0:
                 reply =  build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
-                
+            
             self.push_change("permissions", "set")
-            
-            
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
         return reply

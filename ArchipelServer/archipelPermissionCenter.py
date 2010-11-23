@@ -171,6 +171,7 @@ class TNArchipelPermissionCenter:
         perm = self.get_permission(permission_name)
         user = self.get_user(user_name)
         
+        if not user: return True
         if not perm in user.permissions: return True
         
         if user and perm:
