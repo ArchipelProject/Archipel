@@ -75,6 +75,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 @implementation TNModuleController: CPObject
 {
+    @outlet  CPView         viewPermissionDenied;
+
     BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
     CPArray                 _loadedTabModules               @accessors(getter=loadedTabModules);
     CPDictionary            _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
@@ -319,8 +321,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [bundle loadWithDelegate:self];
     }
 
-    // if ((_numberOfModulesToLoad == 0) && ([_delegate respondsToSelector:@selector(moduleLoaderLoadingComplete:)]))
-    //     [_delegate moduleLoaderLoadingComplete:self];
 }
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -422,9 +422,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [newViewItem setView:scrollView];
 
     [aModule initializeWithEntity:theEntity andRoster:_roster];
-    [aModule willLoad];
 
     [scrollView setDocumentView:[aModule view]];
+
+    [aModule _beforeWillLoad];
 
     [_mainTabView addTabViewItem:newViewItem];
 }
@@ -441,6 +442,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
         supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
         useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"],
+        mandatoryPermissions        = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
         currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle],
@@ -452,6 +454,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setBundle:aBundle];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
+    [currentModuleController setMandatoryPermissions:mandatoryPermissions];
+    [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 
     if (useMenu)
     {
@@ -488,6 +492,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
         moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"],
         toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"],
+        mandatoryPermissions    = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
         frame                   = [_mainModuleView bounds],
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
 
@@ -518,6 +523,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setMandatoryPermissions:mandatoryPermissions];
+    [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
@@ -525,7 +532,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
 
-    [currentModuleController willLoad];
+    [currentModuleController _beforeWillLoad];
 }
 
 /*! Insert all modules' MainMenu items

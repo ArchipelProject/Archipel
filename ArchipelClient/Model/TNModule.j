@@ -26,10 +26,15 @@
     @group TNModule
     the namespace of Archipel Push Notification stanzas.
 */
-TNArchipelPushNotificationNamespace = @"archipel:push";
+TNArchipelPushNotificationNamespace     = @"archipel:push";
+TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
-TNArchipelErrorPermission           = 0;
-TNArchipelErrorGeneral              = 1;
+TNArchipelTypePermissions               = @"archipel:permissions";
+TNArchipelTypePermissionsGet            = @"get";
+
+TNArchipelErrorPermission               = 0;
+TNArchipelErrorGeneral                  = 1;
+
 
 
 /*! @ingroup archipelcore
@@ -82,9 +87,12 @@ TNArchipelErrorGeneral              = 1;
     TNStropheRoster         _roster                 @accessors(property=roster);
     CPToolbarItem           _toolbarItem            @accessors(property=toolbarItem);
     CPToolbar               _toolbar                @accessors(property=toolbar);
+    CPArray                 _mandatoryPermissions   @accessors(property=mandatoryPermissions);
 
+    CPView                  _viewPermissionsDenied  @accessors(property=viewPermissionDenied);
     CPArray                 _registredSelectors;
     CPArray                 _pubsubRegistrar;
+    CPDictionary            _cachedGranted;
 }
 
 
@@ -95,11 +103,11 @@ TNArchipelErrorGeneral              = 1;
 {
     if (self = [super init])
     {
-        _isActive           = NO;
-        _isVisible          = NO;
-        _pubsubRegistrar    = [CPArray array];
+        _isActive               = NO;
+        _isVisible              = NO;
+        _pubsubRegistrar        = [CPArray array];
+        _cachedGranted          = [CPDictionary dictionary];
     }
-
     return self;
 }
 
@@ -121,7 +129,6 @@ TNArchipelErrorGeneral              = 1;
 #pragma mark -
 #pragma mark Events management
 
-
 /*! PRIVATE: this message is called when a matching pubsub event is received
 
     @param aStanza the TNStropheStanza that contains the event
@@ -132,7 +139,7 @@ TNArchipelErrorGeneral              = 1;
 {
     CPLog.trace("Raw (not filtered) pubsub event received from " + [aStanza from]);
 
-    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[1],
+    var nodeOwner   = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
         pushType    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
         pushDate    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"date"],
         pushChange  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"],
@@ -184,15 +191,173 @@ TNArchipelErrorGeneral              = 1;
     }
 }
 
+/*! this message is sent when module receive a permission push in order to refresh
+    display and permission cache
+    @param somePushInfo the push informations as a CPDictionary
+*/
+- (void)_didReceivePermissionsPush:(id)somePushInfo
+{
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"];
+
+    // check if we already have cached some information about the entity
+    // if not, permissions will be recovered at next display so we don't care
+    if ([_cachedGranted containsKey:sender])
+    {
+        var anEntity = [_roster contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
+
+        // invalide the cache for current entity
+        [_cachedGranted removeObjectForKey:sender];
+
+        // if the sender if the _entity then we'll need to perform graphicall chages
+        // otherwise we just update the cache.
+        if (anEntity == _entity)
+            [self checkMandatoryPermissionsAndPerformOnGrant:@selector(hidePermissionDeniedView) onDenial:@selector(displayPermissionDeniedView) forEntity:anEntity];
+        else
+            [self checkMandatoryPermissionsAndPerformOnGrant:nil onDenial:nil forEntity:anEntity];
+    }
+
+    return YES;
+}
+
+
+#pragma mark -
+#pragma mark Mandatory permissions validation
+
+/*! Check if given entity meet the minimal mandatory permission to display the module
+    Thoses mandatory permissions are stored into _mandatoryPermissions
+    @param grantedSelector selector that will be executed if user is conform to mandatory permissions
+    @param grantedSelector selector that will be executed if user is not conform to mandatory permissions
+    @param anEntity the entity to which we should check the permission
+*/
+- (void)checkMandatoryPermissionsAndPerformOnGrant:(SEL)grantedSelector onDenial:(SEL)denialSelector forEntity:(TNStropheContact)anEntity
+{
+    if (!_cachedGranted)
+        _cachedGranted = [CPDictionary dictionary];
+
+    if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
+    {
+        if (grantedSelector)
+            [self performSelector:grantedSelector];
+
+        return;
+    }
+
+    if ([_cachedGranted containsKey:[[anEntity JID] bare]])
+    {
+        if ([_cachedGranted valueForKey:[[anEntity JID] bare]] && grantedSelector)
+            [self performSelector:grantedSelector];
+        else if (denialSelector)
+            [self performSelector:denialSelector];
+
+        return;
+    }
+
+    var stanza = [TNStropheStanza iqWithType:@"get"],
+        selectors = [CPDictionary dictionaryWithObjectsAndKeys: grantedSelector, @"grantedSelector",
+                                                                denialSelector, @"denialSelector",
+                                                                anEntity, @"entity"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypePermissionsGet,
+        "permission_type": "user",
+        "permission_target": [[_connection JID] bare]}];
+
+    [anEntity sendStanza:stanza andRegisterSelector:@selector(_didReceiveMandatoryPermissions:selectors:) ofObject:self userInfo:selectors];
+}
+
+/*! compute the answer containing the users' permissions
+    @param aStanza TNStropheStanza containing the answer
+    @param someUserInfo CPDictionary containing the two selectors and the current entity
+*/
+- (void)_didReceiveMandatoryPermissions:(TNStropheStanza)aStanza selectors:(CPDictionary)someUserInfo
+{
+    if ([aStanza type] == @"result")
+    {
+        var permissions = [aStanza childrenWithName:@"permission"],
+            currentPermissions = [CPArray array],
+            anEntity = [someUserInfo objectForKey:@"entity"];
+
+        [_cachedGranted setValue:YES forKey:[[anEntity JID] bare]];
+
+        for (var i = 0; i < [permissions count]; i++)
+        {
+            var permission      = [permissions objectAtIndex:i],
+                name            = [permission valueForAttribute:@"name"];
+            [currentPermissions addObject:name];
+        }
+
+        if ((![currentPermissions containsObject:@"all"])
+            && [[_connection JID] bare] != [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"]) // <-- TODO!
+        {
+            for (var i = 0; i < [_mandatoryPermissions count]; i++)
+            {
+                if (![currentPermissions containsObject:[_mandatoryPermissions objectAtIndex:i]])
+                {
+                    [_cachedGranted setValue:NO forKey:[[anEntity JID] bare]];
+                    break;
+                }
+            }
+        }
+
+        if ([_cachedGranted valueForKey:[[anEntity JID] bare]] && [someUserInfo objectForKey:@"grantedSelector"])
+        {
+            [self performSelector:[someUserInfo objectForKey:@"grantedSelector"]];
+        }
+        else if ([someUserInfo objectForKey:@"denialSelector"] )
+        {
+            [self performSelector:[someUserInfo objectForKey:@"denialSelector"]];
+        }
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza]
+    }
+}
+
+/*! Display the permission denial view
+*/
+- (void)displayPermissionDeniedView
+{
+    if ([_viewPermissionsDenied superview])
+        return;
+
+    [_viewPermissionsDenied setFrame:[[self view] frame]];
+
+    [[self view] addSubview:_viewPermissionsDenied];
+
+}
+
+/*! Hide the permission denial view
+*/
+- (void)hidePermissionDeniedView
+{
+    if ([_viewPermissionsDenied superview])
+        [_viewPermissionsDenied removeFromSuperview];
+}
 
 #pragma mark -
 #pragma mark TNModule events implementation
 
+/*! @ignore
+    This is called my module controller in order to check if user is granted to display module
+    it will check from cache if any cahed value, or will ask entity with ACP permissions 'get'
+*/
+- (void)_beforeWillLoad
+{
+    [self checkMandatoryPermissionsAndPerformOnGrant:@selector(willLoad) onDenial:@selector(permissionDenied) forEntity:_entity];
+}
+
 /*! This message is sent when module is loaded. It will
-    reinitialize the _registredSelectors dictionnary
+    reinitialize the _registredSelectors dictionary
 */
 - (void)willLoad
 {
+    [self hidePermissionDeniedView];
+
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _registredSelectors = [CPArray array];
     _pubsubRegistrar    = [CPArray array];
@@ -201,6 +366,8 @@ TNArchipelErrorGeneral              = 1;
     [_menuItem setEnabled:YES];
 
     [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection]];
+
+    [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -241,6 +408,13 @@ TNArchipelErrorGeneral              = 1;
     _isVisible = YES;
 }
 
+/*! this message is called when mandatory permissions do not match current permissions
+*/
+- (void)permissionDenied
+{
+    [self displayPermissionDeniedView];
+}
+
 /*! this message is sent when user click on another module.
 */
 - (void)willHide
@@ -248,12 +422,15 @@ TNArchipelErrorGeneral              = 1;
     _isVisible = NO;
 }
 
+/*! this message is sent when the MainMenu is ready
+    i.e. you can insert your module menu items;
+*/
 - (void)menuReady
 {
     // executed when menu is ready
 }
 
-/*! this method is called when the user changes the preferences. Implement this method to store
+/*! this message is sent when the user changes the preferences. Implement this method to store
     datas from your eventual viewPreferences
 */
 - (void)savePreferences
@@ -261,7 +438,7 @@ TNArchipelErrorGeneral              = 1;
     // executed when use saves preferences
 }
 
-/*! this method is called when Archipel displays the preferences window.
+/*! this message is sent when Archipel displays the preferences window.
     implement this in order to refresh your eventual viewPreferences
 */
 - (void)loadPreferences
@@ -304,27 +481,8 @@ TNArchipelErrorGeneral              = 1;
 }
 
 
-/*! this message simplify the sending and the post-management of TNACP to the contact
-    @param anACP: TNACP to send to the contact
-    @param aSelector: Selector to perform when contact send answer
-*/
-- (void)sendACP:(TNACP)anACP andRegisterSelector:(SEL)aSelector
-{
-    [anACP setTo:_entity];
-    [_registredSelectors addObject:[anACP sendAndRegisterSelector:aSelector ofObject:self]];
-}
-
-/*! this message simplify the sending and the post-management of TNACP to the contact
-    if also allow to define the XMPP uid of the stanza. This is useless in the most of case.
-    @param aStanza: TNStropheStanza to send to the contact
-    @param aSelector: Selector to perform when contact send answer
-    @param anUid: CPString containing the XMPP uid to use.
-*/
-- (void)sendACP:(TNACP)anACP andRegisterSelector:(SEL)aSelector withSpecificID:(CPString)anUid
-{
-    [anACP setTo:_entity];
-    [_registredSelectors addObject:[anACP sendAndRegisterSelector:aSelector ofObject:self withSpecificID:anUid]];
-}
+#pragma mark -
+#pragma mark Error management
 
 /*! This message allow to display an error when stanza type is error
 */
