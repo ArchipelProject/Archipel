@@ -174,12 +174,15 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 /*! called when module become visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    return YES;
 }
 
 /*! called when MainMenu is ready

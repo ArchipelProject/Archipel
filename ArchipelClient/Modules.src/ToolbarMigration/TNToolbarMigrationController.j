@@ -210,9 +210,10 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     var bounds = [[[self view] contentView] bounds];
     bounds.size.height = [documentView bounds].size.height;
@@ -234,6 +235,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     [_tableHypervisorVirtualMachines setDelegate:self];
 
     [self populateHypervisorOriginTable];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

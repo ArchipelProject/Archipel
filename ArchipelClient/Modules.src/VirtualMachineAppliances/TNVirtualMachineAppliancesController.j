@@ -178,14 +178,17 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

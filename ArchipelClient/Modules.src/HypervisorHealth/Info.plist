@@ -41,5 +41,12 @@
         <integer>0</integer>
         <key>TNArchipelHealthTableLogDisplayFileColumn</key>
         <integer>0</integer>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>health_info</string>
+            <string>health_history</string>
+            <string>health_logs</string>
+        </array>
     </dict>
 </plist>

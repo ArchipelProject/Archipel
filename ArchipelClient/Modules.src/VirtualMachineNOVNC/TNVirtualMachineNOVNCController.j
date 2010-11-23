@@ -172,7 +172,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [maskingView setFrame:[[self view] bounds]];
 
@@ -182,6 +183,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self view] setFrame:[[[self view] superview] bounds]];
+
+    return YES;
 }
 
 /*! called when module become unvisible

@@ -87,5 +87,13 @@
         -->
         <key>CibName</key>
         <string>VirtualMachineScheduler</string>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>scheduler_jobs</string>
+            <string>scheduler_schedule</string>
+            <string>scheduler_unschedule</string>
+        </array>
+        
     </dict>
 </plist>

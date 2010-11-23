@@ -91,7 +91,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
     TNDatasourceChartView       _memoryDatasource;
-    TNDatasourcePieChartView    _disksDatasource
+    TNDatasourcePieChartView    _disksDatasource;
     TNTableViewDataSource       _datasourceLogs;
 }
 
@@ -310,21 +310,29 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         _timerLogs = nil;
     }
 
-    [_cpuDatasource removeAllObjects];
-    [_memoryDatasource removeAllObjects];
-    [_loadDatasource removeAllObjects];
-    [_disksDatasource removeAllObjects];
-    [_datasourceLogs removeAllObjects];
+    if (_cpuDatasource)
+        [_cpuDatasource removeAllObjects];
+    if (_memoryDatasource)
+        [_memoryDatasource removeAllObjects];
+    if (_loadDatasource)
+        [_loadDatasource removeAllObjects];
+    if (_disksDatasource)
+        [_disksDatasource removeAllObjects];
+    if (_datasourceLogs)
+        [_datasourceLogs removeAllObjects];
 }
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    return YES;
 }
 
 /*! called when user saves preferences

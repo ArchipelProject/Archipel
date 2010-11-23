@@ -201,9 +201,10 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 /*! called when module is loaded
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     _mainMapView = [[MKMapView alloc] initWithFrame:[mapViewContainer bounds] apiKey:''];
 
@@ -221,6 +222,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     var defaults = [CPUserDefaults standardUserDefaults];
     if (posy = [defaults integerForKey:@"mapViewSplitViewPosition"])
         [splitViewHorizontal setPosition:posy ofDividerAtIndex:0];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

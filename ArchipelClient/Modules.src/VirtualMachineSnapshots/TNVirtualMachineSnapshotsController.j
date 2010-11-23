@@ -210,10 +210,14 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
+
     [self checkIfRunning];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

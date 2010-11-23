@@ -31,5 +31,10 @@
         
         <key>TNArchipelControlsMaxVCPUs</key>
         <integer>4</integer>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>info</string>
+        </array>
     </dict>
 </plist>

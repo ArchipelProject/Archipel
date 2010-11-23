@@ -199,14 +199,17 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
 
     CPLog.trace([_mainOutlineView cornerView]);
+
+    return YES;
 }
 
 /*! called when module becomes unvisible

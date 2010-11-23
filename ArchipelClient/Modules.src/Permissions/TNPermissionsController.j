@@ -131,7 +131,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
     [super willLoad];
 
@@ -199,19 +199,22 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    return YES;
 }
 
 /*! called when module is unloaded
 */
 - (void)willUnload
 {
-    [super willHide];
+    [super willUnload];
 
     [_datasourcePermissions removeAllObjects];
     [_tablePermissions reloadData]
@@ -268,7 +271,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 - (IBAction)didCurrentUserChange:(id)aSender
 {
-    if ([[[buttonUser selectedItem] respondsToSelector:@selector(objectValue)])
+    if ([[buttonUser selectedItem] respondsToSelector:@selector(objectValue)])
         [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
 }
 

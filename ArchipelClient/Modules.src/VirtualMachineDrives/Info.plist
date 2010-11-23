@@ -28,5 +28,15 @@
 		<integer>1</integer>
         <key>CibName</key>
         <string>VirtualMachineDrives</string>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>drives_create</string>
+            <string>drives_delete</string>
+            <string>drives_get</string>
+            <string>drives_getisos</string>
+            <string>drives_convert</string>
+            <string>drives_rename</string>
+        </array>
     </dict>
 </plist>

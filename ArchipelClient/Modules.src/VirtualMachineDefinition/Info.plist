@@ -60,5 +60,15 @@
 		<key>TNDescDefaultInputType</key>
 		<string>mouse</string>
 		
+		<key>MandatoryPermissions</key>
+        <array>
+            <string>xmldesc</string>
+            <string>define</string>
+            <string>undefine</string>
+            <string>info</string>
+            <string>capabilities</string>
+            <string>drives_getisos</string>
+            <string>drives_get</string>
+        </array>
     </dict>
 </plist>

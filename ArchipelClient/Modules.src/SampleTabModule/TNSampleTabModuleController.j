@@ -64,12 +64,15 @@
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    return YES;
 }
 
 /*! called when module becomes unvisible
@@ -77,6 +80,13 @@
 - (void)willHide
 {
     [super willHide];
+}
+
+/*! called when user permissions changed
+*/
+- (void)permissionsChanged
+{
+    [super permissionsChanged]
 }
 
 

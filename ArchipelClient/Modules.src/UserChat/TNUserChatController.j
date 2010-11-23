@@ -133,9 +133,10 @@
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
 
     var messageQueue = [_entity messagesQueue],
         stanza;
@@ -156,6 +157,8 @@
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    return YES;
 }
 
 /*! called when user saves preferences

@@ -78,7 +78,7 @@
             If set to 0, the module will not register menu item
         -->
         <key>UseModuleMenu</key>
-		<integer>1</integer>
+    <integer>1</integer>
         
         
         <!--
@@ -87,5 +87,10 @@
         -->
         <key>CibName</key>
         <string>Permissions</string>
+
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>permission</string>
+        </array>
     </dict>
 </plist>

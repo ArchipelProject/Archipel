@@ -47,5 +47,11 @@
         -->
         <key>NOVNCheckRate</key>
         <integer>30</integer>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>vncdisplay</string>
+        </array>
+		
     </dict>
 </plist>

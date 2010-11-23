@@ -61,10 +61,13 @@
 
 /*! this message is called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
     // message sent when the tab is clicked
+
+    return YES;
 }
 
 /*! this message is called when module becomes unvisible
@@ -73,6 +76,13 @@
 {
     [super willHide];
     // message sent when the tab is changed
+}
+
+/*! called when user permissions changed
+*/
+- (void)permissionsChanged
+{
+    [super permissionsChanged]
 }
 
 #pragma mark -
