@@ -116,8 +116,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     if (self = [super init])
     {
-        var center = [CPNotificationCenter defaultCenter];
-
         _loadedTabModulesScrollViews        = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews    = [CPDictionary dictionary];
         _modulesMenuItems                   = [CPDictionary dictionary];
@@ -668,10 +666,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         var oldModule = [currentTabItem module];
 
         [oldModule willHide];
+        [oldModule setCurrentSelectedIndex:NO];
     }
 
     var newModule = [anItem module];
-
+    [newModule setCurrentSelectedIndex:YES];
     [newModule willShow];
 }
 
