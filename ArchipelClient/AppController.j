@@ -191,6 +191,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
     @outlet TNModalWindow           windowModuleLoading;
+    @outlet TNModuleController      moduleController;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -209,7 +210,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     int                             _tempNumberOfReadyModules;
     TNDatasourceRoster              _mainRoster;
     TNiTunesTabView                 _moduleTabView;
-    TNModuleController              _moduleController;
+    TNModuleController              moduleController;
     TNOutlineViewRoster             _rosterOutlineView;
     TNRosterDataViewContact         _rosterDataViewForContacts;
     TNRosterDataViewGroup           _rosterDataViewForGroups;
@@ -354,24 +355,22 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [textFieldLoadingModuleLabel setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
 
-    CPLog.trace(@"initializing _moduleController");
+    CPLog.trace(@"initializing moduleController");
     _tempNumberOfReadyModules = -1;
 
-    _moduleController = [[TNModuleController alloc] init]
+    [moduleController setDelegate:self];
+    [moduleController setMainToolbar:_mainToolbar];
+    [moduleController setMainTabView:_moduleTabView];
+    [moduleController setInfoTextField:_rightViewTextField];
+    [moduleController setModulesPath:@"Modules/"]
+    [moduleController setMainModuleView:rightView];
+    [moduleController setModulesMenu:_modulesMenu];
 
-    [_moduleController setDelegate:self];
-    [_moduleController setMainToolbar:_mainToolbar];
-    [_moduleController setMainTabView:_moduleTabView];
-    [_moduleController setInfoTextField:_rightViewTextField];
-    [_moduleController setModulesPath:@"Modules/"]
-    [_moduleController setMainModuleView:rightView];
-    [_moduleController setModulesMenu:_modulesMenu];
-
-    [_moduleTabView setDelegate:_moduleController];
+    [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
     CPLog.trace(@"Starting loading all modules");
-    [_moduleController load];
+    [moduleController load];
 
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
@@ -640,8 +639,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [_rosterOutlineView setDataSource:_mainRoster];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [_moduleController setRoster:_mainRoster];
-    [_moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
+    [moduleController setRoster:_mainRoster];
+    [moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:32.0 ofDividerAtIndex:0];
@@ -1198,14 +1197,14 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         {
             case TNStropheGroup:
                 CPLog.info(@"setting the entity as " + item + " of type group");
-                [_moduleController setEntity:item ofType:@"group"];
+                [moduleController setEntity:item ofType:@"group"];
                 break;
 
             case TNStropheContact:
                 var vCard       = [item vCard],
                     entityType  = [_mainRoster analyseVCard:vCard];
                 CPLog.info(@"setting the entity as " + item + " of type " + entityType);
-                [_moduleController setEntity:item ofType:entityType];
+                [moduleController setEntity:item ofType:entityType];
                 break;
         }
     }
