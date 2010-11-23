@@ -74,6 +74,29 @@ TNDragTypeContact   = @"TNDragTypeContact";
 }
 
 
+/*! analyse the content of vCard will return the TNArchipelEntityType
+    @param aVCard TNXMLNode containing the vCard
+    @return value of TNArchipelEntityType
+*/
+- (CPString)analyseVCard:(TNXMLNode)aVCard
+{
+    if (aVCard)
+    {
+        var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
+
+        if ((itemType == TNArchipelEntityTypeVirtualMachine)
+            || (itemType == TNArchipelEntityTypeHypervisor)
+            || (itemType == TNArchipelEntityTypeGroup))
+            return itemType;
+        else
+            return TNArchipelEntityTypeUser;
+    }
+
+    return TNArchipelEntityTypeUser;
+}
+
+
+
 #pragma mark -
 #pragma mark Notification handlers
 

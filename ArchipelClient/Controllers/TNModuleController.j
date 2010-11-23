@@ -275,28 +275,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 
-/*! analyse the content of vCard will return the TNArchipelEntityType
-    @param aVCard TNXMLNode containing the vCard
-    @return value of TNArchipelEntityType
-*/
-- (CPString)analyseVCard:(TNXMLNode)aVCard
-{
-    if (aVCard)
-    {
-        var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
-
-        if ((itemType == TNArchipelEntityTypeVirtualMachine)
-            || (itemType == TNArchipelEntityTypeHypervisor)
-            || (itemType == TNArchipelEntityTypeGroup))
-            return itemType;
-        else
-            return TNArchipelEntityTypeUser;
-    }
-
-    return TNArchipelEntityTypeUser;
-}
-
-
 #pragma mark -
 #pragma mark Modules loading
 /*! will start to load all the bundles describe in modules.plist
@@ -632,7 +610,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     if ([vCard text] != [[_entity vCard] text])
     {
-        _moduleType = [self analyseVCard:vCard];
+        _moduleType = [_roster analyseVCard:vCard];
 
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];

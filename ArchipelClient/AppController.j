@@ -1203,7 +1203,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
             case TNStropheContact:
                 var vCard       = [item vCard],
-                    entityType  = [_moduleController analyseVCard:vCard];
+                    entityType  = [_mainRoster analyseVCard:vCard];
                 CPLog.info(@"setting the entity as " + item + " of type " + entityType);
                 [_moduleController setEntity:item ofType:entityType];
                 break;
