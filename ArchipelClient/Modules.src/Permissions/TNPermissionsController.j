@@ -49,6 +49,8 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     CPTableView                     _tablePermissions;
     TNTableViewDataSource           _datasourcePermissions;
+    CPArray                         _currentUserPermissions;
+    CPImage                         _defaultAvatar;
 
 }
 
@@ -58,6 +60,9 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 - (void)awakeFromCib
 {
+    _currentUserPermissions = [CPArray array];
+    _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourcePermissions  = [[TNTableViewDataSource alloc] init];
@@ -114,7 +119,11 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     [filterField setTarget:_datasourcePermissions];
     [filterField setAction:@selector(filterObjects:)];
+
+    [buttonUser setTarget:self];
+    [buttonUser setAction:@selector(didCurrentUserChange:)];
 }
+
 
 
 #pragma mark -
@@ -133,8 +142,58 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
 
     [buttonUser removeAllItems];
-    [buttonUser addItemWithTitle:[[_connection JID] bare]]
-    [self getPermissions];
+
+    var items = [CPArray array],
+        item = [[TNMenuItem alloc] init];
+    [item setTitle:@"Me"];
+    [item setObjectValue:[_connection JID]];
+
+    [buttonUser addItem:item];
+    [buttonUser addItem:[CPMenuItem separatorItem]];
+
+    for (var i = 0; i < [[_roster contacts] count]; i++)
+    {
+        var contact = [[_roster contacts] objectAtIndex:i],
+            item = [[TNMenuItem alloc] init],
+            img = ([contact avatar]) ? [[contact avatar] copy] : _defaultAvatar;
+
+        if ([_roster analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
+        {
+            [img setSize:CPSizeMake(18, 18)];
+
+            [item setTitle:@"  " + [contact nickname]]; // sic..
+            [item setObjectValue:[contact JID]];
+            [item setImage:img];
+            [items addObject:item];
+        }
+    }
+
+    var sortedItems = [CPArray array],
+        sortFunction = function(a, b, context) {
+        var indexA = [[a title] uppercaseString],
+            indexB = [[b title] uppercaseString];
+
+        if (indexA < indexB)
+            return CPOrderedAscending;
+        else if (indexA > indexB)
+            return CPOrderedDescending;
+        else
+            return CPOrderedSame;
+    };
+    sortedItems = [items sortedArrayUsingFunction:sortFunction];
+
+    for (var i = 0; i < [sortedItems count]; i++)
+        [buttonUser addItem:[sortedItems objectAtIndex:i]];
+
+    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
+
+    [buttonUser addItem:[CPMenuItem separatorItem]];
+
+    var item = [[TNMenuItem alloc] init];
+    [item setTitle:@"Manual"];
+    [item setObjectValue:nil];
+
+    [buttonUser addItem:item]
 }
 
 
@@ -186,7 +245,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
-    [self getPermissions];
+    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
 
     return YES;
 }
@@ -205,6 +264,11 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 - (IBAction)changePermissionsState:(id)aSender
 {
     [self changePermissionsState];
+}
+
+- (IBAction)didCurrentUserChange:(id)aSender
+{
+    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
 }
 
 
@@ -240,14 +304,13 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         {
             var permission      = [permissions objectAtIndex:i],
                 name            = [permission valueForAttribute:@"name"],
-                description     = [permission valueForAttribute:@"description"];
-
-            var newPermission = [CPDictionary dictionaryWithObjectsAndKeys:name, @"name", description, @"description", CPOffState, "state"];
+                description     = [permission valueForAttribute:@"description"],
+                state           = [_currentUserPermissions containsObject:name] ? CPOnState : CPOffState;
+            var newPermission = [CPDictionary dictionaryWithObjectsAndKeys:name, @"name", description, @"description", state, "state"];
             [_datasourcePermissions addObject:newPermission];
         }
 
         [_tablePermissions reloadData];
-        [self getUserPermissions:[buttonUser title]];
     }
     else
     {
@@ -280,23 +343,15 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     {
         var permissions = [aStanza childrenWithName:@"permission"];
 
+        [_currentUserPermissions removeAllObjects];
         for (var i = 0; i < [permissions count]; i++)
         {
             var permission      = [permissions objectAtIndex:i],
                 name            = [permission valueForAttribute:@"name"];
 
-            for (var j = 0; j < [_datasourcePermissions count]; j++)
-            {
-                var perm = [_datasourcePermissions objectAtIndex:j];
-                if ([perm objectForKey:@"name"] == name)
-                {
-                    [perm setValue:CPOnState forKey:@"state"];
-                    break;
-                }
-            }
+            [_currentUserPermissions addObject:name]
         }
-
-        [_tablePermissions reloadData];
+        [self getPermissions];
     }
     else
     {
@@ -318,7 +373,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     {
         var perm = [_datasourcePermissions objectAtIndex:i];
         [stanza addChildWithName:@"permission" andAttributes:{
-            @"permission_target": [buttonUser title],
+            @"permission_target": [[[buttonUser selectedItem] objectValue] bare],
             @"permission_type": @"user",
             @"permission_name": [perm objectForKey:@"name"],
             @"permission_value": ([perm valueForKey:@"state"] === CPOnState),
