@@ -123,7 +123,7 @@ class TNOOMKiller:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="oom_")
         
         if action == "getadjust":
             reply = self.iq_oom_get_adjust(iq)

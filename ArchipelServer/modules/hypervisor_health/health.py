@@ -67,7 +67,7 @@ class TNHypervisorHealth:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="health_")
         
         if action == "history":
             reply = self.iq_health_info_history(iq)

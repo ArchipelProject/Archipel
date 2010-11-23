@@ -82,7 +82,7 @@ class TNHypervisorGeolocalization:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="geolocalization_")
         
         if action == "get":
             reply = self.iq_get(iq)

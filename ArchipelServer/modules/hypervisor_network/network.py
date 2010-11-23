@@ -84,7 +84,7 @@ class TNHypervisorNetworks:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)        
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="network_")
         
         if action == "define":
             reply = self.iq_define(iq)
@@ -136,7 +136,7 @@ class TNHypervisorNetworks:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="network_")
         if action == "getnames":
             reply = self.iq_get_names(iq)
             conn.send(reply)

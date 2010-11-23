@@ -118,9 +118,9 @@ class TNArchipelBasicXMPPClient(object):
                 m()
     
     
-    def check_perm(self, conn, stanza, action_name, error_code=-1):
+    def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         """wrapper to check permission"""
-        if not self.permission_center.check_permission(str(stanza.getFrom().getStripped()), action_name):
+        if not self.permission_center.check_permission(str(stanza.getFrom().getStripped()), "%s%s" % (prefix, action_name)):
             conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, stanza, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
             raise xmpp.protocol.NodeProcessed
     
