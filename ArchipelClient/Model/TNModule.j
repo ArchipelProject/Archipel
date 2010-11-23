@@ -52,6 +52,7 @@ TNArchipelErrorGeneral                  = 1;
      - <b>menuReady</b>: This message is sent when the the Main Menu is ready. So if module wants to have a menu, it can implement it from its own _menu property
      - <b>savePreferences</b> this message is sent when user have change the preferences. If module has some, it must save them in the current default.
      - <b>loadPreferences</b> this message is sent when user call the preferences window. All modules prefs *MUST* be refreshed
+     - <b>permissionsChanged</b> this message is sent when permissions of user has changed. This allow to updated GUI if needed
 
     A module can perform background task only if it is loaded. Loaded doesn't mean displayed on the screen. For example
     a statistic module can start collecting data on willLoad message in background. When message willShow is sent,
@@ -68,31 +69,34 @@ TNArchipelErrorGeneral                  = 1;
 */
 @implementation TNModule : CPViewController
 {
-    @outlet CPView          viewPreferences         @accessors;
+    @outlet CPView          viewPreferences             @accessors;
 
-    BOOL                    _isActive               @accessors(property=isActive, readonly);
-    BOOL                    _isVisible              @accessors(property=isVisible, readonly);
-    BOOL                    _toolbarItemOnly        @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
-    CPArray                 _supportedEntityTypes   @accessors(property=supportedEntityTypes);
-    CPBundle                _bundle                 @accessors(property=bundle);
-    CPMenu                  _menu                   @accessors(property=menu);
-    CPMenuItem              _menuItem               @accessors(property=menuItem);
-    CPString                _label                  @accessors(property=label);
-    CPString                _name                   @accessors(property=name);
-    id                      _entity                 @accessors(property=entity);
-    int                     _animationDuration      @accessors(property=animationDuration);
-    int                     _index                  @accessors(property=index);
-    TNStropheConnection     _connection             @accessors(property=connection);
-    TNStropheGroup          _group                  @accessors(property=group);
-    TNStropheRoster         _roster                 @accessors(property=roster);
-    CPToolbarItem           _toolbarItem            @accessors(property=toolbarItem);
-    CPToolbar               _toolbar                @accessors(property=toolbar);
-    CPArray                 _mandatoryPermissions   @accessors(property=mandatoryPermissions);
+    BOOL                    _isActive                   @accessors(property=isActive, readonly);
+    BOOL                    _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
+    BOOL                    _isVisible                  @accessors(property=isVisible, readonly);
+    BOOL                    _toolbarItemOnly            @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
+    CPArray                 _mandatoryPermissions       @accessors(property=mandatoryPermissions);
+    CPArray                 _supportedEntityTypes       @accessors(property=supportedEntityTypes);
+    CPBundle                _bundle                     @accessors(property=bundle);
+    CPMenu                  _menu                       @accessors(property=menu);
+    CPMenuItem              _menuItem                   @accessors(property=menuItem);
+    CPString                _label                      @accessors(property=label);
+    CPString                _name                       @accessors(property=name);
+    CPToolbar               _toolbar                    @accessors(property=toolbar);
+    CPToolbarItem           _toolbarItem                @accessors(property=toolbarItem);
+    CPView                  _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
+    id                      _entity                     @accessors(property=entity);
+    int                     _animationDuration          @accessors(property=animationDuration);
+    int                     _index                      @accessors(property=index);
+    TNStropheConnection     _connection                 @accessors(property=connection);
+    TNStropheGroup          _group                      @accessors(property=group);
+    TNStropheRoster         _roster                     @accessors(property=roster);
 
-    CPView                  _viewPermissionsDenied  @accessors(property=viewPermissionDenied);
-    CPArray                 _registredSelectors;
+    BOOL                    _pubSubPermissionRegistred;
     CPArray                 _pubsubRegistrar;
+    CPArray                 _registredSelectors;
     CPDictionary            _cachedGranted;
+    CPDictionary            _cachedPermissions;
 }
 
 
@@ -127,12 +131,25 @@ TNArchipelErrorGeneral                  = 1;
 
 
 #pragma mark -
+#pragma mark Setters and Getters
+
+/*! @ignore
+    we need to archive and unarchive to get a proper copy of the view
+*/
+- (void)setViewPermissionDenied:(CPView)aView
+{
+    var data = [CPKeyedArchiver archivedDataWithRootObject:aView];
+
+    _viewPermissionsDenied = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+}
+
+
+#pragma mark -
 #pragma mark Events management
 
-/*! PRIVATE: this message is called when a matching pubsub event is received
-
+/*! @ignore
+    this message is called when a matching pubsub event is received
     @param aStanza the TNStropheStanza that contains the event
-
     @return YES in order to continue to listen for events
 */
 - (void)_onPubSubEvents:(TNStropheStanza)aStanza
@@ -161,7 +178,8 @@ TNArchipelErrorGeneral                  = 1;
     return YES;
 }
 
-/*! This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
+/*! @ignore
+    This method allow the module to register itself to Archipel Push notification (archipel:push namespace)
 
     A valid Archipel Push is following the form:
     <message from="pubsub.xmppserver" type="headline" to="controller@xmppserver" >
@@ -191,16 +209,19 @@ TNArchipelErrorGeneral                  = 1;
     }
 }
 
-/*! this message is sent when module receive a permission push in order to refresh
+/*! @ignore
+    this message is sent when module receive a permission push in order to refresh
     display and permission cache
     @param somePushInfo the push informations as a CPDictionary
 */
-- (void)_didReceivePermissionsPush:(id)somePushInfo
+- (BOOL)_onPermissionsPubSubEvents:(TNStropheStanza)aStanza
 {
-    var sender  = [somePushInfo objectForKey:@"owner"],
-        type    = [somePushInfo objectForKey:@"type"],
-        change  = [somePushInfo objectForKey:@"change"],
-        date    = [somePushInfo objectForKey:@"date"];
+    var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
+        type    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
+        change  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"];
+
+    if (type != TNArchipelPushNotificationPermissions)
+        return YES // continue to listen event;
 
     // check if we already have cached some information about the entity
     // if not, permissions will be recovered at next display so we don't care
@@ -208,15 +229,18 @@ TNArchipelErrorGeneral                  = 1;
     {
         var anEntity = [_roster contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
 
-        // invalide the cache for current entity
+        // invalidate the cache for current entity
         [_cachedGranted removeObjectForKey:sender];
+        CPLog.info("cache for module " + _label + " and entity " + anEntity + " has been invalidated");
 
         // if the sender if the _entity then we'll need to perform graphicall chages
         // otherwise we just update the cache.
-        if (anEntity == _entity)
-            [self checkMandatoryPermissionsAndPerformOnGrant:@selector(hidePermissionDeniedView) onDenial:@selector(displayPermissionDeniedView) forEntity:anEntity];
+        if (anEntity === _entity)
+        {
+            [self _checkMandatoryPermissionsAndPerformOnGrant:@selector(_managePermissionGranted) onDenial:@selector(_managePermissionDenied) forEntity:anEntity];
+        }
         else
-            [self checkMandatoryPermissionsAndPerformOnGrant:nil onDenial:nil forEntity:anEntity];
+            [self _checkMandatoryPermissionsAndPerformOnGrant:nil onDenial:nil forEntity:anEntity];
     }
 
     return YES;
@@ -224,18 +248,25 @@ TNArchipelErrorGeneral                  = 1;
 
 
 #pragma mark -
-#pragma mark Mandatory permissions validation
+#pragma mark Mandatory permissions caching
 
-/*! Check if given entity meet the minimal mandatory permission to display the module
+/*! @ignore
+    Check if given entity meet the minimal mandatory permission to display the module
     Thoses mandatory permissions are stored into _mandatoryPermissions
     @param grantedSelector selector that will be executed if user is conform to mandatory permissions
     @param grantedSelector selector that will be executed if user is not conform to mandatory permissions
     @param anEntity the entity to which we should check the permission
 */
-- (void)checkMandatoryPermissionsAndPerformOnGrant:(SEL)grantedSelector onDenial:(SEL)denialSelector forEntity:(TNStropheContact)anEntity
+- (void)_checkMandatoryPermissionsAndPerformOnGrant:(SEL)grantedSelector onDenial:(SEL)denialSelector forEntity:(TNStropheContact)anEntity
 {
+    if (!anEntity)
+        return;
+
     if (!_cachedGranted)
         _cachedGranted = [CPDictionary dictionary];
+
+    if (!_cachedPermissions)
+        _cachedPermissions = [CPDictionary dictionary];
 
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
     {
@@ -247,13 +278,16 @@ TNArchipelErrorGeneral                  = 1;
 
     if ([_cachedGranted containsKey:[[anEntity JID] bare]])
     {
-        if ([_cachedGranted valueForKey:[[anEntity JID] bare]] && grantedSelector)
+        CPLog.info("recover permission from cache for module " + _label + " and entity" + anEntity);
+        if ([self isEntityGranted:anEntity] && grantedSelector)
             [self performSelector:grantedSelector];
         else if (denialSelector)
             [self performSelector:denialSelector];
 
         return;
     }
+
+    CPLog.info("Ask permission to entity for module " + _label + " and entity" + anEntity);
 
     var stanza = [TNStropheStanza iqWithType:@"get"],
         selectors = [CPDictionary dictionaryWithObjectsAndKeys: grantedSelector, @"grantedSelector",
@@ -269,7 +303,8 @@ TNArchipelErrorGeneral                  = 1;
     [anEntity sendStanza:stanza andRegisterSelector:@selector(_didReceiveMandatoryPermissions:selectors:) ofObject:self userInfo:selectors];
 }
 
-/*! compute the answer containing the users' permissions
+/*! @ignore
+    compute the answer containing the users' permissions
     @param aStanza TNStropheStanza containing the answer
     @param someUserInfo CPDictionary containing the two selectors and the current entity
 */
@@ -277,25 +312,27 @@ TNArchipelErrorGeneral                  = 1;
 {
     if ([aStanza type] == @"result")
     {
-        var permissions = [aStanza childrenWithName:@"permission"],
-            currentPermissions = [CPArray array],
-            anEntity = [someUserInfo objectForKey:@"entity"];
+        var permissions         = [aStanza childrenWithName:@"permission"],
+            anEntity            = [someUserInfo objectForKey:@"entity"],
+            defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
 
+        [_cachedPermissions setObject:[CPArray array] forKey:[[anEntity JID] bare]];
         [_cachedGranted setValue:YES forKey:[[anEntity JID] bare]];
 
         for (var i = 0; i < [permissions count]; i++)
         {
             var permission      = [permissions objectAtIndex:i],
                 name            = [permission valueForAttribute:@"name"];
-            [currentPermissions addObject:name];
+
+            [[_cachedPermissions objectForKey:[[anEntity JID] bare]] addObject:name];
         }
 
-        if ((![currentPermissions containsObject:@"all"])
-            && [[_connection JID] bare] != [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"]) // <-- TODO!
+        if ((![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+            && [[_connection JID] bare] != defaultAdminAccount)
         {
             for (var i = 0; i < [_mandatoryPermissions count]; i++)
             {
-                if (![currentPermissions containsObject:[_mandatoryPermissions objectAtIndex:i]])
+                if (![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:[_mandatoryPermissions objectAtIndex:i]])
                 {
                     [_cachedGranted setValue:NO forKey:[[anEntity JID] bare]];
                     break;
@@ -303,14 +340,13 @@ TNArchipelErrorGeneral                  = 1;
             }
         }
 
-        if ([_cachedGranted valueForKey:[[anEntity JID] bare]] && [someUserInfo objectForKey:@"grantedSelector"])
-        {
+        if ([self isEntityGranted:anEntity] && [someUserInfo objectForKey:@"grantedSelector"])
             [self performSelector:[someUserInfo objectForKey:@"grantedSelector"]];
-        }
-        else if ([someUserInfo objectForKey:@"denialSelector"] )
-        {
+        else if ([someUserInfo objectForKey:@"denialSelector"])
             [self performSelector:[someUserInfo objectForKey:@"denialSelector"]];
-        }
+
+        CPLog.info("Permissions for module " + _label + " and entity" + anEntity + " sucessfully cached");
+        [self permissionsChanged];
     }
     else
     {
@@ -318,29 +354,54 @@ TNArchipelErrorGeneral                  = 1;
     }
 }
 
-/*! Display the permission denial view
+/*! @ignore
+    Display the permission denial view
 */
-- (void)displayPermissionDeniedView
+- (void)_managePermissionGranted
+{
+    if (!_isActive)
+        [self willLoad];
+
+    if (!_isVisible && _isCurrentSelectedIndex)
+        [self willShow];
+
+    [self _hidePermissionDeniedView];
+}
+
+/*! @ignore
+    Hide the permission denial view
+*/
+- (void)_managePermissionDenied
+{
+    if (_isVisible)
+        [self willHide];
+
+    if (_isActive)
+        [self willUnload];
+
+    [self _showPermissionDeniedView];
+}
+
+/*! @ignore
+    show the permission denied view
+*/
+- (void)_showPermissionDeniedView
 {
     if ([_viewPermissionsDenied superview])
         return;
 
     [_viewPermissionsDenied setFrame:[[self view] frame]];
-
     [[self view] addSubview:_viewPermissionsDenied];
-
 }
 
-/*! Hide the permission denial view
+/*! @ignore
+    hide the permission denied view
 */
-- (void)hidePermissionDeniedView
+- (void)_hidePermissionDeniedView
 {
     if ([_viewPermissionsDenied superview])
         [_viewPermissionsDenied removeFromSuperview];
 }
-
-#pragma mark -
-#pragma mark TNModule events implementation
 
 /*! @ignore
     This is called my module controller in order to check if user is granted to display module
@@ -348,26 +409,109 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)_beforeWillLoad
 {
-    [self checkMandatoryPermissionsAndPerformOnGrant:@selector(willLoad) onDenial:@selector(permissionDenied) forEntity:_entity];
+    if (!_pubSubPermissionRegistred)
+    {
+        [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection];
+        _pubSubPermissionRegistred = YES;
+    }
+
+    [self _checkMandatoryPermissionsAndPerformOnGrant:@selector(_managePermissionGranted) onDenial:@selector(_managePermissionDenied) forEntity:_entity];
 }
+
+
+#pragma mark -
+#pragma mark Permissions interface
+
+/*! check if given entity is granted to display this module
+    @param anEntity the entity to check
+    @return YES if anEntity is granted, NO otherwise
+*/
+- (BOOL)isEntityGranted:(TNStropheContact)anEntity
+{
+    if ([anEntity class] !== TNStropheContact)
+        return NO;
+
+    if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
+        return YES;
+
+    return [_cachedGranted valueForKey:[[anEntity JID] bare]];
+}
+
+/*! check if current is granted to display this module
+    @return YES if anEntity is granted, NO otherwise
+*/
+- (BOOL)isCurrentEntityGranted
+{
+    return [self isEntityGranted:_entity];
+}
+
+/*! check if given entity has given permission
+    @param anEntity the entity to check
+    @return YES if anEntity has permission, NO otherwise
+*/
+- (BOOL)entity:(TNStropheContact)anEntity hasPermission:(CPString)aPermission
+{
+    if ([anEntity class] !== TNStropheContact)
+        return NO;
+
+    if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
+        return YES;
+
+    if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+        return YES;
+
+    return [[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:aPermission];
+}
+
+/*! check if current entity has given permission
+    @return YES if anEntity has permission, NO otherwise
+*/
+- (BOOL)currentEntityHasPermission:(CPString)aPermission
+{
+    return [self entity:_entity hasPermission:aPermission];
+}
+
+/*! check if given entity has all permissions given in permissionsList
+    @param anEntity the entity to check
+    @return YES if anEntity has all permissions, NO otherwise
+*/
+- (BOOL)entity:(TNStropheContact)anEntity hasPermissions:(CPArray)permissionsList
+{
+    var ret = YES;
+    for (var i = 0; i < [permissionsList count]; i++)
+        ret = ret && [self entity:anEntity hasPermission:[permissionsList objectAtIndex:i]];
+
+    return ret;
+}
+
+/*! check if current entity has all permissions given in permissionsList
+    @return YES if anEntity has permission, NO otherwise
+*/
+- (BOOL)currentEntityHasPermissions:(CPArray)permissionsList
+{
+    return [self entity:_entity hasPermissions:permissionsList];
+}
+
+
+#pragma mark -
+#pragma mark TNModule events implementation
 
 /*! This message is sent when module is loaded. It will
     reinitialize the _registredSelectors dictionary
 */
 - (void)willLoad
 {
-    [self hidePermissionDeniedView];
+    [self _hidePermissionDeniedView];
 
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
+    _isActive           = YES;
     _registredSelectors = [CPArray array];
     _pubsubRegistrar    = [CPArray array];
-    _isActive           = YES;
-
-    [_menuItem setEnabled:YES];
 
     [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection]];
 
-    [self registerSelector:@selector(_didReceivePermissionsPush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
+    [_menuItem setEnabled:YES];
+
 }
 
 /*! This message is sent when module is unloaded. It will remove all push registration,
@@ -380,21 +524,30 @@ TNArchipelErrorGeneral                  = 1;
 
     // unregister all selectors
     for (var i = 0; i < [_registredSelectors count]; i++)
+    {
+        CPLog.trace("deleting SELECTOR in  " + _label + " :" + [_registredSelectors objectAtIndex:i]);
         [_connection deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
+    }
 
     // flush any outgoing stanza
     [_connection flush];
 
     [_pubsubRegistrar removeAllObjects];
+    [_registredSelectors removeAllObjects];
+
     [_menuItem setEnabled:NO];
 
     _isActive = NO;
 }
 
 /*! This message is sent when module will be displayed
+    @return YES if all permission are granted
 */
-- (void)willShow
+- (BOOL)willShow
 {
+    if (![self isCurrentEntityGranted])
+        return NO;
+
     var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([defaults boolForKey:@"TNArchipelUseAnimations"])
@@ -406,13 +559,8 @@ TNArchipelErrorGeneral                  = 1;
         [anim startAnimation];
     }
     _isVisible = YES;
-}
 
-/*! this message is called when mandatory permissions do not match current permissions
-*/
-- (void)permissionDenied
-{
-    [self displayPermissionDeniedView];
+    return YES;
 }
 
 /*! this message is sent when user click on another module.
@@ -444,6 +592,14 @@ TNArchipelErrorGeneral                  = 1;
 - (void)loadPreferences
 {
     // executed when archipel displays preferences panel
+}
+
+/*! this message is sent when user permission changes
+    this allow modules to update interfaces according to permissions
+*/
+- (void)permissionsChanged
+{
+    // called when permissions changes
 }
 
 /*! this message is sent only in case of a ToolbarItem module when user
@@ -480,22 +636,21 @@ TNArchipelErrorGeneral                  = 1;
     [_registredSelectors addObject:selectorID];
 }
 
-
-#pragma mark -
-#pragma mark Error management
-
 /*! This message allow to display an error when stanza type is error
+    @param aStanza the stanza containing the error
 */
 - (void)handleIqErrorFromStanza:(TNStropheStanza)aStanza
 {
     var growl   = [TNGrowlCenter defaultCenter],
         code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"],
-        type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"];
+        type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"],
         perm    = [[aStanza firstChildWithName:@"error"] firstChildWithName:@"archipel-error-permission"];
 
     if (perm)
     {
         CPLog.warn("Permission denied (" + code + "): " + [[aStanza firstChildWithName:@"text"] text]);
+        msg = [[aStanza firstChildWithName:@"text"] text];
+        [growl pushNotificationWithTitle:@"Permission denied" message:msg icon:TNGrowlIconWarning];
         return TNArchipelErrorPermission
     }
     else if ([aStanza firstChildWithName:@"text"])
