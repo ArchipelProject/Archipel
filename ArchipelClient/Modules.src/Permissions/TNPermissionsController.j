@@ -268,7 +268,8 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 - (IBAction)didCurrentUserChange:(id)aSender
 {
-    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
+    if ([[[buttonUser selectedItem] respondsToSelector:@selector(objectValue)])
+        [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
 }
 
 

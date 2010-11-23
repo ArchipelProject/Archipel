@@ -28,6 +28,9 @@
 */
 TNArchipelPushNotificationNamespace = @"archipel:push";
 
+TNArchipelErrorPermission           = 0;
+TNArchipelErrorGeneral              = 1;
+
 
 /*! @ingroup archipelcore
     This is the root class of every module.
@@ -330,8 +333,14 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     var growl   = [TNGrowlCenter defaultCenter],
         code    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"code"],
         type    = [[aStanza firstChildWithName:@"error"] valueForAttribute:@"type"];
+        perm    = [[aStanza firstChildWithName:@"error"] firstChildWithName:@"archipel-error-permission"];
 
-    if ([aStanza firstChildWithName:@"text"])
+    if (perm)
+    {
+        CPLog.warn("Permission denied (" + code + "): " + [[aStanza firstChildWithName:@"text"] text]);
+        return TNArchipelErrorPermission
+    }
+    else if ([aStanza firstChildWithName:@"text"])
     {
         var msg     = [[aStanza firstChildWithName:@"text"] text];
 
@@ -341,6 +350,7 @@ TNArchipelPushNotificationNamespace = @"archipel:push";
     else
         CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
 
+    return TNArchipelErrorGeneral;
 }
 
 @end
