@@ -31,10 +31,7 @@
         
         <key>MandatoryPermissions</key>
         <array>
-            <string>alloc</string>
-            <string>free</string>
             <string>rostervm</string>
-            <string>clone</string>
         </array>
         
     </dict>

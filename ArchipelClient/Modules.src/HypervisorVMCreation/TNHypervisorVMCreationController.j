@@ -195,6 +195,27 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [[_menu addItemWithTitle:@"Clone this virtual machine" action:@selector(cloneVirtualMachine:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    [self tableViewSelectionDidChange:nil];
+
+    if ([self currentEntityHasPermission:@"alloc"])
+        [_plusButton setEnabled:YES];
+    else
+        [_plusButton setEnabled:NO];
+
+    if ([self currentEntityHasPermission:@"free"])
+        [_minusButton setEnabled:YES];
+    else
+        [_minusButton setEnabled:NO];
+
+    if ([self currentEntityHasPermission:@"clone"])
+        [_cloneButton setEnabled:YES];
+    else
+        [_cloneButton setEnabled:NO];
+}
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -250,7 +271,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
     if ([[aNotification object] numberOfSelectedRows] > 0)
     {
-        [_minusButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"free"])
+            [_minusButton setEnabled:YES];
     }
 }
 
@@ -432,7 +454,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a virtual machine"];
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a virtual machine"];
          return;
     }
 
@@ -515,7 +537,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
         || ([_tableVirtualMachines numberOfSelectedRows] > 1))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select one (and only one) virtual machine"];
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select one (and only one) virtual machine"];
          return;
     }
 
