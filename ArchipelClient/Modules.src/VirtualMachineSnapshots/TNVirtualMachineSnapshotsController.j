@@ -237,6 +237,22 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [[_menu addItemWithTitle:@"Delete selected snapshot" action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    [self outlineViewSelectionDidChange:nil];
+
+    if ([self currentEntityHasPermission:@"snapshot_take"])
+        [_plusButton setEnabled:YES];
+    else
+    {
+        [_plusButton setEnabled:NO];
+        [windowNewSnapshot close];
+    }
+
+
+}
 
 #pragma mark -
 #pragma mark Notification
@@ -627,8 +643,15 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     if ([_outlineViewSnapshots numberOfSelectedRows] > 0)
     {
-        [_minusButton setEnabled:YES];
-        [_revertButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"snapshot_delete"])
+            [_minusButton setEnabled:YES];
+        else
+            [_minusButton setEnabled:NO];
+
+        if ([self currentEntityHasPermission:@"snapshot_revert"])
+            [_revertButton setEnabled:YES];
+        else
+            [_revertButton setEnabled:NO];
     }
 }
 

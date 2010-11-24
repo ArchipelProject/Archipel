@@ -86,11 +86,8 @@
         
         <key>MandatoryPermissions</key>
         <array>
-            <string>snapshot_take</string>
-            <string>snapshot_delete</string>
             <string>snapshot_get</string>
             <string>snapshot_current</string>
-            <string>snapshot_revert</string>
         </array>
         
     </dict>
