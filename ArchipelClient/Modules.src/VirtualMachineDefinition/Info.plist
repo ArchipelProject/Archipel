@@ -63,7 +63,6 @@
         <key>MandatoryPermissions</key>
         <array>
             <string>xmldesc</string>
-            <string>info</string>
             <string>capabilities</string>
         </array>
     </dict>

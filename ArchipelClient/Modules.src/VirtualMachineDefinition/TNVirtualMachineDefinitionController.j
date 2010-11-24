@@ -29,7 +29,6 @@ TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control";
 TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition";
 
 TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc";
-TNArchipelTypeVirtualMachineControlInfo             = @"info";
 TNArchipelTypeVirtualMachineDefinitionDefine        = @"define";
 TNArchipelTypeVirtualMachineDefinitionUndefine      = @"undefine";
 TNArchipelTypeVirtualMachineDefinitionCapabilities  = @"capabilities";
