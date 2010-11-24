@@ -234,6 +234,14 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     [[_menu addItemWithTitle:@"Deactivate this network" action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    [self _didTableSelectionChange:nil];
+
+    [networkController hideWindow:nil];
+}
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -271,6 +279,11 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
+    if ([self currentEntityHasPermission:@"network_define"])
+        [_plusButton setEnabled:YES];
+    else
+        [_plusButton setEnabled:NO];
+
     [_minusButton setEnabled:NO];
     [_editButton setEnabled:NO];
     [_activateButton setEnabled:NO];
@@ -283,13 +296,17 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
     if ([networkObject isNetworkEnabled])
     {
-        [_deactivateButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"network_destroy"])
+            [_deactivateButton setEnabled:YES];
     }
     else
     {
-        [_minusButton setEnabled:YES];
-        [_editButton setEnabled:YES];
-        [_activateButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"network_undefine"])
+            [_minusButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"network_define"])
+            [_editButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"network_create"])
+            [_activateButton setEnabled:YES];
     }
 
     return YES;
@@ -531,6 +548,9 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 */
 - (IBAction)editNetwork:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"network_define"])
+        return;
+
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
     if (selectedIndex != -1)

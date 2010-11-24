@@ -292,11 +292,22 @@
       [checkBoxDHCPEnabled setState:CPOffState];
 }
 
+/*! show the main window
+    @param aSender the sender of the action
+*/
 - (IBAction)showWindow:(id)aSender
 {
     [self update];
     [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
+}
+
+/*! hide the main window
+    @param aSender the sender of the action
+*/
+- (IBAction)hideWindow:(id)sender
+{
+    [mainWindow close];
 }
 
 @end

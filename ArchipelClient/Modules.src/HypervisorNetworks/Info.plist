@@ -31,13 +31,7 @@
         
         <key>MandatoryPermissions</key>
         <array>
-            <string>network_define</string>
-            <string>network_undefine</string>
-            <string>network_create</string>
-            <string>network_destroy</string>
             <string>network_get</string>
-            <string>network_getnames</string>
-            <string>network_bridges</string>
         </array>
     </dict>
 </plist>
