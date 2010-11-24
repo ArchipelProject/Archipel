@@ -68,6 +68,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     CPDate                          _scheduledDate;
     CPTableView                     _tableJobs;
     TNTableViewDataSource           _datasourceJobs;
+    CPButton                        _buttonSchedule;
+    CPButton                        _buttonUnschedule;
 }
 
 
@@ -113,18 +115,18 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     [_datasourceJobs setSearchableKeyPaths:[@"comment", @"action", @"date"]];
     [_tableJobs setDataSource:_datasourceJobs];
 
-    var buttonSchedule    = [CPButtonBar plusButton],
-        buttonUnschedule  = [CPButtonBar plusButton];
+    _buttonSchedule    = [CPButtonBar plusButton];
+    _buttonUnschedule  = [CPButtonBar plusButton];
 
-    [buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-plus.png"] size:CPSizeMake(16, 16)]];
-    [buttonSchedule setTarget:self];
-    [buttonSchedule setAction:@selector(openNewJobWindow:)];
+    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-plus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonSchedule setTarget:self];
+    [_buttonSchedule setAction:@selector(openNewJobWindow:)];
 
-    [buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-minus.png"] size:CPSizeMake(16, 16)]];
-    [buttonUnschedule setTarget:self];
-    [buttonUnschedule setAction:@selector(unschedule:)];
+    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-minus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonUnschedule setTarget:self];
+    [_buttonUnschedule setAction:@selector(unschedule:)];
 
-    [buttonBarJobs setButtons:[buttonSchedule, buttonUnschedule]];
+    [buttonBarJobs setButtons:[_buttonSchedule, _buttonUnschedule]];
 
     [filterFieldJobs setTarget:_datasourceJobs];
     [filterFieldJobs setAction:@selector(filterObjects:)];
@@ -204,6 +206,24 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 {
     [[_menu addItemWithTitle:@"Schedule new action" action:@selector(openNewJobWindowq:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Unschedule selected action" action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
+}
+
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    if ([self currentEntityHasPermission:@"scheduler_schedule"])
+        [_buttonSchedule setEnabled:YES];
+    else
+    {
+        [_buttonSchedule setEnabled:NO];
+        [windowNewJob close];
+    }
+
+    if ([self currentEntityHasPermission:@"scheduler_unschedule"])
+        [_buttonUnschedule setEnabled:YES];
+    else
+        [_buttonUnschedule setEnabled:NO];
 }
 
 

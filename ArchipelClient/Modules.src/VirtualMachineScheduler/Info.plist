@@ -91,8 +91,7 @@
         <key>MandatoryPermissions</key>
         <array>
             <string>scheduler_jobs</string>
-            <string>scheduler_schedule</string>
-            <string>scheduler_unschedule</string>
+            <string>scheduler_actions</string>
         </array>
         
     </dict>
