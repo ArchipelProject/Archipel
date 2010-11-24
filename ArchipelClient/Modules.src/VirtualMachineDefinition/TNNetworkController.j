@@ -75,15 +75,15 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         {
             case @"network":
                 if (![_delegate currentEntityHasPermission:@"network_getnames"])
-                    [radio setEnabled:NO];
+                    [_delegate setControl:radio enabled:NO accordingToPermission:@"network_getnames"];
                 else
-                    [radio setEnabled:YES];
+                    [_delegate setControl:radio enabled:YES accordingToPermission:@"network_getnames"];
                     break;
             case @"bridge":
                 if (![_delegate currentEntityHasPermission:@"network_bridges"])
-                    [radio setEnabled:NO];
+                    [_delegate setControl:radio enabled:NO accordingToPermission:@"network_bridges"];
                 else
-                    [radio setEnabled:YES];
+                    [_delegate setControl:radio enabled:YES accordingToPermission:@"network_bridges"];
                     break;
         }
     }
@@ -152,25 +152,25 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         case @"Network":
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
             {
-                [buttonSource setEnabled:YES];
+                [_delegate setControl:buttonSource enabled:YES accordingToPermission:@"network_getnames"];
                 [buttonSource removeAllItems];
                 [_nic setType:@"network"];
                 [self getHypervisorNetworks];
             }
             else
-                [buttonSource setEnabled:NO];
+                [_delegate setControl:buttonSource enabled:NO accordingToPermission:@"network_getnames"];
             break;
 
         case @"Bridge":
             if ([_delegate currentEntityHasPermission:@"network_bridges"])
             {
-                [buttonSource setEnabled:YES];
+                [_delegate setControl:buttonSource enabled:YES accordingToPermission:@"network_bridges"];
                 [buttonSource removeAllItems];
                 [_nic setType:@"bridge"];
                 [self getBridges];
             }
             else
-                [buttonSource setEnabled:NO];
+                [_delegate setControl:buttonSource enabled:NO accordingToPermission:@"network_bridges"];
             break;
 
         case @"User":

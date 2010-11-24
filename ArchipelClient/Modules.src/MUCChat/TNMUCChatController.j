@@ -124,15 +124,19 @@
 
 /*! this message is called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
-    [super willShow];
+    if (![super willShow])
+        return NO;
+
     _numberOfNotices = 0;
     [_toolbarItem setImage:_toolbarItemImages[0]];
     [_toolbar _reloadToolbarItems];
     [self reload:nil];
     [_messageBoard reload];
     [self scrollToBottom];
+
+    return YES;
 }
 
 /*! called when user saves preferences

@@ -97,6 +97,8 @@ TNArchipelErrorGeneral                  = 1;
     CPArray                 _registredSelectors;
     CPDictionary            _cachedGranted;
     CPDictionary            _cachedPermissions;
+    CPDictionary            _disableBadgesRegistry;
+    CPImageView             _imageViewControlDisabledPrototype;
 }
 
 
@@ -429,7 +431,7 @@ TNArchipelErrorGeneral                  = 1;
 - (BOOL)isEntityGranted:(TNStropheContact)anEntity
 {
     if ([anEntity class] !== TNStropheContact)
-        return NO;
+        return YES;
 
     if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
         return YES;
@@ -495,6 +497,52 @@ TNArchipelErrorGeneral                  = 1;
     return [self entity:_entity hasPermissions:permissionsList];
 }
 
+- (void)setControl:(CPControl)aControl enabled:(BOOL)shouldEnable accordingToPermission:(CPString)aPermission
+{
+    // badge stuff. disabled.
+    // if (!_disableBadgesRegistry)
+    //     _disableBadgesRegistry = [CPDictionary dictionary];
+    //
+    // if (!_imageViewControlDisabledPrototype)
+    // {
+    //     _imageViewControlDisabledPrototype = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
+    //     [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
+    // }
+    //
+    // if (!shouldEnable && ![self currentEntityHasPermission:aPermission])
+    // {
+    //     var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
+    //         badge = [CPKeyedUnarchiver unarchiveObjectWithData:data],
+    //         frameOrigin = [aControl frameOrigin],
+    //         clipView = [aControl superview];
+    //
+    //
+    //     while ([[clipView superview] superview])
+    //         clipView = [clipView superview];
+    //
+    //     [badge setAutoresizingMask:[aControl autoresizingMask]];
+    //
+    //     frameOrigin.x += CPRectGetWidth([aControl frame]) - 8.0;
+    //     frameOrigin.y += CPRectGetHeight([aControl frame]) - 11.0;
+    //
+    //     frameOrigin = [aControl convertPoint:frameOrigin toView:clipView];
+    //
+    //     CPLog.warn([aControl frameOrigin].x + " " + frameOrigin.x)
+    //     [badge setFrameOrigin:frameOrigin];
+    //
+    //     [clipView addSubview:badge positioned:CPWindowAbove relativeTo:nil];
+    //
+    //     [_disableBadgesRegistry setObject:badge forKey:aControl];
+    // }
+    // else
+    // {
+    //     [aControl setClipsToBounds:YES];
+    //     if ([_disableBadgesRegistry containsKey:aControl])
+    //         [[_disableBadgesRegistry objectForKey:aControl] removeFromSuperview];
+    // }
+
+    [aControl setEnabled:shouldEnable];
+}
 
 #pragma mark -
 #pragma mark TNModule events implementation
