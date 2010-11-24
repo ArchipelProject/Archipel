@@ -47,7 +47,7 @@ class TNActionScheduler:
         self.supported_actions_for_hypervisor = ("alloc", "free")
         
         # permissions
-        self.entity.permission_center.create_permission("scheduler_jos", "Authorizes user to get the list of task", False);
+        self.entity.permission_center.create_permission("scheduler_jobs", "Authorizes user to get the list of task", False);
         self.entity.permission_center.create_permission("scheduler_schedule", "Authorizes user to schedule a task", False);
         self.entity.permission_center.create_permission("scheduler_unschedule", "Authorizes user to unschedule a task", False);
     
