@@ -237,6 +237,21 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [[_menu addItemWithTitle:@"Delete selected drive" action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    [self tableViewSelectionDidChange:nil];
+
+    if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
+        [windowDiskProperties close];
+
+    if (![self currentEntityHasPermission:@"drives_create"])
+        [windowNewDisk close];
+
+    [self checkIfRunning];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -333,6 +348,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 */
 - (IBAction)openRenamePanel:(id)aSender
 {
+    if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
+        return;
+
     if (_isActive)
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
     else
@@ -668,6 +686,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
+    if ([self currentEntityHasPermission:@"drives_create"])
+        [_plusButton setEnabled:YES];
+    else
+        [_plusButton setEnabled:NO];
+
     if ([_tableMedias numberOfSelectedRows] <= 0)
     {
         [_minusButton setEnabled:NO];
@@ -675,8 +698,15 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         return;
     }
 
-    [_minusButton setEnabled:YES];
-    [_editButton setEnabled:YES];
+    if ([self currentEntityHasPermission:@"drives_delete"])
+        [_minusButton setEnabled:YES];
+    else
+        [_minusButton setEnabled:NO];
+
+    if ([self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
+        [_editButton setEnabled:YES];
+    else
+        [_editButton setEnabled:NO];
 
     var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
         diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
