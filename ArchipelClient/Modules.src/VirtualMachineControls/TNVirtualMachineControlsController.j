@@ -880,7 +880,7 @@ TNArchipelTransportBarReboot    = 4;
 
         if ([_entity XMPPShow] == TNStropheContactStatusOnline)
         {
-            if ([self currentEntityHasPermission:@"migrate"]);
+            if ([self currentEntityHasPermission:@"migrate"])
             {
                 [viewTableHypervisorsContainer setHidden:NO];
                 [filterHypervisors setHidden:NO];
