@@ -96,7 +96,7 @@ class TNMediaManagement:
             raise xmpp.protocol.NodeProcessed
         
         elif action == "getiso":
-            reply = self.iq_getisos(iq)
+            reply = self.iq_getiso(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
@@ -313,7 +313,7 @@ class TNMediaManagement:
         return reply
     
     
-    def iq_getisos(self, iq):
+    def iq_getiso(self, iq):
         """
         Get the virtual cdrom ISO of the virtual machine
         
