@@ -594,7 +594,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
             else
             {
                 [imageViewSecureConnection setHidden:YES];
-                [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VNC" message:aMessage icon:TNGrowlIconError];
             }
             [_vncView resetSize];
             break;
