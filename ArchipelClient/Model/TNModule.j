@@ -30,7 +30,7 @@ TNArchipelPushNotificationNamespace     = @"archipel:push";
 TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
 TNArchipelTypePermissions               = @"archipel:permissions";
-TNArchipelTypePermissionsGet            = @"get";
+TNArchipelTypePermissionsGetOwn         = @"getown";
 
 TNArchipelErrorPermission               = 0;
 TNArchipelErrorGeneral                  = 1;
@@ -296,7 +296,7 @@ TNArchipelErrorGeneral                  = 1;
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypePermissionsGet,
+        "action": TNArchipelTypePermissionsGetOwn,
         "permission_type": "user",
         "permission_target": [[_connection JID] bare]}];
 

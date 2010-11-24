@@ -90,7 +90,8 @@
 
         <key>MandatoryPermissions</key>
         <array>
-            <string>permission</string>
+            <string>permission_getown</string>
+            <string>permission_list</string>
         </array>
     </dict>
 </plist>

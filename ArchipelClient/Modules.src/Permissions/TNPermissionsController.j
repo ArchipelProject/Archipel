@@ -26,6 +26,8 @@ TNArchipelTypePermissions        = @"archipel:permissions";
 TNArchipelTypePermissionsList   = @"list";
 TNArchipelTypePermissionsGet    = @"get";
 TNArchipelTypePermissionsSet    = @"set";
+TNArchipelTypePermissionsGetOwn = @"getown";
+TNArchipelTypePermissionsSetOwn = @"setown";
 
 TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
@@ -46,12 +48,13 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     @outlet CPSearchField           filterField;
     @outlet CPView                  viewTableContainer;
     @outlet CPPopUpButton           buttonUser;
+    @outlet CPTextField             labelUser;
 
+    CPArray                         _currentUserPermissions;
+    CPButton                        _saveButton;
+    CPImage                         _defaultAvatar;
     CPTableView                     _tablePermissions;
     TNTableViewDataSource           _datasourcePermissions;
-    CPArray                         _currentUserPermissions;
-    CPImage                         _defaultAvatar;
-
 }
 
 
@@ -109,13 +112,13 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [_datasourcePermissions setSearchableKeyPaths:[@"name", @"description"]];
     [_tablePermissions setDataSource:_datasourcePermissions];
 
-    var saveButton       = [CPButtonBar plusButton];
+    _saveButton       = [CPButtonBar plusButton];
 
-    [saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-save.png"] size:CPSizeMake(16, 16)]];
-    [saveButton setTarget:self];
-    [saveButton setAction:@selector(changePermissionsState:)];
+    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-save.png"] size:CPSizeMake(16, 16)]];
+    [_saveButton setTarget:self];
+    [_saveButton setAction:@selector(changePermissionsState:)];
 
-    [buttonBarControl setButtons:[saveButton]];
+    [buttonBarControl setButtons:[_saveButton]];
 
     [filterField setTarget:_datasourcePermissions];
     [filterField setAction:@selector(filterObjects:)];
@@ -220,6 +223,35 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [_tablePermissions reloadData]
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    if ([self currentEntityHasPermission:@"permission_get"])
+    {
+        [buttonUser setHidden:NO];
+        [labelUser setHidden:NO];
+    }
+    else
+    {
+        [buttonUser setHidden:YES];
+        [labelUser setHidden:YES];
+        [buttonUser selectItemWithTitle:@"Me"];
+        [self didCurrentUserChange:nil];
+    }
+
+    if ([self currentEntityHasPermission:@"permission_set"] || [self currentEntityHasPermission:@"permission_setown"])
+    {
+        [_saveButton setEnabled:YES];
+        [_tablePermissions setEnabled:YES];
+    }
+    else
+    {
+        [_saveButton setEnabled:NO];
+        [_tablePermissions setEnabled:NO];
+    }
+}
+
 
 
 #pragma mark -
@@ -257,8 +289,25 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 #pragma mark -
 #pragma mark Utilities
 
-// put your utilities here
-
+// - (void)setSateForAllCheckBoxInTable:(int)aState
+// {
+//     for (var i = 0; i < [_datasourcePermissions count]; i++)
+//     {
+//         var permission      = [_datasourcePermissions objectAtIndex:i],
+//         [permission setValue:aState ForKey:@"state"];
+//     }
+//     [_tablePermissions reloadData];
+// }
+//
+// - (void)setForAllCheckBoxInTableEnabled:(BOOL)shouldEnable
+// {
+//     for (var i = 0; i < [_datasourcePermissions count]; i++)
+//     {
+//         var permission = [_datasourcePermissions objectAtIndex:i],
+//         [permission setValue:aState ForKey:@"state"];
+//     }
+//     [_tablePermissions reloadData];
+// }
 
 #pragma mark -
 #pragma mark Actions
@@ -327,11 +376,15 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)getUserPermissions:(CPString)aUser
 {
-    var stanza = [TNStropheStanza iqWithType:@"get"];
+    var stanza = [TNStropheStanza iqWithType:@"get"],
+        currentAction = TNArchipelTypePermissionsGetOwn;
+
+    if ([self currentEntityHasPermission:@"permission_get"])
+        currentAction = TNArchipelTypePermissionsGet
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypePermissionsGet,
+        "action": currentAction,
         "permission_type": "user",
         "permission_target": aUser}];
 
@@ -367,11 +420,15 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)changePermissionsState
 {
-    var stanza = [TNStropheStanza iqWithType:@"set"];
+    var stanza = [TNStropheStanza iqWithType:@"set"],
+        currentAction = TNArchipelTypePermissionsSetOwn;
+
+    if ([self currentEntityHasPermission:@"permission_set"])
+        currentAction = TNArchipelTypePermissionsSet
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        @"action": TNArchipelTypePermissionsSet}];
+        @"action": currentAction}];
 
     for (var i = 0; i < [_datasourcePermissions count]; i++)
     {
@@ -396,7 +453,6 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     if ([aStanza type] == @"error")
         [self handleIqErrorFromStanza:aStanza];
 }
-
 
 
 #pragma mark -

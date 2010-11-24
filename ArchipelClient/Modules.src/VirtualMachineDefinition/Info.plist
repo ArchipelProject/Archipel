@@ -56,11 +56,11 @@
 		<key>TNDescDefaultAPIC</key>
 		<integer>0</integer>
 		<key>TNDescDefaultHugePages</key>
-		<integer>0</integer>
-		<key>TNDescDefaultInputType</key>
-		<string>mouse</string>
-		
-		<key>MandatoryPermissions</key>
+        <integer>0</integer>
+        <key>TNDescDefaultInputType</key>
+        <string>mouse</string>
+        
+        <key>MandatoryPermissions</key>
         <array>
             <string>xmldesc</string>
             <string>info</string>
