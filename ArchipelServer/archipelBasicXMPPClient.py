@@ -156,10 +156,14 @@ class TNArchipelBasicXMPPClient(object):
         self.permission_center.create_permission("all", "All permissions are granted", False);
         self.permission_center.create_permission("presence", "Authorizes users to request presences", False);
         self.permission_center.create_permission("message", "Authorizes users to send messages", False);
-        self.permission_center.create_permission("permission", "Authorizes users to set permissions", False);
         self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False);
         self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False);
         self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False);
+        self.permission_center.create_permission("permission_get", "Authorizes users to get all permissions", True);
+        self.permission_center.create_permission("permission_getown", "Authorizes users to get only own permissions", False);
+        self.permission_center.create_permission("permission_list", "Authorizes users to list existing", False);
+        self.permission_center.create_permission("permission_set", "Authorizes users to set all permissions", False);
+        self.permission_center.create_permission("permission_setown", "Authorizes users to set only own permissions", False);
     
     
     ######################################################################################################
@@ -947,6 +951,8 @@ class TNArchipelBasicXMPPClient(object):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_TAGS)
         return reply
     
+    
+    
     ######################################################################################################
     ### XMPP Message registrars
     ######################################################################################################
@@ -962,7 +968,7 @@ class TNArchipelBasicXMPPClient(object):
         """
         try:
             log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
-    
+            
             reply_stanza = self.__filter_message(msg)
             reply = None
             
@@ -976,6 +982,7 @@ class TNArchipelBasicXMPPClient(object):
         
         if reply:
             conn.send(reply)
+    
     
     def add_message_registrar_item(self, item):
         """
@@ -1106,31 +1113,46 @@ class TNArchipelBasicXMPPClient(object):
         @param iq: the received IQ
         """
         action = self.check_acp(conn, iq)
-        if not action == "get":
-            self.check_perm(conn, iq, "permission", -1)
-        
+        if not action == "getown":
+            self.check_perm(conn, iq, action, -1, prefix="permission_")
+                
         if action == "list":
             reply = self.iq_list_permission(iq)
             conn.send(reply);
             raise xmpp.protocol.NodeProcessed
         
         if action == "set":
-            reply = self.iq_set_permission(iq)
+            reply = self.iq_set_permission(iq, onlyown=False)
+            conn.send(reply);
+            raise xmpp.protocol.NodeProcessed
+        
+        if action == "setown":
+            reply = self.iq_set_permission(iq, onlyown=True)
             conn.send(reply);
             raise xmpp.protocol.NodeProcessed
         
         elif action == "get":
-            reply = self.iq_get_permission(iq)
+            reply = self.iq_get_permission(iq, onlyown=False)
+            conn.send(reply);
+            raise xmpp.protocol.NodeProcessed
+        
+        elif action == "getown":
+            reply = self.iq_get_permission(iq, onlyown=True)
             conn.send(reply);
             raise xmpp.protocol.NodeProcessed
     
     
-    def iq_set_permission(self, iq):
+    def iq_set_permission(self, iq, onlyown):
         try:
             reply   = iq.buildReply("result")
             errors  = []
             perms   = iq.getTag("query").getTag("archipel").getTags(name="permission")
-        
+            
+            if onlyown:
+                for perm in perms:
+                    if not perm.getAttr("permission_target") == iq.getFrom().getStripped():
+                        raise Exception("You cannot set permissions of other users")
+            
             for perm in perms:
                 perm_type   = perm.getAttr("permission_type")
                 perm_target = perm.getAttr("permission_target")
@@ -1164,13 +1186,16 @@ class TNArchipelBasicXMPPClient(object):
         return reply
     
     
-    def iq_get_permission(self, iq):
+    def iq_get_permission(self, iq, onlyown):
         try:
             reply = iq.buildReply("result")
             nodes = []
             perm_type   = iq.getTag("query").getTag("archipel").getAttr("permission_type")
             perm_target = iq.getTag("query").getTag("archipel").getAttr("permission_target")
             
+            if onlyown and not perm_target == iq.getFrom().getStripped():
+                raise Exception("You cannot get permissions of other users")
+                
             if perm_type == "user":
                 permissions = self.permission_center.get_user_permissions(perm_target)
                 if permissions:
