@@ -434,6 +434,9 @@ TNArchipelErrorGeneral                  = 1;
     if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
         return YES;
 
+    if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
+        return YES;
+
     return [_cachedGranted valueForKey:[[anEntity JID] bare]];
 }
 
