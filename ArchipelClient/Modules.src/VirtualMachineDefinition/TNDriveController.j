@@ -92,6 +92,32 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 #pragma mark -
 #pragma mark Utilities
 
+/*! send this message to update GUI according to permissions
+*/
+- (void)updateAfterPermissionChanged
+{
+    for (var i = 0; i < [[radioDriveType radios] count]; i++)
+    {
+        var radio = [[radioDriveType radios] objectAtIndex:i];
+
+        switch ([[radio title] lowercaseString])
+        {
+            case @"hard drive":
+                if (![_delegate currentEntityHasPermission:@"drives_get"])
+                    [radio setEnabled:NO];
+                else
+                    [radio setEnabled:YES];
+                    break;
+            case @"cd/dvd":
+                if (![_delegate currentEntityHasPermission:@"drives_getiso"])
+                    [radio setEnabled:NO];
+                else
+                    [radio setEnabled:YES];
+                    break;
+        }
+    }
+}
+
 /*! update the editor according to the current drive to edit
 */
 - (void)update
@@ -109,9 +135,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
     [radioDriveType setTarget:self];
 
-    if ([_drive device] == @"disk")
+    [self updateAfterPermissionChanged];
+
+    if (([_drive device] == @"disk") && [_delegate currentEntityHasPermission:@"drives_get"])
         [self getDisksInfo];
-    else if ([_drive device] == @"cdrom")
+    else if (([_drive device] == @"cdrom")  && [_delegate currentEntityHasPermission:@"drives_getiso"])
         [self getISOsInfo];
 
 
@@ -134,7 +162,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 #pragma mark Actions
 
 /*! saves the change
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)save:(id)aSender
 {
@@ -171,7 +199,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 }
 
 /*! populate the target button
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)populateTargetButton:(id)aSender
 {
@@ -196,7 +224,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 }
 
 /*! change the type of the drive
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)performRadioDriveTypeChanged:(id)aSender
 {
@@ -243,7 +271,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 }
 
 /*! hange the type of the drive (file or block)
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)driveTypeDidChange:(id)aSender
 {
@@ -272,6 +300,9 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
 }
 
+/*! show the main window
+    @param aSender the sender of the action
+*/
 - (IBAction)showWindow:(id)aSender
 {
     [mainWindow center];
@@ -279,6 +310,15 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
     [self update];
 }
+
+/*! hide the main window
+    @param aSender the sender of the action
+*/
+- (IBAction)hideWindow:(id)aSender
+{
+    [mainWindow close];
+}
+
 
 
 #pragma mark -
@@ -375,7 +415,6 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 [buttonSource selectItem:item];
                 break;
             }
-
         }
     }
 

@@ -63,6 +63,32 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 #pragma mark -
 #pragma mark Utilities
 
+/*! send this message to update GUI according to permissions
+*/
+- (void)updateAfterPermissionChanged
+{
+    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
+    {
+        var radio = [[radioNetworkType radios] objectAtIndex:i];
+
+        switch ([[radio title] lowercaseString])
+        {
+            case @"network":
+                if (![_delegate currentEntityHasPermission:@"network_getnames"])
+                    [radio setEnabled:NO];
+                else
+                    [radio setEnabled:YES];
+                    break;
+            case @"bridge":
+                if (![_delegate currentEntityHasPermission:@"network_bridges"])
+                    [radio setEnabled:NO];
+                else
+                    [radio setEnabled:YES];
+                    break;
+        }
+    }
+}
+
 /*! update the editor according to the current nic to edit
 */
 - (void)update
@@ -86,6 +112,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
             break;
         }
     }
+
+    [self updateAfterPermissionChanged];
+
     [radioNetworkType setTarget:self];
 
     [buttonType selectItemWithTitle:[_nic type]];
@@ -121,17 +150,27 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     switch (nicType)
     {
         case @"Network":
-            [buttonSource setEnabled:YES];
-            [buttonSource removeAllItems];
-            [_nic setType:@"network"];
-            [self getHypervisorNetworks];
+            if ([_delegate currentEntityHasPermission:@"network_getnames"])
+            {
+                [buttonSource setEnabled:YES];
+                [buttonSource removeAllItems];
+                [_nic setType:@"network"];
+                [self getHypervisorNetworks];
+            }
+            else
+                [buttonSource setEnabled:NO];
             break;
 
         case @"Bridge":
-            [buttonSource setEnabled:YES];
-            [buttonSource removeAllItems];
-            [_nic setType:@"bridge"];
-            [self getBridges];
+            if ([_delegate currentEntityHasPermission:@"network_bridges"])
+            {
+                [buttonSource setEnabled:YES];
+                [buttonSource removeAllItems];
+                [_nic setType:@"bridge"];
+                [self getBridges];
+            }
+            else
+                [buttonSource setEnabled:NO];
             break;
 
         case @"User":
@@ -142,12 +181,23 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     }
 }
 
+/*! show the main window
+    @param aSender the sender of the action
+*/
 - (IBAction)showWindow:(id)aSender
 {
     [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
 
     [self update];
+}
+
+/*! hide the main window
+    @param aSender the sender of the action
+*/
+- (IBAction)hideWindow:(id)aSender
+{
+    [mainWindow close];
 }
 
 
@@ -190,7 +240,9 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
     }
     else
-        CPLog.error("Stanza error received in VirtualMachineDefintion _didReceiveHypervisorNetworks: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.");
+    {
+        [_delegate handleIqErrorFromStanza:aStanza];
+    }
 
     return NO;
 }
@@ -231,7 +283,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         }
     }
     else
-        CPLog.error("Stanza error received in VirtualMachineDefintion _didReceiveBridges: I cannot handle this error. I am sorry. Do you hate me ? please. don't hate me. I don't hate you. The cake is a lie.");
+        [_delegate handleIqErrorFromStanza:aStanza];
 
     return NO;
 }

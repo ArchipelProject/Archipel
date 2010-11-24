@@ -106,6 +106,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPButton                buttonOnCrash;
     @outlet CPButton                buttonOnPowerOff;
     @outlet CPButton                buttonOnReboot;
+    @outlet CPButton                buttonXMLEditor;
+    @outlet CPButton                buttonUndefine;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
     @outlet CPPopUpButton           buttonBoot;
@@ -594,6 +596,28 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    if ([self currentEntityHasPermission:@"define"])
+        [self enableDefinitionGUI:YES];
+    else
+    {
+        [self enableDefinitionGUI:NO];
+        [networkController hideWindow:nil];
+        [driveController hideWindow:nil];
+    }
+
+    if ([self currentEntityHasPermission:@"undefine"])
+        [buttonUndefine setEnabled:YES];
+    else
+        [buttonUndefine setEnabled:NO];
+
+    [networkController updateAfterPermissionChanged];
+    [driveController updateAfterPermissionChanged];
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -637,6 +661,37 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! enable or disable the definition interfac
+*/
+- (void)enableDefinitionGUI:(BOOL)shoudlEnable
+{
+    [fieldMemory setEnabled:shoudlEnable];
+    [buttonArchitecture setEnabled:shoudlEnable];
+    [stepperNumberCPUs setEnabled:shoudlEnable];
+    [buttonBoot setEnabled:shoudlEnable];
+    [buttonOnPowerOff setEnabled:shoudlEnable];
+    [buttonOnReboot setEnabled:shoudlEnable];
+    [buttonOnCrash setEnabled:shoudlEnable];
+    [switchPAE setEnabled:shoudlEnable];
+    [switchACPI setEnabled:shoudlEnable];
+    [switchAPIC setEnabled:shoudlEnable];
+    [switchHugePages setEnabled:shoudlEnable];
+    [buttonClocks setEnabled:shoudlEnable];
+    [buttonInputType setEnabled:shoudlEnable];
+    [buttonVNCKeymap setEnabled:shoudlEnable];
+    [fieldVNCPassword setEnabled:shoudlEnable];
+    [buttonHypervisor setEnabled:shoudlEnable];
+    [buttonOSType setEnabled:shoudlEnable];
+    [buttonMachines setEnabled:shoudlEnable];
+    [buttonXMLEditor setEnabled:shoudlEnable];
+    [_editButtonNics setEnabled:shoudlEnable];
+    [_editButtonDrives setEnabled:shoudlEnable];
+    [_plusButtonNics setEnabled:shoudlEnable];
+    [_plusButtonDrives setEnabled:shoudlEnable];
+    [_minusButtonNics setEnabled:shoudlEnable];
+    [_minusButtonDrives setEnabled:shoudlEnable];
+}
 
 /*! generate a random Mac address.
     @return CPString containing a random Mac address
@@ -781,6 +836,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)editNetworkCard:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
     if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
     {
          [self addNetworkCard:aSender];
@@ -798,9 +856,12 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)deleteNetworkCard:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
     if ([_tableNetworkNics numberOfSelectedRows] <= 0)
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a network interface"];
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a network interface"];
          return;
     }
 
@@ -818,6 +879,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)addDrive:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
     var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"];
 
     [_drivesDatasource addObject:defaultDrive];
@@ -830,6 +894,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)editDrive:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
     if ([[_tableDrives selectedRowIndexes] count] != 1)
     {
          [self addDrive:aSender];
@@ -848,9 +915,12 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)deleteDrive:(id)aSender
 {
+    if (![self currentEntityHasPermission:@"define"])
+        return;
+
     if ([_tableDrives numberOfSelectedRows] <= 0)
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must select a drive"];
+        [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a drive"];
         return;
     }
 
@@ -1047,7 +1117,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         // button BOOT
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
-            [buttonBoot setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [buttonBoot setEnabled:YES];
 
             if (boot == "cdrom")
                 [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
@@ -1089,8 +1160,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
-            [fieldVNCPassword setEnabled:YES];
-            [buttonVNCKeymap setEnabled:YES]
+            if ([self currentEntityHasPermission:@"define"])
+            {
+                [fieldVNCPassword setEnabled:YES];
+                [buttonVNCKeymap setEnabled:YES]
+            }
 
             for (var i = 0; i < [graphics count]; i++)
             {
@@ -1121,7 +1195,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             || (hypervisor == TNXMLDescHypervisorQemu)
             || (hypervisor == TNXMLDescHypervisorKQemu))
         {
-            [buttonInputType setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [buttonInputType setEnabled:YES];
+
             [buttonInputType selectItemWithTitle:input];
         }
         else
@@ -1150,7 +1226,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"machines"] &&
             [[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"] count])
         {
-            [buttonMachines setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [buttonMachines setEnabled:YES];
             [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"]];
             if ([buttonMachines indexOfItemWithTitle:machine] == -1)
             {
@@ -1179,7 +1256,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [switchAPIC setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"APIC"] && [capabilities objectForKey:@"APIC"])
         {
-            [switchAPIC setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [switchAPIC setEnabled:YES];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureAPIC])
                 [switchAPIC setOn:YES animated:YES sendAction:NO];
@@ -1190,7 +1268,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [switchACPI setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"ACPI"] && [capabilities objectForKey:@"ACPI"])
         {
-            [switchACPI setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [switchACPI setEnabled:YES];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureACPI])
                 [switchACPI setOn:YES animated:YES sendAction:NO];
@@ -1211,7 +1290,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"]
             && [capabilities containsKey:@"NONPAE"] && [capabilities objectForKey:@"NONPAE"])
         {
-            [switchPAE setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [switchPAE setEnabled:YES];
             if (features && [features containsChildrenWithName:TNXMLDescFeaturePAE])
                 [switchPAE setOn:YES animated:YES sendAction:NO];
         }
@@ -1227,7 +1307,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         //clock
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC]])
         {
-            [buttonClocks setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+                [buttonClocks setEnabled:YES];
 
             if (clock)
             {
@@ -1326,7 +1407,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             {
                 [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
                 [buttonHypervisor selectItemAtIndex:0];
-                [buttonHypervisor setEnabled:YES];
+                if ([self currentEntityHasPermission:@"define"])
+                    [buttonHypervisor setEnabled:YES];
             }
 
             [buttonMachines setEnabled:NO];
@@ -1335,7 +1417,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             {
                 [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
                 [buttonMachines selectItemAtIndex:0];
-                [buttonMachines setEnabled:YES];
+                if ([self currentEntityHasPermission:@"define"])
+                    [buttonMachines setEnabled:YES];
             }
         }
         else
@@ -1671,8 +1754,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
-            [_minusButtonDrives setEnabled:YES];
-            [_editButtonDrives setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+            {
+                [_minusButtonDrives setEnabled:YES];
+                [_editButtonDrives setEnabled:YES];
+            }
         }
     }
     else if ([aNotification object] == _tableNetworkNics)
@@ -1682,8 +1768,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
-            [_minusButtonNics setEnabled:YES];
-            [_editButtonNics setEnabled:YES];
+            if ([self currentEntityHasPermission:@"define"])
+            {
+                [_minusButtonNics setEnabled:YES];
+                [_editButtonNics setEnabled:YES];
+            }
         }
     }
 }
