@@ -38,8 +38,14 @@ import sqlite3
 import archipelPermissionCenter
 
 
-ARCHIPEL_ERROR_CODE_AVATARS       = -1
-ARCHIPEL_ERROR_CODE_SET_AVATAR    = -2
+ARCHIPEL_ERROR_CODE_AVATARS             = -1
+ARCHIPEL_ERROR_CODE_SET_AVATAR          = -2
+ARCHIPEL_ERROR_CODE_MESSAGE             = -3
+ARCHIPEL_ERROR_CODE_GET_PERMISSIONS     = -4
+ARCHIPEL_ERROR_CODE_SET_PERMISSIONS     = -5
+ARCHIPEL_ERROR_CODE_LIST_PERMISSIONS    = -6
+ARCHIPEL_ERROR_CODE_SET_TAGS            = -7
+
 
 ARCHIPEL_MESSAGING_HELP_MESSAGE = """
 You can communicate with me using text commands, just like if you were chatting with your friends. \
@@ -938,7 +944,7 @@ class TNArchipelBasicXMPPClient(object):
             tags = iq.getTag("query").getTag("archipel").getAttr("tags")
             self.set_tags(tags)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_TAGS)
         return reply
     
     ######################################################################################################
@@ -954,14 +960,22 @@ class TNArchipelBasicXMPPClient(object):
         @type msg: xmpp.Protocol.Message
         @param msg: the received message 
         """
-        log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
-        
-        self.check_perm(conn, msg, "message", -1)
-        
-        reply_stanza = self.__filter_message(msg)
-        if reply_stanza:
-            conn.send(self.__build_reply(reply_stanza, msg))
+        try:
+            log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
     
+            reply_stanza = self.__filter_message(msg)
+            reply = None
+            
+            if reply_stanza:
+                if self.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
+                     reply = self.__build_reply(reply_stanza, msg)
+                else:
+                   reply = msg.buildReply("I'm sorry, my parents aren't allowing me to talk to strangers")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_MESSAGE)
+        
+        if reply:
+            conn.send(reply)
     
     def add_message_registrar_item(self, item):
         """
@@ -1146,7 +1160,7 @@ class TNArchipelBasicXMPPClient(object):
             
             self.push_change("permissions", "set")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_PERMISSIONS)
         return reply
     
     
@@ -1165,7 +1179,7 @@ class TNArchipelBasicXMPPClient(object):
             reply.setQueryPayload(nodes);
             
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_GET_PERMISSIONS)
         return reply
     
     
@@ -1181,7 +1195,7 @@ class TNArchipelBasicXMPPClient(object):
             reply.setQueryPayload(nodes);
             
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LIST_PERMISSIONS)
         return reply
         
         
