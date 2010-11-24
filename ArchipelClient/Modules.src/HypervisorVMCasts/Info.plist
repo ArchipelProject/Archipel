@@ -46,14 +46,6 @@
         <key>MandatoryPermissions</key>
         <array>
             <string>vmcasting_get</string>
-            <string>vmcasting_register</string>
-            <string>vmcasting_unregister</string>
-            <string>vmcasting_downloadappliance</string>
-            <string>vmcasting_downloadqueue</string>
-            <string>vmcasting_getappliances</string>
-            <string>vmcasting_deleteappliances</string>
-            <string>vmcasting_getinstalledappliances</string>
         </array>
-        
     </dict>
 </plist>

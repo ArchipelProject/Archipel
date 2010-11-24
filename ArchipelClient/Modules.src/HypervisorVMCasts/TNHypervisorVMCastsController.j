@@ -233,6 +233,39 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     [[_menu addItemWithTitle:@"Show activity monitor" action:@selector(showDownloadQueue:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    if ([self currentEntityHasPermission:@"vmcasting_downloadqueue"])
+        [_downloadQueueButton setEnabled:YES];
+    else
+    {
+        [_downloadQueueButton setEnabled:NO];
+        [windowDownloadQueue close];
+    }
+
+    if ([self currentEntityHasPermission:@"vmcasting_register"])
+        [_plusButton setEnabled:YES];
+    else
+    {
+        [_plusButton setEnabled:NO];
+        [windowNewCastURL close];
+    }
+
+    var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex],
+        currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
+
+    if (([currentVMCast class] == TNVMCast) && [self currentEntityHasPermission:@"vmcasting_unregister"])
+        [_minusButton setEnabled:YES];
+    else if (([currentVMCast class] == TNVMCastSource) && [self currentEntityHasPermission:@"vmcasting_deleteappliance"])
+        [_minusButton setEnabled:YES];
+    else
+        [_minusButton setEnabled:NO];
+
+
+    [self outlineViewSelectionDidChange:NO];
+}
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -641,12 +674,15 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
         if ([object class] == TNVMCast)
         {
-            [_downloadButton setEnabled:(([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError))];
-            [_minusButton setEnabled:([object status] == TNArchipelApplianceInstalled)];
+            if ([self currentEntityHasPermission:@"vmcasting_downloadappliance"])
+                [_downloadButton setEnabled:(([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError))];
+            if ([self currentEntityHasPermission:@"vmcasting_deleteappliance"])
+                [_minusButton setEnabled:([object status] == TNArchipelApplianceInstalled)];
         }
         else if ([object class] == TNVMCastSource)
         {
-            [_minusButton setEnabled:YES];
+            if ([self currentEntityHasPermission:@"vmcasting_unregister"])
+                [_minusButton setEnabled:YES];
             [_downloadButton setEnabled:NO];
         }
     }
