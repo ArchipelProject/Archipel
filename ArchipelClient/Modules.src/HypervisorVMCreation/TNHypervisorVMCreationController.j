@@ -199,12 +199,13 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)permissionsChanged
 {
-    [self tableViewSelectionDidChange:nil];
-
     if ([self currentEntityHasPermission:@"alloc"])
         [_plusButton setEnabled:YES];
     else
+    {
         [_plusButton setEnabled:NO];
+        [windowNewVirtualMachine close];
+    }
 
     if ([self currentEntityHasPermission:@"free"])
         [_minusButton setEnabled:YES];
