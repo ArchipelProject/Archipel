@@ -44,9 +44,6 @@
         <key>MandatoryPermissions</key>
         <array>
             <string>appliance_get</string>
-            <string>appliance_attach</string>
-            <string>appliance_dettach</string>
-            <string>appliance_package</string>
         </array>
         
     </dict>

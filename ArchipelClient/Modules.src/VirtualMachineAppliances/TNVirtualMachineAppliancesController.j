@@ -208,6 +208,21 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [[_menu addItemWithTitle:@"Create appliance from this virtual machine" action:@selector(package:) keyEquivalent:@""] setTarget:self];
 }
 
+/*! called when permissions changes
+*/
+- (void)permissionsChanged
+{
+    [self tableViewSelectionDidChange:nil];
+
+    if ([self currentEntityHasPermission:@"appliance_package"])
+        [_packageButton setEnabled:YES];
+    else
+    {
+        [_packageButton setEnabled:NO];
+        [windowNewAppliance close];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -412,7 +427,9 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
         "action": TNArchipelTypeVirtualMachineVMCastingAttach,
         "uuid": [appliance UUID]}];
 
-    [_attachButton setEnabled:NO];
+    if ([self currentEntityHasPermission:@"appliance_attach"])
+        [_attachButton setEnabled:NO];
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didAttach:) ofObject:self];
 }
 
@@ -466,7 +483,9 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingDetach}];
 
-    [_detachButton setEnabled:NO];
+    if ([self currentEntityHasPermission:@"appliance_attach"])
+        [_detachButton setEnabled:NO];
+
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didDetach:) ofObject:self];
 }
 
@@ -479,7 +498,8 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been detached"];
 
-        [_attachButton setEnabled:YES];
+        if ([self currentEntityHasPermission:@"appliance_attach"])
+            [_attachButton setEnabled:YES];
     }
     else
     {
@@ -544,9 +564,10 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
-    if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
+    if (([appliance statusString] == TNArchipelApplianceStatusInstalled)
+        && ([self currentEntityHasPermission:@"appliance_detach"]))
         [_detachButton setEnabled:YES];
-    else
+    else if ([self currentEntityHasPermission:@"appliance_attach"])
         [_attachButton setEnabled:YES];
 
 }
