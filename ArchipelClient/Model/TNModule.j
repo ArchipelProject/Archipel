@@ -27,10 +27,6 @@
     the namespace of Archipel Push Notification stanzas.
 */
 TNArchipelPushNotificationNamespace     = @"archipel:push";
-TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
-
-TNArchipelTypePermissions               = @"archipel:permissions";
-TNArchipelTypePermissionsGetOwn         = @"getown";
 
 TNArchipelErrorPermission               = 0;
 TNArchipelErrorGeneral                  = 1;
@@ -69,36 +65,35 @@ TNArchipelErrorGeneral                  = 1;
 */
 @implementation TNModule : CPViewController
 {
-    @outlet CPView          viewPreferences             @accessors;
+    @outlet CPView                  viewPreferences             @accessors;
 
-    BOOL                    _isActive                   @accessors(property=isActive, readonly);
-    BOOL                    _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
-    BOOL                    _isVisible                  @accessors(property=isVisible, readonly);
-    BOOL                    _toolbarItemOnly            @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
-    CPArray                 _mandatoryPermissions       @accessors(property=mandatoryPermissions);
-    CPArray                 _supportedEntityTypes       @accessors(property=supportedEntityTypes);
-    CPBundle                _bundle                     @accessors(property=bundle);
-    CPMenu                  _menu                       @accessors(property=menu);
-    CPMenuItem              _menuItem                   @accessors(property=menuItem);
-    CPString                _label                      @accessors(property=label);
-    CPString                _name                       @accessors(property=name);
-    CPToolbar               _toolbar                    @accessors(property=toolbar);
-    CPToolbarItem           _toolbarItem                @accessors(property=toolbarItem);
-    CPView                  _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
-    id                      _entity                     @accessors(property=entity);
-    int                     _animationDuration          @accessors(property=animationDuration);
-    int                     _index                      @accessors(property=index);
-    TNStropheConnection     _connection                 @accessors(property=connection);
-    TNStropheGroup          _group                      @accessors(property=group);
-    TNStropheRoster         _roster                     @accessors(property=roster);
+    BOOL                            _isActive                   @accessors(property=isActive, readonly);
+    BOOL                            _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
+    BOOL                            _isVisible                  @accessors(property=isVisible, readonly);
+    BOOL                            _toolbarItemOnly            @accessors(getter=isToolbarItemOnly, setter=setToolbarItemOnly:);
+    CPArray                         _mandatoryPermissions       @accessors(property=mandatoryPermissions);
+    CPArray                         _supportedEntityTypes       @accessors(property=supportedEntityTypes);
+    CPBundle                        _bundle                     @accessors(property=bundle);
+    CPMenu                          _menu                       @accessors(property=menu);
+    CPMenuItem                      _menuItem                   @accessors(property=menuItem);
+    CPString                        _label                      @accessors(property=label);
+    CPString                        _name                       @accessors(property=name);
+    CPToolbar                       _toolbar                    @accessors(property=toolbar);
+    CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
+    CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
+    id                              _entity                     @accessors(property=entity);
+    int                             _animationDuration          @accessors(property=animationDuration);
+    int                             _index                      @accessors(property=index);
+    TNPermissionsController         _permissionsController      @accessors(getter=permissionController);
+    TNStropheConnection             _connection                 @accessors(property=connection);
+    TNStropheGroup                  _group                      @accessors(property=group);
+    TNStropheRoster                 _roster                     @accessors(property=roster);
 
-    BOOL                    _pubSubPermissionRegistred;
-    CPArray                 _pubsubRegistrar;
-    CPArray                 _registredSelectors;
-    CPDictionary            _cachedGranted;
-    CPDictionary            _cachedPermissions;
-    CPDictionary            _disableBadgesRegistry;
-    CPImageView             _imageViewControlDisabledPrototype;
+    BOOL                            _pubSubPermissionRegistred;
+    CPArray                         _pubsubRegistrar;
+    CPArray                         _registredSelectors;
+    CPDictionary                    _disableBadgesRegistry;
+    CPImageView                     _imageViewControlDisabledPrototype;
 }
 
 
@@ -112,7 +107,6 @@ TNArchipelErrorGeneral                  = 1;
         _isActive               = NO;
         _isVisible              = NO;
         _pubsubRegistrar        = [CPArray array];
-        _cachedGranted          = [CPDictionary dictionary];
     }
     return self;
 }
@@ -126,10 +120,15 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)initializeWithEntity:(id)anEntity andRoster:(TNStropheRoster)aRoster
 {
+    // [[CPNotificationCenter defaultCenter] removeObserver:self name:TNArchipelPermissionsUpdated object:nil];
+
     _entity     = anEntity;
     _roster     = aRoster;
     _connection = [_roster connection];
+
+    // [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(permissionUpdated:) name:TNArchipelPermissionsUpdated object:_entity];
 }
+
 
 
 #pragma mark -
@@ -145,6 +144,14 @@ TNArchipelErrorGeneral                  = 1;
     _viewPermissionsDenied = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 }
 
+/*! set the permissions controller of the module and register onto it as delegate
+    @param aPermissionController the permission controller
+*/
+- (void)setPermissionsController:(TNPermissionsController)aPermissionController
+{
+    _permissionsController = aPermissionController;
+    [_permissionsController addDelegate:self];
+}
 
 #pragma mark -
 #pragma mark Events management
@@ -212,151 +219,6 @@ TNArchipelErrorGeneral                  = 1;
 }
 
 /*! @ignore
-    this message is sent when module receive a permission push in order to refresh
-    display and permission cache
-    @param somePushInfo the push informations as a CPDictionary
-*/
-- (BOOL)_onPermissionsPubSubEvents:(TNStropheStanza)aStanza
-{
-    var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
-        type    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
-        change  = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"];
-
-    if (type != TNArchipelPushNotificationPermissions)
-        return YES // continue to listen event;
-
-    // check if we already have cached some information about the entity
-    // if not, permissions will be recovered at next display so we don't care
-    if ([_cachedGranted containsKey:sender])
-    {
-        var anEntity = [_roster contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
-
-        // invalidate the cache for current entity
-        [_cachedGranted removeObjectForKey:sender];
-        CPLog.info("cache for module " + _label + " and entity " + anEntity + " has been invalidated");
-
-        // if the sender if the _entity then we'll need to perform graphicall chages
-        // otherwise we just update the cache.
-        if (anEntity === _entity)
-        {
-            [self _checkMandatoryPermissionsAndPerformOnGrant:@selector(_managePermissionGranted) onDenial:@selector(_managePermissionDenied) forEntity:anEntity];
-        }
-        else
-            [self _checkMandatoryPermissionsAndPerformOnGrant:nil onDenial:nil forEntity:anEntity];
-    }
-
-    return YES;
-}
-
-
-#pragma mark -
-#pragma mark Mandatory permissions caching
-
-/*! @ignore
-    Check if given entity meet the minimal mandatory permission to display the module
-    Thoses mandatory permissions are stored into _mandatoryPermissions
-    @param grantedSelector selector that will be executed if user is conform to mandatory permissions
-    @param grantedSelector selector that will be executed if user is not conform to mandatory permissions
-    @param anEntity the entity to which we should check the permission
-*/
-- (void)_checkMandatoryPermissionsAndPerformOnGrant:(SEL)grantedSelector onDenial:(SEL)denialSelector forEntity:(TNStropheContact)anEntity
-{
-    if (!anEntity)
-        return;
-
-    if (!_cachedGranted)
-        _cachedGranted = [CPDictionary dictionary];
-
-    if (!_cachedPermissions)
-        _cachedPermissions = [CPDictionary dictionary];
-
-    if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
-    {
-        if (grantedSelector)
-            [self performSelector:grantedSelector];
-
-        return;
-    }
-
-    if ([_cachedGranted containsKey:[[anEntity JID] bare]])
-    {
-        CPLog.info("recover permission from cache for module " + _label + " and entity" + anEntity);
-        if ([self isEntityGranted:anEntity] && grantedSelector)
-            [self performSelector:grantedSelector];
-        else if (denialSelector)
-            [self performSelector:denialSelector];
-
-        return;
-    }
-
-    CPLog.info("Ask permission to entity for module " + _label + " and entity" + anEntity);
-
-    var stanza = [TNStropheStanza iqWithType:@"get"],
-        selectors = [CPDictionary dictionaryWithObjectsAndKeys: grantedSelector, @"grantedSelector",
-                                                                denialSelector, @"denialSelector",
-                                                                anEntity, @"entity"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypePermissionsGetOwn,
-        "permission_type": "user",
-        "permission_target": [[_connection JID] bare]}];
-
-    [anEntity sendStanza:stanza andRegisterSelector:@selector(_didReceiveMandatoryPermissions:selectors:) ofObject:self userInfo:selectors];
-}
-
-/*! @ignore
-    compute the answer containing the users' permissions
-    @param aStanza TNStropheStanza containing the answer
-    @param someUserInfo CPDictionary containing the two selectors and the current entity
-*/
-- (void)_didReceiveMandatoryPermissions:(TNStropheStanza)aStanza selectors:(CPDictionary)someUserInfo
-{
-    if ([aStanza type] == @"result")
-    {
-        var permissions         = [aStanza childrenWithName:@"permission"],
-            anEntity            = [someUserInfo objectForKey:@"entity"],
-            defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
-
-        [_cachedPermissions setObject:[CPArray array] forKey:[[anEntity JID] bare]];
-        [_cachedGranted setValue:YES forKey:[[anEntity JID] bare]];
-
-        for (var i = 0; i < [permissions count]; i++)
-        {
-            var permission      = [permissions objectAtIndex:i],
-                name            = [permission valueForAttribute:@"name"];
-
-            [[_cachedPermissions objectForKey:[[anEntity JID] bare]] addObject:name];
-        }
-
-        if ((![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
-            && [[_connection JID] bare] != defaultAdminAccount)
-        {
-            for (var i = 0; i < [_mandatoryPermissions count]; i++)
-            {
-                if (![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:[_mandatoryPermissions objectAtIndex:i]])
-                {
-                    [_cachedGranted setValue:NO forKey:[[anEntity JID] bare]];
-                    break;
-                }
-            }
-        }
-
-        if ([self isEntityGranted:anEntity] && [someUserInfo objectForKey:@"grantedSelector"])
-            [self performSelector:[someUserInfo objectForKey:@"grantedSelector"]];
-        else if ([someUserInfo objectForKey:@"denialSelector"])
-            [self performSelector:[someUserInfo objectForKey:@"denialSelector"]];
-
-        CPLog.info("Permissions for module " + _label + " and entity" + anEntity + " sucessfully cached");
-        [self permissionsChanged];
-    }
-    else
-    {
-        [self handleIqErrorFromStanza:aStanza]
-    }
-}
-
-/*! @ignore
     Display the permission denial view
 */
 - (void)_managePermissionGranted
@@ -411,13 +273,12 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)_beforeWillLoad
 {
-    if (!_pubSubPermissionRegistred)
-    {
-        [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection];
-        _pubSubPermissionRegistred = YES;
-    }
+    if ([self isCurrentEntityGranted])
+        [self _managePermissionGranted];
+    else
+        [self _managePermissionDenied];
 
-    [self _checkMandatoryPermissionsAndPerformOnGrant:@selector(_managePermissionGranted) onDenial:@selector(_managePermissionDenied) forEntity:_entity];
+    [self permissionsChanged];
 }
 
 
@@ -433,13 +294,23 @@ TNArchipelErrorGeneral                  = 1;
     if ([anEntity class] !== TNStropheContact)
         return YES;
 
-    if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
+    var defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
+
+    if ([[_connection JID] bare] === defaultAdminAccount)
         return YES;
 
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
         return YES;
 
-    return [_cachedGranted valueForKey:[[anEntity JID] bare]];
+    if ((![[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:@"all"]) && [[_connection JID] bare] != defaultAdminAccount)
+    {
+        for (var i = 0; i < [_mandatoryPermissions count]; i++)
+        {
+            if (![[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:[_mandatoryPermissions objectAtIndex:i]])
+                return NO;
+        }
+    }
+    return YES;
 }
 
 /*! check if current is granted to display this module
@@ -462,10 +333,10 @@ TNArchipelErrorGeneral                  = 1;
     if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
         return YES;
 
-    if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+    if ([[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
         return YES;
 
-    return [[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:aPermission];
+    return [[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:aPermission];
 }
 
 /*! check if current entity has given permission
@@ -499,50 +370,42 @@ TNArchipelErrorGeneral                  = 1;
 
 - (void)setControl:(CPControl)aControl enabled:(BOOL)shouldEnable accordingToPermission:(CPString)aPermission
 {
-    // badge stuff. disabled.
-    // if (!_disableBadgesRegistry)
-    //     _disableBadgesRegistry = [CPDictionary dictionary];
-    //
-    // if (!_imageViewControlDisabledPrototype)
-    // {
-    //     _imageViewControlDisabledPrototype = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
-    //     [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
-    // }
-    //
-    // if (!shouldEnable && ![self currentEntityHasPermission:aPermission])
-    // {
-    //     var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
-    //         badge = [CPKeyedUnarchiver unarchiveObjectWithData:data],
-    //         frameOrigin = [aControl frameOrigin],
-    //         clipView = [aControl superview];
-    //
-    //
-    //     while ([[clipView superview] superview])
-    //         clipView = [clipView superview];
-    //
-    //     [badge setAutoresizingMask:[aControl autoresizingMask]];
-    //
-    //     frameOrigin.x += CPRectGetWidth([aControl frame]) - 8.0;
-    //     frameOrigin.y += CPRectGetHeight([aControl frame]) - 11.0;
-    //
-    //     frameOrigin = [aControl convertPoint:frameOrigin toView:clipView];
-    //
-    //     CPLog.warn([aControl frameOrigin].x + " " + frameOrigin.x)
-    //     [badge setFrameOrigin:frameOrigin];
-    //
-    //     [clipView addSubview:badge positioned:CPWindowAbove relativeTo:nil];
-    //
-    //     [_disableBadgesRegistry setObject:badge forKey:aControl];
-    // }
-    // else
-    // {
-    //     [aControl setClipsToBounds:YES];
-    //     if ([_disableBadgesRegistry containsKey:aControl])
-    //         [[_disableBadgesRegistry objectForKey:aControl] removeFromSuperview];
-    // }
+    if (!_disableBadgesRegistry)
+        _disableBadgesRegistry = [CPDictionary dictionary];
+
+    if (!_imageViewControlDisabledPrototype)
+    {
+        _imageViewControlDisabledPrototype = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
+        [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
+    }
+
+    var key = @"" + aControl + @"";
+
+    key = key.replace(" ", "_");
+
+    if (!shouldEnable && ![self currentEntityHasPermission:aPermission] && ![_disableBadgesRegistry containsKey:key])
+    {
+        var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
+            badge = [CPKeyedUnarchiver unarchiveObjectWithData:data];
+
+        [badge setFrameOrigin:CPPointMake(CPRectGetWidth([aControl frame]) - 16.0, CPRectGetHeight([aControl frame]) - 16.0)];
+        [aControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
+
+        [_disableBadgesRegistry setObject:badge forKey:key];
+    }
+    else if (shouldEnable && [self currentEntityHasPermission:aPermission] && [_disableBadgesRegistry containsKey:key])
+    {
+        if ([_disableBadgesRegistry containsKey:key])
+        {
+            [[_disableBadgesRegistry objectForKey:key] removeFromSuperview];
+            [_disableBadgesRegistry removeObjectForKey:key];
+        }
+
+    }
 
     [aControl setEnabled:shouldEnable];
 }
+
 
 #pragma mark -
 #pragma mark TNModule events implementation
@@ -572,6 +435,9 @@ TNArchipelErrorGeneral                  = 1;
 {
     // remove all notification observers
     [[CPNotificationCenter defaultCenter] removeObserver:self];
+
+    // and register again for permissions
+    // [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(permissionUpdated:) name:TNArchipelPermissionsUpdated object:_entity];
 
     // unregister all selectors
     for (var i = 0; i < [_registredSelectors count]; i++)
@@ -715,6 +581,21 @@ TNArchipelErrorGeneral                  = 1;
         CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
 
     return TNArchipelErrorGeneral;
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
+/*! delegate of TNPermissionsController
+*/
+- (void)permissionCenter:(TNPermissionsController)aController updatePermissionForEntity:(TNStropheContact)anEntity
+{
+    if (anEntity === _entity)
+    {
+        CPLog.info("permissions for current entity has changed. updating")
+        [self _beforeWillLoad];
+    }
 }
 
 @end

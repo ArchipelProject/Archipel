@@ -64,6 +64,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 @end
 
 
+
+
 /*! @ingroup archipelcore
 
     this is the Archipel Module loader.
@@ -75,39 +77,38 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 @implementation TNModuleController: CPObject
 {
-    @outlet  CPView         viewPermissionDenied;
+    @outlet  CPView                 viewPermissionDenied;
 
-    BOOL                    _allModulesReady                @accessors(getter=isAllModulesReady);
-    CPArray                 _loadedTabModules               @accessors(getter=loadedTabModules);
-    CPDictionary            _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
-    CPMenu                  _modulesMenu                    @accessors(property=modulesMenu);
-    CPString                _modulesPath                    @accessors(property=modulesPath);
-    CPString                _moduleType                     @accessors(property=moduleType);
-    CPTextField             _infoTextField                  @accessors(property=infoTextField);
-    CPView                  _mainModuleView                 @accessors(property=mainModuleView);
-    id                      _delegate                       @accessors(property=delegate);
-    id                      _entity                         @accessors(property=entity);
-    int                     _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
-    int                     _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
-    TNiTunesTabView         _mainTabView                    @accessors(property=mainTabView);
-    TNStropheRoster         _roster                         @accessors(property=roster);
-    TNToolbar               _mainToolbar                    @accessors(property=mainToolbar);
+    BOOL                            _allModulesReady                @accessors(getter=isAllModulesReady);
+    CPArray                         _loadedTabModules               @accessors(getter=loadedTabModules);
+    CPDictionary                    _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
+    CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
+    CPString                        _modulesPath                    @accessors(property=modulesPath);
+    CPString                        _moduleType                     @accessors(property=moduleType);
+    CPTextField                     _infoTextField                  @accessors(property=infoTextField);
+    CPView                          _mainModuleView                 @accessors(property=mainModuleView);
+    id                              _delegate                       @accessors(property=delegate);
+    id                              _entity                         @accessors(property=entity);
+    int                             _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
+    int                             _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
+    TNiTunesTabView                 _mainTabView                    @accessors(property=mainTabView);
+    TNStropheRoster                 _roster                         @accessors(property=roster);
+    TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
+    TNPermissionsController         _permissionsController          @accessors(property=permissionsController);
 
-    CPArray                 _bundles;
-    CPDictionary            _modulesMenuItems;
-    CPString                _previousXMPPShow;
-    CPToolbarItem           _currentToolbarItem;
-    CPView                  _currentToolbarModule;
-    id                      _modulesPList;
-    int                     _numberOfModulesLoaded;
-    int                     _numberOfModulesToLoad;
+    CPArray                         _bundles;
+    CPDictionary                    _modulesMenuItems;
+    CPString                        _previousXMPPShow;
+    CPToolbarItem                   _currentToolbarItem;
+    CPView                          _currentToolbarModule;
+    id                              _modulesPList;
+    int                             _numberOfModulesLoaded;
+    int                             _numberOfModulesToLoad;
+
+
 }
 
-#pragma mark -
-#pragma mark Initialization
 
-#pragma mark -
-#pragma mark Initialization
 
 /*! initialize the module loader
     @return an initialized instance of TNModuleLoader
@@ -166,7 +167,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _previousXMPPShow = [_entity XMPPShow];
 
         if ((_previousXMPPShow != TNStropheContactStatusOffline) && (_previousXMPPShow != TNStropheContactStatusDND))
+        {
             [self _populateModulesTabView];
+        }
         else
         {
             var label,
@@ -449,6 +452,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setPermissionsController:_permissionsController];
     [currentModuleController setBundle:aBundle];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
@@ -521,6 +525,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setPermissionsController:_permissionsController];
     [currentModuleController setMandatoryPermissions:mandatoryPermissions];
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 

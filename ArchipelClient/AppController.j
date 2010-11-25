@@ -47,6 +47,7 @@
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
+@import "Controllers/TNPermissionsController.j"
 
 
 /*! @global
@@ -212,11 +213,12 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     TNiTunesTabView                 _moduleTabView;
     TNModuleController              moduleController;
     TNOutlineViewRoster             _rosterOutlineView;
+    TNPermissionsController         _permissionsController;
+    TNPubSubController              _pubSubController;
     TNRosterDataViewContact         _rosterDataViewForContacts;
     TNRosterDataViewGroup           _rosterDataViewForGroups;
     TNToolbar                       _mainToolbar;
     TNViewHypervisorControl         _currentRightViewContent;
-    TNPubSubController              _pubSubController;
 }
 
 
@@ -344,6 +346,10 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     /* main menu */
     [self makeMainMenu];
 
+    /* Permission controller*/
+    _permissionsController = [[TNPermissionsController alloc] init];
+
+
     /* module Loader */
     [windowModuleLoading center];
     [windowModuleLoading makeKeyAndOrderFront:nil];
@@ -365,6 +371,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
     [moduleController setModulesMenu:_modulesMenu];
+    [moduleController setPermissionsController:_permissionsController];
 
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
@@ -638,6 +645,9 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     [_rosterOutlineView setDataSource:_mainRoster];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
+
+    [_permissionsController setRoster:_mainRoster];
+    [_permissionsController startWatching];
 
     [moduleController setRoster:_mainRoster];
     [moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
