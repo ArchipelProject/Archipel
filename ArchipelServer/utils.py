@@ -28,6 +28,7 @@ ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
 ARCHIPEL_NS_AVATAR                              = "archipel:avatar"
 ARCHIPEL_NS_TAGS                                = "archipel:tags"
 ARCHIPEL_NS_PERMISSIONS                         = "archipel:permissions"
+ARCHIPEL_NS_SUBSCRIPTION                        = "archipel:subscription"
 
 # XMPP shows
 ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"

@@ -36,7 +36,7 @@ import socket
 import os
 import commands
 from utils import *
-from archipelBasicXMPPClient import *
+from archipelEntity import *
 from archipelTriggers import *
 from threading import Timer, Thread
 from libvirtEventLoop import *
@@ -66,7 +66,7 @@ ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
 
 
-class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
+class TNArchipelVirtualMachine(TNArchipelEntity):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have 
@@ -76,7 +76,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         """
         contructor of the class
         """
-        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration, name)
+        TNArchipelEntity.__init__(self, jid, password, configuration, name)
         
         self.hypervisor                 = hypervisor
         self.libvirt_connection         = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
@@ -214,7 +214,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     def init_permissions(self):
         """initialize the permssions"""
-        TNArchipelBasicXMPPClient.init_permissions(self)
+        TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False);
         self.permission_center.create_permission("create", "Authorizes users to create (start) virtual machine", False);
         self.permission_center.create_permission("shutdown", "Authorizes users to shutdown virtual machine", False);
@@ -242,7 +242,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_CONTROL)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
         
-        TNArchipelBasicXMPPClient.register_handler(self)
+        TNArchipelEntity.register_handler(self)
     
     
     def remove_folder(self):
@@ -395,7 +395,7 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         
         self.stop_novnc_proxy()
         
-        TNArchipelBasicXMPPClient.disconnect(self)
+        TNArchipelEntity.disconnect(self)
     
     
     def create_novnc_proxy(self):
@@ -458,9 +458,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
     
     
     
-    ######################################################################################################
+    
     ### Process IQ
-    ###################################################################################################### 
+     
     
     def __process_iq_archipel_control(self, conn, iq):
         """
@@ -606,9 +606,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             raise xmpp.protocol.NodeProcessed
     
     
-    ######################################################################################################
+    
     ### libvirt controls
-    ######################################################################################################
+    
     
     def create(self):
         self.lock()
@@ -864,9 +864,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
             log.error("can't migrate because of : %s" % str(ex))
     
     
-    ######################################################################################################
+    
     ### Other stuffs
-    ######################################################################################################
+    
     
     
     def perform_threaded_copy(self, src_path, newxml):
@@ -916,9 +916,9 @@ class TNArchipelVirtualMachine(TNArchipelBasicXMPPClient):
         self.perform_hooks("HOOK_VM_TERMINATE")
     
     
-    ######################################################################################################
+    
     ### XMPP Controls
-    ###################################################################################################### 
+     
     
     # iq control
     

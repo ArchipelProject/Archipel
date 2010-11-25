@@ -29,7 +29,7 @@ class TNHypervisorGeolocalization:
     def __init__(self, conf, entity):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         mode = conf.get("GEOLOCALIZATION", "localization_mode");
@@ -65,9 +65,9 @@ class TNHypervisorGeolocalization:
     
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """

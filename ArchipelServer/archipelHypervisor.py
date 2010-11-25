@@ -29,7 +29,7 @@ import commands
 import time
 from threading import Thread
 from utils import *
-from archipelBasicXMPPClient import *
+from archipelEntity import *
 from archipelVirtualMachine import *
 import string
 import random
@@ -85,7 +85,7 @@ class TNThreadedVirtualMachine(Thread):
 
 
 
-class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
+class TNArchipelHypervisor(TNArchipelEntity):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
@@ -103,7 +103,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         @type database_file: string
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
-        TNArchipelBasicXMPPClient.__init__(self, jid, password, configuration, name)
+        TNArchipelEntity.__init__(self, jid, password, configuration, name)
         
         self.virtualmachines            = {}
         self.database_file              = database_file
@@ -168,13 +168,13 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         this method overrides the defaut register_handler of the super class.
         """
-        TNArchipelBasicXMPPClient.register_handler(self)
+        TNArchipelEntity.register_handler(self)
         
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
     
     def init_permissions(self):
         """initialize the permssions"""
-        TNArchipelBasicXMPPClient.init_permissions(self)
+        TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False);
         self.permission_center.create_permission("free", "Authorizes users to free allocated virtual machines", False);
         self.permission_center.create_permission("rostervm", "Authorizes users to access the hypervisor's roster", False);
@@ -200,11 +200,10 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         c = self.database.cursor()
         c.execute("select * from virtualmachines")
         for vm in c:
-            jid, password, date, comment, name = vm
-            vm = self.create_threaded_vm(xmpp.JID(jid), password, name)
-            # add hypervisor in the VM roster. This allow to manually add vm into the database
-            # and during restart, being able to delete it from the GUI
-            # vm.register_actions_to_perform_on_auth("add_jid", self.jid.getStripped(), oneshot=True)
+            string_jid, password, date, comment, name = vm
+            jid = xmpp.JID(string_jid)
+            jid.setResource(self.jid.getNode())
+            vm = self.create_threaded_vm(jid, password, name)
             self.virtualmachines[vm.jid.getNode()] = vm.get_instance()
     
         
@@ -229,9 +228,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     
-    ######################################################################################################
+    
     ### LIBVIRT events Processing
-    ######################################################################################################
+    
     
     def hypervisor_on_domain_event(self, conn, dom, event, detail, opaque):
         """
@@ -265,9 +264,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """
@@ -324,9 +323,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     
-    ######################################################################################################
+    
     ###  Hypervisor controls
-    ######################################################################################################
+    
     
     def alloc(self, requester=None, requested_name=None):
         """
@@ -350,7 +349,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         
         if requester:
             log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
-            vm.register_actions_to_perform_on_auth("add_jid", requester, persistant=False)
+            vm.register_actions_to_perform_on_auth("add_jid", xmpp.JID(requester), persistant=False)
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
         
         log.info("registering the new VM in hypervisor's memory")
@@ -378,7 +377,7 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
         """
         uuid    = jid.getNode()
         
-        jid.setResource(self.resource)
+        jid.setResource(self.jid.getNode())
         log.info("starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm = self.create_threaded_vm(jid, password, name).get_instance()
         
@@ -472,9 +471,9 @@ class TNArchipelHypervisor(TNArchipelBasicXMPPClient):
     
     
     
-    ######################################################################################################
+    
     ###  Hypervisor IQs
-    ######################################################################################################
+    
     
     def iq_alloc(self, iq):
         """

@@ -37,7 +37,7 @@ class TNHypervisorNetworks:
     def __init__(self, entity):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity
@@ -61,9 +61,9 @@ class TNHypervisorNetworks:
             self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False);            
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq_for_hypervisor(self, conn, iq):
         """

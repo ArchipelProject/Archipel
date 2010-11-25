@@ -70,9 +70,9 @@ class TNArchipelPermissionCenter:
         self.TNArchipelPermission.createTable(ifNotExists=True, connection=self.connection)
     
     
-    ######################################################################################################
+    
     ### Permission management
-    ###################################################################################################### 
+     
     
     def create_permission(self, name, description="", default_permission=False):
         """create a new permission"""
@@ -107,9 +107,9 @@ class TNArchipelPermissionCenter:
     
     
     
-    ######################################################################################################
+    
     ### Users management
-    ###################################################################################################### 
+     
     
     def create_user(self, name):
         """create a new user"""
@@ -217,9 +217,9 @@ class TNArchipelPermissionCenter:
 
     
     
-    ######################################################################################################
+    
     ### Roles management
-    ###################################################################################################### 
+     
     
     def create_role(self, name, description=""):
         """create a new role"""
@@ -327,9 +327,9 @@ class TNArchipelPermissionCenter:
     
     
     
-    # ######################################################################################################
+    # 
     # ### User permissions verification
-    # ###################################################################################################### 
+    #  
     
     def check_permission(self, user_name, permission_name):
         """check if given user has given permission"""

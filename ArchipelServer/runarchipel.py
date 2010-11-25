@@ -22,6 +22,7 @@ import getopt
 import archipel
 import xmpp
 import utils
+import socket
 import libvirtEventLoop
 
 
@@ -65,6 +66,8 @@ def main():
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
     name        = config.get("HYPERVISOR", "hypervisor_name")
+    
+    jid.setResource(socket.gethostname())
     
     hyp = archipel.TNArchipelHypervisor(jid, password, config, name, database)
     hyp.connect()

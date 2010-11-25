@@ -34,7 +34,7 @@ class TNHypervisorHealth:
     def __init__(self, entity, db_file,collection_interval, max_rows_before_purge, max_cached_rows, log_file):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.collector = TNThreadedHealthCollector(db_file,collection_interval, max_rows_before_purge, max_cached_rows)
@@ -49,9 +49,9 @@ class TNHypervisorHealth:
     
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """

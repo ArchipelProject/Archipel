@@ -6,9 +6,9 @@ import archipel
 
 ARCHIPEL_NS_HYPERVISOR_HEALTH = "archipel:hypervisor:health"
 
-######################################################################################################
+
 ### Registring of the stanza
-######################################################################################################
+
 
 def __module_init__health_module(self):
     db_file                 = self.configuration.get("HEALTH", "health_database_path")

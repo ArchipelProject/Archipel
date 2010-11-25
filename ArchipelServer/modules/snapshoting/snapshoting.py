@@ -35,7 +35,7 @@ class TNSnapshoting:
     def __init__(self, entity):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity
@@ -49,9 +49,9 @@ class TNSnapshoting:
         
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """

@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import xmpp
 import sys
-from archipelBasicXMPPClient import *
+from archipelEntity import *
 
-class XMPPVirtualMachineController(TNArchipelBasicXMPPClient):
+class XMPPVirtualMachineController(TNArchipelEntity):
                 
     def send_iq(self, iq):
         if sys.argv[2] == "archipel:vm:definition":

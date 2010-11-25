@@ -61,9 +61,9 @@ class TNPubSubNode:
         self.content        = None
     
     
-    ######################################################################################################
+    
     ### Node management
-    ###################################################################################################### 
+     
     
     def recover(self):
         """
@@ -180,9 +180,9 @@ class TNPubSubNode:
     
     
     
-    ######################################################################################################
+    
     ### Item management
-    ###################################################################################################### 
+     
     
     def get_items(self):
         """return an array of all items"""
@@ -210,7 +210,7 @@ class TNPubSubNode:
         """
         triggered on response
         """
-        log.debug("PUBSUB: publish done. Answer is : %s" % str(response))
+        log.debug("PUBSUB: item published is node %s" % self.nodename)
         
         if response.getType() == "result":
             item.setAttr("id", response.getTag("pubsub").getTag("publish").getTag("item").getAttr("id"))

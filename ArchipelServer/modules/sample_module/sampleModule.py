@@ -28,7 +28,7 @@ class TNSampleModule:
     def __init__(self, entity):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity
@@ -58,9 +58,9 @@ class TNSampleModule:
             raise xmpp.protocol.NodeProcessed
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def iq_do_something(self, iq):
         """

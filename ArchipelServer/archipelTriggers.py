@@ -35,7 +35,7 @@ class TNArchipelTrigger:
     def __init__(self, entity, name, description=None, mode=ARCHIPEL_TRIGGER_MODE_MANUAL, check_method=None, check_interval=-1):
         """
         the contructor
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the entity that owns the trigger
         @type name string
         @param name the name of the trigger

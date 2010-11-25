@@ -36,7 +36,7 @@ class TNMediaManagement:
     def __init__(self, shared_isos_folder, entity):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity
@@ -51,9 +51,9 @@ class TNMediaManagement:
         self.entity.permission_center.create_permission("drives_rename", "Authorizes user to rename a drive", False);
     
     
-    ######################################################################################################
+    
     ### XMPP Processing
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """

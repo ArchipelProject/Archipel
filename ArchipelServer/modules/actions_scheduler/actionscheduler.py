@@ -31,7 +31,7 @@ class TNActionScheduler:
     def __init__(self, entity, db_file):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity
@@ -64,9 +64,9 @@ class TNActionScheduler:
     
     
     
-    ######################################################################################################
+    
     ### Persistance
-    ###################################################################################################### 
+     
     
     def delete_job(self, uid):
         self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
@@ -87,9 +87,9 @@ class TNActionScheduler:
     
     
     
-    ######################################################################################################
+    
     ### Jobs
-    ###################################################################################################### 
+     
     
     def get_jod_with_uid(self, uid):
         for job in self.scheduler.jobs:
@@ -137,9 +137,9 @@ class TNActionScheduler:
     
     
     
-    ######################################################################################################
+    
     ### Process IQ
-    ###################################################################################################### 
+     
         
     def process_iq(self, conn, iq):
         """

@@ -29,7 +29,7 @@ class TNOOMKiller:
     def __init__(self, entity, db_file):
         """
         initialize the module
-        @type entity TNArchipelBasicXMPPClient
+        @type entity TNArchipelEntity
         @param entity the module entity
         """
         self.entity = entity;
@@ -44,9 +44,9 @@ class TNOOMKiller:
         self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False);
     
     
-    ######################################################################################################
+    
     ### Hooks
-    ######################################################################################################
+    
     
     def vm_create(self, entity, args):
         oom_info = self.get_oom_info()
@@ -70,9 +70,9 @@ class TNOOMKiller:
     
     
     
-    ######################################################################################################
+    
     ### OOM information management
-    ######################################################################################################
+    
     
     def get_oom_info(self):
         """
@@ -106,9 +106,9 @@ class TNOOMKiller:
     
     
     
-    ######################################################################################################
+    
     ### XMPP handlers
-    ######################################################################################################
+    
     
     def process_iq(self, conn, iq):
         """
