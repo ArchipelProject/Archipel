@@ -53,7 +53,47 @@ class TNActionScheduler:
         self.entity.permission_center.create_permission("scheduler_actions", "Authorizes user to get available actions", False);
     
     
+    
+    ### Persistance
+    
+    def delete_job(self, uid):
+        """
+        remove a job from the database
+        
+        @type uid string
+        @param uid the uid of the job to remove
+        """
+        
+        self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
+        self.database.commit()
+    
+    
     def save_jobs(self, uid, action, year, month, day, hour, minute, second, comment, params=None):
+        """
+        save a job in the database
+        
+        @type uid string
+        @param uid the uid of the job
+        @type action string
+        @param action the action
+        @type year string
+        @param year year of execution
+        @type month string
+        @param month month of execution
+        @type day string
+        @param day day of execution
+        @type hour string
+        @param hour hour of execution
+        @type minute string
+        @param minute minute of execution
+        @type second string
+        @param second second of execution
+        @type comment string
+        @param comment comment about the job
+        @type params string
+        @param params random parameter of the job
+        """
+        
         entityClass = self.entity.__class__.__name__
         if entityClass == "TNArchipelVirtualMachine":
             entity_uid = self.entity.uuid
@@ -63,17 +103,11 @@ class TNActionScheduler:
         self.database.commit()
     
     
-    
-    
-    ### Persistance
-     
-    
-    def delete_job(self, uid):
-        self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid,))
-        self.database.commit()
-    
-    
     def restore_jobs(self):
+        """
+        restore the jobs from the database
+        """
+        
         entityClass = self.entity.__class__.__name__
         if entityClass == "TNArchipelVirtualMachine":
             entity_uid = self.entity.uuid
@@ -83,37 +117,51 @@ class TNActionScheduler:
         for values in self.cursor:
             entity_uuid, job_uuid, action, year, month, day, hour, minute, second, comment, params = values
             str_date = "%s/%s/%s %s:%s:%s" % (year, month, day, hour, minute, second)
-            self.scheduler.add_cron_job(self.__do_job_for_vm, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[action, job_uuid, str_date, comment])
-    
+            self.scheduler.add_cron_job(self.do_job_for_vm, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[action, job_uuid, str_date, comment])
     
     
     
     ### Jobs
-     
     
     def get_jod_with_uid(self, uid):
+        """
+        get a job with given uid
+        
+        @type uid string
+        @param uid the uid of the job
+        """
+        
         for job in self.scheduler.jobs:
             if str(job.args[1]) == uid:
                 return job;
         return None;
     
     
-    def __do_job_for_vm(self, action, uid, str_date, comment, param):
-        if action == "create":
-            self.entity.create()
-        elif action == "shutdown":
-            self.entity.shutdown()
-        elif action == "destroy":
-            self.entity.destroy()
-        elif action == "suspend":
-            self.entity.suspend()
-        elif action == "resume":
-            self.entity.resume()
+    def do_job_for_vm(self, action, uid, str_date, comment, param):
+        """
+        perform the job
+        
+        @type action string
+        @param action the action to execute
+        @type uid string
+        @param uid the uid of the job
+        @type str_date string
+        @param str_date the date of the job
+        @type comment string
+        @param commt comment about the job
+        @type param string
+        @param param a random parameter to give to job
+        """
+        
+        if action == "create":      self.entity.create()
+        elif action == "shutdown":  self.entity.shutdown()
+        elif action == "destroy":   self.entity.destroy()
+        elif action == "suspend":   self.entity.suspend()
+        elif action == "resume":    self.entity.resume()
         elif action == "pause":
             if self.entity.libvirt_status == 1: self.entity.suspend()
             elif self.entity.libvirt_status == 3: self.entity.resume()
-        elif action == "migrate":
-            pass
+        elif action == "migrate": pass
         
         job = self.get_jod_with_uid(uid)
         if not job or not self.scheduler.is_job_active(job):
@@ -122,25 +170,35 @@ class TNActionScheduler:
         self.entity.push_change("scheduler", "jobexecuted");
     
     
-    def __do_job_for_hypervisor(self, action, uid, str_date, comment, param):
+    def do_job_for_hypervisor(self, action, uid, str_date, comment, param):
+        """
+        perform the job
         
-        if action == "alloc":
-            self.entity.alloc()
-        elif action == "free":
-            pass #self.entity.free()
+        @type action string
+        @param action the action to execute
+        @type uid string
+        @param uid the uid of the job
+        @type str_date string
+        @param str_date the date of the job
+        @type comment string
+        @param commt comment about the job
+        @type param string
+        @param param a random parameter to give to job
+        """
+        
+        if action == "alloc": self.entity.alloc()
+        elif action == "free": pass #self.entity.free()
         
         job = self.get_jod_with_uid(uid)
         if not job or not self.scheduler.is_job_active(job):
             self.delete_job(uid);
         
         self.entity.push_change("scheduler", "jobexecuted");
-    
     
     
     
     ### Process IQ
-     
-        
+    
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_VM_SCHEDULER IQ is received.
@@ -158,31 +216,23 @@ class TNActionScheduler:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="scheduler_")
         
-        if action == "schedule":
-            reply = self.iq_schedule(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        elif action == "unschedule":
-            reply = self.iq_unschedule(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        elif action == "jobs":
-            reply = self.iq_jobs(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        elif action == "actions":
-            reply = self.iq_actions(iq)
+        if   action == "schedule":      reply = self.iq_schedule(iq)
+        elif action == "unschedule":    reply = self.iq_unschedule(iq)
+        elif action == "jobs":          reply = self.iq_jobs(iq)
+        elif action == "actions":       reply = self.iq_actions(iq)
+        
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
-        
+    
     def iq_schedule(self, iq):
         """
         Schedule a task.
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -211,10 +261,8 @@ class TNActionScheduler:
             
             str_date = "%s-%s-%s @ %s : %s : %s" % (year, month, day, hour, minute, second)
             
-            if entityClass == "TNArchipelVirtualMachine":
-                func = self.__do_job_for_vm
-            elif entityClass == "TNArchipelHypervisor":
-                func = self.__do_job_for_hypervisor
+            if entityClass == "TNArchipelVirtualMachine":   func = self.do_job_for_vm
+            elif entityClass == "TNArchipelHypervisor":     func = self.do_job_for_hypervisor
             
             self.scheduler.add_cron_job(func, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[job, uid, str_date, comment, param])
             
@@ -229,10 +277,9 @@ class TNActionScheduler:
     def iq_jobs(self, iq):
         """
         gets jobs
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -253,10 +300,10 @@ class TNActionScheduler:
     def iq_unschedule(self, iq):
         """
         gets jobs
-
+        
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
+        
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
