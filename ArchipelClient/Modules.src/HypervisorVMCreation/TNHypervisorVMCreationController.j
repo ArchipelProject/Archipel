@@ -25,6 +25,10 @@ TNArchipelTypeHypervisorControlFree         = @"free";
 TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 TNArchipelTypeHypervisorControlClone        = @"clone";
 
+TNArchipelTypeSubscription                  = @"archipel:subscription";
+TNArchipelTypeSubscriptionAdd               = @"add";
+TNArchipelTypeSubscriptionRemove            = @"remove";
+
 TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
@@ -44,12 +48,18 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     @outlet CPTextField     fieldJID;
     @outlet CPTextField     fieldName;
     @outlet CPTextField     fieldNewVMRequestedName;
+    @outlet CPTextField     fieldNewSubscriptionTarget;
+    @outlet CPTextField     fieldRemoveSubscriptionTarget;
     @outlet CPView          viewTableContainer;
     @outlet CPWindow        windowNewVirtualMachine;
+    @outlet CPWindow        windowNewSubscription;
+    @outlet CPWindow        windowRemoveSubscription;
 
     CPButton                _cloneButton;
     CPButton                _minusButton;
     CPButton                _plusButton;
+    CPButton                _addSubscriptionButton;
+    CPButton                _removeSubscriptionButton;
     CPTableView             _tableVirtualMachines;
     TNTableViewDataSource   _virtualMachinesDatasource;
 }
@@ -127,14 +137,27 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(deleteVirtualMachine:)];
 
+    _addSubscriptionButton = [CPButtonBar plusButton];
+    [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-subscription-add.png"] size:CPSizeMake(16, 16)]];
+    [_addSubscriptionButton setTarget:self];
+    [_addSubscriptionButton setAction:@selector(openAddSubscriptionWindow:)];
+
+    _removeSubscriptionButton = [CPButtonBar plusButton];
+    [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-subscription-remove.png"] size:CPSizeMake(16, 16)]];
+    [_removeSubscriptionButton setTarget:self];
+    [_removeSubscriptionButton setAction:@selector(openRemoveSubscriptionWindow:)];
+
+
     [_minusButton setEnabled:NO];
+    [_addSubscriptionButton setEnabled:NO];
+    [_removeSubscriptionButton setEnabled:NO];
 
     _cloneButton = [CPButtonBar minusButton];
     [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-branch.png"] size:CPSizeMake(16, 16)]];
     [_cloneButton setTarget:self];
     [_cloneButton setAction:@selector(cloneVirtualMachine:)];
 
-    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton]];
+    [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton]];
 
 }
 
@@ -159,7 +182,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_tableVirtualMachines setDelegate:nil];
     [_tableVirtualMachines setDelegate:self]; // hum....
 
-    [self getHypervisorRoster];
+    [self populateVirtualMachinesTable];
 }
 
 /*! called when module is unloaded
@@ -200,22 +223,41 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (void)permissionsChanged
 {
     if ([self currentEntityHasPermission:@"alloc"])
-        [_plusButton setEnabled:YES];
+        [self setControl:_plusButton enabled:YES accordingToPermission:@"alloc"];
     else
     {
-        [_plusButton setEnabled:NO];
+        [self setControl:_plusButton enabled:NO accordingToPermission:@"alloc"];
         [windowNewVirtualMachine close];
     }
 
     if ([self currentEntityHasPermission:@"free"])
-        [_minusButton setEnabled:YES];
+        [self setControl:_minusButton enabled:YES accordingToPermission:@"free"];
     else
-        [_minusButton setEnabled:NO];
+        [self setControl:_minusButton enabled:NO accordingToPermission:@"free"];
 
     if ([self currentEntityHasPermission:@"clone"])
-        [_cloneButton setEnabled:YES];
+        [self setControl:_cloneButton enabled:YES accordingToPermission:@"clone"];
     else
-        [_cloneButton setEnabled:NO];
+        [self setControl:_cloneButton enabled:NO accordingToPermission:@"clone"];
+
+    if ([self currentEntityHasPermission:@"subscription_add"])
+        [self setControl:_addSubscriptionButton enabled:YES accordingToPermission:@"subscription_add"];
+    else
+    {
+        [self setControl:_addSubscriptionButton enabled:NO accordingToPermission:@"subscription_add"];
+        [windowNewSubscription close];
+    }
+
+    if ([self currentEntityHasPermission:@"subscription_remove"])
+        [self setControl:_removeSubscriptionButton enabled:YES accordingToPermission:@"subscription_remove"];
+    else
+    {
+        [self setControl:_removeSubscriptionButton enabled:NO accordingToPermission:@"subscription_remove"];
+        [windowRemoveSubscription close];
+    }
+
+    [self populateVirtualMachinesTable];
+
 }
 
 #pragma mark -
@@ -241,7 +283,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
     CPLog.info("PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
-    [self getHypervisorRoster];
+    [self populateVirtualMachinesTable];
 
     return YES;
 }
@@ -252,7 +294,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 - (void)_reload:(CPNotification)aNotification
 {
     if ([_entity XMPPShow] != TNStropheContactStatusOffline)
-        [self getHypervisorRoster];
+        [self populateVirtualMachinesTable];
 }
 
 /*! reoload the table when a VM change it's status
@@ -268,12 +310,52 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
-    [_minusButton setEnabled:NO];
+    [self setControl:_minusButton enabled:NO accordingToPermission:@"free"];
+    [self setControl:_cloneButton enabled:NO accordingToPermission:@"clone"];
+    [self setControl:_addSubscriptionButton enabled:NO accordingToPermission:@"subscription_add"];
+    [self setControl:_removeSubscriptionButton enabled:NO accordingToPermission:@"subscription_remove"];
 
     if ([[aNotification object] numberOfSelectedRows] > 0)
     {
         if ([self currentEntityHasPermission:@"free"])
-            [_minusButton setEnabled:YES];
+            [self setControl:_minusButton enabled:YES accordingToPermission:@"free"];
+        if ([self currentEntityHasPermission:@"clone"])
+            [self setControl:_cloneButton enabled:YES accordingToPermission:@"clone"];
+        if ([self currentEntityHasPermission:@"subscription_add"])
+            [self setControl:_addSubscriptionButton enabled:YES accordingToPermission:@"subscription_add"];
+        if ([self currentEntityHasPermission:@"subscription_remove"])
+            [self setControl:_removeSubscriptionButton enabled:YES accordingToPermission:@"subscription_remove"];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Utilities
+
+/*! will populate the table of virtual machine according to permissions
+    if entity has rostervm permissions, the it will ask for the hyperisor's roster,
+    otherwise it will populate according to the user roster
+*/
+- (void)populateVirtualMachinesTable
+{
+    if ([self currentEntityHasPermission:@"rostervm"])
+        [self getHypervisorRoster];
+    else
+    {
+        [_virtualMachinesDatasource removeAllObjects];
+        for (var i = 0; i < [[_roster contacts] count]; i++)
+        {
+            var contact = [[_roster contacts] objectAtIndex:i];
+
+            if (([_roster analyseVCard:[contact vCard]] == TNArchipelEntityTypeVirtualMachine)
+                && [[contact resources] count]
+                && ([[contact resources] objectAtIndex:0] == [[_entity JID] node]))
+            {
+                [_virtualMachinesDatasource addObject:contact];
+                [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:contact];
+            }
+        }
+        [_tableVirtualMachines reloadData];
     }
 }
 
@@ -289,14 +371,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index];
 
-    if ([_roster containsJID:[vm JID]])
-    {
-        var row             = [[_roster mainOutlineView] rowForItem:vm],
-            indexes         = [CPIndexSet indexSetWithIndex:row];
-
-        [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
-    }
-    else
+    if (![_roster containsJID:[vm JID]])
     {
         var alert = [TNAlert alertWithMessage:@"Adding contact"
                                     informative:@"Would you like to add " + [vm nickname] + @" to your roster"
@@ -341,6 +416,41 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [self cloneVirtualMachine]
 }
 
+/*! open the add subscription window
+    @param sender the sender of the action
+*/
+- (IBAction)openAddSubscriptionWindow:(id)aSender
+{
+    [fieldNewSubscriptionTarget setStringValue:@""];
+    [windowNewSubscription center];
+    [windowNewSubscription makeKeyAndOrderFront:aSender];
+}
+
+/*! add subscription to selected virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)addSubscription:(id)aSender
+{
+    [self addSubscription];
+}
+
+/*! open the add subscription window
+    @param sender the sender of the action
+*/
+- (IBAction)openRemoveSubscriptionWindow:(id)aSender
+{
+    [fieldRemoveSubscriptionTarget setStringValue:@""];
+    [windowRemoveSubscription center];
+    [windowRemoveSubscription makeKeyAndOrderFront:aSender];
+}
+
+/*! remove subscription from selected virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)removeSubscription:(id)aSender
+{
+    [self removeSubscription];
+}
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -389,7 +499,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
             if (entry)
             {
-               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
+               if ([_roster analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
                {
                    [_virtualMachinesDatasource addObject:entry];
                    [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
@@ -398,6 +508,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             else
             {
                 var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
+                [contact setNickname:[JID node]];
                 [_virtualMachinesDatasource addObject:contact];
             }
         }
@@ -586,5 +697,112 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
     return NO;
 }
+
+/*! add a new subscription to selected virtual machine
+*/
+- (void)addSubscription
+{
+    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
+    {
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a virtual machine"];
+         return;
+    }
+
+    var selectedIndex   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+        vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex],
+        stanza          = [TNStropheStanza iqWithType:@"set"];
+
+    [windowNewSubscription close];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeSubscriptionAdd,
+        "jid": [fieldNewSubscriptionTarget stringValue]}];
+
+    [vm sendStanza:stanza andRegisterSelector:@selector(_didAddSubscription:) ofObject:self];
+
+}
+
+/*! compute the answer of the hypervisor about adding subscription
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (BOOL)_didAddSubscription:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Subscription request" message:@"Added new subscription to virtual machine"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+
+/*! ask vm to remove a subscription. but ask user if he is sure before
+*/
+- (void)removeSubscription
+{
+    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] != 1))
+    {
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a virtual machine"];
+         return;
+    }
+
+    var selectedIndex   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
+        vm              = [_virtualMachinesDatasource objectAtIndex:selectedIndex];
+
+    var alert = [TNAlert alertWithMessage:@"Removing subscription"
+                                informative:@"Are you sure you want to remove the subscription for this user ?"
+                                 target:self
+                                 actions:[["Remove", @selector(performRemoveSubscription:)], ["Cancel", nil]]];
+
+    [alert setUserInfo:vm];
+
+    [alert runModal];
+}
+
+/*! ask vm to remove a subscription
+*/
+- (void)performRemoveSubscription:(TNStropheContact)aVirtualMachine
+{
+    if (([_tableVirtualMachines numberOfRows] == 0) || ([_tableVirtualMachines numberOfSelectedRows] <= 0))
+    {
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a virtual machine"];
+         return;
+    }
+
+    var stanza = [TNStropheStanza iqWithType:@"set"];
+
+    [windowRemoveSubscription close];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeSubscription}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeSubscriptionRemove,
+        "jid": [fieldRemoveSubscriptionTarget stringValue]}];
+
+    [aVirtualMachine sendStanza:stanza andRegisterSelector:@selector(_didRemoveSubscription:) ofObject:self];
+
+}
+
+/*! compute the answer of the hypervisor about removing subscription
+    @param aStanza TNStropheStanza containing hypervisor answer
+*/
+- (BOOL)_didRemoveSubscription:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Subscription request" message:@"Subscription have been removed"];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
 
 @end

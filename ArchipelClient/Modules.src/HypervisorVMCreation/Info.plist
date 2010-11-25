@@ -29,10 +29,10 @@
         <key>CibName</key>
         <string>HypervisorVMCreation</string>
         
-        <key>MandatoryPermissions</key>
+        <!-- <key>MandatoryPermissions</key>
         <array>
             <string>rostervm</string>
-        </array>
+        </array> -->
         
     </dict>
 </plist>
