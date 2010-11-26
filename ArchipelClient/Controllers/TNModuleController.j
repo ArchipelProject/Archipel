@@ -94,7 +94,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     TNiTunesTabView                 _mainTabView                    @accessors(property=mainTabView);
     TNStropheRoster                 _roster                         @accessors(property=roster);
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
-    TNPermissionsController         _permissionsController          @accessors(property=permissionsController);
 
     CPArray                         _bundles;
     CPDictionary                    _modulesMenuItems;
@@ -452,7 +451,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
-    [currentModuleController setPermissionsController:_permissionsController];
     [currentModuleController setBundle:aBundle];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
@@ -525,7 +523,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
-    [currentModuleController setPermissionsController:_permissionsController];
     [currentModuleController setMandatoryPermissions:mandatoryPermissions];
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 

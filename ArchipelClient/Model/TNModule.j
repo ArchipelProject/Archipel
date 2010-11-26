@@ -84,7 +84,6 @@ TNArchipelErrorGeneral                  = 1;
     id                              _entity                     @accessors(property=entity);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
-    TNPermissionsController         _permissionsController      @accessors(getter=permissionController);
     TNStropheConnection             _connection                 @accessors(property=connection);
     TNStropheGroup                  _group                      @accessors(property=group);
     TNStropheRoster                 _roster                     @accessors(property=roster);
@@ -92,8 +91,6 @@ TNArchipelErrorGeneral                  = 1;
     BOOL                            _pubSubPermissionRegistred;
     CPArray                         _pubsubRegistrar;
     CPArray                         _registredSelectors;
-    CPDictionary                    _disableBadgesRegistry;
-    CPImageView                     _imageViewControlDisabledPrototype;
 }
 
 
@@ -107,6 +104,7 @@ TNArchipelErrorGeneral                  = 1;
         _isActive               = NO;
         _isVisible              = NO;
         _pubsubRegistrar        = [CPArray array];
+        [[TNPermissionsCenter defaultCenter] addDelegate:self];
     }
     return self;
 }
@@ -120,13 +118,9 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)initializeWithEntity:(id)anEntity andRoster:(TNStropheRoster)aRoster
 {
-    // [[CPNotificationCenter defaultCenter] removeObserver:self name:TNArchipelPermissionsUpdated object:nil];
-
     _entity     = anEntity;
     _roster     = aRoster;
     _connection = [_roster connection];
-
-    // [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(permissionUpdated:) name:TNArchipelPermissionsUpdated object:_entity];
 }
 
 
@@ -144,14 +138,6 @@ TNArchipelErrorGeneral                  = 1;
     _viewPermissionsDenied = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 }
 
-/*! set the permissions controller of the module and register onto it as delegate
-    @param aPermissionController the permission controller
-*/
-- (void)setPermissionsController:(TNPermissionsController)aPermissionController
-{
-    _permissionsController = aPermissionController;
-    [_permissionsController addDelegate:self];
-}
 
 #pragma mark -
 #pragma mark Events management
@@ -302,13 +288,10 @@ TNArchipelErrorGeneral                  = 1;
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
         return YES;
 
-    if ((![[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:@"all"]) && [[_connection JID] bare] != defaultAdminAccount)
+    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity]) && [[_connection JID] bare] != defaultAdminAccount)
     {
-        for (var i = 0; i < [_mandatoryPermissions count]; i++)
-        {
-            if (![[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:[_mandatoryPermissions objectAtIndex:i]])
+        if (![[TNPermissionsCenter defaultCenter] hasPermissions:_mandatoryPermissions forEntity:anEntity ])
                 return NO;
-        }
     }
     return YES;
 }
@@ -333,10 +316,11 @@ TNArchipelErrorGeneral                  = 1;
     if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
         return YES;
 
-    if ([[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+
+    if ([[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity])
         return YES;
 
-    return [[[_permissionsController permissions] objectForKey:[[anEntity JID] bare]] containsObject:aPermission];
+    return [[TNPermissionsCenter defaultCenter] hasPermission:aPermission forEntity:anEntity];
 }
 
 /*! check if current entity has given permission
@@ -369,86 +353,97 @@ TNArchipelErrorGeneral                  = 1;
 }
 
 
-/*! generate a valid unique identifier for given control
+#pragma mark -
+#pragma mark Control enabling against permissions
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
     @param aControl the original control
-    @return CPString containing the generated key
+    @param aSegment the identifier of the segment (if not nil, the control will be considered as a CPSegmentedControl)
+    @param somePermissions array of permissions
+    @param aSpecialCondition suplemetary condition that must be YES to enable the control (but will remove the badge if permission is granted)
 */
-- (CPString)generateBadgeKeyForControl:(CPControl)aControl
+- (void)setControl:(CPControl)aControl segment:(int)aSegment enabledAccordingToPermissions:(CPArray)somePermissions specialCondition:(BOOL)aSpecialCondition
 {
-    var key = @"" + aControl + @"";
-    return key.replace(" ", "_");
-}
+    var permissionCenter = [TNPermissionsCenter defaultCenter];
 
-/*! Add a deactivated badge with given key to given control
-    @param aKey the key of the control (you may use generateBadgeKeyForControl:)
-    @param aControl the original control
-*/
-- (void)addBadgeWithKey:(CPString)aKey toControl:(CPControl)aControl
-{
-    if (!_disableBadgesRegistry)
-        _disableBadgesRegistry = [CPDictionary dictionary];
-
-    if (!_imageViewControlDisabledPrototype)
-    {
-        _imageViewControlDisabledPrototype = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
-        [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
-    }
-
-    if ([_disableBadgesRegistry containsKey:aKey])
-        return;
-
-    var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
-        badge = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-
-    [badge setFrameOrigin:CPPointMake(CPRectGetWidth([aControl frame]) - 16.0, CPRectGetHeight([aControl frame]) - 16.0)];
-    [aControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
-
-    [_disableBadgesRegistry setObject:badge forKey:aKey];
-}
-
-/*! remove the badge with given key
-    @param aKey the key of the badge (you may use generateBadgeKeyForControl:)
-*/
-- (void)removeBadgeWithKey:(CPString)aKey
-{
-    if ([_disableBadgesRegistry containsKey:aKey])
-    {
-        [[_disableBadgesRegistry objectForKey:aKey] removeFromSuperview];
-        [_disableBadgesRegistry removeObjectForKey:aKey];
-    }
+    [permissionCenter setControl:aControl segment:aSegment enabledAccordingToPermissions:somePermissions forEntity:_entity specialCondition:aSpecialCondition];
 }
 
 /*! enable given control if current entity has given permission
     otherwise, disable it and put a badge
     @param aControl the original control
-    @param aPermission the needed permission
+    @param somePermissions array of permissions
+    @param aSpecialCondition suplemetary condition that must be YES to enable the control (but will remove the badge if permission is granted)
+*/
+- (void)setControl:(CPControl)aControl enabledAccordingToPermissions:(CPArray)somePermissions specialCondition:(BOOL)aSpecialCondition
+{
+    [self setControl:aControl segment:nil enabledAccordingToPermissions:somePermissions specialCondition:aSpecialCondition];
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param aPermission a permission
+    @param aSpecialCondition suplemetary condition that must be YES to enable the control (but will remove the badge if permission is granted)
+*/
+- (void)setControl:(CPControl)aControl enabledAccordingToPermission:(CPString)aPermission specialCondition:(BOOL)aSpecialCondition
+{
+    [self setControl:aControl segment:nil enabledAccordingToPermissions:[aPermission] specialCondition:aSpecialCondition];
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param somePermissions array of permissions
+*/
+- (void)setControl:(CPControl)aControl enabledAccordingToPermissions:(CPArray)somePermissions
+{
+    [self setControl:aControl segment:nil enabledAccordingToPermissions:somePermissions specialCondition:YES];
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param aPermission a permission
 */
 - (void)setControl:(CPControl)aControl enabledAccordingToPermission:(CPString)aPermission
 {
-    if ([self currentEntityHasPermission:aPermission])
-    {
-        [aControl setEnabled:YES];
-        [self removeBadgeWithKey:[self generateBadgeKeyForControl:aControl]];
-    }
-    else
-    {
-        [aControl setEnabled:NO];
-        [self addBadgeWithKey:[self generateBadgeKeyForControl:aControl] toControl:aControl];
-
-    }
+    [self setControl:aControl segment:nil enabledAccordingToPermissions:[aPermission]];
 }
 
-/*! only enable or disable a control only if the given permission in granted
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
     @param aControl the original control
-    @param shouldEnable BOOL that define if control should be enable or not
-    @param aPermission the needed permission
+    @param aSegment the identifier of the segment
+    @param aPermission a permission
+    @param aSpecialCondition suplemetary condition that must be YES to enable the control (but will remove the badge if permission is granted)
 */
-- (void)setControl:(CPControl)aControl enabled:(BOOL)shouldEnable accordingToPermission:(CPString)aPermission
+- (void)setControl:(CPControl)aControl segment:(CPString)aSegment enabledAccordingToPermission:(CPString)aPermission specialCondition:(BOOL)aSpecialCondition
 {
-    if ([self currentEntityHasPermission:aPermission])
-    {
-        [aControl setEnabled:shouldEnable];
-    }
+    [self setControl:aControl segment:aSegment enabledAccordingToPermissions:[aPermission] specialCondition:aSpecialCondition];
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param aSegment the identifier of the segment (if not nil, the control will be considered as a CPSegmentedControl)
+    @param somePermissions array of permissions
+*/
+- (void)setControl:(CPControl)aControl segment:(CPString)aSegment enabledAccordingToPermissions:(CPArray)somePermissions
+{
+    [self setControl:aControl segment:aSegment enabledAccordingToPermissions:somePermissions specialCondition:YES];
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param aSegment the identifier of the segment (if not nil, the control will be considered as a CPSegmentedControl)
+    @param aPermission a permission
+*/
+- (void)setControl:(CPControl)aControl segment:(CPString)aSegment enabledAccordingToPermission:(CPString)aPermission
+{
+    [self setControl:aControl segment:aSegment enabledAccordingToPermissions:[aPermission]];
 }
 
 
@@ -634,7 +629,7 @@ TNArchipelErrorGeneral                  = 1;
 
 /*! delegate of TNPermissionsController
 */
-- (void)permissionCenter:(TNPermissionsController)aController updatePermissionForEntity:(TNStropheContact)anEntity
+- (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
 {
     if (anEntity === _entity)
     {

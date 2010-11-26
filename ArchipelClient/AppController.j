@@ -47,7 +47,7 @@
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
-@import "Controllers/TNPermissionsController.j"
+@import "Controllers/TNPermissionsCenter.j"
 
 
 /*! @global
@@ -172,6 +172,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     @outlet CPSplitView             leftSplitView;
     @outlet CPSplitView             mainHorizontalSplitView;
     @outlet CPSplitView             splitViewTagsContents;
+    @outlet CPTextField             labelCurrentUser;
     @outlet CPTextField             textFieldAboutVersion;
     @outlet CPTextField             textFieldLoadingModuleLabel;
     @outlet CPTextField             textFieldLoadingModuleTitle;
@@ -187,12 +188,12 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     @outlet TNConnectionController  connectionController;
     @outlet TNContactsController    contactsController;
     @outlet TNGroupsController      groupsController;
+    @outlet TNModalWindow           windowModuleLoading;
+    @outlet TNModuleController      moduleController;
     @outlet TNPreferencesController preferencesController;
     @outlet TNPropertiesController  propertiesController;
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
-    @outlet TNModalWindow           windowModuleLoading;
-    @outlet TNModuleController      moduleController;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -213,7 +214,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     TNiTunesTabView                 _moduleTabView;
     TNModuleController              moduleController;
     TNOutlineViewRoster             _rosterOutlineView;
-    TNPermissionsController         _permissionsController;
     TNPubSubController              _pubSubController;
     TNRosterDataViewContact         _rosterDataViewForContacts;
     TNRosterDataViewGroup           _rosterDataViewForGroups;
@@ -346,9 +346,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     /* main menu */
     [self makeMainMenu];
 
-    /* Permission controller*/
-    _permissionsController = [[TNPermissionsController alloc] init];
-
 
     /* module Loader */
     [windowModuleLoading center];
@@ -371,7 +368,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
     [moduleController setModulesMenu:_modulesMenu];
-    [moduleController setPermissionsController:_permissionsController];
 
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
@@ -414,7 +410,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
     [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"plus-menu.png"] size:CPSizeMake(20, 20)]];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"plus-menu.png"] size:CPSizeMake(14, 14)]];
     [plusButton setBordered:NO];
     [plusButton setImagePosition:CPImageOnly];
 
@@ -423,13 +419,21 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [plusButton setMenu:plusMenu];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(20, 20)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(14, 14)]];
     [minusButton setAction:@selector(didMinusBouttonClicked:)];
 
     [buttonBarLeft setButtons:[plusButton, minusButton]];
 
     // copyright;
     [self copyright];
+
+    // connection label
+    [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
+    [labelCurrentUser setStringValue:@""];
+    [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
+    [labelCurrentUser setAlignment:CPRightTextAlignment];
+    [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
 
     // about window
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
@@ -620,6 +624,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
+    document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:connection];
     [_pubSubController retrieveSubscriptions];
@@ -646,8 +651,8 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [_rosterOutlineView setDataSource:_mainRoster];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [_permissionsController setRoster:_mainRoster];
-    [_permissionsController startWatching];
+    [[TNPermissionsCenter defaultCenter] setRoster:_mainRoster];
+    [[TNPermissionsCenter defaultCenter] startWatching];
 
     [moduleController setRoster:_mainRoster];
     [moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
@@ -657,6 +662,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
+    [labelCurrentUser setStringValue:@"Connected as " + [[connection JID] node]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -667,6 +673,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 {
     [theWindow orderOut:nil];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
+    [labelCurrentUser setStringValue:@""];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -739,8 +746,9 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     var defaults    = [CPUserDefaults standardUserDefaults],
         copy = document.createElement("div");
 
+    copy.id = "copyright_label";
     copy.style.position = "absolute";
-    copy.style.fontSize = "10px";
+    copy.style.fontSize = "9px";
     copy.style.color = "#6C707F";
     copy.style.width = "700px";
     copy.style.bottom = "8px";
