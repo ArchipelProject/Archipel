@@ -38,7 +38,6 @@ var __defaultPermissionCenter;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
-    CPArray                 _pubsubServers;
 }
 
 + (TNPermissionsCenter)defaultCenter
@@ -60,7 +59,6 @@ var __defaultPermissionCenter;
     {
         _cachedPermissions                  = [CPDictionary dictionary];
         _delegates                          = [CPArray array];
-        _pubsubServers                      = [CPArray array];
         _disableBadgesRegistry              = [CPDictionary dictionary];
         _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
 
@@ -148,12 +146,6 @@ var __defaultPermissionCenter;
     if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
     {
         var server = [[contact JID] domain];
-
-        if (![_pubsubServers containsObject:server])
-        {
-            [_pubsubServers addObject:server];
-            [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[_roster connection]];
-        }
 
         [self getPermissionForEntity:contact];
     }
