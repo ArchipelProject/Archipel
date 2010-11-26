@@ -298,3 +298,14 @@
     [super keyDown:anEvent];
 }
 @end
+
+
+
+@implementation CPSegmentedControl (comodity)
+
+- (id)segment:(CPString)aSegment
+{
+    return _segments[aSegment];
+}
+
+@end
