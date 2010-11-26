@@ -222,42 +222,24 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)permissionsChanged
 {
-    if ([self currentEntityHasPermission:@"alloc"])
-        [self setControl:_plusButton enabled:YES accordingToPermission:@"alloc"];
-    else
-    {
-        [self setControl:_plusButton enabled:NO accordingToPermission:@"alloc"];
+    [self setControl:_plusButton enabledAccordingToPermission:@"alloc"];
+    [self setControl:_minusButton enabledAccordingToPermission:@"free"];
+    [self setControl:_cloneButton enabledAccordingToPermission:@"clone"];
+    [self setControl:_addSubscriptionButton enabledAccordingToPermission:@"subscription_add"];
+    [self setControl:_removeSubscriptionButton enabledAccordingToPermission:@"subscription_remove"];
+
+    if (![self currentEntityHasPermission:@"alloc"])
         [windowNewVirtualMachine close];
-    }
 
-    if ([self currentEntityHasPermission:@"free"])
-        [self setControl:_minusButton enabled:YES accordingToPermission:@"free"];
-    else
-        [self setControl:_minusButton enabled:NO accordingToPermission:@"free"];
-
-    if ([self currentEntityHasPermission:@"clone"])
-        [self setControl:_cloneButton enabled:YES accordingToPermission:@"clone"];
-    else
-        [self setControl:_cloneButton enabled:NO accordingToPermission:@"clone"];
-
-    if ([self currentEntityHasPermission:@"subscription_add"])
-        [self setControl:_addSubscriptionButton enabled:YES accordingToPermission:@"subscription_add"];
-    else
-    {
-        [self setControl:_addSubscriptionButton enabled:NO accordingToPermission:@"subscription_add"];
+    if (![self currentEntityHasPermission:@"subscription_add"])
         [windowNewSubscription close];
-    }
 
-    if ([self currentEntityHasPermission:@"subscription_remove"])
-        [self setControl:_removeSubscriptionButton enabled:YES accordingToPermission:@"subscription_remove"];
-    else
-    {
-        [self setControl:_removeSubscriptionButton enabled:NO accordingToPermission:@"subscription_remove"];
+    if (![self currentEntityHasPermission:@"subscription_remove"])
         [windowRemoveSubscription close];
-    }
+
+    [self tableViewSelectionDidChange:nil];
 
     [self populateVirtualMachinesTable];
-
 }
 
 #pragma mark -
@@ -315,16 +297,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [self setControl:_addSubscriptionButton enabled:NO accordingToPermission:@"subscription_add"];
     [self setControl:_removeSubscriptionButton enabled:NO accordingToPermission:@"subscription_remove"];
 
-    if ([[aNotification object] numberOfSelectedRows] > 0)
+    if ([_tableVirtualMachines numberOfSelectedRows] > 0)
     {
-        if ([self currentEntityHasPermission:@"free"])
-            [self setControl:_minusButton enabled:YES accordingToPermission:@"free"];
-        if ([self currentEntityHasPermission:@"clone"])
-            [self setControl:_cloneButton enabled:YES accordingToPermission:@"clone"];
-        if ([self currentEntityHasPermission:@"subscription_add"])
-            [self setControl:_addSubscriptionButton enabled:YES accordingToPermission:@"subscription_add"];
-        if ([self currentEntityHasPermission:@"subscription_remove"])
-            [self setControl:_removeSubscriptionButton enabled:YES accordingToPermission:@"subscription_remove"];
+        [self setControl:_minusButton enabled:YES accordingToPermission:@"free"];
+        [self setControl:_cloneButton enabled:YES accordingToPermission:@"clone"];
+        [self setControl:_addSubscriptionButton enabled:YES accordingToPermission:@"subscription_add"];
+        [self setControl:_removeSubscriptionButton enabled:YES accordingToPermission:@"subscription_remove"];
     }
 }
 

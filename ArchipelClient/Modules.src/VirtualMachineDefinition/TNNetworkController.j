@@ -74,16 +74,10 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         switch ([[radio title] lowercaseString])
         {
             case @"network":
-                if (![_delegate currentEntityHasPermission:@"network_getnames"])
-                    [_delegate setControl:radio enabled:NO accordingToPermission:@"network_getnames"];
-                else
-                    [_delegate setControl:radio enabled:YES accordingToPermission:@"network_getnames"];
+                    [_delegate setControl:radio enabledAccordingToPermission:@"network_getnames"];
                     break;
             case @"bridge":
-                if (![_delegate currentEntityHasPermission:@"network_bridges"])
-                    [_delegate setControl:radio enabled:NO accordingToPermission:@"network_bridges"];
-                else
-                    [_delegate setControl:radio enabled:YES accordingToPermission:@"network_bridges"];
+                    [_delegate setControl:radio enabledAccordingToPermission:@"network_bridges"];
                     break;
         }
     }

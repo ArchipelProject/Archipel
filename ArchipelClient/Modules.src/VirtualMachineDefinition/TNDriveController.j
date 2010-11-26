@@ -103,16 +103,10 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         switch ([[radio title] lowercaseString])
         {
             case @"hard drive":
-                if (![_delegate currentEntityHasPermission:@"drives_get"])
-                    [radio setEnabled:NO];
-                else
-                    [radio setEnabled:YES];
+                    [_delegate setControl:radio enabledAccordingToPermission:@"drives_get"];
                     break;
             case @"cd/dvd":
-                if (![_delegate currentEntityHasPermission:@"drives_getiso"])
-                    [radio setEnabled:NO];
-                else
-                    [radio setEnabled:YES];
+                [_delegate setControl:radio enabledAccordingToPermission:@"drives_getiso"];
                     break;
         }
     }

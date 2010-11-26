@@ -238,10 +238,15 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 */
 - (void)permissionsChanged
 {
-    [self _didTableSelectionChange:nil];
+    [self setControl:_plusButton enabledAccordingToPermission:@"network_define"];
+    [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
+    [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
+    [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
+    [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
 
-    [networkController hideWindow:nil];
+    [self _didTableSelectionChange:nil];
 }
+
 
 #pragma mark -
 #pragma mark Notification handlers
@@ -279,15 +284,10 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
-    if ([self currentEntityHasPermission:@"network_define"])
-        [_plusButton setEnabled:YES];
-    else
-        [_plusButton setEnabled:NO];
-
-    [_minusButton setEnabled:NO];
-    [_editButton setEnabled:NO];
-    [_activateButton setEnabled:NO];
-    [_deactivateButton setEnabled:NO];
+    [self setControl:_minusButton enabled:NO accordingToPermission:@"network_undefine"];
+    [self setControl:_editButton enabled:NO accordingToPermission:@"network_define"];
+    [self setControl:_activateButton enabled:NO accordingToPermission:@"network_create"];
+    [self setControl:_deactivateButton enabled:NO accordingToPermission:@"network_destroy"];
 
     if ([_tableViewNetworks numberOfSelectedRows] == 0)
         return;
@@ -296,17 +296,13 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
     if ([networkObject isNetworkEnabled])
     {
-        if ([self currentEntityHasPermission:@"network_destroy"])
-            [_deactivateButton setEnabled:YES];
+        [self setControl:_deactivateButton enabled:YES accordingToPermission:@"network_destroy"];
     }
     else
     {
-        if ([self currentEntityHasPermission:@"network_undefine"])
-            [_minusButton setEnabled:YES];
-        if ([self currentEntityHasPermission:@"network_define"])
-            [_editButton setEnabled:YES];
-        if ([self currentEntityHasPermission:@"network_create"])
-            [_activateButton setEnabled:YES];
+        [self setControl:_minusButton enabled:YES accordingToPermission:@"network_undefine"];
+        [self setControl:_editButton enabled:YES accordingToPermission:@"network_define"];
+        [self setControl:_activateButton enabled:YES accordingToPermission:@"network_create"];
     }
 
     return YES;
