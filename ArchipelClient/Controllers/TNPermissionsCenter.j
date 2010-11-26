@@ -38,6 +38,7 @@ var __defaultPermissionCenter;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
+    CPArray                 _pubsubServers;
 }
 
 + (TNPermissionsCenter)defaultCenter
@@ -57,10 +58,11 @@ var __defaultPermissionCenter;
 {
     if (self = [super init])
     {
-        _cachedPermissions      = [CPDictionary dictionary];
-        _delegates              = [CPArray array];
-        _disableBadgesRegistry  = [CPDictionary dictionary];
-        _imageViewControlDisabledPrototype = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
+        _cachedPermissions                  = [CPDictionary dictionary];
+        _delegates                          = [CPArray array];
+        _pubsubServers                      = [CPArray array];
+        _disableBadgesRegistry              = [CPDictionary dictionary];
+        _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
 
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
@@ -105,6 +107,15 @@ var __defaultPermissionCenter;
 {
     for (var i = 0; i < [somePermissions count]; i++)
     {
+        if ([anEntity class] !== TNStropheContact)
+            return NO;
+
+        if ([[[_roster connection] JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
+            return YES;
+
+        if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+            return YES;
+
         if (![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:[somePermissions objectAtIndex:i]])
             return NO;
     }
@@ -133,8 +144,20 @@ var __defaultPermissionCenter;
     var contact = [aNotification object],
         entityType = [_roster analyseVCard:[contact vCard]];
 
+
     if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
+    {
+        var server = [[contact JID] domain];
+
+        if (![_pubsubServers containsObject:server])
+        {
+            [_pubsubServers addObject:server];
+            [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[_roster connection]];
+        }
+
         [self getPermissionForEntity:contact];
+    }
+
 }
 
 
