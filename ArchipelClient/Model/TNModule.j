@@ -368,7 +368,22 @@ TNArchipelErrorGeneral                  = 1;
     return [self entity:_entity hasPermissions:permissionsList];
 }
 
-- (void)setControl:(CPControl)aControl enabled:(BOOL)shouldEnable accordingToPermission:(CPString)aPermission
+
+/*! generate a valid unique identifier for given control
+    @param aControl the original control
+    @return CPString containing the generated key
+*/
+- (CPString)generateBadgeKeyForControl:(CPControl)aControl
+{
+    var key = @"" + aControl + @"";
+    return key.replace(" ", "_");
+}
+
+/*! Add a deactivated badge with given key to given control
+    @param aKey the key of the control (you may use generateBadgeKeyForControl:)
+    @param aControl the original control
+*/
+- (void)addBadgeWithKey:(CPString)aKey toControl:(CPControl)aControl
 {
     if (!_disableBadgesRegistry)
         _disableBadgesRegistry = [CPDictionary dictionary];
@@ -379,31 +394,61 @@ TNArchipelErrorGeneral                  = 1;
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
 
-    var key = @"" + aControl + @"";
+    if ([_disableBadgesRegistry containsKey:aKey])
+        return;
 
-    key = key.replace(" ", "_");
+    var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
+        badge = [CPKeyedUnarchiver unarchiveObjectWithData:data];
 
-    if (!shouldEnable && ![self currentEntityHasPermission:aPermission] && ![_disableBadgesRegistry containsKey:key])
+    [badge setFrameOrigin:CPPointMake(CPRectGetWidth([aControl frame]) - 16.0, CPRectGetHeight([aControl frame]) - 16.0)];
+    [aControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
+
+    [_disableBadgesRegistry setObject:badge forKey:aKey];
+}
+
+/*! remove the badge with given key
+    @param aKey the key of the badge (you may use generateBadgeKeyForControl:)
+*/
+- (void)removeBadgeWithKey:(CPString)aKey
+{
+    if ([_disableBadgesRegistry containsKey:aKey])
     {
-        var data = [CPKeyedArchiver archivedDataWithRootObject:_imageViewControlDisabledPrototype],
-            badge = [CPKeyedUnarchiver unarchiveObjectWithData:data];
-
-        [badge setFrameOrigin:CPPointMake(CPRectGetWidth([aControl frame]) - 16.0, CPRectGetHeight([aControl frame]) - 16.0)];
-        [aControl addSubview:badge positioned:CPWindowAbove relativeTo:nil];
-
-        [_disableBadgesRegistry setObject:badge forKey:key];
+        [[_disableBadgesRegistry objectForKey:aKey] removeFromSuperview];
+        [_disableBadgesRegistry removeObjectForKey:aKey];
     }
-    else if (shouldEnable && [self currentEntityHasPermission:aPermission] && [_disableBadgesRegistry containsKey:key])
+}
+
+/*! enable given control if current entity has given permission
+    otherwise, disable it and put a badge
+    @param aControl the original control
+    @param aPermission the needed permission
+*/
+- (void)setControl:(CPControl)aControl enabledAccordingToPermission:(CPString)aPermission
+{
+    if ([self currentEntityHasPermission:aPermission])
     {
-        if ([_disableBadgesRegistry containsKey:key])
-        {
-            [[_disableBadgesRegistry objectForKey:key] removeFromSuperview];
-            [_disableBadgesRegistry removeObjectForKey:key];
-        }
+        [aControl setEnabled:YES];
+        [self removeBadgeWithKey:[self generateBadgeKeyForControl:aControl]];
+    }
+    else
+    {
+        [aControl setEnabled:NO];
+        [self addBadgeWithKey:[self generateBadgeKeyForControl:aControl] toControl:aControl];
 
     }
+}
 
-    [aControl setEnabled:shouldEnable];
+/*! only enable or disable a control only if the given permission in granted
+    @param aControl the original control
+    @param shouldEnable BOOL that define if control should be enable or not
+    @param aPermission the needed permission
+*/
+- (void)setControl:(CPControl)aControl enabled:(BOOL)shouldEnable accordingToPermission:(CPString)aPermission
+{
+    if ([self currentEntityHasPermission:aPermission])
+    {
+        [aControl setEnabled:shouldEnable];
+    }
 }
 
 
