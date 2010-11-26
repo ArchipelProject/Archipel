@@ -83,6 +83,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRosterItemChange:) name:TNArchipelNotificationRosterSelectionChanged object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRetrieveSubscriptions:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:nil];
+
+    [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 
 
@@ -153,7 +155,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     }
     else
     {
-        [_buttonSave setEnabled:YES];
+        [[TNPermissionsCenter defaultCenter] setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
 
         [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
         [_tokenFieldTags setEnabled:YES];
@@ -243,6 +245,15 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     if (_currentRosterItem)
         [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
+}
+
+
+/*! delegate of TNPermissionsController
+*/
+- (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
+{
+    if (anEntity === _currentRosterItem)
+        [aCenter setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
 }
 
 
