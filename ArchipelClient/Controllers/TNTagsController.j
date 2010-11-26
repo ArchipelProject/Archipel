@@ -156,6 +156,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     else
     {
         [[TNPermissionsCenter defaultCenter] setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [[TNPermissionsCenter defaultCenter] setControl:_tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
 
         [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
         [_tokenFieldTags setEnabled:YES];
@@ -253,7 +254,10 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 - (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
 {
     if (anEntity === _currentRosterItem)
+    {
         [aCenter setControl:_buttonSave segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+        [aCenter setControl:_tokenFieldTags segment:nil enabledAccordingToPermissions:[@"settags"] forEntity:_currentRosterItem specialCondition:YES];
+    }
 }
 
 
