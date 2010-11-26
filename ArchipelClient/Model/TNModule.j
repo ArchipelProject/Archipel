@@ -89,6 +89,7 @@ TNArchipelErrorGeneral                  = 1;
     TNStropheRoster                 _roster                     @accessors(property=roster);
 
     BOOL                            _pubSubPermissionRegistred;
+    BOOL                            _registredToPermissionCenter;
     CPArray                         _pubsubRegistrar;
     CPArray                         _registredSelectors;
 }
@@ -97,16 +98,13 @@ TNArchipelErrorGeneral                  = 1;
 #pragma mark -
 #pragma mark Initialization
 
-- (id)init
+- (BOOL)initializeModule
 {
-    if (self = [super init])
-    {
-        _isActive               = NO;
-        _isVisible              = NO;
-        _pubsubRegistrar        = [CPArray array];
-        [[TNPermissionsCenter defaultCenter] addDelegate:self];
-    }
-    return self;
+    _isActive               = NO;
+    _isVisible              = NO;
+    _pubsubRegistrar        = [CPArray array];
+
+    [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 
 /*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
@@ -310,16 +308,6 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (BOOL)entity:(TNStropheContact)anEntity hasPermission:(CPString)aPermission
 {
-    if ([anEntity class] !== TNStropheContact)
-        return NO;
-
-    if ([[_connection JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
-        return YES;
-
-
-    if ([[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity])
-        return YES;
-
     return [[TNPermissionsCenter defaultCenter] hasPermission:aPermission forEntity:anEntity];
 }
 
@@ -475,9 +463,6 @@ TNArchipelErrorGeneral                  = 1;
 {
     // remove all notification observers
     [[CPNotificationCenter defaultCenter] removeObserver:self];
-
-    // and register again for permissions
-    // [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(permissionUpdated:) name:TNArchipelPermissionsUpdated object:_entity];
 
     // unregister all selectors
     for (var i = 0; i < [_registredSelectors count]; i++)

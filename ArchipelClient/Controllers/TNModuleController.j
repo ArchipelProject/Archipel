@@ -448,6 +448,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle],
         frame                       = [_mainModuleView bounds];
 
+    [currentModuleController initializeModule];
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
@@ -519,7 +520,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [moduleToolbarItem setTarget:self];
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
-
+    [currentModuleController initializeModule];
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
