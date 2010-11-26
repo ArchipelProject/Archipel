@@ -73,12 +73,15 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 */
 @implementation TNAvatarController : CPObject
 {
+    @outlet CPWindow            mainWindow              @accessors(readonly);
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
-    @outlet CPWindow            mainWindow          @accessors(readonly);
+    @outlet CPButton            buttonChange;
+
+    TNStropheContact            _entity                 @accessors(property=entity);
 
     BOOL                        isReady;
-    TNStropheContact            _entity @accessors(property=entity);
+
 }
 
 
@@ -99,6 +102,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [itemPrototype setView:avatarView];
 
     [collectionViewAvatars setItemPrototype:itemPrototype];
+
+    [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 
 
@@ -194,17 +199,31 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 */
 - (IBAction)showWindow:(id)sender
 {
-    [self getAvailableAvatars];
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:sender];
+    [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
+
+    if ([[TNPermissionsCenter defaultCenter] hasPermission:@"getavatars" forEntity:_entity])
+    {
+        [self getAvailableAvatars];
+        [mainWindow center];
+        [mainWindow makeKeyAndOrderFront:sender];
+    }
 }
 
 
 #pragma mark -
-#pragma mark Collection View delegates
+#pragma mark Delegates
 
 - (void)collectionView:(CPCollectionView)collectionView didDoubleClickOnItemAtIndex:(int)index
 {
     [self setAvatar:nil];
 }
+
+/*! delegate of TNPermissionsCenter
+*/
+- (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
+{
+    if (anEntity === _entity)
+        [aCenter setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatar"] forEntity:_entity specialCondition:YES];
+}
+
 @end
