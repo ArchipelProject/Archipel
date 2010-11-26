@@ -219,6 +219,9 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     TNRosterDataViewGroup           _rosterDataViewForGroups;
     TNToolbar                       _mainToolbar;
     TNViewHypervisorControl         _currentRightViewContent;
+    CPButton                        _hideButton;
+    CPImage                         _hideButtonImageEnable;
+    CPImage                         _hideButtonImageDisable;
 }
 
 
@@ -295,6 +298,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [leftSplitView addSubview:[propertiesController mainView]];
     [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
     [propertiesController setAvatarManager:avatarController];
+    [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -405,6 +409,10 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
+    _hideButton             = [CPButtonBar minusButton];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"hide.png"] size:CPSizeMake(14, 14)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"show.png"] size:CPSizeMake(14, 14)];
+
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
@@ -422,7 +430,11 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(14, 14)]];
     [minusButton setAction:@selector(didMinusBouttonClicked:)];
 
-    [buttonBarLeft setButtons:[plusButton, minusButton]];
+    [_hideButton setTarget:self];
+    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
+    [_hideButton setAction:@selector(didHideBouttonClicked:)];
+
+    [buttonBarLeft setButtons:[plusButton, minusButton, _hideButton]];
 
     // copyright;
     [self copyright];
@@ -462,6 +474,9 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didRetrieveRoster:) name:TNStropheRosterRetrievedNotification object:nil];
 
     CPLog.info(@"Initialization of AppController OK");
 }
@@ -627,7 +642,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:connection];
-    [_pubSubController retrieveSubscriptions];
+
 
     _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:connection];
 
@@ -674,6 +689,23 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [theWindow orderOut:nil];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [labelCurrentUser setStringValue:@""];
+}
+
+
+/*! Notification responder for TNStropheRosterRetrievedNotification
+*/
+- (void)didRetrieveRoster:(CPNotification)aNotification
+{
+    var servers = [CPArray array];
+
+    for (var i = 0; i < [[_mainRoster contacts] count]; i++)
+    {
+        var contact = [[_mainRoster contacts] objectAtIndex:i];
+        if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
+            [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
+    }
+
+    [_pubSubController retrieveSubscriptions];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -777,6 +809,26 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         [self deleteContact:sender];
     else if ([item class] == TNStropheGroup)
         [self deleteGroup:sender];
+}
+
+- (IBAction)didHideBouttonClicked:(id)aSender
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    if ([propertiesController isEnabled])
+    {
+        [propertiesController setEnabled:NO];
+        [_hideButton setImage:_hideButtonImageEnable];
+        [defaults setBool:NO forKey:@"TNArchipelPropertyControllerEnabled"];
+    }
+    else
+    {
+        [propertiesController setEnabled:YES];
+        [_hideButton setImage:_hideButtonImageDisable];
+        [defaults setBool:YES forKey:@"TNArchipelPropertyControllerEnabled"];
+    }
+
+    [propertiesController reload];
 }
 
 /*! will log out from Archipel

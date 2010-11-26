@@ -41,16 +41,18 @@
     @outlet CPTextField     newNickName;
 
 
-    TNStropheContact        _entity             @accessors(getter=entity);
-    TNStropheRoster         _roster             @accessors(property=roster);
+    BOOL                    _enabled            @accessors(getter=isEnabled, setter=setEnabled:);
     TNAvatarController      _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController      _pubSubController   @accessors(property=pubSubController);
+    TNStropheContact        _entity             @accessors(getter=entity);
+    TNStropheRoster         _roster             @accessors(property=roster);
 
-    CPImage                 _unknownUserImage;
-    CPImage                 _pubsubImage;
-    CPImage                 _pubsubDisabledImage;
-    CPNumber                _height;
+
     BOOL                    _isCollapsed;
+    CPImage                 _pubsubDisabledImage;
+    CPImage                 _pubsubImage;
+    CPImage                 _unknownUserImage;
+    CPNumber                _height;
 }
 
 
@@ -190,7 +192,7 @@
 */
 - (void)reload
 {
-    if (!_entity)
+    if (!_entity || !_enabled)
     {
         [self hideView];
         return;
