@@ -365,51 +365,24 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (void)permissionsChanged
 {
-    if ([self currentEntityHasPermissions:[@"oom_getadjust", @"oom_setadjust"]])
-        [switchPreventOOMKiller setEnabled:YES];
-    else
-        [switchPreventOOMKiller setEnabled:NO];
+    var isOnline = ([_entity XMPPShow] == TNStropheContactStatusOnline);
 
-    if ([self currentEntityHasPermission:@"migrate"] && ([_entity XMPPShow] == TNStropheContactStatusOnline))
-    {
-        [viewTableHypervisorsContainer setHidden:NO];
-        [filterHypervisors setHidden:NO];
-    }
-    else
-    {
-        [viewTableHypervisorsContainer setHidden:YES];
-        [filterHypervisors setHidden:YES];
-    }
+    [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]];
+    [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
+    [self setControl:sliderMemory enabledAccordingToPermission:@"memory" specialCondition:isOnline];
+    [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus" specialCondition:isOnline];
 
-    if ([self currentEntityHasPermission:@"memory"] && ([_entity XMPPShow] == TNStropheContactStatusOnline))
-        [sliderMemory setEnabled:YES];
-    else
-        [sliderMemory setEnabled:NO];
+    [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
+    [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
 
-    if ([self currentEntityHasPermission:@"setvcpus"] && ([_entity XMPPShow] == TNStropheContactStatusOnline))
-        [stepperCPU setEnabled:YES];
-    else
-        [stepperCPU setEnabled:NO];
-
-    if ([self currentEntityHasPermission:@"autostart"])
-        [switchAutoStart setEnabled:YES];
-    else
-        [switchAutoStart setEnabled:NO];
-
-    if (![self currentEntityHasPermission:@"create"])
-        [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
-    if (![self currentEntityHasPermission:@"shutdown"])
-        [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
-    if (![self currentEntityHasPermission:@"destroy"])
-        [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
-    if (![self currentEntityHasPermissions:[@"suspend", @"resume"]])
-        [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
-    if (![self currentEntityHasPermission:@"reboot"])
-        [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarPlay enabledAccordingToPermission:@"create"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarDestroy enabledAccordingToPermission:@"destroy"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarPause enabledAccordingToPermissions:[@"suspend", @"resume"]];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
     if (_VMLibvirtStatus)
         [self layoutButtons:_VMLibvirtStatus];
-
 }
 
 
@@ -574,14 +547,10 @@ TNArchipelTransportBarReboot    = 4;
 
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
 
-    if ([self currentEntityHasPermission:@"shutdown"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
-    if ([self currentEntityHasPermission:@"destroy"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
-    if ([self currentEntityHasPermissions:[@"suspend", @"resume"]])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
-    if ([self currentEntityHasPermission:@"reboot"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarDestroy enabledAccordingToPermission:@"destroy"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarPause enabledAccordingToPermissions:[@"suspend", @"resume"]];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
 
@@ -594,10 +563,7 @@ TNArchipelTransportBarReboot    = 4;
     var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
     [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
 
-    if ([self currentEntityHasPermission:@"oom_getadjust"] && [self currentEntityHasPermission:@"oom_setadjust"])
-        [switchPreventOOMKiller setEnabled:YES];
-    else
-        [switchPreventOOMKiller setEnabled:NO];
+    [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
 
 /*! enable buttons necessary when virtual machine is paused
@@ -606,16 +572,11 @@ TNArchipelTransportBarReboot    = 4;
 {
     [buttonBarTransport setSelectedSegment:TNArchipelTransportBarPause];
 
-    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay];
-
-    if ([self currentEntityHasPermission:@"shutdown"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarStop];
-    if ([self currentEntityHasPermission:@"destroy"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarDestroy];
-    if ([self currentEntityHasPermissions:[@"suspend", @"resume"]])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPause];
-    if ([self currentEntityHasPermission:@"reboot"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPlay]
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarStop enabledAccordingToPermission:@"shutdown"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarDestroy enabledAccordingToPermission:@"destroy"];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarPause enabledAccordingToPermissions:[@"suspend", @"resume"]];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
     [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
 
@@ -625,11 +586,7 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imageResume forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
 
-    if ([self currentEntityHasPermission:@"oom_getadjust"] && [self currentEntityHasPermission:@"oom_setadjust"])
-        [switchPreventOOMKiller setEnabled:YES];
-    else
-        [switchPreventOOMKiller setEnabled:NO];
-
+    [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]
 }
 
 /*! enable buttons necessary when virtual machine is shutdowned
@@ -638,12 +595,13 @@ TNArchipelTransportBarReboot    = 4;
 {
     [buttonBarTransport setSelectedSegment:TNArchipelTransportBarStop];
 
-    if ([self currentEntityHasPermission:@"create"])
-        [buttonBarTransport setEnabled:YES forSegment:TNArchipelTransportBarPlay];
+    [self setControl:buttonBarTransport segment:TNArchipelTransportBarPlay enabledAccordingToPermission:@"create"];
+
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarStop];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarDestroy];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
+
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
 
     [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
@@ -652,7 +610,7 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imagePauseDisabled forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageRebootDisabled forSegment:TNArchipelTransportBarReboot];
 
-    [switchPreventOOMKiller setEnabled:NO];
+    [switchPreventOOMKiller setEnabled:NO]
 }
 
 /*! disable all buttons
@@ -838,11 +796,8 @@ TNArchipelTransportBarReboot    = 4;
             [sliderMemory setMaxValue:parseInt(maxMem)];
             [sliderMemory setIntValue:parseInt(mem)];
 
-            if ([self currentEntityHasPermission:@"memory"])
-                [sliderMemory setEnabled:YES];
-
-            if ([self currentEntityHasPermission:@"setvcpus"])
-                [stepperCPU setEnabled:YES];
+            [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
+            [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
         }
         else
         {
@@ -853,8 +808,7 @@ TNArchipelTransportBarReboot    = 4;
             [stepperCPU setEnabled:NO];
         }
 
-        if ([self currentEntityHasPermission:@"autostart"])
-            [switchAutoStart setEnabled:YES];
+        [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
 
         if (autostart == 1)
             [switchAutoStart setOn:YES animated:YES sendAction:NO];

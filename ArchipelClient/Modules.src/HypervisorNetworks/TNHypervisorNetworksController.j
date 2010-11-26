@@ -284,10 +284,10 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 {
     var selectedIndex   = [[_tableViewNetworks selectedRowIndexes] firstIndex];
 
-    [self setControl:_minusButton enabled:NO accordingToPermission:@"network_undefine"];
-    [self setControl:_editButton enabled:NO accordingToPermission:@"network_define"];
-    [self setControl:_activateButton enabled:NO accordingToPermission:@"network_create"];
-    [self setControl:_deactivateButton enabled:NO accordingToPermission:@"network_destroy"];
+    [_minusButton setEnabled:NO];
+    [_editButton setEnabled:NO];
+    [_activateButton setEnabled:NO];
+    [_deactivateButton setEnabled:NO];
 
     if ([_tableViewNetworks numberOfSelectedRows] == 0)
         return;
@@ -296,13 +296,13 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
     if ([networkObject isNetworkEnabled])
     {
-        [self setControl:_deactivateButton enabled:YES accordingToPermission:@"network_destroy"];
+        [self setControl:_deactivateButton enabledAccordingToPermission:@"network_destroy"];
     }
     else
     {
-        [self setControl:_minusButton enabled:YES accordingToPermission:@"network_undefine"];
-        [self setControl:_editButton enabled:YES accordingToPermission:@"network_define"];
-        [self setControl:_activateButton enabled:YES accordingToPermission:@"network_create"];
+        [self setControl:_minusButton enabledAccordingToPermission:@"network_undefine"];
+        [self setControl:_editButton enabledAccordingToPermission:@"network_define"];
+        [self setControl:_activateButton enabledAccordingToPermission:@"network_create"];
     }
 
     return YES;

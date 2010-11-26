@@ -667,13 +667,16 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
         if ([object class] == TNVMCast)
         {
-            [self setControl:_downloadButton enabled:(([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError)) accordingToPermission:@"vmcasting_downloadappliance"];
-            [self setControl:_minusButton enabled:([object status] == TNArchipelApplianceInstalled) accordingToPermission:@"vmcasting_deleteappliance"];
+            var conditionNotInstalled = (([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError)),
+                conditionInstalled = ([object status] == TNArchipelApplianceInstalled);
+
+            [self setControl:_downloadButton enabledAccordingToPermission:@"vmcasting_downloadappliance" specialCondition:conditionNotInstalled];
+            [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance" specialCondition:conditionInstalled];
         }
         else if ([object class] == TNVMCastSource)
         {
-            [self setControl:_minusButton enabled:YES accordingToPermission:@"vmcasting_unregister"];
-            [self setControl:_downloadButton enabled:NO accordingToPermission:@"vmcasting_downloadappliance"];
+            [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"];
+            [_downloadButton setEnabled:NO]
         }
     }
 }

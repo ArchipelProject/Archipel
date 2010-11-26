@@ -146,25 +146,25 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         case @"Network":
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
             {
-                [_delegate setControl:buttonSource enabled:YES accordingToPermission:@"network_getnames"];
+                [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_getnames"];
                 [buttonSource removeAllItems];
                 [_nic setType:@"network"];
                 [self getHypervisorNetworks];
             }
             else
-                [_delegate setControl:buttonSource enabled:NO accordingToPermission:@"network_getnames"];
+                [buttonSource setEnabled:NO];
             break;
 
         case @"Bridge":
             if ([_delegate currentEntityHasPermission:@"network_bridges"])
             {
-                [_delegate setControl:buttonSource enabled:YES accordingToPermission:@"network_bridges"];
+                [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_bridges"];
                 [buttonSource removeAllItems];
                 [_nic setType:@"bridge"];
                 [self getBridges];
             }
             else
-                [_delegate setControl:buttonSource enabled:NO accordingToPermission:@"network_bridges"];
+                [buttonSource setEnabled:NO]
             break;
 
         case @"User":

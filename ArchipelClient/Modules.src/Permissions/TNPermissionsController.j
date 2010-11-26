@@ -240,16 +240,18 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         [self didCurrentUserChange:nil];
     }
 
-    if ([self currentEntityHasPermission:@"permission_set"] || [self currentEntityHasPermission:@"permission_setown"])
+    var hasSetOwn   = [self currentEntityHasPermission:@"permission_setown"],
+        hasSet      = [self currentEntityHasPermission:@"permission_set"];
+
+    if (hasSet || hasSetOwn)
     {
-        [_saveButton setEnabled:YES];
-        [_tablePermissions setEnabled:YES];
+        if (hasSetOwn)
+            [self setControl:_saveButton enabledAccordingToPermission:@"permission_setown"];
+        if (hasSet)
+            [self setControl:_saveButton enabledAccordingToPermission:@"permission_set"];
     }
     else
-    {
-        [_saveButton setEnabled:NO];
-        [_tablePermissions setEnabled:NO];
-    }
+        [self setControl:_saveButton enabledAccordingToPermission:@"permission_FAKE!"];
 }
 
 
@@ -332,6 +334,9 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)getPermissions
 {
+    if (![self currentEntityHasPermission:@"permission_list"])
+        return;
+
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypePermissions}];
@@ -376,6 +381,9 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)getUserPermissions:(CPString)aUser
 {
+    if (![self currentEntityHasPermission:@"permission_get"] && ![self currentEntityHasPermission:@"permission_getown"])
+        return;
+
     var stanza = [TNStropheStanza iqWithType:@"get"],
         currentAction = TNArchipelTypePermissionsGetOwn;
 
@@ -408,6 +416,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
             [_currentUserPermissions addObject:name]
         }
+
         [self getPermissions];
     }
     else

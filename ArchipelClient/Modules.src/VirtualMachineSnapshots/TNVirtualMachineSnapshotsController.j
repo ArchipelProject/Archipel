@@ -146,16 +146,16 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-add.png"] size:CPSizeMake(16, 16)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-add.png"] size:CPSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
-    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-remove.png"] size:CPSizeMake(16, 16)]];
+    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-remove.png"] size:CPSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
 
     _revertButton = [CPButtonBar minusButton];
-    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-revert.png"] size:CPSizeMake(16, 16)]];
+    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-revert.png"] size:CPSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
 
@@ -241,17 +241,12 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 */
 - (void)permissionsChanged
 {
-    [self outlineViewSelectionDidChange:nil];
+    [self setControl:_plusButton enabledAccordingToPermission:@"snapshot_take"];
+    [self setControl:_minusButton enabledAccordingToPermission:@"snapshot_delete" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
+    [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert" specialCondition:([_outlineViewSnapshots numberOfSelectedRows] > 0)];
 
-    if ([self currentEntityHasPermission:@"snapshot_take"])
-        [_plusButton setEnabled:YES];
-    else
-    {
-        [_plusButton setEnabled:NO];
+    if (![self currentEntityHasPermission:@"snapshot_take"])
         [windowNewSnapshot close];
-    }
-
-
 }
 
 #pragma mark -
@@ -643,15 +638,8 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     if ([_outlineViewSnapshots numberOfSelectedRows] > 0)
     {
-        if ([self currentEntityHasPermission:@"snapshot_delete"])
-            [_minusButton setEnabled:YES];
-        else
-            [_minusButton setEnabled:NO];
-
-        if ([self currentEntityHasPermission:@"snapshot_revert"])
-            [_revertButton setEnabled:YES];
-        else
-            [_revertButton setEnabled:NO];
+        [self setControl:_minusButton enabledAccordingToPermission:@"snapshot_delete"];
+        [self setControl:_revertButton enabledAccordingToPermission:@"snapshot_revert"];
     }
 }
 

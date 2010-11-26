@@ -212,18 +212,11 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 */
 - (void)permissionsChanged
 {
-    if ([self currentEntityHasPermission:@"scheduler_schedule"])
-        [_buttonSchedule setEnabled:YES];
-    else
-    {
-        [_buttonSchedule setEnabled:NO];
-        [windowNewJob close];
-    }
+    [self setControl:_buttonSchedule enabledAccordingToPermission:@"scheduler_schedule"];
+    [self setControl:_buttonUnschedule enabledAccordingToPermission:@"scheduler_unschedule"];
 
-    if ([self currentEntityHasPermission:@"scheduler_unschedule"])
-        [_buttonUnschedule setEnabled:YES];
-    else
-        [_buttonUnschedule setEnabled:NO];
+    if (![self currentEntityHasPermission:@"scheduler_schedule"])
+        [windowNewJob close];
 }
 
 

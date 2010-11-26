@@ -241,15 +241,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 */
 - (void)permissionsChanged
 {
-    [self tableViewSelectionDidChange:nil];
+    if (![self currentEntityHasPermission:@"drives_create"])
+        [windowNewDisk close];
 
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
         [windowDiskProperties close];
 
-    if (![self currentEntityHasPermission:@"drives_create"])
-        [windowNewDisk close];
-
-    [self checkIfRunning];
+    [self tableViewSelectionDidChange:nil];
 }
 
 
@@ -686,33 +684,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 - (void)tableViewSelectionDidChange:(CPTableView)aTableView
 {
-    if ([self currentEntityHasPermission:@"drives_create"])
-        [_plusButton setEnabled:YES];
-    else
-        [_plusButton setEnabled:NO];
-
-    if ([_tableMedias numberOfSelectedRows] <= 0)
-    {
-        [_minusButton setEnabled:NO];
-        [_editButton setEnabled:NO];
-        return;
-    }
-
-    if ([self currentEntityHasPermission:@"drives_delete"])
-        [_minusButton setEnabled:YES];
-    else
-        [_minusButton setEnabled:NO];
-
-    if ([self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
-        [_editButton setEnabled:YES];
-    else
-        [_editButton setEnabled:NO];
-
-    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
-        diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
-
-    [buttonEditDiskFormat selectItemWithTitle:[diskObject format]];
+    [self setControl:_plusButton enabledAccordingToPermission:@"drives_create"];
+    [self setControl:_minusButton enabledAccordingToPermission:@"drives_delete" specialCondition:([_tableMedias numberOfSelectedRows] <= 0)];
+    [self setControl:_editButton enabledAccordingToPermissions:[@"drives_convert", @"drives_rename"] specialCondition:([_tableMedias numberOfSelectedRows] <= 0)];
 }
+
 
 @end
 

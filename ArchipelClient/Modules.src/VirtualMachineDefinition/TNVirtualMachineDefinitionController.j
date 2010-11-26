@@ -1104,7 +1104,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         // button BOOT
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
-            [self setControl:buttonBoot enabled:YES accordingToPermission:@"define"];
+            [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
 
             if (boot == "cdrom")
                 [buttonBoot selectItemWithTitle:TNXMLDescBootCDROM];
@@ -1113,7 +1113,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         }
         else
         {
-            [self setControl:buttonBoot enabled:YES accordingToPermission:@"define"];
+            [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
         }
 
 
@@ -1146,8 +1146,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
         {
-            [self setControl:fieldVNCPassword enabled:YES accordingToPermission:@"define"];
-            [self setControl:buttonVNCKeymap enabled:YES accordingToPermission:@"define"];
+            [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
+            [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
 
             for (var i = 0; i < [graphics count]; i++)
             {
@@ -1169,8 +1169,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         }
         else
         {
-            [self setControl:fieldVNCPassword enabled:NO accordingToPermission:@"define"];
-            [self setControl:buttonVNCKeymap enabled:NO accordingToPermission:@"define"];
+            [fieldVNCPassword setEnabled:NO];
+            [buttonVNCKeymap setEnabled:NO];
         }
 
         //input type
@@ -1178,13 +1178,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             || (hypervisor == TNXMLDescHypervisorQemu)
             || (hypervisor == TNXMLDescHypervisorKQemu))
         {
-            [self setControl:buttonInputType enabled:YES accordingToPermission:@"define"];
+            [self setControl:buttonInputType enabledAccordingToPermission:@"define"];
 
             [buttonInputType selectItemWithTitle:input];
         }
         else
         {
-            [self setControl:buttonInputType enabled:NO accordingToPermission:@"define"];
+            [buttonInputType setEnabled:NO];
         }
 
 
@@ -1208,7 +1208,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if ([[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] containsKey:@"machines"] &&
             [[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"] count])
         {
-            [self setControl:buttonMachines enabled:YES accordingToPermission:@"define"];
+            [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
             [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"]];
             if ([buttonMachines indexOfItemWithTitle:machine] == -1)
             {
@@ -1221,7 +1221,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             }
         }
         else
-            [self setControl:buttonMachines enabled:NO accordingToPermission:@"define"];
+            [buttonMachines setEnabled:NO];
 
         // button OStype
         [buttonOSType removeAllItems];
@@ -1233,29 +1233,29 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         //////////////////////////////////////////
 
         // APIC
-        [self setControl:switchAPIC enabled:NO accordingToPermission:@"define"];
+        [switchAPIC setEnabled:NO];
         [switchAPIC setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"APIC"] && [capabilities objectForKey:@"APIC"])
         {
-            [self setControl:switchAPIC enabled:YES accordingToPermission:@"define"];
+            [self setControl:switchAPIC enabledAccordingToPermission:@"define"];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureAPIC])
                 [switchAPIC setOn:YES animated:YES sendAction:NO];
         }
 
         // ACPI
-        [self setControl:switchACPI enabled:NO accordingToPermission:@"define"];
+        [switchACPI setEnabled:NO];
         [switchACPI setOn:NO animated:YES sendAction:NO];
         if ([capabilities containsKey:@"ACPI"] && [capabilities objectForKey:@"ACPI"])
         {
-            [self setControl:switchACPI enabled:YES accordingToPermission:@"define"];
+            [self setControl:switchACPI enabledAccordingToPermission:@"define"];
 
             if (features && [features containsChildrenWithName:TNXMLDescFeatureACPI])
                 [switchACPI setOn:YES animated:YES sendAction:NO];
         }
 
         // PAE
-        [self setControl:switchPAE enabled:NO accordingToPermission:@"define"];
+        [switchPAE setEnabled:NO];
         [switchPAE setOn:NO animated:YES sendAction:NO];
 
         if ([capabilities containsKey:@"PAE"] && ![capabilities containsKey:@"NONPAE"])
@@ -1269,7 +1269,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         else if ([capabilities containsKey:@"PAE"] && [capabilities objectForKey:@"PAE"]
             && [capabilities containsKey:@"NONPAE"] && [capabilities objectForKey:@"NONPAE"])
         {
-            [self setControl:switchPAE enabled:YES accordingToPermission:@"define"];
+            [self setControl:switchPAE enabledAccordingToPermission:@"define"];
             if (features && [features containsChildrenWithName:TNXMLDescFeaturePAE])
                 [switchPAE setOn:YES animated:YES sendAction:NO];
         }
@@ -1285,15 +1285,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         //clock
         if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorLXC]])
         {
-            [self setControl:buttonClocks enabled:YES accordingToPermission:@"define"];
+            [self setControl:buttonClocks enabledAccordingToPermission:@"define"];
 
             if (clock)
                 [buttonClocks selectItemWithTitle:[clock valueForAttribute:@"offset"]];
         }
         else
-        {
-            [self setControl:buttonClocks enabled:NO accordingToPermission:@"define"];
-        }
+            [buttonClocks setEnabled:NO];
 
 
         //////////////////////////////////////////
@@ -1359,9 +1357,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     {
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] == "not-defined")
         {
-            [self setControl:switchAPIC enabled:NO accordingToPermission:@"define"];
-            [self setControl:switchACPI enabled:NO accordingToPermission:@"define"];
-            [self setControl:switchPAE enabled:NO accordingToPermission:@"define"];
+            [switchAPIC setEnabled:NO];
+            [switchACPI setEnabled:NO];
+            [switchPAE setEnabled:NO];
 
             [buttonArchitecture removeAllItems];
             [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
@@ -1373,25 +1371,25 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [buttonOSType addItemWithTitle:[capabilities objectForKey:@"OSType"]];
             [buttonOSType selectItemAtIndex:0];
 
+            CPLog.trace(capabilities);
 
-            CPLog.info(capabilities);
-            [self setControl:buttonHypervisor enabled:NO accordingToPermission:@"define"];
+            [buttonHypervisor setEnabled:NO];
             [buttonHypervisor removeAllItems];
 
             if ([capabilities containsKey:@"domains"])
             {
                 [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
                 [buttonHypervisor selectItemAtIndex:0];
-                [self setControl:buttonHypervisor enabled:YES accordingToPermission:@"define"];
+                [self setControl:buttonHypervisor enabledAccordingToPermission:@"define"];
             }
 
-            [self setControl:buttonMachines enabled:NO accordingToPermission:@"define"];
+            [buttonMachines setEnabled:NO];
             [buttonMachines removeAllItems];
             if ([capabilities containsKey:@"domains"] && [[[[capabilities objectForKey:@"domains"]  objectForKey:[buttonHypervisor title]] objectForKey:@"machines"] count] > 0)
             {
                 [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
                 [buttonMachines selectItemAtIndex:0];
-                [self setControl:buttonMachines enabled:YES accordingToPermission:@"define"];
+                [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
             }
         }
         else
@@ -1720,26 +1718,23 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
 - (void)tableViewSelectionDidChange:(CPNotification)aNotification
 {
+    [_minusButtonDrives setEnabled:NO];
+    [_editButtonDrives setEnabled:NO];
+
     if ([aNotification object] == _tableDrives)
     {
-        [self setControl:_minusButtonDrives enabled:NO accordingToPermission:@"define"];
-        [self setControl:_editButtonDrives enabled:NO accordingToPermission:@"define"];
-
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
-            [self setControl:_minusButtonDrives enabled:YES accordingToPermission:@"define"];
-            [self setControl:_editButtonDrives enabled:YES accordingToPermission:@"define"];
+            [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
+            [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
         }
     }
     else if ([aNotification object] == _tableNetworkNics)
     {
-        [self setControl:_minusButtonDrives enabled:NO accordingToPermission:@"define"];
-        [self setControl:_editButtonDrives enabled:NO accordingToPermission:@"define"];
-
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
-            [self setControl:_minusButtonDrives enabled:YES accordingToPermission:@"define"];
-            [self setControl:_editButtonDrives enabled:YES accordingToPermission:@"define"];
+            [self setControl:_minusButtonDrives enabledAccordingToPermission:@"define"];
+            [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
         }
     }
 }

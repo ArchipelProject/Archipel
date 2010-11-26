@@ -212,15 +212,14 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 */
 - (void)permissionsChanged
 {
-    [self tableViewSelectionDidChange:nil];
+    [self setControl:_packageButton enabledAccordingToPermission:@"appliance_package"];
+    [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
+    [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
 
     if ([self currentEntityHasPermission:@"appliance_package"])
-        [_packageButton setEnabled:YES];
-    else
-    {
-        [_packageButton setEnabled:NO];
         [windowNewAppliance close];
-    }
+
+    [self tableViewSelectionDidChange:nil];
 }
 
 
@@ -498,8 +497,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been detached"];
 
-        if ([self currentEntityHasPermission:@"appliance_attach"])
-            [_attachButton setEnabled:YES];
+        [self setControl:_attachButton currentEntityHasPermission:@"appliance_attach"];
     }
     else
     {
@@ -564,12 +562,10 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     var selectedIndex   = [[_tableAppliances selectedRowIndexes] firstIndex],
         appliance       = [_appliancesDatasource objectAtIndex:selectedIndex];
 
-    if (([appliance statusString] == TNArchipelApplianceStatusInstalled)
-        && ([self currentEntityHasPermission:@"appliance_detach"]))
-        [_detachButton setEnabled:YES];
-    else if ([self currentEntityHasPermission:@"appliance_attach"])
-        [_attachButton setEnabled:YES];
-
+    if ([appliance statusString] == TNArchipelApplianceStatusInstalled)
+        [self setControl:_detachButton enabledAccordingToPermission:@"appliance_detach"];
+    else
+        [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
 }
 
 @end
