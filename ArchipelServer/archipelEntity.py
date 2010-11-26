@@ -1025,7 +1025,7 @@ class TNArchipelEntity:
                 else:
                    reply = msg.buildReply("I'm sorry, my parents aren't allowing me to talk to strangers")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_MESSAGE)
+            reply = msg.buildReply("Cannot process the message: error is %s" % str(ex))
         
         if reply:
             conn.send(reply)
@@ -1041,7 +1041,8 @@ class TNArchipelEntity:
                                 {"name": "param1", "description": "the description of the first param"}, 
                                 {"name": "param2", "description": "the description of the second param"}
                             ], 
-            "method":       self.a_method_to_launch
+            "method":       self.a_method_to_launch,
+            "permissions":   "the permissions in a array you need to process the command",
             "description":  "A general description of the command"
         }
         
@@ -1081,7 +1082,6 @@ class TNArchipelEntity:
             me = reply.getFrom()
             me.setResource(self.resource)
             reply.setType("chat")
-            #reply.setNamespace(ARCHIPEL_NS_SERVICE_MESSAGE)
             return reply
         else:
             log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
@@ -1097,15 +1097,22 @@ class TNArchipelEntity:
         reply_stanza.setBody("not understood")
         
         if body.find("help") >= 0:
-            reply_stanza.setBody(self.build_help())
+            reply_stanza.setBody(self.build_help(msg))
         else:
             loop = True
             for registrar_item in self.messages_registrar:
                 for cmd in registrar_item["commands"]:
                     if body.find(cmd) >= 0:
-                        m = registrar_item["method"]
-                        resp = m(msg)
-                        reply_stanza.setBody(resp)
+                        granted  = True
+                        if registrar_item.has_key("permissions"):
+                            granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
+                        
+                        if granted:
+                            m = registrar_item["method"]
+                            resp = m(msg)
+                            reply_stanza.setBody(resp)
+                        else:
+                            reply_stanza.setBody("Sorry, you do not have the needed permission to execute this command.")
                         loop = False
                         break
                 if not loop:
@@ -1114,7 +1121,7 @@ class TNArchipelEntity:
         return reply_stanza
     
     
-    def build_help(self):
+    def build_help(self, msg):
         """
         build the help message according to the current registrar
         
@@ -1123,19 +1130,25 @@ class TNArchipelEntity:
         resp = ARCHIPEL_MESSAGING_HELP_MESSAGE
         for registrar_item in self.messages_registrar:
             if not registrar_item.has_key("ignore"):
-                cmds = str(registrar_item["commands"])
-                desc = registrar_item["description"]
-                params = registrar_item["parameters"]
-                params_string = ""
-                for p in params:
-                    params_string += "%s: %s\n" % (p["name"], p["description"])
                 
-                if params_string == "":
-                    params_string = "No parameters"
-                else:
-                    params_string = params_string[:-1]
+                granted = True
+                if registrar_item.has_key("permissions"):
+                    granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
                 
-                resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
+                if granted:
+                    cmds = str(registrar_item["commands"])
+                    desc = registrar_item["description"]
+                    params = registrar_item["parameters"]
+                    params_string = ""
+                    for p in params:
+                        params_string += "%s: %s\n" % (p["name"], p["description"])
+                
+                    if params_string == "":
+                        params_string = "No parameters"
+                    else:
+                        params_string = params_string[:-1]
+                
+                    resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
         
         return resp
     

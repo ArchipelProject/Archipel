@@ -56,6 +56,7 @@ class TNHypervisorGeolocalization:
         registrar_item = {  "commands" : ["where are you", "localize"], 
                             "parameters": {}, 
                             "method": self.message_get,
+                            "permissions": ["geolocalization_get"],
                             "description": "give my the latitude and longitude." }
         
         self.entity.add_message_registrar_item(registrar_item)

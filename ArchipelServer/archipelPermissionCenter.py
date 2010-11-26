@@ -345,6 +345,13 @@ class TNArchipelPermissionCenter:
                 return True
         return False
     
+    
+    def check_permissions(self, user_name, permissions):
+        """check if all permissions on array are granted"""
+        for perm in permissions:
+            if not self.check_permission(user_name, perm):
+                return False
+        return True
 
 
 if __name__ == "__main__":

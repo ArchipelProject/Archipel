@@ -148,43 +148,50 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def register_for_messages(self):
-        """
+        """"permissions":
         this method register for user messages
         """
         registrar_items = [
                             {  "commands" : ["start", "create", "boot", "play", "run"], 
                                 "parameters": [],
                                 "method": self.message_create,
+                                "permissions": ["create"],
                                 "description": "I'll start" },
                             
                             {  "commands" : ["shutdown", "stop"], 
                                 "parameters": [],
                                 "method": self.message_shutdown,
+                                "permissions": ["shutdown"],
                                 "description": "I'll shutdown" },
                                 
                             {  "commands" : ["destroy"], 
                                 "parameters": [],
                                 "method": self.message_destroy,
+                                "permissions": ["destroy"],
                                 "description": "I'll destroy myself" },
                                 
                             {  "commands" : ["pause", "suspend"], 
                                 "parameters": [],
                                 "method": self.message_suspend,
+                                "permissions": ["suspend"],
                                 "description": "I'll suspend" },
                             
                             {  "commands" : ["resume", "unpause"], 
                                 "parameters": [],
                                 "method": self.message_resume,
+                                "permissions": ["resume"],
                                 "description": "I'll resume" },
                             
                             {  "commands" : ["info", "how are you", "and you"], 
                                 "parameters": [],
                                 "method": self.message_info,
+                                "permissions": ["info"],
                                 "description": "I'll give info about me" },
                             
                             {  "commands" : ["vnc", "screen"], 
                                 "parameters": [],
                                 "method": self.message_vncdisplay,
+                                "permissions": ["vncdisplay"],
                                 "description": "I'll show my VNC port" },
                                 
                             {  "commands" : ["desc", "xml"], 
@@ -195,6 +202,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                             {  "commands" : ["net", "stat"], 
                                 "parameters": [],
                                 "method": self.message_networkinfo,
+                                "permissions": ["networkinfo"],
                                 "description": "I'll show my network stats" },
                             
                             {  "commands" : ["fuck", "asshole", "jerk", "stupid", "suck"],
@@ -207,7 +215,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                                 "ignore": True,
                                 "parameters": [],
                                 "method": self.message_hello,
-                                "description": "I'll show my network stats" },
+                                "description": "" },
                         ]
         self.add_message_registrar_items(registrar_items)
     
