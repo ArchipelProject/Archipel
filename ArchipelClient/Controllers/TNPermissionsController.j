@@ -137,14 +137,8 @@ TNArchipelTypePermissionsGetOwn         = @"getown";
 */
 - (void)getPermissionForEntity:(TNStropheContact)anEntity
 {
-    if (!anEntity)
+    if (!anEntity || ([anEntity class] != TNStropheContact))
         return;
-
-    if ([anEntity class] == TNStropheGroup)
-    {
-        [anObject performSelector:aSelector];
-        return;
-    }
 
     CPLog.info("Ask permission to entity for entity " + anEntity);
 
