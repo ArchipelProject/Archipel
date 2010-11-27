@@ -405,7 +405,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
         rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
-        plusButton              = [CPButtonBar minusButton],
+        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
@@ -419,20 +419,17 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     [plusButton setTarget:self];
     [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
-    [plusButton setBordered:NO];
-    [plusButton setImagePosition:CPImageOnly];
-
     [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
     [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
     [plusButton setMenu:plusMenu];
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
-    [minusButton setAction:@selector(didMinusBouttonClicked:)];
+    [minusButton setAction:@selector(toogleRemoveEntity:)];
 
     [_hideButton setTarget:self];
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
-    [_hideButton setAction:@selector(didHideBouttonClicked:)];
+    [_hideButton setAction:@selector(toggleShowPropertiesView:)];
 
     [buttonBarLeft setButtons:[plusButton, minusButton, _hideButton]];
 
@@ -470,7 +467,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
 
     CPLog.trace(@"registering for notification TNArchipelActionRemoveSelectedRosterEntityNotification");
-    [center addObserver:self selector:@selector(didMinusBouttonClicked:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
+    [center addObserver:self selector:@selector(toogleRemoveEntity:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
 
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
@@ -800,7 +797,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 /*! will remove the selected roster item according to its type
     @param the sender of the action
 */
-- (IBAction)didMinusBouttonClicked:(id)sender
+- (IBAction)toogleRemoveEntity:(id)sender
 {
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
         item    = [_rosterOutlineView itemAtRow:index];
@@ -811,7 +808,10 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         [self deleteGroup:sender];
 }
 
-- (IBAction)didHideBouttonClicked:(id)aSender
+/*! will hide or show the properties views
+    @param the sender of the action
+*/
+- (IBAction)toggleShowPropertiesView:(id)aSender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 

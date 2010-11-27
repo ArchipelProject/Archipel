@@ -120,8 +120,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         imageSendPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"sendPasteBoard.png"] size:CPSizeMake(16, 16)],
         imageGetPasteBoard = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"getPasteBoard.png"] size:CPSizeMake(16, 16)];
 
-
-
     [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
     [buttonZoomFitToWindow setImage:imageZoomFit];
     [buttonZoomReset setImage:imageZoomReset];
@@ -129,6 +127,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [buttonSendCtrlAtlDel setImage:imageCtrlAltDel];
     [buttonSendPasteBoard setImage:imageSendPasteBoard];
     [buttonGetPasteBoard setImage:imageGetPasteBoard];
+
+    var inset = CGInsetMake(2, 2, 2, 5);
+
+    [buttonZoomFitToWindow setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonZoomReset setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonDirectURL setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonSendCtrlAtlDel setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonSendPasteBoard setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonGetPasteBoard setValue:inset forThemeAttribute:@"content-inset"];
 
     [fieldPassword setSecure:YES];
 

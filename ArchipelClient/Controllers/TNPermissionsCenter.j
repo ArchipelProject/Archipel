@@ -274,21 +274,25 @@ var __defaultPermissionCenter;
             [permissionCenter removeBadgeWithKey:[self generateBadgeKeyForControl:aControl]];
 
         if (aSpecialCondition)
+        {
             if (aSegment !== nil)
-                [[aControl segment:aSegment] setEnabled:YES];
+                [aControl setEnabled:YES forSegment:aSegment];
             else
                 [aControl setEnabled:YES];
+        }
         else
+        {
             if (aSegment !== nil)
-                [[aControl segment:aSegment] setEnabled:NO];
+                [aControl setEnabled:NO forSegment:aSegment];
             else
                 [aControl setEnabled:NO];
+        }
     }
     else
     {
         if (aSegment !== nil)
         {
-            [[aControl segment:aSegment] setEnabled:NO];
+            [aControl setEnabled:NO forSegment:aSegment];
             [permissionCenter addBadgeWithKey:[self generateBadgeKeyForControl:[aControl segment:aSegment]] toSegmentedControl:aControl segment:aSegment];
         }
         else
