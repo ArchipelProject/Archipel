@@ -123,18 +123,18 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [_tableAppliances setMenu:menu];
 
     _packageButton  = [CPButtonBar plusButton];
-    [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-package.png"] size:CPSizeMake(16, 16)]];
+    [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/package.png"] size:CPSizeMake(16, 16)]];
     [_packageButton setTarget:self];
     [_packageButton setAction:@selector(openNewApplianceWindow:)];
 
 
     _attachButton  = [CPButtonBar plusButton];
-    [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-lock.png"] size:CPSizeMake(16, 16)]];
+    [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/lock.png"] size:CPSizeMake(16, 16)]];
     [_attachButton setTarget:self];
     [_attachButton setAction:@selector(attach:)];
 
     _detachButton  = [CPButtonBar plusButton];
-    [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unlock.png"] size:CPSizeMake(16, 16)]];
+    [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unlock.png"] size:CPSizeMake(16, 16)]];
     [_detachButton setTarget:self];
     [_detachButton setAction:@selector(detach:)];
 

@@ -142,21 +142,21 @@ TNArchipelTransportBarReboot    = 4;
 
 
 
-    _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CGSizeMake(20, 20)];
-    _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CGSizeMake(20, 20)];
-    _imageDestroy           = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CGSizeMake(20, 20)];
-    _imagePause             = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
-    _imageReboot            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CGSizeMake(16, 16)];
-    _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-resume.png"] size:CGSizeMake(16, 16)];
+    _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(20, 20)];
+    _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(20, 20)];
+    _imageDestroy           = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CGSizeMake(20, 20)];
+    _imagePause             = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(20, 20)];
+    _imageReboot            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CGSizeMake(16, 16)];
+    _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CGSizeMake(16, 16)];
 
-    _imagePlayDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play-disabled.png"] size:CGSizeMake(20, 20)];
-    _imageStopDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop-disabled.png"] size:CGSizeMake(20, 20)];
-    _imageDestroyDisabled   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug-disabled.png"] size:CGSizeMake(20, 20)];
-    _imagePauseDisabled     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause-disabled.png"] size:CGSizeMake(20, 20)];
-    _imageRebootDisabled    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart-disabled.png"] size:CGSizeMake(16, 16)];
+    _imagePlayDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-disabled.png"] size:CGSizeMake(20, 20)];
+    _imageStopDisabled      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-disabled.png"] size:CGSizeMake(20, 20)];
+    _imageDestroyDisabled   = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug-disabled.png"] size:CGSizeMake(20, 20)];
+    _imagePauseDisabled     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-disabled.png"] size:CGSizeMake(20, 20)];
+    _imageRebootDisabled    = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart-disabled.png"] size:CGSizeMake(16, 16)];
 
-    _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play-selected.png"] size:CGSizeMake(20, 20)];
-    _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop-selected.png"] size:CGSizeMake(20, 20)];
+    _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-selected.png"] size:CGSizeMake(20, 20)];
+    _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(20, 20)];
 
 
 
@@ -234,7 +234,7 @@ TNArchipelTransportBarReboot    = 4;
     // button bar migration
 
     _migrateButton  = [CPButtonBar plusButton];
-    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-migrate.png"] size:CPSizeMake(16, 16)]];
+    [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
 
@@ -560,7 +560,7 @@ TNArchipelTransportBarReboot    = 4;
     [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setImage:_imageReboot forSegment:TNArchipelTransportBarReboot];
 
-    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CGSizeMake(20, 20)];
+    var imagePause  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CGSizeMake(20, 20)];
     [buttonBarTransport setImage:_imagePause forSegment:TNArchipelTransportBarPause];
 
     [self setControl:switchPreventOOMKiller enabledAccordingToPermissions:[@"oom_getadjust", @"oom_setadjust"]]

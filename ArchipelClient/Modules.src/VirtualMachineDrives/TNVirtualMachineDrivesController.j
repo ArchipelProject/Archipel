@@ -172,7 +172,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [_minusButton setAction:@selector(removeDisk:)];
 
     _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(openRenamePanel:)];
 

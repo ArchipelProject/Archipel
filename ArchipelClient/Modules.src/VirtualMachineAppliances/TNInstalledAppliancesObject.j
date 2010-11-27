@@ -70,7 +70,7 @@ TNArchipelApplianceStatusNone       = @"none";
     if (self = [super init])
     {
         var bundle      = [CPBundle mainBundle];
-        _usedIcon       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(12, 12)];
+        _usedIcon       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
         _installingIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16, 16)];
         _noneIcon       = nil;
     }

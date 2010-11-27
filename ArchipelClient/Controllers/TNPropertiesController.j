@@ -32,6 +32,8 @@
     @outlet CPButton        entryAvatar;
     @outlet CPImageView     entryStatusIcon;
     @outlet CPImageView     imageEventSubscription;
+    @outlet CPTextField     entryType;
+    @outlet CPTextField     labelType;
     @outlet CPTextField     entryDomain;
     @outlet CPTextField     entryResource;
     @outlet CPTextField     entryStatus;
@@ -76,7 +78,7 @@
     [mainView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
-    [entryName setTextColor:[CPColor colorWithHexString:@"8D929D"]];
+    [entryName setTextColor:[CPColor colorWithHexString:@"515151"]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
 
@@ -203,7 +205,10 @@
         [labelResource setStringValue:@"Resource :"];
         [labelStatus setHidden:NO];
         [labelDomain setHidden:NO];
+        [labelType setHidden:NO];
         [entryAvatar setHidden:NO];
+        [entryType setHidden:NO];
+
         [imageEventSubscription setHidden:NO];
 
         [entryStatusIcon setImage:[_entity statusIcon]];
@@ -211,6 +216,20 @@
         [entryDomain setStringValue:[[_entity JID] domain]];
         [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatus setStringValue:[_entity XMPPStatus]];
+
+        switch ([_roster analyseVCard:[_entity vCard]])
+        {
+            case TNArchipelEntityTypeVirtualMachine:
+                [entryType setStringValue:@"Virtual machine"];
+                break;
+
+            case TNArchipelEntityTypeHypervisor:
+                [entryType setStringValue:@"Hypervisor"];
+                break;
+
+            default:
+                [entryType setStringValue:@"User"];
+        }
 
         if ([_entity avatar])
             [entryAvatar setImage:[_entity avatar]];
@@ -239,7 +258,10 @@
         [labelResource setStringValue:@"Contents :"];
         [labelStatus setHidden:YES];
         [labelDomain setHidden:YES];
+        [labelType setHidden:YES];
         [entryAvatar setHidden:YES];
+        [entryType setHidden:YES];
+
         [imageEventSubscription setHidden:YES];
 
         [entryStatusIcon setImage:_groupUserImage];

@@ -32,12 +32,8 @@
     CPTextField _status      @accessors(property=status);
 
     CPImage     _unknownUserImage;
-    CPImage     _playImage;
-    CPImage     _pauseImage;
     CPImage     _normalStateCartoucheColor;
     CPImage     _selectedStateCartoucheColor;
-    CPButton    _playButton;
-    CPButton    _pauseButton;
     CPString    _entityType;
 
     TNStropheContact    _contact;
@@ -61,25 +57,9 @@
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
         _avatar                         = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
-        _playButton                     = [[CPButton alloc] initWithFrame:CGRectMake(150, 8, 16, 16)];
-        _pauseButton                    = [[CPButton alloc] initWithFrame:CGRectMake(130, 8, 16, 16)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         _normalStateCartoucheColor      = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor    = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
-        _pauseImage                     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_pause.png"] size:CGSizeMake(16, 16)];
-        _playImage                      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vm_play.png"] size:CGSizeMake(16, 16)];
-
-        [_pauseButton setImage:_pauseImage];
-        [_pauseButton setBordered:NO];
-        [_pauseButton setTarget:self];
-        [_pauseButton setAction:@selector(sendPauseCommand:)];
-        [_pauseButton setHidden:YES];
-
-        [_playButton setImage:_playImage];
-        [_playButton setBordered:NO];
-        [_playButton setTarget:self];
-        [_playButton setAction:@selector(sendPlayCommand:)];
-        [_playButton setHidden:YES];
 
         [_events setBackgroundColor:_normalStateCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
@@ -107,8 +87,6 @@
         [self addSubview:_events];
         [self addSubview:_status];
         [self addSubview:_avatar];
-        [self addSubview:_playButton];
-        [self addSubview:_pauseButton];
     }
     return self;
 }
@@ -125,27 +103,11 @@
     _contact = aContact;
 
     var mainBounds          = [self bounds],
-        boundsEvents        = [_events frame],
-        boundsPlay          = [_playButton frame],
-        boundsPause         = [_pauseButton frame];
+        boundsEvents        = [_events frame];
 
     boundsEvents.origin.x   = mainBounds.size.width - 25;
     [_events setFrame:boundsEvents];
     [_events setAutoresizingMask:CPViewMinXMargin];
-
-    boundsPlay.origin.x     = mainBounds.size.width - 20;
-    [_playButton setFrame:boundsPlay];
-    [_playButton setAutoresizingMask:CPViewMinXMargin];
-
-    boundsPause.origin.x    = mainBounds.size.width - 36;
-    [_pauseButton setFrame:boundsPause];
-    [_pauseButton setAutoresizingMask:CPViewMinXMargin];
-
-    if ([aContact XMPPShow] == TNStropheContactStatusOffline)
-    {
-        [_playButton setHidden:YES];
-        [_pauseButton setHidden:YES];
-    }
 
     [_name setStringValue:[aContact nickname]];
     [_name sizeToFit];
@@ -222,12 +184,8 @@
 
         _contact            = [aCoder decodeObjectForKey:@"_contact"];
         _unknownUserImage   = [aCoder decodeObjectForKey:@"_unknownUserImage"];
-        _pauseButton        = [aCoder decodeObjectForKey:@"_pauseButton"];
-        _playButton         = [aCoder decodeObjectForKey:@"_playButton"];
-        _playImage          = [aCoder decodeObjectForKey:@"_playImage"];
-        _pauseImage         = [aCoder decodeObjectForKey:@"_pauseImage"];
         _name               = [aCoder decodeObjectForKey:@"_name"];
-        _status               = [aCoder decodeObjectForKey:@"_status"];
+        _status             = [aCoder decodeObjectForKey:@"_status"];
         _statusIcon         = [aCoder decodeObjectForKey:@"_statusIcon"];
         _events             = [aCoder decodeObjectForKey:@"_events"];
         _avatar             = [aCoder decodeObjectForKey:@"_avatar"];
@@ -243,10 +201,6 @@
     [super encodeWithCoder:aCoder];
 
     [aCoder encodeObject:_contact forKey:@"_contact"];
-    [aCoder encodeObject:_pauseButton forKey:@"_pauseButton"];
-    [aCoder encodeObject:_playButton forKey:@"_playButton"];
-    [aCoder encodeObject:_pauseImage forKey:@"_pauseImage"];
-    [aCoder encodeObject:_playImage forKey:@"_playImage"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:_name forKey:@"_name"];
     [aCoder encodeObject:_status forKey:@"_status"];

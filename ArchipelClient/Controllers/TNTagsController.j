@@ -53,7 +53,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
-        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray2.png"]],
+        gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-tags.png"]],
         tokenFrame;
 
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];

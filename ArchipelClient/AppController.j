@@ -327,7 +327,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
-    [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"gradientGray.png"]]]];
+    [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
@@ -387,10 +387,10 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [growl setView:rightView];
 
     CPLog.trace(@"Initializing the traffic status LED");
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"statusBarBg.png"]]]];
-    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-in.png"]];
-    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-out.png"]];
-    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"data-no.png"]];
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-statusbar.png"]]]];
+    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
+    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
+    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
 
     // buttonBar
     CPLog.trace(@"Initializing the roster button bar");
@@ -405,20 +405,20 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
         rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
-        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0,0,30, 30)],
+        plusButton              = [CPButtonBar minusButton],
         plusMenu                = [[CPMenu alloc] init],
         minusButton             = [CPButtonBar minusButton];
 
     _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"hide.png"] size:CPSizeMake(14, 14)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"show.png"] size:CPSizeMake(14, 14)];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(16, 16)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(16, 16)];
 
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
     [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"plus-menu.png"] size:CPSizeMake(14, 14)]];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
     [plusButton setBordered:NO];
     [plusButton setImagePosition:CPImageOnly];
 
@@ -427,7 +427,7 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     [plusButton setMenu:plusMenu];
 
     [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"minus.png"] size:CPSizeMake(14, 14)]];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
     [minusButton setAction:@selector(didMinusBouttonClicked:)];
 
     [_hideButton setTarget:self];
@@ -586,9 +586,9 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
 {
     var bundle  = [CPBundle bundleForClass:self];
 
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"help.png"] target:self action:@selector(toolbarItemHelpClick:)];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
 
     var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
         availableItem = [[CPMenuItem alloc] init],
@@ -598,19 +598,19 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
         statusItem = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
-    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Available.png"]]];
+    [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
     [statusSelector addItem:availableItem];
 
     [awayItem setTitle:TNArchipelStatusAwayLabel];
-    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Away.png"]]];
+    [awayItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/away.png"]]];
     [statusSelector addItem:awayItem];
 
     [busyItem setTitle:TNArchipelStatusBusyLabel];
-    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Busy.png"]]];
+    [busyItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/busy.png"]]];
     [statusSelector addItem:busyItem];
 
     [DNDItem setTitle:TNArchipelStatusDNDLabel];
-    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"DND.png"]]];
+    [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/dnd.png"]]];
     [statusSelector addItem:DNDItem];
 
     [statusItem setMinSize:CGSizeMake(120.0, 24.0)];

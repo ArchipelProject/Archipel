@@ -223,7 +223,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [_plusButtonDrives setAction:@selector(addDrive:)];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
-    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_minusButtonDrives setEnabled:NO];
@@ -239,7 +239,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
-    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editNetworkCard:)];
     [_minusButtonNics setEnabled:NO];

@@ -118,11 +118,11 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     _buttonSchedule    = [CPButtonBar plusButton];
     _buttonUnschedule  = [CPButtonBar plusButton];
 
-    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-plus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
 
-    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-minus.png"] size:CPSizeMake(16, 16)]];
+    [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [_buttonUnschedule setTarget:self];
     [_buttonUnschedule setAction:@selector(unschedule:)];
 

@@ -146,16 +146,16 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
-    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-add.png"] size:CPSizeMake(14, 14)]];
+    [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
-    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-photo-remove.png"] size:CPSizeMake(14, 14)]];
+    [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CPSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
 
     _revertButton = [CPButtonBar minusButton];
-    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-revert.png"] size:CPSizeMake(14, 14)]];
+    [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CPSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
 

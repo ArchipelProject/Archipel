@@ -138,12 +138,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_minusButton setAction:@selector(deleteVirtualMachine:)];
 
     _addSubscriptionButton = [CPButtonBar plusButton];
-    [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-subscription-add.png"] size:CPSizeMake(16, 16)]];
+    [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-add.png"] size:CPSizeMake(16, 16)]];
     [_addSubscriptionButton setTarget:self];
     [_addSubscriptionButton setAction:@selector(openAddSubscriptionWindow:)];
 
     _removeSubscriptionButton = [CPButtonBar plusButton];
-    [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-subscription-remove.png"] size:CPSizeMake(16, 16)]];
+    [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-remove.png"] size:CPSizeMake(16, 16)]];
     [_removeSubscriptionButton setTarget:self];
     [_removeSubscriptionButton setAction:@selector(openRemoveSubscriptionWindow:)];
 
@@ -153,7 +153,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [_removeSubscriptionButton setEnabled:NO];
 
     _cloneButton = [CPButtonBar minusButton];
-    [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-branch.png"] size:CPSizeMake(16, 16)]];
+    [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/branch.png"] size:CPSizeMake(16, 16)]];
     [_cloneButton setTarget:self];
     [_cloneButton setAction:@selector(cloneVirtualMachine:)];
 

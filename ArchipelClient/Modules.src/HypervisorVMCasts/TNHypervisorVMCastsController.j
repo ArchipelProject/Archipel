@@ -145,12 +145,12 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     [_minusButton setAction:@selector(remove:)];
 
     _downloadButton = [CPButtonBar plusButton];
-    [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-download.png"] size:CPSizeMake(16, 16)]];
+    [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
 
     _downloadQueueButton = [CPButtonBar plusButton];
-    [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-view.png"] size:CPSizeMake(16, 16)]];
+    [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
 

@@ -114,7 +114,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     _saveButton       = [CPButtonBar plusButton];
 
-    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-save.png"] size:CPSizeMake(16, 16)]];
+    [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
     [_saveButton setTarget:self];
     [_saveButton setAction:@selector(changePermissionsState:)];
 

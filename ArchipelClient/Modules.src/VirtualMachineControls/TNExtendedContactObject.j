@@ -50,7 +50,7 @@
         _nickname       = aNickname;
         _fullJID        = aFullJID;
         _selected       = NO;
-        _imageSelected  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(12, 12)];
+        _imageSelected  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(12, 12)];
     }
 
     return self;

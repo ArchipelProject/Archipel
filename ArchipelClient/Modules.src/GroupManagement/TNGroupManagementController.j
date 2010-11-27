@@ -118,27 +118,27 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         resumeButton    = [CPButtonBar plusButton],
         rebootButton    = [CPButtonBar plusButton];
 
-    [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-play.png"] size:CPSizeMake(16, 16)]];
+    [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
 
-    [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-stop.png"] size:CPSizeMake(16, 16)]];
+    [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
 
-    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-unplug.png"] size:CPSizeMake(16, 16)]];
+    [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
 
-    [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-pause.png"] size:CPSizeMake(16, 16)]];
+    [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
 
-    [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-resume.png"] size:CPSizeMake(16, 16)]];
+    [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
 
-    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-restart.png"] size:CPSizeMake(16, 16)]];
+    [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
 

@@ -165,17 +165,17 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     [_minusButton setAction:@selector(delNetwork:)];
 
     _activateButton = [CPButtonBar plusButton];
-    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-check.png"] size:CPSizeMake(16, 16)]];
+    [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(16, 16)]];
     [_activateButton setTarget:self];
     [_activateButton setAction:@selector(activateNetwork:)];
 
     _deactivateButton = [CPButtonBar plusButton];
-    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-cancel.png"] size:CPSizeMake(16, 16)]];
+    [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CPSizeMake(16, 16)]];
     [_deactivateButton setTarget:self];
     [_deactivateButton setAction:@selector(deactivateNetwork:)];
 
     _editButton  = [CPButtonBar plusButton];
-    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"button-icons/button-icon-edit.png"] size:CPSizeMake(16, 16)]];
+    [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNetwork:)];
 
