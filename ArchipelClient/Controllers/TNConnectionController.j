@@ -143,12 +143,31 @@
     CPLog.debug("credential remember set");
 }
 
+
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
+- (void)connection:(TNStropheConnection)aStrophe errorCondition:(CPString)anError
+{
+    switch (anError)
+    {
+        case "host-unknown":
+            [message setStringValue:@"Host unreachable"];
+            break;
+        default:
+            [message setStringValue:anError];
+    }
+    [connectButton setEnabled:YES];
+    [spinning setHidden:YES];
+}
+
 /*! delegate of TNStropheConnection
     @param aStrophe TNStropheConnection
 */
 - (void)onStropheConnecting:(TNStropheConnection)aStrophe
 {
-    [message setStringValue:@"Connecting"];
+    [message setStringValue:@"Connecting..."];
+    [connectButton setEnabled:NO];
     [spinning setHidden:NO];
 }
 
@@ -157,7 +176,7 @@
 */
 - (void)onStropheConnected:(TNStropheConnection)aStrophe
 {
-    [message setStringValue:@"Connected."];
+    [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
 
     CPLog.info(@"Strophe is now connected using JID " + [JID stringValue]);
@@ -170,7 +189,7 @@
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [message setStringValue:@"Connection failed."];
+    [message setStringValue:@"Connection failed"];
 
     CPLog.info(@"XMPP connection failed");
 }
@@ -181,7 +200,6 @@
 - (void)onStropheAuthenticating:(TNStropheConnection)aStrophe
 {
     [message setStringValue:@"Authenticating..."];
-
     CPLog.info(@"XMPP authenticating...");
 }
 
@@ -192,7 +210,7 @@
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [message setStringValue:@"Authentication failed."];
+    [message setStringValue:@"Authentication failed"];
 
     CPLog.info(@"XMPP auth failed");
 }
@@ -204,16 +222,19 @@
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [message setStringValue:@"Unknown error."];
+    [message setStringValue:@"Unknown error"];
 
     CPLog.info(@"XMPP unknown error");
 }
 
+/*! delegate of TNStropheConnection
+    @param aStrophe TNStropheConnection
+*/
 - (void)onStropheDisconnecting:(TNStropheConnection)aStrophe
 {
     [spinning setHidden:NO];
     [connectButton setEnabled:NO];
-    [message setStringValue:@"Disconnecting."];
+    [message setStringValue:@"Disconnecting..."];
 
    CPLog.info(@"XMPP is disconnecting");
 }
@@ -223,10 +244,11 @@
 */
 - (void)onStropheDisconnected:(id)sStrophe
 {
-    [self initCredentials];
+    defaults = [CPUserDefaults standardUserDefaults];
+    [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"]
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [message setStringValue:@"Disconnected."];
+    [message setStringValue:@"Disconnected"];
 
     CPLog.info(@"XMPP connection is now disconnected");
 }
