@@ -23,26 +23,31 @@
 
 - (id)initWithContentRect:(CPRect)aFrame styleMask:(id)aMask
 {
- if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
- {
-     var bundle  = [CPBundle mainBundle],
-         frame   = [[self contentView] frame],
-         bgImage = [[CPNinePartImage alloc] initWithImageSlices:[
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-0.png"] size:CPSizeMake(24, 63)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-1.png"] size:CPSizeMake(1, 63)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-2.png"] size:CPSizeMake(24, 63)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-3.png"] size:CPSizeMake(24, 1)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-4.png"] size:CPSizeMake(1, 1)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-5.png"] size:CPSizeMake(24, 1)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-6.png"] size:CPSizeMake(24, 25)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-7.png"] size:CPSizeMake(1, 25)],
-             [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ModalWindow/modal-bezel-8.png"] size:CPSizeMake(24, 25)]
-         ]];
+     if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
+     {
+         _windowView._DOMElement.style.background               = "-webkit-gradient(linear, left top, left bottom, from(#F4F4F4), to(#D2D2D2))";
+         _windowView._DOMElement.style.background               = "-moz-linear-gradient(-90deg, #F4F4F4, #D2D2D2)";
+         _windowView._DOMElement.style.border                   = "1px solid white";
+         _windowView._DOMElement.style.borderRadius             = "6px";
+         _windowView._DOMElement.style.mozBorderRadius          = "6px";
+         _windowView._DOMElement.style.webkitBoxShadow          = "0px 0px 10px #8DB9D1";
+         _windowView._DOMElement.style.mozBoxShadow             = "0px 0px 10px #8DB9D1";
+         _windowView._DOMElement.style.webkitTransition         = "0.5s";
+         _windowView._DOMElement.style.webkitPerspective        = 1000;
+     }
 
-     [self setBackgroundColor:[CPColor colorWithPatternImage:bgImage]];
- }
-
- return self;
+     return self;
 }
+
+// - (void)makeKeyAndOrderFront:(id)aSender
+// {
+//     [super makeKeyAndOrderFront:aSender];
+//     _windowView._DOMElement.style.webkitTransform = "translateX(0px)";
+// }
+// 
+// - (void)hide
+// {
+//     _windowView._DOMElement.style.webkitTransform = "translateX(-1000px)";
+// }
 
 @end
