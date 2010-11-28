@@ -71,21 +71,21 @@
 {
     _moduleLoader = [aNotification object];
 
-    var tabModules      = [_moduleLoader loadedTabModules],
-        toolbarModules  = [[_moduleLoader loadedToolbarModules] allValues],
-        notSortedModules = [tabModules arrayByAddingObjectsFromArray:toolbarModules];
+    var tabModules          = [_moduleLoader loadedTabModules],
+        toolbarModules      = [[_moduleLoader loadedToolbarModules] allValues],
+        notSortedModules    = [tabModules arrayByAddingObjectsFromArray:toolbarModules],
+        sortFunction        = function(a, b, context) {
+            var indexA = [a label],
+                indexB = [b label];
 
-    var sortFunction = function(a, b, context) {
-        var indexA = [a label],
-            indexB = [b label];
+            if (indexA < indexB)
+                return CPOrderedAscending;
+            else if (indexA > indexB)
+                return CPOrderedDescending;
+            else
+                return CPOrderedSame;
+        },
 
-        if (indexA < indexB)
-            return CPOrderedAscending;
-        else if (indexA > indexB)
-            return CPOrderedDescending;
-        else
-            return CPOrderedSame;
-    },
     _modules = [notSortedModules sortedArrayUsingFunction:sortFunction];
 
     for (var i = 0; i < [_modules count]; i++)
@@ -113,6 +113,9 @@
 - (IBAction)showWindow:(id)sender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
+
+    // hack...
+    [buttonDebugLevel selectItemWithTitle:@"info"];
 
     [fieldWelcomePageUrl setStringValue:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
@@ -155,7 +158,6 @@
         if ([module viewPreferences] !== nil)
             [module savePreferences];
     }
-
 
     [mainWindow close];
 }
