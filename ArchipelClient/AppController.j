@@ -212,7 +212,6 @@ TNToolBarItemStatus             = @"TNToolBarItemStatus";
     int                             _tempNumberOfReadyModules;
     TNDatasourceRoster              _mainRoster;
     TNiTunesTabView                 _moduleTabView;
-    TNModuleController              moduleController;
     TNOutlineViewRoster             _rosterOutlineView;
     TNPubSubController              _pubSubController;
     TNRosterDataViewContact         _rosterDataViewForContacts;
