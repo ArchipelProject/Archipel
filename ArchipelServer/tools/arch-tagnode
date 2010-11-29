@@ -1,6 +1,6 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
 # 
-# tagspubsub.py
+# arch-tagnode
 # 
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
+
 import xmpp
 import sys, os, getopt
 
@@ -26,12 +27,12 @@ import pubsub
 
 
 HELP = """\
-tagspubsub (c) 2010 Antoine Mercadal
+arch-tagnode (c) 2010 Antoine Mercadal
 this tool allows to create a new tags node. 
 you should create this node using admin account (or a special dedicated account)
 
 usage :
-    tagspubsub.py --jid aJid --password aPassword --pubsubserver pubsub.server [--create] [--delete]
+    arch-tagnode --jid aJid --password aPassword --pubsubserver pubsub.server [--create] [--delete]
     
     --jid           : set the JID to use
     --password      : set the password associated to the JID
