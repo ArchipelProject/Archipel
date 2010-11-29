@@ -316,6 +316,14 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         [perm setValue:CPOffState forKey:@"state"];
     }
 
+    [self addPermissions:somePermissions];
+}
+
+/*! will add all permissions given (keeping existing)
+    @param somePermissions CPArray containing a list raw Archipel permissions (TNXMLNodes)
+*/
+- (void)addPermissions:(CPArray)somePermissions
+{
     for (var i = 0; i < [somePermissions count]; i++)
     {
         var permTemplate = [somePermissions objectAtIndex:i];
@@ -333,6 +341,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     [_tablePermissions reloadData];
 }
+
 
 /*! will remove all permissions given
     @param somePermissions CPArray containing a list raw Archipel permissions (TNXMLNodes)

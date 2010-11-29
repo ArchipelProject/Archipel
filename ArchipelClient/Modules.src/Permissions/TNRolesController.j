@@ -139,6 +139,14 @@
     [_delegate applyPermissions:[self buildPermissionsArray]];
 }
 
+/*! add selected roles to delegate's role datasource
+    @param aSender the sender of the action
+*/
+- (IBAction)addRoles:(id)aSender
+{
+    [_delegate addPermissions:[self buildPermissionsArray]];
+}
+
 /*! retract selected roles to delegate's role datasource
     @param aSender the sender of the action
 */
