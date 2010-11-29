@@ -20,6 +20,7 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "TNRolesController.j"
 
 TNArchipelTypePermissions        = @"archipel:permissions";
 
@@ -41,26 +42,31 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 @implementation TNPermissionsController : TNModule
 {
-    @outlet CPTextField             fieldJID                @accessors;
-    @outlet CPTextField             fieldName               @accessors;
     @outlet CPButtonBar             buttonBarControl;
+    @outlet CPPopUpButton           buttonUser;
     @outlet CPScrollView            scrollViewPermissions;
     @outlet CPSearchField           filterField;
-    @outlet CPView                  viewTableContainer;
-    @outlet CPPopUpButton           buttonUser;
+    @outlet CPTextField             fieldJID                @accessors;
+    @outlet CPTextField             fieldName               @accessors;
     @outlet CPTextField             labelUser;
+    @outlet CPView                  viewTableContainer;
+    @outlet TNRolesController       rolesController;
 
     CPArray                         _currentUserPermissions;
+    CPButton                        _applyRoleButton;
+    CPButton                        _saveAsTemplateButton;
     CPButton                        _saveButton;
     CPImage                         _defaultAvatar;
     CPTableView                     _tablePermissions;
-    TNTableViewDataSource           _datasourcePermissions;
+    TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
 }
 
 
 #pragma mark -
 #pragma mark Initialization
 
+/*! called at cib awakening
+*/
 - (void)awakeFromCib
 {
     _currentUserPermissions = [CPArray array];
@@ -107,26 +113,36 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [_tablePermissions addTableColumn:colName];
     [_tablePermissions addTableColumn:colDescription];
 
-
     [_datasourcePermissions setTable:_tablePermissions];
     [_datasourcePermissions setSearchableKeyPaths:[@"name", @"description"]];
     [_tablePermissions setDataSource:_datasourcePermissions];
 
-    _saveButton       = [CPButtonBar plusButton];
-
+    _saveButton = [CPButtonBar plusButton];
     [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
     [_saveButton setTarget:self];
     [_saveButton setAction:@selector(changePermissionsState:)];
 
-    [buttonBarControl setButtons:[_saveButton]];
+    _saveAsTemplateButton = [CPButtonBar plusButton];
+    [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CPSizeMake(16, 16)]];
+    [_saveAsTemplateButton setTarget:rolesController];
+    [_saveAsTemplateButton setAction:@selector(openNewTemplateWindow:)];
+
+    _applyRoleButton = [CPButtonBar plusButton];
+    [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CPSizeMake(16, 16)]];
+    [_applyRoleButton setTarget:self];
+    [_applyRoleButton setAction:@selector(openRolesWindow:)];
+
+    [buttonBarControl setButtons:[_saveButton, _saveAsTemplateButton, _applyRoleButton]];
+
 
     [filterField setTarget:_datasourcePermissions];
     [filterField setAction:@selector(filterObjects:)];
 
     [buttonUser setTarget:self];
-    [buttonUser setAction:@selector(didCurrentUserChange:)];
-}
+    [buttonUser setAction:@selector(changeCurrentUser:)];
 
+    [rolesController setDelegate:self];
+}
 
 
 #pragma mark -
@@ -196,9 +212,8 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [item setTitle:@"Manual"];
     [item setObjectValue:nil];
 
-    [buttonUser addItem:item]
+    [buttonUser addItem:item];
 }
-
 
 /*! called when module becomes visible
 */
@@ -237,7 +252,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         [buttonUser setHidden:YES];
         [labelUser setHidden:YES];
         [buttonUser selectItemWithTitle:@"Me"];
-        [self didCurrentUserChange:nil];
+        [self changeCurrentUser:nil];
     }
 
     var hasSetOwn   = [self currentEntityHasPermission:@"permission_setown"],
@@ -253,7 +268,6 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     else
         [self setControl:_saveButton enabledAccordingToPermission:@"permission_FAKE!"];
 }
-
 
 
 #pragma mark -
@@ -291,39 +305,85 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 #pragma mark -
 #pragma mark Utilities
 
-// - (void)setSateForAllCheckBoxInTable:(int)aState
-// {
-//     for (var i = 0; i < [_datasourcePermissions count]; i++)
-//     {
-//         var permission      = [_datasourcePermissions objectAtIndex:i],
-//         [permission setValue:aState ForKey:@"state"];
-//     }
-//     [_tablePermissions reloadData];
-// }
-//
-// - (void)setForAllCheckBoxInTableEnabled:(BOOL)shouldEnable
-// {
-//     for (var i = 0; i < [_datasourcePermissions count]; i++)
-//     {
-//         var permission = [_datasourcePermissions objectAtIndex:i],
-//         [permission setValue:aState ForKey:@"state"];
-//     }
-//     [_tablePermissions reloadData];
-// }
+/*! will select all permissions given (and deselect others)
+    @param somePermissions CPArray containing a list raw Archipel permissions (TNXMLNodes)
+*/
+- (void)applyPermissions:(CPArray)somePermissions
+{
+    for (var j = 0; j < [_datasourcePermissions count]; j++)
+    {
+        var perm = [_datasourcePermissions objectAtIndex:j];
+        [perm setValue:CPOffState forKey:@"state"];
+    }
+
+    for (var i = 0; i < [somePermissions count]; i++)
+    {
+        var permTemplate = [somePermissions objectAtIndex:i];
+
+        for (var j = 0; j < [_datasourcePermissions count]; j++)
+        {
+            var perm = [_datasourcePermissions objectAtIndex:j];
+            if ([perm valueForKey:@"name"] == [permTemplate valueForAttribute:@"permission_name"])
+            {
+                [perm setValue:CPOnState forKey:@"state"];
+                break;
+            }
+        }
+    }
+
+    [_tablePermissions reloadData];
+}
+
+/*! will remove all permissions given
+    @param somePermissions CPArray containing a list raw Archipel permissions (TNXMLNodes)
+*/
+- (void)retractPermissions:(CPArray)somePermissions
+{
+    for (var i = 0; i < [somePermissions count]; i++)
+    {
+        var permTemplate = [somePermissions objectAtIndex:i];
+
+        for (var j = 0; j < [_datasourcePermissions count]; j++)
+        {
+            var perm = [_datasourcePermissions objectAtIndex:j];
+            if ([perm valueForKey:@"name"] == [permTemplate valueForAttribute:@"permission_name"])
+            {
+                [perm setValue:CPOffState forKey:@"state"];
+                break;
+            }
+        }
+    }
+
+    [_tablePermissions reloadData];
+}
+
 
 #pragma mark -
 #pragma mark Actions
 
-
+/*! will set permissions
+    @param aSender the sender of the action
+*/
 - (IBAction)changePermissionsState:(id)aSender
 {
     [self changePermissionsState];
 }
 
-- (IBAction)didCurrentUserChange:(id)aSender
+/*! will take care of the current user change
+    @param aSender the sender of the action
+*/
+- (IBAction)changeCurrentUser:(id)aSender
 {
     if ([[buttonUser selectedItem] respondsToSelector:@selector(objectValue)])
         [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
+}
+
+/*! will open the new role window
+    @param aSender the sender of the action
+*/
+- (IBAction)openRolesWindow:(id)aSender
+{
+    [rolesController showWindow:aSender];
 }
 
 
@@ -463,11 +523,6 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         [self handleIqErrorFromStanza:aStanza];
 }
 
-
-#pragma mark -
-#pragma mark Delegates
-
-// put your delegates here
 
 @end
 
