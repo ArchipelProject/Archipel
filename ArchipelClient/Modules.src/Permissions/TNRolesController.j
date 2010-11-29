@@ -153,6 +153,7 @@
 - (IBAction)openNewTemplateWindow:(id)aSender
 {
     [fieldNewTemplateName setStringValue:@""];
+    [fieldNewTemplateDescription setStringValue:@""];
     [windowNewTemplate center];
     [windowNewTemplate makeKeyAndOrderFront:aSender];
 }
