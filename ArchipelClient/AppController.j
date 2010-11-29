@@ -151,7 +151,7 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
     @group TNToolBarItem
     identifier for item status
 */
-TNToolBarItemStatus             = @"TNToolBarItemStatus";
+TNToolBarItemStatus         = @"TNToolBarItemStatus";
 
 
 /*! @defgroup  archipelcore Archipel Core
