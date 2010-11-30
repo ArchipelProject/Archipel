@@ -39,12 +39,12 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
     @outlet CPButtonBar     buttonBarControl;
     @outlet CPSearchField   filterField;
 
-    TNStropheRoster         _roster         @accessors(setter=setRoster:);
-    TNStropheContact        _entity         @accessors(setter=setEntity:);
-    id                      _delegate       @accessors(property=delegate);
+    TNStropheRoster         _roster             @accessors(setter=setRoster:);
+    TNStropheContact        _entity             @accessors(setter=setEntity:);
+    TNTableViewDataSource   _datasourceUsers    @accessors(getter=datasource);
+    id                      _delegate           @accessors(property=delegate);
 
     CPTableView             _tableUsers;
-    TNTableViewDataSource   _datasourceUsers;
     CPButton                _addButton;
     CPButton                _deleteButton;
 }
@@ -89,12 +89,12 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
     [_tableUsers setDataSource:_datasourceUsers];
 
     _addButton = [CPButtonBar plusButton];
-    [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user_add.png"] size:CPSizeMake(16, 16)]];
+    [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
     [_addButton setTarget:self];
     [_addButton setAction:@selector(openRegisterUserWindow:)];
 
     _deleteButton = [CPButtonBar plusButton];
-    [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user_delete.png"] size:CPSizeMake(16, 16)]];
+    [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteButton setTarget:self];
     [_deleteButton setAction:@selector(unregisterUser:)];
 
@@ -127,6 +127,10 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 */
 - (IBAction)openRegisterUserWindow:(id)aSender
 {
+    [fieldNewUserUsername setStringValue:@""];
+    [fieldNewUserPassword setStringValue:@""];
+    [fieldNewUserPasswordConfirm setStringValue:@""];
+
     [windowNewUser center];
     [windowNewUser makeKeyAndOrderFront:aSender];
 }
@@ -162,8 +166,6 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
         [TNAlert showAlertWithMessage:@"You must select one user" informative:@""];
         return;
     }
-
-
 
     var indexes     = [_tableUsers selectedRowIndexes],
         users       = [_datasourceUsers objectsAtIndexes:indexes],

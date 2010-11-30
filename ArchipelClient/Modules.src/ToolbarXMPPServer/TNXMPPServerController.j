@@ -65,6 +65,8 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     [tabViewMain addTabViewItem:itemViewGroups];
 
     [usersController setDelegate:self];
+    [sharedGroupsController setDelegate:self];
+    [sharedGroupsController setUsersController:usersController];
 
     pushRegistred = NO;
 
@@ -107,8 +109,11 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
     [usersController setRoster:_roster];
-
     [usersController reload];
+
+    [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+    [sharedGroupsController setRoster:_roster];
+    [sharedGroupsController reload];
 
     return YES;
 }
@@ -138,6 +143,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     [self populateHypervisors];
     [usersController reload];
+    [sharedGroupsController reload];
 }
 
 /*! called when an Archipel push is received
@@ -152,6 +158,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
     [usersController reload];
+    [sharedGroupsController reload];
 
     return YES;
 }
@@ -220,6 +227,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
     [usersController reload];
+
+    [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
+    [sharedGroupsController reload];
 }
 
 
