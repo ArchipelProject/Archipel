@@ -137,7 +137,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)_didHypervisorPresenceUpdate:(CPNotification)aNotification
 {
     [self populateHypervisors];
-    [self reload];
+    [usersController reload];
 }
 
 /*! called when an Archipel push is received
@@ -166,22 +166,26 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     [buttonHypervisors removeAllItems];
 
-    var items = [CPArray array];
+
+    var servers = [CPArray array],
+        items = [CPArray array];
 
     for (var i = 0; i < [[_roster contacts] count]; i++)
     {
         var contact = [[_roster contacts] objectAtIndex:i],
-            item = [[TNMenuItem alloc] init],
-            img = ([contact avatar]) ? [[contact avatar] copy] : _defaultAvatar;
-        if (([_roster analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
-            && ([contact XMPPShow] != TNStropheContactStatusOffline))
-        {
-            [img setSize:CPSizeMake(18, 18)];
+            item = [[TNMenuItem alloc] init];
 
-            [item setTitle:@"  " + [contact nickname]]; // sic..
+        if (([_roster analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+            && ([contact XMPPShow] != TNStropheContactStatusOffline)
+            && ![servers containsObject:[[contact JID] domain]])
+        {
+
+            [servers addObject:[[contact JID] domain]];
+
+            [item setTitle:[[contact JID] domain]]; // sic..
             [item setObjectValue:contact];
-            [item setImage:img];
             [items addObject:item];
+
             [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:contact];
             [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didHypervisorPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:contact];
         }
