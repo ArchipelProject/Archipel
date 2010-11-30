@@ -40,16 +40,22 @@ class TNXMPPServerController:
         self.ejabberdctl_path   = exec_path
         
         # permissions
-        self.entity.permission_center.create_permission("xmppserver_groups", "Authorizes user to manage shared roster", False);
-        self.entity.permission_center.create_permission("xmppserver_users", "Authorizes user to manage XMPP users", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False);
+        self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False);
+        self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False);
+        self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False);
     
     
     
     ### XMPP Processing for shared groups
     
-    def process_rosters_iq(self, conn, iq):
+    def process_groups_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_EJABBERDCTL_ROSTERS IQ is received.
+        this method is invoked when a ARCHIPEL_NS_XMPPSERVER_GROUPS IQ is received.
         
         it understands IQ of type:
             - create
@@ -64,7 +70,7 @@ class TNXMPPServerController:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_groups_")
         reply = None
         
         if      action == "create":         reply = self.iq_group_create(iq)
@@ -257,7 +263,7 @@ class TNXMPPServerController:
         @param iq: the received IQ
         """
         action = self.entity.check_acp(conn, iq)
-        self.entity.check_perm(conn, iq, action, -1)
+        self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_users_")
         reply = None
         
         if      action == "register":   reply = self.iq_users_register(iq)
