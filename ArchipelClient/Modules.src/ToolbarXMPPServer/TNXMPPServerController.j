@@ -38,6 +38,7 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     @outlet TNXMPPSharedGroupsController    sharedGroupsController;
     @outlet TNXMPPUsersController           usersController;
     @outlet CPPopUpButton                   buttonHypervisors;
+    @outlet CPView                          viewBottom;
 
     CPImage     _defaultAvatar;
     BOOL        pushRegistred;
@@ -72,6 +73,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     [buttonHypervisors setTarget:self];
     [buttonHypervisors setAction:@selector(changeCurrentHypervisor:)];
+
+    var imageBg = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
+    [viewBottom setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
 }
 
 #pragma mark -
