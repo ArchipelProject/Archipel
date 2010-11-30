@@ -64,7 +64,7 @@
             they are displayed in the load order.
         -->
         <key>ToolbarIndex</key>
-        <string>500</string>
+        <string>501</string>
         
         <!--
             If set to 1, no view is needed. module is just a toolbar item
