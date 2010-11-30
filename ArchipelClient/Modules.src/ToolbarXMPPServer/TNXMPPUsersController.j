@@ -77,9 +77,11 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 
     [colName setWidth:325];
     [[colName headerView] setStringValue:@"Name"];
+    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colJID setWidth:450];
     [[colJID headerView] setStringValue:@"JID"];
+    [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [_tableUsers addTableColumn:colName];
     [_tableUsers addTableColumn:colJID];

@@ -100,9 +100,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     [colName setWidth:275];
     [[colName headerView] setStringValue:@"Name"];
+    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colJID setWidth:200];
     [[colJID headerView] setStringValue:@"JID"];
+    [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [_tableUsers addTableColumn:colName];
     [_tableUsers addTableColumn:colJID];
@@ -139,9 +141,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     [colName setWidth:175];
     [[colName headerView] setStringValue:@"Name"];
+    [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colDescription setWidth:450];
     [[colDescription headerView] setStringValue:@"Description"];
+    [colDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
 
     [_tableGroups addTableColumn:colName];
     [_tableGroups addTableColumn:colDescription];
@@ -190,6 +194,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 
     [colUserName setWidth:175];
     [[colUserName headerView] setStringValue:@"jid"];
+    [colUserName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [_tableUsersInGroup addTableColumn:colUserName];
 
