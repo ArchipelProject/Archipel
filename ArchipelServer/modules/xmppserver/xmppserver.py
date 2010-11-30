@@ -26,7 +26,7 @@ import archipel
 
 
 
-class TNEjabberdctl:
+class TNXMPPServerController:
     
     def __init__(self, entity, exec_path):
         """
@@ -40,8 +40,8 @@ class TNEjabberdctl:
         self.ejabberdctl_path   = exec_path
         
         # permissions
-        self.entity.permission_center.create_permission("ejabberdctl_rosters", "Authorizes user to manage shared roster", False);
-        self.entity.permission_center.create_permission("ejabberdctl_users", "Authorizes user to manage XMPP users", False);
+        self.entity.permission_center.create_permission("xmppserver_groups", "Authorizes user to manage shared roster", False);
+        self.entity.permission_center.create_permission("xmppserver_users", "Authorizes user to manage XMPP users", False);
     
     
     
@@ -102,7 +102,7 @@ class TNEjabberdctl:
             
             log.info("creating a new shared group %s" % groupID)
             
-            self.entity.push_change("ejabberdctl:rosters", "create")
+            self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -130,7 +130,7 @@ class TNEjabberdctl:
             
             log.info("removing a shared group %s" % groupID)
             
-            self.entity.push_change("ejabberdctl:rosters", "remove")
+            self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -205,7 +205,7 @@ class TNEjabberdctl:
             
             log.info("adding user %s into shared group %s" % (userJID, groupID))
             
-            self.entity.push_change("ejabberdctl:rosters", "usersadded")
+            self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -233,7 +233,7 @@ class TNEjabberdctl:
                 commands.getstatusoutput(cmd);
                 log.info("removing user %s from shared group %s" % (userJID, groupID))
             
-            self.entity.push_change("ejabberdctl:rosters", "usersremoved")
+            self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -292,7 +292,7 @@ class TNEjabberdctl:
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
                 log.info("registred a new user user %s@%s" % (username, server))
             
-            self.entity.push_change("ejabberdctl:users", "registered")
+            self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -319,7 +319,7 @@ class TNEjabberdctl:
                 if os.system(cmd):
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
                 log.info("unregistred user %s@%s" % (username, server))
-            self.entity.push_change("ejabberdctl:users", "unregistered")
+            self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

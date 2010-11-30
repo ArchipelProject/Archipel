@@ -1,0 +1,24 @@
+#!/usr/bin/python
+import xmppserver
+import archipel
+
+
+ARCHIPEL_NS_XMPPSERVER_ROSTERS  = "archipel:xmppserver:rosters"
+ARCHIPEL_NS_XMPPSERVER_USERS   = "archipel:xmppserver:users"
+
+# this method will be call at loading
+def __module_init__xmppserver(self):
+    exec_path = self.configuration.get("XMPPSERVER", "exec_path")
+    self.module_xmppserver = xmppserver.TNXMPPServerController(self, exec_path=exec_path)
+
+# this method will be called at registration of handlers for XMPP
+def __module_register_stanza__xmppserver(self):
+    self.xmppclient.RegisterHandler('iq', self.module_xmppserver.process_rosters_iq, ns=ARCHIPEL_NS_XMPPSERVER_ROSTERS)
+    self.xmppclient.RegisterHandler('iq', self.module_xmppserver.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+
+
+
+# WARNING THIS WILL CHANGE SOON.
+# finally, we add the methods to the class
+setattr(archipel.TNArchipelHypervisor, "__module_init__xmppserver", __module_init__xmppserver)
+setattr(archipel.TNArchipelHypervisor, "__module_register_stanza__xmppserver", __module_register_stanza__xmppserver)
