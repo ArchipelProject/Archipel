@@ -152,39 +152,43 @@ class TNXMPPServerController:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        try:
-            reply       = iq.buildReply("result")
-            server      = self.entity.jid.getDomain()
-            cmd         = "%s srg-list %s" % (self.ejabberdctl_path, server)
-            groupsNode  = []
-            
-            log.debug("console command is : %s" % cmd)
+        # try:
+        reply       = iq.buildReply("result")
+        server      = self.entity.jid.getDomain()
+        cmd         = "%s srg-list %s" % (self.ejabberdctl_path, server)
+        groupsNode  = []
+        
+        log.debug("console command is : %s" % cmd)
+        status, output = commands.getstatusoutput(cmd)
+        
+        if status:
+            raise Exception("EJABBERDCTL command error : %s" % cmd)
+        groups = output.split()
+        
+        for group in groups:
+            cmd = "%s srg-get-info %s %s" % (self.ejabberdctl_path, group, server)
             status, output = commands.getstatusoutput(cmd)
-            
-            if status:
-                raise Exception("EJABBERDCTL command error : %s" % cmd)
-            groups = output.split()
-            
-            for group in groups:
-                cmd = "%s srg-get-info %s %s" % (self.ejabberdctl_path, group, server)
-                status, output = commands.getstatusoutput(cmd)
-                gid, displayed_name, description = output.split("\n")
-                gid = re.findall('"([^"]*)"', gid)[0]
-                displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
+            displayed_name, gid, description = output.split("\n")
+            gid = re.findall('"([^"]*)"', gid)[0]
+            displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
+            try:
                 description = re.findall('"([^"]*)"', description)[0]
-                info = {"id": gid, "displayed_name": displayed_name, "description": description}
-                newNode = xmpp.Node("group", attrs=info)
-                
-                cmd = "%s srg-get-members %s %s" % (self.ejabberdctl_path, group, server)
-                status, output = commands.getstatusoutput(cmd)
-                for jid in output.split():
-                    newNode.addChild("user", attrs={"jid": jid})
-                groupsNode.append(newNode)
+            except:
+                description = ""
             
-            reply.setQueryPayload(groupsNode);
+            info = {"id": gid, "displayed_name": displayed_name, "description": description}
+            newNode = xmpp.Node("group", attrs=info)
             
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            cmd = "%s srg-get-members %s %s" % (self.ejabberdctl_path, group, server)
+            status, output = commands.getstatusoutput(cmd)
+            for jid in output.split():
+                newNode.addChild("user", attrs={"jid": jid})
+            groupsNode.append(newNode)
+        
+        reply.setQueryPayload(groupsNode);
+        
+        # except Exception as ex:
+        #     reply = build_error_iq(self, ex, iq)
         return reply
     
     
