@@ -38,6 +38,7 @@ var __defaultPermissionCenter;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
+    TNPubSubNode            _pubSubPermission;
 }
 
 + (TNPermissionsCenter)defaultCenter
@@ -160,12 +161,13 @@ var __defaultPermissionCenter;
 */
 - (BOOL)_onPermissionsPubSubEvents:(TNStropheStanza)aStanza
 {
-    var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
-        type    = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"],
-        user    = [TNStropheJID stropheJIDWithString:[[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"]];
+    var type = [[aStanza firstChildWithName:@"push"] valueForAttribute:@"xmlns"];
 
     if (type != TNArchipelPushNotificationPermissions)
         return YES;
+
+    var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
+        user    = [TNStropheJID stropheJIDWithString:[[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"]];
 
     if (![[[_roster connection] JID] bareEquals:user])
         return YES;
