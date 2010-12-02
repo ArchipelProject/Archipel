@@ -70,9 +70,9 @@ task ("release", function()
 
 task ("deploy", ["release"], function()
 {
-    FILE.mkdirs(FILE.join("Build", "deploy", NAME));
-    OS.system(["press", "-f", FILE.join("Build", "Release", NAME), FILE.join("Build", "deploy", NAME)]);
-    printResults("deploy")
+    FILE.mkdirs(FILE.join("Build", "Deployment", NAME));
+    OS.system(["press", "-f", "-v", "-F", "/../../../../../Frameworks/", FILE.join("Build", "Release", NAME), FILE.join("Build", "Deployment", NAME)]);
+    printResults("Deployment")
 });
 
 function printResults(configuration)
