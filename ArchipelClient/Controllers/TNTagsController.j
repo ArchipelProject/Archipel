@@ -117,7 +117,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 */
 - (void)didRetrieveSubscriptions:(CPNotification)aNotification
 {
-    var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[_connection JID] domain]],
+    var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[_currentRosterItem JID] domain]],
         nodeName = @"/archipel/tags";
 
     _pubsubTagsNode = [_pubsubController nodeWithName:nodeName];
