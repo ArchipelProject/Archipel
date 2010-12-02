@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
@@ -35,9 +34,40 @@
 }
 
 #pragma mark -
+#pragma mark Initialization
+
+- (void)awakeFromCib
+{
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
+}
+
+#pragma mark -
+#pragma mark Utilities
+
+- (void)subscribeToPubSubNodeOfContactWithJID:(TNStropheJID)aJID
+{
+    var nodeName = @"/archipel/" + [aJID bare] + @"/events",
+        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aJID domain]];
+
+    if (![_pubsubController nodeWithName:nodeName])
+        [_pubsubController subscribeToNodeWithName:nodeName server:server];
+}
+
+- (void)unsubscribeToPubSubNodeOfContactWithJID:(TNStropheJID)aJID
+{
+    var nodeName = "/archipel/" + [aJID bare] + "/events",
+        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aJID domain]];
+
+    if ([_pubsubController nodeWithName:nodeName])
+        [_pubsubController unsubscribeFromNodeWithName:nodeName server:server]
+}
+
+
+#pragma mark -
 #pragma mark Notification handlers
 
-- (void)_didPubSubSubscriptionsRetrieved:(TNStropheStanza)aNotification
+- (void)_didPubSubSubscriptionsRetrieved:(CPNotification)aNotification
 {
     var eventNode = [[[aNotification object] nodes] objectAtIndex:0];
 
@@ -46,6 +76,19 @@
     [eventNode unsubscribe];
 }
 
+- (void)_performPushRosterAdded:(CPNotification)aNotification
+{
+    var contact = [aNotification userInfo];
+
+    [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
+}
+
+- (void)_performPushRosterRemoved:(CPNotification)aNotification
+{
+    var contact = [aNotification userInfo];
+
+    [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
+}
 
 #pragma mark -
 #pragma mark Actions
@@ -132,12 +175,11 @@
 */
 - (void)performDeleteContact:(id)userInfo
 {
-    var contact = userInfo,
-        nodeName = "/archipel/" + [[contact JID] bare] + "/events",
-        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[contact JID] domain]];
+    var contact = userInfo;
+
+    [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
 
     [_roster removeContact:contact];
-    [_pubsubController unsubscribeFromNodeWithName:nodeName server:server]
 
     CPLog.info(@"contact " + [contact JID] + "removed");
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
@@ -179,8 +221,8 @@
     var alert = [TNAlert alertWithMessage:@"Subscription request"
                                 informative:nick + @" is asking you subscription. Do you want to authorize it ?"
                                  target:self
-                                 actions:[["Accept", @selector(performSubscribe:)],
-                                            ["Decline", @selector(performUnsubscribe:)]]];
+                                 actions:[["Accept", @selector(performAuthorize:)],
+                                            ["Decline", @selector(performRefuse:)]]];
 
     [alert setHelpTarget:self action:@selector(showHelpForSubscription:)];
     [alert setUserInfo:requestStanza]
@@ -190,19 +232,16 @@
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
     Will accept the subscription and try to register to Archipel pubsub nodes
 */
-- (void)performSubscribe:(id)aRequestStanza
+- (void)performAuthorize:(TNStropheStanza)aRequestStanza
 {
-    var nodeName = @"/archipel/" + [aRequestStanza fromBare] + @"/events",
-        server = [TNStropheJID stropheJIDWithString:@"pubsub." + [aRequestStanza fromDomain]];
-
+    [self subscribeToPubSubNodeOfContactWithJID:[aRequestStanza from]];
     [_roster answerAuthorizationRequest:aRequestStanza answer:YES];
-    [_pubsubController subscribeToNodeWithName:nodeName server:server];
 }
 
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
     Will refuse the subscription and try to unregister to Archipel pubsub nodes
 */
-- (void)performUnsubscribe:(id)aRequestStanza
+- (void)performRefuse:(TNStropheStanza)aRequestStanza
 {
     [_roster answerAuthorizationRequest:aRequestStanza answer:NO];
 }
