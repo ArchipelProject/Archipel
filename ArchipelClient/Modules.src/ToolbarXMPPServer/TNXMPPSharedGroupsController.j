@@ -49,6 +49,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     @outlet CPSearchField   filterFieldUsersInGroup;
     @outlet CPPopUpButton   buttonGroups;
     @outlet CPWindow        windowAddUserInGroup;
+    @outlet CPSplitView     splitViewVertical;
 
     TNStropheRoster         _roster             @accessors(setter=setRoster:);
     TNStropheContact        _entity             @accessors(setter=setEntity:);
@@ -77,6 +78,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 - (void)awakeFromCib
 {
     /* table Users */
+    [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
+    [splitViewVertical setIsPaneSplitter:YES];
 
     [scrollViewUsers setBorderedWithHexColor:@"#C0C7D2"];
 
