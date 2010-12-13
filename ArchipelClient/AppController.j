@@ -154,6 +154,8 @@ TNToolBarItemHelp           = @"TNToolBarItemHelp";
 TNToolBarItemStatus         = @"TNToolBarItemStatus";
 
 
+TNArchipelTagViewHeight     = 33.0;
+
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
 */
@@ -669,7 +671,7 @@ TNToolBarItemStatus         = @"TNToolBarItemStatus";
     [moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
 
     if (_tagsVisible)
-        [splitViewTagsContents setPosition:32.0 ofDividerAtIndex:0];
+        [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
@@ -1171,7 +1173,7 @@ TNToolBarItemStatus         = @"TNToolBarItemStatus";
 */
 - (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
 {
-    var dividerPosition = _tagsVisible ?  (aValue * 32.0) : 32.0 - (aValue * 32.0),
+    var dividerPosition = _tagsVisible ?  (aValue * TNArchipelTagViewHeight) : TNArchipelTagViewHeight - (aValue * TNArchipelTagViewHeight),
         defaults        = [CPUserDefaults standardUserDefaults];
 
     [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
