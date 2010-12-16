@@ -92,5 +92,7 @@
         -->
         <key>CibName</key>
         <string>ToolbarXMPPServer</string>
+
+        
     </dict>
 </plist>

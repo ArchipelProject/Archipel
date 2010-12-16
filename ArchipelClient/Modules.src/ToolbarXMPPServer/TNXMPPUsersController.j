@@ -29,15 +29,15 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 */
 @implementation TNXMPPUsersController : CPObject
 {
-    @outlet CPView          mainView        @accessors(getter=mainView);
-    @outlet CPWindow        windowNewUser;
-    @outlet CPTextField     fieldNewUserUsername;
+    @outlet CPButtonBar     buttonBarControl;
+    @outlet CPScrollView    scrollViewUsers;
+    @outlet CPSearchField   filterField;
     @outlet CPTextField     fieldNewUserPassword;
     @outlet CPTextField     fieldNewUserPasswordConfirm;
+    @outlet CPTextField     fieldNewUserUsername;
+    @outlet CPView          mainView        @accessors(getter=mainView);
     @outlet CPView          viewTableContainer;
-    @outlet CPScrollView    scrollViewUsers;
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPSearchField   filterField;
+    @outlet CPWindow        windowNewUser;
 
     TNStropheRoster         _roster             @accessors(setter=setRoster:);
     TNStropheContact        _entity             @accessors(setter=setEntity:);
@@ -112,6 +112,19 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! called when permissions has changed
+*/
+- (void)permissionsChanged
+{
+    [_delegate setControl:_addButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]];
+    [_delegate setControl:_deleteButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_users_unregister"]];
+
+    if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_users_register"]])
+        [windowNewUser close];
+
+    [self reload];
+}
 
 /*! reload the display of the module
 */
@@ -196,6 +209,13 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 */
 - (void)getXMPPUsers
 {
+    if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:_entity])
+    {
+        [_datasourceUsers removeAllObjects];
+        [_tableUsers reloadData];
+        return;
+    }
+
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];

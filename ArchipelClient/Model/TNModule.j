@@ -616,7 +616,7 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
 {
-    if (anEntity === _entity)
+    if ((anEntity === _entity) || _toolbarItem)
     {
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];

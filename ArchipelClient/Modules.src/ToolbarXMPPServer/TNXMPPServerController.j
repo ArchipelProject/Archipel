@@ -130,11 +130,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     // message sent when the tab is changed
 }
 
-/*! called when user permissions changed
+/*! called when permissions changes
 */
 - (void)permissionsChanged
 {
-    [super permissionsChanged]
+    [sharedGroupsController permissionsChanged];
+    [usersController permissionsChanged];
 }
 
 #pragma mark -
@@ -146,8 +147,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 - (void)_didHypervisorPresenceUpdate:(CPNotification)aNotification
 {
     [self populateHypervisors];
-    [usersController reload];
-    [sharedGroupsController reload];
 }
 
 /*! called when an Archipel push is received
@@ -218,6 +217,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 
     for (var i = 0; i < [sortedItems count]; i++)
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
+
+    _entity = [[buttonHypervisors selectedItem] objectValue];
+    [self permissionsChanged];
 }
 
 
@@ -229,11 +231,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (IBAction)changeCurrentHypervisor:(id)aSender
 {
-    [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [usersController reload];
+    _entity = [[buttonHypervisors selectedItem] objectValue];
 
+    [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
     [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [sharedGroupsController reload];
+
+    [self permissionsChanged];
 }
 
 

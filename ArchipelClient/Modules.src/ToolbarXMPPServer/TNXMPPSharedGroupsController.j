@@ -225,6 +225,25 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 #pragma mark -
 #pragma mark Utilities
 
+/*! called when permissions has changed
+*/
+- (void)permissionsChanged
+{
+    [_delegate setControl:_addGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]];
+    [_delegate setControl:_deleteGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_delete"]];
+    [_delegate setControl:_addUserInGroupButton enabledAccordingToPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]];
+    [_delegate setControl:_deleteUserFromGroupButton enabledAccordingToPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_deleteusers"]];
+
+    if (![_delegate currentEntityHasPermissions:[@"xmppserver_users_list", @"xmppserver_groups_list", @"xmppserver_groups_addusers"]])
+        [windowAddUserInGroup close];
+
+    if (![_delegate currentEntityHasPermissions:[@"xmppserver_groups_list", @"xmppserver_groups_create"]])
+        [windowNewGroup close];
+
+    [self reload];
+}
+
+
 /*! reload the controller
 */
 - (void)reload
@@ -336,6 +355,15 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)getSharedGroupsInfo
 {
+    if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_groups_list" forEntity:_entity])
+    {
+        [_datasourceGroups removeAllObjects];
+        [_datasourceUsersInGroup removeAllObjects];
+        [_tableGroups reloadData];
+        [_tableUsersInGroup reloadData];
+        return;
+    }
+
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerGroups}];
