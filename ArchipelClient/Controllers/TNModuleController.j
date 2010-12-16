@@ -453,6 +453,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setName:moduleName];
     [currentModuleController setLabel:moduleLabel];
     [currentModuleController setBundle:aBundle];
+    [currentModuleController setModuleType:TNArchipelModuleTypeTab];
     [currentModuleController setSupportedEntityTypes:supportedTypes];
     [currentModuleController setIndex:moduleTabIndex];
     [currentModuleController setMandatoryPermissions:mandatoryPermissions];
@@ -524,6 +525,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
+    [currentModuleController setModuleType:TNArchipelModuleTypeToolbar];
     [currentModuleController setMandatoryPermissions:mandatoryPermissions];
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
 

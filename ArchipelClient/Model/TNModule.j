@@ -82,6 +82,7 @@ TNArchipelErrorGeneral                  = 1;
     CPToolbarItem                   _toolbarItem                @accessors(property=toolbarItem);
     CPView                          _viewPermissionsDenied      @accessors(getter=viewPermissionDenied);
     id                              _entity                     @accessors(property=entity);
+    id                              _moduleType                 @accessors(property=moduleType);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
     TNStropheConnection             _connection                 @accessors(property=connection);
@@ -616,7 +617,7 @@ TNArchipelErrorGeneral                  = 1;
 */
 - (void)permissionCenter:(TNPermissionsCenter)aCenter updatePermissionForEntity:(TNStropheContact)anEntity
 {
-    if ((anEntity === _entity) || _toolbarItem)
+    if ((anEntity === _entity) || (_moduleType === TNArchipelModuleTypeToolbar))
     {
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
