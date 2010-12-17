@@ -358,18 +358,14 @@ def install_archipelserver():
     inst_start = None
     inst_conf = None
     inst_cert = None
-    inst_prefix = ""
     
-    if ask_bool("Would you like to set a specific prefix ?"):
-        inst_prefix = ask("What prefix do you want to use ?", None, inst_prefix)
-    
-    if ask_bool("Whould you like to install Archipel binary ?"):
+    if ask_bool("Would you like to install Archipel binary ?"):
         inst_bin    = ask("Where do you want to install ArchipelServer ?", None, "/usr/bin")
         
-    if ask_bool("Whould you like to install Archipel default configuration ?"):
+    if ask_bool("Would you like to install Archipel default configuration ?"):
         inst_conf   = ask("Where do you want to install configuration ?", None, "/etc/archipel")
     
-    if ask_bool("Whould you like to create Archipel data folder ?"):
+    if ask_bool("Would you like to create Archipel data folder ?"):
         inst_data   = ask("Where do you want to ArchipelServer stores its datas ?", None, "/var/lib/archipel")
     
     if ask_bool("Would you like to install the init script ?"):
@@ -384,9 +380,9 @@ def install_archipelserver():
     
     print ""
     print " Installation information"
-    if inst_bin:    print "   - binary folder        : %s" % inst_prefix + inst_bin
-    if inst_data:   print "   - data folder          : %s" % inst_prefix + inst_data
-    if inst_conf:   print "   - configuration folder : %s" % inst_prefix + inst_conf
+    if inst_bin:    print "   - binary folder        : %s" % inst_bin
+    if inst_data:   print "   - data folder          : %s" % inst_data
+    if inst_conf:   print "   - configuration folder : %s" % inst_conf
     if inst_init:   print "   - install init script  : %s" % inst_init
     if inst_start:  print "   - start with system    : %s" % inst_start
     print ""
@@ -396,48 +392,48 @@ def install_archipelserver():
         print " \033[33m* Installation canceled by user\033[0m"
         sys.exit(0)
     
-    if inst_bin and not os.path.exists(inst_prefix + inst_bin):
-        print " - creating folder %s" % inst_prefix + inst_bin
+    if inst_bin and not os.path.exists(inst_bin):
+        print " - creating folder %s" % inst_bin
         s = Spinner()
-        os.system("mkdir -p '%s'" % inst_prefix + inst_bin)
+        os.system("mkdir -p '%s'" % inst_bin)
         s.stop()
             
     if inst_bin: 
         print " - installation ArchipelServer binary to %s" % inst_bin
         s = Spinner()
-        os.system("cp -a ./ArchipelServer '%s'" %  inst_prefix + inst_bin)
-        os.system("chmod -R 700 '%s'" %  inst_prefix + inst_bin)
+        os.system("cp -a ./ArchipelServer '%s'" %  inst_bin)
+        os.system("chmod -R 700 '%s'" %  inst_bin)
         s.stop()
     
-    if inst_conf and not os.path.exists(inst_prefix + inst_conf):
+    if inst_conf and not os.path.exists(inst_conf):
         s = Spinner()
-        print " - creating folder %s" % inst_prefix + inst_conf
-        os.system("mkdir -p '%s'" % inst_prefix + inst_conf)
+        print " - creating folder %s" % inst_conf
+        os.system("mkdir -p '%s'" % inst_conf)
         s.stop()
         
     if inst_conf:
-        print " - installing configuration in %s" % inst_prefix + inst_conf
+        print " - installing configuration in %s" % inst_conf
         s = Spinner()
-        os.system("cp -a ./ArchipelServer/conf/archipel.conf '%s'" % inst_prefix + inst_conf)
-        os.system("chmod -R 700 '%s'" % inst_prefix + inst_conf)
+        os.system("cp -a ./ArchipelServer/conf/archipel.conf '%s'" % inst_conf)
+        os.system("chmod -R 700 '%s'" % inst_conf)
         s.stop()
         
-    if inst_data and not os.path.exists(inst_prefix + inst_data):
-        print " - creating folder %s" %  inst_prefix + inst_data
+    if inst_data and not os.path.exists(inst_data):
+        print " - creating folder %s" %  inst_data
         s = Spinner()
-        os.system("mkdir -p '%s'" % inst_prefix + inst_data)
+        os.system("mkdir -p '%s'" % inst_data)
         s.stop()
     
-    if inst_init and not os.path.exists(inst_prefix + inst_init):
-        print " - creating folder  %s" % inst_prefix + inst_init
+    if inst_init and not os.path.exists(inst_init):
+        print " - creating folder  %s" % inst_init
         s = Spinner()
-        os.system("mkdir -p '%s'" % inst_prefix + inst_init)
+        os.system("mkdir -p '%s'" % inst_init)
         s.stop()
             
     if inst_init:
-        print " - installing init script to  %s" % inst_prefix + inst_init
+        print " - installing init script to  %s" % inst_init
         s = Spinner()
-        os.system("cp -a ./ArchipelServer/archipel '%s'" % inst_prefix + inst_init)
+        os.system("cp -a ./ArchipelServer/archipel '%s'" % inst_init)
         s.stop()
     
     if inst_init and inst_start:
@@ -449,7 +445,7 @@ def install_archipelserver():
     if inst_cert:
         print " - generating the certificates for VNC"
         print "\n\033[35m*******************************************************************************"
-        os.system("openssl req -new -x509 -days 365 -nodes -out '%s/vnc.pem' -keyout '%s/vnc.pem'" % (inst_prefix +inst_conf, inst_prefix +inst_conf))
+        os.system("openssl req -new -x509 -days 365 -nodes -out '%s/vnc.pem' -keyout '%s/vnc.pem'" % (inst_conf, inst_conf))
         print "*******************************************************************************\033[0m"
     
     
