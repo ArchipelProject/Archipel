@@ -203,6 +203,7 @@ def install_archipelclient():
     
     inst_export = None
     
+    inst_capp           = ask_bool("Would you like to build Cappuccino ?", default="n")
     inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
     inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
     inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
@@ -218,6 +219,7 @@ def install_archipelclient():
         
     print ""
     print " Installation information"
+    print "   - build Cappuccino            : %s" % str(inst_capp)
     print "   - build GrowlCappuccino       : %s" % str(inst_growl)
     print "   - build VNCCappuccino         : %s" % str(inst_vnc)
     print "   - build StropheCappuccino     : %s" % str(inst_strophe)
@@ -235,6 +237,7 @@ def install_archipelclient():
         print " \033[33m* Installation canceled by user\033[0m"
         sys.exit(0)
     
+    if inst_capp:           build_cappuccino()
     if inst_growl:          build_growlcappuccino()
     if inst_vnc:            build_vnccappuccino()
     if inst_strophe:        build_strophecappuccino()
@@ -253,11 +256,27 @@ def install_archipelclient():
     ask_bool("Continue ?")
 
 
+
+def build_cappuccino():
+    print " * Building Cappuccino";
+    print "\n\033[35m*******************************************************************************"
+    ret = os.system("cd ./Cappuccino && ./bootstrap.sh && jake install")
+    print "*******************************************************************************\033[0m"
+    if ret != 0:
+        print "\033[31mUnable to build Cappuccino\033[0m"
+        sys.exit(1)
+    print "\033[32m * Cappuccinno builded\033[0m"
+
+
+
 def build_strophecappuccino():
     print " * Building StropheCappuccino";
     s = Spinner();
     os.system("cd ./StropheCappuccino && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
     s.stop()
+    if ret != 0:
+        print "\033[31mUnable to build StropheCappuccino\033[0m"
+        sys.exit(1)
     print "\033[32m * StropheCappuccino builded\033[0m"
 
 
@@ -266,6 +285,9 @@ def build_growlcappuccino():
     s = Spinner();
     os.system("cd ./GrowlCappuccino && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
     s.stop()
+    if ret != 0:
+        print "\033[31mUnable to build GrowlCappuccino\033[0m"
+        sys.exit(1)
     print "\033[32m * GrowlCappuccino builded \033[0m"
 
 
