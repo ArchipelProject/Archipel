@@ -33,7 +33,7 @@
 
 - (void)setBorderColor:(CPColor)aColor
 {
-    [box setBorderColor:aColor];
+    [_box setBorderColor:aColor];
 }
 
 @end
