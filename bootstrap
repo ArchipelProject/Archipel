@@ -170,6 +170,13 @@ def test_basic_cmds():
     test_cmd_or_die("chmod")
 
 
+def test_user_root():
+    import getpass
+    if not getpass.getuser() == "root":
+        print "\033[31m\n * ERROR: You need to be root\033[0m\n"
+        sys.exit(1)
+
+
 def test_install_archipelserver():
     test_basic_cmds()
     test_cmd_or_die("openssl", warn=True)
@@ -476,6 +483,8 @@ if __name__ == "__main__":
     try:
         clear()
         
+        test_user_root()
+
         git_init_submodules()
         
         print MSG_ARCHIPEL_WELCOME
