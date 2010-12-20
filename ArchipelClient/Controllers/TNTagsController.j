@@ -62,10 +62,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _currentRosterItem  = nil;
     _alreadyReady       = NO;
 
-    _tokenFieldTags = [CPTokenField textFieldWithStringValue:@"" placeholder:@"You can't assign tags here" width:CPRectGetWidth(frame) - 45];
-    tokenFrame = [_tokenFieldTags frame];
-    tokenFrame.origin = CPPointMake(0.0, 1.0);
-    [_tokenFieldTags setFrame:tokenFrame];
+    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 45, 30)];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [_tokenFieldTags setDelegate:self];
     [mainView addSubview:_tokenFieldTags];
