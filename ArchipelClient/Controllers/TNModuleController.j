@@ -103,8 +103,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     id                              _modulesPList;
     int                             _numberOfModulesLoaded;
     int                             _numberOfModulesToLoad;
-
-
 }
 
 
@@ -279,6 +277,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 #pragma mark -
 #pragma mark Modules loading
+
 /*! will start to load all the bundles describe in modules.plist
 */
 - (void)load
@@ -643,7 +642,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _allModulesReady = YES;
     }
 }
-
 
 
 #pragma mark -
