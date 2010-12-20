@@ -88,26 +88,23 @@
     CGContextSetLineWidth(context, 1.3);
     CGContextSetStrokeColor(context, [CPColor whiteColor]);
 
-    //var fillColors = [[CPColor colorWithHexString:@"E29A3E"], [CPColor colorWithHexString:@"75B886"]];
-    var fillColors = [
-                        [CPColor colorWithHexString:@"4379ca"],
-                        [CPColor colorWithHexString:@"7fca43"],
-                        [CPColor colorWithHexString:@"ca4343"],
-                        [CPColor colorWithHexString:@"dcd639"],
-                        [CPColor colorWithHexString:@"ca9f43"],
-                        [CPColor colorWithHexString:@"af43ca"],
-                        [CPColor colorWithHexString:@"43afca"]
-                    ];
-
+    var blueColor       = [CPColor colorWithHexString:@"4379ca"],
+        darkBlueColor   = [CPColor colorWithHexString:@"3A5FA5"],
+        greenColor      = [CPColor colorWithHexString:@"7fca43"],
+        darkGreenColor  = [CPColor colorWithHexString:@"758B2C"],
+        fillColors = [
+                        [[blueColor redComponent], [blueColor greenComponent], [blueColor blueComponent],1.0, [darkBlueColor redComponent], [darkBlueColor greenComponent], [darkBlueColor blueComponent],1.0],
+                        [[greenColor redComponent], [greenColor greenComponent], [greenColor blueComponent],1.0, [darkGreenColor redComponent], [darkGreenColor greenComponent], [darkGreenColor blueComponent],1.0]
+                     ];
     for (var i = 0; i < paths.length; i++)
     {
         CGContextBeginPath(context);
         CGContextAddPath(context, paths[i]);
+
+        var gradient = CGGradientCreateWithColorComponents(CGColorSpaceCreateDeviceRGB(), fillColors[i], [0,1], 2);
+        CGContextDrawLinearGradient(context, gradient, [self frame].origin, CGPointMake(0.0, 200.0), 0);
+
         CGContextClosePath(context);
-
-        CGContextSetFillColor(context, fillColors[i]);
-
-        CGContextFillPath(context);
         CGContextStrokePath(context);
     }
 }
