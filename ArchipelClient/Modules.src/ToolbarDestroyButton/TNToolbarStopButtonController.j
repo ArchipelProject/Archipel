@@ -33,6 +33,42 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 @implementation TNToolbarDestroyButtonController : TNModule
 
 #pragma mark -
+#pragma mark Intialization
+
+- (void)willLoad
+{
+    [super willLoad];
+
+    [_toolbarItem setEnabled:NO];
+}
+
+
+#pragma mark -
+#pragma mark Overrides
+- (void)setEntity:(TNStropheContact)anEntity
+{
+    [super setEntity:anEntity];
+    _toolbarItem = [_toolbar itemWithIdentifier:_name];
+
+    if ([_roster analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
+    {
+        [_toolbarItem setEnabled:NO];
+        return;
+    }
+
+    switch ([_entity XMPPShow])
+    {
+        case TNStropheContactStatusOnline:
+            [_toolbarItem setEnabled:YES];
+            break;
+        case TNStropheContactStatusAway:
+            [_toolbarItem setEnabled:YES];
+            break;
+        default:
+            [_toolbarItem setEnabled:NO];
+   }
+}
+#pragma mark -
 #pragma mark Actions
 
 /*! send TNArchipelControlNotification containing command TNArchipelControlDestroy
