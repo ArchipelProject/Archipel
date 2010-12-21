@@ -1063,6 +1063,7 @@ TNArchipelTagViewHeight     = 33.0;
         if (!url || (url == @"local"))
             url = @"help/index.html";
 
+        [newHelpView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
 
         [scrollView setAutohidesScrollers:YES];
