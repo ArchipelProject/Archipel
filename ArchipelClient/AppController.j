@@ -675,7 +675,7 @@ TNArchipelTagViewHeight     = 33.0;
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
-    [labelCurrentUser setStringValue:@"Connected as " + [[connection JID] node]];
+    [labelCurrentUser setStringValue:@"Connected as " + [[connection JID] bare]];
 }
 
 /*! Notification responder of TNStropheConnection
