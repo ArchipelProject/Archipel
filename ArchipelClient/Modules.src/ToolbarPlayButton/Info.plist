@@ -64,7 +64,7 @@
             they are displayed in the load order.
         -->
         <key>ToolbarIndex</key>
-        <string>2</string>
+        <string>102</string>
         
         <!--
             This image will be displayed as toolbar item icon when module is unactivated.

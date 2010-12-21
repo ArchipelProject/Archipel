@@ -129,6 +129,13 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
 /*! @global
     @group TNToolBarItem
+    identifier for item avatar
+*/
+
+TNToolBarItemAvatar         = @"TNToolBarItemAvatar";
+
+/*! @global
+    @group TNToolBarItem
     identifier for item logout
 */
 TNToolBarItemLogout         = @"TNToolBarItemLogout";
@@ -476,6 +483,9 @@ TNArchipelTagViewHeight     = 33.0;
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didRetrieveRoster:) name:TNStropheRosterRetrievedNotification object:nil];
 
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
+
     CPLog.info(@"Initialization of AppController OK");
 }
 
@@ -582,18 +592,37 @@ TNArchipelTagViewHeight     = 33.0;
 */
 - (void)makeToolbar
 {
-    var bundle  = [CPBundle bundleForClass:self];
+    var bundle          = [CPBundle bundleForClass:self],
+        userAvatarView  = [[CPButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 50.0, 50.0)],
+        userAvatar      = [[CPMenuItem alloc] init],
+        userAvatarMenu  = [[CPMenu alloc] init];
 
+    [userAvatarMenu addItemWithTitle:@"Avatar A" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar B" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar C" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar D" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar E" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar F" action:nil keyEquivalent:nil];
+    [userAvatarMenu addItemWithTitle:@"Avatar G" action:nil keyEquivalent:nil];
+
+    [userAvatarView setBordered:NO];
+    [userAvatarView setMenu:userAvatarMenu];
+    [userAvatarView setValue:CPScaleProportionally forThemeAttribute:@"image-scaling"];
+
+    [userAvatarView setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"] size:CPSizeMake(32.0, 32.0)]];
+
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemAvatar label:@"Avatar" view:userAvatarView target:self action:@selector(toolbarItemAvatarClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
 
-    var statusSelector = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
-        availableItem = [[CPMenuItem alloc] init],
-        awayItem = [[CPMenuItem alloc] init],
-        busyItem = [[CPMenuItem alloc] init],
-        DNDItem = [[CPMenuItem alloc] init],
-        statusItem = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
+        availableItem   = [[CPMenuItem alloc] init],
+        awayItem        = [[CPMenuItem alloc] init],
+        busyItem        = [[CPMenuItem alloc] init],
+        DNDItem         = [[CPMenuItem alloc] init],
+        statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
+
 
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
     [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
@@ -614,8 +643,10 @@ TNArchipelTagViewHeight     = 33.0;
     [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
     [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
 
-    [_mainToolbar setPosition:0 forToolbarItemIdentifier:TNToolBarItemStatus];
+    [_mainToolbar setPosition:0 forToolbarItemIdentifier:TNToolBarItemAvatar];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+    [_mainToolbar setPosition:2 forToolbarItemIdentifier:TNToolBarItemStatus];
+    [_mainToolbar setPosition:3 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:499 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
     [_mainToolbar setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
@@ -1034,53 +1065,51 @@ TNArchipelTagViewHeight     = 33.0;
 #pragma mark -
 #pragma mark Toolbar Actions
 
-/*! Delegate of toolbar imutables toolbar items.
+/*! Action of toolbar imutables toolbar items.
     Trigger on delete help item click.
     This will show a window conataining the helpView
     To have more information about the toolbar, see TNToolbar
 */
 - (IBAction)toolbarItemHelpClick:(id)sender
 {
-    if (!_helpWindow)
+    if (_helpWindow)
     {
-        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
-
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
-        var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
-
-        [_helpWindow setPlatformWindow:_platformHelpWindow];
-        [_platformHelpWindow orderFront:nil];
-
-        [_helpWindow setDelegate:self];
-
-        var bundle          = [CPBundle mainBundle],
-            defaults        = [CPUserDefaults standardUserDefaults],
-            newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
-            url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-            version         = [defaults objectForKey:@"TNArchipelVersion"];
-
-        if (!url || (url == @"local"))
-            url = @"help/index.html";
-
-        [newHelpView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
-
-        [scrollView setAutohidesScrollers:YES];
-        [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [scrollView setDocumentView:newHelpView];
-
-        [_helpWindow setContentView:scrollView];
-        [_helpWindow center];
-        [_helpWindow makeKeyAndOrderFront:nil];
-    }
-    else
-    {
+        [_platformHelpWindow orderOut:nil];
         [_helpWindow close];
         _helpWindow = nil;
     }
+    _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
+
+    _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+    var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
+
+    [_helpWindow setPlatformWindow:_platformHelpWindow];
+    [_platformHelpWindow orderFront:nil];
+
+    [_helpWindow setDelegate:self];
+
+    var bundle          = [CPBundle mainBundle],
+        defaults        = [CPUserDefaults standardUserDefaults],
+        newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
+        url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+        version         = [defaults objectForKey:@"TNArchipelVersion"];
+
+    if (!url || (url == @"local"))
+        url = @"help/index.html";
+
+    [newHelpView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
+
+    [scrollView setAutohidesScrollers:YES];
+    [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [scrollView setDocumentView:newHelpView];
+
+    [_helpWindow setContentView:scrollView];
+    [_helpWindow center];
+    [_helpWindow makeKeyAndOrderFront:nil];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
+/*! Action of toolbar imutables toolbar items.
     Trigger presence item change.
     This will change your own XMPP status
 */
@@ -1119,7 +1148,7 @@ TNArchipelTagViewHeight     = 33.0;
     [[_mainRoster connection] send:presence];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
+/*! Action of toolbar imutables toolbar items.
     Trigger on logout item click
     To have more information about the toolbar, see TNToolbar
     @param sender the sender of the action (the CPToolbarItem)
@@ -1129,7 +1158,7 @@ TNArchipelTagViewHeight     = 33.0;
     [self logout:sender];
 }
 
-/*! Delegate of toolbar imutables toolbar items.
+/*! Action of toolbar imutables toolbar items.
     Trigger on tags item click
     To have more information about the toolbar, see TNToolbar
     @param sender the sender of the action (the CPToolbarItem)
@@ -1151,6 +1180,53 @@ TNArchipelTagViewHeight     = 33.0;
     else
     {
         [self animation:nil valueForProgress:1.0];
+    }
+}
+
+/*! Action of toolbar imutables toolbar items.
+    Trigger on avatar item click
+    To have more information about the toolbar, see TNToolbar
+    @param sender the sender of the action (the CPToolbarItem)
+*/
+- (IBAction)toolbarItemAvatarClick:(id)aSender
+{
+    var wp = CPPointMake(16, 12);
+
+    wp = [aSender convertPoint:wp toView:nil];
+
+    var fake = [CPEvent mouseEventWithType:CPRightMouseDown
+                        location:wp
+                        modifierFlags:0 timestamp:nil
+                        windowNumber:[theWindow windowNumber]
+                        context:nil
+                        eventNumber:0
+                        clickCount:1
+                        pressure:1];
+
+    [CPMenu popUpContextMenu:[aSender menu] withEvent:fake forView:aSender];
+}
+
+#pragma mark -
+#pragma mark User vCard management
+
+/*! trigger by TNConnectionControllerCurrentUserVCardRetreived that indicates the controller has received
+    the user vCard
+    @param aNotification the notification that triggers the selector
+*/
+- (void)didRetreiveUserVCard:(CPNotification)aNotification
+{
+
+    var vCard = [connectionController userVCard],
+        photoNode;
+
+    if (photoNode = [vCard firstChildWithName:@"PHOTO"])
+    {
+        var contentType     = [[photoNode firstChildWithName:@"TYPE"] text],
+            data            = [[photoNode firstChildWithName:@"BINVAL"] text],
+            currentAvatar   = [TNBase64Image base64ImageWithContentType:contentType data:data delegate:self];
+
+        [currentAvatar setSize:CPSizeMake(32.0, 32.0)];
+        [[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view] setImage:currentAvatar];
     }
 }
 

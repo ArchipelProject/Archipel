@@ -21,6 +21,8 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 
 
+TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
+
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
@@ -42,9 +44,12 @@
     @outlet TNModalWindow   mainWindow @accessors(readonly);
 
 
-
     TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
+    TNStropheStanza     _userVCard          @accessors(property=userVCard);
 }
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize the window when CIB is loaded
 */
@@ -102,6 +107,19 @@
     if (lastRememberCred)
         [self connect:nil];
 }
+
+
+#pragma mark -
+#pragma mark Notification handlers
+
+- (void)_didReceiveUserVCard:(CPNotification)aNotification
+{
+    _userVCard = [[aNotification userInfo] firstChildWithName:@"vCard"];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNConnectionControllerCurrentUserVCardRetreived object:self];
+}
+
+#pragma mark -
+#pragma mark Actions
 
 /*! connection action
     @param sender the sender
@@ -178,7 +196,10 @@
 {
     [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
-
+    
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheConnectionVCardReceived object:_stropheConnection];
+    [_stropheConnection getVCard];
+    
     CPLog.info(@"Strophe is now connected using JID " + [JID stringValue]);
 }
 
