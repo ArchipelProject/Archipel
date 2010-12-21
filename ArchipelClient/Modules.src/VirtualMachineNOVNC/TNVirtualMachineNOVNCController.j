@@ -317,7 +317,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     else
     {
         [sliderScaling setDoubleValue:aEndZoom];
-        [self changeScale:nil];
+        [self changeScale:sliderScaling];
     }
 }
 
