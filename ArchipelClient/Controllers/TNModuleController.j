@@ -209,6 +209,14 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 }
 
+- (void)setCurrentEntityForToolbarModules:(TNStropheContact)anEntity
+{
+    for (var i = 0; i < [[_loadedToolbarModules allValues] count]; i++)
+    {
+        var module = [[_loadedToolbarModules allValues] objectAtIndex:i];
+        [module setEntity:anEntity];
+    }
+}
 
 #pragma mark -
 #pragma mark Storage
@@ -499,6 +507,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [moduleToolbarItem setLabel:moduleLabel];
     [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
+    [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CPSizeMake(32, 32)]];
 
     // if toolbar item only, no cib
     if (toolbarOnly)
@@ -520,17 +529,19 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [moduleToolbarItem setTarget:self];
         [moduleToolbarItem setAction:@selector(didToolbarModuleClicked:)];
     }
+
+    [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
+    [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
+    [_mainToolbar _reloadToolbarItems];
+
     [currentModuleController initializeModule];
+    [currentModuleController setName:moduleName];
     [currentModuleController setToolbarItem:moduleToolbarItem];
     [currentModuleController setToolbar:_mainToolbar];
     [currentModuleController setLabel:moduleLabel];
     [currentModuleController setModuleType:TNArchipelModuleTypeToolbar];
     [currentModuleController setMandatoryPermissions:mandatoryPermissions];
     [currentModuleController setViewPermissionDenied:viewPermissionDenied];
-
-    [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
-    [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-    [_mainToolbar _reloadToolbarItems];
 
     [_loadedToolbarModules setObject:currentModuleController forKey:moduleName];
 

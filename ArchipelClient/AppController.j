@@ -1252,7 +1252,6 @@ TNArchipelTagViewHeight     = 33.0;
     if ([_rosterOutlineView numberOfSelectedRows] == 0)
     {
         [self showHelpView];
-        //[_mainRoster setCurrentItem:nil];
         [propertiesController hideView];
     }
     else
@@ -1260,7 +1259,6 @@ TNArchipelTagViewHeight     = 33.0;
         var item        = [aTimer userInfo],
             defaults    = [CPUserDefaults standardUserDefaults];
 
-        //[_mainRoster setCurrentItem:item];
 
         [self hideHelpView];
 
@@ -1269,6 +1267,7 @@ TNArchipelTagViewHeight     = 33.0;
             case TNStropheGroup:
                 CPLog.info(@"setting the entity as " + item + " of type group");
                 [moduleController setEntity:item ofType:@"group"];
+                [moduleController setCurrentEntityForToolbarModules:nil];
                 break;
 
             case TNStropheContact:
@@ -1276,6 +1275,7 @@ TNArchipelTagViewHeight     = 33.0;
                     entityType  = [_mainRoster analyseVCard:vCard];
                 CPLog.info(@"setting the entity as " + item + " of type " + entityType);
                 [moduleController setEntity:item ofType:entityType];
+                [moduleController setCurrentEntityForToolbarModules:item];
                 break;
         }
     }
