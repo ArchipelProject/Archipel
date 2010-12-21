@@ -687,6 +687,7 @@ TNArchipelTagViewHeight     = 33.0;
     [theWindow orderOut:nil];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [labelCurrentUser setStringValue:@""];
+    [CPMenu setMenuBarVisible:NO];
 }
 
 
@@ -845,8 +846,6 @@ TNArchipelTagViewHeight     = 33.0;
 
     CPLog.info(@"starting to disconnect");
     [_mainRoster disconnect];
-
-    [CPMenu setMenuBarVisible:NO];
 }
 
 /*! will opens the add contact window
