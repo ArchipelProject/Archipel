@@ -19,7 +19,9 @@
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
-@import <AppKit/CPSound.j>
+
+@import "TNDetachedChatController.j"
+
 
 /*! @defgroup  userchat Module User Chat
     @desc This module allows to chat with entities
@@ -31,18 +33,22 @@
 */
 @implementation TNUserChatController : TNModule
 {
-    @outlet CPImageView     imageSpinnerWriting;
-    @outlet CPScrollView    messagesScrollView;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldMessage;
-    @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldPreferencesMaxChatMessage;
-    @outlet CPTextField     fieldUserJID;
+    @outlet CPImageView                 imageSpinnerWriting;
+    @outlet CPScrollView                messagesScrollView;
+    @outlet CPTextField                 fieldJID;
+    @outlet CPTextField                 fieldMessage;
+    @outlet CPTextField                 fieldName;
+    @outlet CPTextField                 fieldPreferencesMaxChatMessage;
+    @outlet CPTextField                 fieldUserJID;
+    @outlet CPView                      viewControls;
+    @outlet CPButton                    buttonClear;
+    @outlet CPButton                    buttonDetach;
 
     CPArray                 _messages;
     CPTimer                 _composingMessageTimer;
     TNMessageBoard          _messageBoard;
     CPSound                 _soundMessage;
+    CPDictionary            _detachedChats;
 }
 
 
@@ -56,7 +62,22 @@
     var bundle      = [CPBundle bundleForClass:[self class]],
         mainBundle  = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
-        frame       = [[messagesScrollView contentView] bounds];
+        frame       = [[messagesScrollView contentView] bounds],
+        controlsBg  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"bg-controls.png"]];
+
+    [viewControls setBackgroundColor:[CPColor colorWithPatternImage:controlsBg]];
+
+    //controls buttons
+    var imageClear  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/clean.png"] size:CPSizeMake(16, 16)],
+        imageDetach = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] size:CPSizeMake(16, 16)];
+
+    [buttonClear setImage:imageClear];
+    [buttonDetach setImage:imageDetach];
+
+    var inset = CGInsetMake(2, 2, 2, 5);
+    [buttonClear setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonDetach setValue:inset forThemeAttribute:@"content-inset"];
+
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -65,10 +86,11 @@
 
     [fieldJID setSelectable:YES];
 
+    _detachedChats = [CPDictionary dictionary];
     _messages = [CPArray array];
 
     [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];
-    [messagesScrollView setAutoresizingMask:CPViewWidthSizable];
+    [messagesScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [messagesScrollView setAutohidesScrollers:YES];
 
     frame.size.height = 0;
@@ -157,6 +179,9 @@
 
     [fieldName setStringValue:[_entity nickname]];
     [fieldJID setStringValue:[_entity JID]];
+
+    [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    [[self view] setFrame:[[[self view] superview] bounds]];
 
     return YES;
 }
@@ -376,4 +401,14 @@
     [_messageBoard removeAllMessages:nil];
 }
 
+
+/*! open the chat in w new window
+*/
+- (IBAction)detachChat:(id)aSender
+{
+    var detachedChatController = [[TNDetachedChatController alloc] initWithEntity:_entity];
+    [detachedChatController setDelegate:self];
+    [detachedChatController setMessageHistory:_messages];
+    [detachedChatController showWindow];
+}
 @end
