@@ -127,12 +127,6 @@ TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificati
 TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
 
 
-/*! @global
-    @group TNToolBarItem
-    identifier for item avatar
-*/
-
-TNToolBarItemAvatar         = @"TNToolBarItemAvatar";
 
 /*! @global
     @group TNToolBarItem
@@ -162,6 +156,9 @@ TNToolBarItemStatus         = @"TNToolBarItemStatus";
 
 
 TNArchipelTagViewHeight     = 33.0;
+
+
+TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
@@ -231,6 +228,7 @@ TNArchipelTagViewHeight     = 33.0;
     CPButton                        _hideButton;
     CPImage                         _hideButtonImageEnable;
     CPImage                         _hideButtonImageDisable;
+    CPButton                        _userAvatarButton;
 }
 
 
@@ -298,6 +296,9 @@ TNArchipelTagViewHeight     = 33.0;
     _mainToolbar = [[TNToolbar alloc] init];
     [theWindow setToolbar:_mainToolbar];
     [self makeToolbar];
+
+    /* avatar chooser */
+    [self makeAvatarChooser];
 
     /* properties controller */
     CPLog.trace(@"initializing the leftSplitView");
@@ -593,23 +594,15 @@ TNArchipelTagViewHeight     = 33.0;
 */
 - (void)makeToolbar
 {
-    var bundle          = [CPBundle bundleForClass:self],
-        userAvatarView  = [[CPButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 50.0, 50.0)],
-        userAvatar      = [[CPMenuItem alloc] init],
-        userAvatarMenu  = [[CPMenu alloc] init];
+    var bundle          = [CPBundle bundleForClass:self];
 
-    [userAvatarView setBordered:NO];
-    [userAvatarView setMenu:userAvatarMenu];
-    [userAvatarView setValue:CPScaleProportionally forThemeAttribute:@"image-scaling"];
-
-    [userAvatarView setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"] size:CPSizeMake(32.0, 32.0)]];
-
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemAvatar label:@"Avatar" view:userAvatarView target:self action:@selector(toolbarItemAvatarClick:)];
+    // ok the next following line is a terrible awfull hack.
+    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"             " view:nil target:nil action:nil];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(8.0, 8.0, 120.0, 24.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 120.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
@@ -636,16 +629,37 @@ TNArchipelTagViewHeight     = 33.0;
     [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
     [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
 
-    [_mainToolbar setPosition:0 forToolbarItemIdentifier:TNToolBarItemAvatar];
-    [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
-    [_mainToolbar setPosition:2 forToolbarItemIdentifier:TNToolBarItemStatus];
-    [_mainToolbar setPosition:3 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+    [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
+    [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];
+    [_mainToolbar setPosition:2 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:499 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
     [_mainToolbar setPosition:901 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
     [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
     [_mainToolbar setPosition:903 forToolbarItemIdentifier:TNToolBarItemHelp];
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 }
+
+/*! initialize the avatar button
+*/
+- (void)makeAvatarChooser
+{
+    var bundle              = [CPBundle mainBundle],
+        userAvatar          = [[CPMenuItem alloc] init],
+        userAvatarMenu      = [[CPMenu alloc] init];
+
+    _userAvatarButton    = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
+
+    [_userAvatarButton setBordered:NO];
+    [_userAvatarButton setBorderedWithHexColor:@"#E6EFF1"];
+    [_userAvatarButton setTarget:self];
+    [_userAvatarButton setAction:@selector(toolbarItemAvatarClick:)];
+    [_userAvatarButton setMenu:userAvatarMenu];
+    [_userAvatarButton setValue:CPScaleProportionally forThemeAttribute:@"image-scaling"];
+    [_userAvatarButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"] size:TNUserAvatarSize]];
+
+    [[_mainToolbar customSubViews] addObject:_userAvatarButton];
+}
+
 
 #pragma mark -
 #pragma mark Notifications handlers
@@ -1218,14 +1232,14 @@ TNArchipelTagViewHeight     = 33.0;
             data            = [[photoNode firstChildWithName:@"BINVAL"] text],
             currentAvatar   = [TNBase64Image base64ImageWithContentType:contentType data:data delegate:self];
 
-        [currentAvatar setSize:CPSizeMake(32.0, 32.0)];
-        [[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view] setImage:currentAvatar];
+        [currentAvatar setSize:TNUserAvatarSize];
+        [_userAvatarButton setImage:currentAvatar];
         [userAvatarController setCurrentAvatar:currentAvatar];
     }
 
     [userAvatarController setConnection:[_mainRoster connection]];
-    [userAvatarController setButtonAvatar:[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view]];
-    [userAvatarController setMenuAvatarSelection:[[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view] menu]];
+    [userAvatarController setButtonAvatar:_userAvatarButton];
+    [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
     [userAvatarController loadAvatarMetaInfos];
 }
