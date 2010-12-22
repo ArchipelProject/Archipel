@@ -48,7 +48,7 @@
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
 @import "Controllers/TNPermissionsCenter.j"
-
+@import "Controllers/TNUserAvatarController.j"
 
 /*! @global
     @group TNArchipelEntityType
@@ -203,6 +203,7 @@ TNArchipelTagViewHeight     = 33.0;
     @outlet TNPropertiesController  propertiesController;
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
+    @outlet TNUserAvatarController  userAvatarController;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -596,14 +597,6 @@ TNArchipelTagViewHeight     = 33.0;
         userAvatarView  = [[CPButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 50.0, 50.0)],
         userAvatar      = [[CPMenuItem alloc] init],
         userAvatarMenu  = [[CPMenu alloc] init];
-
-    [userAvatarMenu addItemWithTitle:@"Avatar A" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar B" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar C" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar D" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar E" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar F" action:nil keyEquivalent:nil];
-    [userAvatarMenu addItemWithTitle:@"Avatar G" action:nil keyEquivalent:nil];
 
     [userAvatarView setBordered:NO];
     [userAvatarView setMenu:userAvatarMenu];
@@ -1227,7 +1220,14 @@ TNArchipelTagViewHeight     = 33.0;
 
         [currentAvatar setSize:CPSizeMake(32.0, 32.0)];
         [[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view] setImage:currentAvatar];
+        [userAvatarController setCurrentAvatar:currentAvatar];
     }
+
+    [userAvatarController setConnection:[_mainRoster connection]];
+    [userAvatarController setButtonAvatar:[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view]];
+    [userAvatarController setMenuAvatarSelection:[[[_mainToolbar itemWithIdentifier:TNToolBarItemAvatar] view] menu]];
+
+    [userAvatarController loadAvatarMetaInfos];
 }
 
 
