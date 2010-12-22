@@ -597,7 +597,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     var bundle          = [CPBundle bundleForClass:self];
 
     // ok the next following line is a terrible awfull hack.
-    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"             " view:nil target:nil action:nil];
+    [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:)];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
@@ -647,10 +647,11 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         userAvatar          = [[CPMenuItem alloc] init],
         userAvatarMenu      = [[CPMenu alloc] init];
 
-    _userAvatarButton    = [[CPButton alloc] initWithFrame:CPRectMake(5.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
+    _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
 
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#E6EFF1"];
+    [_userAvatarButton setBackgroundColor:[CPColor blackColor]];
     [_userAvatarButton setTarget:self];
     [_userAvatarButton setAction:@selector(toolbarItemAvatarClick:)];
     [_userAvatarButton setMenu:userAvatarMenu];
@@ -767,13 +768,13 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
         currentContact  = [aNotification object];
 
-    if ([_rosterOutlineView selectedRow] != [_rosterOutlineView rowForItem:currentContact])
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:user
-                                                         message:message
-                                                      customIcon:customIcon
-                                                          target:self
-                                                          action:@selector(growlNotification:clickedWithUser:)
-                                                actionParameters:currentContact];
+    // if ([_rosterOutlineView selectedRow] != [_rosterOutlineView rowForItem:currentContact])
+    //     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:user
+    //                                                      message:message
+    //                                                   customIcon:customIcon
+    //                                                       target:self
+    //                                                       action:@selector(growlNotification:clickedWithUser:)
+    //                                             actionParameters:currentContact];
 
     [_rosterOutlineView reloadData];
 }
