@@ -60,6 +60,7 @@ var TNDetachedChatControllerDefaultFrame = CPRectMake(0, 0, 400, 370);
         _scrollView = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
         [_scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [_scrollView setBorderedWithHexColor:@"#C0C7D2"];
+        [_scrollView setBackgroundColor:[CPColor whiteColor]];
         [_scrollView setAutohidesScrollers:YES];
         [[_window contentView] addSubview:_scrollView];
 
