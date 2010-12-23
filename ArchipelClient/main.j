@@ -22,16 +22,18 @@
 
 /*! @mainpage
     @htmlonly <pre>@endhtmlonly
-    @htmlinclude ./README
+    @htmlinclude ../README.markdown
     @htmlonly </pre>@endhtmlonly
 
-    Archipel is distributed under the @ref license "AGPL".
+    Archipel is a free software distributed under the the terms of @ref license "AGPL".
 
     @page license License
     @htmlonly <pre>@endhtmlonly
-    @htmlinclude ./LICENSE
+    @htmlinclude ../LICENSE
     @htmlonly </pre>@endhtmlonly
 */
+
+
 
 function main(args, namedArgs)
 {
