@@ -106,21 +106,16 @@
 - (void)setAvatarImage:(CPImage)anAvatarImage withName:(CPString)anAvatarName
 {
     var base64Avatar    = [anAvatarImage base64EncodedData],
-        uid             = [_connection getUniqueId],
-        stanza          = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"set"}],
-        params          = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+        vCard           = [TNXMLNode nodeWithName:@"vCard" andAttributes:{@"xmlns": @"vcard-temp"}];
 
-    [stanza addChildWithName:@"vCard" andAttributes:{@"xmlns": @"vcard-temp"}];
-    [stanza addChildWithName:@"PHOTO"];
-    [stanza addChildWithName:@"TYPE"];
-    [stanza addTextNode:@"image/png"];
-    [stanza up]
-    [stanza addChildWithName:@"BINVAL"];
-    [stanza addTextNode:base64Avatar];
+    [vCard addChildWithName:@"PHOTO"];
+    [vCard addChildWithName:@"TYPE"];
+    [vCard addTextNode:@"image/png"];
+    [vCard up]
+    [vCard addChildWithName:@"BINVAL"];
+    [vCard addTextNode:base64Avatar];
 
-    [_connection registerSelector:@selector(_didSetAvatar:image:) ofObject:self withDict:params userInfo:anAvatarImage];
-    [_connection send:stanza];
-
+    [_connection setVCard:vCard object:self selector:@selector(_didSetAvatar:image:) userInfo:anAvatarImage];
 }
 
 /*! conpute avatar setting answer
