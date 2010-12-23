@@ -8,7 +8,10 @@ fi
 
 echo "Copying source files..."
 cp -r . /tmp/tempDoc.doc
+cp -r ../README.markdown /tmp/tempDoc.doc/
+cp -r ../LICENSE /tmp/tempDoc.doc/
 rm -rf /tmp/tempDoc.doc/.git
+rm -rf /tmp/tempDoc.doc/Build
 
 echo "Processing source files..."
 find /tmp/tempDoc.doc -name "*.j" -exec sed -e '/@import.*/ d' -i '' {} \;
