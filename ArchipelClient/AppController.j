@@ -27,7 +27,6 @@
 @import <MessageBoard/MessageBoard.j>
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
-
 @import <LPKit/LPCrashReporter.j>
 
 @import "Model/TNCategoriesAndGlobalSubclasses.j"
