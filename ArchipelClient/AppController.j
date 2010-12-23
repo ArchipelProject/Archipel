@@ -28,7 +28,7 @@
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
 
-// @import <LPKit/LPCrashReporter.j>
+@import <LPKit/LPCrashReporter.j>
 
 @import "Model/TNCategoriesAndGlobalSubclasses.j"
 @import "Model/TNDatasourceRoster.j"
@@ -650,7 +650,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
 
     [_userAvatarButton setBordered:NO];
-    [_userAvatarButton setBorderedWithHexColor:@"#E6EFF1"];
+    [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
     [_userAvatarButton setBackgroundColor:[CPColor blackColor]];
     [_userAvatarButton setTarget:self];
     [_userAvatarButton setAction:@selector(toolbarItemAvatarClick:)];
