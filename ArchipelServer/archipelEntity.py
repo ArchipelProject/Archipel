@@ -324,7 +324,8 @@ class TNArchipelEntity:
             log.info("HOOK: registering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
-        
+    
+    
     def unregister_hook(self, hookname, m):
         """unregister a method from a hook"""
         if self.hooks.has_key(hookname):
@@ -332,6 +333,7 @@ class TNArchipelEntity:
             log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
+    
     
     def perform_hooks(self, hookname, args=None):
         log.info("HOOK: going to run methods for hook %s" % hookname)
@@ -341,10 +343,6 @@ class TNArchipelEntity:
                 m(self, args)
             except Exception as ex:
                 log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
-    
-    
-    ### Server registration
-     
     
     
     
@@ -393,7 +391,6 @@ class TNArchipelEntity:
         
         # check permissions
         if not self.permission_center.check_permission(jid.getStripped(), "presence"):
-            
             if typ == "subscribe":
                 self.unsubscribe(jid)
             self.remove_jid(jid)
@@ -401,7 +398,7 @@ class TNArchipelEntity:
         
         # if everything is all right, process request
         if typ == "subscribe":
-            self.add_jid(jid)
+            self.authorize(jid)
         elif typ == "unsubscribe":
             self.remove_jid(jid)
         raise xmpp.protocol.NodeProcessed
@@ -446,6 +443,7 @@ class TNArchipelEntity:
             self.permission_center.grant_permission_to_user("presence", jid.getStripped())
             self.push_change("permissions", "set")
             self.add_jid(jid)
+            self.authorize(jid)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_ADD_SUBSCRIPTION)
         return reply
@@ -573,11 +571,13 @@ class TNArchipelEntity:
             excluded = False
             if excludedgroups:
                 for excludedgroup in excludedgroups:
-                    groups = self.roster.getGroups(barejid)
-                    if groups and excludedgroup in groups:
+                    try:
+                        groups = self.roster.getGroups(barejid)
+                        if groups and excludedgroup in groups:
+                            excluded = True
+                            break
+                    except:
                         excluded = True
-                        break
-            
             if not excluded:
                 resources = self.roster.getResources(barejid)
                 for resource in resources:
@@ -600,9 +600,8 @@ class TNArchipelEntity:
         
         if not self.roster: self.roster = self.xmppclient.getRoster()
         self.roster.setItem(jid=jid.getStripped(), groups=groups)
-        if not self.roster.getItem(jid.getStripped()) or self.roster.getSubscription(jid.getStripped()) in ("to", "none"):
-            self.subscribe(jid)
-            self.authorize(jid)
+        self.subscribe(jid)
+        
         self.push_change("subscription", "added")
     
     

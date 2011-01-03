@@ -333,7 +333,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         """
         vmuuid      = str(uuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
-        vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower())
+        vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
         
         log.info("adding the xmpp vm %s to my roster" % (str(vm_jid)))
         
@@ -490,13 +490,13 @@ class TNArchipelHypervisor(TNArchipelEntity):
                 requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
             except:
                 requested_name = None
-            
+        
             vm = self.alloc(iq.getFrom(), requested_name=requested_name)
-            
+        
             reply   = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
             reply.setQueryPayload([payload])
-            
+        
             self.push_change("hypervisor", "alloc", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
