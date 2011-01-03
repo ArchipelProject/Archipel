@@ -165,12 +165,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+
+    [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCScreenNotification object:nil];
 }
 
 /*! called when module is unloaded
 */
 - (void)willUnload
 {
+    _VMHost = nil;
     [fieldPassword setStringValue:@""];
     [super willUnload];
 }
@@ -268,6 +271,19 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [self checkIfRunning];
 }
 
+/*! called when TNArchipelVNCScreenNotification is received
+    @param aNotification the notification
+*/
+- (void)_showExternalScreen:(CPNotification)aNotification
+{
+    if (!_isVisible && !_VMHost)
+    {
+    }
+    else
+    {
+        [self openVNCInNewWindow:nil];
+    }
+}
 
 #pragma mark -
 #pragma mark Utilities
@@ -284,8 +300,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
     else
     {
-        if (([_vncView state] != TNVNCCappuccinoStateDisconnected)
-            && ([_vncView state] != TNVNCCappuccinoStateDisconnect))
+        if (([_vncView state] != TNVNCCappuccinoStateDisconnected) && ([_vncView state] != TNVNCCappuccinoStateDisconnect))
         {
             [_vncView disconnect:nil];
             [_vncView resetSize];
@@ -321,6 +336,69 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     }
 }
 
+/*! perform operation to display the screen according the gathered values
+*/
+- (void)prepareVNCScreen
+{
+    var defaults    = [CPUserDefaults standardUserDefaults],
+        scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
+        passwordKey = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID],
+        lastScale   = [defaults objectForKey:scaleKey];
+
+    if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
+        _useSSL = YES;
+
+    if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
+    {
+        var growl = [TNGrowlCenter defaultCenter];
+        if (_vncOnlySSL)
+        {
+            [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
+            return;
+        }
+        else
+        {
+            [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
+            _useSSL = NO;
+        }
+    }
+
+    if (lastScale)
+    {
+        [sliderScaling setDoubleValue:lastScale];
+        [fieldZoomValue setStringValue:lastScale];
+    }
+    else
+    {
+        [sliderScaling setDoubleValue:100];
+        [fieldZoomValue setStringValue:@"100"];
+    }
+
+    if ([defaults stringForKey:passwordKey])
+    {
+        [fieldPassword setStringValue:[defaults stringForKey:key]];
+        [checkboxPasswordRemember setState:CPOnState];
+    }
+    else
+    {
+        [fieldPassword setStringValue:@""];
+        [checkboxPasswordRemember setState:CPOffState];
+    }
+
+    [_vncView setCheckRate:_NOVNCheckRate];
+    [_vncView setFrameBufferRequestRate:_NOVNCFBURate];
+    [_vncView setHost:_VMHost];
+    [_vncView setPort:_vncProxyPort];
+    [_vncView setPassword:[fieldPassword stringValue]];
+    [_vncView setZoom:(lastScale) ? (lastScale / 100) : 1];
+    [_vncView setTrueColor:YES];
+    [_vncView setEncrypted:_useSSL];
+    [_vncView setDelegate:self];
+
+    [_vncView load];
+    [_vncView connect:nil];
+}
+
 
 #pragma mark -
 #pragma mark Actions
@@ -330,7 +408,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)openDirectURI:(id)aSender
 {
-    // window.open(@"vnc://" + _VMHost + @":" + _vncDirectPort);
     [self openVNCInNewWindow:aSender];
 }
 
@@ -458,8 +535,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     {
         VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
         platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
-        [VNCWindow setPlatformWindow:platformVNCWindow];
 
+        [VNCWindow setPlatformWindow:platformVNCWindow];
+        [platformVNCWindow orderFront:nil];
         [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
         [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
     }
@@ -507,75 +585,19 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     if ([aStanza type] == @"result")
     {
         var defaults    = [CPUserDefaults standardUserDefaults],
-            displayNode = [aStanza firstChildWithName:@"vncdisplay"],
-            key         = TNArchipelVNCScaleFactor + [[self entity] JID],
-            lastScale   = [defaults objectForKey:key],
-            defaults    = [CPUserDefaults standardUserDefaults],
-            key         = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID];
+            displayNode = [aStanza firstChildWithName:@"vncdisplay"];
 
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
         _vncDirectPort  = [displayNode valueForAttribute:@"port"];
         _vncSupportSSL  = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
-
         _useSSL         = NO;
         _preferSSL      = ([defaults boolForKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
         _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
         _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
 
-        if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
-            _useSSL = YES;
-
-        if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
-        {
-            var growl = [TNGrowlCenter defaultCenter];
-            if (_vncOnlySSL)
-            {
-                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
-                return;
-            }
-            else
-            {
-                [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
-                _useSSL = NO;
-            }
-        }
-
-        if (lastScale)
-        {
-            [sliderScaling setDoubleValue:lastScale];
-            [fieldZoomValue setStringValue:lastScale];
-        }
-        else
-        {
-            [sliderScaling setDoubleValue:100];
-            [fieldZoomValue setStringValue:@"100"];
-        }
-
-        if ([defaults stringForKey:key])
-        {
-            [fieldPassword setStringValue:[defaults stringForKey:key]];
-            [checkboxPasswordRemember setState:CPOnState];
-        }
-        else
-        {
-            [fieldPassword setStringValue:@""];
-            [checkboxPasswordRemember setState:CPOffState];
-        }
-
-        [_vncView setCheckRate:_NOVNCheckRate];
-        [_vncView setFrameBufferRequestRate:_NOVNCFBURate];
-        [_vncView setHost:_VMHost];
-        [_vncView setPort:_vncProxyPort];
-        [_vncView setPassword:[fieldPassword stringValue]];
-        [_vncView setZoom:(lastScale) ? (lastScale / 100) : 1];
-        [_vncView setTrueColor:YES];
-        [_vncView setEncrypted:_useSSL];
-        [_vncView setDelegate:self];
-
-        [_vncView load];
-        [_vncView connect:nil];
+        [self prepareVNCScreen];
     }
     else if ([aStanza type] == @"error")
     {

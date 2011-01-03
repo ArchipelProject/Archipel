@@ -65,7 +65,8 @@
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self contentView] addSubview:_vncView];
 
-    [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
+    if ([[self platformWindow] DOMWindow])
+        [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
 
     [_vncView setHost:aHost];
     [_vncView setPort:aPort];
