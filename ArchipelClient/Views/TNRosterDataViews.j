@@ -100,6 +100,9 @@
 */
 - (void)setObjectValue:(id)aContact
 {
+    if (!aContact)
+        return;
+
     _contact = aContact;
 
     var mainBounds          = [self bounds],
@@ -117,6 +120,7 @@
 
     [_statusIcon setImage:[aContact statusIcon]];
 
+    CPLog.warn("SETTING UNK TO " + aContact + " : " + [aContact avatar]);
     if ([aContact avatar])
         [_avatar setImage:[aContact avatar]];
     else
