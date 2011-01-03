@@ -27,34 +27,33 @@
 */
 @implementation TNPropertiesController: CPObject
 {
-    @outlet CPView          mainView            @accessors(readonly);
-    @outlet TNEditableLabel entryName           @accessors(readonly);
-    @outlet CPButton        entryAvatar;
-    @outlet CPImageView     entryStatusIcon;
-    @outlet CPImageView     imageEventSubscription;
-    @outlet CPTextField     entryType;
-    @outlet CPTextField     labelType;
-    @outlet CPTextField     entryDomain;
-    @outlet CPTextField     entryResource;
-    @outlet CPTextField     entryStatus;
-    @outlet CPTextField     labelDomain;
-    @outlet CPTextField     labelResource;
-    @outlet CPTextField     labelStatus;
-    @outlet CPTextField     newNickName;
+    @outlet CPView                  mainView            @accessors(readonly);
+    @outlet TNEditableLabel         entryName           @accessors(readonly);
+    @outlet CPButton                entryAvatar;
+    @outlet CPImageView             entryStatusIcon;
+    @outlet CPButton                buttonEventSubscription;
+    @outlet CPTextField             entryType;
+    @outlet CPTextField             labelType;
+    @outlet CPTextField             entryDomain;
+    @outlet CPTextField             entryResource;
+    @outlet CPTextField             entryStatus;
+    @outlet CPTextField             labelDomain;
+    @outlet CPTextField             labelResource;
+    @outlet CPTextField             labelStatus;
+    @outlet CPTextField             newNickName;
+    @outlet TNContactsController    contactsController;
 
+    BOOL                            _enabled            @accessors(getter=isEnabled);
+    TNAvatarController              _avatarManager      @accessors(getter=avatarManager);
+    TNPubSubController              _pubSubController   @accessors(property=pubSubController);
+    TNStropheContact                _entity             @accessors(getter=entity);
+    TNStropheRoster                 _roster             @accessors(property=roster);
 
-    BOOL                    _enabled            @accessors(getter=isEnabled);
-    TNAvatarController      _avatarManager      @accessors(getter=avatarManager);
-    TNPubSubController      _pubSubController   @accessors(property=pubSubController);
-    TNStropheContact        _entity             @accessors(getter=entity);
-    TNStropheRoster         _roster             @accessors(property=roster);
-
-
-    BOOL                    _isCollapsed;
-    CPImage                 _pubsubDisabledImage;
-    CPImage                 _pubsubImage;
-    CPImage                 _unknownUserImage;
-    CPNumber                _height;
+    BOOL                            _isCollapsed;
+    CPImage                         _pubsubDisabledImage;
+    CPImage                         _pubsubImage;
+    CPImage                         _unknownUserImage;
+    CPNumber                        _height;
 }
 
 
@@ -86,10 +85,11 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     [entryAvatar setImage:_unknownUserImage];
-    [imageEventSubscription setToolTip:@"Click on avatar to change it."];
 
-    [imageEventSubscription setImageScaling:CPScaleProportionally];
-    [imageEventSubscription setHidden:YES];
+    [buttonEventSubscription setToolTip:@"Click on avatar to change it."];
+    [buttonEventSubscription setBordered:NO];
+    [buttonEventSubscription setImageScaling:CPScaleProportionally];
+    [buttonEventSubscription setHidden:YES];
 
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
 }
@@ -215,7 +215,7 @@
         [entryAvatar setHidden:NO];
         [entryType setHidden:NO];
 
-        [imageEventSubscription setHidden:NO];
+        [buttonEventSubscription setHidden:NO];
 
         [entryStatusIcon setImage:[_entity statusIcon]];
         [entryName setStringValue:[_entity nickname]];
@@ -247,13 +247,13 @@
 
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
         {
-            [imageEventSubscription setImage:_pubsubImage];
-            [imageEventSubscription setToolTip:@"You are registred to the entity events."];
+            [buttonEventSubscription setImage:_pubsubImage];
+            [buttonEventSubscription setToolTip:@"You are registred to the entity events."];
         }
         else
         {
-            [imageEventSubscription setImage:_pubsubDisabledImage];
-            [imageEventSubscription setToolTip:@"You are not registred to the entity events."];
+            [buttonEventSubscription setImage:_pubsubDisabledImage];
+            [buttonEventSubscription setToolTip:@"You are not registred to the entity events."];
         }
 
     }
@@ -268,7 +268,7 @@
         [entryAvatar setHidden:YES];
         [entryType setHidden:YES];
 
-        [imageEventSubscription setHidden:YES];
+        [buttonEventSubscription setHidden:YES];
 
         [entryStatusIcon setImage:_groupUserImage];
         [entryName setStringValue:[_entity name]];
@@ -303,6 +303,19 @@
 - (IBAction)changeNickName:(id)sender
 {
     [[mainView window] makeFirstResponder:[entryName previousResponder]];
+}
+
+/*! subscribe (unsubscribe) to (from) the entity pubsub if any
+    @param aSender the sender
+*/
+- (IBAction)manageContactSubscription:(id)aSender
+{
+    if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
+        [contactsController unsubscribeToPubSubNodeOfContactWithJID:[_entity JID]];
+    else
+        [contactsController subscribeToPubSubNodeOfContactWithJID:[_entity JID]];
+
+    [self reload];
 }
 
 

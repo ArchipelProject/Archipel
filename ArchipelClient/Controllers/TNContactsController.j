@@ -140,6 +140,7 @@
     [_roster addContact:JID withName:name inGroupWithName:group];
     [_roster askAuthorizationTo:JID];
     [_roster authorizeJID:JID];
+    [self subscribeToPubSubNodeOfContactWithJID:JID];
 
     [mainWindow performClose:nil];
 
@@ -200,7 +201,6 @@
 {
     window.open("http://www.google.fr/search?q=XMPP delete contact", "_new");
 }
-
 
 #pragma mark -
 #pragma mark Delegate
