@@ -1081,17 +1081,28 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 {
     if (_helpWindow)
     {
-        [_platformHelpWindow orderOut:nil];
+        if ([CPPlatform isBrowser])
+            [_platformHelpWindow orderOut:nil];
+
         [_helpWindow close];
         _helpWindow = nil;
     }
-    _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
 
-    _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+    if ([CPPlatform isBrowser])
+        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
+
+    if ([CPPlatform isBrowser])
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+    else
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
+
     var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
 
-    [_helpWindow setPlatformWindow:_platformHelpWindow];
-    [_platformHelpWindow orderFront:nil];
+    if ([CPPlatform isBrowser])
+    {
+        [_helpWindow setPlatformWindow:_platformHelpWindow];
+        [_platformHelpWindow orderFront:nil];
+    }
 
     [_helpWindow setDelegate:self];
 

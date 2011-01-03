@@ -78,7 +78,6 @@
     [buttonClear setValue:inset forThemeAttribute:@"content-inset"];
     [buttonDetach setValue:inset forThemeAttribute:@"content-inset"];
 
-
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore"

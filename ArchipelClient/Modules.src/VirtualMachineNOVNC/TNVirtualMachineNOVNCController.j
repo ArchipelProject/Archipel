@@ -375,7 +375,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     [self animateChangeScaleFrom:currentVNCZoom to:100];
 }
 
-/*! Send CTRL+ALT+DEL key combination to the VNCView
+/*! Send CTRL ALT DEL key combination to the VNCView
     @param sender the sender of the action
 */
 - (IBAction)sendCtrlAltDel:(id)aSender
@@ -451,15 +451,32 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     var vncSize             = [_vncView canvasSize],
         winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
         pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
-        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask],
-        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+        VNCWindow,
+        platformVNCWindow;
 
-    [VNCWindow setPlatformWindow:platformVNCWindow];
+    if ([CPPlatform isBrowser])
+    {
+        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+        [VNCWindow setPlatformWindow:platformVNCWindow];
+
+        [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+        [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
+    }
+    else
+    {
+        winFrame.origin.x = 20;
+        winFrame.origin.y = 50;
+        winFrame.size.height += 25;
+
+        VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
+
+        [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6 + 25)];
+        [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6 + 25)];
+    }
+
     [VNCWindow makeKeyAndOrderFront:nil];
     [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
-
-    [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
-    [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
 
     [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
     [VNCWindow makeKeyWindow];

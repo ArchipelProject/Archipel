@@ -21,7 +21,10 @@
 @import <AppKit/AppKit.j>
 
 
-var TNDetachedChatControllerDefaultFrame = CPRectMake(0, 0, 400, 370);
+if ([CPPlatform isBrowser])
+    var TNDetachedChatControllerDefaultFrame = CPRectMake(100, 100, 400, 370);
+else
+    var TNDetachedChatControllerDefaultFrame = CPRectMake(100, 100, 400, 395);
 
 
 /*! @ingroup userchat
@@ -52,7 +55,10 @@ var TNDetachedChatControllerDefaultFrame = CPRectMake(0, 0, 400, 370);
     {
         _entity = anEntity;
 
-        _window = [[CPWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+        if ([CPPlatform isBrowser])
+            _window = [[CPWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+        else
+            _window = [[CPWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
         [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
         [[_window contentView] setBackgroundColor:[CPColor colorWithHexString:@"f4f4f4"]];
         [[_window contentView] setAutoresizingMask:nil];
@@ -83,10 +89,13 @@ var TNDetachedChatControllerDefaultFrame = CPRectMake(0, 0, 400, 370);
         [_viewAvatar setAutoresizingMask:CPViewMinYMargin];
         [[_window contentView] addSubview:_viewAvatar];
 
-        _platformWindow = [[CPPlatformWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame];
-        [_window setPlatformWindow:_platformWindow];
-        [_platformWindow orderFront:nil];
-        [_platformWindow setTitle:[_window title]];
+        if ([CPPlatform isBrowser])
+        {
+            _platformWindow = [[CPPlatformWindow alloc] initWithContentRect:TNDetachedChatControllerDefaultFrame];
+            [_window setPlatformWindow:_platformWindow];
+            [_platformWindow orderFront:nil];
+            [_platformWindow setTitle:[_window title]];
+        }
     }
 
     return self;
@@ -130,7 +139,8 @@ var TNDetachedChatControllerDefaultFrame = CPRectMake(0, 0, 400, 370);
 - (void)_didUpdateNickname:(CPNotification)aNotification
 {
     [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
-    [_platformWindow setTitle:[_window title]];
+    if ([CPPlatform isBrowser])
+        [_platformWindow setTitle:[_window title]];
 }
 
 /*! called when the window is closed
