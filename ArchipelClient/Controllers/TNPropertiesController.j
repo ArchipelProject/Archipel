@@ -43,7 +43,7 @@
     @outlet CPTextField     newNickName;
 
 
-    BOOL                    _enabled            @accessors(getter=isEnabled, setter=setEnabled:);
+    BOOL                    _enabled            @accessors(getter=isEnabled);
     TNAvatarController      _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController      _pubSubController   @accessors(property=pubSubController);
     TNStropheContact        _entity             @accessors(getter=entity);
@@ -149,6 +149,11 @@
     }
 }
 
+- (void)setEnabled:(BOOL)shouldEnable
+{
+    _enabled = shouldEnable;
+    [entryName setEnabled:shouldEnable];
+}
 
 #pragma mark -
 #pragma mark Utilities

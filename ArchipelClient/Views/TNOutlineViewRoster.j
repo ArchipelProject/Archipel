@@ -175,10 +175,13 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
             break;
 
         case CPReturnKeyCode:
-            [_entityRenameField setPreviousResponder:self];
-            [_entityRenameField mouseDown:nil];
-            [_entityRenameField _inputElement].focus();
-            [[self window] makeFirstResponder:_entityRenameField];
+            if ([_entityRenameField isEnabled])
+            {
+                [_entityRenameField setPreviousResponder:self];
+                [_entityRenameField mouseDown:nil];
+                [_entityRenameField _inputElement].focus();
+                [[self window] makeFirstResponder:_entityRenameField];
+            }
             break;
 
         case CPDownArrowKeyCode:
