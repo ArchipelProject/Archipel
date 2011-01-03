@@ -196,37 +196,7 @@
 }
 @end
 
-/*! @ingroup utils
-    CPWindow that fade in and fade out
-*/
-@implementation CPWindow (TNKit)
 
-- (IBAction)orderFront:(id)sender
-{
-    var defaults = [CPUserDefaults standardUserDefaults];
-
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"] && ![self isVisible])
-    {
-        var animView    = [CPDictionary dictionaryWithObjectsAndKeys:[self contentView], CPViewAnimationTargetKey, CPViewAnimationFadeInEffect, CPViewAnimationEffectKey],
-            anim        = [[CPViewAnimation alloc] initWithViewAnimations:[animView]];
-
-        [anim setDuration:0.3];
-        [anim startAnimation];
-    }
-
-    [_platformWindow orderFront:self];
-    [_platformWindow order:CPWindowAbove window:self relativeTo:nil];
-
-    if (_firstResponder === self || !_firstResponder)
-        [self makeFirstResponder:[self initialFirstResponder]];
-
-    if (!CPApp._keyWindow)
-        [self makeKeyWindow];
-
-    if (!CPApp._mainWindow)
-        [self makeMainWindow];
-}
-@end
 
 /*! @ingroup utils
     Groups name are uppercase
