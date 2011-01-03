@@ -44,18 +44,10 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
 
 
 #pragma mark -
-#pragma mark Overrides
-- (void)setEntity:(TNStropheContact)anEntity
+#pragma mark Notification handlers
+
+- (void)setGUIAccordingToStatus:(CPNotification)aNotification
 {
-    [super setEntity:anEntity];
-    _toolbarItem = [_toolbar itemWithIdentifier:_name];
-
-    if ([_roster analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
-    {
-        [_toolbarItem setEnabled:NO];
-        return;
-    }
-
     switch ([_entity XMPPShow])
     {
         case TNStropheContactStatusOnline:
@@ -68,6 +60,28 @@ TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
             [_toolbarItem setEnabled:NO];
    }
 }
+
+
+#pragma mark -
+#pragma mark Overrides
+
+- (void)setEntity:(TNStropheContact)anEntity
+{
+    [super setEntity:anEntity];
+    _toolbarItem = [_toolbar itemWithIdentifier:_name];
+
+    [[CPNotificationCenter defaultCenter] removeObserver:self];
+    if ([_roster analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
+    {
+        [_toolbarItem setEnabled:NO];
+        return;
+    }
+    [self setGUIAccordingToStatus:nil];
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+}
+
+
 #pragma mark -
 #pragma mark Actions
 
