@@ -95,8 +95,8 @@
 }
 
 
-// #pragma mark -
-// #pragma mark Notification handlers
+#pragma mark -
+#pragma mark Notification handlers
 
 /*! message performed when contact update its presence in order to update information
 */
@@ -154,6 +154,7 @@
     _enabled = shouldEnable;
     [entryName setEnabled:shouldEnable];
 }
+
 
 #pragma mark -
 #pragma mark Utilities
