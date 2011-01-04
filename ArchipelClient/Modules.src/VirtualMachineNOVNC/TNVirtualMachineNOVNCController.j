@@ -50,6 +50,8 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 
+TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification";
+
 /*! @ingroup virtualmachinenovnc
     module that allow to access virtual machine console using VNC
 */
@@ -161,12 +163,15 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 {
     [super willLoad];
 
+    [self getVirtualMachineVNCDisplay];
+
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-
     [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCScreenNotification object:nil];
+    [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
+
+    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 }
 
 /*! called when module is unloaded
@@ -276,13 +281,16 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (void)_showExternalScreen:(CPNotification)aNotification
 {
-    if (!_isVisible && !_VMHost)
-    {
-    }
-    else
-    {
-        [self openVNCInNewWindow:nil];
-    }
+    [self openVNCInNewWindow:nil];
+}
+
+/*! called when TNArchipelVNCInformationRecoveredNotification is received
+    @param aNotification the notification
+*/
+- (void)_didVNCInformationRecovered:(CPNotification)aNotification
+{
+    if ((_isVisible) && (([_vncView state] == TNVNCCappuccinoStateDisconnected) || ([_vncView state] == TNVNCCappuccinoStateDisconnect)))
+        [self prepareVNCScreen];
 }
 
 #pragma mark -
@@ -295,8 +303,8 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         [maskingView removeFromSuperview];
-        if ((_isVisible) && (([_vncView state] == TNVNCCappuccinoStateDisconnected) || ([_vncView state] == TNVNCCappuccinoStateDisconnect)))
-            [self getVirtualMachineVNCDisplay];
+        if (_VMHost)
+            [self prepareVNCScreen];
     }
     else
     {
@@ -515,19 +523,9 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 */
 - (IBAction)openVNCInNewWindow:(id)aSender
 {
-    var widthOffset         = 6,
-        heightOffset        = 6;
 
-    // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
-    if (navigator.appVersion.indexOf("Chrome") != -1)
-    {
-        widthOffset     =   6;
-        heightOffset    =   56;
-    }
-
-    var vncSize             = [_vncView canvasSize],
-        winFrame            = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
-        pfWinFrame          = CGRectMake(100, 100, vncSize.width + widthOffset, vncSize.height + heightOffset),
+    var winFrame    = CGRectMake(100, 100, 800, 600),
+        pfWinFrame  = CGRectMake(100, 100, 800, 600),
         VNCWindow,
         platformVNCWindow;
 
@@ -538,8 +536,6 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
         [VNCWindow setPlatformWindow:platformVNCWindow];
         [platformVNCWindow orderFront:nil];
-        [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
-        [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6)];
     }
     else
     {
@@ -548,16 +544,11 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         winFrame.size.height += 25;
 
         VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
-
-        [VNCWindow setMaxSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6 + 25)];
-        [VNCWindow setMinSize:CPSizeMake(vncSize.width + 6, vncSize.height + 6 + 25)];
     }
 
-    [VNCWindow makeKeyAndOrderFront:nil];
     [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
-
     [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
-    [VNCWindow makeKeyWindow];
+    [VNCWindow makeKeyAndOrderFront:nil];
 }
 
 
@@ -597,7 +588,7 @@ TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
         _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
         _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
 
-        [self prepareVNCScreen];
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
     }
     else if ([aStanza type] == @"error")
     {

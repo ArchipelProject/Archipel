@@ -30,7 +30,10 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
     The module main controller
 */
 @implementation TNToolbarScreenButtonController : TNModule
+{
+    BOOL    _vncReady;
 
+}
 #pragma mark -
 #pragma mark Intialization
 
@@ -47,6 +50,12 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
 
 - (void)setGUIAccordingToStatus:(CPNotification)aNotification
 {
+    if (!_vncReady)
+    {
+        [_toolbarItem setEnabled:NO];
+        return;
+    }
+
     switch ([_entity XMPPShow])
     {
         case TNStropheContactStatusOnline:
@@ -57,12 +66,19 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
    }
 }
 
+- (void)didVNCInformationRecovered:(CPNotification)aNotification
+{
+    _vncReady = YES;
+    [self setGUIAccordingToStatus:nil];
+}
+
 
 #pragma mark -
 #pragma mark Overrides
 
 - (void)setEntity:(TNStropheContact)anEntity
 {
+    _vncReady = NO;
     [super setEntity:anEntity];
     _toolbarItem = [_toolbar itemWithIdentifier:_name];
 
@@ -74,6 +90,7 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
     }
     [self setGUIAccordingToStatus:nil];
 
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 }
 
