@@ -148,11 +148,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [self _removeAllTabsFromModulesTabView];
 
-    _numberOfReadyModules = 0;
-    _allModulesReady = NO;
-
-    _entity     = anEntity;
-    _moduleType = aType;
+    _numberOfReadyModules   = 0;
+    _allModulesReady        = NO;
+    _entity                 = anEntity;
+    _moduleType             = aType;
 
     [center removeObserver:self];
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -169,21 +168,15 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         }
         else
         {
-            var label,
-                center = [CPNotificationCenter defaultCenter];
-
             if (_previousXMPPShow == TNStropheContactStatusOffline)
-                label = @"Entity is offline";
+                [_infoTextField setStringValue:@"Entity is offline"];
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberLastSelectedTabIndex];
-                label = @"Entity do not want to be disturbed";
+                [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
             }
 
-            [_infoTextField setStringValue:label];
-
             [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
         }
     }
     else
@@ -349,32 +342,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         },
         sortedValue = [_loadedTabModules sortedArrayUsingFunction:sortFunction];
 
-
-    // THE PIGGY WAY. I'LL REDO THAT LATER.
     _numberOfActiveModules = 0;
+
     for (var i = 0; i < [sortedValue count]; i++)
     {
         var module      = [sortedValue objectAtIndex:i],
-            moduleTypes = [module supportedEntityTypes],
-            moduleIndex = [module index],
-            moduleLabel = [module label],
-            moduleName  = [module name];
+            moduleTypes = [module supportedEntityTypes];
 
         if ([moduleTypes containsObject:_moduleType])
-            _numberOfActiveModules++;
-    }
-
-    //@each(var module in [_modulesPList objectForKey:@"Modules"];
-    for (var i = 0; i < [sortedValue count]; i++)
-    {
-        var module      = [sortedValue objectAtIndex:i],
-            moduleTypes = [module supportedEntityTypes],
-            moduleIndex = [module index],
-            moduleLabel = [module label],
-            moduleName  = [module name];
-
-        if ([moduleTypes containsObject:_moduleType])
+        {
             [self _addItemToModulesTabView:module];
+            _numberOfActiveModules++;
+        }
     }
 
     [self recoverFromLastSelectedIndex];
@@ -387,7 +366,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if ([_mainTabView numberOfTabViewItems] <= 0)
         return;
 
-    var arrayCpy        = [[_mainTabView tabViewItems] copy];
+    var arrayCpy = [CPArray arrayWithArray:[_mainTabView tabViewItems]];
 
     for (var i = 0; i < [arrayCpy count]; i++)
     {
@@ -414,7 +393,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     var frame           = [_mainModuleView bounds],
         newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]],
-        theEntity       = _entity,
         scrollView      = [[CPScrollView alloc] initWithFrame:frame];
 
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -428,7 +406,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [newViewItem setLabel:[aModule label]];
     [newViewItem setView:scrollView];
 
-    [aModule initializeWithEntity:theEntity andRoster:_roster];
+    [aModule initializeWithEntity:_entity andRoster:_roster];
 
     [scrollView setDocumentView:[aModule view]];
 
@@ -596,8 +574,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     if ([[aNotification object] XMPPShow] == TNStropheContactStatusOffline)
     {
-        _numberOfActiveModules = 0;
-        _allModulesReady = NO;
+        _numberOfActiveModules  = 0;
+        _allModulesReady        = NO;
+
         [self _removeAllTabsFromModulesTabView];
         _previousXMPPShow = TNStropheContactStatusOffline;
         [_infoTextField setStringValue:@"Entity is offline"];
@@ -613,9 +592,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     }
     else if ((_previousXMPPShow == TNStropheContactStatusOffline) || (_previousXMPPShow == TNStropheContactStatusDND))
     {
-        _previousXMPPShow         = nil;
-        _numberOfActiveModules  = 0;
-        _allModulesReady        = NO;
+        _previousXMPPShow           = nil;
+        _numberOfActiveModules      = 0;
+        _allModulesReady            = NO;
+
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
