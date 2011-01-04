@@ -27,7 +27,7 @@
 @import <MessageBoard/MessageBoard.j>
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
-@import <LPKit/LPCrashReporter.j>
+// @import <LPKit/LPCrashReporter.j>
 
 @import "Model/TNCategoriesAndGlobalSubclasses.j"
 @import "Model/TNDatasourceRoster.j"
@@ -1337,12 +1337,18 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
 
     if (_moduleLoadingDelay)
+    {
         [_moduleLoadingDelay invalidate];
+        _moduleLoadingDelay = null;
+    }
 
     [propertiesController setEntity:item];
     [propertiesController reload];
 
-    _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
+    if (loadDelay == 0)
+        [self performModuleChange:[CPDictionary dictionaryWithObjectsAndKeys:item, @"userInfo"]]; // fake the timer
+    else
+       _moduleLoadingDelay = [CPTimer scheduledTimerWithTimeInterval:loadDelay target:self selector:@selector(performModuleChange:) userInfo:item repeats:NO];
 }
 
 /*! This method is called by delegate outlineViewSelectionDidChange: after a small delay by a timer
@@ -1357,16 +1363,14 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     }
     else
     {
-        var item        = [aTimer userInfo],
+        var item        = [aTimer valueForKey:@"userInfo"],
             defaults    = [CPUserDefaults standardUserDefaults];
-
 
         [self hideHelpView];
 
         switch ([item class])
         {
             case TNStropheGroup:
-                CPLog.info(@"setting the entity as " + item + " of type group");
                 [moduleController setEntity:item ofType:@"group"];
                 [moduleController setCurrentEntityForToolbarModules:nil];
                 break;
@@ -1374,7 +1378,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
             case TNStropheContact:
                 var vCard       = [item vCard],
                     entityType  = [_mainRoster analyseVCard:vCard];
-                CPLog.info(@"setting the entity as " + item + " of type " + entityType);
                 [moduleController setEntity:item ofType:entityType];
                 [moduleController setCurrentEntityForToolbarModules:item];
                 break;
