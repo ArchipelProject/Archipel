@@ -546,8 +546,7 @@ TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationReco
         VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
     }
 
-    [VNCWindow setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate];
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate entity:_entity];
     [VNCWindow makeKeyAndOrderFront:nil];
 }
 
@@ -653,6 +652,3 @@ TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationReco
 }
 
 @end
-
-
-

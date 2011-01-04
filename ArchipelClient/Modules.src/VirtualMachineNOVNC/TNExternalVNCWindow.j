@@ -16,24 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <AppKit/AppKit.j>
 
-/*! @ingroup virtualmachinenovnc
-    Category that enable the set the title of a physical window
-*/
-@implementation CPPlatformWindow (cool)
 
-- (void)setTitle:(CPString)aTitle
-{
-    _DOMWindow.document.title = aTitle;
-}
-
-- (id)DOMWindow
-{
-    return _DOMWindow;
-}
-@end
+var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
+    TNVNCWindowToolBarSendPasteboard    = @"TNVNCWindowToolBarSendPasteboard",
+    TNVNCWindowToolBarGetPasteboard     = @"TNVNCWindowToolBarGetPasteboard";
 
 
 /*! @ingroup virtualmachinenovnc
@@ -41,12 +29,69 @@
 */
 @implementation TNExternalVNCWindow : CPWindow
 {
-    TNVNCView       _vncView;
+    TNVNCView           _vncView;
+    TNToolbar           _mainToolbar;
+    TNStropheContact    _entity;
+    CPImageView         _imageViewVirtualMachineAvatar;
 }
 
 
 #pragma mark -
 #pragma mark Initialization
+
+/*! intialize the window
+    @param aRect the content rect of the window
+    @param aStyleMask the style mask of the window
+*/
+- (id)initWithContentRect:(CGRect)aRect styleMask:(int)aStyleMask
+{
+    if (self = [super initWithContentRect:aRect styleMask:aStyleMask])
+    {
+        _mainToolbar = [[TNToolbar alloc] init];
+        [self setToolbar:_mainToolbar];
+
+        [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:@"Ctrl Alt Del" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:@"Get Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:@"Send Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
+
+        [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
+        [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
+        [_mainToolbar setPosition:2 forToolbarItemIdentifier:TNVNCWindowToolBarGetPasteboard];
+        [_mainToolbar setPosition:3 forToolbarItemIdentifier:TNVNCWindowToolBarSendPasteboard];
+        [_mainToolbar setPosition:4 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        [_mainToolbar setPosition:5 forToolbarItemIdentifier:TNVNCWindowToolBarCtrlAltDel];
+
+        [_mainToolbar reloadToolbarItems];
+    }
+
+    return self;
+}
+
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when entity updates its vCard (and so the avatar)
+    @param aNotification the notification
+*/
+- (void)_entityVCardUpdated:(CPNotification)aNotification
+{
+    [_imageViewVirtualMachineAvatar setImage:[_entity avatar]];
+}
+
+/*! called when entity updates its nickname
+    @param aNotification the notification
+*/
+- (void)_entityNicknameUpdated:(CPNotification)aNotification
+{
+    [self setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
+    [[self platformWindow] setTitle:[self title]];
+}
+
+
+#pragma mark -
+#pragma mark Utilities
 
 /*! Initialize the window with given parameters
     @param aHost VNC host
@@ -57,17 +102,28 @@
     @param aCheckRate the check rate
     @param aFBURate the FBU rate
 */
-- (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor checkRate:(int)aCheckRate FBURate:(int)aFBURate
+- (void)loadVNCViewWithHost:(CPString)aHost port:(CPString)aPort password:(CPString)aPassword encrypt:(BOOL)isEncrypted trueColor:(BOOL)isTrueColor checkRate:(int)aCheckRate FBURate:(int)aFBURate entity:(TNStropheContact)anEntity
 {
+    _entity = anEntity;
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityVCardUpdated:) name:TNStropheContactVCardReceivedNotification object:_entity];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityNicknameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+
+    [self setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
     [[self platformWindow] setTitle:[self title]];
+    [[self platformWindow] DOMWindow].onbeforeunload = function(){
+        [self close];
+    };
+
+    _imageViewVirtualMachineAvatar = [[CPImageView alloc] initWithFrame:CPRectMake(7.0, 4.0, 50.0, 50.0)];
+    [_imageViewVirtualMachineAvatar setImage:[_entity avatar]];
+    [[_mainToolbar customSubViews] addObject:_imageViewVirtualMachineAvatar];
+    [_mainToolbar reloadToolbarItems];
+
     _vncView  = [[TNVNCView alloc] initWithFrame:[[self contentView] bounds]];
 
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [[self contentView] addSubview:_vncView];
-
-    if ([[self platformWindow] DOMWindow])
-        [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
-
+    [_vncView setFocusContainer:[[self platformWindow] DOMWindow].document];
     [_vncView setHost:aHost];
     [_vncView setPort:aPort];
     [_vncView setPassword:aPassword];
@@ -76,15 +132,40 @@
     [_vncView setEncrypted:isEncrypted];
     [_vncView setCheckRate:aCheckRate];
     [_vncView setFrameBufferRequestRate:aFBURate];
-
     [_vncView setDelegate:self];
+
+    [[self contentView] addSubview:_vncView];
 
     [_vncView load];
     [_vncView connect:nil];
 
-    [[self platformWindow] DOMWindow].onbeforeunload = function(){
-        [self close];
-    };
+}
+
+#pragma mark -
+#pragma mark Actions
+
+/*! send CTRL ALT DEL to the VNC server
+    @param aSender the sender of the action
+*/
+- (IBAction)sendCtrlAltDel:(id)aSender
+{
+    [_vncView sendCtrlAltDel:aSender];
+}
+
+/*! get the remote pasteboard
+    @param aSender the sender of the action
+*/
+- (IBAction)getPasteboard:(id)aSender
+{
+    alert("not implemented");
+}
+
+/*! send the local pasteboard
+    @param aSender the sender of the action
+*/
+- (IBAction)sendPasteboard:(id)aSender
+{
+    alert("not implemented");
 }
 
 
@@ -105,13 +186,13 @@
             var vncSize         = [_vncView canvasSize],
                 newRect         = [self frame],
                 widthOffset     = 6,
-                heightOffset    = 6;
+                heightOffset    = 6 + 59;
 
             // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
             if ([CPPlatform isBrowser] && (navigator.appVersion.indexOf("Chrome") != -1))
             {
                 widthOffset     = 6;
-                heightOffset    = 56;
+                heightOffset    = 56 + 59;
             }
 
             vncSize.width += widthOffset;
@@ -136,6 +217,7 @@
 
 - (void)close
 {
+    [[CPNotificationCenter defaultCenter] removeObserver:self];
     CPLog.info("disconnecting windowed noVNC client")
 
     if ([_vncView state] != TNVNCCappuccinoStateDisconnected)

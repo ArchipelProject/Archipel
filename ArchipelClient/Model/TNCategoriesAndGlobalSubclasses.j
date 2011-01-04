@@ -279,3 +279,19 @@
 }
 
 @end
+
+/*! @ingroup archipelcore
+    Category that enable the set the title of a physical window
+*/
+@implementation CPPlatformWindow (title)
+
+- (void)setTitle:(CPString)aTitle
+{
+    _DOMWindow.document.title = aTitle;
+}
+
+- (id)DOMWindow
+{
+    return _DOMWindow;
+}
+@end
