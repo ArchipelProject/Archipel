@@ -188,23 +188,19 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
                 widthOffset     = 6,
                 heightOffset    = 6 + 59;
 
-            // if on chrome take care of the address bar and it's fuckness about counting it into the size of the window...
-            if ([CPPlatform isBrowser] && (navigator.appVersion.indexOf("Chrome") != -1))
-            {
-                widthOffset     = 6;
-                heightOffset    = 56 + 59;
-            }
-
-            vncSize.width += widthOffset;
-            vncSize.height += heightOffset;
-            newRect.size = vncSize;
+            vncSize.width   += widthOffset;
+            vncSize.height  += heightOffset;
+            newRect.size    = vncSize;
 
             [self setFrameSize:vncSize];
             [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
             [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
 
             [[self platformWindow] setContentRect:newRect];
-            [[self platformWindow] updateNativeContentRect];
+
+            // seems needed with Safari/WebKit nightlies
+            if ([CPPlatform isBrowser] && (navigator.vendor.indexOf("Apple Computer, Inc.") != -1))
+                [[self platformWindow] updateNativeContentRect];
 
             [_vncView focus];
             break;
