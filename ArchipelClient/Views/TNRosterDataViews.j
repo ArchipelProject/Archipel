@@ -120,7 +120,6 @@
 
     [_statusIcon setImage:[aContact statusIcon]];
 
-    CPLog.warn("SETTING UNK TO " + aContact + " : " + [aContact avatar]);
     if ([aContact avatar])
         [_avatar setImage:[aContact avatar]];
     else
