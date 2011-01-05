@@ -60,7 +60,7 @@ function main(args, namedArgs)
     {
         for (i = 0; i < features.length; i++)
         {
-            if (CPFeatureIsCompatible(features[i]))
+            if (!CPFeatureIsCompatible(features[i]))
             {
                 gameOver(features[i]);
                 browserIsCompatible = NO;
