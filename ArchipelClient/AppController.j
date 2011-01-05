@@ -1135,7 +1135,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 {
     var XMPPShow,
         statusLabel = [sender title],
-        presence    = [TNStropheStanza presenceWithAttributes:{}],
         growl       = [TNGrowlCenter defaultCenter];
 
     switch (statusLabel)
@@ -1154,16 +1153,9 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
             break;
     }
 
-    [presence addChildWithName:@"status"];
-    [presence addTextNode:statusLabel];
-    [presence up]
-    [presence addChildWithName:@"show"];
-    [presence addTextNode:XMPPShow];
-    CPLog.info(@"Changing presence to " + statusLabel + ":" + XMPPShow);
+    [[_mainRoster connection] setPresenceShow:XMPPShow status:nil];
 
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
-
-    [[_mainRoster connection] send:presence];
 }
 
 /*! Action of toolbar imutables toolbar items.
