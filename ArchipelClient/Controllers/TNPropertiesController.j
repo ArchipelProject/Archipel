@@ -21,6 +21,7 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
+
 /*! @ingroup archipelcore
     subclass of CPView that represent the bottom-left property panel.
     it allows to change nickname of a TNStropheContact and give informations about it.
@@ -193,6 +194,7 @@
     _isCollapsed = NO;
 
     [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelPropertiesViewDidShowNotification object:self];
 
 }
 

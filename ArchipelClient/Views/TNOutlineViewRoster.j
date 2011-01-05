@@ -19,7 +19,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
+TNArchipelRosterOutlineViewReload           = @"TNArchipelRosterOutlineViewReload";
+TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowNotification";
 
 /*! @ingroup archipelcore
     Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
@@ -30,6 +31,10 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
     CPTabView       _tabViewModules     @accessors(property=modulesTabView);
     CPTextField     _entityRenameField  @accessors(property=entityRenameField);
 }
+
+#pragma mark -
+#pragma mark Initialization
+
 /*! init the class
     @param aFrame CPRect the frame of the view
 */
@@ -44,6 +49,7 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
         [columnOutline setWidth:12.0];
 
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(reload:) name:TNArchipelRosterOutlineViewReload object:nil];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didPropertiesViewUpdate:) name:TNArchipelPropertiesViewDidShowNotification object:nil];
 
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
@@ -62,6 +68,14 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
     return self;
 }
 
+
+#pragma mark -
+#pragma mark Notification handlers
+
+/*! called when TNArchipelRosterOutlineViewReload is received.
+    It will reload the data
+    @param aNotification the notification
+*/
 - (void)reload:(CPNotification)aNotification
 {
     var index = [[self selectedRowIndexes] firstIndex],
@@ -83,6 +97,20 @@ TNArchipelRosterOutlineViewReload = @"TNArchipelRosterOutlineViewReload";
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
+/*! called when TNArchipelPropertiesViewDidShowNotification is received.
+    It will scroll to make selected row visible
+    @param aNotification the notification
+*/
+- (void)didPropertiesViewUpdate:(CPNotification)aNotification
+{
+    var selectedIndex = [[self selectedRowIndexes] firstIndex];
+
+    [self scrollRowToVisible:selectedIndex];
+}
+
+
+#pragma mark -
+#pragma mark Overrides
 
 - (void)moveLeft
 {
