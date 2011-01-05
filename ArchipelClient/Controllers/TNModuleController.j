@@ -379,6 +379,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         [[module view] scrollPoint:CPMakePoint(0.0, 0.0)];
 
+        [[tabViewItem view] setDocumentView:nil];
         [[tabViewItem view] removeFromSuperview];
         [_mainTabView removeTabViewItem:tabViewItem];
     }
