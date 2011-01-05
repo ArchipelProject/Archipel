@@ -20,8 +20,6 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-@import "TNACP.j"
-
 /*! @global
     @group TNModule
     the namespace of Archipel Push Notification stanzas.
@@ -108,8 +106,9 @@ TNArchipelErrorGeneral                  = 1;
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
 
-/*! this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
-    YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleLoader will do the job for you.
+/*! @ignore
+    this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
+    YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleController will do the job for you.
 
     @param anEntity : TNStropheContact concerned by the module
     @param aConnection : TNStropheConnection general connection
@@ -121,7 +120,6 @@ TNArchipelErrorGeneral                  = 1;
     _roster     = aRoster;
     _connection = [_roster connection];
 }
-
 
 
 #pragma mark -
@@ -164,9 +162,7 @@ TNArchipelErrorGeneral                  = 1;
         var item = [_pubsubRegistrar objectAtIndex:i];
 
         if (pushType == [item objectForKey:@"type"])
-        {
             [self performSelector:[item objectForKey:@"selector"] withObject:infoDict]
-        }
     }
 
     return YES;
@@ -598,7 +594,7 @@ TNArchipelErrorGeneral                  = 1;
     }
     else if ([aStanza firstChildWithName:@"text"])
     {
-        var msg     = [[aStanza firstChildWithName:@"text"] text];
+        var msg = [[aStanza firstChildWithName:@"text"] text];
 
         [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
         CPLog.error(msg);

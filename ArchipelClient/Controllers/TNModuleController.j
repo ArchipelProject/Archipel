@@ -218,12 +218,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)rememberLastSelectedTabIndex
 {
-    if (_entity && ([_mainTabView numberOfTabViewItems] > 0))
-    {
-        var currentItem = [_mainTabView selectedTabViewItem];
-
-        [self rememberSelectedIndexOfItem:currentItem];
-    }
+    [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
 }
 
 /*! set wich item tab to remember
@@ -233,17 +228,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     if (anItem && _entity && ([_mainTabView numberOfTabViewItems] > 0))
     {
-        var identifier,
-            memid,
-            defaults                = [CPUserDefaults standardUserDefaults],
-            currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem];
-
-        if ([_entity class] == TNStropheContact)
-            identifier = [_entity JID];
-        else
-            identifier = [_entity name];
-
-        memid = @"selectedTabIndexFor" + identifier;
+        var defaults                = [CPUserDefaults standardUserDefaults],
+            currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
+            identifier              = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
+            memid                   = @"selectedTabIndexFor" + identifier;
 
         CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
 
@@ -255,24 +243,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)recoverFromLastSelectedIndex
 {
-    var identifier;
-
-    if ([_entity class] == TNStropheContact)
-        identifier = [_entity JID];
-    else
-        identifier = [_entity name];
-
     var defaults            = [CPUserDefaults standardUserDefaults],
+        identifier          = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
         memid               = @"selectedTabIndexFor" + identifier,
         oldSelectedIndex    = [defaults integerForKey:memid],
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
-    if (_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1))
-    {
-        CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
-        if (oldSelectedIndex)
-            [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
-    }
+    if (!(_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1)))
+        return;
+
+    CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
+    if (oldSelectedIndex)
+        [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
 
@@ -283,8 +265,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)load
 {
-    [self unloadAllModules];
-
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]],
         connection  = [CPURLConnection connectionWithRequest:request delegate:self];
 
@@ -292,16 +272,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [connection start];
 }
 
-- (void)unloadAllModules
-{
-    _numberOfModulesToLoad = 0;
-}
-
 /*! will load all CPBundle
 */
 - (void)_loadAllBundles
 {
-    CPLog.debug("going to parse the PList");
+    CPLog.debug("going to parse the plist");
 
     _numberOfModulesToLoad = [[_modulesPList objectForKey:@"Modules"] count];
 
@@ -312,8 +287,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i],
             path    = _modulesPath + [module objectForKey:@"folder"],
             bundle  = [CPBundle bundleWithPath:path];
-
-        // _numberOfModulesToLoad++;
 
         if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
             [_delegate moduleLoader:self willLoadBundle:bundle];
@@ -648,8 +621,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if ([aTabView numberOfTabViewItems] <= 0)
         return
 
-    if ([self isAllModulesReady])
-        [self rememberSelectedIndexOfItem:anItem];
+    [self rememberSelectedIndexOfItem:anItem];
 
     var currentTabItem = [aTabView selectedTabViewItem];
 
