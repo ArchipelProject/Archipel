@@ -113,6 +113,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [[self platformWindow] setTitle:[self title]];
     [[self platformWindow] DOMWindow].onbeforeunload = function(){
         [self close];
+        // FIXME: should we free self ?
     };
 
     _imageViewVirtualMachineAvatar = [[CPImageView alloc] initWithFrame:CPRectMake(7.0, 4.0, 50.0, 50.0)];

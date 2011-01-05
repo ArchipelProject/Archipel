@@ -301,19 +301,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)_populateModulesTabView
 {
-    var modulesToLoad = [CPArray array],
-        sortFunction = function(a, b, context) {
-            var indexA = [a index],
-                indexB = [b index];
-
-            if (indexA < indexB)
-                return CPOrderedAscending;
-            else if (indexA > indexB)
-                return CPOrderedDescending;
-            else
-                return CPOrderedSame;
-        },
-        sortedValue = [_loadedTabModules sortedArrayUsingFunction:sortFunction];
+    var modulesToLoad   = [CPArray array],
+        sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"index" ascending:YES],
+        sortedValue     = [_loadedTabModules sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
 
     _numberOfActiveModules = 0;
 
@@ -504,36 +494,20 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)insertModulesMenuItems
 {
-    var keys = [_modulesMenuItems allKeys].sort();
-    // it would be better but it didn't work..
-    // var desc = [CPSortDescriptor sortDescriptorWithKey:@"string" ascending:YES];
-    // var keys = [_modulesMenuItems allKeys] sortedArrayUsingDescriptors:[CPArray arrayWithObject:desc]];
+    var modulesNames    = [_modulesMenuItems allKeys].sort(), // it would be better to also use a sort desc but it doesn't work..
+        sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"title" ascending:YES];
 
-    for (var k = 0; k < [keys count] ; k++)
+    for (var k = 0; k < [modulesNames count] ; k++)
     {
-        var key = [keys objectAtIndex:k],
-            arr = [_modulesMenuItems objectForKey:key],
-            sortFunction = function(a, b, context) {
-                var indexA = [a title],
-                    indexB = [b title];
-                if (indexA < indexB)
-                        return CPOrderedAscending;
-                    else if (indexA > indexB)
-                        return CPOrderedDescending;
-                    else
-                        return CPOrderedSame;
-            },
-            sortedItems = [arr sortedArrayUsingFunction:sortFunction];
+        var menuItems       = [_modulesMenuItems objectForKey:[modulesNames objectAtIndex:k]],
+            sortedMenuItems = [menuItems sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
 
-        for (var i = 0; i < [sortedItems count]; i++)
-        {
-            [_modulesMenu addItem:[sortedItems objectAtIndex:i]];
-        }
+        for (var i = 0; i < [sortedMenuItems count]; i++)
+            [_modulesMenu addItem:[sortedMenuItems objectAtIndex:i]];
 
-        if (k + 1 < [keys count])
+        if (k + 1 < [modulesNames count])
             [_modulesMenu addItem:[CPMenuItem separatorItem]];
     }
-
 }
 
 

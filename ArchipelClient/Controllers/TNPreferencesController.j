@@ -74,19 +74,9 @@
     var tabModules          = [_moduleLoader loadedTabModules],
         toolbarModules      = [[_moduleLoader loadedToolbarModules] allValues],
         notSortedModules    = [tabModules arrayByAddingObjectsFromArray:toolbarModules],
-        sortFunction        = function(a, b, context) {
-            var indexA = [a label],
-                indexB = [b label];
+        sortDescriptor      = [CPSortDescriptor sortDescriptorWithKey:@"label" ascending:YES];
 
-            if (indexA < indexB)
-                return CPOrderedAscending;
-            else if (indexA > indexB)
-                return CPOrderedDescending;
-            else
-                return CPOrderedSame;
-        },
-
-    _modules = [notSortedModules sortedArrayUsingFunction:sortFunction];
+    _modules = [notSortedModules sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
 
     for (var i = 0; i < [_modules count]; i++)
     {

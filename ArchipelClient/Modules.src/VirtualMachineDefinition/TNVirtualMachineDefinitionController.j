@@ -1328,7 +1328,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [_tableDrives reloadData];
 
         // THE dirty temporary solution (instead of beer)
-        setTimeout(function(){[_tableDrives setNeedsLayout], [_tableDrives setNeedsDisplay:YES]}, 1000);
+        setTimeout(function(){[_tableDrives setNeedsLayout]; [_tableDrives setNeedsDisplay:YES]}, 1000);
 
 
         //////////////////////////////////////////

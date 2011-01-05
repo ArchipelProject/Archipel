@@ -201,19 +201,8 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
         }
     }
 
-    var sortedItems = [CPArray array],
-        sortFunction = function(a, b, context) {
-        var indexA = [[a title] uppercaseString],
-            indexB = [[b title] uppercaseString];
-
-        if (indexA < indexB)
-            return CPOrderedAscending;
-        else if (indexA > indexB)
-            return CPOrderedDescending;
-        else
-            return CPOrderedSame;
-    };
-    sortedItems = [items sortedArrayUsingFunction:sortFunction];
+    var sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"title.uppercaseString" ascending:YES],
+        sortedItems     = [items sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
 
     for (var i = 0; i < [sortedItems count]; i++)
         [buttonHypervisors addItem:[sortedItems objectAtIndex:i]];
