@@ -33,9 +33,42 @@
     @htmlonly </pre>@endhtmlonly
 */
 
+function gameOver(code)
+{
+    var container = document.getElementById("container"),
+        sound = [[CPSound alloc] initWithContentsOfURL:[CPURL URLWithString:@"Resources/incompatible.mp3"] byReference:NO];
+    container.style.color = "white";
+    container.style.width = "100%";
+    container.style.left = "0px";
+    container.style.top = "200px";
+    container.style.fontSize = "11px";
+    container.style.textAlign = "center";
+    container.innerHTML = "<h2>Game Over</h2><br/>You're browser seems uncompatible with feature code <code>" +
+        code + "</code><br/>You should use Chromium or Safari or any decent browser actually";
 
+    // yeah, yeah...
+    setTimeout(function(){[sound play]}, 100);
+}
 
 function main(args, namedArgs)
 {
-    CPApplicationMain(args, namedArgs);
+    // put needed features here in this array. If one fails, game over
+    var features = [CPHTMLCanvasFeature],
+        browserIsCompatible = YES;
+
+    if ([CPPlatform isBrowser])
+    {
+        for (i = 0; i < features.length; i++)
+        {
+            if (CPFeatureIsCompatible(features[i]))
+            {
+                gameOver(features[i]);
+                browserIsCompatible = NO;
+                break;
+            }
+        }
+    }
+
+    if (browserIsCompatible)
+        CPApplicationMain(args, namedArgs);
 }
