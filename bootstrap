@@ -303,7 +303,7 @@ def client_build_cappuccino():
     if ret != 0:
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
-    print "\033[32m * Cappuccinno builded\033[0m"
+    print "\033[32m * Cappuccinno build\033[0m"
 
 
 def client_build_strophecappuccino():
@@ -314,7 +314,7 @@ def client_build_strophecappuccino():
     if ret != 0:
         print "\033[31mUnable to build StropheCappuccino\033[0m"
         sys.exit(1)
-    print "\033[32m * StropheCappuccino builded\033[0m"
+    print "\033[32m * StropheCappuccino build\033[0m"
 
 
 def client_build_growlcappuccino():
@@ -325,7 +325,7 @@ def client_build_growlcappuccino():
     if ret != 0:
         print "\033[31mUnable to build GrowlCappuccino\033[0m"
         sys.exit(1)
-    print "\033[32m * GrowlCappuccino builded \033[0m"
+    print "\033[32m * GrowlCappuccino build \033[0m"
 
 
 def client_build_vnccappuccino():
@@ -336,7 +336,7 @@ def client_build_vnccappuccino():
     if ret != 0:
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
-    print "\033[32m * VNCCappuccino builded\033[0m"
+    print "\033[32m * VNCCappuccino build\033[0m"
 
 
 def client_build_itunestabview():
@@ -347,7 +347,7 @@ def client_build_itunestabview():
     if ret != 0:
         print "\033[31mUnable to build iTunesTabView\033[0m"
         sys.exit(1)
-    print "\033[32m * iTunesTabView builded\033[0m"
+    print "\033[32m * iTunesTabView build\033[0m"
 
 
 def client_build_messageboard():
@@ -358,7 +358,7 @@ def client_build_messageboard():
     if ret != 0:
         print "\033[31mUnable to build MessageBoard\033[0m"
         sys.exit(1)
-    print "\033[32m * MessageBoard builded\033[0m"
+    print "\033[32m * MessageBoard build\033[0m"
 
 
 def client_build_lpkit():
@@ -369,7 +369,7 @@ def client_build_lpkit():
     if ret != 0:
         print "\033[31mUnable to build LPKit\033[0m"
         sys.exit(1)
-    print "\033[32m * LPKit builded\033[0m"
+    print "\033[32m * LPKit build\033[0m"
 
 
 def client_build_tnkit():
@@ -380,7 +380,7 @@ def client_build_tnkit():
     if ret != 0:
         print "\033[31mUnable to build TNKit\033[0m"
         sys.exit(1)
-    print "\033[32m * TNKit builded\033[0m"
+    print "\033[32m * TNKit build\033[0m"
 
 
 def client_build_archipel(exportpath=None):
