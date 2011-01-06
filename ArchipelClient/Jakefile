@@ -36,7 +36,7 @@ var ENV = require("system").env,
     task = require("jake").task,
     FileList = JAKE.FileList,
     app = require("cappuccino/jake").app,
-    configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
+    configuration = ENV["CONFIG"] ||  "Debug",
     OS = require("os");
 
 $DOCUMENTATION_BUILD = FILE.join("Build", "Documentation");
@@ -70,13 +70,13 @@ task ("build", ["Archipel"], function()
 
 task ("debug", function()
 {
-    ENV["CONFIGURATION"] = "Debug";
+    ENV["CONFIG"] = "Debug";
     JAKE.subjake(["."], "build", ENV);
 });
 
 task ("release", function()
 {
-    ENV["CONFIGURATION"] = "Release";
+    ENV["CONFIG"] = "Release";
     JAKE.subjake(["."], "build", ENV);
 });
 

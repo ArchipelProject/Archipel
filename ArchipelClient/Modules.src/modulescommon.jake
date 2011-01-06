@@ -24,7 +24,7 @@ var ENV = require("system").env,
     task = JAKE.task,
     FileList = require("jake").FileList,
     framework = require("cappuccino/jake").framework,
-    configuration = ENV["CONFIG"] || ENV["CONFIGURATION"] || ENV["c"] || "Debug",
+    configuration = ENV["CONFIG"] || "Debug",
     OS = require("os"),
     FILELIST = (typeof(FILELIST) == "undefined") ?  new FileList("*.j") : FILELIST;
 
@@ -58,13 +58,13 @@ task ("build", ["default"]);
 
 task ("debug", function()
 {
-    ENV["CONFIGURATION"] = "Debug";
+    ENV["CONFIG"] = "Debug";
     JAKE.subjake(["."], "build", ENV);
 });
 
 task ("release", function()
 {
-    ENV["CONFIGURATION"] = "Release";
+    ENV["CONFIG"] = "Release";
     JAKE.subjake(["."], "build", ENV);
 });
 
