@@ -20,7 +20,7 @@ Thanks to Archipel you will be able to :
 
 # Get help
 
-* IRC : [Archipel channel at Freenode](irc://irc.freenode.net/#archipel)
+* IRC : [Archipel channel at Freenode](irc://irc.freenode.net/#archipel) (irc://irc.freenode.net/#archipel)
 * Wiki : [Github Wiki](http:/github.com/primalmotion/archipel/wiki)
 * Bugtracker : [Github Issues](http:/github.com/primalmotion/archipel/issues)
 * Mailing list : [Google group](http://groups.google.com/group/archipelproject)
