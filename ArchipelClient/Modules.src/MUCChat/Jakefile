@@ -20,7 +20,7 @@
 AUTHOR		= "Antoine Mercadal";
 EMAIL		= "feedback @nospam@ yourcompany.com";
 COMPANY		= "org.archipelproject";
-NAME 		= "mucchat";
+NAME 		= "MUCChat";
 SUMMARY		= "Multi user chat room for Archipel";
 VERSION		= "1.0";
 
