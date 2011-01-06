@@ -390,7 +390,7 @@ def client_build_archipel(exportpath=None):
         export = ""
     print " * Building ArchipelClient"
     s = Spinner();
-    os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=Release %s > /dev/null 2>&1" % export)
+    os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release %s > /dev/null 2>&1" % export)
     s.stop()
     print "\033[32m * ArchipelClient built\033[0m"
 
