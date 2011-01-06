@@ -18,6 +18,14 @@ Thanks to Archipel you will be able to :
 
 ![Archipel](http://antoinemercadal.fr/archipelblog/wp-content/uploads/manual/archipel_pres.png)
 
+# Get help
+
+* IRC : [Archipel channel at Freenode](irc://irc.freenode.net/#archipel)
+* Wiki : [Github Wiki](http:/github.com/primalmotion/archipel/wiki)
+* Bugtracker : [Github Issues](http:/github.com/primalmotion/archipel/issues)
+* Mailing list : [Google group](http://groups.google.com/group/archipelproject)
+* Website : [Official website](http://archipelproject.org)
+* Sources : [Github Sources](http:/github.com/primalmotion/archipel)
 
 # Team
 
