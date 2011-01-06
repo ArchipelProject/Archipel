@@ -184,7 +184,6 @@ def test_cmd_or_die(cmd, warn=False):
 def test_basic_cmds():
     test_cmd_or_die("git")
     test_cmd_or_die("cp")
-    test_cmd_or_die("cd")
     test_cmd_or_die("mkdir")
     test_cmd_or_die("mv")
     test_cmd_or_die("echo")
@@ -363,7 +362,7 @@ def client_build_messageboard():
 def client_build_lpkit():
     print " * Building LPKit";
     s = Spinner();
-    ret = os.system("cd ./LPKit && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
+    ret = os.system("cd ./LPKit && export CONFIG=Release && jake -f myJakefile build  > /dev/null 2>&1 && export CONFIG=Debug && jake -f myJakefile build > /dev/null 2>&1")
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build LPKit\033[0m"
