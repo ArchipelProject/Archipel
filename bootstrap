@@ -491,7 +491,7 @@ def install_archipelserver():
 def server_install_python_eggs():
     print " * Installing needed python eggs";
     print "\n\033[35m*******************************************************************************"
-    ret = os.system("easy_install xmpppy sqlobject")
+    ret = os.system("easy_install xmpppy sqlobject apscheduler")
     print "*******************************************************************************\033[0m"
     print "\033[32m * Needed eggs installed\033[0m"
     
