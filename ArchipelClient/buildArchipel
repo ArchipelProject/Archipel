@@ -198,8 +198,9 @@ def copy_modules(modules_paths, config, ignorepaths):
         if path.lower().find("sample") > -1:
             continue
         
+        config              = config.capitalize()
         module_name         = path.split("/")[-1]
-        module_dest_path   = GLOBAL_MODULES_BUILD_PATH + "/";
+        module_dest_path    = GLOBAL_MODULES_BUILD_PATH + "/";
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
         
         remove_modules([path], config, ignorepaths);
