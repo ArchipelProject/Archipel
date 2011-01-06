@@ -584,7 +584,7 @@ def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_di
                 {"domain": "MODULES",               "key": "oom_killer",                                "name": "Use module OOM",                       "type": "bool", "default": "y"},
                 {"domain": "MODULES",               "key": "actions_scheduler",                         "name": "Use module scheduler",                 "type": "bool", "default": "y"},
                 {"domain": "MODULES",               "key": "xmppserver",                                "name": "Use module XMPPServer",                "type": "bool", "default": "y"},
-                {"domain": "MODULES",               "key": "iphone_appnotification",                    "name": "Use module iPhone Noitification",      "type": "bool", "default": "n"},
+                {"domain": "MODULES",               "key": "iphone_appnotification",                    "name": "Use module iPhone Notification",       "type": "bool", "default": "n"},
                 {"domain": "HYPERVISOR",            "key": "hypervisor_xmpp_jid",                       "name": "Hypervisor XMPP JID",                  "type": "text", "default": "hypervisor@xmppserver"},
                 {"domain": "HYPERVISOR",            "key": "hypervisor_xmpp_password",                  "name": "Hypervisor XMPP password",             "type": "text", "default": "password"},
                 {"domain": "HYPERVISOR",            "key": "hypervisor_name",                           "name": "Hypervisor name",                      "type": "text", "default": "auto"},
