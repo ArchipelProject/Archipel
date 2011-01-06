@@ -338,8 +338,13 @@ def export_sdk(path):
 def export_archipel(path, config):
     print "# exporting flattened Archipel application to " + path
     
+    temp_path = "/tmp/Archipel-%s-b%s-flattened" % (config, GLOBAL_BUILD_NUMBER)
+    final_path = "%s/Archipel-%s-b%s" % (path, config, GLOBAL_BUILD_NUMBER)
+    
     build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("/*", "");
-    os.system("flatten -f %s %s/Archipel-%s-b%s" % (build_dir, path, config, GLOBAL_BUILD_NUMBER))
+    os.system("flatten -f %s %s" % (build_dir, temp_path))
+    os.system("press -f %s %s" % (temp_path, final_path))
+    os.system("rm -rf %s" % temp_path)
 
 
 
