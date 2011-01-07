@@ -17,12 +17,23 @@ fi
 archipel="/usr/bin/ArchipelServer/runarchipel.py"
 prog=$(basename $archipel)
 ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
-lockfile=/var/lock/subsys/archipel
+
+if [ -d /var/lock/subsys ]; then
+    lockfile=/var/lock/subsys/archipel
+elif [ -d /var/lock/ ]; then
+    lockfile=/var/lock/archipel
+else
+   lockfile=/var/.lock-archipel
+fi
+
+if [[ `which daemon` != "" ]]; then
+    daemonCommand=deamon
+fi
 
 start() {
     [ -x $archipel ] || exit 5
     echo -n $"Starting $prog: "
-    daemon $archipel --config="$ARCHIPEL_CONF_FILE" 2>&1 /dev/null
+    $daemonCommand $archipel --config="$ARCHIPEL_CONF_FILE" 2>&1 /dev/null
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
