@@ -18,12 +18,12 @@ archipel="/usr/bin/ArchipelServer/runarchipel.py"
 prog=$(basename $archipel)
 ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
 
-if [ -d /var/lock/subsys ]; then
+if [[ -d /var/lock/subsys ]]; then
     lockfile=/var/lock/subsys/archipel
-elif [ -d /var/lock/ ]; then
+elif [[ -d /var/lock/ ]]; then
     lockfile=/var/lock/archipel
 else
-   lockfile=/var/.lock-archipel
+   lockfile=/tmp/.lock-archipel
 fi
 
 if [[ `which daemon` != "" ]]; then
@@ -42,7 +42,7 @@ start() {
 
 stop() {
     echo -n $"Stopping $prog: "
-    killproc $prog
+    killall $prog
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile
