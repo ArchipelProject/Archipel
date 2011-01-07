@@ -58,7 +58,7 @@
 		<key>TNDescDefaultHugePages</key>
         <integer>0</integer>
         <key>TNDescDefaultInputType</key>
-        <string>mouse</string>
+        <string>tablet</string>
         
         <key>MandatoryPermissions</key>
         <array>
