@@ -142,6 +142,28 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
 }
 
+- (void)fitWindowToVNCView
+{
+    var vncSize         = [_vncView canvasSize],
+        newRect         = [self frame],
+        widthOffset     = 6,
+        heightOffset    = 6 + 59;
+
+    vncSize.width   += widthOffset;
+    vncSize.height  += heightOffset;
+    newRect.size    = vncSize;
+
+    [self setFrameSize:vncSize];
+    [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
+    [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
+
+    [[self platformWindow] setContentRect:newRect];
+
+    // seems needed with Safari/WebKit nightlies
+    if ([CPPlatform isBrowser] && (navigator.vendor.indexOf("Apple Computer, Inc.") != -1))
+        [[self platformWindow] updateNativeContentRect];
+}
+
 #pragma mark -
 #pragma mark Actions
 
@@ -184,30 +206,18 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             break;
 
         case TNVNCCappuccinoStateNormal:
-            var vncSize         = [_vncView canvasSize],
-                newRect         = [self frame],
-                widthOffset     = 6,
-                heightOffset    = 6 + 59;
-
-            vncSize.width   += widthOffset;
-            vncSize.height  += heightOffset;
-            newRect.size    = vncSize;
-
-            [self setFrameSize:vncSize];
-            [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
-            [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
-
-            [[self platformWindow] setContentRect:newRect];
-
-            // seems needed with Safari/WebKit nightlies
-            if ([CPPlatform isBrowser] && (navigator.vendor.indexOf("Apple Computer, Inc.") != -1))
-                [[self platformWindow] updateNativeContentRect];
-
+            [self fitWindowToVNCView];
             [_vncView focus];
             break;
     }
 }
 
+/*! VNCView delegate
+*/
+- (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CPSize)aNewSize
+{
+    [self fitWindowToVNCView];
+}
 
 #pragma mark -
 #pragma mark CPWindow overrides
