@@ -27,7 +27,7 @@ else
 fi
 
 if [[ `which daemon` != "" ]]; then
-    daemonCommand=deamon
+    daemonCommand=daemon
 fi
 
 start() {
