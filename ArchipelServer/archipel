@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # chkconfig: - 01 99
 # description: Archipel Server Daemon
