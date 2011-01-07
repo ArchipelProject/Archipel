@@ -431,7 +431,8 @@ def install_archipelserver():
     inst_conf               = None
     inst_cert               = None
     inst_configure          = None
-    inst_working_folders    = True
+    inst_working_folders    = None
+    inst_log_folder         = None
     vm_working_folders      = { "drives":   "/vm/drives", 
                                 "iso":      "/vm/iso", 
                                 "repo":     "/vm/repo",
@@ -450,6 +451,9 @@ def install_archipelserver():
     
     if ask_bool("Would you like to create Archipel data folder ?"):
         inst_data   = ask("Where do you want to ArchipelServer stores its datas ?", None, "/var/lib/archipel")
+    
+    if ask_bool("Would you like to create Archipel log folder ?"):
+        inst_log_folder = ask("Where do you want to store the log files ?", None, "/var/log/archipel")
     
     if ask_bool("Would you like to configure Archipel working folders (store all virtualization info) ?"):
         inst_working_folders = True;
@@ -476,6 +480,7 @@ def install_archipelserver():
     if inst_eggs:               print "   - install eggs         : %s" % str(inst_eggs)
     if inst_bin:                print "   - binary folder        : %s" % inst_bin
     if inst_data:               print "   - data folder          : %s" % inst_data
+    if inst_log_folder:         print "   - log folder           : %s" % inst_log_folder
     if inst_working_folders:    
         print "   - working folders      : "
         for name, folder in vm_working_folders.items():
@@ -494,11 +499,12 @@ def install_archipelserver():
     if inst_bin:                    server_install_binary(inst_bin)
     if inst_conf:                   server_install_conf_folder(inst_conf)
     if inst_data:                   server_install_data_folder(inst_data)
+    if inst_log_folder:             server_install_log_folder(inst_log_folder)
     if inst_working_folders:        server_install_working_folders(vm_working_folders)
     if inst_init:                   server_install_init_script(inst_init)
     if inst_init and inst_start:    server_install_init_start()    
     if inst_cert:                   server_install_vnc_certificate(inst_conf)
-    if inst_configure:              server_configure("./ArchipelServer/conf/archipel.conf.template", inst_bin, inst_data, inst_conf, vm_working_folders)
+    if inst_configure:              server_configure("./ArchipelServer/conf/archipel.conf.template", inst_bin, inst_data, inst_conf, vm_working_folders, inst_log_folder)
     
     print "\033[32m"
     print " Installation is now complete.\n"
@@ -553,6 +559,14 @@ def server_install_data_folder(inst_data):
        os.system("mkdir -p '%s'" % inst_data)
        s.stop()
 
+def server_install_log_folder(folder):
+    if not os.path.exists(folder):
+        print " - creating log folder  %s" % folder
+        s = Spinner()
+        os.system("mkdir -p '%s'" % folder)
+        s.stop()
+
+
 def server_install_working_folders(folders):
     for name, folder in folders.items():
         print " - creating working %s folder at %s" %  (name, folder)
@@ -591,7 +605,7 @@ def server_install_vnc_certificate(inst_conf):
     
 
 
-def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_dir, vm_working_folders):
+def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_dir, vm_working_folders, log_folder):
     os.system("cp %s %s.working" %  (confpath, confpath))
     conf = ConfigParser.ConfigParser()
     conf.readfp(open("%s.working" % confpath))
@@ -622,13 +636,13 @@ def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_di
                 {"domain": "VIRTUALMACHINE",        "key": "vnc_certificate_file",                      "name": "Virtual machines VNC certificate",     "type": "text", "default": "%s/vnc.pem" % general_etc_dir},
                 {"domain": "VIRTUALMACHINE",        "key": "vnc_only_ssl",                              "name": "Use only SSL connection for VNC",      "type": "bool", "default": "n"},
                 {"domain": "LOGGING",               "key": "logging_level",                             "name": "Logging level",                        "type": "text", "default": "info"},
-                {"domain": "LOGGING",               "key": "logging_file_path",                         "name": "Log file",                             "type": "text", "default": "/var/log/archipel/archipel.log"},
+                {"domain": "LOGGING",               "key": "logging_file_path",                         "name": "Log file",                             "type": "text", "default": "%s/archipel.log" % log_folder},
                 {"domain": "LOGGING",               "key": "hypervisor_permissions_database_path",      "name": "Hypervisor",                           "type": "text", "default": ""},
                 {"domain": "HEALTH",                "key": "health_database_path",                      "name": "Health database path",                 "type": "text", "default": "%s/health.sqlite3" % general_var_dir,                   "dep_module_key": "hypervisor_health"},
                 {"domain": "HEALTH",                "key": "health_collection_interval",                "name": "Collection interval",                  "type": "text", "default": "5",                                                     "dep_module_key": "hypervisor_health"},
                 {"domain": "HEALTH",                "key": "max_rows_before_purge",                     "name": "Max rows before purge",                "type": "text", "default": "50000",                                                 "dep_module_key": "hypervisor_health"},
                 {"domain": "HEALTH",                "key": "max_cached_rows",                           "name": "Max cached rows",                      "type": "text", "default": "200",                                                   "dep_module_key": "hypervisor_health"},
-                {"domain": "MEDIAS",                 "key": "iso_base_path",                             "name": "Path of common ISO",                  "type": "text", "default": vm_working_folders["iso"],                                  "dep_module_key": "vm_media_management"},
+                {"domain": "MEDIAS",                "key": "iso_base_path",                             "name": "Path of common ISO",                  "type": "text", "default": vm_working_folders["iso"],                                  "dep_module_key": "vm_media_management"},
                 {"domain": "GEOLOCALIZATION",       "key": "localization_mode",                         "name": "Geolocalization mode (manual/auto)",   "type": "text", "default": "auto",                                                  "dep_module_key": "geolocalization"},
                 {"domain": "GEOLOCALIZATION",       "key": "localization_latitude",                     "name": "Latitude (manual mode)",               "type": "text", "default": "0.0",                                                   "dep_module_key": "geolocalization"},
                 {"domain": "GEOLOCALIZATION",       "key": "localization_longitude",                    "name": "Longitude (manual mode)",              "type": "text", "default": "0.0",                                                   "dep_module_key": "geolocalization"},
