@@ -9,8 +9,10 @@
 # archipel - this script starts and stops the archipel daemon
 
 # Source function library.
-. /etc/rc.d/init.d/functions
 
+if [ -f /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+fi
 
 archipel="/usr/bin/ArchipelServer/runarchipel.py"
 prog=$(basename $archipel)
