@@ -33,7 +33,7 @@ fi
 start() {
     [ -x $archipel ] || exit 5
     echo -n $"Starting $prog: "
-    $daemonCommand $archipel --config="$ARCHIPEL_CONF_FILE" 2>&1 /dev/null
+    $daemonCommand $archipel --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
