@@ -364,7 +364,7 @@ def client_build_messageboard():
 def client_build_lpkit():
     print " * Building LPKit";
     s = Spinner();
-    ret = os.system("cd ./LPKit && export CONFIG=Release && jake -f myJakeFile build  > /dev/null 2>&1 && export CONFIG=Debug && jake -f myJakeFile build > /dev/null 2>&1")
+    ret = os.system("cd ./LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  > /dev/null 2>&1 && export CONFIGURATION=Debug && jake -f myJakeFile build > /dev/null 2>&1")
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build LPKit\033[0m"
