@@ -589,7 +589,7 @@ def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_di
                 {"domain": "HYPERVISOR",            "key": "hypervisor_xmpp_password",                  "name": "Hypervisor XMPP password",             "type": "text", "default": "password"},
                 {"domain": "HYPERVISOR",            "key": "hypervisor_name",                           "name": "Hypervisor name",                      "type": "text", "default": "auto"},
                 {"domain": "HYPERVISOR",            "key": "hypervisor_database_path",                  "name": "Hypervisor database path",             "type": "text", "default": "%s/hypervisor.sqlite3" % general_var_dir},
-                {"domain": "HYPERVISOR",            "key": "hypervisor_permissions_database_path",      "name": "Hypervisor permissions database path", "type": "text", "default": "%s/hypervisor.sqlite3" % general_var_dir},
+                {"domain": "HYPERVISOR",            "key": "hypervisor_permissions_database_path",      "name": "Hypervisor permissions database path", "type": "text", "default": "%s/hypervisor-permissions.sqlite3" % general_var_dir},
                 {"domain": "HYPERVISOR",            "key": "name_generation_file",                      "name": "path for virtual machine names list",  "type": "text", "default": "%s/names.txt" % general_exec_dir},
                 {"domain": "VIRTUALMACHINE",        "key": "vm_base_path",                              "name": "Virtual machines base path",           "type": "text", "default": "/vm/drives"},
                 {"domain": "VIRTUALMACHINE",        "key": "xmpp_password_size",                        "name": "Virtual machines XMPP password size",  "type": "text", "default": "32"},
