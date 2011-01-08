@@ -128,7 +128,7 @@ class TNArchipelEntity:
         """check is iq is a valid ACP and return action"""
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
-            self.log.info("ACP RECEIVED: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
+            self.log.info("acp received: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
             return action
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
@@ -145,7 +145,7 @@ class TNArchipelEntity:
         Initializes the permissions
         overrides this to add custom permissions
         """
-        self.log.debug("initializing permissions of %s" % self.jid)
+        self.log.info("initializing permissions of %s" % self.jid)
         self.permission_center.create_permission("all", "All permissions are granted", False);
         self.permission_center.create_permission("presence", "Authorizes users to request presences", False);
         self.permission_center.create_permission("message", "Authorizes users to send messages", False);
@@ -159,7 +159,7 @@ class TNArchipelEntity:
         self.permission_center.create_permission("permission_setown", "Authorizes users to set only own permissions", False);
         self.permission_center.create_permission("subscription_add", "Authorizes users add others in entity roster", False);
         self.permission_center.create_permission("subscription_remove", "Authorizes users remove others in entity roster", False);
-        self.log.debug("permissions of %s initialized" % self.jid)
+        self.log.info("permissions of %s initialized" % self.jid)
     
     
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
@@ -177,6 +177,7 @@ class TNArchipelEntity:
         @type prefix: string
         @param prefix: the prefix of action_name (for example if permission if health_get and action is get, you can give 'health_' as prefix)
         """
+        self.log.info("checking permission for action %s%s asked by %s" % (prefix, action_name, stanza.getFrom()))
         if not self.permission_center.check_permission(str(stanza.getFrom().getStripped()), "%s%s" % (prefix, action_name)):
             conn.send(build_error_iq(self, "Cannot use '%s': permission denied" % action_name, stanza, code=error_code, ns=ARCHIPEL_NS_PERMISSION_ERROR))
             raise xmpp.protocol.NodeProcessed
@@ -236,6 +237,7 @@ class TNArchipelEntity:
         Connect and auth to XMPP Server
         """
         if self.xmppclient and self.xmppclient.isConnected():
+            self.log.warning("trying to connect, but already connected. ignoring")
             return
         
         if self.connect_xmpp():
@@ -247,7 +249,8 @@ class TNArchipelEntity:
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-    
+        else:
+            self.log.warning("trying to disconnect, but not connected. ignoring")
     
     
     ### Pubsub
@@ -256,7 +259,7 @@ class TNArchipelEntity:
         """
         create or get the current hypervisor pubsub node.
         """
-        # creating/gettingthe event pubsub node
+        # creating/getting the event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
         
@@ -383,7 +386,7 @@ class TNArchipelEntity:
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
-        self.log.info("Subscription Presence ask by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
+        self.log.info("presence stanza received by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
         
         # update roster is necessary
         if not self.roster:
@@ -391,6 +394,10 @@ class TNArchipelEntity:
         
         typ = presence.getType()
         jid = presence.getFrom()
+        
+        if not typ in ("subscribe", "unsubscribe") or self.jid.getStripped() == jid.getStripped():
+            self.log.info("prescence is not of type 'subscribe', 'unsubscribe' or is send by own jid. ignoring")
+            raise xmpp.protocol.NodeProcessed
         
         # check permissions
         if not self.permission_center.check_permission(jid.getStripped(), "presence"):
@@ -400,10 +407,9 @@ class TNArchipelEntity:
             raise xmpp.protocol.NodeProcessed
         
         # if everything is all right, process request
-        if typ == "subscribe":
-            self.authorize(jid)
-        elif typ == "unsubscribe":
-            self.remove_jid(jid)
+        if typ == "subscribe":      self.authorize(jid)
+        elif typ == "unsubscribe":  self.remove_jid(jid)
+        
         raise xmpp.protocol.NodeProcessed
     
     
