@@ -171,6 +171,6 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
 
 
 def build_error_message(originclass, ex):
-    caller = inspect.stack()[2][3];
+    caller = inspect.stack()[3][3];
     log.error("%s: exception raised is : %s" % (caller, str(ex)))
     return str(ex)
