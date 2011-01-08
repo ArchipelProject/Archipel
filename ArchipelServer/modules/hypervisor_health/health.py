@@ -181,8 +181,10 @@ class TNHypervisorHealth:
             nodes = []
             for line in output.split("\n"):
                 infos = line.split("::")
-                log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": infos[2], "method": infos[3]})
-                log_node.setData(infos[4]);
+                # log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": infos[2], "method": infos[3]})
+                # log_node.setData(infos[4]);
+                log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
+                log_node.setData(line);
                 nodes.append(log_node)
                 
             reply.setQueryPayload(nodes)
