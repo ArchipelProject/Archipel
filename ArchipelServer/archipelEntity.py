@@ -229,7 +229,6 @@ class TNArchipelEntity:
         self.get_vcard()
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        
     
     
     def connect(self):
@@ -386,18 +385,18 @@ class TNArchipelEntity:
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
-        self.log.info("presence stanza received by %s to %s: %s" % (str(presence.getFrom().getStripped()), self.jid.getStripped(), str(presence.getType())))
+        self.log.info("presence stanza received from %s: %s" % (presence.getFrom(), presence.getType()))
         
         # update roster is necessary
-        if not self.roster:
-            self.roster = self.xmppclient.getRoster()
+        if not self.roster: self.roster = self.xmppclient.getRoster()
         
         typ = presence.getType()
         jid = presence.getFrom()
         
         if not typ in ("subscribe", "unsubscribe") or self.jid.getStripped() == jid.getStripped():
-            self.log.info("prescence is not of type 'subscribe', 'unsubscribe' or is send by own jid. ignoring")
             raise xmpp.protocol.NodeProcessed
+        
+        self.log.info("managing subscribtion request with type %s" % presence.getType())
         
         # check permissions
         if not self.permission_center.check_permission(jid.getStripped(), "presence"):
@@ -546,7 +545,6 @@ class TNArchipelEntity:
         self.log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
         
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        #self.mass_sender.stanzas.append(pres)
         self.xmppclient.send(pres) 
     
     
@@ -556,7 +554,6 @@ class TNArchipelEntity:
         """
         self.xmppstatus = presence_status
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        #self.mass_sender.stanzas.append(pres)
         self.xmppclient.send(pres)
     
     
@@ -574,10 +571,12 @@ class TNArchipelEntity:
     
     
     def shout(self, subject, message, excludedgroups=None):
-        """send a message to evrybody in roster"""
-        
+        """send a message to everybody in roster"""
         for barejid in self.roster.getItems():
             excluded = False
+            if self.jid.getStripped() == barejid:
+                continue
+            
             if excludedgroups:
                 for excludedgroup in excludedgroups:
                     try:
@@ -587,12 +586,19 @@ class TNArchipelEntity:
                             break
                     except:
                         excluded = True
-            if not excluded:
-                resources = self.roster.getResources(barejid)
+            if excluded: continue
+            
+            resources = self.roster.getResources(barejid);
+            if len(resources) == 0:
+                broadcast = xmpp.Message(body=message, typ="headline", to=barejid)
+                self.log.info("SHOUTING : shouting message to %s" % (barejid))
+                self.xmppclient.send(broadcast)
+            else:
                 for resource in resources:
                     broadcast = xmpp.Message(body=message, typ="headline", to=barejid + "/" + resource)
                     self.log.info("SHOUTING : shouting message to %s" % (barejid))
                     self.xmppclient.send(broadcast)
+                    
     
     
     
@@ -1258,8 +1264,8 @@ class TNArchipelEntity:
                         else:
                             self.unauthorize(xmpp.JID(perm_target))
                 if not perm_target in perm_targets:
-                        perm_targets.append(perm_target);
-                    
+                    perm_targets.append(perm_target)
+            
             if len(errors) > 0:
                 reply =  build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
             
