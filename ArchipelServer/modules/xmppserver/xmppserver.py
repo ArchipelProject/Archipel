@@ -102,11 +102,11 @@ class TNXMPPServerController:
             server      = self.entity.jid.getDomain()
             cmd         = "%s srg-create %s %s \"'%s'\" \"'%s'\" %s" % (self.ejabberdctl_path, groupID, server, groupName, groupDesc, groupID)
             
-            log.debug("console command is : %s" % cmd)
+            self.entity.log.debug("console command is : %s" % cmd)
             if os.system(cmd):
                 raise Exception("EJABBERDCTL command error : %s" % cmd)
             
-            log.info("creating a new shared group %s" % groupID)
+            self.entity.log.info("creating a new shared group %s" % groupID)
             
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
@@ -130,11 +130,11 @@ class TNXMPPServerController:
             server      = self.entity.jid.getDomain()
             cmd         = "%s srg-delete %s %s" % (self.ejabberdctl_path, groupID, server)
             
-            log.debug("console command is : %s" % cmd)
+            self.entity.log.debug("console command is : %s" % cmd)
             if os.system(cmd):
                 raise Exception("EJABBERDCTL command error : %s" % cmd)
             
-            log.info("removing a shared group %s" % groupID)
+            self.entity.log.info("removing a shared group %s" % groupID)
             
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
@@ -158,7 +158,7 @@ class TNXMPPServerController:
         cmd         = "%s srg-list %s" % (self.ejabberdctl_path, server)
         groupsNode  = []
         
-        log.debug("console command is : %s" % cmd)
+        self.entity.log.debug("console command is : %s" % cmd)
         status, output = commands.getstatusoutput(cmd)
         
         if status:
@@ -213,7 +213,7 @@ class TNXMPPServerController:
                 cmd = "%s srg-user-add %s %s %s %s" % (self.ejabberdctl_path, userJID.getNode(), userJID.getDomain(), groupID, server)
                 commands.getstatusoutput(cmd);
             
-            log.info("adding user %s into shared group %s" % (userJID, groupID))
+            self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
             
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
@@ -241,7 +241,7 @@ class TNXMPPServerController:
                 userJID = xmpp.JID(user.getAttr("jid"))
                 cmd = "%s srg-user-del %s %s %s %s" % (self.ejabberdctl_path, userJID.getNode(), userJID.getDomain(), groupID, server)
                 commands.getstatusoutput(cmd);
-                log.info("removing user %s from shared group %s" % (userJID, groupID))
+                self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
             
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
@@ -300,7 +300,7 @@ class TNXMPPServerController:
                 cmd         = "%s register %s %s %s" % (self.ejabberdctl_path, username, server, password)
                 if os.system(cmd):
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
-                log.info("registred a new user user %s@%s" % (username, server))
+                self.entity.log.info("registred a new user user %s@%s" % (username, server))
             
             self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
@@ -328,7 +328,7 @@ class TNXMPPServerController:
                 cmd         = "%s unregister %s %s" % (self.ejabberdctl_path, username, server)
                 if os.system(cmd):
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
-                log.info("unregistred user %s@%s" % (username, server))
+                self.entity.log.info("unregistred user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)

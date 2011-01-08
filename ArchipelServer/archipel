@@ -26,23 +26,20 @@ else
    lockfile=/tmp/.lock-archipel
 fi
 
-if [[ `which daemon` != "" ]]; then
-    daemonCommand=daemon
-fi
-
 start() {
     [ -x $archipel ] || exit 5
     echo -n $"Starting $prog: "
-    $daemonCommand $archipel --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1
+    $archipel --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1 &
     retval=$?
     echo
     [ $retval -eq 0 ] && touch $lockfile
+    echo $! > $lockfile
     return $retval
 }
 
 stop() {
     echo -n $"Stopping $prog: "
-    killall $prog
+    kill `head $lockfile`
     retval=$?
     echo
     [ $retval -eq 0 ] && rm -f $lockfile

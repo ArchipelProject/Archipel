@@ -131,13 +131,13 @@ class TNSnapshoting:
             except:
                 return build_error_iq(self, Exception("Virtual machine hasn't any drive to snapshot"), iq, code=ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE)
                 
-            log.info("creating snapshot with name %s desc :%s" % (name, xmlDesc))
+            self.entity.log.info("creating snapshot with name %s desc :%s" % (name, xmlDesc))
             
             self.entity.change_presence(presence_show="dnd", presence_status="Snapshoting...")
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            log.info("snapshot with name %s created" % name);
+            self.entity.log.info("snapshot with name %s created" % name);
             self.entity.push_change("snapshoting", "taken", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
@@ -233,14 +233,14 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             
-            log.info("deleting snapshot with name %s" % name)
+            self.entity.log.info("deleting snapshot with name %s" % name)
             
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            log.info("snapshot with name %s deleted" % name);
+            self.entity.log.info("snapshot with name %s deleted" % name);
             self.entity.push_change("snapshoting", "deleted", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
@@ -270,13 +270,13 @@ class TNSnapshoting:
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             
-            log.info("restoring snapshot with name %s" % name)
+            self.entity.log.info("restoring snapshot with name %s" % name)
             
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             self.entity.domain.revertToSnapshot(snapshotObject, 0);
             
-            log.info("reverted to snapshot with name %s " % name);
+            self.entity.log.info("reverted to snapshot with name %s " % name);
             self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:

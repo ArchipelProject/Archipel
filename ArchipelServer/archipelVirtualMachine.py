@@ -100,7 +100,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         if not os.path.isdir(self.folder): os.mkdir(self.folder)
         
         # triggers
-        log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
+        self.log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
         self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
         
         # permissions
@@ -134,14 +134,14 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def lock(self):
-        log.info("acquiring lock")
+        self.log.info("acquiring lock")
         self.locked = True;
         self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
         self.lock_timer.start()
     
     
     def unlock(self):
-        log.info("releasing lock")
+        self.log.info("releasing lock")
         self.locked = False;
         if self.lock_timer:
             self.lock_timer.cancel()
@@ -266,7 +266,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
-            log.info("virtual machine state is %d" %  dominfo[0])
+            self.log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.create_novnc_proxy()
@@ -281,7 +281,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             self.perform_hooks("HOOK_VM_INITIALIZE")
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
-                log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                self.log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
@@ -295,26 +295,26 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         exit on any error.
         """
         if self.domain:
-            log.info("already connected to domain. ignoring.")
+            self.log.info("already connected to domain. ignoring.")
             return;
         
         try:
             self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-            log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
+            self.log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
             self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
             self.set_presence_according_to_libvirt_info()
         except Exception as ex:
-            log.error("can't connect to libvirt : " + str(ex))
+            self.log.error("can't connect to libvirt : " + str(ex))
             self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)        
         
     
     
     def on_domain_event(self, conn, dom, event, detail, opaque):
-        log.info("libvirt event received: %d with detail %s" % (event, detail))
+        self.log.info("libvirt event received: %d with detail %s" % (event, detail))
         
         if self.is_migrating:
-            log.info("event received but virtual machine is migrating.")
+            self.log.info("event received but virtual machine is migrating.")
             return
         
         try:
@@ -372,7 +372,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 self.perform_hooks("HOOK_VM_DEFINE")
             
         except Exception as ex:
-            log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
+            self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
         finally:
             if not event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED and not event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 try:
@@ -384,7 +384,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     def remove_libvirt_handler(self):
         if not self.libvirt_event_callback_id is None:
-            log.info("removing the libvirt event listener for %s" % self.jid)
+            self.log.info("removing the libvirt event listener for %s" % self.jid)
             self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
             self.libvirt_event_callback_id = None;
     
@@ -393,7 +393,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         overides the disconnect function
         """
-        log.info("%s is disconnecting from everything" % self.jid)
+        self.log.info("%s is disconnecting from everything" % self.jid)
         
         self.remove_libvirt_handler();
         
@@ -412,13 +412,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         current_vnc_port        = self.vncdisplay()["direct"]
         novnc_proxy_port        = self.vncdisplay()["proxy"]
-        log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
+        self.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         
         cert = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
         if cert.lower() in ("none", "no", "false"): cert = None;
-        log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
+        self.log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl");
-        log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
+        self.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
         
         self.novnc_proxy = archipelWebSocket.TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl);
         self.novnc_proxy.start()
@@ -429,7 +429,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         stops the current novnc websocket proxy is any.
         """
         if self.novnc_proxy:
-            log.info("stopping novnc proxy")
+            self.log.info("stopping novnc proxy")
             self.novnc_proxy.stop()
             self.novnc_proxy = None;
     
@@ -438,7 +438,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         create or read the trigger database
         """ 
-        log.info("populating trigger database if not exists")
+        self.log.info("populating trigger database if not exists")
         self.trigger_database.execute("create table if not exists triggers (name text, description text, mode integer, check_method text, check_interval integer)")
         self.trigger_database.execute("create table if not exists watchers (name text, targetjid text, triggername text, triggeronaction text, triggeroffaction text, state integer)")
         c = self.trigger_database.cursor()
@@ -446,18 +446,18 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         c.execute("select * from triggers")
         for trigger in c:
             name, description, mode, check_method, check_interval = trigger
-            log.info("recovring trigger %s" % name)
+            self.log.info("recovring trigger %s" % name)
             self.triggers[name] = TNArchipelTrigger(self, name, description) #FIXME : get the rest of the implementation
         
         c.execute("select * from watchers")
         for watcher in c:
             name, targetjid, triggername, triggeronaction, triggeroffaction, state = watcher
-            log.info("recovring watcher fro trigger %s" % triggername)
+            self.log.info("recovring watcher fro trigger %s" % triggername)
             try:
                 self.watchers[name] = TNArchipelTriggerWatcher(self, name, xmpp.JID(targetjid), triggername, getattr(self, triggeronaction), getattr(self, triggeroffaction))
                 if state == ARCHIPEL_WATCHER_STATE_ON: self.watchers[name].watch()
             except Exception as ex:
-                log.error("Can't recover watcher %s: %s" % (name, str(ex)))
+                self.log.error("Can't recover watcher %s: %s" % (name, str(ex)))
         
         #self.remove_watcher("totowatcher", force=True)
         #self.add_watcher("totowatcher", self.jid, "libvirt_run", self.TEST_ON, self.TEST_OFF)
@@ -492,7 +492,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.check_perm(conn, iq, action, -1)
         
         if not self.libvirt_connection:
-            log.info("control action required but no libvirt connection")
+            self.log.info("control action required but no libvirt connection")
             raise xmpp.protocol.NodeProcessed
         
         if self.is_migrating and (not action in ("info", "vncdisplay", "xmldesc", "networkinfo")):
@@ -621,41 +621,41 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     def create(self):
         self.lock()
         self.domain.create()
-        log.info("virtual machine created")
+        self.log.info("virtual machine created")
         return str(self.domain.ID())
     
     
     def shutdown(self):
         self.lock()
-        # log.info("%d ?= %d" % (self.info()["state"], libvirt.VIR_DOMAIN_SHUTDOWN))
+        # self.log.info("%d ?= %d" % (self.info()["state"], libvirt.VIR_DOMAIN_SHUTDOWN))
         self.domain.shutdown()
         if (self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING):
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
-        log.info("virtual machine shutdowned")
+        self.log.info("virtual machine shutdowned")
     
     
     def destroy(self):
         self.lock()
         self.domain.destroy()
-        log.info("virtual machine destroyed")
+        self.log.info("virtual machine destroyed")
     
     
     def reboot(self):
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
-        log.info("virtual machine rebooted")
+        self.log.info("virtual machine rebooted")
     
     
     def suspend(self):
         self.lock()
         self.domain.suspend()
-        log.info("virtual machine suspended")
+        self.log.info("virtual machine suspended")
     
     
     def resume(self):
         self.lock()
         self.domain.resume()
-        log.info("virtual machine resumed")
+        self.log.info("virtual machine resumed")
     
     
     def info(self):
@@ -790,7 +790,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.domain.undefine()
         self.definition = None;
         self.domain = None;
-        log.info("virtual machine undefined")
+        self.log.info("virtual machine undefined")
     
     
     def undefine_and_disconnect(self):
@@ -799,7 +799,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.definition = None;
         self.unlock()
         self.disconnect()
-        log.info("virtual machine undefined and disconnected")
+        self.log.info("virtual machine undefined and disconnected")
     
     
     def clone(self, info):
@@ -817,9 +817,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         xmlstring   = xmlstring.replace(baseuuid, self.uuid)
         newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
         
-        log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
+        self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
-        log.info("starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
+        self.log.info("starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
         thread.start_new_thread(self.perform_threaded_copy, (path, newxml))
         
     
@@ -869,7 +869,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             self.is_migrating = False;
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
-            log.error("can't migrate because of : %s" % str(ex))
+            self.log.error("can't migrate because of : %s" % str(ex))
     
     
     
@@ -882,7 +882,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         perform threaded copy of the virtual machine and then define it
         """
         os.system("cp -a %s/* %s" % (src_path, self.folder))
-        log.info("defining the cloned virtual machine")
+        self.log.info("defining the cloned virtual machine")
         self.define(newxml)
     
     
@@ -951,7 +951,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -990,7 +990,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -1027,7 +1027,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -1066,7 +1066,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -1104,7 +1104,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:
@@ -1142,7 +1142,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         @return: a ready to send IQ containing the result of the action
         """
         if self.locked:
-            log.error("Virtual machine is locked, can't do anything")
+            self.log.error("Virtual machine is locked, can't do anything")
             return build_error_iq(self, Exception("Virtual machine is locked, can't do anything"), iq, ARCHIPEL_ERROR_CODE_VM_LOCKED)
         
         try:    
@@ -1307,7 +1307,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
             
             self.define(domain_node)
-            log.info("virtual machine XML is defined")
+            self.log.info("virtual machine XML is defined")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1329,7 +1329,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         try:
             reply = iq.buildReply("result")
             self.undefine()
-            log.info("virtual machine is undefined")
+            self.log.info("virtual machine is undefined")
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1352,7 +1352,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             reply = iq.buildReply("result")
             autostart = int(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setAutostart(autostart)
-            log.info("virtual autostart is set to %d" % autostart)
+            self.log.info("virtual autostart is set to %d" % autostart)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1374,7 +1374,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             reply = iq.buildReply("result")
             memory = long(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setMemory(memory)
-            log.info("virtual machine memory is set to %d" % memory)
+            self.log.info("virtual machine memory is set to %d" % memory)
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -1396,7 +1396,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             reply = iq.buildReply("result")
             cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
             self.setVCPUs(cpus)
-            log.info("virtual machine number of cpus is set to %d" % cpus)
+            self.log.info("virtual machine number of cpus is set to %d" % cpus)
             self.push_change("virtualmachine:control", "nvcpu", excludedgroups=['vitualmachines'])
             self.push_change("virtualmachine:definition", "nvcpu", excludedgroups=['vitualmachines'])
         except libvirt.libvirtError as ex:
@@ -1494,7 +1494,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     #         reply = iq.buildReply("result")
     #         cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
     #         self.setVCPUs(cpus)
-    #         log.info("virtual machine number of cpus is set to %d" % cpus)
+    #         self.log.info("virtual machine number of cpus is set to %d" % cpus)
     #         self.push_change("virtualmachine:control", "nvcpu", excludedgroups=['vitualmachines'])
     #     except libvirt.libvirtError as ex:
     #         reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

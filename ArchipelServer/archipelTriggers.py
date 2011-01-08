@@ -135,7 +135,7 @@ class TNArchipelTriggerWatcher:
             else:
                 if self.triggeroffaction: self.triggeroffaction()
         except Exception as ex:
-            log.error("Error in on_event: %s" % str(ex))
+            self.entity.log.error("Error in on_event: %s" % str(ex))
 
 
 

@@ -88,7 +88,7 @@ class TNHypervisorGeolocalization:
         if action == "get":
             reply = self.iq_get(iq)
             conn.send(reply)
-            log.debug("geolocalization information sent. Node processed")
+            self.entity.log.debug("geolocalization information sent. Node processed")
             raise xmpp.protocol.NodeProcessed
     
     

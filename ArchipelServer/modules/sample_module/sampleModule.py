@@ -74,7 +74,7 @@ class TNSampleModule:
         """
         try:
             reply = iq.buildReply("result")
-            log.info("I did something!")
+            self.entity.log.info("I did something!")
             self.entity.push_change("sample", "I_DID_SOMETHING")
             self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")
         except Exception as ex:

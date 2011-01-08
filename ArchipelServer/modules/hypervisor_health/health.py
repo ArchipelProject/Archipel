@@ -96,7 +96,7 @@ class TNHypervisorHealth:
         """
         try:
             reply = iq.buildReply("result")
-            log.debug("converting stats into XML node")
+            self.entity.log.debug("converting stats into XML node")
             
             limit = int(iq.getTag("query").getTag("archipel").getAttr("limit"))
             nodes = []

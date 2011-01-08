@@ -37,7 +37,7 @@ class TNOOMKiller:
         self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
         self.database.commit()
         self.cursor = self.database.cursor()
-        log.info("module oom killer initialized")
+        self.entity.log.info("module oom killer initialized")
         
         # permissions
         self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False);
@@ -50,9 +50,9 @@ class TNOOMKiller:
     
     def vm_create(self, entity, args):
         oom_info = self.get_oom_info()
-        log.info("OOM value retrieved %s" % str(oom_info));
+        self.entity.log.info("OOM value retrieved %s" % str(oom_info));
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        log.info("oom valuee for vm with uuid %s have been restored" % self.entity.uuid)
+        self.entity.log.info("oom valuee for vm with uuid %s have been restored" % self.entity.uuid)
     
     
     def vm_terminate(self, entity, args):
@@ -60,13 +60,13 @@ class TNOOMKiller:
         self.database.commit()
         self.cursor.close()
         self.database.close()
-        log.info("oom information for vm with uuid %s has been removed" % self.entity.uuid)
+        self.entity.log.info("oom information for vm with uuid %s has been removed" % self.entity.uuid)
     
     
     def vm_initialized(self, entity, args):
         oom_info = self.get_oom_info()
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        log.info("oom information for vm with uuid %s have been removed" % self.entity.uuid)
+        self.entity.log.info("oom information for vm with uuid %s have been removed" % self.entity.uuid)
     
     
     
@@ -97,7 +97,7 @@ class TNOOMKiller:
             f.write(str(adjust))
             f.close()
         except Exception as ex:
-            log.warning("No valid PID. storing value only on database: " + str(ex))
+            self.entity.log.warning("No valid PID. storing value only on database: " + str(ex))
         try:
             self.cursor.execute("INSERT INTO oomkiller VALUES (?, ?)", (self.entity.uuid, int(adjust),))
         except:

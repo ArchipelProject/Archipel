@@ -22,7 +22,7 @@ import appnotificator
 
 # this method will be call at loading
 def __module_init__iphone_notification_vm(self):
-    log.info("initializing iPhone notification for virtual machine")
+    self.log.info("initializing iPhone notification for virtual machine")
     
     self.iphone_notifications = []
     creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");
@@ -42,7 +42,7 @@ def __module_init__iphone_notification_vm(self):
 
 
 def __module_init__iphone_notification_hypervisor(self):
-    log.info("initializing iPhone notification for hypervisor")
+    self.log.info("initializing iPhone notification for hypervisor")
     
     self.iphone_notifications = []
     creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");

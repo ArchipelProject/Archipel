@@ -143,7 +143,7 @@ class TNMediaManagement:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
          
             reply = iq.buildReply("result")
-            log.info("disk created")
+            self.entity.log.info("disk created")
             self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "created", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -181,7 +181,7 @@ class TNMediaManagement:
                         
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
-            log.info("convertion of  created")
+            self.entity.log.info("convertion of  created")
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "converted", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -214,7 +214,7 @@ class TNMediaManagement:
             os.rename(path, newpath)
             
             reply = iq.buildReply("result")
-            log.info("renamed hard drive %s into  %s" % (path, newname))
+            self.entity.log.info("renamed hard drive %s into  %s" % (path, newname))
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname), excludedgroups=['vitualmachines'])
             self.entity.push_change("disk", "renamed", excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -265,7 +265,7 @@ class TNMediaManagement:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
             reply = iq.buildReply("result")
-            log.info("disk %s deleted" % secure_disk_path)
+            self.entity.log.info("disk %s deleted" % secure_disk_path)
             self.entity.push_change("disk", "deleted", excludedgroups=['vitualmachines'])
             self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name), excludedgroups=['vitualmachines'])
         except Exception as ex:
@@ -307,7 +307,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            log.info("info about disks sent")
+            self.entity.log.info("info about disks sent")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply
@@ -340,7 +340,7 @@ class TNMediaManagement:
         
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            log.info("info about iso sent")
+            self.entity.log.info("info about iso sent")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
         return reply
