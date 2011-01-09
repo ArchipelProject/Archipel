@@ -38,6 +38,8 @@ var __defaultPermissionCenter;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
+    CPString                _adminAccountName;
+    int                     _adminAccountValidationMode;
     TNPubSubNode            _pubSubPermission;
 }
 
@@ -62,6 +64,8 @@ var __defaultPermissionCenter;
         _delegates                          = [CPArray array];
         _disableBadgesRegistry              = [CPDictionary dictionary];
         _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
+        _adminAccountValidationMode         = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelCheckNodeAdminAccount"];
+        _adminAccountName                   = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
 
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
@@ -109,8 +113,11 @@ var __defaultPermissionCenter;
         if ([anEntity class] !== TNStropheContact)
             return NO;
 
-        if ([[[_roster connection] JID] bare] === [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"])
+        if (((_adminAccountValidationMode === 1) && ([[[_roster connection] JID] node] === _adminAccountName))
+            || ((_adminAccountValidationMode === 0) && ([[[_roster connection] JID] bare] === _adminAccountName)))
             return YES;
+        else
+            [CPException raise:CPInvalidArgumentException reason:@"account check mode " + _adminAccountValidationMode + " is not valid. Should be 1 or 0"]
 
         if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
             return YES;
