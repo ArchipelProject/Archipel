@@ -86,6 +86,13 @@
         all of them commands will be rejected.
     -->
     <key>ArchipelDefaultAdminAccount</key>
-    <string>admin@ramucho</string>
+    <string>admin</string>
+
+    <!--
+        if set to 1, the ArchipelDefaultAdminAccount will only be validated against the JID's node part
+    -->
+    <key>ArchipelCheckNodeAdminAccount</key>
+    <string>1</string>
+
 </dict>
 </plist>
