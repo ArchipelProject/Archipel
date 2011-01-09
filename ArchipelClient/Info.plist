@@ -92,7 +92,7 @@
         if set to 1, the ArchipelDefaultAdminAccount will only be validated against the JID's node part
     -->
     <key>ArchipelCheckNodeAdminAccount</key>
-    <string>1</string>
+    <integer>1</integer>
 
 </dict>
 </plist>
