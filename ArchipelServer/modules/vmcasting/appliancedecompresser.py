@@ -57,32 +57,43 @@ class TNApplianceDecompresser(Thread):
     
     def run(self):
         try:
-            log.info("unpacking to %s" % self.working_dir)
-            self.unpack()
+            self.entity.log.info("TNApplianceDecompresser: unpacking to %s" % self.working_dir)
+            
+            try:
+                self.entity.log.info("TNApplianceDecompresser: unpacking to %s" % self.working_dir)
+                self.unpack()
+            except Exception as ex:
+                raise Exception("TNApplianceDecompresser: cannot unpack because unpack() has returned exception: %s" % str(ex))
+            
+            try:
+                self.entity.log.info("TNApplianceDecompresser: defining UUID in description file as %s" % self.entity.uuid)
+                self.update_description()
+            except Exception as ex:
+                raise Exception("TNApplianceDecompresser: cannot update description because update_description() has returned exception: %s" % str(ex))
         
-            log.info("defining UUID in description file as %s" % self.entity.uuid)
-            if not self.update_description():
-                raise Exception("cannot update description because update_description returned False (mainly means than description is empty). Content of description prop is %s" % self.description)
-        
-            log.info("installing package in %s" % self.install_path)
-            self.install()
-        
-            log.info("cleaning...")
+            try:
+                self.entity.log.info("TNApplianceDecompresser: installing package in %s" % self.install_path)
+                self.install()
+            except Exception as ex:
+                raise Exception("TNApplianceDecompresser: cannot update install because install returned exception %s" % str(ex))
+            
+            self.entity.log.info("TNApplianceDecompresser: cleaning working directory %s " % self.working_dir)
             self.clean()
         
-            log.info("Defining the virtual machine")
+            self.entity.log.info("TNApplianceDecompresser: Defining the virtual machine")
             self.entity.define(self.description_node)
         
             # This doesn;t work. we have to wait libvirt to handle snapshot recovering.
             # anyway, everything is ready, snapshots desc are stored in xvm2 packages, XML desc
             # are stored into self.snapshots_desc.
-            # log.info("Recovering any snapshots")
+            # self.entity.log.info("Recovering any snapshots")
             # self.recover_snapshots()
         
             self.finish_callback()
         except Exception as ex:
+            self.clean()
             self.error_callback(ex)
-            log.error(str(ex))
+            self.entity.log.error(str(ex))
         
     
     def unpack(self):
@@ -98,41 +109,37 @@ class TNApplianceDecompresser(Thread):
         
         package.extractall(path=self.extract_path)
         
-        try:
-            for aFile in os.listdir(self.extract_path):
-                full_path = os.path.join(self.extract_path, aFile)
-                log.debug("parsing file %s" % full_path)
+        for aFile in os.listdir(self.extract_path):
+            full_path = os.path.join(self.extract_path, aFile)
+            self.entity.log.debug("TNApplianceDecompresser: parsing file %s" % full_path)
+            
+            if os.path.splitext(full_path)[-1] == ".gz":
+                self.entity.log.info("found one gziped disk : %s" % full_path)
+                i = open(full_path, 'rb')
+                o = open(full_path.replace(".gz", ""), 'w')
+                self._gunzip(i, o)
+                i.close()
+                o.close()
+                self.entity.log.info("file unziped at : %s" % full_path.replace(".gz", ""))
+                self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "")
                 
-                if os.path.splitext(full_path)[-1] == ".gz":
-                    log.info("found one gziped disk : %s" % full_path)
-                    i = open(full_path, 'rb')
-                    o = open(full_path.replace(".gz", ""), 'w')
-                    self._gunzip(i, o)
-                    i.close()
-                    o.close()
-                    log.info("file unziped at : %s" % full_path.replace(".gz", ""))
-                    self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "")
-                    
-                if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                    log.debug("found one disk : %s" % full_path)
-                    self.disk_files[aFile] = full_path
-                    
-                if aFile == "description.xml":
-                    log.debug("found description.xml file : %s" % full_path)
-                    o = open(full_path, 'r')
-                    self.description_file = o.read()
-                    o.close()
-                    
-                # if aFile.find("snapshot-") > -1:
-                #     log.debug("found snapshot file : %s" % full_path)
-                #     o = open(full_path, 'r')
-                #     snapXML = o.read()
-                #     o.close()
-                #     self.snapshots_desc.append(snapXML)
+            if os.path.splitext(full_path)[-1] in self.disk_extensions:
+                self.entity.log.debug("found one disk : %s" % full_path)
+                self.disk_files[aFile] = full_path
                 
-        except Exception as ex:
-            self.error_callback(ex)
-            log.error(str(ex))
+            if aFile == "description.xml":
+                self.entity.log.debug("found description.xml file : %s" % full_path)
+                o = open(full_path, 'r')
+                self.description_file = o.read()
+                o.close()
+                
+            # if aFile.find("snapshot-") > -1:
+            #     self.entity.log.debug("found snapshot file : %s" % full_path)
+            #     o = open(full_path, 'r')
+            #     snapXML = o.read()
+            #     o.close()
+            #     self.snapshots_desc.append(snapXML)
+        return True
     
     
     def update_description(self):
@@ -143,7 +150,7 @@ class TNApplianceDecompresser(Thread):
         @param uuid: the uuid to use
         """
         if not self.description_file:
-            return False
+            raise Exception("description file is empty")
         
         desc_string = self.description_file
         
@@ -186,7 +193,7 @@ class TNApplianceDecompresser(Thread):
                 #print snap_str
                 self.entity.domain.snapshotCreateXML(snap_str, 0)
             except Exception as ex:
-                log.error("can't recover snapshot: %s", str(ex))
+                self.entity.log.error("TNApplianceDecompresser: can't recover snapshot: %s", str(ex))
     
     
     def install(self):
@@ -197,10 +204,10 @@ class TNApplianceDecompresser(Thread):
         """
         
         if not self.description_file:
-            return False
+            raise Exception("description file is empty")
         
         for key, path in self.disk_files.items():
-            log.debug("moving %s to %s" % (path, self.install_path))
+            self.entity.log.debug("TNApplianceDecompresser: moving %s to %s" % (path, self.install_path))
             try:
                 shutil.move(path, self.install_path)
             except:

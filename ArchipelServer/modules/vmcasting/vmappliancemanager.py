@@ -87,6 +87,7 @@ class TNVMApplianceManager:
         self.installing_media_uuid = None
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
         self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
+        self.entity.change_status("Cannot install appliance")
         self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
     
     
@@ -294,7 +295,7 @@ class TNVMApplianceManager:
                     snapshots.append(desc)
             
             working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging)
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity)
             
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])

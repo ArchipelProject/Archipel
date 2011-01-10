@@ -79,7 +79,7 @@ class TNApplianceDownloader(Thread):
         """
         main loop of the thread. will start to download
         """
-        log.info("starting to download appliance %s " % self.url)
+        info("TNApplianceDownloader: starting to download appliance %s " % self.url)
         urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
     
     
@@ -158,7 +158,6 @@ class TNHypervisorRepoManager:
         @type entity: TNArchipelHypervisor
         @param entity: the instance of the TNArchipelHypervisor. Will be used for push.
         """
-        log.info("opening vmcasting database file {0}".format(database_path))
         
         self.entity = entity
         self.database_path = database_path
@@ -166,6 +165,7 @@ class TNHypervisorRepoManager:
         self.own_repo_params = own_repo_params
         self.download_queue = {}
         
+        self.entity.log.info("TNHypervisorRepoManager: opening vmcasting database file {0}".format(database_path))
         self.own_vmcastmaker = vmcastmaker.VMCastMaker(self.own_repo_params["name"].replace("$HOSTAME", self.entity.resource), 
                                                         self.own_repo_params["uuid"], 
                                                         self.own_repo_params["description"].replace("$HOSTAME", self.entity.resource),
@@ -181,7 +181,7 @@ class TNHypervisorRepoManager:
         self.cursor = self.database_connection.cursor()
         self.cursor.execute("create table if not exists vmcastsources (name text, description text, url text not null unique, uuid text unique)")
         self.cursor.execute("create table if not exists vmcastappliances (name text, description text, url text, uuid text unique not null, status int, source text not null, save_path text)")
-        log.info("Database ready.")
+        self.entity.log.info("TNHypervisorRepoManager: Database ready.")
         
         # permissions 
         self.entity.permission_center.create_permission("vmcasting_get", "Authorizes user to get registered VMCast feeds", False);
@@ -201,10 +201,10 @@ class TNHypervisorRepoManager:
     
     def parse_own_repo(self, loop=True):
         while True:
-            log.debug("begin to refresh own vmcast feed")
+            self.entity.log.debug("TNHypervisorRepoManager: begin to refresh own vmcast feed")
             self.own_vmcastmaker.parseDirectory(self.own_repo_params["path"])
             self.own_vmcastmaker.writeFeed(self.own_repo_params["path"] + "/" + self.own_repo_params["filename"])
-            log.debug("finish to refresh own vmcast feed")
+            self.entity.log.debug("TNHypervisorRepoManager: finish to refresh own vmcast feed")
             if not loop:
                 break
             time.sleep(self.own_repo_params["refresh"])
@@ -247,7 +247,7 @@ class TNHypervisorRepoManager:
         for values in sources:
             name, description, url, uuid = values
             
-            log.debug("parsing feed with url %s" % url)
+            self.entity.log.debug("TNHypervisorRepoManager: parsing feed with url %s" % url)
             
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
             content_nodes = []
@@ -268,7 +268,7 @@ class TNHypervisorRepoManager:
                 tmp_cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url))
                 self.database_connection.commit()
             except Exception as ex:
-                log.debug("unable to update source because: " + str(ex))
+                self.entity.log.debug("TNHypervisorRepoManager: unable to update source because: " + str(ex))
                 pass
             
             for item in items:
