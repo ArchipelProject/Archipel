@@ -213,7 +213,7 @@ logging_date_format         = %Y-%m-%d %H:%M:%S
 # %(threadName)s        Thread name (if available).
 # %(process)d           Process ID (if available).
 # %(message)s           The logged message, computed as msg % args.
-logging_formatter           = %(levelname)s::%(asctime)s::%(filename)s:%(lineno)s::%(module)s.%(funcName)s::%(message)s
+logging_formatter           = %(levelname)s::%(asctime)s::%(message)s
 
 
 
