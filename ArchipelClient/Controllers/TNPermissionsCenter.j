@@ -116,8 +116,6 @@ var __defaultPermissionCenter;
         if (((_adminAccountValidationMode === 1) && ([[[_roster connection] JID] node] === _adminAccountName))
             || ((_adminAccountValidationMode === 0) && ([[[_roster connection] JID] bare] === _adminAccountName)))
             return YES;
-        else
-            return NO;
 
         if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
             return YES;
