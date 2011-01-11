@@ -117,7 +117,7 @@ var __defaultPermissionCenter;
             || ((_adminAccountValidationMode === 0) && ([[[_roster connection] JID] bare] === _adminAccountName)))
             return YES;
         else
-            [CPException raise:CPInvalidArgumentException reason:@"account check mode " + _adminAccountValidationMode + " is not valid. Should be 1 or 0"]
+            return NO;
 
         if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
             return YES;
