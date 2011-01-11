@@ -21,7 +21,9 @@
 
 var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     TNVNCWindowToolBarSendPasteboard    = @"TNVNCWindowToolBarSendPasteboard",
-    TNVNCWindowToolBarGetPasteboard     = @"TNVNCWindowToolBarGetPasteboard";
+    TNVNCWindowToolBarGetPasteboard     = @"TNVNCWindowToolBarGetPasteboard",
+    TNVNCWindowToolBarFullScreen        = @"TNVNCWindowToolBarFullScreen",
+    TNVNCWindowToolBarZoom              = @"TNVNCWindowToolBarZoom";
 
 
 /*! @ingroup virtualmachinenovnc
@@ -50,17 +52,28 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         _mainToolbar = [[TNToolbar alloc] init];
         [self setToolbar:_mainToolbar];
 
-        [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:@"Ctrl Alt Del" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
+        // var zoomSlider = [[CPSlider alloc] initWithFrame:CPRectMake(0.0, 0.0, 96.0, 21.0)];
+        //
+        // [zoomSlider setSliderType:CPLinearSlider];
+        // [zoomSlider setMinValue:1.0];
+        // [zoomSlider setDoubleValue:1.0];
+        // [zoomSlider setMaxValue:2.0];
+
+        [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              " view:nil target:nil action:nil];
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:@"Get Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:@"Send Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:@"Full Screen" icon:[[CPBundle mainBundle] pathForResource:@"iconsButtons/fullscreen.png"] target:self action:@selector(setFullScreen:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:@"Ctrl Alt Del" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
+        // [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:@"Zoom" view:zoomSlider target:nil action:nil];
 
         [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
         [_mainToolbar setPosition:1 forToolbarItemIdentifier:CPToolbarSeparatorItemIdentifier];
         [_mainToolbar setPosition:2 forToolbarItemIdentifier:TNVNCWindowToolBarGetPasteboard];
         [_mainToolbar setPosition:3 forToolbarItemIdentifier:TNVNCWindowToolBarSendPasteboard];
-        [_mainToolbar setPosition:4 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
-        [_mainToolbar setPosition:5 forToolbarItemIdentifier:TNVNCWindowToolBarCtrlAltDel];
+        [_mainToolbar setPosition:4 forToolbarItemIdentifier:TNVNCWindowToolBarCtrlAltDel];
+        // [_mainToolbar setPosition:5 forToolbarItemIdentifier:TNVNCWindowToolBarZoom];
+        [_mainToolbar setPosition:10 forToolbarItemIdentifier:CPToolbarFlexibleSpaceItemIdentifier];
+        [_mainToolbar setPosition:11 forToolbarItemIdentifier:TNVNCWindowToolBarFullScreen];
 
         [_mainToolbar reloadToolbarItems];
     }
@@ -191,6 +204,13 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     alert("not implemented");
 }
 
+/*! display in full screen
+    @param aSender the sender of the action
+*/
+- (IBAction)setFullScreen:(id)aSender
+{
+    [_vncView setFullScreen:YES];
+}
 
 #pragma mark -
 #pragma mark Delegate
