@@ -94,7 +94,7 @@
         <string>MUCChat</string>
 
 		<key>TNArchipelMUCDefaultService</key>
-		<string>conference.xmppserver</string>
+		<string>conference.archipelproject.org</string>
 		
 		<key>TNArchipelMUCDefaultRoom</key>
 		<string>archipel-general</string>
