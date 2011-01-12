@@ -167,8 +167,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     newRect.size    = vncSize;
 
     [self setFrameSize:vncSize];
-    [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
-    [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
+    // [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
+    // [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
 
     [[self platformWindow] setContentRect:newRect];
 
@@ -209,7 +209,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 - (IBAction)setFullScreen:(id)aSender
 {
-    [_vncView setFullScreen:YES];
+    [_vncView setFullScreen:![_vncView isFullScreen]];
 }
 
 #pragma mark -
@@ -237,6 +237,14 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 - (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CPSize)aNewSize
 {
     [self fitWindowToVNCView];
+}
+
+/*! VNCView delegate
+*/
+- (void)vncView:(TNVNCView)aVNCView didBecomeFullScreen:(BOOL)isFullScreen size:(CPSize)aSize zoomFactor:(float)zoomFactor
+{
+    [_vncView setZoom:zoomFactor];
+
 }
 
 #pragma mark -
