@@ -75,7 +75,7 @@ def buildVNCCappuccino():
 
 def buildArchipel(export_dir="/var/www/archipelproject.org/nigthlies"):
     folder = "%s/%s" % (export_dir, datetime.datetime.now().strftime("%y%m%d-%H:%M"))
-    os.system("mkdir -p %s" % folder))
+    os.system("mkdir -p %s" % folder)
     if os.system("cd ./ArchipelClient; ./buildArchipel -bag --config=release --export=%s" % folder):
         print "unable to build VNCCappuccino";
         sys.exit(-9)
