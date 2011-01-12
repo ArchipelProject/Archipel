@@ -222,7 +222,12 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     switch (aState)
     {
         case TNVNCCappuccinoStateFailed:
-            [self close];
+            var growl = [[TNGrowlCenter alloc] init];
+            [growl setView:[self contentView]];
+            [growl pushNotificationWithTitle:@"Connection fail"
+                                     message:@"Cannot connect to the VNC screen"
+                                        icon:TNGrowlIconError];
+
             break;
 
         case TNVNCCappuccinoStateNormal:
@@ -244,7 +249,15 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 - (void)vncView:(TNVNCView)aVNCView didBecomeFullScreen:(BOOL)isFullScreen size:(CPSize)aSize zoomFactor:(float)zoomFactor
 {
     [_vncView setZoom:zoomFactor];
+}
 
+- (void)vncViewDoesNotSupportFullScreen:(TNVNCView)aVNCView
+{
+    var growl = [[TNGrowlCenter alloc] init];
+    [growl setView:[self contentView]];
+    [growl pushNotificationWithTitle:@"FullScreen not supported"
+                             message:@"Your browser does not support javascript fullscreen"
+                                icon:TNGrowlIconWarning];
 }
 
 #pragma mark -
@@ -257,6 +270,9 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
     {
+        [growl pushNotificationWithTitle:@"Connection closed"
+                                 message:@"The remote host has closed the connection"
+                                    icon:TNGrowlIconError];
         [_vncView disconnect:nil];
         [_vncView unfocus];
     }
