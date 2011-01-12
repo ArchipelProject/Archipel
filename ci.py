@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys
+import os, sys, datetime
 
 def buildCappuccino():
     if os.system("cd ./Cappuccino && jake release && jake debug"):
@@ -68,10 +68,12 @@ def buildVNCCappuccino():
 
 
 def buildArchipel(export_dir="/var/www/archipelproject.org/nigthlies"):
-    if os.system("cd ./ArchipelClient; ./buildArchipel -bag --config=release --export=%s" % export_dir):
+    folder = "%s/%s" % (export_dir, datetime.datetime.now().strftime("%y%m%d-%H:%M"))
+    os.system("mkdir -p %s" % folder))
+    if os.system("cd ./ArchipelClient; ./buildArchipel -bag --config=release --export=%s" % folder):
         print "unable to build VNCCappuccino";
         sys.exit(-9)
-
+    
 
 
 if __name__ == "__main__":
