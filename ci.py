@@ -18,6 +18,12 @@
 
 import os, sys, datetime
 
+def pullSubrepo():
+    if os.system("git submodule foreach git pull"):
+        sys.exit(-42)
+    
+
+
 def buildCappuccino():
     if os.system("cd ./Cappuccino && jake release && jake debug"):
         if os.system("cd ./Cappuccino && jake clean && jake release && jake debug"):
@@ -80,6 +86,7 @@ if __name__ == "__main__":
     """
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
+    pullSubrepo()
     buildCappuccino()
     buildGrowlCappuccino()
     buildiTunesTabView()
