@@ -219,7 +219,7 @@ def git_init_submodules():
         ret = os.system("git submodule update --init --recursive")
         if ret != 0:
             print "\033[31mUnable to initialize submodules\033[0m"
-            sys.exit(1)       
+            sys.exit(1)
         print "\033[32mSubmodule are initialized.\033[0m\n"
         os.system("touch .submodules_initialized")
         confirm = ask("Continue ?", ["y", "n"], "y")
