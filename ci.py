@@ -147,9 +147,7 @@ def buildArchipel(export_dir, build):
     token   = datetime.datetime.now().strftime("%y%m%d-%H-%M")
     folder  = "%s/%s" % (export_dir, token)
     os.system("mkdir -p %s" % folder)
-    if build: cmd = "cd ./ArchipelClient && ./buildArchipel -bag --config=release --export=%s" % folder
-    else: cmd = "cd ./ArchipelClient && ./buildArchipel --config=release --export=%s" % folder
-    if os.system(cmd):
+    if os.system("cd ./ArchipelClient && ./buildArchipel -bpg --config=release --export=%s" % folder):
         os.system(" echo unable to build ArchipelClient")
         sys.exit(-9)
     os.system("tar -czf %s/Archipel-nightly-%s.tar.gz %s" % (export_dir, token, folder))
