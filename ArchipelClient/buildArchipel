@@ -83,7 +83,6 @@ def main():
         
         if o in ("--config"):
             opt_build_config = a.lower();
-            opt_should_build = True;
         
         if o in ("-b", "--build"):
             opt_should_build = True;
@@ -340,9 +339,9 @@ def export_archipel(path, config):
     print "# exporting flattened Archipel application to " + path
     
     temp_path = "/tmp/Archipel-%s-b%s-flattened" % (config, GLOBAL_BUILD_NUMBER)
-    final_path = "%s/Archipel-%s-b%s" % (path, config, GLOBAL_BUILD_NUMBER)
+    final_path = "%s/Archipel-%s-b%s" % (path, config.capitalize(), GLOBAL_BUILD_NUMBER)
     
-    build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("/*", "");
+    build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config.capitalize()).replace("/*", "");
     os.system("flatten -f %s %s" % (build_dir, temp_path))
     os.system("press -f %s %s" % (temp_path, final_path))
     os.system("rm -rf %s" % temp_path)
