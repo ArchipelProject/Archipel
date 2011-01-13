@@ -16,18 +16,74 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, sys, datetime
+import os, sys, datetime, commands
+
+BUILD_CAPPUCCINO=True
+BUILD_LPKIT=True
+BUILD_TNKIT=True
+BUILD_VNCCAPPUCCINO=True
+BUILD_STROPHECAPPUCCINO=True
+BUILD_GROWLCAPPUCCINO=True
+BUILD_ITUNESTABVIEW=True
+BUILD_MESSAGEBOARD=True
 
 def pullSubrepo():
-    if os.system("cd Cappuccino; git pull"): sys.exit(-42)
-    if os.system("cd LPKit; git pull"): sys.exit(-42)
-    if os.system("cd StropheCappuccino; git pull"): sys.exit(-42)
-    if os.system("cd TNKit; git pull"): sys.exit(-42)
-    if os.system("cd VNCCappuccino; git pull"): sys.exit(-42)
-    if os.system("cd GrowlCappuccino; git pull"): sys.exit(-42)
-    if os.system("cd iTunesTabView; git pull"): sys.exit(-42)
-    if os.system("cd MessageBoard; git pull"): sys.exit(-42)
+    global BUILD_CAPPUCCINO
+    global BUILD_LPKIT
+    global BUILD_TNKIT
+    global BUILD_VNCCAPPUCCINO
+    global BUILD_STROPHECAPPUCCINO
+    global BUILD_ITUNESTABVIEW
+    global BUILD_MESSAGEBOARD
+    global BUILD_GROWLCAPPUCCINO
     
+    print "Checking if we need to build Cappuccino..."
+    ret, out = commands.getstatusoutput("cd ./Cappuccino; git pull origin master")
+    if ret: sys.exit(-421)
+    if "Already up-to-date." in out: BUILD_CAPPUCCINO=False
+    print "build Cappuccino: %s" % (str(BUILD_CAPPUCCINO))
+    
+    print "Checking if we need to build LPKit..."
+    ret, out = commands.getstatusoutput("cd ./LPKit; git pull origin integ")
+    if ret: sys.exit(-422)
+    if "Already up-to-date." in out: BUILD_LPKIT=False
+    print "build LPKit: %s" % (str(BUILD_LPKIT))
+    
+    print "Checking if we need to build StropheCappuccino..."
+    ret, out = commands.getstatusoutput("cd ./StropheCappuccino; git pull origin master")
+    if ret: sys.exit(-423)
+    if "Already up-to-date." in out: BUILD_STROPHECAPPUCCINO=False
+    print "build StropheCappuccino: %s" % (str(BUILD_STROPHECAPPUCCINO))
+    
+    print "Checking if we need to build TNKit..."
+    ret, out = commands.getstatusoutput("cd ./TNKit; git pull origin master")
+    if ret: sys.exit(-424)
+    if "Already up-to-date." in out: BUILD_TNKIT=False
+    print "build TNKit: %s" % (str(BUILD_TNKIT))
+    
+    print "Checking if we need to build VNCCappuccino..."
+    ret, out = commands.getstatusoutput("cd ./VNCCappuccino; git pull origin master")
+    if ret: sys.exit(-425)
+    if "Already up-to-date." in out: BUILD_VNCCAPPUCCINO=False
+    print "build VNCCappuccino: %s" % (str(BUILD_VNCCAPPUCCINO))
+    
+    print "Checking if we need to build GrowlCappuccino..."
+    ret, out = commands.getstatusoutput("cd ./GrowlCappuccino; git pull origin master")
+    if ret: sys.exit(-426)
+    if "Already up-to-date." in out: BUILD_GROWLCAPPUCCINO=False
+    print "build GrowlCappuccino: %s" % (str(BUILD_GROWLCAPPUCCINO))
+    
+    print "Checking if we need to build iTunesTabView..."
+    ret, out = commands.getstatusoutput("cd ./iTunesTabView; git pull origin master")
+    if ret: sys.exit(-427)
+    if "Already up-to-date." in out: BUILD_ITUNESTABVIEW=False
+    print "build iTunesTabView: %s" % (str(BUILD_ITUNESTABVIEW))
+    
+    print "Checking if we need to build MessageBoard..."
+    ret, out = commands.getstatusoutput("cd ./MessageBoard; git pull origin master")
+    if ret: sys.exit(-428)
+    if "Already up-to-date." in out: BUILD_MESSAGEBOARD=False    
+    print "build MessageBoard: %s" % (str(BUILD_MESSAGEBOARD))
 
 
 def buildCappuccino():
@@ -93,14 +149,18 @@ if __name__ == "__main__":
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
     pullSubrepo()
-    buildCappuccino()
-    buildGrowlCappuccino()
-    buildiTunesTabView()
-    buildLPKit()
-    buildMessageBoard()
-    buildStropheCappuccino()
-    buildTNKit()
-    buildVNCCappuccino()
+    
+    if BUILD_CAPPUCCINO:        buildCappuccino()
+    if BUILD_GROWLCAPPUCCINO:   buildGrowlCappuccino()
+    if BUILD_ITUNESTABVIEW:     buildiTunesTabView()
+    if BUILD_LPKIT:             buildLPKit()
+    if BUILD_MESSAGEBOARD:      buildMessageBoard()
+    if BUILD_STROPHECAPPUCCINO: buildStropheCappuccino()
+    if BUILD_TNKIT:             buildTNKit()
+    if BUILD_VNCCAPPUCCINO:     buildVNCCappuccino()
+    
     if len(sys.argv) > 1: buildArchipel(sys.argv[1])
     else: buildArchipel()
+    
+    print "BUILD SUCESSFULL."
     sys.exit(0)
