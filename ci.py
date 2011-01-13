@@ -18,6 +18,7 @@
 
 import os, sys, datetime, commands
 
+FORCE=False
 BUILD_CAPPUCCINO=True
 BUILD_LPKIT=True
 BUILD_TNKIT=True
@@ -27,7 +28,8 @@ BUILD_GROWLCAPPUCCINO=True
 BUILD_ITUNESTABVIEW=True
 BUILD_MESSAGEBOARD=True
 BUILD_ARCHIPELCLIENT=True
-DEPLOY_PATH="/var/www/archipelproject.org/nightlies/"
+DEPLOY_PATH="/var/www/archipelproject.org/app/"
+EXPORT_PATH="/var/www/archipelproject.org/nightlies/"
 
 def pullSubrepo():
     global BUILD_CAPPUCCINO
@@ -86,74 +88,85 @@ def pullSubrepo():
     if ret: sys.exit(-428)
     if "Already up-to-date." in out: BUILD_MESSAGEBOARD=False    
     os.system("echo \* build MessageBoard: %s" % (str(BUILD_MESSAGEBOARD)))
-    
-    # os.system("echo \* Checking if we need to build ArchipelClient...")
-    # ret, out = commands.getstatusoutput("git pull origin master")
-    # if ret: sys.exit(-428)
-    # if "Already up-to-date." in out: BUILD_ARCHIPELCLIENT=False    
-    # os.system("echo \* build ArchipelClient: %s" % (str(BUILD_ARCHIPELCLIENT)))
-    
+
 
 def buildCappuccino():
-    if os.system("cd ./Cappuccino && jake release && jake debug"):
-        if os.system("cd ./Cappuccino && jake clean && jake release && jake debug"):
+    os.system("echo \* Starting to build Cappuccino")
+    if os.system("cd ./Cappuccino && jake release"):
+        if os.system("cd ./Cappuccino && jake clean && jake release"):
             sys.exit(-1)
-    
 
 
 def buildGrowlCappuccino():
-    if os.system("cd ./GrowlCappuccino && jake release &&jake debug"):
+    os.system("echo \* Starting to build GrowlCappuccino")
+    if os.system("cd ./GrowlCappuccino && jake release"):
         os.system("echo \* unable to build GrowlCappuccino")
         sys.exit(-2)
 
 
 def buildiTunesTabView():
-    if os.system("cd ./iTunesTabView && jake release && jake debug"):
+    os.system("echo \* Starting to build iTunesTabView")
+    if os.system("cd ./iTunesTabView && jake release"):
         os.system("echo \* unable to build iTunesTabView")
         sys.exit(-3)
 
 
 def buildLPKit():
-    if os.system("cd ./LPKit && export CONFIGURATION=Debug && jake -f myJakeFile build && export CONFIGURATION=Release && jake -f myJakeFile build"):
+    os.system("echo \* Starting to build LPKit")
+    if os.system("cd ./LPKit && export CONFIGURATION=Release && jake -f myJakeFile build"):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
 
 def buildMessageBoard():
-    if os.system("cd ./MessageBoard && jake release && jake debug"):
+    os.system("echo \* Starting to build MessageBoard")
+    if os.system("cd ./MessageBoard && jake release"):
         os.system("echo \* unable to build MessageBoard")
         sys.exit(-5)
 
 
 def buildStropheCappuccino():
-    if os.system("cd ./StropheCappuccino && jake release && jake debug"):
+    os.system("echo \* Starting to build StropheCappuccino")
+    if os.system("cd ./StropheCappuccino && jake release"):
         os.system("echo \* unable to build StropheCappuccino")
         sys.exit(-6)
 
 
 def buildTNKit():
-    if os.system("cd ./TNKit && jake release && jake debug"):
+    os.system("echo \* Starting to build TNKit")
+    if os.system("cd ./TNKit && jake release"):
         os.system("echo \* unable to build TNKit")
         sys.exit(-7)
 
 
 def buildVNCCappuccino():
-    if os.system("cd ./VNCCappuccino && jake release && jake debug"):
+    os.system("echo \* Starting to build VNCCappuccino")
+    if os.system("cd ./VNCCappuccino && jake release"):
         os.system("echo \* unable to build VNCCappuccino")
         sys.exit(-8)
 
 
 def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
-    token   = datetime.datetime.now().strftime("%y%m%d-%H-%M")
-    # if os.system("cd ./ArchipelClient && ./buildArchipel -bpg --config=release --export=%s" % folder):
-    #     os.system(" echo unable to build ArchipelClient")
-    #     sys.exit(-9)
-    os.system("tar -czf %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz ./ArchipelClient/Build/Release/Archipel" % (export_dir))
-    os.system("rm -f %s/latest-build" % (export_dir))
-    os.system("ln -s %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz %s/latest-build" % (export_dir, export_dir))
-    os.system("chown cruise:www-data %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz)" % (export_dir))
-    os.system("chown cruise:www-data %s/latest-build)" % (export_dir))
+    builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
+    if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
+        os.system("echo \* unable to build ArchipelClient. try to clean")
+        os.system("cd ./ArchipelClient && ./buildArchipel -Cau")
+        if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
+            os.system("echo \* unable to build ArchipelClient. end of line.")
+            sys.exit(-9)
+    os.system("cd ./ArchipelClient/Build/Release/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`.tar.gz ./Archipel" % (export_dir, builddate))
+    os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`.tar.gz" % (export_dir, builddate))
+
+
+def deployArchipel(deploy_dir):
+    os.system("echo \* Starting to deploy Archipel into app.archipelproject.org")
+    os.system("rm -rf %s/*" % deploy_dir)
+    os.system("echo 'deploying new build, please reload in a moment' > %s/index.txt" % deploy_dir)
+    os.system("cp -a ./ArchipelClient/Build/Release/Archipel/* %s" % deploy_dir)
+    os.system("chown -R cruise:www-data %s/*" % deploy_dir)
+    os.system("chmod 755 -R %s/*" % deploy_dir)
+    os.system("rm -f %s/index.txt" % deploy_dir)
 
 
 if __name__ == "__main__":
@@ -162,16 +175,17 @@ if __name__ == "__main__":
     """
     pullSubrepo()
     
-    if BUILD_CAPPUCCINO:        buildCappuccino()
-    if BUILD_GROWLCAPPUCCINO:   buildGrowlCappuccino()
-    if BUILD_ITUNESTABVIEW:     buildiTunesTabView()
-    if BUILD_LPKIT:             buildLPKit()
-    if BUILD_MESSAGEBOARD:      buildMessageBoard()
-    if BUILD_STROPHECAPPUCCINO: buildStropheCappuccino()
-    if BUILD_TNKIT:             buildTNKit()
-    if BUILD_VNCCAPPUCCINO:     buildVNCCappuccino()
+    if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
+    if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
+    if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
+    if BUILD_LPKIT or FORCE:             buildLPKit()
+    if BUILD_MESSAGEBOARD or FORCE:      buildMessageBoard()
+    if BUILD_STROPHECAPPUCCINO or FORCE: buildStropheCappuccino()
+    if BUILD_TNKIT or FORCE:             buildTNKit()
+    if BUILD_VNCCAPPUCCINO or FORCE:     buildVNCCappuccino()
     
-    buildArchipel(DEPLOY_PATH, BUILD_ARCHIPELCLIENT)
+    buildArchipel(EXPORT_PATH, BUILD_ARCHIPELCLIENT)
+    deployArchipel(DEPLOY_PATH)
     
     os.system("echo \* BUILD SUCESSFULL.")
     sys.exit(0)
