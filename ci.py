@@ -156,8 +156,8 @@ def buildArchipel(export_dir, build):
     os.system("rm -f %s/latest-build" % (export_dir))
     os.system("ln -s %s/Archipel-nightly-%s.tar.gz %s/latest-build" % (export_dir, token, export_dir))
     os.system("rm -rf %s" % (folder))
-    os.system("chown cruise:www-data %s/Archipel-nightly-%s.tar.gz)" % (export_dir, token)
-    os.system("chown cruise:www-data %s/latest-build)" % (export_dir)
+    os.system("chown cruise:www-data %s/Archipel-nightly-%s.tar.gz)" % (export_dir, token))
+    os.system("chown cruise:www-data %s/latest-build)" % (export_dir))
 
 
 if __name__ == "__main__":
