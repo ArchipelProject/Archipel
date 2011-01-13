@@ -307,6 +307,15 @@ def client_build_cappuccino():
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
     print "\033[32m * Cappuccinno build\033[0m"
+    os.system("export PATH=/usr/local/narwhal/bin;$PATH")
+    if os.path.exists("~/.profile"):
+        os.system("source ~/.profile")
+    elif os.path.exists("~/.bash_profile"):
+        os.system("source ~/.bash_profile")
+    elif os.path.exists("~/.bashrc"):
+        os.system("source ~/.bashrc")
+    else:
+        os.system("export PATH='/usr/local/narwhal/bin:$PATH'")
 
 
 def client_build_strophecappuccino():
@@ -518,8 +527,20 @@ def install_archipelserver():
 
 def server_install_python_eggs():
     print " * Installing needed python eggs";
+    test_cmd_or_die("svn")
     print "\n\033[35m*******************************************************************************"
-    ret = os.system("easy_install xmpppy sqlobject apscheduler")
+    ret = os.system("easy_install xmpppy")
+    if ret != 0:
+        print "\033[31mUnable to get xmpppy egg\033[0m"
+        sys.exit(1)
+    ret = os.system("easy_install sqlobject")
+    if ret != 0:
+        print "\033[31mUnable to get sqlobject egg\033[0m"
+        sys.exit(1)
+    ret = os.system("easy_install apscheduler")
+    if ret != 0:
+        print "\033[31mUnable to get apscheduler egg\033[0m"
+        sys.exit(1)
     print "*******************************************************************************\033[0m"
     print "\033[32m * Needed eggs installed\033[0m"
     
