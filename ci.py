@@ -50,7 +50,7 @@ def buildiTunesTabView():
 
 
 def buildLPKit():
-    if os.system("cd ./LPKit; export CONFIG=Debug && jake -f myJakeFile build && export CONFIG=Release && jake -f myJakeFile build;"):
+    if os.system("cd ./LPKit; export CONFIGURATION=Debug && jake -f myJakeFile build && export CONFIGURATION=Release && jake -f myJakeFile build;"):
         print "unable to build LPKit";
         sys.exit(-4)
 
@@ -79,7 +79,7 @@ def buildVNCCappuccino():
         sys.exit(-8)
 
 
-def buildArchipel(export_dir="/var/www/archipelproject.org/nigthlies"):
+def buildArchipel(export_dir="/var/www/archipelproject.org/nightlies"):
     folder = "%s/%s" % (export_dir, datetime.datetime.now().strftime("%y%m%d-%H:%M"))
     os.system("mkdir -p %s" % folder)
     if os.system("cd ./ArchipelClient; ./buildArchipel -bag --config=release --export=%s" % folder):
