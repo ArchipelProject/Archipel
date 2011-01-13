@@ -146,16 +146,13 @@ def buildVNCCappuccino():
 def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
     token   = datetime.datetime.now().strftime("%y%m%d-%H-%M")
-    folder  = "%s/%s" % (export_dir, token)
-    os.system("mkdir -p %s" % folder)
-    if os.system("cd ./ArchipelClient && ./buildArchipel -bpg --config=release --export=%s" % folder):
-        os.system(" echo unable to build ArchipelClient")
-        sys.exit(-9)
-    os.system("tar -czf %s/Archipel-nightly-%s.tar.gz %s" % (export_dir, token, folder))
+    # if os.system("cd ./ArchipelClient && ./buildArchipel -bpg --config=release --export=%s" % folder):
+    #     os.system(" echo unable to build ArchipelClient")
+    #     sys.exit(-9)
+    os.system("tar -czf %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz ./ArchipelClient/Build/Release/Archipel" % (export_dir))
     os.system("rm -f %s/latest-build" % (export_dir))
-    os.system("ln -s %s/Archipel-nightly-%s.tar.gz %s/latest-build" % (export_dir, token, export_dir))
-    os.system("rm -rf %s" % (folder))
-    os.system("chown cruise:www-data %s/Archipel-nightly-%s.tar.gz)" % (export_dir, token))
+    os.system("ln -s %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz %s/latest-build" % (export_dir, export_dir))
+    os.system("chown cruise:www-data %s/Archipel-nightly-`git rev-parse --short HEAD`.tar.gz)" % (export_dir))
     os.system("chown cruise:www-data %s/latest-build)" % (export_dir))
 
 
