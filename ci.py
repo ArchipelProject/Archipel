@@ -19,8 +19,14 @@
 import os, sys, datetime
 
 def pullSubrepo():
-    if os.system("git submodule foreach git pull"):
-        sys.exit(-42)
+    if os.system("cd Cappuccino; git pull"): sys.exit(-42)
+    if os.system("cd LPKit; git pull"): sys.exit(-42)
+    if os.system("cd StropheCappuccino; git pull"): sys.exit(-42)
+    if os.system("cd TNKit; git pull"): sys.exit(-42)
+    if os.system("cd VNCCappuccino; git pull"): sys.exit(-42)
+    if os.system("cd GrowlCappuccino; git pull"): sys.exit(-42)
+    if os.system("cd iTunesTabView; git pull"): sys.exit(-42)
+    if os.system("cd MessageBoard; git pull"): sys.exit(-42)
     
 
 
