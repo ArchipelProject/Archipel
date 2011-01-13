@@ -87,11 +87,11 @@ def pullSubrepo():
     if "Already up-to-date." in out: BUILD_MESSAGEBOARD=False    
     os.system("echo build MessageBoard: %s" % (str(BUILD_MESSAGEBOARD)))
     
-    os.system("echo Checking if we need to build ArchipelClient...")
-    ret, out = commands.getstatusoutput("git pull origin master")
-    if ret: sys.exit(-428)
-    if "Already up-to-date." in out: BUILD_ARCHIPELCLIENT=False    
-    os.system("echo build ArchipelClient: %s" % (str(BUILD_ARCHIPELCLIENT)))
+    # os.system("echo Checking if we need to build ArchipelClient...")
+    # ret, out = commands.getstatusoutput("git pull origin master")
+    # if ret: sys.exit(-428)
+    # if "Already up-to-date." in out: BUILD_ARCHIPELCLIENT=False    
+    # os.system("echo build ArchipelClient: %s" % (str(BUILD_ARCHIPELCLIENT)))
     
 
 def buildCappuccino():
