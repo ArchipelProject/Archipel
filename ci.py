@@ -173,7 +173,7 @@ if __name__ == "__main__":
     """
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
-    pullSubrepo()
+    #pullSubrepo()
     
     if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
     if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
