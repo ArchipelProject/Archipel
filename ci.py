@@ -155,8 +155,10 @@ def buildArchipel(export_dir, build):
         if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
             os.system("echo \* unable to build ArchipelClient. end of line.")
             sys.exit(-9)
-    os.system("cd ./ArchipelClient/Build/Release/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`.tar.gz ./Archipel" % (export_dir, builddate))
-    os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`.tar.gz" % (export_dir, builddate))
+    os.system("cd ./ArchipelClient/Build/Release/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz ./Archipel" % (export_dir, builddate))
+    os.system("cd ./ArchipelServer/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`.-server.tar.gz ./Archipel" % (export_dir, builddate))
+    os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz" % (export_dir, builddate))
+    os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz" % (export_dir, builddate))
 
 
 def deployArchipel(deploy_dir):
