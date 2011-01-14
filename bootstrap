@@ -275,7 +275,12 @@ def install_archipelclient():
         print " \033[33m* Installation canceled by user\033[0m"
         sys.exit(0)
     
-    if inst_capp:           client_build_cappuccino()
+    if inst_capp:
+        client_build_cappuccino()
+    elif test_cmd("jake") == False:
+        print "\033[31mYou don't want to install Cappuccino but it's also not already installed\033[0m"
+        sys.exit(1)
+
     if inst_growl:          client_build_growlcappuccino()
     if inst_vnc:            client_build_vnccappuccino()
     if inst_strophe:        client_build_strophecappuccino()
