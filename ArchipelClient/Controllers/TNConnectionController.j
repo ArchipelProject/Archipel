@@ -202,7 +202,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheConnectionVCardReceived object:aStropheClient];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheClientVCardReceived object:aStropheClient];
     [aStropheClient getVCard];
 
     CPLog.info(@"Strophe is now connected using JID " + [aStropheClient JID]);
