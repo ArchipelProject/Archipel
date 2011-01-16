@@ -25,6 +25,26 @@
     @desc Simples categories or subclass in order to live ina better world
 */
 
+/*! @ingroup utils
+    Make TNStropheClient singular
+*/
+var DefaultTNStropheClient = nil;
+@implementation TNStropheClient (defaultClient)
+
++ (TNStropheClient)defaultClient
+{
+    if (!DefaultTNStropheClient)
+        DefaultTNStropheClient = [TNStropheClient client];
+
+    return DefaultTNStropheClient;
+}
+
+- (void)setDefaultClient
+{
+    DefaultTNStropheClient = self;
+}
+
+@end
 
 /*! @ingroup utils
     Make CPTabView border editable

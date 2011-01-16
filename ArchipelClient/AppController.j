@@ -216,7 +216,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPTimer                         _moduleLoadingDelay;
     CPWindow                        _helpWindow;
     int                             _tempNumberOfReadyModules;
-    TNDatasourceRoster              _mainRoster;
     TNiTunesTabView                 _moduleTabView;
     TNOutlineViewRoster             _rosterOutlineView;
     TNPubSubController              _pubSubController;
@@ -669,7 +668,15 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
-    var connection = [aNotification object];
+    if ([[aNotification object] connection] != [[TNStropheClient defaultClient] connection])
+    {
+        CPLog.error("We appear to have two connections. Something really weird is happening.");
+        return;
+    }
+
+    var client      = [TNStropheClient defaultClient],
+        connection  = [client connection],
+        roster      = [client roster];
 
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
@@ -678,41 +685,37 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:connection];
 
-
-    _mainRoster = [[TNDatasourceRoster alloc] initWithConnection:connection];
-
-    [_mainRoster setDelegate:contactsController];
-    [_mainRoster setFilterField:filterField];
-    [[_mainRoster connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
-    [[_mainRoster connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
-    [_mainRoster getRoster];
+    [roster setDelegate:contactsController];
+    [roster setFilterField:filterField];
+    [connection rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
+    [connection rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
 
     [tagsController setConnection:connection];
     [tagsController setPubSubController:_pubSubController];
 
-    [propertiesController setRoster:_mainRoster];
+    [propertiesController setRoster:roster];
     [propertiesController setPubSubController:_pubSubController];
 
-    [contactsController setRoster:_mainRoster];
+    [contactsController setRoster:roster];
     [contactsController setPubSubController:_pubSubController];
 
-    [groupsController setRoster:_mainRoster];
+    [groupsController setRoster:roster];
 
-    [_rosterOutlineView setDataSource:_mainRoster];
+    [_rosterOutlineView setDataSource:roster];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [[TNPermissionsCenter defaultCenter] setRoster:_mainRoster];
+    [[TNPermissionsCenter defaultCenter] setRoster:roster];
     [[TNPermissionsCenter defaultCenter] startWatching];
 
-    [moduleController setRoster:_mainRoster];
-    [moduleController setRosterForToolbarItems:_mainRoster andConnection:connection];
+    [moduleController setRoster:roster];
+    [moduleController setRosterForToolbarItems:roster andConnection:connection];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
-    [labelCurrentUser setStringValue:@"Connected as " + [[connection JID] bare]];
+    [labelCurrentUser setStringValue:@"Connected as " + [[client JID] bare]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -731,11 +734,12 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)didRetrieveRoster:(CPNotification)aNotification
 {
-    var servers = [CPArray array];
+    var servers = [CPArray array],
+        roster  = [aNotification object];
 
-    for (var i = 0; i < [[_mainRoster contacts] count]; i++)
+    for (var i = 0; i < [[roster contacts] count]; i++)
     {
-        var contact = [[_mainRoster contacts] objectAtIndex:i];
+        var contact = [[roster contacts] objectAtIndex:i];
         if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
             [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
     }
@@ -747,7 +751,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)onApplicationTerminate:(CPNotification)aNotification
 {
-    [_mainRoster disconnect];
+    [[TNStropheClient defaultClient] disconnect];
 }
 
 /*! Triggered when TNModuleController send TNArchipelModulesAllReadyNotification.
@@ -881,7 +885,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
 
     CPLog.info(@"starting to disconnect");
-    [_mainRoster disconnect];
+    [[TNStropheClient defaultClient] disconnect];
 }
 
 /*! will opens the add contact window
@@ -1151,7 +1155,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
             break;
     }
 
-    [[_mainRoster connection] setPresenceShow:XMPPShow status:nil];
+    [[TNStropheClient defaultClient] setPresenceShow:XMPPShow status:nil];
 
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
 }
@@ -1238,7 +1242,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         [userAvatarController setCurrentAvatar:currentAvatar];
     }
 
-    [userAvatarController setConnection:[_mainRoster connection]];
+    [userAvatarController setConnection:[[TNStropheClient defaultClient] connection]];
     [userAvatarController setButtonAvatar:_userAvatarButton];
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
@@ -1367,7 +1371,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
             case TNStropheContact:
                 var vCard       = [item vCard],
-                    entityType  = [_mainRoster analyseVCard:vCard];
+                    entityType  = [[[TNStropheClient defaultClient] roster] analyseVCard:vCard];
                 [moduleController setEntity:item ofType:entityType];
                 [moduleController setCurrentEntityForToolbarModules:item];
                 break;
