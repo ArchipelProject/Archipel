@@ -43,6 +43,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 #pragma mark -
 #pragma mark Initialization
 
++ (TNStropheRoster)rosterWithConnection:(TNStropheConnection)aConnection
+{
+    return [[TNDatasourceRoster alloc] initWithConnection:aConnection];
+}
+
 /*! init the datasource
     @param aConnection a valid connected TNStropheConnection
     @return initialized instance of TNDatasourceRoster
