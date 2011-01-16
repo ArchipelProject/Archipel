@@ -30,22 +30,21 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 @implementation TNConnectionController : CPObject
 {
     @outlet CPButton        connectButton;
-    @outlet TNSwitch        credentialRemember;
     @outlet CPImageView     spinning;
     @outlet CPTextField     boshService;
     @outlet CPTextField     JID;
-    @outlet CPTextField     message;
-    @outlet CPTextField     password;
-    @outlet CPTextField     labelPassword;
     @outlet CPTextField     labelBoshService;
     @outlet CPTextField     labelJID;
+    @outlet CPTextField     labelPassword;
     @outlet CPTextField     labelRemeber;
     @outlet CPTextField     labelTitle;
+    @outlet CPTextField     message;
+    @outlet CPTextField     password;
     @outlet TNModalWindow   mainWindow @accessors(readonly);
+    @outlet TNSwitch        credentialRemember;
 
-
-    TNStropheConnection _stropheConnection  @accessors(property=stropheConnection);
-    TNStropheStanza     _userVCard          @accessors(property=userVCard);
+    TNStropheConnection     _stropheConnection  @accessors(property=stropheConnection);
+    TNStropheStanza         _userVCard          @accessors(property=userVCard);
 }
 
 #pragma mark -
@@ -196,10 +195,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 {
     [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
-    
+
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheConnectionVCardReceived object:_stropheConnection];
     [_stropheConnection getVCard];
-    
+
     CPLog.info(@"Strophe is now connected using JID " + [JID stringValue]);
 }
 

@@ -727,7 +727,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [CPMenu setMenuBarVisible:NO];
 }
 
-
 /*! Notification responder for TNStropheRosterRetrievedNotification
 */
 - (void)didRetrieveRoster:(CPNotification)aNotification
