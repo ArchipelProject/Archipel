@@ -668,11 +668,11 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
-    if ([[aNotification object] connection] != [[TNStropheClient defaultClient] connection])
-    {
-        CPLog.error("We appear to have two connections. Something really weird is happening.");
-        return;
-    }
+    // if ([[aNotification object] connection] != [[TNStropheClient defaultClient] connection])
+    // {
+    //     CPLog.error("We appear to have two connections. Something really weird is happening.");
+    //     return;
+    // }
 
     var client      = [TNStropheClient defaultClient],
         connection  = [client connection],
