@@ -26,6 +26,9 @@ Thanks to Archipel you will be able to :
 * Mailing list : [Google group](http://groups.google.com/group/archipelproject)
 * Website : [Official website](http://archipelproject.org)
 * Sources : [Github Sources](http:/github.com/primalmotion/archipel)
+* Nighty Builds : [Nightlies](http:/nightlies.archipelproject.org)
+* Test application : [Nightly build deployed](http:/app.archipelproject.org)
+* FAQ : [Github FAQ](https://github.com/primalmotion/Archipel/wiki/Faq)
 
 # Team
 
