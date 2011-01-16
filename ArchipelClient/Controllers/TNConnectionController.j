@@ -20,6 +20,8 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
+@import "../Model/TNDatasourceRoster.j"
+
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
 
@@ -144,7 +146,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 
     [JID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
 
-    var stropheClient = [TNStropheClient clientWithService:[boshService stringValue] JID:JID password:[password stringValue]];
+    var stropheClient = [TNStropheClient clientWithService:[boshService stringValue] JID:JID password:[password stringValue] rosterClass:TNDatasourceRoster];
 
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
