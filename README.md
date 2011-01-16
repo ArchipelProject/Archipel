@@ -18,15 +18,15 @@ Thanks to Archipel you will be able to :
 
 # Get help
 
-* IRC : [[irc://irc.freenode.net/#archipel]]
-* Wiki : [Github Wiki](http:/github.com/primalmotion/archipel/wiki)
-* Bugtracker : [Github Issues](http:/github.com/primalmotion/archipel/issues)
-* Mailing list : [Google group](http://groups.google.com/group/archipelproject)
-* Website : [Official website](http://archipelproject.org)
-* Sources : [Github Sources](http:/github.com/primalmotion/archipel)
-* Nighty Builds : [Nightlies](http:/nightlies.archipelproject.org)
-* Test application : [Nightly build deployed](http:/app.archipelproject.org)
-* FAQ : [Github FAQ](https://github.com/primalmotion/Archipel/wiki/Faq)
+* IRC : irc://irc.freenode.net/#archipel
+* Wiki : http:/github.com/primalmotion/archipel/wiki
+* Bugtracker : http:/github.com/primalmotion/archipel/issues
+* Mailing list : http://groups.google.com/group/archipelproject)
+* Website : http://archipelproject.org
+* Sources : http:/github.com/primalmotion/archipel
+* Nighty Builds : http:/nightlies.archipelproject.org
+* Test application : http:/app.archipelproject.org
+* FAQ : https://github.com/primalmotion/Archipel/wiki/Faq
 
 # Team
 
