@@ -78,9 +78,12 @@
 
 - (void)_performPushRosterAdded:(CPNotification)aNotification
 {
-    var contact = [aNotification userInfo];
+    var contact = [aNotification userInfo],
+        JID     = [contact JID];
 
-    [self subscribeToPubSubNodeOfContactWithJID:[contact JID]];
+    [_roster askAuthorizationTo:JID];
+    [_roster authorizeJID:JID];
+    [self subscribeToPubSubNodeOfContactWithJID:JID];
 }
 
 - (void)_performPushRosterRemoved:(CPNotification)aNotification
@@ -131,16 +134,9 @@
     var group   = [newContactGroup title],
         JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
         name    = [newContactName stringValue],
-        growl   = [TNGrowlCenter defaultCenter],
-        msg     = @"Presence subsciption has been sent to " + JID + ".";
-
-    if (name == "")
-        name = [JID node];
+        growl   = [TNGrowlCenter defaultCenter];
 
     [_roster addContact:JID withName:name inGroupWithName:group];
-    [_roster askAuthorizationTo:JID];
-    [_roster authorizeJID:JID];
-    [self subscribeToPubSubNodeOfContactWithJID:JID];
 
     [mainWindow performClose:nil];
 
@@ -245,4 +241,5 @@
 {
     [_roster answerAuthorizationRequest:aRequestStanza answer:NO];
 }
+
 @end
