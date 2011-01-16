@@ -19,13 +19,13 @@ Thanks to Archipel you will be able to :
 # Get help
 
 * IRC : irc://irc.freenode.net/#archipel
-* Wiki : http:/github.com/primalmotion/archipel/wiki
-* Bugtracker : http:/github.com/primalmotion/archipel/issues
-* Mailing list : http://groups.google.com/group/archipelproject)
+* Wiki : <http://github.com/primalmotion/archipel/wiki>
+* Bugtracker : http://github.com/primalmotion/archipel/issues
+* Mailing list : http://groups.google.com/group/archipelproject
 * Website : http://archipelproject.org
-* Sources : http:/github.com/primalmotion/archipel
-* Nighty Builds : http:/nightlies.archipelproject.org
-* Test application : http:/app.archipelproject.org
+* Sources : http://github.com/primalmotion/archipel
+* Nighty Builds : http://nightlies.archipelproject.org
+* Test application : http://app.archipelproject.org
 * FAQ : https://github.com/primalmotion/Archipel/wiki/Faq
 
 # Team
