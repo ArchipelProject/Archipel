@@ -668,13 +668,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
-    // if ([[aNotification object] connection] != [[TNStropheClient defaultClient] connection])
-    // {
-    //     CPLog.error("We appear to have two connections. Something really weird is happening.");
-    //     return;
-    // }
-
-    var client      = [TNStropheClient defaultClient],
+    var client      = [TNStropheIMClient defaultClient],
         connection  = [client connection],
         roster      = [client roster];
 
@@ -751,7 +745,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)onApplicationTerminate:(CPNotification)aNotification
 {
-    [[TNStropheClient defaultClient] disconnect];
+    [[TNStropheIMClient defaultClient] disconnect];
 }
 
 /*! Triggered when TNModuleController send TNArchipelModulesAllReadyNotification.
@@ -885,7 +879,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
 
     CPLog.info(@"starting to disconnect");
-    [[TNStropheClient defaultClient] disconnect];
+    [[TNStropheIMClient defaultClient] disconnect];
 }
 
 /*! will opens the add contact window
@@ -1155,7 +1149,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
             break;
     }
 
-    [[TNStropheClient defaultClient] setPresenceShow:XMPPShow status:nil];
+    [[TNStropheIMClient defaultClient] setPresenceShow:XMPPShow status:nil];
 
     [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
 }
@@ -1242,7 +1236,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         [userAvatarController setCurrentAvatar:currentAvatar];
     }
 
-    [userAvatarController setConnection:[[TNStropheClient defaultClient] connection]];
+    [userAvatarController setConnection:[[TNStropheIMClient defaultClient] connection]];
     [userAvatarController setButtonAvatar:_userAvatarButton];
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 
@@ -1371,7 +1365,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
             case TNStropheContact:
                 var vCard       = [item vCard],
-                    entityType  = [[[TNStropheClient defaultClient] roster] analyseVCard:vCard];
+                    entityType  = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
                 [moduleController setEntity:item ofType:entityType];
                 [moduleController setCurrentEntityForToolbarModules:item];
                 break;
