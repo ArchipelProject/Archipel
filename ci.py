@@ -92,7 +92,7 @@ def buildVNCCappuccino():
 def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    os.system("cd ./ArchipelClient && ./buildArchipel -Cau")
+    os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=release")
     if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
         os.system("echo \* unable to build ArchipelClient. end of line.")
         sys.exit(-9)
