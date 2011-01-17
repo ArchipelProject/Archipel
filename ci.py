@@ -92,12 +92,10 @@ def buildVNCCappuccino():
 def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
+    os.system("cd ./ArchipelClient && ./buildArchipel -Cau")
     if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
-        os.system("echo \* unable to build ArchipelClient. try to clean")
-        os.system("cd ./ArchipelClient && ./buildArchipel -Cau")
-        if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
-            os.system("echo \* unable to build ArchipelClient. end of line.")
-            sys.exit(-9)
+        os.system("echo \* unable to build ArchipelClient. end of line.")
+        sys.exit(-9)
     os.system("cd ./ArchipelClient/Build/Release/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz ./Archipel" % (export_dir, builddate))
     os.system("tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz ./ArchipelServer" % (export_dir, builddate))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz" % (export_dir, builddate))
