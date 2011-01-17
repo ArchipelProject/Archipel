@@ -142,11 +142,11 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
-    var JID = [TNStropheJID stropheJIDWithString:[JID stringValue]];
+    var connectionJID = [TNStropheJID stropheJIDWithString:[JID stringValue]];
 
-    [JID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
+    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
 
-    var stropheClient = [TNStropheIMClient IMClientWithService:[boshService stringValue] JID:JID password:[password stringValue] rosterClass:TNDatasourceRoster];
+    var stropheClient = [TNStropheIMClient IMClientWithService:[boshService stringValue] JID:connectionJID password:[password stringValue] rosterClass:TNDatasourceRoster];
 
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
