@@ -114,15 +114,16 @@ def deployArchipel(deploy_dir):
     os.system("find %s/* -exec touch {} \;" % deploy_dir)
     os.system("rm -f %s/index.txt" % deploy_dir)
 
+
 def generateAPI(api_dir):
     os.system("echo \* Starting to generate documentation")
     os.system("rm -rf %s/*" % api_dir)
     
-    os.system("echo \* Generating doc for Archipel")
-    os.system("mkdir -p %s/archipel" % api_dir)
+    os.system("echo \* Generating doc for ArchipelClient")
+    os.system("mkdir -p %s/archipel-client" % api_dir)
     os.system("cd ArchipelClient; jake docs")
-    os.system("cp -a ArchipelClient/Build/Documentation/html/* %s/archipel/" % api_dir)
-    os.system("chown -R cruise:www-data %s/archipel/" % api_dir)
+    os.system("cp -a ArchipelClient/Build/Documentation/html/* %s/archipel-client/" % api_dir)
+    os.system("chown -R cruise:www-data %s/archipel-client/" % api_dir)
     
     os.system("echo \* Generating doc for StropheCappuccino")
     os.system("mkdir -p %s/strophecappuccino" % api_dir)
@@ -159,6 +160,13 @@ def generateAPI(api_dir):
     os.system("cd TNKit; jake docs")
     os.system("cp -a TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
     os.system("chown -R cruise:www-data %s/tnkit/" % api_dir)
+    
+    os.system("echo \* Generating doc for ArchipelServer")
+    os.system("mkdir -p %s/archipel-server" % api_dir)
+    os.system("cd ArchipelServer; epydoc .")
+    os.system("cp -a ArchipelServer/html/* %s/archipel-server/" % api_dir)
+    os.system("chown -R cruise:www-data %s/archipel-server/" % api_dir)
+    
     
     os.system("echo \* Documentation generation complete")
 
