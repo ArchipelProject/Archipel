@@ -67,12 +67,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedContactNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactPresenceUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactNicknameUpdatedNotification object:nil];
-        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactGroupUpdatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterAddedGroupNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactMessageTreatedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheContactVCardReceivedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheGroupRenamedNotification object:nil];
         [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterRemovedGroupNotification object:nil];
+        [center addObserver:self selector:@selector(updateOutlineView:) name:TNStropheRosterPushNotification object:nil];
     }
 
     return self;
@@ -355,20 +355,16 @@ TNDragTypeContact   = @"TNDragTypeContact";
         for (var i = 0; i < [contactsToMove count]; i++)
         {
             var contact = [contactsToMove objectAtIndex:i];
-
-            [self changeGroup:theItem ofContact:contact];
+            [contact setGroups:[theItem]];
         }
 
         [self removeGroup:_draggedItem];
-        [anOutlineView reloadData];
 
         return YES;
     }
     else if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
     {
-        [self changeGroup:theItem ofContact:_draggedItem];
-        [anOutlineView reloadData];
-
+        [_draggedItem setGroups:[theItem]];
         return YES;
     }
 
