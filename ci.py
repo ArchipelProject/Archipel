@@ -30,6 +30,7 @@ BUILD_MESSAGEBOARD=True
 BUILD_ARCHIPELCLIENT=True
 DEPLOY_PATH="/var/www/archipelproject.org/app/"
 EXPORT_PATH="/var/www/archipelproject.org/nightlies/"
+API_PATH="/var/www/archipelproject.org/api/"
 
 def pullSubrepo():
     global BUILD_CAPPUCCINO
@@ -171,6 +172,55 @@ def deployArchipel(deploy_dir):
     os.system("find %s/* -exec touch {} \;" % deploy_dir)
     os.system("rm -f %s/index.txt" % deploy_dir)
 
+def generateAPI(api_dir):
+    os.system("echo \* Starting to generate documentation")
+    os.system("rm -rf %s/*" % api_dir)
+    
+    os.system("echo \* Generating doc for Archipel")
+    os.system("mkdir -p %s/archipel" % api_dir)
+    os.system("cd ArchipelClient; jake docs")
+    os.system("cp -a ArchipelClient/Build/Documentation/html/* %s/archipel/" % api_dir)
+    os.system("chown -R cruise:www-data %s/archipel/" % api_dir)
+    
+    os.system("echo \* Generating doc for StropheCappuccino")
+    os.system("mkdir -p %s/strophecappuccino" % api_dir)
+    os.system("cd StropheCappuccino; jake docs")
+    os.system("cp -a StropheCappuccino/Build/Documentation/html/* %s/strophecappuccino/" % api_dir)
+    os.system("chown -R cruise:www-data %s/strophecappuccino/" % api_dir)
+    
+    os.system("echo \* Generating doc for VNCCappuccino")
+    os.system("mkdir -p %s/vnccappuccino" % api_dir)
+    os.system("cd VNCCappuccino; jake docs")
+    os.system("cp -a VNCCappuccino/Build/Documentation/html/* %s/vnccappuccino/" % api_dir)
+    os.system("chown -R cruise:www-data %s/vnccappuccino/" % api_dir)
+    
+    os.system("echo \* Generating doc for GrowlCappuccino")
+    os.system("mkdir -p %s/growlcappuccino" % api_dir)
+    os.system("cd GrowlCappuccino; jake docs")
+    os.system("cp -a GrowlCappuccino/Build/Documentation/html/* %s/growlcappuccino/" % api_dir)
+    os.system("chown -R cruise:www-data %s/growlcappuccino/" % api_dir)
+    
+    os.system("echo \* Generating doc for iTunesTabView")
+    os.system("mkdir -p %s/itunestabview" % api_dir)
+    os.system("cd iTunesTabView; jake docs")
+    os.system("cp -a iTunesTabView/Build/Documentation/html/* %s/itunestabview/" % api_dir)
+    os.system("chown -R cruise:www-data %s/itunestabview/" % api_dir)
+    
+    os.system("echo \* Generating doc for MessageBoard")
+    os.system("mkdir -p %s/messageboard" % api_dir)
+    os.system("cd MessageBoard; jake docs")
+    os.system("cp -a MessageBoard/Build/Documentation/html/* %s/messageboard/" % api_dir)
+    os.system("chown -R cruise:www-data %s/messageboard/" % api_dir)
+    
+    os.system("echo \* Generating doc for TNKit")
+    os.system("mkdir -p %s/tnkit" % api_dir)
+    os.system("cd TNKit; jake docs")
+    os.system("cp -a TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
+    os.system("chown -R cruise:www-data %s/tnkit/" % api_dir)
+    
+    os.system("echo \* Documentation generation complete")
+
+
 
 if __name__ == "__main__":
     """
@@ -189,6 +239,7 @@ if __name__ == "__main__":
     
     buildArchipel(EXPORT_PATH, BUILD_ARCHIPELCLIENT)
     deployArchipel(DEPLOY_PATH)
+    generateAPI(API_PATH)
     
     os.system("echo \* BUILD SUCESSFULL.")
     sys.exit(0)
