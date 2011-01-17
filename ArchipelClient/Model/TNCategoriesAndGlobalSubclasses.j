@@ -26,22 +26,21 @@
 */
 
 /*! @ingroup utils
-    Make TNStropheClient singular
+    Make TNStropheIMClient singular
 */
-var DefaultTNStropheClient = nil;
-@implementation TNStropheClient (defaultClient)
+var DefaultTNStropheIMClient = nil;
+@implementation TNStropheIMClient (defaultClient)
 
-+ (TNStropheClient)defaultClient
++ (TNStropheIMClient)defaultClient
 {
-    if (!DefaultTNStropheClient)
-        DefaultTNStropheClient = [TNStropheClient client];
-
-    return DefaultTNStropheClient;
+    if (!DefaultTNStropheIMClient)
+        [CPException raise:CPInternalInconsistencyException raison:@"DefaultTNStropheIMClient is not set. use setDefaultClient: before"];
+    return DefaultTNStropheIMClient;
 }
 
 - (void)setDefaultClient
 {
-    DefaultTNStropheClient = self;
+    DefaultTNStropheIMClient = self;
 }
 
 @end

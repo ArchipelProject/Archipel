@@ -484,7 +484,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             }
             else
             {
-                var contact = [TNStropheContact contactWithConnection:nil JID:JID groupName:@"nogroup"];
+                var contact = [TNStropheContact contactWithConnection:nil JID:JID group:nil];
                 [contact setNickname:[JID node]];
                 [_virtualMachinesDatasource addObject:contact];
             }

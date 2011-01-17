@@ -115,7 +115,7 @@
     [vCard addChildWithName:@"BINVAL"];
     [vCard addTextNode:base64Avatar];
 
-    [_connection setVCard:vCard object:self selector:@selector(_didSetAvatar:image:) userInfo:anAvatarImage];
+    [[TNStropheIMClient defaultClient] setVCard:vCard object:self selector:@selector(_didSetAvatar:image:) userInfo:anAvatarImage];
 }
 
 /*! conpute avatar setting answer

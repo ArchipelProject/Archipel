@@ -37,6 +37,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     TNPubSubNode                _pubsubTagsNode;
     id                          _draggedItem;
     CPDictionary                _tagsRegistry;
+    BOOL                        _shouldDragDuplicate;
 }
 
 
@@ -56,7 +57,8 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (self = [super initWithConnection:aConnection])
     {
-        _filter = nil;
+        _filter                 = nil;
+        _shouldDragDuplicate    = NO;
 
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
@@ -319,6 +321,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     _draggedItem = [theItems objectAtIndex:0];
 
+    if ([[CPApp currentEvent] modifierFlags] & CPAlternateKeyMask)
+    {
+        _shouldDragDuplicate = YES;
+        [[CPCursor dragCopyCursor] set];
+    }
+
+
     [thePasteBoard declareTypes:[TNDragTypeContact] owner:self];
     [thePasteBoard setData:[CPKeyedArchiver archivedDataWithRootObject:theItems] forType:TNDragTypeContact];
 
@@ -358,13 +367,20 @@ TNDragTypeContact   = @"TNDragTypeContact";
             [contact setGroups:[theItem]];
         }
 
+        _shouldDragDuplicate = NO;
         [self removeGroup:_draggedItem];
 
         return YES;
     }
     else if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
     {
-        [_draggedItem setGroups:[theItem]];
+        if (_shouldDragDuplicate)
+            [_draggedItem addGroup:theItem];
+        else
+            [_draggedItem setGroups:[CPArray arrayWithObject:theItem]];
+        _shouldDragDuplicate = NO;
+        [[CPCursor arrowCursor] set];
+
         return YES;
     }
 

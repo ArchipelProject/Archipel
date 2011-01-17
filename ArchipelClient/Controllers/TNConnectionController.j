@@ -146,7 +146,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 
     [JID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
 
-    var stropheClient = [TNStropheClient clientWithService:[boshService stringValue] JID:JID password:[password stringValue] rosterClass:TNDatasourceRoster];
+    var stropheClient = [TNStropheIMClient IMClientWithService:[boshService stringValue] JID:JID password:[password stringValue] rosterClass:TNDatasourceRoster];
 
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
@@ -166,11 +166,11 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 }
 
 
-/*! delegate of TNStropheClient
-    @param aStropheClient a TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient a TNStropheIMClient
     @param anError a string describing the error
 */
-- (void)client:(TNStropheClient)aStropheClient errorCondition:(CPString)anError
+- (void)client:(TNStropheIMClient)aStropheClient errorCondition:(CPString)anError
 {
     switch (anError)
     {
@@ -184,20 +184,20 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     [spinning setHidden:YES];
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheConnecting:(TNStropheClient)aStropheClient
+- (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
     [message setStringValue:@"Connecting..."];
     [connectButton setEnabled:NO];
     [spinning setHidden:NO];
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheConnected:(TNStropheClient)aStropheClient
+- (void)onStropheConnected:(TNStropheIMClient)aStropheClient
 {
     [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
@@ -208,10 +208,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     CPLog.info(@"Strophe is now connected using JID " + [aStropheClient JID]);
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheConnectFail:(TNStropheClient)aStropheClient
+- (void)onStropheConnectFail:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
@@ -220,19 +220,19 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     CPLog.info(@"XMPP connection failed");
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheAuthenticating:(TNStropheClient)aStropheClient
+- (void)onStropheAuthenticating:(TNStropheIMClient)aStropheClient
 {
     [message setStringValue:@"Authenticating..."];
     CPLog.info(@"XMPP authenticating...");
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheAuthFail:(TNStropheClient)aStropheClient
+- (void)onStropheAuthFail:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
@@ -241,10 +241,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     CPLog.info(@"XMPP auth failed");
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheError:(TNStropheClient)aStropheClient
+- (void)onStropheError:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
@@ -253,10 +253,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     CPLog.info(@"XMPP unknown error");
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheDisconnecting:(TNStropheClient)aStropheClient
+- (void)onStropheDisconnecting:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:NO];
     [connectButton setEnabled:NO];
@@ -265,10 +265,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
    CPLog.info(@"XMPP is disconnecting");
 }
 
-/*! delegate of TNStropheClient
-    @param aStropheClient TNStropheClient
+/*! delegate of TNStropheIMClient
+    @param aStropheClient TNStropheIMClient
 */
-- (void)onStropheDisconnected:(TNStropheClient)aStropheClient
+- (void)onStropheDisconnected:(TNStropheIMClient)aStropheClient
 {
     [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
     [spinning setHidden:YES];
