@@ -228,6 +228,11 @@ if __name__ == "__main__":
     """
     #pullSubrepo()
     
+    ret, out = commands.getstatusoutput("git log -n1")
+    if "#nobuild" in out:
+        os.system("echo \* Build skipped according to last commit message (contains #nobuild)")
+        sys.exit(0)
+    
     if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
     if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
     if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
