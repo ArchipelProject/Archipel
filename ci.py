@@ -32,64 +32,6 @@ DEPLOY_PATH="/var/www/archipelproject.org/app/"
 EXPORT_PATH="/var/www/archipelproject.org/nightlies/"
 API_PATH="/var/www/archipelproject.org/api/"
 
-def pullSubrepo():
-    global BUILD_CAPPUCCINO
-    global BUILD_LPKIT
-    global BUILD_TNKIT
-    global BUILD_VNCCAPPUCCINO
-    global BUILD_STROPHECAPPUCCINO
-    global BUILD_ITUNESTABVIEW
-    global BUILD_MESSAGEBOARD
-    global BUILD_GROWLCAPPUCCINO
-    
-    os.system("echo \* Checking if we need to build Cappuccino...")
-    ret, out = commands.getstatusoutput("cd ./Cappuccino && git pull origin master")
-    if ret: sys.exit(-421)
-    if "Already up-to-date." in out: BUILD_CAPPUCCINO=False
-    os.system("echo \* build Cappuccino: %s" % (str(BUILD_CAPPUCCINO)))
-    
-    os.system("echo \* Checking if we need to build LPKit...")
-    ret, out = commands.getstatusoutput("cd ./LPKit && git pull origin integ")
-    if ret: sys.exit(-422)
-    if "Already up-to-date." in out: BUILD_LPKIT=False
-    os.system("echo \* build LPKit: %s" % (str(BUILD_LPKIT)))
-    
-    os.system("echo \* Checking if we need to build StropheCappuccino...")
-    ret, out = commands.getstatusoutput("cd ./StropheCappuccino && git pull origin master")
-    if ret: sys.exit(-423)
-    if "Already up-to-date." in out: BUILD_STROPHECAPPUCCINO=False
-    os.system("echo \* build StropheCappuccino: %s" % (str(BUILD_STROPHECAPPUCCINO)))
-    
-    os.system("echo \* Checking if we need to build TNKit...")
-    ret, out = commands.getstatusoutput("cd ./TNKit && git pull origin master")
-    if ret: sys.exit(-424)
-    if "Already up-to-date." in out: BUILD_TNKIT=False
-    os.system("echo \* build TNKit: %s" % (str(BUILD_TNKIT)))
-    
-    os.system("echo \* Checking if we need to build VNCCappuccino...")
-    ret, out = commands.getstatusoutput("cd ./VNCCappuccino && git pull origin master")
-    if ret: sys.exit(-425)
-    if "Already up-to-date." in out: BUILD_VNCCAPPUCCINO=False
-    os.system("echo \* build VNCCappuccino: %s" % (str(BUILD_VNCCAPPUCCINO)))
-    
-    os.system("echo \* Checking if we need to build GrowlCappuccino...")
-    ret, out = commands.getstatusoutput("cd ./GrowlCappuccino && git pull origin master")
-    if ret: sys.exit(-426)
-    if "Already up-to-date." in out: BUILD_GROWLCAPPUCCINO=False
-    os.system("echo \* build GrowlCappuccino: %s" % (str(BUILD_GROWLCAPPUCCINO)))
-    
-    os.system("echo \* Checking if we need to build iTunesTabView...")
-    ret, out = commands.getstatusoutput("cd ./iTunesTabView && git pull origin master")
-    if ret: sys.exit(-427)
-    if "Already up-to-date." in out: BUILD_ITUNESTABVIEW=False
-    os.system("echo \* build iTunesTabView: %s" % (str(BUILD_ITUNESTABVIEW)))
-    
-    os.system("echo \* Checking if we need to build MessageBoard...")
-    ret, out = commands.getstatusoutput("cd ./MessageBoard && git pull origin master")
-    if ret: sys.exit(-428)
-    if "Already up-to-date." in out: BUILD_MESSAGEBOARD=False    
-    os.system("echo \* build MessageBoard: %s" % (str(BUILD_MESSAGEBOARD)))
-
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
@@ -226,7 +168,6 @@ if __name__ == "__main__":
     """
     Simple script that can be run using CruiseControl.rb to make continuous integration
     """
-    #pullSubrepo()
     
     ret, out = commands.getstatusoutput("git log -n1")
     if "#nobuild" in out:
