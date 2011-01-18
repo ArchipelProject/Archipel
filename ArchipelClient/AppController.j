@@ -29,25 +29,29 @@
 @import <LPKit/LPMultiLineTextField.j>
 // @import <LPKit/LPCrashReporter.j>
 
-@import "Model/TNCategoriesAndGlobalSubclasses.j"
-@import "Model/TNDatasourceRoster.j"
-@import "Model/TNModule.j"
-@import "Views/TNOutlineViewRoster.j"
-@import "Views/TNRosterDataViews.j"
-@import "Views/TNSearchField.j"
-@import "Views/TNSwitch.j"
-@import "Views/TNCalendarView.j"
-@import "Views/TNModalWindow.j"
+@import "Categories/TNCategories.j"
 @import "Controllers/TNAvatarController.j"
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
 @import "Controllers/TNModuleController.j"
+@import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
-@import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNUserAvatarController.j"
+@import "Model/TNDatasourceRoster.j"
+@import "Model/TNModule.j"
+@import "Views/TNButtonBarPopUpButton.j"
+@import "Views/TNCalendarView.j"
+@import "Views/TNEditableLabel.j"
+@import "Views/TNMenuItem.j"
+@import "Views/TNModalWindow.j"
+@import "Views/TNOutlineViewRoster.j"
+@import "Views/TNRosterDataViews.j"
+@import "Views/TNSearchField.j"
+@import "Views/TNSwitch.j"
+
 
 /*! @global
     @group TNArchipelEntityType
