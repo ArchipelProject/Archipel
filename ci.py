@@ -18,6 +18,7 @@
 
 import os, sys, datetime, commands
 
+CONFIGURATION="debug"
 FORCE=False
 BUILD_CAPPUCCINO=True
 BUILD_LPKIT=True
@@ -35,56 +36,56 @@ API_PATH="/var/www/archipelproject.org/api/"
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./Cappuccino && jake release"):
-        if os.system("cd ./Cappuccino && jake clean && jake release"):
+    if os.system("cd ./Cappuccino && jake %s " % CONFIGURATION):
+        if os.system("cd ./Cappuccino && jake clean && jake %s " % CONFIGURATION):
             sys.exit(-1)
 
 
 def buildGrowlCappuccino():
     os.system("echo \* Starting to build GrowlCappuccino")
-    if os.system("cd ./GrowlCappuccino && jake release"):
+    if os.system("cd ./GrowlCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build GrowlCappuccino")
         sys.exit(-2)
 
 
 def buildiTunesTabView():
     os.system("echo \* Starting to build iTunesTabView")
-    if os.system("cd ./iTunesTabView && jake release"):
+    if os.system("cd ./iTunesTabView && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build iTunesTabView")
         sys.exit(-3)
 
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
-    if os.system("cd ./LPKit && export CONFIGURATION=Release && jake -f myJakeFile build"):
+    if os.system("cd ./LPKit && export CONFIGURATION=%s && jake -f myJakeFile build" % CONFIGURATION.capitalize()):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
 
 def buildMessageBoard():
     os.system("echo \* Starting to build MessageBoard")
-    if os.system("cd ./MessageBoard && jake release"):
+    if os.system("cd ./MessageBoard && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build MessageBoard")
         sys.exit(-5)
 
 
 def buildStropheCappuccino():
     os.system("echo \* Starting to build StropheCappuccino")
-    if os.system("cd ./StropheCappuccino && jake release"):
+    if os.system("cd ./StropheCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build StropheCappuccino")
         sys.exit(-6)
 
 
 def buildTNKit():
     os.system("echo \* Starting to build TNKit")
-    if os.system("cd ./TNKit && jake release"):
+    if os.system("cd ./TNKit && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build TNKit")
         sys.exit(-7)
 
 
 def buildVNCCappuccino():
     os.system("echo \* Starting to build VNCCappuccino")
-    if os.system("cd ./VNCCappuccino && jake release"):
+    if os.system("cd ./VNCCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build VNCCappuccino")
         sys.exit(-8)
 
@@ -92,11 +93,11 @@ def buildVNCCappuccino():
 def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=release")
-    if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release"):
+    os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=%s" % CONFIGURATION)
+    if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
         os.system("echo \* unable to build ArchipelClient. end of line.")
         sys.exit(-9)
-    os.system("cd ./ArchipelClient/Build/Release/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz ./Archipel" % (export_dir, builddate))
+    os.system("cd ./ArchipelClient/Build/%s/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz ./Archipel" % (CONFIGURATION.capitalize(), export_dir, builddate))
     os.system("tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz ./ArchipelServer" % (export_dir, builddate))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz" % (export_dir, builddate))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz" % (export_dir, builddate))
@@ -106,7 +107,7 @@ def deployArchipel(deploy_dir):
     os.system("echo \* Starting to deploy Archipel into app.archipelproject.org")
     os.system("rm -rf %s/*" % deploy_dir)
     os.system("echo 'deploying new build, please reload in a moment' > %s/index.txt" % deploy_dir)
-    os.system("cp -a ./ArchipelClient/Build/Release/Archipel/* %s" % deploy_dir)
+    os.system("cp -a ./ArchipelClient/Build/%s/Archipel/* %s" % (CONFIGURATION.capitalize(), deploy_dir))
     os.system("chown -R cruise:www-data %s/*" % deploy_dir)
     os.system("chmod 755 -R %s/*" % deploy_dir)
     os.system("find %s/* -exec touch {} \;" % deploy_dir)
