@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import os, sys, getopt
 import threading, time
 import ConfigParser
@@ -54,6 +53,7 @@ will initialize it for you. Please wait.
 
 """
 
+
 MSG_ARCHIPEL_SERVER_HEADER = """\
 ###############################################################################
 #                                                                             #
@@ -75,11 +75,12 @@ MSG_ARCHIPEL_CLIENT_HEADER = """\
 #                                                                             #
 ###############################################################################
 
-Welcome to the installation script of Archipel Client. You need to have the 
-Cappuccino development environment installed in order to build this software.
-You can grab it from http://cappuccino.org
+Welcome to the installation script of Archipel Client.
+Note that you must be root in order to install this software. Please answer the 
+following questions.
 
 """
+
 
 MSG_ARCHIPEL_END = """\
 ###############################################################################
@@ -97,7 +98,9 @@ visit the folowing :
 
 If you find any bug, please tell us using our tracker :
  * Official tracker  : https://github.org/primalmotion/Archipel/issues
+
 """
+
 
 class Spinner(threading.Thread):
     
@@ -123,6 +126,7 @@ class Spinner(threading.Thread):
     def stop(self):
         self.on = False;
     
+
 
 
 
@@ -165,6 +169,13 @@ def ask_bool(message, default="y"):
 
 
 ### tests / init / Utils
+
+def test_python_version():
+    version = sys.version_info
+    if not version[0] == 2 or (version[0] == 2 and not version[1] in (5,6)):
+        print "\033[31m\n * ERROR: You need to use python 2.5 or 2.6\033[0m\n"
+        sys.exit(1)
+
 
 def test_cmd(cmd):
     if os.system("which %s > /dev/null 2>&1" % cmd) != 0:
@@ -280,7 +291,7 @@ def install_archipelclient():
     elif test_cmd("jake") == False:
         print "\033[31mYou don't want to install Cappuccino but it's also not already installed\033[0m"
         sys.exit(1)
-
+    
     if inst_growl:          client_build_growlcappuccino()
     if inst_vnc:            client_build_vnccappuccino()
     if inst_strophe:        client_build_strophecappuccino()
@@ -588,6 +599,7 @@ def server_install_data_folder(inst_data):
        os.system("mkdir -p '%s'" % inst_data)
        s.stop()
 
+
 def server_install_log_folder(folder):
     if not os.path.exists(folder):
         print " - creating log folder  %s" % folder
@@ -707,8 +719,10 @@ def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_di
             resp = ask("[\033[33m%s\033[0m] %s" % (token["domain"], token["name"]), None, token["default"])
             conf.set(token["domain"], token["key"], resp)
     
-    with open("%s/archipel.conf" % general_etc_dir, "wb") as configfile:
-        conf.write(configfile)
+    configfile = open("%s/archipel.conf" % general_etc_dir, "wb")
+    conf.write(configfile)
+    configfile.close()
+    
     os.system("rm %s.working" % confpath)
 
 
@@ -721,6 +735,8 @@ def main():
         clear()
         
         print MSG_ARCHIPEL_WELCOME
+        
+        test_python_version()
         
         test_user_root()
         
@@ -749,6 +765,8 @@ def main():
         
     except KeyboardInterrupt:
         print "\n\n\033[33m * Installation canceled by user\033[0m\n"
+
+
 
 
 if __name__ == "__main__":
