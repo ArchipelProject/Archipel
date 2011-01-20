@@ -346,6 +346,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         [[tabViewItem view] removeFromSuperview];
         [_mainTabView removeTabViewItem:tabViewItem];
     }
+
+    delete arrayCpy;
 }
 
 /*! insert a TNModules embeded in a scroll view to the mainToolbarView CPView
