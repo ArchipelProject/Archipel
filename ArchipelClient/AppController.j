@@ -428,6 +428,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
 
+
     [plusButton setTarget:self];
     [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
     [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
@@ -442,7 +443,16 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
 
-    [buttonBarLeft setButtons:[plusButton, minusButton, _hideButton]];
+    var buttons = [CPArray array];
+
+    if ([bundle objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
+    {
+        [buttons addObject:plusButton]
+        [buttons addObject:minusButton]
+    }
+
+    [buttons addObject:_hideButton];
+    [buttonBarLeft setButtons:buttons];
 
     // copyright;
     [self copyright];
@@ -536,16 +546,24 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_mainMenu setSubmenu:editMenuItem forItem:editMenu];
 
     // Groups
-    [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
-    [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
-    [groupsMenu addItem:[CPMenuItem separatorItem]];
+    if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
+    {
+        [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
+        [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
+        [groupsMenu addItem:[CPMenuItem separatorItem]];
+    }
+
     [groupsMenu addItemWithTitle:@"Rename group" action:@selector(renameGroup:) keyEquivalent:@""];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
 
     // Contacts
-    [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
-    [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
-    [contactsMenu addItem:[CPMenuItem separatorItem]];
+    if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
+    {
+        [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
+        [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
+        [contactsMenu addItem:[CPMenuItem separatorItem]];
+    }
+
     [contactsMenu addItemWithTitle:@"Rename contact" action:@selector(renameContact:) keyEquivalent:@"R"];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 

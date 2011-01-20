@@ -94,5 +94,11 @@
     <key>ArchipelCheckNodeAdminAccount</key>
     <integer>1</integer>
 
+    <!--
+        if set to 0, the add and remove contact button is not displayed. this is just a GUI thing
+    -->
+    <key>TNArchipelDisplayXMPPManageContactsButton</key>
+    <integer>1</integer>
+
 </dict>
 </plist>
