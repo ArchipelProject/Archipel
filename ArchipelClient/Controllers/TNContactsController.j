@@ -29,7 +29,6 @@
     @outlet CPTextField     newContactName;
 
     @outlet CPWindow        mainWindow          @accessors(readonly);
-    TNStropheRoster         _roster             @accessors(property=roster);
     TNPubSubController      _pubsubController   @accessors(property=pubSubController);
 }
 
@@ -81,8 +80,8 @@
     var contact = [aNotification userInfo],
         JID     = [contact JID];
 
-    [_roster askAuthorizationTo:JID];
-    [_roster authorizeJID:JID];
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:JID];
+    [[[TNStropheIMClient defaultClient] roster] authorizeJID:JID];
     [self subscribeToPubSubNodeOfContactWithJID:JID];
 }
 
@@ -101,14 +100,14 @@
 */
 - (IBAction)showWindow:(id)aSender
 {
-    var groups = [_roster groups];
+    var groups = [[[TNStropheIMClient defaultClient] roster] groups];
 
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
     [newContactGroup removeAllItems];
     //[self makeFirstResponder:newContactJID];
 
-    if (![_roster containsGroup:@"General"])
+    if (![[[TNStropheIMClient defaultClient] roster] containsGroup:@"General"])
     {
         [newContactGroup addItemWithTitle:@"General"];
     }
@@ -136,7 +135,7 @@
         name    = [newContactName stringValue],
         growl   = [TNGrowlCenter defaultCenter];
 
-    [_roster addContact:JID withName:name inGroupWithName:group];
+    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithName:group];
 
     [mainWindow performClose:nil];
 
@@ -176,7 +175,7 @@
 
     [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
 
-    [_roster removeContact:contact];
+    [[[TNStropheIMClient defaultClient] roster] removeContact:contact];
 
     CPLog.info(@"contact " + [contact JID] + "removed");
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
@@ -231,7 +230,7 @@
 - (void)performAuthorize:(TNStropheStanza)aRequestStanza
 {
     [self subscribeToPubSubNodeOfContactWithJID:[aRequestStanza from]];
-    [_roster answerAuthorizationRequest:aRequestStanza answer:YES];
+    [[[TNStropheIMClient defaultClient] roster] answerAuthorizationRequest:aRequestStanza answer:YES];
 }
 
 /*! Action of didReceiveSubscriptionRequest's confirmation alert.
@@ -239,7 +238,7 @@
 */
 - (void)performRefuse:(TNStropheStanza)aRequestStanza
 {
-    [_roster answerAuthorizationRequest:aRequestStanza answer:NO];
+    [[[TNStropheIMClient defaultClient] roster] answerAuthorizationRequest:aRequestStanza answer:NO];
 }
 
 @end

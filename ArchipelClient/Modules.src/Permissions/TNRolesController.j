@@ -173,7 +173,7 @@
 {
     var template = [TNXMLNode nodeWithName:@"role"];
 
-    [template setValue:[[[_delegate connection] JID] bare] forAttribute:@"creator"];
+    [template setValue:[[[TNStropheIMClient defaultClient] JID] bare] forAttribute:@"creator"];
     [template setValue:[fieldNewTemplateName stringValue] forAttribute:@"name"];
     [template setValue:[fieldNewTemplateDescription stringValue] forAttribute:@"description"];
 
@@ -238,7 +238,7 @@
 {
     if (!_nodeRolesTemplates)
     {
-        _nodeRolesTemplates = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/roles" connection:[_delegate connection] pubSubServer:nil];
+        _nodeRolesTemplates = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/roles" connection:[[TNStropheIMClient defaultClient] connection] pubSubServer:nil];
         [_nodeRolesTemplates setDelegate:self];
         [_nodeRolesTemplates retrieveItems];
     }

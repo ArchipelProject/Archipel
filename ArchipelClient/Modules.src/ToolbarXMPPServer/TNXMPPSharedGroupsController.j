@@ -51,7 +51,6 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     @outlet CPWindow        windowAddUserInGroup;
     @outlet CPSplitView     splitViewVertical;
 
-    TNStropheRoster         _roster             @accessors(setter=setRoster:);
     TNStropheContact        _entity             @accessors(setter=setEntity:);
     id                      _delegate           @accessors(property=delegate);
     TNXMPPUsersController   _usersController    @accessors(setter=setUsersController:);

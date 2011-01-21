@@ -83,7 +83,7 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
     _toolbarItem = [_toolbar itemWithIdentifier:_name];
 
     [[CPNotificationCenter defaultCenter] removeObserver:self];
-    if ([_roster analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
+    if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[anEntity vCard]] !== TNArchipelEntityTypeVirtualMachine)
     {
         [_toolbarItem setEnabled:NO];
         return;

@@ -281,7 +281,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     [_hypervisorOriginDatasource removeAllObjects];
 
-    var rosterItems = [_roster contacts];
+    var rosterItems = [[[TNStropheIMClient defaultClient] roster] contacts];
 
     for (var i = 0; i < [rosterItems count]; i++)
     {
@@ -300,7 +300,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 {
     [_hypervisorDestinationDatasource removeAllObjects];
 
-    var rosterItems = [_roster contacts];
+    var rosterItems = [[[TNStropheIMClient defaultClient] roster] contacts];
 
     for (var i = 0; i < [rosterItems count]; i++)
     {
@@ -400,7 +400,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
-                entry   = [_roster contactWithJID:JID];
+                entry   = [[[TNStropheIMClient defaultClient] roster] contactWithJID:JID];
 
             if (entry)
             {

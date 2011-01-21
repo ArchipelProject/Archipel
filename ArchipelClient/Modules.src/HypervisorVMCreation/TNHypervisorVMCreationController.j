@@ -320,11 +320,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     else
     {
         [_virtualMachinesDatasource removeAllObjects];
-        for (var i = 0; i < [[_roster contacts] count]; i++)
+        for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
         {
-            var contact = [[_roster contacts] objectAtIndex:i];
+            var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
-            if (([_roster analyseVCard:[contact vCard]] == TNArchipelEntityTypeVirtualMachine)
+            if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeVirtualMachine)
                 && [[contact resources] count]
                 && ([[contact resources] objectAtIndex:0] == [[_entity JID] node]))
             {
@@ -348,7 +348,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index];
 
-    if (![_roster containsJID:[vm JID]])
+    if (![[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
     {
         var alert = [TNAlert alertWithMessage:@"Adding contact"
                                     informative:@"Would you like to add " + [vm nickname] + @" to your roster"
@@ -439,9 +439,9 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     var vm      = someUserInfo;
 
-    [_roster addContact:[vm JID] withName:[vm nickname] inGroupWithName:@"General"];
-    [_roster askAuthorizationTo:[vm JID]];
-    [_roster authorizeJID:[vm JID]];
+    [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[vm nickname] inGroupWithName:@"General"];
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[vm JID]];
+    [[[TNStropheIMClient defaultClient] roster] authorizeJID:[vm JID]];
 }
 
 /*! get the hypervisor roster content
@@ -472,11 +472,11 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
-                entry   = [_roster firstContactWithBareJID:JID];
+                entry   = [[[TNStropheIMClient defaultClient] roster] firstContactWithBareJID:JID];
 
             if (entry)
             {
-               if ([_roster analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
+               if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine)
                {
                    [_virtualMachinesDatasource addObject:entry];
                    [center addObserver:self selector:@selector(_didChangeVMStatus:) name:TNStropheContactPresenceUpdatedNotification object:entry];
@@ -586,7 +586,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             "action": TNArchipelTypeHypervisorControlFree,
             "jid": [vm JID]}];
 
-        [_roster removeContact:vm];
+        [[[TNStropheIMClient defaultClient] roster] removeContact:vm];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
     }
@@ -615,7 +615,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
-    [_roster removeContactWithJID:[someUserInfo JID]];
+    [[[TNStropheIMClient defaultClient] roster] removeContactWithJID:[someUserInfo JID]];
 }
 
 /*! clone a virtual machine. but ask user if he is sure before

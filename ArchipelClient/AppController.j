@@ -690,48 +690,35 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
-    var client      = [TNStropheIMClient defaultClient],
-        connection  = [client connection],
-        roster      = [client roster];
-
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
-    _pubSubController = [TNPubSubController pubSubControllerWithConnection:connection];
+    _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
-    [roster setDelegate:contactsController];
-    [roster setFilterField:filterField];
-    [connection rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
-    [connection rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+    [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
+    [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
 
-    [tagsController setConnection:connection];
+    [[[TNStropheIMClient defaultClient] connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
+    [[[TNStropheIMClient defaultClient] connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+
     [tagsController setPubSubController:_pubSubController];
-
-    [propertiesController setRoster:roster];
     [propertiesController setPubSubController:_pubSubController];
-
-    [contactsController setRoster:roster];
     [contactsController setPubSubController:_pubSubController];
 
-    [groupsController setRoster:roster];
-
-    [_rosterOutlineView setDataSource:roster];
+    [_rosterOutlineView setDataSource:[[TNStropheIMClient defaultClient] roster]];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [[TNPermissionsCenter defaultCenter] setRoster:roster];
     [[TNPermissionsCenter defaultCenter] startWatching];
 
-    [moduleController setRoster:roster];
-    [moduleController setRosterForToolbarItems:roster andConnection:connection];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
-    [labelCurrentUser setStringValue:@"Connected as " + [[client JID] bare]];
+    [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -1258,7 +1245,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         [userAvatarController setCurrentAvatar:currentAvatar];
     }
 
-    [userAvatarController setConnection:[[TNStropheIMClient defaultClient] connection]];
     [userAvatarController setButtonAvatar:_userAvatarButton];
     [userAvatarController setMenuAvatarSelection:[_userAvatarButton menu]];
 

@@ -33,7 +33,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 {
     @outlet CPView      mainView            @accessors(readonly);
 
-    TNStropheConnection _connection         @accessors(property=connection);
     TNPubSubController  _pubsubController   @accessors(property=pubSubController);
     TNPubSubNode        _pubsubTagsNode;
 
@@ -114,7 +113,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 */
 - (void)didRetrieveSubscriptions:(CPNotification)aNotification
 {
-    var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[_connection JID] domain]],
+    var server = [TNStropheJID stropheJIDWithString:@"pubsub." + [[[TNStropheIMClient defaultClient] JID] domain]],
         nodeName = @"/archipel/tags";
 
     _pubsubTagsNode = [_pubsubController nodeWithName:nodeName];
@@ -160,7 +159,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
         if (_currentRosterItem)
             [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
-
     }
 }
 

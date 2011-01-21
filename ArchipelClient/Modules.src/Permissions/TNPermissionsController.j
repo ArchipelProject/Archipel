@@ -165,18 +165,18 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     var items = [CPArray array],
         item = [[TNMenuItem alloc] init];
     [item setTitle:@"Me"];
-    [item setObjectValue:[_connection JID]];
+    [item setObjectValue:[[TNStropheIMClient defaultClient] JID]];
 
     [buttonUser addItem:item];
     [buttonUser addItem:[CPMenuItem separatorItem]];
 
-    for (var i = 0; i < [[_roster contacts] count]; i++)
+    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
-        var contact = [[_roster contacts] objectAtIndex:i],
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
             item = [[TNMenuItem alloc] init],
             img = ([contact avatar]) ? [[contact avatar] copy] : _defaultAvatar;
 
-        if ([_roster analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
+        if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
         {
             [img setSize:CPSizeMake(18, 18)];
 

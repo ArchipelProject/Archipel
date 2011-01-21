@@ -83,9 +83,7 @@ TNArchipelErrorGeneral                  = 1;
     id                              _moduleType                 @accessors(property=moduleType);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
-    TNStropheConnection             _connection                 @accessors(property=connection);
     TNStropheGroup                  _group                      @accessors(property=group);
-    TNStropheRoster                 _roster                     @accessors(property=roster);
 
     BOOL                            _pubSubPermissionRegistred;
     BOOL                            _registredToPermissionCenter;
@@ -104,21 +102,6 @@ TNArchipelErrorGeneral                  = 1;
     _pubsubRegistrar        = [CPArray array];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
-}
-
-/*! @ignore
-    this method set the roster, the TNStropheConnection and the contact that module will be allow to access.
-    YOU MUST NOT CALL THIS METHOD BY YOURSELF. TNModuleController will do the job for you.
-
-    @param anEntity : TNStropheContact concerned by the module
-    @param aConnection : TNStropheConnection general connection
-    @param aRoster : TNStropheRoster general roster
-*/
-- (void)initializeWithEntity:(id)anEntity andRoster:(TNStropheRoster)aRoster
-{
-    _entity     = anEntity;
-    _roster     = aRoster;
-    _connection = [_roster connection];
 }
 
 
@@ -277,13 +260,13 @@ TNArchipelErrorGeneral                  = 1;
 
     var defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
 
-    if ([[_connection JID] bare] === defaultAdminAccount)
+    if ([[[TNStropheIMClient defaultClient] JID] bare] === defaultAdminAccount)
         return YES;
 
     if (!_mandatoryPermissions || [_mandatoryPermissions count] == 0)
         return YES;
 
-    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity]) && [[_connection JID] bare] != defaultAdminAccount)
+    if ((![[TNPermissionsCenter defaultCenter] hasPermission:@"all" forEntity:anEntity]) && [[[TNStropheIMClient defaultClient] JID] bare] != defaultAdminAccount)
     {
         if (![[TNPermissionsCenter defaultCenter] hasPermissions:_mandatoryPermissions forEntity:anEntity ])
                 return NO;
@@ -447,7 +430,7 @@ TNArchipelErrorGeneral                  = 1;
     _registredSelectors = [CPArray array];
     _pubsubRegistrar    = [CPArray array];
 
-    [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:_connection]];
+    [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]]];
 
     [_menuItem setEnabled:YES];
 
@@ -465,11 +448,11 @@ TNArchipelErrorGeneral                  = 1;
     for (var i = 0; i < [_registredSelectors count]; i++)
     {
         CPLog.trace("deleting SELECTOR in  " + _label + " :" + [_registredSelectors objectAtIndex:i]);
-        [_connection deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
+        [[[TNStropheIMClient defaultClient] connection] deleteRegisteredSelector:[_registredSelectors objectAtIndex:i]];
     }
 
     // flush any outgoing stanza
-    [_connection flush];
+    [[[TNStropheIMClient defaultClient] connection] flush];
 
     [_pubsubRegistrar removeAllObjects];
     [_registredSelectors removeAllObjects];
@@ -590,7 +573,7 @@ TNArchipelErrorGeneral                  = 1;
         CPLog.warn("Permission denied (" + code + "): " + [[aStanza firstChildWithName:@"text"] text]);
         msg = [[aStanza firstChildWithName:@"text"] text];
         [growl pushNotificationWithTitle:@"Permission denied" message:msg icon:TNGrowlIconWarning];
-        return TNArchipelErrorPermission
+        return TNArchipelErrorPermission;
     }
     else if ([aStanza firstChildWithName:@"text"])
     {

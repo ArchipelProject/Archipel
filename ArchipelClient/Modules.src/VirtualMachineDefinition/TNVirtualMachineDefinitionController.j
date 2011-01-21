@@ -1405,7 +1405,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)defineXML
 {
-    var uid             = [_connection getUniqueId],
+    var uid             = [[[TNStropheIMClient defaultClient] connection] getUniqueId],
         memory          = "" + [fieldMemory intValue] * 1024 + "",
         arch            = [buttonArchitecture title],
         machine         = [buttonMachines title],

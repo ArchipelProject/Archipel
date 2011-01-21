@@ -42,7 +42,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     @outlet CPTextField     labelTitle;
     @outlet CPTextField     message;
     @outlet CPTextField     password;
-    @outlet TNModalWindow   mainWindow @accessors(readonly);
+    @outlet TNModalWindow   mainWindow          @accessors(readonly);
     @outlet TNSwitch        credentialRemember;
 
     TNStropheStanza         _userVCard          @accessors(property=userVCard);

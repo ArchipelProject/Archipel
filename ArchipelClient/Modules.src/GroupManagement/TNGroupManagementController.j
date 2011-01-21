@@ -237,10 +237,10 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 {
     var selectedIndexes = [_tableVirtualMachines selectedRowIndexes],
         contact         = [_datasourceGroupVM objectAtIndex:[selectedIndexes firstIndex]],
-        row             = [[_roster mainOutlineView] rowForItem:contact],
+        row             = [[[[TNStropheIMClient defaultClient] roster] mainOutlineView] rowForItem:contact],
         indexes         = [CPIndexSet indexSetWithIndex:row];
 
-    [[_roster mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
+    [[[[TNStropheIMClient defaultClient] roster] mainOutlineView] selectRowIndexes:indexes byExtendingSelection:NO];
 }
 
 /*! Action that is sent when user click the create button

@@ -483,7 +483,7 @@ TNArchipelTransportBarReboot    = 4;
 - (void)populateHypervisorsTable
 {
     [_datasourceHypervisors removeAllObjects];
-    var rosterItems = [_roster contacts];
+    var rosterItems = [[[TNStropheIMClient defaultClient] roster] contacts];
 
     for (var i = 0; i < [rosterItems count]; i++)
     {

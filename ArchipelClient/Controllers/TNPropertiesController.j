@@ -48,7 +48,6 @@
     TNAvatarController              _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController              _pubSubController   @accessors(property=pubSubController);
     TNStropheContact                _entity             @accessors(getter=entity);
-    TNStropheRoster                 _roster             @accessors(property=roster);
 
     BOOL                            _isCollapsed;
     CPImage                         _pubsubDisabledImage;
@@ -114,7 +113,7 @@
 {
     if (([_entity class] == TNStropheContact) && ([_entity nickname] != [entryName stringValue]))
     {
-        [_roster changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
+        [[[TNStropheIMClient defaultClient] roster] changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
     }
     else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
     {
@@ -225,7 +224,7 @@
         [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatus setStringValue:[_entity XMPPStatus]];
 
-        switch ([_roster analyseVCard:[_entity vCard]])
+        switch ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]])
         {
             case TNArchipelEntityTypeVirtualMachine:
                 [entryType setStringValue:@"Virtual machine"];

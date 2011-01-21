@@ -33,7 +33,6 @@ var __defaultPermissionCenter;
 @implementation TNPermissionsCenter : CPObject
 {
     CPDictionary            _cachedPermissions      @accessors(getter=permissions);
-    TNStropheRoster         _roster                 @accessors(property=roster);
 
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
@@ -97,7 +96,7 @@ var __defaultPermissionCenter;
 */
 - (void)startWatching
 {
-    [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[_roster connection]];
+    [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityReady:) name:TNStropheContactVCardReceivedNotification object:nil];
 }
@@ -110,11 +109,12 @@ var __defaultPermissionCenter;
 {
     for (var i = 0; i < [somePermissions count]; i++)
     {
-        if ([anEntity class] !== TNStropheContact)
+
+        if ([anEntity class] != TNStropheContact)
             return NO;
 
-        if (((_adminAccountValidationMode === 1) && ([[[_roster connection] JID] node] === _adminAccountName))
-            || ((_adminAccountValidationMode === 0) && ([[[_roster connection] JID] bare] === _adminAccountName)))
+        if (((_adminAccountValidationMode === 1) && ([[[TNStropheIMClient defaultClient] JID] node] === _adminAccountName))
+            || ((_adminAccountValidationMode === 0) && ([[[TNStropheIMClient defaultClient] JID] bare] === _adminAccountName)))
             return YES;
 
         if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
@@ -146,7 +146,7 @@ var __defaultPermissionCenter;
 - (void)_entityReady:(CPNotification)aNotification
 {
     var contact = [aNotification object],
-        entityType = [_roster analyseVCard:[contact vCard]];
+        entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]];
 
 
     if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
@@ -174,12 +174,12 @@ var __defaultPermissionCenter;
     var sender  = [[aStanza firstChildWithName:@"items"] valueForAttribute:@"node"].split("/")[2],
         user    = [TNStropheJID stropheJIDWithString:[[aStanza firstChildWithName:@"push"] valueForAttribute:@"change"]];
 
-    if (![[[_roster connection] JID] bareEquals:user])
+    if (![[[TNStropheIMClient defaultClient] JID] bareEquals:user])
         return YES;
 
     if ([_cachedPermissions containsKey:sender])
     {
-        var anEntity = [_roster contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
+        var anEntity = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
 
         [_cachedPermissions removeObjectForKey:sender];
         CPLog.info("cache for entity " + anEntity + " has been invalidated");
@@ -335,7 +335,7 @@ var __defaultPermissionCenter;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypePermissionsGetOwn,
         "permission_type": "user",
-        "permission_target": [[[_roster connection] JID] bare]}];
+        "permission_target": [[[TNStropheIMClient defaultClient] JID] bare]}];
 
     [anEntity sendStanza:stanza andRegisterSelector:@selector(_didReceivePermissions:ofEntity:) ofObject:self userInfo:anEntity];
 }

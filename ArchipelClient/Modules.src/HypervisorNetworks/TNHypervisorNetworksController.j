@@ -626,7 +626,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 */
 - (BOOL)_didNetworkUndefinBeforeDefining:(TNStropheStanza)aStanza
 {
-    var uid             = [_connection getUniqueId],
+    var uid             = [[[TNStropheIMClient defaultClient] connection] getUniqueId],
         defineStanza    = [self generateXMLNetworkStanzaWithUniqueID:uid];
 
     [self sendStanza:defineStanza andRegisterSelector:@selector(_didDefineNetwork:) withSpecificID:uid];

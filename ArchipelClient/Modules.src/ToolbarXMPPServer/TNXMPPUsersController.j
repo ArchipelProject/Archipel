@@ -39,7 +39,6 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
     @outlet CPView          viewTableContainer;
     @outlet CPWindow        windowNewUser;
 
-    TNStropheRoster         _roster             @accessors(setter=setRoster:);
     TNStropheContact        _entity             @accessors(setter=setEntity:);
     TNTableViewDataSource   _datasourceUsers    @accessors(getter=datasource);
     id                      _delegate           @accessors(property=delegate);
@@ -240,7 +239,7 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
             var user     = [users objectAtIndex:i],
                 jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
                 name    = [jid node],
-                contact = [_roster contactWithJID:jid],
+                contact = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
                 newItem;
 
             if (contact)

@@ -28,7 +28,6 @@
     CPButton                _buttonAvatar           @accessors(property=buttonAvatar);
     CPImage                 _currentAvatar          @accessors(property=currentAvatar);
     CPMenu                  _menuAvatarSelection    @accessors(property=menuAvatarSelection);
-    TNStropheConnection     _connection             @accessors(property=connection);
 
     CPDictionary            _avatars;
     id                      _pListObject;

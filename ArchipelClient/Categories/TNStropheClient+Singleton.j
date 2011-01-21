@@ -28,8 +28,6 @@ var DefaultTNStropheIMClient = nil;
 
 + (TNStropheIMClient)defaultClient
 {
-    if (!DefaultTNStropheIMClient)
-        [CPException raise:CPInternalInconsistencyException raison:@"DefaultTNStropheIMClient is not set. use setDefaultClient: before"];
     return DefaultTNStropheIMClient;
 }
 

@@ -112,11 +112,9 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     }
 
     [usersController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [usersController setRoster:_roster];
     [usersController reload];
 
     [sharedGroupsController setEntity:[[buttonHypervisors selectedItem] objectValue]];
-    [sharedGroupsController setRoster:_roster];
     [sharedGroupsController reload];
 
     return YES;
@@ -180,12 +178,12 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
     var servers = [CPArray array],
         items = [CPArray array];
 
-    for (var i = 0; i < [[_roster contacts] count]; i++)
+    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
-        var contact = [[_roster contacts] objectAtIndex:i],
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
             item = [[TNMenuItem alloc] init];
 
-        if (([_roster analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+        if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
             && ([contact XMPPShow] != TNStropheContactStatusOffline)
             && ![servers containsObject:[[contact JID] domain]])
         {

@@ -92,7 +92,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     int                             _numberOfActiveModules          @accessors(getter=numberOfActiveModules);
     int                             _numberOfReadyModules           @accessors(getter=numberOfReadyModules);
     TNiTunesTabView                 _mainTabView                    @accessors(property=mainTabView);
-    TNStropheRoster                 _roster                         @accessors(property=roster);
     TNToolbar                       _mainToolbar                    @accessors(property=mainToolbar);
 
     CPArray                         _bundles;
@@ -137,17 +136,14 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (BOOL)setEntity:(id)anEntity ofType:(CPString)aType
 {
-    if (anEntity == _entity)
+    if (anEntity === _entity)
         return NO;
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:_entity];
-
-    _numberOfActiveModules = 0;
-
     [self _removeAllTabsFromModulesTabView];
 
+    _numberOfActiveModules  = 0;
     _numberOfReadyModules   = 0;
     _allModulesReady        = NO;
     _entity                 = anEntity;
@@ -187,20 +183,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     return YES;
 }
 
-/*! Set the roster and the connection for the Toolbar Modules.
-    @param aRoster TNStropheRoster a connected roster
-    @param aConnection the connection used by the roster
-*/
-- (void)setRosterForToolbarItems:(TNStropheRoster)aRoster andConnection:(TNStropheConnection)aConnection
-{
-    for (var i = 0; i < [[_loadedToolbarModules allValues] count]; i++)
-    {
-        var module = [[_loadedToolbarModules allValues] objectAtIndex:i];
-
-        [module initializeWithEntity:nil andRoster:aRoster];
-    }
-
-}
 
 - (void)setCurrentEntityForToolbarModules:(TNStropheContact)anEntity
 {
@@ -338,7 +320,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         [module willUnload];
         [module setEntity:nil];
-        [module setRoster:nil];
 
         [[module view] scrollPoint:CPMakePoint(0.0, 0.0)];
 
@@ -372,7 +353,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [newViewItem setLabel:[aModule label]];
     [newViewItem setView:scrollView];
 
-    [aModule initializeWithEntity:_entity andRoster:_roster];
+    [aModule setEntity:_entity];
 
     [scrollView setDocumentView:[aModule view]];
 
@@ -560,7 +541,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     if ([vCard text] != [[_entity vCard] text])
     {
-        _moduleType = [_roster analyseVCard:vCard];
+        _moduleType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
 
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];

@@ -28,8 +28,6 @@
 {
     @outlet CPTextField newGroupName;
     @outlet CPWindow    mainWindow;
-
-    TNStropheRoster     roster  @accessors;
 }
 
 /*! overide of the orderFront
@@ -56,7 +54,7 @@
     {
         var groupName = [newGroupName stringValue];
 
-        [[self roster] addGroupWithName:groupName];
+        [[[TNStropheIMClient defaultClient] roster] addGroupWithName:groupName];
         [newGroupName setStringValue:@""];
         CPLog.info(@"new group " + groupName + " added.");
 
@@ -106,7 +104,7 @@
         defaults = [CPUserDefaults standardUserDefaults],
         key     = TNArchipelRememberOpenedGroup + [group name];
 
-    [roster removeGroup:group];
+    [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
     [defaults removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];

@@ -161,8 +161,8 @@
 
             _session = [TNStropheMUCRoom joinRoom:[defaults objectForKey:@"TNArchipelMUCDefaultRoom"]
                                         onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
-                                  usingConnection:_connection
-                                         withNick:[_connection JID]];
+                                  usingConnection:[[TNStropheIMClient defaultClient] connection]
+                                         withNick:[[TNStropheIMClient defaultClient] JID]];
             [_session join];
             [_session setDelegate:self];
 
@@ -269,7 +269,7 @@
     var index   = [[_tableViewPeople selectedRowIndexes] firstIndex],
         member  = [_peopleDatasource objectAtIndex:index];
 
-    if (![_roster containsJID:[member JID]])
+    if (![[[TNStropheIMClient defaultClient] roster] containsJID:[member JID]])
     {
         var alert = [TNAlert alertWithMessage:@"Adding contact"
                                     informative:@"Would you like to add " + [member nickname] + @" to your roster"
@@ -287,9 +287,9 @@
 {
     var member  = someUserInfo;
 
-    [_roster addContact:[member nickname] withName:[member nickname] inGroupWithName:@"General"];
-    [_roster askAuthorizationTo:[member nickname]];
-    [_roster authorizeJID:[member nickname]];
+    [[[TNStropheIMClient defaultClient] roster] addContact:[member nickname] withName:[member nickname] inGroupWithName:@"General"];
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[member nickname]];
+    [[[TNStropheIMClient defaultClient] roster] authorizeJID:[member nickname]];
 }
 
 
@@ -302,8 +302,8 @@
 */
 - (void)mucRoom:(TNStropheMUCRoom)aRoom receivedMessage:(CPDictionary)aMessage
 {
-    var color = ([aMessage valueForKey:@"from"] == [_connection JID]) ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
-        isNotice = ([aMessage valueForKey:"body"].indexOf([[_connection JID] node]) != -1)
+    var color = ([aMessage valueForKey:@"from"] == [[TNStropheIMClient defaultClient] JID]) ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
+        isNotice = ([aMessage valueForKey:"body"].indexOf([[[TNStropheIMClient defaultClient] JID] node]) != -1)
 
     if (isNotice)
         color = [CPColor colorWithHexString:@"D1E28B"];
