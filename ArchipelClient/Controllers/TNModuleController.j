@@ -150,6 +150,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     _moduleType             = aType;
 
     [center removeObserver:self];
+
+    if (!_entity)
+        return;
+
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
