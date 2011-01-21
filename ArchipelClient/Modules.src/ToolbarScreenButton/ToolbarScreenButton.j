@@ -90,8 +90,11 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
     }
     [self setGUIAccordingToStatus:nil];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    if (typeof(TNArchipelVNCInformationRecoveredNotification) != "undefined")
+    {
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    }
 }
 
 
