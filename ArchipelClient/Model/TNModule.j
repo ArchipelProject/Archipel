@@ -89,6 +89,7 @@ TNArchipelErrorGeneral                  = 1;
     BOOL                            _registredToPermissionCenter;
     CPArray                         _pubsubRegistrar;
     CPArray                         _registredSelectors;
+    id                              _pubSubHandlerId;
 }
 
 
@@ -100,6 +101,7 @@ TNArchipelErrorGeneral                  = 1;
     _isActive               = NO;
     _isVisible              = NO;
     _pubsubRegistrar        = [CPArray array];
+    _registredSelectors     = [CPArray array];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
 }
@@ -427,10 +429,9 @@ TNArchipelErrorGeneral                  = 1;
 
     _animationDuration  = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelAnimationsDuration"]; // if I put this in init, it won't work.
     _isActive           = YES;
-    _registredSelectors = [CPArray array];
-    _pubsubRegistrar    = [CPArray array];
 
-    [_registredSelectors addObject:[TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]]];
+    if (!_pubSubHandlerId)
+        _pubSubHandlerId = [TNPubSubNode registerSelector:@selector(_onPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
     [_menuItem setEnabled:YES];
 
