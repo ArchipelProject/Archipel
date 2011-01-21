@@ -186,8 +186,6 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [windowDownloadQueue orderOut:nil];
     [windowNewCastURL orderOut:nil];
 
@@ -195,6 +193,8 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
     [[_castsDatasource contents] removeAllObjects];
     [_mainOutlineView reloadData];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible

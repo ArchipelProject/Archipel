@@ -199,13 +199,13 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [_datasourceSnapshots removeAllObjects];
     [_outlineViewSnapshots reloadData];
     [_outlineViewSnapshots deselectAll];
     [_revertButton setEnabled:NO];
     [_minusButton setEnabled:NO];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible

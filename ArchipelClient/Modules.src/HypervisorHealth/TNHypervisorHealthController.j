@@ -293,15 +293,12 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     if (_timerStats)
     {
         [_timerStats invalidate];
         CPLog.debug("timer for stats invalidated");
         _timerStats = nil;
     }
-
 
     if (_timerLogs)
     {
@@ -320,6 +317,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         [_disksDatasource removeAllObjects];
     if (_datasourceLogs)
         [_datasourceLogs removeAllObjects];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible

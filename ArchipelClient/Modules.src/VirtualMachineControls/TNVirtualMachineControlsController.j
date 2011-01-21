@@ -286,8 +286,6 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [fieldInfoMem setStringValue:@"..."];
     [fieldInfoCPUs setStringValue:@"..."];
     [fieldInfoConsumedCPU setStringValue:@"..."];
@@ -296,6 +294,8 @@ TNArchipelTransportBarReboot    = 4;
 
     [self disableAllButtons];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible

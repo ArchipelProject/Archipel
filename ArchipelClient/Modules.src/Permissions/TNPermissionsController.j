@@ -221,10 +221,10 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [_datasourcePermissions removeAllObjects];
-    [_tablePermissions reloadData]
+    [_tablePermissions reloadData];
+
+    [super willUnload];
 }
 
 /*! called when permissions changes

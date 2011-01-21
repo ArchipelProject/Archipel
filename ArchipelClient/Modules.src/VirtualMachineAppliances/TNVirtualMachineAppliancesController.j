@@ -170,10 +170,10 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [_appliancesDatasource removeAllObjects];
     [_tableAppliances reloadData];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible

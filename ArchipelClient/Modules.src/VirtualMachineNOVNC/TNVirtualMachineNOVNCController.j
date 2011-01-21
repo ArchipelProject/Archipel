@@ -180,6 +180,7 @@ TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationReco
 {
     _VMHost = nil;
     [fieldPassword setStringValue:@""];
+
     [super willUnload];
 }
 

@@ -511,9 +511,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)willUnload
 {
-    [super willUnload];
-
     [self setDefaultValues];
+
+    [super willUnload];
 }
 
 /*! called when module becomes visible
