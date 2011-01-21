@@ -1354,6 +1354,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 {
     if ([_rosterOutlineView numberOfSelectedRows] == 0)
     {
+        [moduleController setEntity:nil ofType:nil];
+        [moduleController setCurrentEntityForToolbarModules:nil];
         [self showHelpView];
         [propertiesController hideView];
     }
