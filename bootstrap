@@ -172,8 +172,8 @@ def ask_bool(message, default="y"):
 
 def test_python_version():
     version = sys.version_info
-    if not version[0] == 2 or (version[0] == 2 and not version[1] in (5,6)):
-        print "\033[31m\n * ERROR: You need to use python 2.5 or 2.6\033[0m\n"
+    if not version[0] == 2 or (version[0] == 2 and not version[1] in (5,6,7)):
+        print "\033[31m\n * ERROR: You need to use python 2.5 to 2.7 \033[0m\n"
         sys.exit(1)
 
 
