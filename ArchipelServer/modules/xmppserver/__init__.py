@@ -11,6 +11,7 @@ def __module_init__xmppserver(self):
     exec_path = self.configuration.get("XMPPSERVER", "exec_path")
     if not os.path.exists(exec_path):
         self.log.warning("unable to find %s command. aborting loading of module XMPPServer" % exec_path)
+        self.module_xmppserver = False
         return
     self.module_xmppserver = xmppserver.TNXMPPServerController(self, exec_path=exec_path)
 
