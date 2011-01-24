@@ -9,11 +9,12 @@ ARCHIPEL_NS_XMPPSERVER_USERS   = "archipel:xmppserver:users"
 # this method will be call at loading
 def __module_init__xmppserver(self):
     exec_path = self.configuration.get("XMPPSERVER", "exec_path")
+    exec_user = self.configuration.get("XMPPSERVER", "exec_user")
     if not os.path.exists(exec_path):
         self.log.warning("unable to find %s command. aborting loading of module XMPPServer" % exec_path)
         self.module_xmppserver = False
         return
-    self.module_xmppserver = xmppserver.TNXMPPServerController(self, exec_path=exec_path)
+    self.module_xmppserver = xmppserver.TNXMPPServerController(self, exec_path=exec_path, exec_user=exec_user)
 
 # this method will be called at registration of handlers for XMPP
 def __module_register_stanza__xmppserver(self):

@@ -28,7 +28,7 @@ import archipel
 
 class TNXMPPServerController:
     
-    def __init__(self, entity, exec_path):
+    def __init__(self, entity, exec_path, exec_user):
         """
         initialize the module
         @type entity TNArchipelEntity
@@ -36,8 +36,9 @@ class TNXMPPServerController:
         @type entity String
         @param entity the path of the ejabberdctl command
         """
-        self.entity             = entity
-        self.ejabberdctl_path   = exec_path
+        self.entity                 = entity
+        self.ejabberdctl_path       = exec_path
+        self.ejabberdctl_user       = exec_user
         
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False);
@@ -50,6 +51,9 @@ class TNXMPPServerController:
         self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False);
     
     
+    def generate_command(self, command):
+        """generate the ejabberdctl command"""
+        return "su - %s -c '%s %s'" % (self.ejabberdctl_user, self.ejabberdctl_path, command)
     
     ### XMPP Processing for shared groups
     
@@ -100,7 +104,7 @@ class TNXMPPServerController:
             groupName   = iq.getTag("query").getTag("archipel").getAttr("name")
             groupDesc   = iq.getTag("query").getTag("archipel").getAttr("description")
             server      = self.entity.jid.getDomain()
-            cmd         = "%s srg-create %s %s \"'%s'\" \"'%s'\" %s" % (self.ejabberdctl_path, groupID, server, groupName, groupDesc, groupID)
+            cmd         = self.generate_command("srg-create %s %s \"\'%s\'\" \"\'%s\'\" %s"  % (groupID, server, groupName, groupDesc, groupID))
             
             self.entity.log.debug("console command is : %s" % cmd)
             if os.system(cmd):
@@ -128,7 +132,7 @@ class TNXMPPServerController:
             reply       = iq.buildReply("result")
             groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
             server      = self.entity.jid.getDomain()
-            cmd         = "%s srg-delete %s %s" % (self.ejabberdctl_path, groupID, server)
+            cmd         = self.generate_command("srg-delete %s %s"  % (groupID, server))
             
             self.entity.log.debug("console command is : %s" % cmd)
             if os.system(cmd):
@@ -155,7 +159,7 @@ class TNXMPPServerController:
         # try:
         reply       = iq.buildReply("result")
         server      = self.entity.jid.getDomain()
-        cmd         = "%s srg-list %s" % (self.ejabberdctl_path, server)
+        cmd         = self.generate_command("srg-list %s"  % server)
         groupsNode  = []
         
         self.entity.log.debug("console command is : %s" % cmd)
@@ -166,7 +170,7 @@ class TNXMPPServerController:
         groups = output.split()
         
         for group in groups:
-            cmd = "%s srg-get-info %s %s" % (self.ejabberdctl_path, group, server)
+            cmd = self.generate_command("srg-get-info %s %s" % (group, server))
             status, output = commands.getstatusoutput(cmd)
             displayed_name, gid, description = output.split("\n")
             gid = re.findall('"([^"]*)"', gid)[0]
@@ -179,7 +183,7 @@ class TNXMPPServerController:
             info = {"id": gid, "displayed_name": displayed_name, "description": description}
             newNode = xmpp.Node("group", attrs=info)
             
-            cmd = "%s srg-get-members %s %s" % (self.ejabberdctl_path, group, server)
+            cmd = self.generate_command("srg-get-members %s %s" % (group, server))
             status, output = commands.getstatusoutput(cmd)
             for jid in output.split():
                 newNode.addChild("user", attrs={"jid": jid})
@@ -210,7 +214,7 @@ class TNXMPPServerController:
             
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                cmd = "%s srg-user-add %s %s %s %s" % (self.ejabberdctl_path, userJID.getNode(), userJID.getDomain(), groupID, server)
+                cmd = self.generate_command("srg-user-add %s %s %s %s" % (userJID.getNode(), userJID.getDomain(), groupID, server))
                 commands.getstatusoutput(cmd);
             
             self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
@@ -239,7 +243,7 @@ class TNXMPPServerController:
             
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                cmd = "%s srg-user-del %s %s %s %s" % (self.ejabberdctl_path, userJID.getNode(), userJID.getDomain(), groupID, server)
+                cmd = self.generate_command("srg-user-del %s %s %s %s" % (userJID.getNode(), userJID.getDomain(), groupID, server))
                 commands.getstatusoutput(cmd);
                 self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
             
@@ -297,7 +301,7 @@ class TNXMPPServerController:
             for user in users:
                 username    = user.getAttr("username")
                 password    = user.getAttr("password")
-                cmd         = "%s register %s %s %s" % (self.ejabberdctl_path, username, server, password)
+                cmd         = self.generate_command("register %s %s %s" % (username, server, password))
                 if os.system(cmd):
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
                 self.entity.log.info("registred a new user user %s@%s" % (username, server))
@@ -325,7 +329,7 @@ class TNXMPPServerController:
             
             for user in users:
                 username    = user.getAttr("username")
-                cmd         = "%s unregister %s %s" % (self.ejabberdctl_path, username, server)
+                cmd         = self.generate_command("unregister %s %s" % (username, server))
                 if os.system(cmd):
                     raise Exception("EJABBERDCTL command error : %s" % cmd)
                 self.entity.log.info("unregistred user %s@%s" % (username, server))
@@ -348,7 +352,7 @@ class TNXMPPServerController:
         try:
             reply       = iq.buildReply("result")
             server      = self.entity.jid.getDomain()
-            cmd         = "%s registered_users %s" % (self.ejabberdctl_path, server)
+            cmd         = self.generate_command("registered_users %s" % server)
             nodes       = []
             
             status, output = commands.getstatusoutput(cmd);

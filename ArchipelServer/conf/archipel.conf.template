@@ -349,3 +349,4 @@ database                    = /var/lib/archipel/scheduler.sqlite3
 
 [XMPPSERVER]
 exec_path                   = /sbin/ejabberdctl
+exec_user                   = ejabberd
