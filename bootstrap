@@ -654,7 +654,7 @@ def server_configure(confpath, general_exec_dir, general_var_dir, general_etc_di
                 {"domain": "GLOBAL",                "key": "general_exec_dir",                          "name": "General execution directory",          "type": "text", "default": "%s/ArchipelServer" % general_exec_dir},
                 {"domain": "GLOBAL",                "key": "machine_ip",                                "name": "Hypervisor IP",                        "type": "text", "default": "auto"},
                 {"domain": "GLOBAL",                "key": "libvirt_uri",                               "name": "Libvirt URI",                          "type": "text", "default": "qemu:///system"},
-                {"domain": "GLOBAL",                "key": "xmpp_pubsub_server",                        "name": "PubSub Server",                        "type": "test", "default": "pubsub.xmppserver"},
+                {"domain": "GLOBAL",                "key": "xmpp_pubsub_server",                        "name": "PubSub Server",                        "type": "text", "default": "pubsub.xmppserver"},
                 {"domain": "GLOBAL",                "key": "archipel_root_admin",                       "name": "Archipel admin account",               "type": "text", "default": "admin@xmppserver"},
                 {"domain": "MODULES",               "key": "hypervisor_health",                         "name": "Use module hypervisor health",         "type": "bool", "default": "y"},
                 {"domain": "MODULES",               "key": "hypervisor_network",                        "name": "Use module hypervisor network",        "type": "bool", "default": "y"},
