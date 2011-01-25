@@ -27,13 +27,14 @@
     {
         if (self = [super initWithContentRect:aFrame styleMask:CPBorderlessWindowMask])
         {
-            _windowView._DOMElement.style.background               = "-webkit-gradient(linear, left top, left bottom, from(#F4F4F4), to(#D2D2D2))";
-            _windowView._DOMElement.style.background               = "-moz-linear-gradient(-90deg, #F4F4F4, #D2D2D2)";
-            _windowView._DOMElement.style.border                   = "1px solid white";
-            _windowView._DOMElement.style.borderRadius             = "6px";
-            _windowView._DOMElement.style.MozBorderRadius          = "6px";
-            _windowView._DOMElement.style.webkitBoxShadow          = "0px 0px 10px #8DB9D1";
-            _windowView._DOMElement.style.MozBoxShadow             = "0px 0px 10px #8DB9D1";
+            _windowView._DOMElement.style.background        = "#F4F4F4";
+            _windowView._DOMElement.style.background        = "-webkit-gradient(linear, left top, left bottom, from(#F4F4F4), to(#D2D2D2))";
+            _windowView._DOMElement.style.background        = "-moz-linear-gradient(-90deg, #F4F4F4, #D2D2D2)";
+            _windowView._DOMElement.style.border            = "1px solid white";
+            _windowView._DOMElement.style.borderRadius      = "6px";
+            _windowView._DOMElement.style.MozBorderRadius   = "6px";
+            _windowView._DOMElement.style.webkitBoxShadow   = "0px 0px 10px #8DB9D1";
+            _windowView._DOMElement.style.MozBoxShadow      = "0px 0px 10px #8DB9D1";
         }
     }
     else
