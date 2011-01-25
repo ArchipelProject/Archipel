@@ -303,6 +303,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         [self prepareVNCScreen];
 }
 
+
 #pragma mark -
 #pragma mark Utilities
 
