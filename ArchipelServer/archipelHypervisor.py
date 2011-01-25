@@ -282,7 +282,13 @@ class TNArchipelHypervisor(TNArchipelEntity):
         @param iq: the received IQ
         """
         action = self.check_acp(conn, iq)
-        self.check_perm(conn, iq, action, -1)
+        
+        # temp fix to authorize migration
+        # We should find a way to authorize 
+        # hypervisors to ask uri with another way
+        if not action in ('uri'):
+            self.check_perm(conn, iq, action, -1)
+        
         
         if action == "alloc":
             reply = self.iq_alloc(iq)
