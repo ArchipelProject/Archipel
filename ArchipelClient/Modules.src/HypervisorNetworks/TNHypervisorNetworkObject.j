@@ -23,7 +23,7 @@
 /*! @ingroup hypervisornetworks
     this class represent a network object
 */
-@implementation TNNetwork : CPObject
+@implementation TNHypervisorNetwork : CPObject
 {
     BOOL        _isDHCPEnabled           @accessors(getter=isDHCPEnabled, setter=setDHCPEnabled:);
     BOOL        _isNetworkEnabled        @accessors(getter=isNetworkEnabled, setter=setNetworkEnabled:);

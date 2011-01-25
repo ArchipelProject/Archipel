@@ -17,12 +17,12 @@
  */
 
 @import "TNDHCPEntryObject.j";
-@import "TNNetworkObject.j";
+@import "TNHypervisorNetworkObject.j";
 
 /*! @ingroup hypervisornetworks
     The newtork window edition
 */
-@implementation TNNetworkController : CPObject
+@implementation TNWindowNetworkController : CPObject
 {
     @outlet CPWindow        mainWindow;
     @outlet CPButtonBar     buttonBarControlDHCPHosts;

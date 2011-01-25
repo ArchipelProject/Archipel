@@ -20,9 +20,9 @@
 @import <AppKit/AppKit.j>
 @import <AppKit/CPCollectionView.j>
 
-@import "TNNetworkObject.j"
+@import "TNHypervisorNetworkObject.j"
 @import "TNDHCPEntryObject.j"
-@import "TNNetworkController.j"
+@import "TNWindowNetworkController.j"
 
 TNArchipelPushNotificationNetworks          = @"archipel:push:network";
 TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
@@ -48,7 +48,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     @outlet CPTextField                 fieldJID;
     @outlet CPTextField                 fieldName;
     @outlet CPView                      viewTableContainer;
-    @outlet TNNetworkController         networkController;
+    @outlet TNWindowNetworkController   networkController;
 
     CPButton                            _activateButton;
     CPButton                            _deactivateButton;
@@ -467,7 +467,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
                 [DHCPHostEntriesArray addObject:DHCPEntryObject];
             }
 
-            var newNetwork  = [TNNetwork networkWithName:name
+            var newNetwork  = [TNHypervisorNetwork networkWithName:name
                                                     UUID:uuid
                                               bridgeName:bridgeName
                                              bridgeDelay:bridgeDelay
@@ -506,7 +506,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
         ipStart         = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.2",
         ipEnd           = ip.split(".")[0] + "." + ip.split(".")[1] + ".0.254",
         baseDHCPEntry   = [TNDHCPEntry DHCPRangeWithStartAddress:ipStart  endAddress:ipEnd],
-        newNetwork      = [TNNetwork networkWithName:uuid
+        newNetwork      = [TNHypervisorNetwork networkWithName:uuid
                                                 UUID:uuid
                                           bridgeName:@"br" + Math.round((Math.random() * 42000))
                                          bridgeDelay:@"0"
