@@ -50,7 +50,16 @@ TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
 TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
 
 
+/*! @ingroup virtualmachinenovnc
+    sent when vnc info of the current entity have been recovered
+*/
 TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification";
+
+/*! @ingroup virtualmachinenovnc
+    if received, will show external VNC window
+*/
+TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowNotification";
+
 
 /*! @ingroup virtualmachinenovnc
     module that allow to access virtual machine console using VNC
@@ -168,7 +177,7 @@ TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationReco
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCScreenNotification object:nil];
+    [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCShowExternalWindowNotification object:nil];
     [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -277,7 +286,7 @@ TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationReco
     [self checkIfRunning];
 }
 
-/*! called when TNArchipelVNCScreenNotification is received
+/*! called when TNArchipelVNCShowExternalWindowNotification is received
     @param aNotification the notification
 */
 - (void)_showExternalScreen:(CPNotification)aNotification

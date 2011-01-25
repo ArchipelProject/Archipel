@@ -19,12 +19,12 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
 
 /*! @defgroup  toolbardestroybutton Module Toolbar Button Destroy
     @desc This module displays a toolbar item that can send destroy action to the current entity
 */
 
+var TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowNotification";
 
 /*! @ingroup toolbardestroybutton
     The module main controller
@@ -109,7 +109,7 @@ TNArchipelVNCScreenNotification = @"TNArchipelVNCScreenNotification";
     var center = [CPNotificationCenter defaultCenter];
 
     CPLog.info(@"Sending TNArchipelVNCScreenNotification");
-    [center postNotificationName:TNArchipelVNCScreenNotification object:self userInfo:nil];
+    [center postNotificationName:TNArchipelVNCShowExternalWindowNotification object:self userInfo:nil];
 }
 
 @end
