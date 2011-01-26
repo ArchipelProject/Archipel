@@ -179,7 +179,7 @@ def clear():
 
 ### install client
 
-def install_archipelclient():
+def install_archipelclient(interactive=True, properties=None):
     clear()
     print MSG_ARCHIPEL_CLIENT_HEADER
     
@@ -190,20 +190,35 @@ def install_archipelclient():
     
     inst_export = None
     
-    inst_capp           = ask_bool("Would you like to build Cappuccino ?", default="n")
-    inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
-    inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
-    inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
-    inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
-    inst_messageboard   = ask_bool("Would you like to build MessageBoard ?")
-    inst_tnkit          = ask_bool("Would you like to build TNKit ?")
-    inst_lpkit          = ask_bool("Would you like to build LPKit ?")
-    inst_archipel       = ask_bool("Would you like to build Archipel Client ?")
-    inst_appcapp        = ask_bool("Would you like to apply Cappuccino Framework ?")
+    if interactive:
+        inst_capp           = ask_bool("Would you like to build Cappuccino ?", default="n")
+        inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
+        inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
+        inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
+        inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
+        inst_messageboard   = ask_bool("Would you like to build MessageBoard ?")
+        inst_tnkit          = ask_bool("Would you like to build TNKit ?")
+        inst_lpkit          = ask_bool("Would you like to build LPKit ?")
+        inst_archipel       = ask_bool("Would you like to build Archipel Client ?")
+        inst_appcapp        = ask_bool("Would you like to apply Cappuccino Framework ?")
+        if ask_bool("Would you like to export Archipel ?"):
+            inst_export     = ask("Where do you want to export Archipel Client ?", None, "~/")
+    else:
+        inst_capp           = properties["inst_capp"]
+        inst_growl          = properties["inst_growl"]
+        inst_vnc            = properties["inst_vnc"]
+        inst_strophe        = properties["inst_strophe"]
+        inst_itunestabview  = properties["inst_itunestabview"]
+        inst_messageboard   = properties["inst_messageboard"]
+        inst_tnkit          = properties["inst_tnkit"]
+        inst_lpkit          = properties["inst_lpkit"]
+        inst_archipel       = properties["inst_archipel"]
+        if properties["inst_export"]:
+            inst_appcapp    = True
+            inst_export     = properties["inst_export"]
+        else:
+            inst_appcapp    = False
     
-    if ask_bool("Would you like to export Archipel ?"):
-        inst_export    = ask("Where do you want to export Archipel Client ?", None, "~/")
-        
     print ""
     print " Installation information"
     print "   - build Cappuccino            : %s" % str(inst_capp)
@@ -219,10 +234,11 @@ def install_archipelclient():
     if inst_export: print "   - export to                   : %s" % inst_export
     print ""
     
-    confirm = ask("Do you confirm ?", ["y", "n"], "y")
-    if confirm == "n":
-        print " \033[33m* Installation canceled by user\033[0m"
-        sys.exit(0)
+    if interactive: 
+        confirm = ask("Do you confirm ?", ["y", "n"], "y")
+        if confirm == "n":
+            print " \033[33m* Installation canceled by user\033[0m"
+            sys.exit(0)
     
     if inst_capp:
         client_build_cappuccino()
@@ -245,17 +261,17 @@ def install_archipelclient():
     print " Installation is now complete.\n"
     print "\033[0m"
     
-    ask_bool("Continue ?")
+    if interactive: ask_bool("Continue ?")
 
 
 def client_build_cappuccino():
     print " * Building Cappuccino";
     print "\n\033[35m*******************************************************************************"
-    ret = os.system("cd ./ArchipelClient/Libraries/Cappuccino && ./bootstrap.sh")
+    ret = os.system("cd ./Libraries/Cappuccino && ./bootstrap.sh")
     if ret != 0:
         print "\033[31mUnable to bootstrap Cappuccino\033[0m"
         sys.exit(1)
-    ret = os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake install")
+    ret = os.system("cd ./Libraries/Cappuccino && jake install")
     print "*******************************************************************************\033[0m"
     if ret != 0:
         print "\033[31mUnable to build Cappuccino\033[0m"
@@ -275,7 +291,7 @@ def client_build_cappuccino():
 def client_build_strophecappuccino():
     print " * Building StropheCappuccino";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/StropheCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/StropheCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build StropheCappuccino\033[0m"
@@ -286,7 +302,7 @@ def client_build_strophecappuccino():
 def client_build_growlcappuccino():
     print " * Building GrowlCappuccino";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/GrowlCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build GrowlCappuccino\033[0m"
@@ -297,7 +313,7 @@ def client_build_growlcappuccino():
 def client_build_vnccappuccino():
     print " * Building VNCCappuccino";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/VNCCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/VNCCappuccino && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build Cappuccino\033[0m"
@@ -308,7 +324,7 @@ def client_build_vnccappuccino():
 def client_build_itunestabview():
     print " * Building iTunesTabView";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/iTunesTabView && jake debug %s && jake release %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/iTunesTabView && jake debug %s && jake release %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build iTunesTabView\033[0m"
@@ -319,7 +335,7 @@ def client_build_itunestabview():
 def client_build_messageboard():
     print " * Building MessageBoard";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/MessageBoard && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/MessageBoard && jake debug  %s && jake release %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build MessageBoard\033[0m"
@@ -330,7 +346,7 @@ def client_build_messageboard():
 def client_build_lpkit():
     print " * Building LPKit";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build %s && export CONFIGURATION=Debug && jake -f myJakeFile build %s" % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build %s && export CONFIGURATION=Debug && jake -f myJakeFile build %s" % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build LPKit\033[0m"
@@ -341,7 +357,7 @@ def client_build_lpkit():
 def client_build_tnkit():
     print " * Building TNKit";
     s = Spinner();
-    ret = os.system("cd ./ArchipelClient/Libraries/TNKit && jake debug  %s && jake release %s"  % (REDIRECT, REDIRECT))
+    ret = os.system("cd ./Libraries/TNKit && jake debug  %s && jake release %s"  % (REDIRECT, REDIRECT))
     s.stop()
     if ret != 0:
         print "\033[31mUnable to build TNKit\033[0m"
@@ -372,7 +388,7 @@ def client_apply_cappuccino_frameworks():
 def client_export_archipel(path):
     print " * Exporting archipel to %s" % path
     s = Spinner();
-    os.system("cp -a ./ArchipelClient/Build/Release/Archipel %s %s" % (path, REDIRECT))
+    os.system("cp -a ./Build/Release/Archipel %s %s" % (path, REDIRECT))
     s.stop()
     print "\033[32m * Archipel Client exported\033[0m"
 
@@ -383,7 +399,7 @@ def client_export_archipel(path):
 
 ### Main
 
-def main():
+def main(interactive=True, properties=None):
     try:
         clear()
 
@@ -393,21 +409,82 @@ def main():
         git_init_submodules()
         print " "
 
-        confirm = ask("Do want to start installation ?", ["y", "n"], "y")
-        if confirm == "n":
-            print " \033[33m* Installation canceled by user\033[0m"
-            sys.exit(0)
+        if interactive: 
+            confirm = ask("Do want to start installation ?", ["y", "n"], "y")
+            if confirm == "n":
+                print " \033[33m* Installation canceled by user\033[0m"
+                sys.exit(0)
 
-        install_archipelclient()
+        install_archipelclient(interactive, properties)
         clear()
     except KeyboardInterrupt:
         print "\n\n\033[33m * Installation canceled by user\033[0m\n"
 
 
 
+# inst_capp           = properties["inst_capp"]
+# inst_growl          = properties["inst_growl"]
+# inst_vnc            = properties["inst_vnc"]
+# inst_strophe        = properties["inst_strophe"]
+# inst_itunestabview  = properties["inst_itunestabview"]
+# inst_messageboard   = properties["inst_messageboard"]
+# inst_tnkit          = properties["inst_tnkit"]
+# inst_lpkit          = properties["inst_lpkit"]
+# inst_archipel       = properties["inst_archipel"]
+# inst_appcapp        = properties["inst_appcapp"]
+# if inst_appcapp:
+#     inst_export     = properties["inst_export"]
 
 if __name__ == "__main__":
-    main()
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "", [  "notinteractive",
+                                                        "cappuccino",
+                                                        "growlcappuccino", 
+                                                        "vnccappuccino",
+                                                        "strophecappuccino",
+                                                        "itunestabview",
+                                                        "messageboard", 
+                                                        "lpkit",
+                                                        "tnkit",
+                                                        "archipel",
+                                                        "export="])
+    except getopt.GetoptError, err:
+        print str(err)
+        #usage()
+        sys.exit(2);
+    
+    interactive = True
+    
+    properties = {}
+    properties["inst_capp"]             = False
+    properties["inst_growl"]            = False
+    properties["inst_vnc"]              = False
+    properties["inst_strophe"]          = False
+    properties["inst_itunestabview"]    = False
+    properties["inst_messageboard"]     = False
+    properties["inst_lpkit"]            = False
+    properties["inst_tnkit"]            = False
+    properties["inst_archipel"]         = False
+    properties["inst_export"]           = None
+    
+    
+    for o, a in opts:
+        if o in ("--notinteractive"):
+            interactive = False
+            
+        if not interactive and o in ("--cappuccino"):           properties["inst_capp"]             = True
+        if not interactive and o in ("--growlcappuccino"):      properties["inst_growl"]            = True
+        if not interactive and o in ("--vnccappuccino"):        properties["inst_vnc"]              = True
+        if not interactive and o in ("--strophecappuccino"):    properties["inst_strophe"]          = True
+        if not interactive and o in ("--itunestabview"):        properties["inst_itunestabview"]    = True
+        if not interactive and o in ("--messageboard"):         properties["inst_messageboard"]     = True
+        if not interactive and o in ("--lpkit"):                properties["inst_lpkit"]            = True
+        if not interactive and o in ("--tnkit"):                properties["inst_tnkit"]            = True
+        if not interactive and o in ("--archipel"):             properties["inst_archipel"]         = True
+        if not interactive and o in ("--export"):               properties["inst_export"]           = a
+    
+    
+    main(interactive, properties)
 
 
 
