@@ -39,19 +39,6 @@ default values should be ok most of the time.
 """
 
 
-MSG_ARCHIPEL_INIT_SUBMODULES = """\
-###############################################################################
-#                                                                             #
-#                        Archipel Submodules                                  #
-#                                                                             #
-###############################################################################
-
-It seems that your local copy hasn't its submodules initialized. Bootstrap
-will initialize it for you. Please wait.
-
-"""
-
-
 MSG_ARCHIPEL_END = """\
 ###############################################################################
 #                                                                             #
@@ -145,21 +132,6 @@ def clear():
     os.system("clear")
 
 
-def git_init_submodules():
-    if not os.path.exists(".submodules_initialized"):
-        clear()
-        print MSG_ARCHIPEL_INIT_SUBMODULES
-        print "\033[35m"
-        ret = os.system("git submodule update --init --recursive")
-        if ret != 0:
-            print "\033[31mUnable to initialize submodules\033[0m"
-            sys.exit(1)
-        print "\033[32mSubmodule are initialized.\033[0m\n"
-        os.system("touch .submodules_initialized")
-        confirm = ask("Continue ?", ["y", "n"], "y")
-        clear()
-
-
 
 ### install client
 def install_archipelclient():
@@ -181,8 +153,6 @@ def main():
         print MSG_ARCHIPEL_WELCOME
         
         test_user_root()
-        
-        git_init_submodules()
         
         install_server = ask_bool("Would you like to install Archipel Server ?")
         install_client = ask_bool("Would you like to install Archipel Client ?")

@@ -37,6 +37,19 @@ following questions.
 
 """
 
+MSG_ARCHIPEL_INIT_SUBMODULES = """\
+###############################################################################
+#                                                                             #
+#                        Archipel Submodules                                  #
+#                                                                             #
+###############################################################################
+
+It seems that your local copy hasn't its submodules initialized. Bootstrap
+will initialize it for you. Please wait.
+
+"""
+
+
 
 class Spinner(threading.Thread):
     
@@ -109,6 +122,21 @@ def test_user_root():
     if not getpass.getuser() == "root":
         print "\033[31m\n * ERROR: You need to be root\033[0m\n"
         sys.exit(1)
+
+
+def git_init_submodules():
+    if not os.path.exists(".submodules_initialized"):
+        clear()
+        print MSG_ARCHIPEL_INIT_SUBMODULES
+        print "\033[35m"
+        ret = os.system("cd ../ && git submodule update --init --recursive")
+        if ret != 0:
+            print "\033[31mUnable to initialize submodules\033[0m"
+            sys.exit(1)
+        print "\033[32mSubmodule are initialized.\033[0m\n"
+        os.system("touch .submodules_initialized")
+        confirm = ask("Continue ?", ["y", "n"], "y")
+        clear()
 
 
 
@@ -362,7 +390,7 @@ def main():
         print MSG_ARCHIPEL_CLIENT_HEADER
 
         test_user_root()
-
+        git_init_submodules()
         print " "
 
         confirm = ask("Do want to start installation ?", ["y", "n"], "y")
