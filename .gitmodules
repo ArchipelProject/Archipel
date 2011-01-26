@@ -1,6 +1,3 @@
-[submodule "Libvirt"]
-	path = Libvirt
-	url = git://libvirt.org/libvirt.git
 [submodule "ArchipelClient/Libraries/Cappuccino"]
 	path = ArchipelClient/Libraries/Cappuccino
 	url = git://github.com/primalmotion/cappuccino.git
