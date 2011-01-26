@@ -1,27 +1,27 @@
 [submodule "VNCCappuccino"]
-	path = VNCCappuccino
+	path = ArchipelClient/Libraries/VNCCappuccino
 	url = git://github.com/primalmotion/VNCCappuccino.git
 [submodule "StropheCappuccino"]
-	path = StropheCappuccino
+	path = ArchipelClient/Libraries/StropheCappuccino
 	url = git://github.com/primalmotion/StropheCappuccino.git
 [submodule "GrowlCappuccino"]
-	path = GrowlCappuccino
+	path = ArchipelClient/Libraries/GrowlCappuccino
 	url = git://github.com/primalmotion/GrowlCappuccino.git
 [submodule "MessageBoard"]
-	path = MessageBoard
+	path = ArchipelClient/Libraries/MessageBoard
 	url = git://github.com/primalmotion/MessageBoard.git
 [submodule "iTunesTabView"]
-	path = iTunesTabView
+	path = ArchipelClient/Libraries/iTunesTabView
 	url = git://github.com/primalmotion/iTunesTabView.git
 [submodule "LPKit"]
-	path = LPKit
+	path = ArchipelClient/Libraries/LPKit
 	url = git://github.com/primalmotion/LPKit.git
 [submodule "Cappuccino"]
-	path = Cappuccino
+	path = ArchipelClient/Libraries/Cappuccino
 	url = git://github.com/primalmotion/cappuccino.git
 [submodule "Libvirt"]
 	path = Libvirt
 	url = git://libvirt.org/libvirt.git
 [submodule "TNKit"]
-	path = TNKit
+	path = ArchipelClient/Libraries/TNKit
 	url = git://github.com/primalmotion/TNKit.git

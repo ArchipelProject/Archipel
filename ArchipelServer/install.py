@@ -63,6 +63,8 @@ class Spinner(threading.Thread):
 
 
 
+### tests / init / Utils
+
 def ask(message, answers=None, default=None):
     question = " * " + message
     if answers and default:
@@ -96,9 +98,6 @@ def ask_bool(message, default="y"):
         return True
     return False
 
-
-
-### tests / init / Utils
 
 def test_python_version():
     version = sys.version_info
@@ -449,7 +448,7 @@ def main():
                 
         print " "
         
-        confirm = ask("Do you confirm ?", ["y", "n"], "y")
+        confirm = ask("Do want to start installation ?", ["y", "n"], "y")
         if confirm == "n":
             print " \033[33m* Installation canceled by user\033[0m"
             sys.exit(0)
