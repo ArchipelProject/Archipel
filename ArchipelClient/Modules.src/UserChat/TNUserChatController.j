@@ -104,7 +104,7 @@
 
     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 
-    _soundMessage = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.mp3"] byReference:NO];
+    _soundMessage = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.wav"] byReference:NO];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 }

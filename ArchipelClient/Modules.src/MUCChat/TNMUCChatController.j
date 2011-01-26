@@ -87,7 +87,7 @@
     [_tableViewPeople setDataSource:_peopleDatasource];
 
     var bundle = [CPBundle bundleForClass:[self class]],
-        sound = [bundle pathForResource:@"Stoof.aiff"];
+        sound = [bundle pathForResource:@"Stoof.wav"];
 
     _audioTagReceive = document.createElement('audio');
     _audioTagReceive.setAttribute("src", sound);

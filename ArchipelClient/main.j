@@ -36,7 +36,7 @@
 function gameOver(code)
 {
     var container = document.getElementById("container"),
-        sound = [[CPSound alloc] initWithContentsOfURL:[CPURL URLWithString:@"Resources/incompatible.mp3"] byReference:NO];
+        sound = [[CPSound alloc] initWithContentsOfURL:[CPURL URLWithString:@"Resources/incompatible.wav"] byReference:NO];
     container.style.color = "white";
     container.style.width = "100%";
     container.style.left = "0px";
@@ -47,7 +47,7 @@ function gameOver(code)
         code + "</code><br/>You should use Chromium or Safari or any decent browser actually";
 
     // yeah, yeah...
-    setTimeout(function(){[sound play]}, 100);
+    setTimeout(function(){[sound play]}, 200);
 }
 
 function main(args, namedArgs)
