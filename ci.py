@@ -36,56 +36,56 @@ API_PATH="/var/www/archipelproject.org/api/"
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./Cappuccino && jake %s " % CONFIGURATION):
-        if os.system("cd ./Cappuccino && jake clean && jake release && jake debug"):
+    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake %s " % CONFIGURATION):
+        if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clean && jake release && jake debug"):
             sys.exit(-1)
 
 
 def buildGrowlCappuccino():
     os.system("echo \* Starting to build GrowlCappuccino")
-    if os.system("cd ./GrowlCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build GrowlCappuccino")
         sys.exit(-2)
 
 
 def buildiTunesTabView():
     os.system("echo \* Starting to build iTunesTabView")
-    if os.system("cd ./iTunesTabView && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/iTunesTabView && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build iTunesTabView")
         sys.exit(-3)
 
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
-    if os.system("cd ./LPKit && export CONFIGURATION=%s && jake -f myJakeFile build" % CONFIGURATION.capitalize()):
+    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=%s && jake -f myJakeFile build" % CONFIGURATION.capitalize()):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
 
 def buildMessageBoard():
     os.system("echo \* Starting to build MessageBoard")
-    if os.system("cd ./MessageBoard && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/MessageBoard && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build MessageBoard")
         sys.exit(-5)
 
 
 def buildStropheCappuccino():
     os.system("echo \* Starting to build StropheCappuccino")
-    if os.system("cd ./StropheCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/StropheCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build StropheCappuccino")
         sys.exit(-6)
 
 
 def buildTNKit():
     os.system("echo \* Starting to build TNKit")
-    if os.system("cd ./TNKit && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/TNKit && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build TNKit")
         sys.exit(-7)
 
 
 def buildVNCCappuccino():
     os.system("echo \* Starting to build VNCCappuccino")
-    if os.system("cd ./VNCCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/VNCCappuccino && jake %s " % CONFIGURATION):
         os.system("echo \* unable to build VNCCappuccino")
         sys.exit(-8)
 
@@ -127,38 +127,38 @@ def generateAPI(api_dir):
     
     os.system("echo \* Generating doc for StropheCappuccino")
     os.system("mkdir -p %s/strophecappuccino" % api_dir)
-    os.system("cd StropheCappuccino; jake docs")
-    os.system("cp -a StropheCappuccino/Build/Documentation/html/* %s/strophecappuccino/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/StropheCappuccino; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/StropheCappuccino/Build/Documentation/html/* %s/strophecappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/strophecappuccino/" % api_dir)
     
     os.system("echo \* Generating doc for VNCCappuccino")
     os.system("mkdir -p %s/vnccappuccino" % api_dir)
-    os.system("cd VNCCappuccino; jake docs")
-    os.system("cp -a VNCCappuccino/Build/Documentation/html/* %s/vnccappuccino/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/VNCCappuccino; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/VNCCappuccino/Build/Documentation/html/* %s/vnccappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/vnccappuccino/" % api_dir)
     
     os.system("echo \* Generating doc for GrowlCappuccino")
     os.system("mkdir -p %s/growlcappuccino" % api_dir)
-    os.system("cd GrowlCappuccino; jake docs")
-    os.system("cp -a GrowlCappuccino/Build/Documentation/html/* %s/growlcappuccino/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/GrowlCappuccino/Build/Documentation/html/* %s/growlcappuccino/" % api_dir)
     os.system("chown -R cruise:www-data %s/growlcappuccino/" % api_dir)
     
     os.system("echo \* Generating doc for iTunesTabView")
     os.system("mkdir -p %s/itunestabview" % api_dir)
-    os.system("cd iTunesTabView; jake docs")
-    os.system("cp -a iTunesTabView/Build/Documentation/html/* %s/itunestabview/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/iTunesTabView; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/iTunesTabView/Build/Documentation/html/* %s/itunestabview/" % api_dir)
     os.system("chown -R cruise:www-data %s/itunestabview/" % api_dir)
     
     os.system("echo \* Generating doc for MessageBoard")
     os.system("mkdir -p %s/messageboard" % api_dir)
-    os.system("cd MessageBoard; jake docs")
-    os.system("cp -a MessageBoard/Build/Documentation/html/* %s/messageboard/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/MessageBoard; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/MessageBoard/Build/Documentation/html/* %s/messageboard/" % api_dir)
     os.system("chown -R cruise:www-data %s/messageboard/" % api_dir)
     
     os.system("echo \* Generating doc for TNKit")
     os.system("mkdir -p %s/tnkit" % api_dir)
-    os.system("cd TNKit; jake docs")
-    os.system("cp -a TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
+    os.system("cd ./ArchipelClient/Libraries/TNKit; jake docs")
+    os.system("cp -a ./ArchipelClient/Libraries/TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
     os.system("chown -R cruise:www-data %s/tnkit/" % api_dir)
     
     os.system("echo \* Generating doc for ArchipelServer")

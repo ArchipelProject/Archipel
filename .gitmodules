@@ -1,27 +1,27 @@
-[submodule "VNCCappuccino"]
-	path = ArchipelClient/Libraries/VNCCappuccino
-	url = git://github.com/primalmotion/VNCCappuccino.git
-[submodule "StropheCappuccino"]
-	path = ArchipelClient/Libraries/StropheCappuccino
-	url = git://github.com/primalmotion/StropheCappuccino.git
-[submodule "GrowlCappuccino"]
-	path = ArchipelClient/Libraries/GrowlCappuccino
-	url = git://github.com/primalmotion/GrowlCappuccino.git
-[submodule "MessageBoard"]
-	path = ArchipelClient/Libraries/MessageBoard
-	url = git://github.com/primalmotion/MessageBoard.git
-[submodule "iTunesTabView"]
-	path = ArchipelClient/Libraries/iTunesTabView
-	url = git://github.com/primalmotion/iTunesTabView.git
-[submodule "LPKit"]
-	path = ArchipelClient/Libraries/LPKit
-	url = git://github.com/primalmotion/LPKit.git
-[submodule "Cappuccino"]
-	path = ArchipelClient/Libraries/Cappuccino
-	url = git://github.com/primalmotion/cappuccino.git
 [submodule "Libvirt"]
 	path = Libvirt
 	url = git://libvirt.org/libvirt.git
-[submodule "TNKit"]
+[submodule "ArchipelClient/Libraries/Cappuccino"]
+	path = ArchipelClient/Libraries/Cappuccino
+	url = git://github.com/primalmotion/cappuccino.git
+[submodule "ArchipelClient/Libraries/GrowlCappuccino"]
+	path = ArchipelClient/Libraries/GrowlCappuccino
+	url = git://github.com/primalmotion/GrowlCappuccino.git
+[submodule "ArchipelClient/Libraries/StropheCappuccino"]
+	path = ArchipelClient/Libraries/StropheCappuccino
+	url = git://github.com/primalmotion/StropheCappuccino.git
+[submodule "ArchipelClient/Libraries/iTunesTabView"]
+	path = ArchipelClient/Libraries/iTunesTabView
+	url = git://github.com/primalmotion/iTunesTabView.git
+[submodule "ArchipelClient/Libraries/VNCCappuccino"]
+	path = ArchipelClient/Libraries/VNCCappuccino
+	url = git://github.com/primalmotion/VNCCappuccino.git
+[submodule "ArchipelClient/Libraries/LPKit"]
+	path = ArchipelClient/Libraries/LPKit
+	url = git://github.com/primalmotion/LPKit.git
+[submodule "ArchipelClient/Libraries/TNKit"]
 	path = ArchipelClient/Libraries/TNKit
 	url = git://github.com/primalmotion/TNKit.git
+[submodule "ArchipelClient/Libraries/MessageBoard"]
+	path = ArchipelClient/Libraries/MessageBoard
+	url = git://github.com/primalmotion/MessageBoard.git

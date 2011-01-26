@@ -17,8 +17,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os, sys, getopt
-import threading, time
-import ConfigParser
 import uuid
 
 MSG_ARCHIPEL_WELCOME = """\
@@ -54,21 +52,6 @@ will initialize it for you. Please wait.
 """
 
 
-
-MSG_ARCHIPEL_CLIENT_HEADER = """\
-###############################################################################
-#                                                                             #
-#                            Archipel Client                                  #
-#                                                                             #
-###############################################################################
-
-Welcome to the installation script of Archipel Client.
-Note that you must be root in order to install this software. Please answer the 
-following questions.
-
-"""
-
-
 MSG_ARCHIPEL_END = """\
 ###############################################################################
 #                                                                             #
@@ -88,36 +71,6 @@ If you find any bug, please tell us using our tracker :
 
 """
 
-
-class Spinner(threading.Thread):
-    
-    def __init__(self, delay=0.2):
-        threading.Thread.__init__(self);
-        self.sequence = ["#   ", "##  ", "### ", "####", " ###", "  ##", "   #", "    " ];
-        self.on = True;
-        self.delay = delay
-        self.start()
-    
-    
-    def run(self):
-        i = 0
-        while self.on:
-            sys.stdout.write("\033[33m [%s]\033[0m\r" % self.sequence[i])
-            sys.stdout.flush()
-            i += 1;
-            if i >= len(self.sequence):
-                i = 0;
-            time.sleep(self.delay)
-    
-    
-    def stop(self):
-        self.on = False;
-    
-
-
-
-
-### User interaction
 
 def ask(message, answers=None, default=None):
     question = " * " + message
@@ -163,13 +116,6 @@ def test_user_root():
 
 ### tests / init / Utils
 
-def test_python_version():
-    version = sys.version_info
-    if not version[0] == 2 or (version[0] == 2 and not version[1] in (5,6,7)):
-        print "\033[31m\n * ERROR: You need to use python 2.5 to 2.7 \033[0m\n"
-        sys.exit(1)
-
-
 def test_cmd(cmd):
     if os.system("which %s > /dev/null 2>&1" % cmd) != 0:
         return False
@@ -195,12 +141,6 @@ def test_basic_cmds():
     test_cmd_or_die("chown")
 
 
-
-
-def test_install_archipelclient():
-    test_basic_cmds()
-
-
 def clear():
     os.system("clear")
 
@@ -220,212 +160,14 @@ def git_init_submodules():
 
 
 
-
 ### install client
-
 def install_archipelclient():
-    clear()
-    print MSG_ARCHIPEL_CLIENT_HEADER
-    
-    print " Testing environment"
-    test_install_archipelclient()
-    print ""
-    
-    
-    inst_export = None
-    
-    inst_capp           = ask_bool("Would you like to build Cappuccino ?", default="n")
-    inst_growl          = ask_bool("Would you like to build GrowlCappuccino ?")
-    inst_vnc            = ask_bool("Would you like to build VNCCappuccino ?")
-    inst_strophe        = ask_bool("Would you like to build StropheCappuccino ?")
-    inst_itunestabview  = ask_bool("Would you like to build iTunesTabView ?")
-    inst_messageboard   = ask_bool("Would you like to build MessageBoard ?")
-    inst_tnkit          = ask_bool("Would you like to build TNKit ?")
-    inst_lpkit          = ask_bool("Would you like to build LPKit ?")
-    inst_archipel       = ask_bool("Would you like to build Archipel Client ?")
-    inst_appcapp        = ask_bool("Would you like to apply Cappuccino Framework ?")
-    
-    if ask_bool("Would you like to export Archipel ?"):
-        inst_export    = ask("Where do you want to export Archipel Client ?", None, "~/")
-        
-    print ""
-    print " Installation information"
-    print "   - build Cappuccino            : %s" % str(inst_capp)
-    print "   - build GrowlCappuccino       : %s" % str(inst_growl)
-    print "   - build VNCCappuccino         : %s" % str(inst_vnc)
-    print "   - build StropheCappuccino     : %s" % str(inst_strophe)
-    print "   - build iTunesTabView         : %s" % str(inst_itunestabview)
-    print "   - build MessageBoard          : %s" % str(inst_messageboard)
-    print "   - build TNKit                 : %s" % str(inst_tnkit)
-    print "   - build LPKit                 : %s" % str(inst_lpkit)
-    print "   - build Archipel Client       : %s" % str(inst_archipel)
-    print "   - apply Cappuccino            : %s" % str(inst_appcapp)
-    if inst_export: print "   - export to                   : %s" % inst_export
-    print ""
-    
-    confirm = ask("Do you confirm ?", ["y", "n"], "y")
-    if confirm == "n":
-        print " \033[33m* Installation canceled by user\033[0m"
-        sys.exit(0)
-    
-    if inst_capp:
-        client_build_cappuccino()
-    elif test_cmd("jake") == False:
-        print "\033[31mYou don't want to install Cappuccino but it's also not already installed\033[0m"
-        sys.exit(1)
-    
-    if inst_growl:          client_build_growlcappuccino()
-    if inst_vnc:            client_build_vnccappuccino()
-    if inst_strophe:        client_build_strophecappuccino()
-    if inst_itunestabview:  client_build_itunestabview()
-    if inst_messageboard:   client_build_messageboard()
-    if inst_tnkit:          client_build_tnkit()
-    if inst_lpkit:          client_build_lpkit()
-    if inst_appcapp:        client_apply_cappuccino_frameworks()
-    if inst_archipel:       client_build_archipel()
-    if inst_export:         client_export_archipel(inst_export)
-    
-    print "\033[32m"
-    print " Installation is now complete.\n"
-    print "\033[0m"
-    
-    ask_bool("Continue ?")
-
-
-def client_build_cappuccino():
-    print " * Building Cappuccino";
-    print "\n\033[35m*******************************************************************************"
-    ret = os.system("cd ./Cappuccino && ./bootstrap.sh")
-    if ret != 0:
-        print "\033[31mUnable to bootstrap Cappuccino\033[0m"
-        sys.exit(1)
-    ret = os.system("cd ./Cappuccino && jake install")
-    print "*******************************************************************************\033[0m"
-    if ret != 0:
-        print "\033[31mUnable to build Cappuccino\033[0m"
-        sys.exit(1)
-    print "\033[32m * Cappuccinno build\033[0m"
-    os.system("export PATH=/usr/local/narwhal/bin;$PATH")
-    if os.path.exists("~/.profile"):
-        os.system("source ~/.profile")
-    elif os.path.exists("~/.bash_profile"):
-        os.system("source ~/.bash_profile")
-    elif os.path.exists("~/.bashrc"):
-        os.system("source ~/.bashrc")
-    else:
-        os.system("export PATH='/usr/local/narwhal/bin:$PATH'")
-
-
-def client_build_strophecappuccino():
-    print " * Building StropheCappuccino";
-    s = Spinner();
-    ret = os.system("cd ./StropheCappuccino && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build StropheCappuccino\033[0m"
-        sys.exit(1)
-    print "\033[32m * StropheCappuccino build\033[0m"
-
-
-def client_build_growlcappuccino():
-    print " * Building GrowlCappuccino";
-    s = Spinner();
-    ret = os.system("cd ./GrowlCappuccino && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build GrowlCappuccino\033[0m"
-        sys.exit(1)
-    print "\033[32m * GrowlCappuccino build \033[0m"
-
-
-def client_build_vnccappuccino():
-    print " * Building VNCCappuccino";
-    s = Spinner();
-    ret = os.system("cd ./VNCCappuccino && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build Cappuccino\033[0m"
-        sys.exit(1)
-    print "\033[32m * VNCCappuccino build\033[0m"
-
-
-def client_build_itunestabview():
-    print " * Building iTunesTabView";
-    s = Spinner();
-    ret = os.system("cd ./iTunesTabView && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build iTunesTabView\033[0m"
-        sys.exit(1)
-    print "\033[32m * iTunesTabView build\033[0m"
-
-
-def client_build_messageboard():
-    print " * Building MessageBoard";
-    s = Spinner();
-    ret = os.system("cd ./MessageBoard && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build MessageBoard\033[0m"
-        sys.exit(1)
-    print "\033[32m * MessageBoard build\033[0m"
-
-
-def client_build_lpkit():
-    print " * Building LPKit";
-    s = Spinner();
-    ret = os.system("cd ./LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  > /dev/null 2>&1 && export CONFIGURATION=Debug && jake -f myJakeFile build > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build LPKit\033[0m"
-        sys.exit(1)
-    print "\033[32m * LPKit build\033[0m"
-
-
-def client_build_tnkit():
-    print " * Building TNKit";
-    s = Spinner();
-    ret = os.system("cd ./TNKit && jake debug  > /dev/null 2>&1 && jake release > /dev/null 2>&1")
-    s.stop()
-    if ret != 0:
-        print "\033[31mUnable to build TNKit\033[0m"
-        sys.exit(1)
-    print "\033[32m * TNKit build\033[0m"
-
-
-def client_build_archipel(exportpath=None):
-    if exportpath:
-        export = " --export=%s" % exportpath 
-    else:
-        export = ""
-    print " * Building ArchipelClient"
-    s = Spinner();
-    os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release %s > /dev/null 2>&1" % export)
-    s.stop()
-    print "\033[32m * ArchipelClient built\033[0m"
-
-
-def client_apply_cappuccino_frameworks():
-    print " * Adding Cappuccino framework"
-    s = Spinner();
-    os.system("/usr/local/narwhal/bin/capp gen -f ./ArchipelClient > /dev/null 2>&1")
-    s.stop()
-    print "\033[32m * Cappuccino added\033[0m"
-
-
-def client_export_archipel(path):
-    print " * Exporting archipel to %s" % path
-    s = Spinner();
-    os.system("cp -a ./ArchipelClient/Build/Release/Archipel %s > /dev/null 2>&1" % path)
-    s.stop()
-    print "\033[32m * Archipel Client exported\033[0m"
-
-
+    os.system("./ArchipelClient/bootstrap")
 
 
 ### install server
 def install_archipelserver():
-    os.system("./ArchipelServer/install.py")
+    os.system("./ArchipelServer/bootstrap")
 
 
 
@@ -436,8 +178,6 @@ def main():
         clear()
         
         print MSG_ARCHIPEL_WELCOME
-        
-        test_python_version()
         
         test_user_root()
         
@@ -462,6 +202,7 @@ def main():
         
         clear()
         
+        print MSG_ARCHIPEL_END;
     except KeyboardInterrupt:
         print "\n\n\033[33m * Installation canceled by user\033[0m\n"
 

@@ -454,9 +454,7 @@ def main():
             sys.exit(0)
         
         install_archipelserver()
-        
         clear()
-        print MSG_ARCHIPEL_END;
     except KeyboardInterrupt:
         print "\n\n\033[33m * Installation canceled by user\033[0m\n"
 
