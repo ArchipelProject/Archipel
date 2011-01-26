@@ -37,7 +37,7 @@ API_PATH="/var/www/archipelproject.org/api/"
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
     if os.system("cd ./Cappuccino && jake %s " % CONFIGURATION):
-        if os.system("cd ./Cappuccino && jake clean && jake %s " % CONFIGURATION):
+        if os.system("cd ./Cappuccino && jake clean && jake release && jake debug"):
             sys.exit(-1)
 
 
