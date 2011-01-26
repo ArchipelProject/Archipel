@@ -36,56 +36,56 @@ API_PATH="/var/www/archipelproject.org/api/"
 
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake release && jake debug"):
         if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake clean && jake release && jake debug"):
             sys.exit(-1)
 
 
 def buildGrowlCappuccino():
     os.system("echo \* Starting to build GrowlCappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/GrowlCappuccino && jake release && jake debug"):
         os.system("echo \* unable to build GrowlCappuccino")
         sys.exit(-2)
 
 
 def buildiTunesTabView():
     os.system("echo \* Starting to build iTunesTabView")
-    if os.system("cd ./ArchipelClient/Libraries/iTunesTabView && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/iTunesTabView && jake release && jake debug"):
         os.system("echo \* unable to build iTunesTabView")
         sys.exit(-3)
 
 
 def buildLPKit():
     os.system("echo \* Starting to build LPKit")
-    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=%s && jake -f myJakeFile build" % CONFIGURATION.capitalize()):
+    if os.system("cd ./ArchipelClient/Libraries/LPKit && export CONFIGURATION=Release && jake -f myJakeFile build  && export CONFIGURATION=Debug && jake -f myJakeFile build"):
         os.system("echo \* unable to build LPKit")
         sys.exit(-4)
 
 
 def buildMessageBoard():
     os.system("echo \* Starting to build MessageBoard")
-    if os.system("cd ./ArchipelClient/Libraries/MessageBoard && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/MessageBoard && jake release && jake debug"):
         os.system("echo \* unable to build MessageBoard")
         sys.exit(-5)
 
 
 def buildStropheCappuccino():
     os.system("echo \* Starting to build StropheCappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/StropheCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/StropheCappuccino && jake release && jake debug"):
         os.system("echo \* unable to build StropheCappuccino")
         sys.exit(-6)
 
 
 def buildTNKit():
     os.system("echo \* Starting to build TNKit")
-    if os.system("cd ./ArchipelClient/Libraries/TNKit && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/TNKit && jake release && jake debug"):
         os.system("echo \* unable to build TNKit")
         sys.exit(-7)
 
 
 def buildVNCCappuccino():
     os.system("echo \* Starting to build VNCCappuccino")
-    if os.system("cd ./ArchipelClient/Libraries/VNCCappuccino && jake %s " % CONFIGURATION):
+    if os.system("cd ./ArchipelClient/Libraries/VNCCappuccino && jake release && jake debug"):
         os.system("echo \* unable to build VNCCappuccino")
         sys.exit(-8)
 
