@@ -873,7 +873,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running."];
     }
     else
     {
@@ -920,7 +920,7 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza type] == @"result")
     {
         [self enableButtonsForPaused];
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused."];
     }
     else
     {
@@ -939,7 +939,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is resumed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine was resumed."];
     }
     else
     {
@@ -971,7 +971,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is shutdowning"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is shutting down."];
     }
     else
     {
@@ -986,7 +986,7 @@ TNArchipelTransportBarReboot    = 4;
 - (void)destroy
 {
     var alert = [TNAlert alertWithMessage:@"Unplug Virtual Machine ?"
-                                informative:@"Destroying virtual machine is dangerous. It is equivalent to remove power plug of a real computer"
+                                informative:@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer."
                                  target:self
                                  actions:[["Unplug", @selector(performDestroy:)], ["Cancel", @selector(doNotPerformDestroy:)]]];
 
@@ -1020,7 +1020,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is destroyed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been destroyed."];
     }
     else
     {
@@ -1050,7 +1050,7 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting."];
     }
     else
     {
@@ -1083,9 +1083,9 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza type] == @"result")
     {
         if ([switchAutoStart isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been set"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been set."];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been unset"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been unset."];
     }
     else
     {
@@ -1158,9 +1158,9 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza type] == @"result")
     {
         if ([switchPreventOOMKiller isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"OOM" message:@"OOM Killer cannot kill this virtual machine"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"OOM" message:@"OOM Killer cannot kill this virtual machine."];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"OOM Killer can kill this virtual machine"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"OOM Killer can kill this virtual machine."];
 
         if ([self currentEntityHasPermission:@"oom_getadjust"])
             [self getOOMKiller];
@@ -1244,7 +1244,7 @@ TNArchipelTransportBarReboot    = 4;
 
     if ([destinationHypervisor fullJID] == _currentHypervisorJID)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"You can't migrate to the initial virtual machine's hyperviseur." icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"You can't migrate to the initial virtual machine's hypervisor." icon:TNGrowlIconError];
         return
     }
 
