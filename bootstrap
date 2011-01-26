@@ -135,12 +135,12 @@ def clear():
 
 ### install client
 def install_archipelclient():
-    os.system("./ArchipelClient/bootstrap")
+    os.system("cd ./ArchipelClient && ./bootstrap")
 
 
 ### install server
 def install_archipelserver():
-    os.system("./ArchipelServer/bootstrap")
+    os.system("cd ./ArchipelServer && ./bootstrap")
 
 
 
