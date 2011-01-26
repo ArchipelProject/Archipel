@@ -30,7 +30,9 @@ Thanks to Archipel you are be able to :
 
 # Installation
 
-The installation procedure can be found at <https://github.com/primalmotion/archipel/wiki>.
+Simple way: run ./bootstrap
+
+The complete installation procedure can be found at <https://github.com/primalmotion/archipel/wiki>.
 If you find some errors, please feel free to correct them.
 
 # Team

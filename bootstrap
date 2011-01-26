@@ -147,6 +147,7 @@ def clear():
 
 def git_init_submodules():
     if not os.path.exists(".submodules_initialized"):
+        clear()
         print MSG_ARCHIPEL_INIT_SUBMODULES
         print "\033[35m"
         ret = os.system("git submodule update --init --recursive")
