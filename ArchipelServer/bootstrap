@@ -241,7 +241,7 @@ def install_archipelserver():
     if inst_init:                   server_install_init_script(inst_init)
     if inst_init and inst_start:    server_install_init_start()    
     if inst_cert:                   server_install_vnc_certificate(inst_conf)
-    if inst_configure:              server_configure("./ArchipelServer/conf/archipel.conf.template", inst_bin, inst_data, inst_conf, vm_working_folders, inst_log_folder)
+    if inst_configure:              server_configure("./conf/archipel.conf.template", inst_bin, inst_data, inst_conf, vm_working_folders, inst_log_folder)
     
     print "\033[32m"
     print " Installation is now complete.\n"
@@ -279,7 +279,7 @@ def server_install_binary(inst_bin):
     
     print " - installation ArchipelServer binary to %s" % inst_bin
     s = Spinner()
-    os.system("cp -a ./ArchipelServer '%s'" %  inst_bin)
+    os.system("cp -a ../ArchipelServer '%s'" %  inst_bin)
     os.system("chmod -R 700 '%s/ArchipelServer'" %  inst_bin)
     os.system("chown root:root '%s/ArchipelServer'" % inst_bin)
     s.stop()
@@ -293,7 +293,7 @@ def server_install_conf_folder(inst_conf):
         s.stop()
     print " - installing configuration in %s" % inst_conf
     s = Spinner()
-    os.system("cp -a ./ArchipelServer/conf/archipel.conf '%s'" % inst_conf)
+    os.system("cp -a ./conf/archipel.conf '%s'" % inst_conf)
     os.system("chmod -R 700 '%s'" % inst_conf)
     os.system("chown root:root '%s'" % inst_conf)
     s.stop()
@@ -331,7 +331,7 @@ def server_install_init_script(inst_init):
         s.stop()
     print " - installing init script to  %s" % inst_init
     s = Spinner()
-    os.system("cp -a ./ArchipelServer/archipel '%s'" % inst_init)
+    os.system("cp -a ./archipel '%s'" % inst_init)
     os.system("chmod -R 700 '%s/archipel'" % inst_init)
     os.system("chown root:root '%s/archipel'" % inst_init)
     s.stop()
