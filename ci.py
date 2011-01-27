@@ -105,8 +105,10 @@ def buildArchipel(export_dir, build):
     os.system("cd %s/.. && rm -f latest-archipel-client.tar.gz" % (export_dir))
     os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-%s-server.tar.gz latest-archipel-server.tar.gz" % (export_dir, builddate, rev))
     os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-%s-client.tar.gz latest-archipel-client.tar.gz" % (export_dir, builddate, rev))
-    os.system("chown cruise:www-data %sArchipel-nightly-%s-%rev-client.tar.gz" % (export_dir, builddate, rev))
+    os.system("chown cruise:www-data %sArchipel-nightly-%s-%s-client.tar.gz" % (export_dir, builddate, rev))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-%s-server.tar.gz" % (export_dir, builddate, rev))
+    os.system("chmod 755 %sArchipel-nightly-%s-%s-client.tar.gz" % (export_dir, builddate, rev))
+    os.system("chmod 755 %sArchipel-nightly-%s-%s-server.tar.gz" % (export_dir, builddate, rev))
 
 
 def deployArchipel(deploy_dir):
