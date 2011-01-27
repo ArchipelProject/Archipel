@@ -45,7 +45,7 @@
     @outlet CPView          viewTableRangesContainer;
 
     CPTableView             _externalTable              @accessors(property=tableNetwork);
-    TNNetwork               _network                    @accessors(property=network);
+    TNHypervisorNetwork     _network                    @accessors(property=network);
     id                      _delegate                   @accessors(property=delegate);
 
     CPButton                _minusButtonDHCPHosts;

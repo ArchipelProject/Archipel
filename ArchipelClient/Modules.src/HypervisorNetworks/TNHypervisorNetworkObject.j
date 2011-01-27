@@ -1,5 +1,5 @@
 /*
- * TNNetwork.j
+ * TNHypervisorNetwork.j
  *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -46,7 +46,7 @@
 #pragma mark -
 #pragma mark  Initialization
 
-/*! initialize the TNNetwork
+/*! initialize the TNHypervisorNetwork
 */
 - (id)init
 {
@@ -60,7 +60,7 @@
     return self;
 }
 
-/*! create, initializes and return a new TNNetwork
+/*! create, initializes and return a new TNHypervisorNetwork
     @param aName the name
     @param anUUID the UUID
     @param aBridgeName the bridge name
@@ -73,9 +73,9 @@
     @param networkEnabled flag is enabled
     @param STPEnabled flag STP enabled
     @param DHCPEnabled flag DCHP enabled
-    @return initialized TNNetwork object
+    @return initialized TNHypervisorNetwork object
 */
-+ (TNNetwork)networkWithName:(CPString)aName
++ (TNHypervisorNetwork)networkWithName:(CPString)aName
                         UUID:(CPString)anUUID
                   bridgeName:(CPString)aBridgeName
                  bridgeDelay:(CPString)aBridgeDelay
@@ -89,7 +89,7 @@
                   STPEnabled:(BOOL)STPEnabled
                  DHCPEnabled:(BOOL)DHCPEnabled
 {
-    var net = [[TNNetwork alloc] init];
+    var net = [[TNHypervisorNetwork alloc] init];
 
     [net setNetworkName:aName];
     [net setUUID:anUUID];
