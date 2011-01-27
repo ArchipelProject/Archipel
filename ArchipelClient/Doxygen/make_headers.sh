@@ -12,6 +12,7 @@ cp -r ../README.markdown /tmp/tempDoc.doc/
 cp -r ../LICENSE /tmp/tempDoc.doc/
 rm -rf /tmp/tempDoc.doc/.git
 rm -rf /tmp/tempDoc.doc/Build
+rm -rf /tmp/tempDoc.doc/Libraries
 
 echo "Processing source files..."
 find /tmp/tempDoc.doc -name "*.j" -exec sed -e '/@import.*/ d' -i '' {} \;
