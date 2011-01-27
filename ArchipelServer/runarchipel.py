@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python -W ignore::DeprecationWarning
 # 
 # main.py
 # 
@@ -36,6 +36,20 @@ Options :
 * --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
 """
 
+def test_libvirt():
+    """test if all needed libvirt's function are present"""
+    try:
+        import libvirt
+    except:
+        print "\n\n\033[31mERROR: you need python libvirt module. I can't import it.\033[0m\n"
+        return False
+    try:
+        getattr(libvirt.virConnect, "domainEventRegisterAny")
+    except:
+        print "\n\n\033[31mERROR: your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.\033[0m\n"
+        return False
+    return True
+
 
 def load_modules():
     """
@@ -43,7 +57,7 @@ def load_modules():
     """
     module_dir      = config.get("GLOBAL", "modules_dir_name")
     module_dir_path = str(config.get("GLOBAL" , "modules_dir_base_path")) + "/" + module_dir
-
+    
     if config.getboolean("GLOBAL", "general_auto_load_module"):        
         for subdir, dirs, files in os.walk(module_dir_path):
             for module in dirs:
@@ -52,12 +66,12 @@ def load_modules():
         for module, should_load in config.items("MODULES"):
             if should_load == "True":
                 __import__(module_dir + "." + module, None, locals())
-    
-                
+
+ 
 def main():
     """
     main function of Archipel
-    """    
+    """
     # starting thre libvirt event loop
     libvirtEventLoop.virEventLoopPureStart()
     
@@ -72,9 +86,12 @@ def main():
     hyp = archipel.TNArchipelHypervisor(jid, password, config, name, database)
     hyp.connect()
     hyp.loop()
-    
-    
+    return 0
+
+
 if __name__ == "__main__":
+    if not test_libvirt(): sys.exit(1)
+    
     opts, args = getopt.getopt(sys.argv[1:], "hn", ["nofork", "config=", "help"])
     
     configPath = "/etc/archipel/archipel.conf"
@@ -101,7 +118,7 @@ if __name__ == "__main__":
     config = utils.init_conf(configPath)
     os.chdir(config.get("GLOBAL", "general_exec_dir"))
     load_modules()
-
+    
     if fork:
         os.setsid()
         os.umask(0)
