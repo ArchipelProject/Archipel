@@ -422,19 +422,6 @@ def main(interactive=True, properties=None):
 
 
 
-# inst_capp           = properties["inst_capp"]
-# inst_growl          = properties["inst_growl"]
-# inst_vnc            = properties["inst_vnc"]
-# inst_strophe        = properties["inst_strophe"]
-# inst_itunestabview  = properties["inst_itunestabview"]
-# inst_messageboard   = properties["inst_messageboard"]
-# inst_tnkit          = properties["inst_tnkit"]
-# inst_lpkit          = properties["inst_lpkit"]
-# inst_archipel       = properties["inst_archipel"]
-# inst_appcapp        = properties["inst_appcapp"]
-# if inst_appcapp:
-#     inst_export     = properties["inst_export"]
-
 if __name__ == "__main__":
     try:
         opts, args = getopt.getopt(sys.argv[1:], "", [  "notinteractive",
