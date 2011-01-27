@@ -100,6 +100,8 @@ def buildArchipel(export_dir, build):
         sys.exit(-9)
     os.system("cd ./ArchipelClient/Build/%s/ && tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz ./Archipel" % (CONFIGURATION.capitalize(), export_dir, builddate))
     os.system("tar -czf %s/Archipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz ./ArchipelServer" % (export_dir, builddate))
+    os.system("cd %s/.. && rm -f latest-archipel-server.tar.gz" % (export_dir, builddate))
+    os.system("cd %s/.. && rm -f latest-archipel-client.tar.gz" % (export_dir, builddate))
     os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-`git rev-parse --short HEAD`-server.tar.gz latest-archipel-server.tar.gz" % (export_dir, builddate))
     os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz latest-archipel-client.tar.gz" % (export_dir, builddate))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-`git rev-parse --short HEAD`-client.tar.gz" % (export_dir, builddate))
