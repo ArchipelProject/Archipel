@@ -94,11 +94,11 @@ def buildArchipel(export_dir, build):
     os.system("echo \* Starting to build Archipel")
     rev = commands.getoutput("git rev-parse --short HEAD");
     builddate   = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    # os.system("rm -rf ./ArchipelClient/Build")
-    # os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=%s" % CONFIGURATION)
-    # if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
-    #     os.system("echo \* unable to build ArchipelClient. end of line.")
-    #     sys.exit(-9)
+    os.system("rm -rf ./ArchipelClient/Build")
+    os.system("cd ./ArchipelClient && ./buildArchipel -Cau --config=%s" % CONFIGURATION)
+    if os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=%s" % CONFIGURATION):
+        os.system("echo \* unable to build ArchipelClient. end of line.")
+        sys.exit(-9)
     os.system("cd ./ArchipelClient/Build/%s/ && tar -czf %s/Archipel-nightly-%s-%s-client.tar.gz ./Archipel" % (CONFIGURATION.capitalize(), export_dir, builddate, rev))
     os.system("tar -czf %s/Archipel-nightly-%s-%s-server.tar.gz ./ArchipelServer" % (export_dir, builddate, rev))
     os.system("cd %s/.. && rm -f latest-archipel-server.tar.gz" % (export_dir))
@@ -187,15 +187,15 @@ if __name__ == "__main__":
         os.system("echo \* Build skipped according to last commit message (contains #nobuild)")
         sys.exit(0)
     
-    # if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
-    # if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
-    # if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
-    # if BUILD_LPKIT or FORCE:             buildLPKit()
-    # if BUILD_MESSAGEBOARD or FORCE:      buildMessageBoard()
-    # if BUILD_STROPHECAPPUCCINO or FORCE: buildStropheCappuccino()
-    # if BUILD_TNKIT or FORCE:             buildTNKit()
-    # if BUILD_VNCCAPPUCCINO or FORCE:     buildVNCCappuccino()
-    # 
+    if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
+    if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
+    if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
+    if BUILD_LPKIT or FORCE:             buildLPKit()
+    if BUILD_MESSAGEBOARD or FORCE:      buildMessageBoard()
+    if BUILD_STROPHECAPPUCCINO or FORCE: buildStropheCappuccino()
+    if BUILD_TNKIT or FORCE:             buildTNKit()
+    if BUILD_VNCCAPPUCCINO or FORCE:     buildVNCCappuccino()
+    
     buildArchipel(EXPORT_PATH, BUILD_ARCHIPELCLIENT)
     deployArchipel(DEPLOY_PATH)
     generateAPI(API_PATH)
