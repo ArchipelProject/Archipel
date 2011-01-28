@@ -104,7 +104,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     int                             _numberOfModulesToLoad;
 }
 
-
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize the module loader
     @return an initialized instance of TNModuleLoader
@@ -113,17 +114,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     if (self = [super init])
     {
-        _loadedTabModulesScrollViews        = [CPDictionary dictionary];
-        _loadedToolbarModulesScrollViews    = [CPDictionary dictionary];
-        _modulesMenuItems                   = [CPDictionary dictionary];
-        _loadedToolbarModules               = [CPDictionary dictionary];
-        _bundles                            = [CPArray array];
-        _loadedTabModules                   = [CPArray array];
-        _numberOfModulesToLoad              = 0;
-        _numberOfModulesLoaded              = 0;
-        _numberOfActiveModules              = 0;
-        _numberOfReadyModules               = 0;
-        _allModulesReady                    = NO;
+        _loadedTabModulesScrollViews            = [CPDictionary dictionary];
+        _loadedToolbarModulesScrollViews        = [CPDictionary dictionary];
+        _modulesMenuItems                       = [CPDictionary dictionary];
+        _loadedToolbarModules                   = [CPDictionary dictionary];
+        _bundles                                = [CPArray array];
+        _loadedTabModules                       = [CPArray array];
+        _numberOfModulesToLoad                  = 0;
+        _numberOfModulesLoaded                  = 0;
+        _numberOfActiveModules                  = 0;
+        _numberOfReadyModules                   = 0;
+        _allModulesReady                        = NO;
+        _deactivateModuleTabItemPositionStorage = NO;
     }
 
     return self;
@@ -172,7 +174,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
                 [_infoTextField setStringValue:@"Entity is offline"];
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
-                [self rememberLastSelectedTabIndex];
+                [self rememberSelectedIndexOfItem:[aTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
             }
 
@@ -200,29 +202,30 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark -
 #pragma mark Storage
 
-/*! store in CPUserDefaults last selected tab index for entity
-*/
-- (void)rememberLastSelectedTabIndex
-{
-    [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
-}
-
 /*! set wich item tab to remember
     @param anItem: the TNiTunesTabView item to remember
 */
 - (void)rememberSelectedIndexOfItem:(id)anItem
 {
-    if (anItem && _entity && ([_mainTabView numberOfTabViewItems] > 0))
-    {
-        var defaults                = [CPUserDefaults standardUserDefaults],
-            currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
-            identifier              = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
-            memid                   = @"selectedTabIndexFor" + identifier;
+    if (_deactivateModuleTabItemPositionStorage)
+        return;
 
-        CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
+    if (!anItem || !_entity)
+        return;
 
-        [defaults setInteger:currentSelectedIndex forKey:memid];
-    }
+    if ([_mainTabView numberOfTabViewItems] <= 0)
+        return;
+
+    var defaults                = [CPUserDefaults standardUserDefaults],
+        currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
+        identifier              = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
+        memid                   = @"selectedTabIndexFor" + identifier;
+
+    if (currentSelectedIndex == [defaults integerForKey:memid])
+        return;
+
+    CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
+    [defaults setInteger:currentSelectedIndex forKey:memid];
 }
 
 /*! Reselect the last remembered tab index for entity
@@ -230,7 +233,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 - (void)recoverFromLastSelectedIndex
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
-        identifier          = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
+        identifier          = ([_entity class] === TNStropheContact) ? [_entity JID] : [_entity name],
         memid               = @"selectedTabIndexFor" + identifier,
         oldSelectedIndex    = [defaults integerForKey:memid],
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
@@ -239,8 +242,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         return;
 
     CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
-    if (oldSelectedIndex)
-        [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
+    [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
 
@@ -293,6 +295,9 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     _numberOfActiveModules = 0;
 
+    // we know disable the storage remembering during the tab item populating
+    _deactivateModuleTabItemPositionStorage = YES;
+
     for (var i = 0; i < [sortedValue count]; i++)
     {
         var module      = [sortedValue objectAtIndex:i],
@@ -304,6 +309,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
             _numberOfActiveModules++;
         }
     }
+    // and we reactivate it
+    _deactivateModuleTabItemPositionStorage = NO;
 
     [self recoverFromLastSelectedIndex];
 }
@@ -582,8 +589,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if ([aTabView numberOfTabViewItems] <= 0)
         return
 
-    [self rememberSelectedIndexOfItem:anItem];
-
     var currentTabItem = [aTabView selectedTabViewItem];
 
     if (currentTabItem == anItem)
@@ -595,6 +600,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
         [oldModule willHide];
         [oldModule setCurrentSelectedIndex:NO];
+
+        [self rememberSelectedIndexOfItem:anItem];
     }
 
     var newModule = [anItem module];
