@@ -42,8 +42,10 @@ TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowN
 {
     if (self = [super initWithFrame:aFrame])
     {
-        var columnLabel = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
-            columnOutline = [[CPTableColumn alloc] initWithIdentifier:"outline"];
+        var columnLabel     = [[CPTableColumn alloc] initWithIdentifier:"nickname"],
+            columnOutline   = [[CPTableColumn alloc] initWithIdentifier:"outline"],
+            rosterLayout    = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
+            rowHeight       = [rosterLayout objectForKey:@"TNOutlineViewRosterRowHeight"];
 
         [columnLabel setWidth:aFrame.size.width];
         [columnOutline setWidth:12.0];
@@ -55,8 +57,7 @@ TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowN
         [self setHeaderView:nil];
         [self setCornerView:nil];
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-        [self setRowHeight:35];
-        // [self setIndentationPerLevel:2];
+        [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
         [self addTableColumn:columnOutline];
         [self addTableColumn:columnLabel];

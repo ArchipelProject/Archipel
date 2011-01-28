@@ -100,5 +100,38 @@
     <key>TNArchipelDisplayXMPPManageContactsButton</key>
     <integer>1</integer>
 
+    <!--
+        this allow to configure the layout of the roster view, like size of items,
+        displaying avatar, and positionning.
+    -->
+    <key>TNArchipelRosterLayout</key>
+    <dict>
+        <key>TNOutlineViewRosterDisplayAvatar</key>
+        <integer>1</integer>
+        <key>TNOutlineViewRosterRowHeight</key>
+        <real>30.0</real>
+        <key>TNRosterDataViewContactFontSizeGroup</key>
+        <real>11.0</real>
+        <key>TNRosterDataViewContactFontSizeName</key>
+        <real>11.0</real>
+        <key>TNRosterDataViewContactFontSizeStatus</key>
+        <real>-10.0</real>
+        <key>TNRosterDataViewContactPlacementOffset</key>
+        <real>-10.0</real>
+        <key>TNRosterDataViewContactImageSizeAvatar</key>
+            <dict>
+                <key>width</key>
+                <real>22.0</real>
+                <key>height</key>
+                <real>22.0</real>
+            </dict>
+        <key>TNRosterDataViewContactImageSizeStatus</key>
+        <dict>
+            <key>width</key>
+            <real>16.0</real>
+            <key>height</key>
+            <real>16.0</real>
+        </dict>
+    </dict>
 </dict>
 </plist>

@@ -20,22 +20,24 @@
 @import <AppKit/AppKit.j>
 
 
+
+
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
 */
 @implementation TNRosterDataViewContact : CPView
 {
-    CPImageView _avatar      @accessors(property=avatar);
-    CPImageView _statusIcon  @accessors(property=statusIcon);
-    CPTextField _events      @accessors(property=events);
-    CPTextField _name        @accessors(property=name);
-    CPTextField _status      @accessors(property=status);
+    CPImageView         _avatar      @accessors(property=avatar);
+    CPImageView         _statusIcon  @accessors(property=statusIcon);
+    CPTextField         _events      @accessors(property=events);
+    CPTextField         _name        @accessors(property=name);
+    CPTextField         _status      @accessors(property=status);
 
-    CPImage     _unknownUserImage;
-    CPImage     _normalStateCartoucheColor;
-    CPImage     _selectedStateCartoucheColor;
-    CPString    _entityType;
-
+    CPImage             _unknownUserImage;
+    CPImage             _normalStateCartoucheColor;
+    CPImage             _selectedStateCartoucheColor;
+    CPString            _entityType;
+    BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
 }
 
@@ -50,16 +52,28 @@
 {
     if (self = [super init])
     {
-        var bundle = [CPBundle mainBundle];
+        var bundle                  = [CPBundle mainBundle],
+            rosterLayout            = [bundle objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
+            contactFontSizeName     = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeName"],
+            contactFontSizeStatus   = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeStatus"],
+            contactPlacementOffset  = [rosterLayout objectForKey:@"TNRosterDataViewContactPlacementOffset"],
+            contactImageSizeAvatar  = CPSizeMake([[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeAvatar"] objectForKey:@"width"],
+                                                 [[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeAvatar"] objectForKey:@"height"]),
+            contactImageSizeStatus  = CPSizeMake([[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeStatus"] objectForKey:@"width"],
+                                                 [[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeStatus"] objectForKey:@"height"]);
 
-        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33, 1, 16, 16)];
-        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48, 2, 170, 100)];
-        _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33, 18, 170, 100)];
+        _shouldDisplayAvatar            = !![rosterLayout objectForKey:@"TNOutlineViewRosterDisplayAvatar"],
+        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 1, 16, 16)];
+        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 2, 170, 100)];
+        _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 18, 170, 100)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
-        _avatar                         = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         _normalStateCartoucheColor      = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor    = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
+
+        if (_shouldDisplayAvatar)
+            _avatar = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
+            [_avatar setFrameSize:contactImageSizeAvatar];
 
         [_events setBackgroundColor:_normalStateCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
@@ -73,10 +87,12 @@
         [_events setValue:CGInsetMake(0.0, 0.0, 0.0, 0.0) forThemeAttribute:@"bezel-inset"];
         [_events setHidden:YES];
 
+        [_name setFont:[CPFont systemFontOfSize:contactFontSizeName]];
         [_name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_name setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
+        [_name setValue:[CPFont boldSystemFontOfSize:contactFontSizeName] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
 
+        [_status setFont:[CPFont systemFontOfSize:contactFontSizeStatus]];
         [_status setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_status setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
@@ -86,7 +102,8 @@
         [self addSubview:_name];
         [self addSubview:_events];
         [self addSubview:_status];
-        [self addSubview:_avatar];
+        if (_shouldDisplayAvatar)
+            [self addSubview:_avatar];
     }
     return self;
 }
@@ -120,10 +137,11 @@
 
     [_statusIcon setImage:[aContact statusIcon]];
 
-    if ([aContact avatar])
-        [_avatar setImage:[aContact avatar]];
-    else
-        [_avatar setImage:_unknownUserImage];
+    if (_shouldDisplayAvatar)
+        if ([aContact avatar])
+            [_avatar setImage:[aContact avatar]];
+        else
+            [_avatar setImage:_unknownUserImage];
 
     var boundsName = [_name frame];
     boundsName.size.width += 10;
@@ -185,13 +203,14 @@
         _normalStateCartoucheColor = [aCoder decodeObjectForKey:@"_normalStateCartoucheColor"];
         _selectedStateCartoucheColor = [aCoder decodeObjectForKey:@"_selectedStateCartoucheColor"];
 
-        _contact            = [aCoder decodeObjectForKey:@"_contact"];
-        _unknownUserImage   = [aCoder decodeObjectForKey:@"_unknownUserImage"];
-        _name               = [aCoder decodeObjectForKey:@"_name"];
-        _status             = [aCoder decodeObjectForKey:@"_status"];
-        _statusIcon         = [aCoder decodeObjectForKey:@"_statusIcon"];
-        _events             = [aCoder decodeObjectForKey:@"_events"];
-        _avatar             = [aCoder decodeObjectForKey:@"_avatar"];
+        _shouldDisplayAvatar    = [aCoder decodeObjectForKey:@"_shouldDisplayAvatar"];
+        _contact                = [aCoder decodeObjectForKey:@"_contact"];
+        _unknownUserImage       = [aCoder decodeObjectForKey:@"_unknownUserImage"];
+        _name                   = [aCoder decodeObjectForKey:@"_name"];
+        _status                 = [aCoder decodeObjectForKey:@"_status"];
+        _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
+        _events                 = [aCoder decodeObjectForKey:@"_events"];
+        _avatar                 = [aCoder decodeObjectForKey:@"_avatar"];
     }
 
     return self;
@@ -203,6 +222,7 @@
 {
     [super encodeWithCoder:aCoder];
 
+    [aCoder encodeObject:_shouldDisplayAvatar forKey:@"_shouldDisplayAvatar"];
     [aCoder encodeObject:_contact forKey:@"_contact"];
     [aCoder encodeObject:_unknownUserImage forKey:@"_unknownUserImage"];
     [aCoder encodeObject:_name forKey:@"_name"];
@@ -231,7 +251,10 @@
 {
     if (self = [super init])
     {
-        [self setFont:[CPFont boldSystemFontOfSize:12]];
+        var rosterLayout            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
+            contactFontSizeGroup    = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeGroup"];
+
+        [self setFont:[CPFont boldSystemFontOfSize:contactFontSizeGroup]];
         [self setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [self setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [self setValue:[CPFont boldSystemFontOfSize:12] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
@@ -244,4 +267,5 @@
 
     return self;
 }
+
 @end
