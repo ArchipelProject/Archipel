@@ -1,0 +1,68 @@
+#!/bin/bash
+#
+# chkconfig: - 01 99
+# description: Archipel Server Daemon
+# processname: runarchipel.py
+# config: /etc/archipel/archipel.conf
+# pidfile: /var/run/archipel.pid
+#
+# archipel - this script starts and stops the archipel daemon
+
+# Source function library.
+
+if [ -f /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+fi
+
+archipel="/usr/bin/runarchipel"
+prog=$(basename $archipel)
+ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
+
+if [[ -d /var/lock/subsys ]]; then
+    lockfile=/var/lock/subsys/archipel
+elif [[ -d /var/lock/ ]]; then
+    lockfile=/var/lock/archipel
+else
+   lockfile=/tmp/.lock-archipel
+fi
+
+start() {
+    [ -x $archipel ] || exit 5
+    echo -n $"Starting $prog: "
+    $archipel --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1 &
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    echo $! > $lockfile
+    return 0
+}
+
+stop() {
+    echo -n $"Stopping $prog: "
+    killall -9 runarchipel
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|restart}"
+        exit 2
+esac

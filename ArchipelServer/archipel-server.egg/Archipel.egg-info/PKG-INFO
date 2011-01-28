@@ -1,0 +1,11 @@
+Metadata-Version: 1.0
+Name: Archipel
+Version: 1.0betadev
+Summary: The hypervisor's agent part of Archipel
+Home-page: http://archipelproject.org
+Author: Antoine Mercadal
+Author-email: primalmotion@archipelproject.org
+License: AGPLv3
+Description: This package contains the agent you need to install on your hypervisor in order to use them with Archipel
+Keywords: archipel,virtualization,libvirt,orchestration
+Platform: UNKNOWN
