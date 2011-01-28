@@ -133,6 +133,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.initialize_modules()
     
     
+    
+    ### Utilities
+    
     def lock(self):
         self.log.info("acquiring lock")
         self.locked = True;
@@ -148,7 +151,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def register_for_messages(self):
-        """"permissions":
+        """"
         this method register for user messages
         """
         registrar_items = [
@@ -217,6 +220,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                                 "method": self.message_hello,
                                 "description": "" },
                         ]
+        
         self.add_message_registrar_items(registrar_items)
     
     
@@ -260,9 +264,26 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         os.system("rm -rf " + self.folder)
     
     
+    def set_automatic_libvirt_description(self, xmldesc):
+        """
+        set the XML description's description of the VM
+        """
+        if not xmldesc.getTag('description'): 
+            xmldesc.addChild(name='description')
+        else:
+            xmldesc.delChild("description")
+            xmldesc.addChild(name='description')
+        
+        xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
+        return str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+    
+    
     def set_presence_according_to_libvirt_info(self):
         try:
             self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
+            
+            currentXMLDesc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
+            self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(currentXMLDesc))
             
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
@@ -466,9 +487,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     
-    
-    ### Process IQ
-     
+    ### Process IQ 
     
     def __process_iq_archipel_control(self, conn, iq):
         """
@@ -615,8 +634,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     
-    ### libvirt controls
     
+    ### libvirt controls
     
     def create(self):
         self.lock()
@@ -762,23 +781,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def define(self, xmldesc):
-        
-        if not xmldesc.getTag('description'): 
-            xmldesc.addChild(name='description')
-        else:
-            xmldesc.delChild("description")
-            xmldesc.addChild(name='description')
-        
-        xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
-        
-        # this is more user firendly when using virsh or whaterver
-        # but as we can't change a name of an already defined VM (stupid...)
-        # we'll activate this later for release. So FIXME.
-        #xmldesc.getTag('name').setData(self.name)
-        
-        definitionXML = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
-        self.libvirt_connection.defineXML(definitionXML)
-        
+        self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc));
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
@@ -873,9 +876,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     
+    
     ### Other stuffs
-    
-    
     
     def perform_threaded_copy(self, src_path, newxml):
         """
