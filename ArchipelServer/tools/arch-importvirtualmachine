@@ -80,5 +80,5 @@ if __name__ == "__main__":
         print HELP
         sys.exit(1)
     
-    #insert(dbfile, uuid, xmppserver, name, password)
+    insert(dbfile, uuid, xmppserver, name, password)
     
