@@ -1,3 +1,0 @@
-xmpppy>= 0.5.0rc1
-sqlobject>=0.14.1
-apscheduler>=1.3.1
