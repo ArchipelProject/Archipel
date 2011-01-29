@@ -1,0 +1,9 @@
+recursive-include archipel *
+recursive-include install/bin *
+recursive-include archipel/etc/init.d *
+recursive-include archipel/etc/archipel *
+recursive-include archipel/var/lib/archipel *
+recursive-include archipel/var/lib/archipel/avatars *
+recursive-include archipel/var/lib/logs/avatars *
+
+include README.md AUTHORS LICENSE setup.py setup.cfg

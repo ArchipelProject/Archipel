@@ -1,4 +1,0 @@
-archipel
-core
-utils
-modules

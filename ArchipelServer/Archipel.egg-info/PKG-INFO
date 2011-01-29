@@ -8,4 +8,4 @@ Author-email: primalmotion@archipelproject.org
 License: AGPLv3
 Description: This package contains the agent you need to install on your hypervisor in order to use them with Archipel
 Keywords: archipel,virtualization,libvirt,orchestration
-Platform: UNKNOWN
+Platform: Linux
