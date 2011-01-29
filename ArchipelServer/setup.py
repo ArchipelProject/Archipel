@@ -67,7 +67,7 @@ create_log_folder("%s/var/log/archipel" % PREFIX)
 
 
 
-setup(name='Archipel',
+setup(name='archipel-server',
       version=VERSION,
       description="The hypervisor's agent part of Archipel",
       long_description=DESCRIPTION,
