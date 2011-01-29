@@ -7,3 +7,5 @@
 *ArchipelClient/Modules.src/**/Build
 *ArchipelClient/Modules/**
 *.submodules_initialized
+*ArchipelServer/build
+*ArchipelServer/dist
