@@ -295,6 +295,10 @@ class TNVMApplianceManager:
                     snapshots.append(desc)
             
             working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
+
+            ## create directories if needed
+            if not os.path.exists(working_dir): os.makedirs(working_dir)
+            
             compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity)
             
             self.is_installing = True

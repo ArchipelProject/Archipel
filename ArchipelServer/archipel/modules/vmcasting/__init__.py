@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import xmpp
 from archipel.utils import *
 import archipel.core.archipelHypervisor
@@ -30,9 +31,8 @@ ARCHIPEL_NS_VIRTUALMACHINE_VMCASTING    = "archipel:virtualmachine:vmcasting"
 
 
 def __module_init__vmcasting_module_for_hypervisor(self):
-    db_path     = self.configuration.get("VMCASTING", "vmcasting_database_path")
-    repo_path   = self.configuration.get("VMCASTING", "repository_path")
-
+    db_path                     = self.configuration.get("VMCASTING", "vmcasting_database_path")
+    repo_path                   = self.configuration.get("VMCASTING", "repository_path")    
     own_vmcast_uuid             = self.configuration.get("VMCASTING", "own_vmcast_uuid")
     own_vmcast_url              = self.configuration.get("VMCASTING", "own_vmcast_url")
     own_vmcast_path             = self.configuration.get("VMCASTING", "own_vmcast_path")
@@ -41,6 +41,11 @@ def __module_init__vmcasting_module_for_hypervisor(self):
     own_vmcast_description      = self.configuration.get("VMCASTING", "own_vmcast_description")
     own_vmcast_lang             = self.configuration.get("VMCASTING", "own_vmcast_lang")
     own_vmcast_refresh_interval = self.configuration.getint("VMCASTING", "own_vmcast_refresh_interval")    
+    
+    
+    ## create directories if needed
+    if not os.path.exists(repo_path):       os.makedirs(repo_path)
+    if not os.path.exists(own_vmcast_path): os.makedirs(own_vmcast_path)
     
     repo_dict = {"uuid": own_vmcast_uuid, "url": own_vmcast_url, "name": own_vmcast_name, "description": own_vmcast_description, 
                     "path": own_vmcast_path, "filename": own_vmcast_file_name, "refresh": own_vmcast_refresh_interval, "lang": own_vmcast_lang}
@@ -53,6 +58,11 @@ def __module_init__vmcasting_module_for_virtualmachine(self):
     temp_path               = self.configuration.get("VMCASTING", "temp_path")
     disks_ext               = self.configuration.get("VMCASTING", "disks_extensions")
     hypervisor_repo_path    = self.configuration.get("VMCASTING", "own_vmcast_path")
+    
+    ## create directories if neede
+    if not os.path.exists(repo_path):               os.makedirs(repo_path)
+    if not os.path.exists(temp_path):               os.makedirs(temp_path)
+    if not os.path.exists(hypervisor_repo_path):    os.makedirs(hypervisor_repo_path)
     
     self.module_packaging = vmappliancemanager.TNVMApplianceManager(db_path, temp_path, disks_ext, hypervisor_repo_path, self)
 

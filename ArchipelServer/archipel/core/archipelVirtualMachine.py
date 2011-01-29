@@ -96,6 +96,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.entity_type                = "virtualmachine";
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         
+        
+        ## create directories if needed
+        if not os.path.exists(vm_disk_base_path): os.makedirs(vm_disk_base_path)
+        
         # folder
         if not os.path.isdir(self.folder): os.mkdir(self.folder)
         

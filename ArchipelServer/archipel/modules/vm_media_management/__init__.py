@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import os
+
 from archipel.utils import *
 import archipel.core.archipelHypervisor
 import archipel.core.archipelVirtualMachine
@@ -26,6 +28,9 @@ ARCHIPEL_NS_VM_DISK = "archipel:vm:disk"
 
 def __module_init__disk_management(self):
     shared_isos_folder = self.configuration.get("MEDIAS", "iso_base_path") + "/"
+    
+    ## create directories if needed
+    if not os.path.exists(shared_isos_folder): os.makedirs(shared_isos_folder)
     
     self.module_media = diskManagement.TNMediaManagement(shared_isos_folder, self)
     
