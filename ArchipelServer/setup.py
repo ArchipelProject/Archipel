@@ -17,6 +17,7 @@
 
 import os
 from setuptools import setup, find_packages
+from distutils.core import Command
 import sys, os
 
 
@@ -41,30 +42,12 @@ WORKINGFOLDERS  = { "drives"    : "%s/vm/drives"  % PREFIX,
                     "vmcasts"   : "%s/vm/vmcasts" % PREFIX}
 
 
+
 def create_avatar_list(folder):
     ret = []
     for avatar in os.listdir(folder):
         ret.append("%s%s" % (folder, avatar))
-    return ret
- 
-
-
-def create_working_folders(folders):
-    for name, folder in folders.items():
-        print "creating working %s folder at %s" %  (name, folder)
-        os.system("mkdir -p '%s'" % folder)
-
-
-def create_log_folder(folder):
-    if not os.path.exists(folder):
-        print "creating log folder  %s" % folder
-        os.system("mkdir -p '%s'" % folder)
-
-
-
-create_working_folders(WORKINGFOLDERS)
-create_log_folder("%s/var/log/archipel" % PREFIX)
-
+    return ret    
 
 
 setup(name='archipel-server',
@@ -94,6 +77,7 @@ setup(name='archipel-server',
       license='AGPLv3',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
+      include_empty_folders=True,
       zip_safe=False,
       provides=["archipel"],
       install_requires=[
