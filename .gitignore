@@ -9,3 +9,4 @@
 *.submodules_initialized
 *ArchipelServer/build
 *ArchipelServer/dist
+*ArchipelServer/*.egg-info
