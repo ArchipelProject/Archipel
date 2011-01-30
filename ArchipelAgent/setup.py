@@ -111,7 +111,3 @@ setup(name='archipel-agent',
         ('/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )
-
-
-
-manual_install_data_files()
