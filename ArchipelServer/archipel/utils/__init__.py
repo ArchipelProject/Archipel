@@ -145,6 +145,8 @@ def init_conf(path):
         level = logging.CRITICAL
     log_file = conf.get("LOGGING", "logging_file_path")
     
+    if not os.path.exists(os.path.dirname(log_file)): os.makedirs(os.path.dirname(log_file))
+    
     logger          = globals()["log"];
     max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
     backup_count    = conf.getint("LOGGING", "logging_backup_count")
