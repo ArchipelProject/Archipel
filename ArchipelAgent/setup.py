@@ -15,17 +15,17 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import os, shutil
 from setuptools import setup, find_packages
 
 VERSION = "1.0beta"
 DESCRIPTION="""\
-** Archipel Server **
+** Archipel Agent **
 
 Copyright (c) 2011 Antoine Mercadal
 
 This package contains the agent you need to install on your hypervisor 
-in order to use them with Archipel. You need a running XMPP server in 
+in order to use them with Archipel. You need a running XMPP agent in 
 order to use Archipel and a recent version of Libvirt.
 
 For more information, please go to http://archipelproject.org
@@ -38,7 +38,29 @@ def create_avatar_list(folder):
     return ret    
 
 
-setup(name='archipel-server',
+
+def manual_install_data_files():
+    if not os.path.exists('/var/lib/archipel/'): 
+        os.makedirs('/var/lib/archipel/')
+    
+    if not os.path.exists('/etc/archipel/'):
+        os.makedirs('/etc/archipel/')
+        
+    if not os.path.exists('/var/lib/archipel/avatars'):
+        shutil.copytree('/install/var/lib/archipel/avatars', '/var/lib/archipel/')
+    
+    if not os.path.exists('/var/lib/archipel/names.txt'):
+        shutil.copytree('/install/var/lib/archipel/names.txt', '/var/lib/archipel/')
+    
+    if not os.path.exists('/etc/archipel'):
+        shutil.copytree('/install/etc/archipel', '/etc/archipel')
+    
+    if not os.path.exists('/etc/init.d/archipel'):
+        shutil.copytree('/install/etc/init.d/archipel', '/etc/init.d/')
+    
+
+
+setup(name='archipel-agent',
       version=VERSION,
       description="The hypervisor's agent part of Archipel",
       long_description=DESCRIPTION,
@@ -89,3 +111,7 @@ setup(name='archipel-server',
         ('/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )
+
+
+
+manual_install_data_files()
