@@ -17,12 +17,8 @@
 
 import os
 from setuptools import setup, find_packages
-from distutils.core import Command
-import sys, os
-
 
 VERSION = "1.0beta"
-PREFIX= ""
 DESCRIPTION="""\
 ** Archipel Server **
 
@@ -34,14 +30,6 @@ order to use Archipel and a recent version of Libvirt.
 
 For more information, please go to http://archipelproject.org
 """
-
-WORKINGFOLDERS  = { "drives"    : "%s/vm/drives"  % PREFIX, 
-                    "iso"       : "%s/vm/iso"     % PREFIX, 
-                    "repo"      : "%s/vm/repo"    % PREFIX, 
-                    "tmp"       : "%s/vm/tmp"     % PREFIX, 
-                    "vmcasts"   : "%s/vm/vmcasts" % PREFIX}
-
-
 
 def create_avatar_list(folder):
     ret = []
@@ -64,7 +52,7 @@ setup(name='archipel-server',
         'Intended Audience :: Science/Research',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Telecommunications Industry',
-        'License :: OSI Approved :: GNU Affero General Public License v',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Topic :: Internet',
@@ -77,7 +65,6 @@ setup(name='archipel-server',
       license='AGPLv3',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
-      include_empty_folders=True,
       zip_safe=False,
       provides=["archipel"],
       install_requires=[
@@ -96,9 +83,9 @@ setup(name='archipel-server',
         'install/bin/runarchipel',
         ],
       data_files=[
-        ('%s/var/lib/archipel/avatars'  % PREFIX, create_avatar_list("install/var/lib/archipel/avatars/")),
-        ('%s/var/lib/archipel/'         % PREFIX, ['install/var/lib/archipel/names.txt']),
-        ('%s/etc/init.d'                % PREFIX, ['install/etc/init.d/archipel']),
-        ('%s/etc/archipel/'             % PREFIX, ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
+        ('/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
+        ('/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
+        ('/etc/init.d'              , ['install/etc/init.d/archipel']),
+        ('/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )
