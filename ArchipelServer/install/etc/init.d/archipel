@@ -10,12 +10,10 @@
 
 # Source function library.
 
-if [ -f /etc/rc.d/init.d/functions ]; then
-    . /etc/rc.d/init.d/functions
-fi
 
-archipel="/usr/bin/runarchipel"
-prog=$(basename $archipel)
+ARCHIPEL=`which runarchipel`
+PROG=$(basename $ARCHIPEL)
+PROGNAME="Archipel"
 ARCHIPEL_CONF_FILE="/etc/archipel/archipel.conf"
 
 if [[ -d /var/lock/subsys ]]; then
@@ -23,32 +21,65 @@ if [[ -d /var/lock/subsys ]]; then
 elif [[ -d /var/lock/ ]]; then
     lockfile=/var/lock/archipel
 else
-   lockfile=/tmp/.lock-archipel
+    lockfile=/tmp/.lock-archipel
 fi
 
 start() {
-    [ -x $archipel ] || exit 5
-    echo -n $"Starting $prog: "
-    $archipel --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1 &
+    [[ -x $ARCHIPEL ]] || exit 5
+
+    if [[ -f $lockfile ]]; then
+        echo -ne " * $PROGNAME already running: \\033[31m[ERROR]\\033[0m\\n"
+        exit 6
+    fi
+
+    echo -ne " * Starting $PROGNAME:\\r"
+    $ARCHIPEL --config="$ARCHIPEL_CONF_FILE" > /dev/null 2>&1
     retval=$?
-    echo
-    [ $retval -eq 0 ] && touch $lockfile
-    echo $! > $lockfile
-    return 0
+
+    if [[ $retval == 0 ]]; then
+        touch $lockfile
+        echo $! > $lockfile
+        echo -ne " * Starting $PROGNAME: \\033[32m[OK]\\033[0m\\n"
+    else
+        echo -ne " * Starting $PROGNAME: \\033[31m[ERROR]\\033[0m\\n"
+    fi
+
+    return $retval
 }
 
 stop() {
-    echo -n $"Stopping $prog: "
-    killall -9 runarchipel
+    if [[ ! -f $lockfile ]]; then
+        echo -ne " * $PROGNAME is not running: \\033[31m[ERROR]\\033[0m\\n"
+        exit 6
+    fi
+
+    echo -ne " * Stopping $PROGNAME:\\r"
+    killall -9 $PROG
     retval=$?
-    echo
-    [ $retval -eq 0 ] && rm -f $lockfile
+    if [[ $retval == 0 ]]; then
+        rm -f $lockfile
+        echo -ne " * Stopping $PROGNAME: \\033[32m[OK]\\033[0m\\n"
+    else
+        echo -ne " * Stopping $PROGNAME: \\033[31m[ERROR]\\033[0m\\n"
+    fi
+
     return $retval
 }
 
 restart() {
     stop
     start
+}
+
+status() {
+    if [[ -f $lockfile ]]; then
+        echo -ne " * $PROGNAME state: \\033[32m[RUNNING]\\033[0m\\n"
+        exit 0
+    else
+        echo -ne " * $PROGNAME state: \\033[31m[STOPPED]\\033[0m\\n"
+        exit 0
+    fi
+
 }
 
 
@@ -62,7 +93,10 @@ case "$1" in
     restart)
         $1
         ;;
+    status)
+        $1
+        ;;
     *)
-        echo $"Usage: $0 {start|stop|restart}"
+        echo $"Usage: $0 {start|stop|restart|status}"
         exit 2
 esac
