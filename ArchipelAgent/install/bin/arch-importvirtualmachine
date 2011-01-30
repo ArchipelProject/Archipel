@@ -27,7 +27,7 @@ import commands
 HELP = """\
 arch-importvirtualmachine (c) 2010 Antoine Mercadal
 this tool allows to import already existing libvirt virtual machine into Archipel.
-Be sure to stop archipelServer before running this tool
+Be sure to stop archipel agent before running this tool
 
 usage :
     arch-importvirtualmachine --file=sqlite3DB --uuid=aUUID --xmppserver=aServer --name=aName [--password=aPassword]

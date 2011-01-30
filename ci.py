@@ -100,15 +100,15 @@ def buildArchipel(export_dir, build):
         os.system("echo \* unable to build ArchipelClient. end of line.")
         sys.exit(-9)
     os.system("cd ./ArchipelClient/Build/%s/ && tar -czf %s/Archipel-nightly-%s-%s-client.tar.gz ./Archipel" % (CONFIGURATION.capitalize(), export_dir, builddate, rev))
-    os.system("tar -czf %s/Archipel-nightly-%s-%s-server.tar.gz ./ArchipelServer" % (export_dir, builddate, rev))
-    os.system("cd %s/.. && rm -f latest-archipel-server.tar.gz" % (export_dir))
+    os.system("tar -czf %s/Archipel-nightly-%s-%s-agent.tar.gz ./ArchipelAgent" % (export_dir, builddate, rev))
+    os.system("cd %s/.. && rm -f latest-archipel-agent.tar.gz" % (export_dir))
     os.system("cd %s/.. && rm -f latest-archipel-client.tar.gz" % (export_dir))
-    os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-%s-server.tar.gz latest-archipel-server.tar.gz" % (export_dir, builddate, rev))
+    os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-%s-agent.tar.gz latest-archipel-agent.tar.gz" % (export_dir, builddate, rev))
     os.system("cd %s/.. && ln -s old/Archipel-nightly-%s-%s-client.tar.gz latest-archipel-client.tar.gz" % (export_dir, builddate, rev))
     os.system("chown cruise:www-data %sArchipel-nightly-%s-%s-client.tar.gz" % (export_dir, builddate, rev))
-    os.system("chown cruise:www-data %sArchipel-nightly-%s-%s-server.tar.gz" % (export_dir, builddate, rev))
+    os.system("chown cruise:www-data %sArchipel-nightly-%s-%s-agent.tar.gz" % (export_dir, builddate, rev))
     os.system("chmod 755 %sArchipel-nightly-%s-%s-client.tar.gz" % (export_dir, builddate, rev))
-    os.system("chmod 755 %sArchipel-nightly-%s-%s-server.tar.gz" % (export_dir, builddate, rev))
+    os.system("chmod 755 %sArchipel-nightly-%s-%s-agent.tar.gz" % (export_dir, builddate, rev))
 
 
 def deployArchipel(deploy_dir):
@@ -168,11 +168,11 @@ def generateAPI(api_dir):
     os.system("cp -a ./ArchipelClient/Libraries/TNKit/Build/Documentation/html/* %s/tnkit/" % api_dir)
     os.system("chown -R cruise:www-data %s/tnkit/" % api_dir)
     
-    os.system("echo \* Generating doc for ArchipelServer")
-    os.system("mkdir -p %s/archipel-server" % api_dir)
-    os.system("cd ArchipelServer; epydoc .")
-    os.system("cp -a ArchipelServer/html/* %s/archipel-server/" % api_dir)
-    os.system("chown -R cruise:www-data %s/archipel-server/" % api_dir)
+    os.system("echo \* Generating doc for ArchipelAgent")
+    os.system("mkdir -p %s/archipel-agent" % api_dir)
+    os.system("cd ArchipelAgent; epydoc .")
+    os.system("cp -a ArchipelAgent/html/* %s/archipel-agent/" % api_dir)
+    os.system("chown -R cruise:www-data %s/archipel-agent/" % api_dir)
     
     
     os.system("echo \* Documentation generation complete")

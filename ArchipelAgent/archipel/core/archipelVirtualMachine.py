@@ -24,7 +24,7 @@ This module contain the class ArchipelVirtualMachine that represents a virtual m
 linked to a libvirt domain and allowing other XMPP entities to control it using IQ.
 
 The ArchipelVirtualMachine is able to register to any kind of XMPP compliant Server. These 
-Server SHOULD allow in-band registration, or you have to manually register VM before 
+Server MUST allow in-band registration, or you have to manually register VM before 
 launching them.
 
 Also the JID of the virtual machine MUST be the UUID use in the libvirt domain, or it will

@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 # chkconfig: - 01 99
-# description: Archipel Server Daemon
+# description: Archipel Agent Daemon
 # processname: runarchipel.py
 # config: /etc/archipel/archipel.conf
 # pidfile: /var/run/archipel.pid
