@@ -594,8 +594,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
 
     // help
-    [helpMenu addItemWithTitle:@"Archipel Help" action:nil keyEquivalent:@""];
-    [helpMenu addItemWithTitle:@"Release note" action:nil keyEquivalent:@""];
+    [helpMenu addItemWithTitle:@"Archipel Help" action:@selector(openWiki:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:@"Release note" action:@selector(openReleaseNotes:) keyEquivalent:@""];
     [helpMenu addItem:[CPMenuItem separatorItem]];
     [helpMenu addItemWithTitle:@"Go to website" action:@selector(openWebsite:) keyEquivalent:@""];
     [helpMenu addItemWithTitle:@"Report a bug" action:@selector(openBugTracker:) keyEquivalent:@""];
@@ -1030,12 +1030,28 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     window.open("http://archipelproject.org");
 }
 
+/*! Opens the archipel wiki in a new window
+    @param the sender of the action
+*/
+- (IBAction)openWiki:(id)sender
+{
+    window.open("http://github.org/primalmotion/archipel/wiki");
+}
+
+/*! Opens the archipel commit line
+    @param the sender of the action
+*/
+- (IBAction)openReleaseNotes:(id)sender
+{
+    window.open("http://github.com/primalmotion/Archipel/commits/master");
+}
+
 /*! Opens the donation website in a new window
     @param the sender of the action
 */
 - (IBAction)openDonationPage:(id)sender
 {
-    window.open("http://antoinemercadal.fr/archipelblog/donate/");
+    window.open("http://archipelproject.org/donate");
 }
 
 /*! Opens the archipel issues website in a new window
@@ -1043,7 +1059,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (IBAction)openBugTracker:(id)sender
 {
-    window.open("http://github.org/primalmotion/archipel/issues/new");
+    window.open("http://github.org/primalmotion/archipel/issues/");
 }
 
 /*! hide or show the main menu
