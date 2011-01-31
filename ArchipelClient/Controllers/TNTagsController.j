@@ -64,10 +64,12 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 45, 30)];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [_tokenFieldTags setDelegate:self];
+    [_tokenFieldTags setEditable:YES];
+    [_tokenFieldTags setEnabled:NO];
     [mainView addSubview:_tokenFieldTags];
 
 
-    _buttonSave = [CPButton buttonWithTitle:@"Tag"];
+    _buttonSave = [CPButton buttonWithTitle:@" Tag "];
     [_buttonSave setBezelStyle:CPRoundedBezelStyle];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
     [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 3, 3)];
@@ -143,9 +145,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     if ([_currentRosterItem class] !== TNStropheContact)
     {
-        [_buttonSave setEnabled:NO];
-
         [_tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
+        [_buttonSave setEnabled:NO];
         [_tokenFieldTags setEnabled:NO];
         [_tokenFieldTags setObjectValue:[]];
     }
@@ -156,6 +157,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
         [_tokenFieldTags setPlaceholderString:@"Enter coma separated tags"];
         [_tokenFieldTags setEnabled:YES];
+        [_buttonSave setEnabled:YES];
 
         if (_currentRosterItem)
             [_tokenFieldTags setObjectValue:[self getTagsForJID:[_currentRosterItem JID]]];
