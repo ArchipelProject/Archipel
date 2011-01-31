@@ -18,7 +18,7 @@
 import os, shutil
 from setuptools import setup, find_packages
 
-VERSION = "1.0beta"
+VERSION = "1.0beta2"
 DESCRIPTION="""\
 ** Archipel Agent **
 
