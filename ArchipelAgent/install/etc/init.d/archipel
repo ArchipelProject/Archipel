@@ -56,12 +56,8 @@ stop() {
     echo -ne " * Stopping $PROGNAME:\\r"
     killall -9 $PROG
     retval=$?
-    if [[ $retval == 0 ]]; then
-        rm -f $lockfile
-        echo -ne " * Stopping $PROGNAME: \\033[32m[OK]\\033[0m\\n"
-    else
-        echo -ne " * Stopping $PROGNAME: \\033[31m[ERROR]\\033[0m\\n"
-    fi
+    rm -f $lockfile
+    echo -ne " * Stopping $PROGNAME: \\033[32m[OK]\\033[0m\\n"
 
     return $retval
 }

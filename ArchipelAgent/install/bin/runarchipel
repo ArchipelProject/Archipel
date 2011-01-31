@@ -1,18 +1,18 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
-# 
+#
 # runarchipel
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -29,8 +29,17 @@ import archipel.core.libvirtEventLoop
 import archipel.core.archipelHypervisor
 
 
+## error codes
+ARCHIPEL_INIT_SUCCESS           = 0
+ARCHIPEL_INIT_ERROR_NO_CONFIG   = 1
+ARCHIPEL_INIT_ERROR_NO_MODULE   = 2
+ARCHIPEL_INIT_ERROR_BAD_LIBVIRT = 3
+ARCHIPEL_INIT_ERROR_UNKNOWN     = 4
+
+
+## help message
 ARCHIPEL_CMD_HELP   = """\
-Archipel Daemon (c) 2010 Antoine Mercadal
+Archipel Agent (c) 2010 Antoine Mercadal
 
 usage: runarchipel [--nofork] [--config=</path/to/conf>]
 
@@ -57,41 +66,52 @@ def test_libvirt():
 def load_modules():
     """
     this function load modules
-    """    
+    """
     for module, should_load in config.items("MODULES"):
         if should_load in ("True", "1", "y", "yes"):
-            __import__("archipel.modules." + module, globals(), locals(), [], -1)
+            try:
+                log.info("MODULE LOADING: trying to load archipel.modules.%s" %  module)
+                __import__("archipel.modules.%s" %  module, globals(), locals(), [], -1)
+            except:
+                try:
+                    error = "MODULE LOADING: trying to load" %  module
+                    print "\033[31m%s\033[0m" % error
+                    log.error(error)
+                    __import__(module, globals(), locals(), [], -1)
+                except:
+                    error = "MODULE LOADING: unable to load module %s. aborting" %  module
+                    print "\033[31m%s\033[0m" % error
+                    log.error(error)
+                    return False
+    return True
 
- 
+
+
 def main():
     """
     main function of Archipel
     """
     # starting thre libvirt event loop
     archipel.core.libvirtEventLoop.virEventLoopPureStart()
-    
     # initializing the hypervisor XMPP entity
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
     name        = config.get("HYPERVISOR", "hypervisor_name")
-    
     jid.setResource(socket.gethostname())
-    
     hyp = archipel.core.archipelHypervisor.TNArchipelHypervisor(jid, password, config, name, database)
     hyp.connect()
     hyp.loop()
-    return 0
 
 
 if __name__ == "__main__":
-    if not test_libvirt(): sys.exit(1)
-    
+    if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
+
     opts, args = getopt.getopt(sys.argv[1:], "hn", ["nofork", "config=", "help"])
-    
+
     configPath = "/etc/archipel/archipel.conf"
     fork = True
-    
+
     for o, a in opts:
         if o in ("--config"):
             configPath = a
@@ -99,29 +119,33 @@ if __name__ == "__main__":
             fork = False
         if o in ("-h", "--help"):
             print ARCHIPEL_CMD_HELP
-            
-            sys.exit(0)
-    
+            sys.exit(ARCHIPEL_INIT_SUCCESS)
+
+    try:
+        config = init_conf(configPath)
+    except:
+        print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % configPath
+        sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)
+
+    if not load_modules():
+        sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
+
     if fork:
         try:
             pid = os.fork()
             if pid > 0:
-                sys.exit(0)
+                sys.exit(ARCHIPEL_INIT_SUCCESS)
         except OSError as e:
-            os.exit(1)
-    
-    config = init_conf(configPath)
-    #os.chdir(config.get("GLOBAL", "general_exec_dir"))
-    load_modules()
-    
+            os.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+
     if fork:
         os.setsid()
         os.umask(0)
         try:
             pid = os.fork()
             if pid > 0:
-              sys.exit(0)
+              sys.exit(ARCHIPEL_INIT_SUCCESS)
         except OSError as e:
-            sys.exit(1)
-    
+            sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
+
     main()
