@@ -35,30 +35,7 @@ def create_avatar_list(folder):
     ret = []
     for avatar in os.listdir(folder):
         ret.append("%s%s" % (folder, avatar))
-    return ret    
-
-
-
-def manual_install_data_files():
-    if not os.path.exists('/var/lib/archipel/'): 
-        os.makedirs('/var/lib/archipel/')
-    
-    if not os.path.exists('/etc/archipel/'):
-        os.makedirs('/etc/archipel/')
-        
-    if not os.path.exists('/var/lib/archipel/avatars'):
-        shutil.copytree('/install/var/lib/archipel/avatars', '/var/lib/archipel/')
-    
-    if not os.path.exists('/var/lib/archipel/names.txt'):
-        shutil.copytree('/install/var/lib/archipel/names.txt', '/var/lib/archipel/')
-    
-    if not os.path.exists('/etc/archipel'):
-        shutil.copytree('/install/etc/archipel', '/etc/archipel')
-    
-    if not os.path.exists('/etc/init.d/archipel'):
-        shutil.copytree('/install/etc/init.d/archipel', '/etc/init.d/')
-    
-
+    return ret
 
 setup(name='archipel-agent',
       version=VERSION,
