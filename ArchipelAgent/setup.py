@@ -95,19 +95,20 @@ setup(name='archipel-agent',
         "apscheduler>=1.3.1"
       ],
       entry_points="""
-      # -*- Entry points: -*-
-      """,
+        # -*- Entry points: -*-
+        """,
       scripts = [
         'install/bin/arch-importvirtualmachine',
         'install/bin/arch-rolesnode',
         'install/bin/arch-tagnode',
         'install/bin/arch-updatedomain',
         'install/bin/runarchipel',
+        'install/bin/arch-initinstall'
         ],
       data_files=[
-        ('/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
-        ('/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
-        ('/etc/init.d'              , ['install/etc/init.d/archipel']),
-        ('/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
+        ('system/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
+        ('system/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
+        ('system/etc/init.d'              , ['install/etc/init.d/archipel']),
+        ('system/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )
