@@ -138,11 +138,6 @@ def install_archipelclient():
     os.system("cd ./ArchipelClient && ./bootstrap")
 
 
-### install agent
-def install_archipelagent():
-    os.system("cd ./ArchipelAgent && python setup.py install")
-
-
 
 ### Main
 
@@ -154,11 +149,9 @@ def main():
         
         test_user_root()
         
-        install_agent = ask_bool("Would you like to install Archipel Agent ?")
         install_client = ask_bool("Would you like to install Archipel Client ?")
         
         print "\n\nWe will now execute the following installation: "
-        if install_agent: print " - Archipel Agent"
         if install_client: print " - Archipel Client"
         
         print " "
@@ -168,7 +161,6 @@ def main():
             print " \033[33m* Installation canceled by user\033[0m"
             sys.exit(0)
         
-        if install_agent: install_archipelagent()
         if install_client: install_archipelclient()
         
         clear()
