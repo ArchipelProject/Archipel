@@ -1,0 +1,143 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# 
+# archipel-initinstall
+# 
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+import os
+import sqlite3
+import sys
+import getopt
+import shutil
+
+HELP = """\
+archipel-initinstall (c) 2010 Antoine Mercadal
+this tool should be run right after installing Archipel Agent from the egg. it will
+create necessary folders and install default configuration. Then, you should go and
+edit /etc/archipel/archipel.conf to match your platform configuration
+
+usage :
+    archipel-initinstall [--help | -h] [--prefix=aPrefix] [--force | -f]
+
+    --prefix        : all installation folders and files will be prefixed with given value
+    --force, -f     : before installing, clean all existing folder and files.
+    --help, -h      : shows this message
+
+"""
+
+def prepare_environment(prefix="", force=False):
+    from pkg_resources import Requirement, resource_filename
+    import errno
+    init_script     = resource_filename(Requirement.parse("archipel-agent"),"system/etc/init.d/archipel")
+    conf_folder     = resource_filename(Requirement.parse("archipel-agent"),"system/etc/archipel")
+    lib_folder      = resource_filename(Requirement.parse("archipel-agent"),"system/var/lib/archipel")
+
+    print init_script
+
+    if force:
+        try:
+            print "# cleaning old existing files"
+            print " - cleaning init script from %s/etc/init.d/archipel" % prefix
+            os.system("rm -rf %s/etc/init.d/archipel" % prefix)
+            print " - cleaning library folders from %s/var/lib/archipel" % prefix
+            os.system("rm -rf %s/var/lib/archipel" % prefix)
+            print " - cleaning configuration file from %s/etc/archipel" % prefix
+            os.system("rm -rf %s/etc/archipel" % prefix)
+            print ""
+            print "\033[32m[SUCCESS]\033[0m : previous installation cleaned"
+            print ""
+        except Exception as ex:
+            print "\033[31m[ERROR]\033[0m : %s" % (n, strerror)
+
+
+    print "# Installation initialization started"
+    try:
+        sys.stdout.write(" - installing init script to %s/etc/init.d/archipel: " % prefix)
+        shutil.copyfile(init_script, "%s/etc/init.d/archipel" % prefix)
+        os.system("chmod 755 %s/etc/init.d/archipel" % prefix)
+        print "\033[32m[OK]\033[0m"
+    except IOError as (n, strerror):
+        if n == errno.ENOENT:
+            print "\033[31m[ERROR]\033[0m\n"
+            print "  %s/etc/init.d doesn't exist. You mostly are on a non-supported platform." % prefix
+            sys.exit(2)
+        if n == errno.EEXIST:
+            print  "\033[33m[WARNING]"
+            print "   init script files already exists. Leaving as it is\033[0m"
+    except Exception as ex :
+        print "\033[31m[ERROR]\033[0m : %s" % (str(ex))
+        sys.exit(1)
+
+    print ""
+
+    try:
+        sys.stdout.write(" - installing configuration to %s/etc/archipel:" % prefix)
+        shutil.copytree(conf_folder, "%s/etc/archipel/" % prefix)
+        print "      \033[32m[OK]\033[0m"
+    except OSError as (n, strerror):
+        if n == errno.ENOENT:
+            print "      \033[31m[ERROR]\033[0m"
+            print "  %s/etc doesn't exist. You mostly are on a non-supported platform." % prefix
+            sys.exit(2)
+        if n == errno.EEXIST:
+            print "      \033[33m[WARNING]"
+            print "   configuration files already exists. Leaving as it is\033[0m"
+    except Exception as ex :
+        print "  \033[31m[ERROR]\033[0m : %s" % (str(ex))
+        sys.exit(1)
+
+    print ""
+
+    try:
+        sys.stdout.write(" - installing data folder to %s/var/lib/archipel" % prefix)
+        shutil.copytree(lib_folder, "%s/var/lib/archipel" % prefix)
+        print "     \033[32m[OK]\033[0m"
+    except OSError as (n, strerror):
+        if n == errno.ENOENT:
+            print "     \033[31m[ERROR %d]"
+            print "  %s/var/lib/ doesn't exist. You mostly are on a non-supported platform.\033[0m" % prefix
+            sys.exit(2)
+        if n == errno.EEXIST:
+            print "     \033[33m[WARNING]"
+            print "   lib files already exists. Leaving as it is\033[0m"
+    except Exception as ex :
+        print "  \033[31m[ERROR]\033[0m : %s" % (str(ex))
+        sys.exit(1)
+
+    print ""
+    print "\033[32m[SUCCESS]\033[0m : installation initialization complete"
+    print ""
+    print "\033[35m ** IMPORTANT NOTE: you now need to edit /etc/archipel/archipel.conf top match your informations **\033[0m"
+    print ""
+
+
+if __name__ == "__main__":
+    prefix  = ""
+    clean   = False
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hf", ["help", "prefix=", "forces"])
+        for o, a in opts:
+            if o in ("--prefix"):
+                prefix = a
+            if o in ("--force", "-f"):
+                clean = True
+            if o in ("-h", "--help"):
+                print HELP
+                sys.exit(0)
+    except Exception as ex:
+        print "\033[31mERROR: %s \n\033[0m" % str(ex)
+
+    prepare_environment(prefix, clean)
