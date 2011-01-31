@@ -98,12 +98,12 @@ setup(name='archipel-agent',
         # -*- Entry points: -*-
         """,
       scripts = [
-        'install/bin/arch-importvirtualmachine',
-        'install/bin/arch-rolesnode',
-        'install/bin/arch-tagnode',
-        'install/bin/arch-updatedomain',
-        'install/bin/runarchipel',
-        'install/bin/arch-initinstall'
+        'install/bin/archipel-importvirtualmachine',
+        'install/bin/archipel-rolesnode',
+        'install/bin/archipel-tagnode',
+        'install/bin/archipel-updatedomain',
+        'install/bin/archipel-initinstall',
+        'install/bin/runarchipel'
         ],
       data_files=[
         ('system/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),

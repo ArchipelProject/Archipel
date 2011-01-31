@@ -293,7 +293,7 @@ class TNArchipelEntity:
         tagsNodeName = "/archipel/tags"
         self.pubSubNodeTags = archipel.core.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
         if not self.pubSubNodeTags.recover():
-            Exception("the pubsub node /archipel/tags must have been created. You can use arch-tagnode tool to create it.")        
+            Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")        
     
     
     def remove_pubsubs(self):
