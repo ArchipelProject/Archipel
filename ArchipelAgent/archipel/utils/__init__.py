@@ -2,7 +2,7 @@
 this module contains some functions that allow objects to use advanced logging
 functionalities or others common stuffs
 """
-import sys
+import sys, os
 import datetime
 import ConfigParser
 import xmpp
