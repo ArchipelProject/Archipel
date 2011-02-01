@@ -440,9 +440,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl");
         self.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
-        
         self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl);
         self.novnc_proxy.start()
+        self.push_change("virtualmachine:control", "websocketvncstart", excludedgroups=['vitualmachines'])
     
     
     def stop_novnc_proxy(self):
@@ -453,6 +453,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             self.log.info("stopping novnc proxy")
             self.novnc_proxy.stop()
             self.novnc_proxy = None;
+            self.push_change("virtualmachine:control", "websocketvncstop", excludedgroups=['vitualmachines'])
     
     
     def manage_trigger_persistance(self):
@@ -759,6 +760,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         xmldesc = self.domain.XMLDesc(0)
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
         directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
+        if directport == -1:
+            return {"direct"        : -1, 
+                    "proxy"         : -1, 
+                    "onlyssl"       : False, 
+                    "supportssl"    : False}
         proxyport = directport + 1000
         supportSSL = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
         if supportSSL.lower() in ("none", "no", "false"): 

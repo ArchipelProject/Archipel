@@ -28,6 +28,7 @@
     using VNC.
 */
 
+TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
 
 /*! @ingroup virtualmachinevnc
     @group TNArchipelTypeVirtualMachineControl
@@ -172,22 +173,30 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 {
     [super willLoad];
 
-    [self getVirtualMachineVNCDisplay];
-
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCShowExternalWindowNotification object:nil];
     [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
 
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
+
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+
+    if ([_entity XMPPShow] == TNStropheContactStatusOnline)
+        [self getVirtualMachineVNCDisplay];
 }
 
 /*! called when module is unloaded
 */
 - (void)willUnload
 {
-    _VMHost = nil;
+    _VMHost         = nil;
+    _vncProxyPort   = nil;
+    _vncDirectPort  = nil;
+    _vncSupportSSL  = nil;
+    _vncOnlySSL     = nil;
+
     [fieldPassword setStringValue:@""];
 
     [super willUnload];
@@ -267,6 +276,36 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 #pragma mark -
 #pragma mark Notification handlers
 
+/*! called when TNArchipelPushNotificationControl is recieved
+    @param somePushInfo CPDictionary containing the push information
+*/
+- (BOOL)_didReceivePush:(CPDictionary)somePushInfo
+{
+    var sender  = [somePushInfo objectForKey:@"owner"],
+        type    = [somePushInfo objectForKey:@"type"],
+        change  = [somePushInfo objectForKey:@"change"],
+        date    = [somePushInfo objectForKey:@"date"];
+
+    switch (change)
+    {
+        case @"websocketvncstart":
+            [self getVirtualMachineVNCDisplay];
+            break;
+
+        case @"websocketvncstop":
+            _VMHost         = nil;
+            _vncProxyPort   = nil;
+            _vncDirectPort  = nil;
+            _vncSupportSSL  = nil;
+            _vncOnlySSL     = nil;
+            [_vncView unfocus];
+            [_vncView resetSize];
+            break;
+    }
+
+    return YES;
+}
+
 /*! called when contact nickname has been updated
     @param aNotification the notification
 */
@@ -314,8 +353,8 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
         [maskingView removeFromSuperview];
-        if (_VMHost)
-            [self prepareVNCScreen];
+
+        [self getVirtualMachineVNCDisplay];
     }
     else
     {
@@ -324,6 +363,12 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
             [_vncView disconnect:nil];
             [_vncView resetSize];
             [_vncView unfocus];
+
+            _VMHost         = nil;
+            _vncProxyPort   = nil;
+            _vncDirectPort  = nil;
+            _vncSupportSSL  = nil;
+            _vncOnlySSL     = nil;
         }
 
         [maskingView setFrame:[[self view] bounds]];
@@ -359,6 +404,9 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 */
 - (void)prepareVNCScreen
 {
+    if (_vncProxyPort == -1)
+        return;
+
     var defaults    = [CPUserDefaults standardUserDefaults],
         scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
         passwordKey = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID],
@@ -598,7 +646,9 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
         _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
 
-        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
+        console.warn("---> VNC PORT IS " + _vncProxyPort)
+        if (parseInt(_vncProxyPort) != -1)
+            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
     }
     else if ([aStanza type] == @"error")
     {
