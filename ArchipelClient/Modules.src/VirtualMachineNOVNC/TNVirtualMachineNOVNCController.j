@@ -646,7 +646,6 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
         _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
 
-        console.warn("---> VNC PORT IS " + _vncProxyPort)
         if (parseInt(_vncProxyPort) != -1)
             [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
     }
