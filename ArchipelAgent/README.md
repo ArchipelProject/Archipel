@@ -1,20 +1,10 @@
-# What is Archipel ?
+# What is Archipel Agent ?
 
-Archipel is an Open Source project that aims to bring push notifications to virtualization orchestration using XMPP.
+Archipel Agent is the small piece of software you need to install on each of your hypervisors.
+It will perform bridging between XMPP and Libvirt, and allows to add extensions. It will
+create a thread for the hypervisor and each virtual machines you run an the hypervisor.
+It it distribute under python setuptools package. You can install it directly from
 
-Archipel relies on open source technologies like python, ejabberd, cappuccino, strophe, nginx, libvirt, KVM and even more. All of these  technologies are mixed together to create a real time orchestration solution for virtualization.
-
-Thanks to Archipel you are be able to :
-
-* Visualize in real time the states of virtual machines and hypervisors ;
-* Send real time commands to them ;
-* Communicate inside the orchestrator with other human users ;
-* Organize virtual machines and hypervisors into groups and send commands to them ;
-* Connect distant datacenters in a secure way using XMPP S2S communication ;
-* Even use Archipel with XMPP client like GMail in order to receive your VMs notifications ;
-* Avoid the presence of SPOF. If a something fails, everything else still works ;
-* Use it with KVM, Xen, OpenVZ, VirtualBox, and mix them all if you want to ;
-* Have a great real time interface.
 
 # Get help
 
@@ -28,13 +18,26 @@ Thanks to Archipel you are be able to :
 * Bugtracker : <https://github.com/primalmotion/archipel/issues>
 * FAQ : <https://github.com/primalmotion/Archipel/wiki/Faq>
 
+
 # Installation
 
-The installation procedure can be found at <https://github.com/primalmotion/archipel/wiki>.
-If you find some errors, please feel free to correct them.
+run :
+
+    # sudo python setup.py install && archipel-initinstall
+
+Then edit the first line of /etc/archipel/archipel.conf to match your ejabberd server.
+Finally start it using :
+    
+    # /etc/init.d/archipel start
+
+You can check the log at /var/log/archipel/archipel.log
+
 
 # Team
 
 * Antoine Mercadal : Lead developer
-* Franck Villaume : Contributor
-* Alexandre Fernandez : Contributor
+
+
+# License
+
+Archipel is distributed under AGPL v3. See the LICENSE file
