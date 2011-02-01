@@ -214,7 +214,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
             break;
     }
 
-    [buttonTarget selectItemWithTitle:[_drive target]];
+    [self driveTypeDidChange:buttonType];
+
+    if ([buttonType title] == TNXMLDescDriveTypeFile)
+        [buttonTarget selectItemWithTitle:[_drive target]];
+
 }
 
 /*! change the type of the drive
