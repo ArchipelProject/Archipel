@@ -270,9 +270,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
     {
-        [growl pushNotificationWithTitle:@"Connection closed"
-                                 message:@"The remote host has closed the connection"
-                                    icon:TNGrowlIconError];
         [_vncView disconnect:nil];
         [_vncView unfocus];
     }
