@@ -17,9 +17,11 @@
  */
 
 @import <Foundation/Foundation.j>
+@import "TNCellPercentageView.j"
 
 TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
 TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
+
 
 
 /*! @ingroup hypervisorvmcasts
@@ -36,8 +38,10 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     TNTableViewDataSource           _dlDatasource;
 }
 
+
 #pragma mark -
 #pragma mark Initialization
+
 /*! called at cib awaking
 */
 - (void)awakeFromCib
@@ -47,7 +51,7 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     _mainTableView = [[CPTableView alloc] initWithFrame:[mainScrollView bounds]];
     [_mainTableView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_mainTableView setUsesAlternatingRowBackgroundColors:YES];
-    [_mainTableView setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_mainTableView setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
 
     var columnIdentifier = [[CPTableColumn alloc] initWithIdentifier:@"name"],
         columnSize = [[CPTableColumn alloc] initWithIdentifier:@"totalSize"],
@@ -55,9 +59,12 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
     [[columnIdentifier headerView] setStringValue:@"Name"];
 
-    [[columnSize headerView] setStringValue:@"Total Size"];
+    [[columnSize headerView] setStringValue:@"Size"];
+    [columnSize setWidth:70.0];
 
-    [[columnPercentage headerView] setStringValue:@"Percentage"];
+    [[columnPercentage headerView] setStringValue:@"Progress"];
+    [columnPercentage setWidth:130.0];
+    [columnPercentage setDataView:[[TNCellPercentageView alloc] init]];
 
     [_mainTableView addTableColumn:columnIdentifier];
     [_mainTableView addTableColumn:columnSize];
@@ -74,8 +81,10 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [_mainTableView reloadData];
 }
 
+
 #pragma mark -
 #pragma mark CPWindow overrides
+
 - (void)makeKeyAndOrderFront:(id)sender
 {
     [self getDownloadQueue:nil];
@@ -91,8 +100,10 @@ TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
     [super performClose:sender];
 }
 
+
 #pragma mark -
 #pragma mark XMPP Controls
+
 /*! get the progress of downloads
     @param aTimer the timere that have triggered the message
 */

@@ -51,12 +51,13 @@
 #pragma mark -
 #pragma mark Accessors
 
-/*! format the percentage property
-    @return formatted percentage
+/*! format the size
+    @return formated size
 */
-- (CPString)percentage
+- (CPString)totalSize
 {
-    return @"" + _percentage + @"%";
+    return @"" + Math.round((parseFloat(_totalSize) / 1024 / 1024)) + "Mb";
 }
+
 
 @end
