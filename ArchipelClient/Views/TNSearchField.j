@@ -30,24 +30,30 @@
 
 - (void)keyDown:(CPEvent)anEvent
 {
-    if (([anEvent keyCode] == CPReturnKeyCode) || ([anEvent keyCode] == CPDownArrowKeyCode)
-        || ([anEvent keyCode] == CPUpArrowKeyCode))
+    switch ([anEvent keyCode])
     {
-        var indexToSelect;
+        case CPDownArrowKeyCode:
+            [_outlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
+            [[_outlineView window] makeFirstResponder:_outlineView];
+            break;
 
-        if ([anEvent keyCode] == CPDownArrowKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:0];
-        else if ([anEvent keyCode] == CPUpArrowKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:([_outlineView numberOfRows] - 1)];
-        else if ([anEvent keyCode] == CPReturnKeyCode)
-            indexToSelect = [CPIndexSet indexSetWithIndex:1];
+        case CPUpArrowKeyCode:
+            [_outlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:([_outlineView numberOfRows] - 1)] byExtendingSelection:NO];
+            [[_outlineView window] makeFirstResponder:_outlineView];
+            break;
 
-        [_outlineView selectRowIndexes:indexToSelect byExtendingSelection:NO];
+        case CPReturnKeyCode:
+            [_outlineView selectRowIndexes:[CPIndexSet indexSetWithIndex:1] byExtendingSelection:NO];
+            [[_outlineView window] makeFirstResponder:_outlineView];
+            break;
 
-        [[_outlineView window] makeFirstResponder:_outlineView];
-        return;
+        case CPEscapeKeyCode:
+            [[self cancelButton] performClick:nil];
+            break;
+
+        default:
+            [super keyDown:anEvent];
     }
-    [super keyDown:anEvent];
 }
 
 @end
