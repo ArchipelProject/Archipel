@@ -50,7 +50,7 @@ class TNApplianceDownloader(Thread):
     """
     implementation of a downloader. This run in a separate thread.
     """
-    def __init__(self, url, save_folder, uuid, name, finish_callback):
+    def __init__(self, url, save_folder, uuid, name, logger, finish_callback):
         """
         initialization of the class
         @type url: string
@@ -73,13 +73,14 @@ class TNApplianceDownloader(Thread):
         self.save_path          = self.save_folder + "/" + uuid + ".xvm2"
         self.progress           = 0.0
         self.total_size         = None
+        self.logger             = logger
     
     
     def run(self):
         """
         main loop of the thread. will start to download
         """
-        info("TNApplianceDownloader: starting to download appliance %s " % self.url)
+        self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
         urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
     
     
@@ -465,7 +466,7 @@ class TNHypervisorRepoManager:
             
             for values in self.cursor:
                 name, description, url, uuid, status, source, path = values
-                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.on_download_complete)
+                downloader = TNApplianceDownloader(url, self.repository_path, uuid, name, self.entity.log, self.on_download_complete)
                 self.download_queue[uuid] = downloader
                 downloader.daemon  = True
                 downloader.start()
