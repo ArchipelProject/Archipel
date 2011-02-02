@@ -24,6 +24,8 @@
 */
 @implementation TNContactsController: CPObject
 {
+    @outlet CPButton        buttonAdd;
+    @outlet CPButton        buttonCancel;
     @outlet CPPopUpButton   newContactGroup;
     @outlet CPTextField     newContactJID;
     @outlet CPTextField     newContactName;
@@ -39,6 +41,8 @@
 {
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
+
+    [mainWindow setDefaultButton:buttonAdd];
 }
 
 #pragma mark -

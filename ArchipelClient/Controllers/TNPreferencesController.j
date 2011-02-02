@@ -29,14 +29,16 @@
 */
 @implementation TNPreferencesController : CPObject
 {
-    @outlet CPTabView       tabViewMain;
-    @outlet CPView          viewPreferencesGeneral;
-    @outlet CPTextField     fieldWelcomePageUrl;
-    @outlet CPTextField     fieldModuleLoadingDelay;
-    @outlet CPTextField     fieldBOSHResource;
+    @outlet CPButton        buttonCancel;
+    @outlet CPButton        buttonSave;
     @outlet CPPopUpButton   buttonDebugLevel;
-    @outlet TNSwitch        switchUseAnimations;
+    @outlet CPTabView       tabViewMain;
+    @outlet CPTextField     fieldBOSHResource;
+    @outlet CPTextField     fieldModuleLoadingDelay;
+    @outlet CPTextField     fieldWelcomePageUrl;
+    @outlet CPView          viewPreferencesGeneral;
     @outlet CPWindow        mainWindow @accessors(readonly);
+    @outlet TNSwitch        switchUseAnimations;
 
     CPArray                 _modules;
 }
@@ -58,6 +60,8 @@
     [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warning", @"error", @"critical"]];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
+
+    [mainWindow setDefaultButton:buttonSave];
 }
 
 

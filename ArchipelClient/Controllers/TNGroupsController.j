@@ -26,45 +26,26 @@
 */
 @implementation TNGroupsController: CPObject
 {
+    @outlet CPButton    buttonAdd;
+    @outlet CPButton    buttonCancel;
     @outlet CPTextField newGroupName;
     @outlet CPWindow    mainWindow;
 }
 
-/*! overide of the orderFront
-    @param sender the sender
-*/
-- (IBAction)showWindow:(id)sender
-{
-    [newGroupName setStringValue:@""];
 
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:sender];
+#pragma mark -
+#pragma mark Initialization
+
+/*! called at cib awakening
+*/
+- (void)awakeFromCib
+{
+    [mainWindow setDefaultButton:buttonAdd];
 }
 
-/*! add a group according to the outlets
-    @param sender the sender
-*/
-- (IBAction)addGroup:(id)sender
-{
-    if ([newGroupName stringValue] == "")
-    {
-        [TNAlert showAlertWithMessage:@"Group addition error" informative:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
-    }
-    else
-    {
-        var groupName = [newGroupName stringValue];
 
-        [[[TNStropheIMClient defaultClient] roster] addGroupWithName:groupName];
-        [newGroupName setStringValue:@""];
-        CPLog.info(@"new group " + groupName + " added.");
-
-        var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
-
-        [mainWindow performClose:nil];
-    }
-}
-
+#pragma mark -
+#pragma mark Utilities
 
 /*! will ask for deleting the selected group
     @param the sender of the action
@@ -108,6 +89,45 @@
     [defaults removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! overide of the orderFront
+    @param sender the sender
+*/
+- (IBAction)showWindow:(id)sender
+{
+    [newGroupName setStringValue:@""];
+
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:sender];
+}
+
+/*! add a group according to the outlets
+    @param sender the sender
+*/
+- (IBAction)addGroup:(id)sender
+{
+    if ([newGroupName stringValue] == "")
+    {
+        [TNAlert showAlertWithMessage:@"Group addition error" informative:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
+    }
+    else
+    {
+        var groupName = [newGroupName stringValue];
+
+        [[[TNStropheIMClient defaultClient] roster] addGroupWithName:groupName];
+        [newGroupName setStringValue:@""];
+        CPLog.info(@"new group " + groupName + " added.");
+
+        var growl = [TNGrowlCenter defaultCenter];
+        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
+
+        [mainWindow performClose:nil];
+    }
 }
 
 @end

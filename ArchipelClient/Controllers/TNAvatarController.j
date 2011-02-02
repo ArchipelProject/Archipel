@@ -75,10 +75,11 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
 */
 @implementation TNAvatarController : CPObject
 {
-    @outlet CPWindow            mainWindow              @accessors(readonly);
+    @outlet CPButton            buttonCancel;
+    @outlet CPButton            buttonChange;
     @outlet CPCollectionView    collectionViewAvatars;
     @outlet CPImageView         imageSpinner;
-    @outlet CPButton            buttonChange;
+    @outlet CPWindow            mainWindow              @accessors(readonly);
 
     TNStropheContact            _entity                 @accessors(property=entity);
 
@@ -106,6 +107,8 @@ TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
     [collectionViewAvatars setItemPrototype:itemPrototype];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
+
+    [mainWindow setDefaultButton:buttonChange];
 }
 
 
