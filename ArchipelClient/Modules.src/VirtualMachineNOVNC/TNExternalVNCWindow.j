@@ -271,8 +271,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     if ([_vncView state] != TNVNCCappuccinoStateDisconnected)
     {
         [_vncView disconnect:nil];
-        [_vncView unfocus];
     }
+    [_vncView unfocus];
     [super close];
 }
 
