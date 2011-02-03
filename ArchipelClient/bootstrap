@@ -277,7 +277,6 @@ def client_build_cappuccino():
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
     print "\033[32m * Cappuccinno build\033[0m"
-    os.system("export PATH=/usr/local/narwhal/bin;$PATH")
     if os.path.exists("~/.profile"):
         os.system("source ~/.profile")
     elif os.path.exists("~/.bash_profile"):
