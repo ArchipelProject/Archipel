@@ -371,7 +371,7 @@ def client_build_archipel(exportpath=None):
         export = ""
     print " * Building ArchipelClient"
     s = Spinner();
-    os.system("cd ./ArchipelClient && ./buildArchipel -bag --config=release %s %s" % (export, REDIRECT))
+    os.system("./buildArchipel -bag --config=release %s %s" % (export, REDIRECT))
     s.stop()
     print "\033[32m * ArchipelClient built\033[0m"
 
