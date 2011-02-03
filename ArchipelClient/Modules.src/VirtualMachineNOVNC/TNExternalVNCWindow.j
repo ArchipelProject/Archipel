@@ -150,9 +150,10 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     [[self contentView] addSubview:_vncView];
 
+    CPLog.info("VNC: connecting to " + aHost + ":" + aPort + " using SSL:" + isEncrypted);
+
     [_vncView load];
     [_vncView connect:nil];
-
 }
 
 - (void)fitWindowToVNCView
@@ -167,9 +168,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     newRect.size    = vncSize;
 
     [self setFrameSize:vncSize];
-    // [self setMaxSize:CPSizeMake(vncSize.width, vncSize.height)];
-    // [self setMinSize:CPSizeMake(vncSize.width, vncSize.height)];
-
     [[self platformWindow] setContentRect:newRect];
 
     // seems needed with Safari/WebKit nightlies
@@ -225,9 +223,10 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             var growl = [[TNGrowlCenter alloc] init];
             [growl setView:[self contentView]];
             [growl pushNotificationWithTitle:@"Connection fail"
-                                     message:@"Cannot connect to the VNC screen"
+                                     message:@"Cannot connect to the VNC screen at " + [_vncView host] + @":" + [_vncView port]
                                         icon:TNGrowlIconError];
 
+            CPLog.error(@"Cannot connect to the VNC screen at " + [_vncView host] + @":" + [_vncView port]);
             break;
 
         case TNVNCCappuccinoStateNormal:

@@ -420,12 +420,12 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         var growl = [TNGrowlCenter defaultCenter];
         if (_vncOnlySSL)
         {
-            [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome." icon:TNGrowlIconError];
+            CPLog.warn(@"Your browser doesn't support TLSv1 for WebSocket and Archipel server doesn't support plain connection. Use Google Chrome.");
             return;
         }
         else
         {
-            [growl pushNotificationWithTitle:@"VNC" message:@"Your browser doesn't support Websocket TLSv1. We use plain connection." icon:TNGrowlIconWarning];
+            CPLog.warn(@"Your browser doesn't support Websocket TLSv1. We use plain connection.");
             _useSSL = NO;
         }
     }
@@ -462,6 +462,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     [_vncView setEncrypted:_useSSL];
     [_vncView setDelegate:self];
 
+    CPLog.info("VNC: connecting to " + _VMHost + ":" + _vncProxyPort + " using SSL:" + _useSSL);
     [_vncView load];
     [_vncView connect:nil];
 }
@@ -689,7 +690,11 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
             }
             else
             {
+                [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Connection fail"
+                                         message:@"Cannot connect to the VNC screen at " + _VMHost + @":" + _vncProxyPort
+                                            icon:TNGrowlIconError];
                 [imageViewSecureConnection setHidden:YES];
+                CPLog.error(@"Cannot connect to the VNC screen at " + _VMHost + @":" + _vncProxyPort);
             }
             [_vncView resetSize];
             break;
