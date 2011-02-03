@@ -267,7 +267,7 @@ def install_archipelclient(interactive=True, properties=None):
 def client_build_cappuccino():
     print " * Building Cappuccino";
     print "\n\033[35m*******************************************************************************"
-    ret = os.system("cd ./Libraries/Cappuccino && ./bootstrap.sh")
+    ret = os.system("cd ./Libraries/Cappuccino && ./bootstrap.sh --install-capp")
     if ret != 0:
         print "\033[31mUnable to bootstrap Cappuccino\033[0m"
         sys.exit(1)
