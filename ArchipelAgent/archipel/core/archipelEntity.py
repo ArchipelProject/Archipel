@@ -1342,35 +1342,28 @@ class TNArchipelEntity:
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_REMOVE_USER:
                     self.process_inband_unregistration()
                     return
-                    
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
                     if self.xmppclient.isConnected():
                         self.xmppclient.Process(3)
-                        
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
                     if self.xmppclient.isConnected():
                         self.xmppclient.disconnect()
                     time.sleep(1.0)
                     self.connect()
             except Exception as ex:
-                self.log.info("GREPME: Loop exception : %s. Loop status is now %d" % (ex, self.loop_status))
-                traceback.print_exc(file=sys.stdout, limit=20)
-                
-                if str(ex).find('User removed') > -1: # ok, there is something I haven't understood with exception...
-                    self.log.info("GREPME : Account has been removed from server")
+                if str(ex).find('User removed') > -1: # ok, weird.
+                    self.log.info("LOOP EXCEPTION: Account has been removed from server")
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-                    
                 elif self.auto_reconnect:
-                    self.log.info("GREPME : Disconnected from server. Trying to reconnect in 5 five seconds")
+                    self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 five seconds")
+                    self.log.error("TRACEBACK: %s" % traceback.extract_stack())
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
-                    
                 else:
-                    self.log.error("GREPME : End of loop forced by exception : %s" % str(ex))
+                    self.log.error("LOOP EXCEPTION : End of loop forced by exception : %s" % str(ex))
+                    self.log.error("TRACEBACK: %s" % traceback.extract_stack())
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 print traceback.extract_stack()
-                
-                
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
     
