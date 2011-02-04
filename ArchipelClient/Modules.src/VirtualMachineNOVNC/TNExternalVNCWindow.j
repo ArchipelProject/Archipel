@@ -59,7 +59,6 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         [zoomSlider setMinValue:1.0];
         [zoomSlider setDoubleValue:100.0];
         [zoomSlider setMaxValue:200.0];
-        [zoomSlider setContinuous:NO];
 
         [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              " view:nil target:nil action:nil];
         [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:@"Get Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
@@ -222,6 +221,9 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 - (IBAction)changeScale:(id)aSender
 {
+    // seems that isContinuous is keyvalue coded.
+    // this is a hack. but it works.
+    [aSender setContinuous:NO];
     _currentZoom = [aSender intValue] / 100;
     [_vncView setZoom:_currentZoom];
 
