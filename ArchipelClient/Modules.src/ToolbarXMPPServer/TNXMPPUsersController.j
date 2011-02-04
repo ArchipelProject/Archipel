@@ -22,9 +22,7 @@
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
     TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
-    TNArchipelTypeXMPPServerUsersList               = @"list",
-    TNArchipelTypeXMPPServerUsersListFilterAll      = @"all",
-    TNArchipelTypeXMPPServerUsersListFilterHuman    = @"human";
+    TNArchipelTypeXMPPServerUsersList               = @"list";
 
 /*! @ingroup toolbarxmppserver
     XMPP user controller implementation
