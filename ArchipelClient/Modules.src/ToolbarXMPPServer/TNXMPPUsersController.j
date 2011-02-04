@@ -19,10 +19,12 @@
 @import <Foundation/Foundation.j>
 
 
-var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
-    TNArchipelTypeXMPPServerUsersRegister       = @"register",
-    TNArchipelTypeXMPPServerUsersUnregister     = @"unregister",
-    TNArchipelTypeXMPPServerUsersList           = @"list";
+var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
+    TNArchipelTypeXMPPServerUsersRegister           = @"register",
+    TNArchipelTypeXMPPServerUsersUnregister         = @"unregister",
+    TNArchipelTypeXMPPServerUsersList               = @"list",
+    TNArchipelTypeXMPPServerUsersListFilterAll      = @"all",
+    TNArchipelTypeXMPPServerUsersListFilterHuman    = @"human";
 
 /*! @ingroup toolbarxmppserver
     XMPP user controller implementation
@@ -41,11 +43,15 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 
     TNStropheContact        _entity             @accessors(setter=setEntity:);
     TNTableViewDataSource   _datasourceUsers    @accessors(getter=datasource);
+    CPArray                 _users              @accessors(getter=users);
     id                      _delegate           @accessors(property=delegate);
 
     CPTableView             _tableUsers;
     CPButton                _addButton;
     CPButton                _deleteButton;
+    CPImage                 _iconEntityTypeHuman;
+    CPImage                 _iconEntityTypeVM;
+    CPImage                 _iconEntityTypeHypervisor;
 }
 
 #pragma mark -
@@ -53,11 +59,16 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
 
 - (void)awakeFromCib
 {
+    var bundle                  = [CPBundle bundleForClass:[self class]];
+
+    _datasourceUsers            = [[TNTableViewDataSource alloc] init];
+    _tableUsers                 = [[CPTableView alloc] initWithFrame:[scrollViewUsers bounds]];
+    _users                      = [CPArray array];
+    _iconEntityTypeHuman        = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-human.png"] size:CPSizeMake(16, 16)];
+    _iconEntityTypeVM           = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-vm.png"] size:CPSizeMake(16, 16)];
+    _iconEntityTypeHypervisor   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"type-hypervisor.png"] size:CPSizeMake(16, 16)];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-
-    _datasourceUsers  = [[TNTableViewDataSource alloc] init];
-    _tableUsers       = [[CPTableView alloc] initWithFrame:[scrollViewUsers bounds]];
-
     [scrollViewUsers setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewUsers setAutohidesScrollers:YES];
     [scrollViewUsers setDocumentView:_tableUsers];
@@ -218,7 +229,8 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
     var stanza = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
-    [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeXMPPServerUsersList}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeXMPPServerUsersList}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
 }
@@ -233,11 +245,13 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
         var users = [aStanza childrenWithName:@"user"];
 
         [_datasourceUsers removeAllObjects];
+        [_users removeAllObjects];
 
         for (var i = 0; i < [users count]; i++)
         {
-            var user     = [users objectAtIndex:i],
+            var user    = [users objectAtIndex:i],
                 jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+                type    = [user valueForAttribute:@"type"],
                 name    = [jid node],
                 contact = [[[TNStropheIMClient defaultClient] roster] contactWithJID:jid],
                 newItem;
@@ -245,8 +259,25 @@ var TNArchipelTypeXMPPServerUsers               = @"archipel:xmppserver:users",
             if (contact)
                 name = [contact nickname];
 
-            newItem = [CPDictionary dictionaryWithObjects:[name, jid] forKeys:[@"name", @"jid"]]
-            [_datasourceUsers addObject:newItem];
+            var icon;
+            switch (type)
+            {
+                case "human":
+                    icon = _iconEntityTypeHuman
+                    break;
+                case "virtualmachine":
+                    icon = _iconEntityTypeVM
+                    break;
+                case "hypervisor":
+                    icon = _iconEntityTypeHypervisor
+                    break;
+            }
+
+            newItem = [CPDictionary dictionaryWithObjects:[name, jid, type, icon] forKeys:[@"name", @"jid", @"type", @"icon"]]
+            [_users addObject:newItem];
+
+            if (type == "human")
+                [_datasourceUsers addObject:newItem];
         }
 
         [_tableUsers reloadData];

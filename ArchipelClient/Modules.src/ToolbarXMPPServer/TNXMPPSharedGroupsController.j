@@ -97,8 +97,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_tableUsers setAllowsEmptySelection:YES];
     [_tableUsers setAllowsMultipleSelection:YES];
 
-    var colName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
-        colJID  = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
+    var colName     = [[CPTableColumn alloc] initWithIdentifier:@"name"],
+        colJID      = [[CPTableColumn alloc] initWithIdentifier:@"jid"],
+        colIcon     = [[CPTableColumn alloc] initWithIdentifier:@"icon"],
+        iconView    = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [colName setWidth:275];
     [[colName headerView] setStringValue:@"Name"];
@@ -108,6 +110,12 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [[colJID headerView] setStringValue:@"JID"];
     [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
+    [iconView setImageScaling:CPScaleNone];
+    [colIcon setWidth:16];
+    [colIcon setDataView:iconView];
+    [[colIcon headerView] setStringValue:@""];
+
+    [_tableUsers addTableColumn:colIcon];
     [_tableUsers addTableColumn:colName];
     [_tableUsers addTableColumn:colJID];
 
@@ -271,7 +279,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (IBAction)openAddUserInGroupWindow:(id)aSender
 {
-    [_datasourceUsers setContent:[[[_usersController datasource] content] copy]];
+    [_datasourceUsers setContent:[[_usersController users] copy]];
 
     [windowAddUserInGroup center];
     [windowAddUserInGroup makeKeyAndOrderFront:aSender];
