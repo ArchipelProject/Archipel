@@ -104,7 +104,7 @@ class TNXMPPServerController:
             groupName   = iq.getTag("query").getTag("archipel").getAttr("name")
             groupDesc   = iq.getTag("query").getTag("archipel").getAttr("description")
             server      = self.entity.jid.getDomain()
-            cmd         = self.generate_command("srg-create %s %s \"\'%s\'\" \"\'%s\'\" %s"  % (groupID, server, groupName, groupDesc, groupID))
+            cmd         = self.generate_command("srg-create %s %s \\\"%s\\\" \\\"%s\\\" %s"  % (groupID, server, groupName, groupDesc, groupID))
             
             self.entity.log.debug("console command is : %s" % cmd)
             if os.system(cmd):
