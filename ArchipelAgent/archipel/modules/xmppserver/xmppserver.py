@@ -330,13 +330,21 @@ class TNXMPPServerController:
         """
         try:
             reply       = iq.buildReply("result")
+            currentuser = iq.getFrom().getNode()
             server      = self.entity.jid.getDomain()
             anwser      = self.xmlrpc_server.registered_users({"host": server})
             nodes       = []
             users       = anwser["users"]
             
             for user in users:
-                nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server)}))
+                try:
+                    anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "TYPE"})
+                    entity_type = anwser["content"]
+                except:
+                    entity_type = "human"
+                finally:
+                    nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
+                
             reply.setQueryPayload(nodes);
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
