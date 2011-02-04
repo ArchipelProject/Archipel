@@ -75,38 +75,15 @@ class TNMediaManagement:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="drives_")
         
-        if self.entity.is_migrating and (not action in ("get", "getiso")):
-            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any drives operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if self.entity.is_migrating and (not action in ("get", "getiso")): reply = build_error_iq(self, "virtual machine is migrating. Can't perform any drives operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
+        elif action == "create":    reply = self.iq_create(iq)
+        elif action == "delete":    reply = self.iq_delete(iq)
+        elif action == "get":       reply = self.iq_get(iq)
+        elif action == "getiso":    reply = self.iq_getiso(iq)
+        elif action == "convert":   reply = self.iq_convert(iq)
+        elif action == "rename":    reply = self.iq_rename(iq)
         
-        if action == "create":
-            reply = self.iq_create(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "delete":
-            reply = self.iq_delete(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "get":
-            reply = self.iq_get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getiso":
-            reply = self.iq_getiso(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "convert":
-            reply = self.iq_convert(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "rename":
-            reply = self.iq_rename(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

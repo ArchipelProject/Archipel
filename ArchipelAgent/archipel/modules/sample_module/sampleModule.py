@@ -52,8 +52,10 @@ class TNSampleModule:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1)
         
-        if action == "do-something":
-            reply = self.iq_do_something(iq)
+        if action == "do-something":            reply = self.iq_do_something(iq)
+        elif action == "do-something-else":     reply = self.iq_do_something_else(iq)
+        
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -75,9 +77,27 @@ class TNSampleModule:
         try:
             reply = iq.buildReply("result")
             self.entity.log.info("I did something!")
-            self.entity.push_change("sample", "I_DID_SOMETHING")
+            self.entity.push_change("sample", "something")
             self.entity.shout("Sample", "Hey buddies, you know what ? I did somthing! crazy isn't it ?")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
     
+    
+    def iq_do_something_else(self, iq):
+        """
+        Do something else.
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            self.entity.log.info("I did something else!")
+            self.entity.push_change("sample", "somethingelse")
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply

@@ -120,28 +120,13 @@ class TNVMApplianceManager:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="appliance_")
         
-        if self.entity.is_migrating and (not action in ("get")):
-            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if self.entity.is_migrating and (not action in ("get")): reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)        
+        elif action == "get":       reply = self.iq_get(iq)
+        elif action == "attach":    reply = self.iq_attach(iq)
+        elif action == "detach":    reply = self.iq_detach(iq)
+        elif action == "package":   reply = self.iq_package(iq)
         
-        if action == "get":
-            reply = self.iq_get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "attach":
-            reply = self.iq_attach(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-                
-        elif action == "detach":
-            reply = self.iq_detach(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "package":
-            reply = self.iq_package(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

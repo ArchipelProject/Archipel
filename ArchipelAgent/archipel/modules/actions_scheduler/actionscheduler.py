@@ -265,9 +265,7 @@ class TNActionScheduler:
             elif entityClass == "TNArchipelHypervisor":     func = self.do_job_for_hypervisor
             
             self.scheduler.add_cron_job(func, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[job, uid, str_date, comment, param])
-            
             self.save_jobs(uid, job, year, month, day, hour, minute, second, comment, param)
-            
             self.entity.push_change("scheduler", "scheduled")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -289,12 +287,10 @@ class TNActionScheduler:
             for job in self.scheduler.jobs:
                 job_node = xmpp.Node(tag="job", attrs={"action": str(job.args[0]), "uid": str(job.args[1]), "date": str(job.args[2]), "comment": job.args[3]})
                 nodes.append(job_node)
-            
             reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
-
     
     
     def iq_unschedule(self, iq):
@@ -313,7 +309,6 @@ class TNActionScheduler:
             the_job = self.get_jod_with_uid(uid);
             if not the_job:
                 raise Exception("job with uid %s doesn't exists" % uid)
-            
             self.delete_job(uid);
             self.scheduler.unschedule_job(the_job);
             self.entity.push_change("scheduler", "unscheduled")
@@ -340,7 +335,6 @@ class TNActionScheduler:
                 actions = self.supported_actions_for_vm
             elif entityClass == "TNArchipelHypervisor":
                 actions = self.supported_actions_for_hypervisor
-            
             nodes = []
             for action in actions:
                 action_node = xmpp.Node(tag="action")

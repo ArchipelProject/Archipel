@@ -125,13 +125,10 @@ class TNOOMKiller:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="oom_")
         
-        if action == "getadjust":
-            reply = self.iq_oom_get_adjust(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "setadjust":
-            reply = self.iq_oom_set_adjust(iq)
+        if action == "getadjust":   reply = self.iq_oom_get_adjust(iq)
+        elif action == "setadjust": reply = self.iq_oom_set_adjust(iq)
+        
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed    
     

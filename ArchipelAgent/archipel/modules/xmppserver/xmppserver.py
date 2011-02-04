@@ -85,7 +85,7 @@ class TNXMPPServerController:
         elif    action == "addusers":       reply = self.iq_group_add_users(iq)
         elif    action == "deleteusers":    reply = self.iq_group_delete_users(iq)
         
-        if (reply):
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

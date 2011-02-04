@@ -324,43 +324,16 @@ class TNHypervisorRepoManager:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="vmcasting_")
         
-        if action == "get":
-            reply = self.iq_get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "register":
-            reply = self.iq_register(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "unregister":
-            reply = self.iq_unregister(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "downloadappliance":
-            reply = self.iq_download(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "get":                         reply = self.iq_get(iq)
+        elif action == "register":                  reply = self.iq_register(iq)
+        elif action == "unregister":                reply = self.iq_unregister(iq)
+        elif action == "downloadappliance":         reply = self.iq_download(iq)
+        elif action == "downloadqueue":             reply = self.iq_get_download_queue(iq)
+        elif action == "getappliances":             reply = self.iq_get_appliance(iq)
+        elif action == "deleteappliance":           reply = self.iq_delete_appliance(iq)
+        elif action == "getinstalledappliances":    reply = self.iq_get_installed_appliances(iq)
         
-        elif action == "downloadqueue":
-            reply = self.iq_get_download_queue(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getappliances":
-            reply = self.iq_get_appliance(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed   
-        
-        elif action == "deleteappliance":
-            reply = self.iq_delete_appliance(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getinstalledappliances":
-            reply = self.iq_get_installed_appliances(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

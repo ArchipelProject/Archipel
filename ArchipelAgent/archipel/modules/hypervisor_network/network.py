@@ -86,38 +86,15 @@ class TNHypervisorNetworks:
         action = self.entity.check_acp(conn, iq)        
         self.entity.check_perm(conn, iq, action, -1, prefix="network_")
         
-        if action == "define":
-            reply = self.iq_define(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "define":      reply = self.iq_define(iq)
+        elif action == "undefine":  reply = self.iq_undefine(iq)
+        elif action == "create":    reply = self.iq_create(iq)
+        elif action == "destroy":   reply = self.iq_destroy(iq)
+        elif action == "get":       reply = self.iq_get(iq)
+        elif action == "bridges":   reply = self.iq_bridges(iq)
+        elif action == "getnames":  reply = self.iq_get_names(iq)
         
-        elif action == "undefine":
-            reply = self.iq_undefine(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "create":
-            reply = self.iq_create(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "destroy":
-            reply = self.iq_destroy(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "get":
-            reply = self.iq_get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "bridges":
-            reply = self.iq_bridges(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getnames":
-            reply = self.iq_get_names(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

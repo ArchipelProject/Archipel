@@ -77,31 +77,13 @@ class TNSnapshoting:
         
         if self.entity.is_migrating and (not action in ("current", "get")):
             reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        elif action == "take":      reply = self.iq_take(iq)
+        elif action == "delete":    reply = self.iq_delete(iq)
+        elif action == "get":       reply = self.iq_get(iq)
+        elif action == "current":   reply = self.iq_getcurrent(iq)
+        elif action == "revert":    reply = self.iq_revert(iq)
         
-        elif action == "take":
-            reply = self.iq_take(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "delete":
-            reply = self.iq_delete(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "get":
-            reply = self.iq_get(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "current":
-            reply = self.iq_getcurrent(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "revert":
-            reply = self.iq_revert(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     

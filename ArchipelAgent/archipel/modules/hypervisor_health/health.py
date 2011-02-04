@@ -69,18 +69,11 @@ class TNHypervisorHealth:
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="health_")
         
-        if action == "history":
-            reply = self.iq_health_info_history(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "history": reply = self.iq_health_info_history(iq)
+        elif action == "info":  reply = self.iq_health_info(iq)
+        elif action == "logs":  reply = self.iq_get_logs(iq)
         
-        elif action == "info":
-            reply = self.iq_health_info(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "logs":
-            reply = self.iq_get_logs(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
