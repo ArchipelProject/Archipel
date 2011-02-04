@@ -26,17 +26,15 @@ ARCHIPEL_NS_XMPPSERVER_USERS   = "archipel:xmppserver:users"
 
 # this method will be call at loading
 def __module_init__xmppserver(self):
-    exec_path = self.configuration.get("XMPPSERVER", "exec_path")
-    exec_user = self.configuration.get("XMPPSERVER", "exec_user")
-    if not os.path.exists(exec_path):
-        self.log.warning("unable to find %s command. aborting loading of module XMPPServer" % exec_path)
-        self.module_xmppserver = False
-        return
-    self.module_xmppserver = xmppserver.TNXMPPServerController(self, exec_path=exec_path, exec_user=exec_user)
+    xmlrpc_host     = self.configuration.get("XMPPSERVER", "xmlrpc_host")
+    xmlrpc_port     = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
+    xmlrpc_user     = self.configuration.get("XMPPSERVER", "xmlrpc_user")
+    xmlrpc_password = self.configuration.get("XMPPSERVER", "xmlrpc_password")
+    
+    self.module_xmppserver = xmppserver.TNXMPPServerController(self, xmlrpc_host, xmlrpc_port, xmlrpc_user, xmlrpc_password)
 
 # this method will be called at registration of handlers for XMPP
 def __module_register_stanza__xmppserver(self):
-    if not self.module_xmppserver: return
     self.xmppclient.RegisterHandler('iq', self.module_xmppserver.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
     self.xmppclient.RegisterHandler('iq', self.module_xmppserver.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
 

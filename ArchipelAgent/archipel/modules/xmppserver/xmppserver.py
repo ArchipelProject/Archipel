@@ -19,6 +19,7 @@
 # we need to import the package containing the class to surclass
 import xmpp
 import uuid
+import xmlrpclib
 import os, commands
 import re
 from archipel.utils import *
@@ -28,7 +29,7 @@ import archipel.core
 
 class TNXMPPServerController:
     
-    def __init__(self, entity, exec_path, exec_user):
+    def __init__(self, entity, xmlrpc_host, xmlrpc_port, xmlrpc_user, xmlrpc_password):
         """
         initialize the module
         @type entity TNArchipelEntity
@@ -37,8 +38,13 @@ class TNXMPPServerController:
         @param entity the path of the ejabberdctl command
         """
         self.entity                 = entity
-        self.ejabberdctl_path       = exec_path
-        self.ejabberdctl_user       = exec_user
+        self.xmpp_server            = entity.jid.getDomain()
+        self.xmlrpc_host            = xmlrpc_host
+        self.xmlrpc_port            = xmlrpc_port
+        self.xmlrpc_user            = xmlrpc_user
+        self.xmlrpc_password        = xmlrpc_password
+        self.xmlrpc_call            = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
+        self.xmlrpc_server          = xmlrpclib.ServerProxy(self.xmlrpc_call)
         
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False);
@@ -50,10 +56,6 @@ class TNXMPPServerController:
         self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False);
         self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False);
     
-    
-    def generate_command(self, command):
-        """generate the ejabberdctl command"""
-        return "su - %s -c '%s %s'" % (self.ejabberdctl_user, self.ejabberdctl_path, command)
     
     ### XMPP Processing for shared groups
     
@@ -104,14 +106,10 @@ class TNXMPPServerController:
             groupName   = iq.getTag("query").getTag("archipel").getAttr("name")
             groupDesc   = iq.getTag("query").getTag("archipel").getAttr("description")
             server      = self.entity.jid.getDomain()
-            cmd         = self.generate_command("srg-create %s %s \\\"%s\\\" \\\"%s\\\" %s"  % (groupID, server, groupName, groupDesc, groupID))
+            answer      = self.xmlrpc_server.srg_create({"host": server, "display": groupID, "name": groupName, "description": groupDesc, "group": groupID})
             
-            self.entity.log.debug("console command is : %s" % cmd)
-            if os.system(cmd):
-                raise Exception("EJABBERDCTL command error : %s" % cmd)
-            
+            if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
             self.entity.log.info("creating a new shared group %s" % groupID)
-            
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -132,14 +130,11 @@ class TNXMPPServerController:
             reply       = iq.buildReply("result")
             groupID     = iq.getTag("query").getTag("archipel").getAttr("id")
             server      = self.entity.jid.getDomain()
-            cmd         = self.generate_command("srg-delete %s %s"  % (groupID, server))
+            answer      = self.xmlrpc_server.srg_delete({"host": server, "group": groupID})
             
-            self.entity.log.debug("console command is : %s" % cmd)
-            if os.system(cmd):
-                raise Exception("EJABBERDCTL command error : %s" % cmd)
+            if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
             
             self.entity.log.info("removing a shared group %s" % groupID)
-            
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -156,43 +151,33 @@ class TNXMPPServerController:
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
-        # try:
-        reply       = iq.buildReply("result")
-        server      = self.entity.jid.getDomain()
-        cmd         = self.generate_command("srg-list %s"  % server)
-        groupsNode  = []
+        try:
+            reply       = iq.buildReply("result")
+            server      = self.entity.jid.getDomain()
+            answer      = self.xmlrpc_server.srg_list({"host": server})
+            groups      = answer["groups"]
+            groupsNode  = []
         
-        self.entity.log.debug("console command is : %s" % cmd)
-        status, output = commands.getstatusoutput(cmd)
-        
-        if status:
-            raise Exception("EJABBERDCTL command error : %s" % cmd)
-        groups = output.split()
-        
-        for group in groups:
-            cmd = self.generate_command("srg-get-info %s %s" % (group, server))
-            status, output = commands.getstatusoutput(cmd)
-            displayed_name, gid, description = output.split("\n")
-            gid = re.findall('"([^"]*)"', gid)[0]
-            displayed_name = re.findall('"([^"]*)"', displayed_name)[0]
-            try:
-                description = re.findall('"([^"]*)"', description)[0]
-            except:
-                description = ""
-            
-            info = {"id": gid, "displayed_name": displayed_name, "description": description}
-            newNode = xmpp.Node("group", attrs=info)
-            
-            cmd = self.generate_command("srg-get-members %s %s" % (group, server))
-            status, output = commands.getstatusoutput(cmd)
-            for jid in output.split():
-                newNode.addChild("user", attrs={"jid": jid})
-            groupsNode.append(newNode)
-        
-        reply.setQueryPayload(groupsNode);
-        
-        # except Exception as ex:
-        #     reply = build_error_iq(self, ex, iq)
+            for group in groups:
+                answer          = self.xmlrpc_server.srg_get_info({"host": server, "group": group["id"]})
+                informations    = answer["informations"]
+                
+                for info in informations:
+                    if info['information'][0]["key"] == "name":         displayed_name  = info['information'][1]["value"]
+                    if info['information'][0]["key"] == "description":  description     = info['information'][1]["value"]
+                            
+                info    = {"id": group["id"], "displayed_name": displayed_name.replace("\"", ""), "description": description.replace("\"", "")}
+                newNode = xmpp.Node("group", attrs=info)    
+                answer  = self.xmlrpc_server.srg_get_members({"host": server, "group": group["id"]})
+                members = answer["members"]
+                
+                for member in members:
+                    newNode.addChild("user", attrs={"jid": member["member"]})
+                
+                groupsNode.append(newNode)
+            reply.setQueryPayload(groupsNode);
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
         return reply
     
     
@@ -214,11 +199,9 @@ class TNXMPPServerController:
             
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                cmd = self.generate_command("srg-user-add %s %s %s %s" % (userJID.getNode(), userJID.getDomain(), groupID, server))
-                commands.getstatusoutput(cmd);
-            
-            self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
-            
+                answer  = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server })
+                if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
+                self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -243,10 +226,9 @@ class TNXMPPServerController:
             
             for user in users:
                 userJID = xmpp.JID(user.getAttr("jid"))
-                cmd = self.generate_command("srg-user-del %s %s %s %s" % (userJID.getNode(), userJID.getDomain(), groupID, server))
-                commands.getstatusoutput(cmd);
+                answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server })
+                if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
                 self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
-            
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -301,11 +283,9 @@ class TNXMPPServerController:
             for user in users:
                 username    = user.getAttr("username")
                 password    = user.getAttr("password")
-                cmd         = self.generate_command("register %s %s %s" % (username, server, password))
-                if os.system(cmd):
-                    raise Exception("EJABBERDCTL command error : %s" % cmd)
+                answer      = self.xmlrpc_server.register({"user": username, "password": password, "host": server })
+                if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
                 self.entity.log.info("registred a new user user %s@%s" % (username, server))
-            
             self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
@@ -329,9 +309,8 @@ class TNXMPPServerController:
             
             for user in users:
                 username    = user.getAttr("username")
-                cmd         = self.generate_command("unregister %s %s" % (username, server))
-                if os.system(cmd):
-                    raise Exception("EJABBERDCTL command error : %s" % cmd)
+                answer      = self.xmlrpc_server.unregister({"user": username,"host": server })
+                if not answer['res'] == 0: raise Exception("Cannot create shared roster group")
                 self.entity.log.info("unregistred user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
@@ -352,16 +331,12 @@ class TNXMPPServerController:
         try:
             reply       = iq.buildReply("result")
             server      = self.entity.jid.getDomain()
-            cmd         = self.generate_command("registered_users %s" % server)
+            anwser      = self.xmlrpc_server.registered_users({"host": server})
             nodes       = []
+            users       = anwser["users"]
             
-            status, output = commands.getstatusoutput(cmd);
-            if status:
-                raise Exception("EJABBERDCTL command error : %s" % cmd)
-            
-            users = output.split()
             for user in users:
-                nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user, server)}))
+                nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server)}))
             reply.setQueryPayload(nodes);
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
