@@ -271,20 +271,27 @@ def client_build_cappuccino():
     if ret != 0:
         print "\033[31mUnable to bootstrap Cappuccino\033[0m"
         sys.exit(1)
+    if os.path.exists(os.path.expanduser("~/.profile")):
+        profile = open(os.path.expanduser("~/.profile"), "r")
+        for line in profile:
+             # We just want the last line but it seems Python must do something in a loop
+             last_line = line
+        profile.close()
+        if (last_line.find('export PATH=\"') != -1) and (last_line.find(':$PATH\"') != -1):
+             last_line = last_line.replace('export PATH=\"', '')
+             last_line = last_line.replace(':$PATH\"', '')
+             last_line = last_line.strip();
+             os.environ['PATH'] = os.environ['PATH']+':'+last_line
+        else:
+             os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
+    else:
+        os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
     ret = os.system("cd ./Libraries/Cappuccino && jake install")
     print "*******************************************************************************\033[0m"
     if ret != 0:
         print "\033[31mUnable to build Cappuccino\033[0m"
         sys.exit(1)
     print "\033[32m * Cappuccinno build\033[0m"
-    if os.path.exists("~/.profile"):
-        os.system("source ~/.profile")
-    elif os.path.exists("~/.bash_profile"):
-        os.system("source ~/.bash_profile")
-    elif os.path.exists("~/.bashrc"):
-        os.system("source ~/.bashrc")
-    else:
-        os.system("export PATH='/usr/local/narwhal/bin:$PATH'")
 
 
 def client_build_strophecappuccino():
