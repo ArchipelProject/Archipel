@@ -393,6 +393,7 @@ def client_apply_cappuccino_frameworks():
 
 def client_export_archipel(path):
     print " * Exporting archipel to %s" % path
+    os.system("mkdir -p %s %s" % (path, REDIRECT))
     s = Spinner();
     os.system("cp -a ./Build/Release/Archipel %s %s" % (path, REDIRECT))
     s.stop()
