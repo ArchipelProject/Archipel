@@ -26,7 +26,7 @@ GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_BUILD_PATH + "/modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
 GLOBAL_BUILD_NUMBER         = commands.getoutput("git rev-parse --short HEAD")
 
-os.system("export PATH=/usr/local/narwhal/bin:$PATH");
+os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
 
 def main():
     try:
