@@ -386,7 +386,7 @@ def client_build_archipel(exportpath=None):
 def client_apply_cappuccino_frameworks():
     print " * Adding Cappuccino framework"
     s = Spinner();
-    os.system("capp gen -f ./ArchipelClient %s" % REDIRECT)
+    os.system("capp gen -f . %s" % REDIRECT)
     s.stop()
     print "\033[32m * Cappuccino added\033[0m"
 
