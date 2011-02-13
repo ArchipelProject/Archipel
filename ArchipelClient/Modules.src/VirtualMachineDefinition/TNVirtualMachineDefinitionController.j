@@ -1088,8 +1088,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             features        = [domain firstChildWithName:@"features"],
             clock           = [domain firstChildWithName:@"clock"],
             input           = [[domain firstChildWithName:@"input"] valueForAttribute:@"type"],
-            capabilities    = [_supportedCapabilities objectForKey:arch],
-            shouldRefresh   = NO;
+            capabilities    = [_supportedCapabilities objectForKey:arch];
 
         //////////////////////////////////////////
         // BASIC SETTINGS
@@ -1222,14 +1221,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
             [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:hypervisor] objectForKey:@"machines"]];
             if ([buttonMachines indexOfItemWithTitle:machine] == -1)
-            {
                 [buttonMachines selectItemAtIndex:0];
-                //shouldRefresh = YES;
-            }
             else
-            {
                 [buttonMachines selectItemWithTitle:machine];
-            }
         }
         else
             [buttonMachines setEnabled:NO];
@@ -1358,11 +1352,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [_nicsDatasource addObject:newNic];
         }
         [_tableNetworkNics reloadData];
-
-        // if automatic changes has been done while changing arch, hypervisor etc,
-        // redefine virtual machine
-        if (shouldRefresh)
-            [self defineXML:nil];
     }
     else if ([aStanza type] == @"error")
     {
