@@ -151,8 +151,6 @@ var __defaultPermissionCenter;
 
     if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
     {
-        var server = [[contact JID] domain];
-
         [self getPermissionForEntity:contact];
     }
 

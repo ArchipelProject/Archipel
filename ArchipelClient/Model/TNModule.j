@@ -584,7 +584,10 @@ TNArchipelErrorGeneral                  = 1;
         CPLog.error(msg);
     }
     else
+    {
         CPLog.error(@"Error " + code + " / " + type + ". No message. If 503, it should be allright");
+        CPLog.trace(aStanza);
+    }
 
     return TNArchipelErrorGeneral;
 }
