@@ -274,7 +274,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             xmldesc.delChild("description")
             xmldesc.addChild(name='description')
         
-        xmldesc.getTag('description').setPayload("%s::::%s::::%s" % (self.jid.getStripped(), self.password, self.name))
+        xmldesc.getTag('description').setData("%s::::%s" % (self.jid.getStripped(), self.password))
+        
+        if not xmldesc.getTag('name'): xmldesc.addChild(name='name')
+        xmldesc.getTag('name').setData(self.name)
+        
         return str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
     
     

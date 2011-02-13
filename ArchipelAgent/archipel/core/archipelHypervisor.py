@@ -255,7 +255,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
                 desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
-                vmname  = desc.getTag(name="description").getCDATA().split("::::")[2]
+                vmname  = desc.getTag(name="name").getCDATA()
                 self.log.info("MIGRATION: virtual machine %s resumed from live migration. Allocating softly" % vmjid)
                 self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", dom)
