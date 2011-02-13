@@ -23,7 +23,6 @@ import sys
 import getopt
 import commands
 
-from archipel.utils import *
 import archipel.core.pubsub
 
 
@@ -80,9 +79,6 @@ if __name__ == "__main__":
         sys.exit(-1)
     
     if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-    
-    
-    config = init_conf("/etc/archipel/archipel.conf")
     
     xmppclient = xmpp.Client(jid.getDomain(), debug=[])
     xmppclient.connect()
