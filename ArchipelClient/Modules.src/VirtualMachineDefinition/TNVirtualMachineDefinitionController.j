@@ -1655,14 +1655,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (void)defineXMLString
 {
-    var desc    = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0],
-        stanza  = [TNStropheStanza iqWithType:@"get"];
-
-    desc = document.importNode(desc, true);
+    var desc        = (new DOMParser()).parseFromString(unescape(""+[fieldStringXMLDesc stringValue]+""), "text/xml").getElementsByTagName("domain")[0],
+        stanza      = [TNStropheStanza iqWithType:@"get"],
+        descNode    = [TNXMLNode nodeWithXMLNode:desc];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
-    [stanza addNode:desc];
+    [stanza addNode:descNode];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
     [windowXMLEditor close];
