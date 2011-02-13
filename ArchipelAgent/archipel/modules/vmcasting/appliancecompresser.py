@@ -47,17 +47,17 @@ class TNApplianceCompresser(Thread):
         self.entity.log.info("TNApplianceCompresser: packaging appliance %s" % self.name)
         
         self.entity.log.info("TNApplianceCompresser: creating tar file at : %s/%s.xvm2" % (self.working_dir, self.name))
-        tar_file = self.working_dir + "/" + self.name + ".xvm2";
+        tar_file = self.working_dir + "/" + self.name + ".xvm2"
         tar = tarfile.open(tar_file, "w")
         
         self.xml_definition.getTag("description").setData("")
-        definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '');
+        definitionXML = str(self.xml_definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.entity.log.info("TNApplianceCompresser: writing definion at path  %s/description.xml" % self.working_dir)
         f = open(self.working_dir + "/description.xml", 'w')
         f.write(definitionXML)
         f.close()
         tar.add(self.working_dir + "/description.xml", "/description.xml")
-        os.unlink(self.working_dir + "/description.xml");
+        os.unlink(self.working_dir + "/description.xml")
         
         for i, snapshot in enumerate(self.xml_snapshots):
             snapshotXML = str(snapshot).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
@@ -67,9 +67,9 @@ class TNApplianceCompresser(Thread):
             f.write(snapshotXML)
             f.close()
             tar.add(descPath, descName)
-            os.unlink(descPath);
+            os.unlink(descPath)
             
-        zipped_file_paths = [];
+        zipped_file_paths = []
         for path in self.paths:
             self.entity.log.info("TNApplianceCompresser: zipping file %s" % path)
             zipped_file_path = self.compress_disk(path)
@@ -82,12 +82,12 @@ class TNApplianceCompresser(Thread):
         for zipped_file_path in zipped_file_paths:
             self.entity.log.info("TNApplianceCompresser: adding to tar file %s" % zipped_file_path)
             tar.add(zipped_file_path, "/" + zipped_file_path.split("/")[-1])
-            os.unlink(zipped_file_path);
+            os.unlink(zipped_file_path)
         
         tar.close()
         
         self.entity.log.info("TNApplianceCompresser: moving the tar file %s to repo %s" % (tar_file, self.hypervisor_repo_path))
-        os.system("mv %s %s" % (tar_file, self.hypervisor_repo_path));
+        os.system("mv %s %s" % (tar_file, self.hypervisor_repo_path))
         self.entity.log.info("TNApplianceCompresser: cleaning the working temp dir")
         os.system("rm -rf %s" % self.working_dir)
         self.callback()

@@ -147,7 +147,7 @@ def init_conf(path):
     
     if not os.path.exists(os.path.dirname(log_file)): os.makedirs(os.path.dirname(log_file))
     
-    logger          = globals()["log"];
+    logger          = globals()["log"]
     max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
     backup_count    = conf.getint("LOGGING", "logging_backup_count")
     handler         = logging.handlers.RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
@@ -161,7 +161,7 @@ def init_conf(path):
 
 def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     #traceback.print_exc(file=sys.stdout, limit=20)
-    caller = inspect.stack()[1][3];
+    caller = inspect.stack()[1][3]
     log.error("%s.%s: exception raised is : %s" % (originclass, caller, ex))
     reply = iq.buildReply('error')
     reply.setQueryPayload(iq.getQueryPayload())
@@ -173,6 +173,6 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
 
 
 def build_error_message(originclass, ex):
-    caller = inspect.stack()[3][3];
+    caller = inspect.stack()[3][3]
     log.error("%s: exception raised is : %s" % (caller, str(ex)))
     return str(ex)

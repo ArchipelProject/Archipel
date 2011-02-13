@@ -113,30 +113,30 @@ class TNArchipelHypervisor(TNArchipelEntity):
         self.local_libvirt_uri          = self.configuration.get("GLOBAL", "libvirt_uri")
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
-        self.libvirt_event_callback_id  = None;
+        self.libvirt_event_callback_id  = None
         
         # permissions
         permission_db_file              = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
         permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = archipel.core.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name);
+        self.permission_center          = archipel.core.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
         self.init_permissions()
         
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')
-        self.generated_names = names_file.readlines();
-        names_file.close();
+        self.generated_names = names_file.readlines()
+        names_file.close()
         self.number_of_names = len(self.generated_names) - 1
         
         self.log.info("server address defined as {0}".format(self.xmppserveraddr))
         
         
         # hooks
-        self.create_hook("HOOK_HYPERVISOR_ALLOC");
-        self.create_hook("HOOK_HYPERVISOR_FREE");
-        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE");
-        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE");
+        self.create_hook("HOOK_HYPERVISOR_ALLOC")
+        self.create_hook("HOOK_HYPERVISOR_FREE")
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE")
+        self.create_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE")
         self.create_hook("HOOK_HYPERVISOR_CLONE")
         
-        # module inits;
+        # module inits
         self.initialize_modules()
         
         
@@ -177,13 +177,13 @@ class TNArchipelHypervisor(TNArchipelEntity):
     def init_permissions(self):
         """initialize the permssions"""
         TNArchipelEntity.init_permissions(self)
-        self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False);
-        self.permission_center.create_permission("free", "Authorizes users to free allocated virtual machines", False);
-        self.permission_center.create_permission("rostervm", "Authorizes users to access the hypervisor's roster", False);
-        self.permission_center.create_permission("clone", "Authorizes users to clone virtual machines", False);
-        self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False);
-        self.permission_center.create_permission("uri", "Authorizes users to get the hypervisor's libvirt URI", False);
-        self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False);
+        self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False)
+        self.permission_center.create_permission("free", "Authorizes users to free allocated virtual machines", False)
+        self.permission_center.create_permission("rostervm", "Authorizes users to access the hypervisor's roster", False)
+        self.permission_center.create_permission("clone", "Authorizes users to clone virtual machines", False)
+        self.permission_center.create_permission("ip", "Authorizes users to get hypervisor's IP address", False)
+        self.permission_center.create_permission("uri", "Authorizes users to get the hypervisor's libvirt URI", False)
+        self.permission_center.create_permission("capabilities", "Authorizes users to access the hypervisor capabilities", False)
     
     
     def manage_persistance(self):
@@ -415,7 +415,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
             vm.domain.undefine()
         
         self.log.info("launch %s's terminate method" % (str(jid)))
-        vm.terminate();
+        vm.terminate()
         
         self.log.info("removing the xmpp vm %s from my roster" % (str(jid)))
         self.remove_jid(jid)
@@ -456,17 +456,17 @@ class TNArchipelHypervisor(TNArchipelEntity):
     
     def clone(self, uuid, requester):
         xmppvm      = self.virtualmachines[uuid]
-        xmldesc     = xmppvm.definition;
+        xmldesc     = xmppvm.definition
         
         if not xmldesc:
             raise Exception('The mother vm has to be defined to be cloned')
         
-        dominfo = xmppvm.domain.info();
+        dominfo = xmppvm.domain.info()
         if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother vm has to be stopped to be cloned')
         
-        name = "%s (clone)" % xmppvm.name;
-        newvm = self.alloc(requester, requested_name=name);
+        name = "%s (clone)" % xmppvm.name
+        newvm = self.alloc(requester, requested_name=name)
         newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", xmppvm)
         
@@ -475,7 +475,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
     def get_capabilities(self):
         """return hypervisor's capabilities"""
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
-        return capp;
+        return capp
     
     
     
@@ -505,7 +505,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
             reply.setQueryPayload([payload])
         
-            self.push_change("hypervisor", "alloc", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.push_change("hypervisor", "alloc", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -525,9 +525,9 @@ class TNArchipelHypervisor(TNArchipelEntity):
             name        = iq.getTag("query").getTag("archipel").getAttr("name")
             password    = iq.getTag("query").getTag("archipel").getAttr("password")
             
-            self.alloc_for_migration(vmjid, name, password);
+            self.alloc_for_migration(vmjid, name, password)
             
-            self.push_change("hypervisor", "migrate", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.push_change("hypervisor", "migrate", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             self.shout("virtualmachine", "The virtual machine %s has been migrated from hypervisor %s" % (vmjid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC_MIGRATION)
@@ -555,7 +555,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
             
             reply.setQueryPayload([xmpp.Node(tag="virtualmachine", attrs={"jid": vm_jid})])
             self.log.info("XMPP Virtual Machine instance sucessfully destroyed")
-            self.push_change("hypervisor", "free", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.push_change("hypervisor", "free", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             self.shout("virtualmachine", "The Archipel Virtual Machine %s has been destroyed by %s" % (domain_uuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -572,7 +572,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         try:
             reply = iq.buildReply("result")
             vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-            self.free_for_migration(vmjid);
+            self.free_for_migration(vmjid)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_FREE_MIGRATION)
         return reply
@@ -592,11 +592,11 @@ class TNArchipelHypervisor(TNArchipelEntity):
         try:
             reply       = iq.buildReply("result")
             vmjid       = xmpp.JID(jid=iq.getTag("query").getTag("archipel").getAttr("jid"))
-            vmuuid      = vmjid.getNode();
+            vmuuid      = vmjid.getNode()
             
             self.clone(vmuuid, iq.getFrom())
             
-            self.push_change("hypervisor", "clone", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR]);
+            self.push_change("hypervisor", "clone", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (vmuuid, iq.getFrom()), excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
             
         except Exception as ex:
@@ -637,7 +637,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         """
         try:
             reply = iq.buildReply("result")
-            reply.getTag("query").addChild(name="ip", payload=self.ipaddr);
+            reply.getTag("query").addChild(name="ip", payload=self.ipaddr)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_IP)
         return reply
@@ -655,7 +655,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         try:
             network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.resource)
             reply = iq.buildReply("result")
-            reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri);
+            reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_LIBVIRT_URI)
         return reply

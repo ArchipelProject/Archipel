@@ -32,16 +32,16 @@ class TNOOMKiller:
         @type entity TNArchipelEntity
         @param entity the module entity
         """
-        self.entity = entity;
-        self.database = sqlite3.connect(db_file, check_same_thread=False);
+        self.entity = entity
+        self.database = sqlite3.connect(db_file, check_same_thread=False)
         self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
         self.database.commit()
         self.cursor = self.database.cursor()
         self.entity.log.info("module oom killer initialized")
         
         # permissions
-        self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False);
-        self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False);
+        self.entity.permission_center.create_permission("oom_getadjust", "Authorizes user to get OOM values", False)
+        self.entity.permission_center.create_permission("oom_setadjust", "Authorizes user to set OOM values", False)
     
     
     
@@ -50,7 +50,7 @@ class TNOOMKiller:
     
     def vm_create(self, entity, args):
         oom_info = self.get_oom_info()
-        self.entity.log.info("OOM value retrieved %s" % str(oom_info));
+        self.entity.log.info("OOM value retrieved %s" % str(oom_info))
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
         self.entity.log.info("oom valuee for vm with uuid %s have been restored" % self.entity.uuid)
     
@@ -93,7 +93,7 @@ class TNOOMKiller:
         """
         try:
             pid = int(commands.getoutput("ps -ef | grep kvm | grep %s | grep -v grep" % self.entity.uuid).split()[1])
-            f = open("/proc/%d/oom_adj" % pid, "w");
+            f = open("/proc/%d/oom_adj" % pid, "w")
             f.write(str(adjust))
             f.close()
         except Exception as ex:
@@ -102,7 +102,7 @@ class TNOOMKiller:
             self.cursor.execute("INSERT INTO oomkiller VALUES (?, ?)", (self.entity.uuid, int(adjust),))
         except:
             self.cursor.execute("UPDATE oomkiller SET adjust=? WHERE uuid=?", (int(adjust), self.entity.uuid,))
-        self.database.commit();
+        self.database.commit()
     
     
     
@@ -145,7 +145,7 @@ class TNOOMKiller:
         """
         try:
             reply = iq.buildReply("result")
-            oom_info = self.get_oom_info();
+            oom_info = self.get_oom_info()
             adj_node = xmpp.Node(tag="oom", attrs={"adjust": oom_info["adjust"], "score": oom_info["score"]})
             reply.setQueryPayload([adj_node])
         except Exception as ex:
@@ -167,7 +167,7 @@ class TNOOMKiller:
         try:
             reply = iq.buildReply("result")
             value = iq.getTag("query").getTag("archipel").getAttr("adjust")
-            self.set_oom_info(value, 0);
+            self.set_oom_info(value, 0)
             self.entity.push_change("oom", "adjusted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)

@@ -38,7 +38,7 @@ class TNActionScheduler:
         self.scheduler = Scheduler()
         self.scheduler.start()
         
-        self.database = sqlite3.connect(db_file, check_same_thread=False);
+        self.database = sqlite3.connect(db_file, check_same_thread=False)
         self.database.execute("create table if not exists scheduler (entity_uuid text, job_uuid text, action text, year text, month text, day text, hour text, minute text, second text, comment text, params text)")
         self.database.commit()
         self.cursor = self.database.cursor()
@@ -47,10 +47,10 @@ class TNActionScheduler:
         self.supported_actions_for_hypervisor = ("alloc", "free")
         
         # permissions
-        self.entity.permission_center.create_permission("scheduler_jobs", "Authorizes user to get the list of task", False);
-        self.entity.permission_center.create_permission("scheduler_schedule", "Authorizes user to schedule a task", False);
-        self.entity.permission_center.create_permission("scheduler_unschedule", "Authorizes user to unschedule a task", False);
-        self.entity.permission_center.create_permission("scheduler_actions", "Authorizes user to get available actions", False);
+        self.entity.permission_center.create_permission("scheduler_jobs", "Authorizes user to get the list of task", False)
+        self.entity.permission_center.create_permission("scheduler_schedule", "Authorizes user to schedule a task", False)
+        self.entity.permission_center.create_permission("scheduler_unschedule", "Authorizes user to unschedule a task", False)
+        self.entity.permission_center.create_permission("scheduler_actions", "Authorizes user to get available actions", False)
     
     
     
@@ -133,8 +133,8 @@ class TNActionScheduler:
         
         for job in self.scheduler.jobs:
             if str(job.args[1]) == uid:
-                return job;
-        return None;
+                return job
+        return None
     
     
     def do_job_for_vm(self, action, uid, str_date, comment, param):
@@ -165,9 +165,9 @@ class TNActionScheduler:
         
         job = self.get_jod_with_uid(uid)
         if not job or not self.scheduler.is_job_active(job):
-            self.delete_job(uid);
+            self.delete_job(uid)
         
-        self.entity.push_change("scheduler", "jobexecuted");
+        self.entity.push_change("scheduler", "jobexecuted")
     
     
     def do_job_for_hypervisor(self, action, uid, str_date, comment, param):
@@ -191,9 +191,9 @@ class TNActionScheduler:
         
         job = self.get_jod_with_uid(uid)
         if not job or not self.scheduler.is_job_active(job):
-            self.delete_job(uid);
+            self.delete_job(uid)
         
-        self.entity.push_change("scheduler", "jobexecuted");
+        self.entity.push_change("scheduler", "jobexecuted")
     
     
     
@@ -283,7 +283,7 @@ class TNActionScheduler:
         """
         try:
             reply = iq.buildReply("result")
-            nodes = [];
+            nodes = []
             for job in self.scheduler.jobs:
                 job_node = xmpp.Node(tag="job", attrs={"action": str(job.args[0]), "uid": str(job.args[1]), "date": str(job.args[2]), "comment": job.args[3]})
                 nodes.append(job_node)
@@ -306,11 +306,11 @@ class TNActionScheduler:
         try:
             reply = iq.buildReply("result")
             uid = iq.getTag("query").getTag("archipel").getAttr("uid")
-            the_job = self.get_jod_with_uid(uid);
+            the_job = self.get_jod_with_uid(uid)
             if not the_job:
                 raise Exception("job with uid %s doesn't exists" % uid)
-            self.delete_job(uid);
-            self.scheduler.unschedule_job(the_job);
+            self.delete_job(uid)
+            self.scheduler.unschedule_job(the_job)
             self.entity.push_change("scheduler", "unscheduled")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)

@@ -41,11 +41,11 @@ class TNSnapshoting:
         self.entity = entity
         
         # permissions
-        self.entity.permission_center.create_permission("snapshot_take", "Authorizes user to get take a snapshot", False);
-        self.entity.permission_center.create_permission("snapshot_delete", "Authorizes user to delete a snapshot", False);
-        self.entity.permission_center.create_permission("snapshot_get", "Authorizes user to get all snapshots", False);
-        self.entity.permission_center.create_permission("snapshot_current", "Authorizes user to get current used snapshot", False);
-        self.entity.permission_center.create_permission("snapshot_revert", "Authorizes user to revert to a snapshot", False);
+        self.entity.permission_center.create_permission("snapshot_take", "Authorizes user to get take a snapshot", False)
+        self.entity.permission_center.create_permission("snapshot_delete", "Authorizes user to delete a snapshot", False)
+        self.entity.permission_center.create_permission("snapshot_get", "Authorizes user to get all snapshots", False)
+        self.entity.permission_center.create_permission("snapshot_current", "Authorizes user to get current used snapshot", False)
+        self.entity.permission_center.create_permission("snapshot_revert", "Authorizes user to revert to a snapshot", False)
         
     
     
@@ -101,7 +101,7 @@ class TNSnapshoting:
         reply = iq.buildReply("result")
         try:
             xmlDesc     = iq.getTag('query').getTag("archipel").getTag('domainsnapshot')
-            name        = xmlDesc.getTag('name').getData();
+            name        = xmlDesc.getTag('name').getData()
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
             
@@ -119,7 +119,7 @@ class TNSnapshoting:
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            self.entity.log.info("snapshot with name %s created" % name);
+            self.entity.log.info("snapshot with name %s created" % name)
             self.entity.push_change("snapshoting", "taken", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
@@ -127,7 +127,7 @@ class TNSnapshoting:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
             try:
                 snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
-                snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
+                snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             except:
                 pass
         except Exception as ex:
@@ -135,7 +135,7 @@ class TNSnapshoting:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_TAKE)
             try:
                 snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
-                snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
+                snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             except:
                 pass
             
@@ -219,10 +219,10 @@ class TNSnapshoting:
             
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
-            snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN);
+            snapshotObject.delete(VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             
-            self.entity.log.info("snapshot with name %s deleted" % name);
+            self.entity.log.info("snapshot with name %s deleted" % name)
             self.entity.push_change("snapshoting", "deleted", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:
@@ -256,9 +256,9 @@ class TNSnapshoting:
             
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
-            self.entity.domain.revertToSnapshot(snapshotObject, 0);
+            self.entity.domain.revertToSnapshot(snapshotObject, 0)
             
-            self.entity.log.info("reverted to snapshot with name %s " % name);
+            self.entity.log.info("reverted to snapshot with name %s " % name)
             self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
         except libvirtError as ex:

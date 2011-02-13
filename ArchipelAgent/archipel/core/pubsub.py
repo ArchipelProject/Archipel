@@ -70,7 +70,7 @@ class TNPubSubNode:
         get the current pubsub node and wait for response. If not already recovered, ask to server
         """
         try:
-            return self.retrieve_items(wait=True);
+            return self.retrieve_items(wait=True)
         except Exception as ex:
             log.error("PUBSUB: can't get node %s : %s" % (self.nodename, str(ex)))
             return False
@@ -102,7 +102,7 @@ class TNPubSubNode:
             self.recovered = True
             return self.recovered
         else:
-            return False;
+            return False
     
     
     def create(self):

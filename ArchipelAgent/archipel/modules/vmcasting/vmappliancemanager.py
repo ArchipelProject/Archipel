@@ -60,10 +60,10 @@ class TNVMApplianceManager:
         self.hypervisor_repo_path = hypervisor_repo_path
         
         # permissions 
-        self.entity.permission_center.create_permission("appliance_get", "Authorizes user to get installed appliances", False);
-        self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False);
-        self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False);
-        self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False);
+        self.entity.permission_center.create_permission("appliance_get", "Authorizes user to get installed appliances", False)
+        self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False)
+        self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False)
+        self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False)
         
     
     
@@ -94,7 +94,7 @@ class TNVMApplianceManager:
     def finish_packaging(self):
         self.is_installing = False
         self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
-        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False);
+        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False)
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
     
     
@@ -271,7 +271,7 @@ class TNVMApplianceManager:
                 paths.append(path)
             
             
-            snapshots = [];
+            snapshots = []
             if self.entity.domain.hasCurrentSnapshot(0):
                 snapshot_names = self.entity.domain.snapshotListNames(0)
                 for snapshot_name in snapshot_names:

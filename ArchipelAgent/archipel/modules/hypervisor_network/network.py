@@ -49,16 +49,16 @@ class TNHypervisorNetworks:
         
         # permissions
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
-            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False);
-            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False);
+            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
+            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False)
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
-            self.entity.permission_center.create_permission("network_define",   "Authorizes user to define a network", False);
-            self.entity.permission_center.create_permission("network_undefine", "Authorizes user to undefine a network", False);
-            self.entity.permission_center.create_permission("network_create",   "Authorizes user to create (start) a network", False);
-            self.entity.permission_center.create_permission("network_destroy",  "Authorizes user to destroy (stop) a network", False);
-            self.entity.permission_center.create_permission("network_get",      "Authorizes user to get all networks informations", False);
-            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False);
-            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False);            
+            self.entity.permission_center.create_permission("network_define",   "Authorizes user to define a network", False)
+            self.entity.permission_center.create_permission("network_undefine", "Authorizes user to undefine a network", False)
+            self.entity.permission_center.create_permission("network_create",   "Authorizes user to create (start) a network", False)
+            self.entity.permission_center.create_permission("network_destroy",  "Authorizes user to destroy (stop) a network", False)
+            self.entity.permission_center.create_permission("network_get",      "Authorizes user to get all networks informations", False)
+            self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
+            self.entity.permission_center.create_permission("network_bridges",  "Authorizes user to get existing bridges", False)
     
     
     
@@ -308,7 +308,7 @@ class TNHypervisorNetworks:
             lines = output.split("\n")[1:]
             bridges_names = [] 
             for line in lines:
-                bridge_name = line.split()[0];
+                bridge_name = line.split()[0]
                 bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
                 bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)

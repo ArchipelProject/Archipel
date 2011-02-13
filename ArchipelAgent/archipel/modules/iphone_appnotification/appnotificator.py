@@ -21,7 +21,7 @@ from archipel.utils import *
 class AppNotificator:
     
     def __init__(self, credentials):
-        self.credentials = credentials;
+        self.credentials = credentials
     
     def send(self, title, message, subtitle=None):
         long_message_preview = message

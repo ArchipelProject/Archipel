@@ -185,14 +185,14 @@ class TNHypervisorRepoManager:
         self.entity.log.info("TNHypervisorRepoManager: Database ready.")
         
         # permissions 
-        self.entity.permission_center.create_permission("vmcasting_get", "Authorizes user to get registered VMCast feeds", False);
-        self.entity.permission_center.create_permission("vmcasting_register", "Authorizes user to register to a VMCast feed", False);
-        self.entity.permission_center.create_permission("vmcasting_unregister", "Authorizes user to unregister from a VMCast feed", False);
-        self.entity.permission_center.create_permission("vmcasting_downloadappliance", "Authorizes user to download an appliance from a feed", False);
-        self.entity.permission_center.create_permission("vmcasting_downloadqueue", "Authorizes user to see the download queue", False);
-        self.entity.permission_center.create_permission("vmcasting_getappliances", "Authorizes user to get all availables appliances", False);
-        self.entity.permission_center.create_permission("vmcasting_deleteappliance", "Authorizes user to delete an installed appliance", False);
-        self.entity.permission_center.create_permission("vmcasting_getinstalledappliances", "Authorizes user to get all installed appliances", False);
+        self.entity.permission_center.create_permission("vmcasting_get", "Authorizes user to get registered VMCast feeds", False)
+        self.entity.permission_center.create_permission("vmcasting_register", "Authorizes user to register to a VMCast feed", False)
+        self.entity.permission_center.create_permission("vmcasting_unregister", "Authorizes user to unregister from a VMCast feed", False)
+        self.entity.permission_center.create_permission("vmcasting_downloadappliance", "Authorizes user to download an appliance from a feed", False)
+        self.entity.permission_center.create_permission("vmcasting_downloadqueue", "Authorizes user to see the download queue", False)
+        self.entity.permission_center.create_permission("vmcasting_getappliances", "Authorizes user to get all availables appliances", False)
+        self.entity.permission_center.create_permission("vmcasting_deleteappliance", "Authorizes user to delete an installed appliance", False)
+        self.entity.permission_center.create_permission("vmcasting_getinstalledappliances", "Authorizes user to get all installed appliances", False)
         
     
     
@@ -384,7 +384,7 @@ class TNHypervisorRepoManager:
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
             self.database_connection.commit()
             
-            self.parseRSS();
+            self.parseRSS()
             
             self.entity.push_change("vmcasting", "register")
             self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()), excludedgroups=['vitualmachines'])

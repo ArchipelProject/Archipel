@@ -43,9 +43,9 @@ class TNHypervisorHealth:
         self.entity = entity
         
         # permissions
-        self.entity.permission_center.create_permission("health_history", "Authorizes user to get the health history", False);
-        self.entity.permission_center.create_permission("health_info", "Authorizes user to get entity information", False);
-        self.entity.permission_center.create_permission("health_logs", "Authorizes user to get entity logs", False);
+        self.entity.permission_center.create_permission("health_history", "Authorizes user to get the health history", False)
+        self.entity.permission_center.create_permission("health_info", "Authorizes user to get entity information", False)
+        self.entity.permission_center.create_permission("health_logs", "Authorizes user to get entity logs", False)
     
     
     
@@ -170,14 +170,14 @@ class TNHypervisorHealth:
         try:
             reply = iq.buildReply("result")
             limit = int(iq.getTag("query").getTag("archipel").getAttr("limit"))
-            output = commands.getoutput("tail -n %d %s" % (limit, self.logfile));
+            output = commands.getoutput("tail -n %d %s" % (limit, self.logfile))
             nodes = []
             for line in output.split("\n"):
                 infos = line.split("::")
                 # log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": infos[2], "method": infos[3]})
-                # log_node.setData(infos[4]);
+                # log_node.setData(infos[4])
                 log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
-                log_node.setData(line);
+                log_node.setData(line)
                 nodes.append(log_node)
                 
             reply.setQueryPayload(nodes)

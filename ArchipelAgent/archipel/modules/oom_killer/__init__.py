@@ -27,7 +27,7 @@ ARCHIPEL_NS_OOM_KILLER = "archipel:vm:oom"
 
 # this method will be call at loading
 def __module_init__oom(self):
-    dbfile = self.configuration.get("OOMKILLER", "database");
+    dbfile = self.configuration.get("OOMKILLER", "database")
     self.module_oom = oomkiller.TNOOMKiller(self, dbfile)
     self.register_hook("HOOK_VM_INITIALIZE", self.module_oom.vm_initialized)
     self.register_hook("HOOK_VM_CREATE", self.module_oom.vm_create)

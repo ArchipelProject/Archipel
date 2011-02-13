@@ -86,7 +86,7 @@ class TNArchipelPermissionCenter:
     def get_permission(self, name):
         """get the permission by name"""
         try:
-            return self.TNArchipelPermission.byName(name, connection=self.connection);
+            return self.TNArchipelPermission.byName(name, connection=self.connection)
         except main.SQLObjectNotFound:
             return None
     
@@ -103,7 +103,7 @@ class TNArchipelPermissionCenter:
     
     def get_permissions(self):
         """return all permissions"""
-        return self.TNArchipelPermission.select(connection=self.connection);
+        return self.TNArchipelPermission.select(connection=self.connection)
     
     
     
@@ -125,7 +125,7 @@ class TNArchipelPermissionCenter:
     def get_user(self, name):
         """get the user by name"""
         try:
-            return self.TNArchipelUser.byName(name, connection=self.connection);
+            return self.TNArchipelUser.byName(name, connection=self.connection)
         except main.SQLObjectNotFound:
             return None
     
@@ -205,13 +205,13 @@ class TNArchipelPermissionCenter:
     
     
     def get_user_roles(self, user_name):
-        user = self.get_user(user_name);
+        user = self.get_user(user_name)
         if user: return user.roles
         return None
     
     
     def get_user_permissions(self, user_name):
-        user = self.get_user(user_name);
+        user = self.get_user(user_name)
         if user: return user.permissions
         return None
 
@@ -235,7 +235,7 @@ class TNArchipelPermissionCenter:
     def get_role(self, name):
         """get the role by name"""
         try:
-            return self.TNArchipelRole.byName(name, connection=self.connection);
+            return self.TNArchipelRole.byName(name, connection=self.connection)
         except main.SQLObjectNotFound:
             return None
     

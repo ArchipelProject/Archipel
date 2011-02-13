@@ -147,19 +147,19 @@ class TNArchipelEntity:
         overrides this to add custom permissions
         """
         self.log.info("initializing permissions of %s" % self.jid)
-        self.permission_center.create_permission("all", "All permissions are granted", False);
-        self.permission_center.create_permission("presence", "Authorizes users to request presences", False);
-        self.permission_center.create_permission("message", "Authorizes users to send messages", False);
-        self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False);
-        self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False);
-        self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False);
-        self.permission_center.create_permission("permission_get", "Authorizes users to get all permissions", True);
-        self.permission_center.create_permission("permission_getown", "Authorizes users to get only own permissions", False);
-        self.permission_center.create_permission("permission_list", "Authorizes users to list existing", False);
-        self.permission_center.create_permission("permission_set", "Authorizes users to set all permissions", False);
-        self.permission_center.create_permission("permission_setown", "Authorizes users to set only own permissions", False);
-        self.permission_center.create_permission("subscription_add", "Authorizes users add others in entity roster", False);
-        self.permission_center.create_permission("subscription_remove", "Authorizes users remove others in entity roster", False);
+        self.permission_center.create_permission("all", "All permissions are granted", False)
+        self.permission_center.create_permission("presence", "Authorizes users to request presences", False)
+        self.permission_center.create_permission("message", "Authorizes users to send messages", False)
+        self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
+        self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
+        self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
+        self.permission_center.create_permission("permission_get", "Authorizes users to get all permissions", True)
+        self.permission_center.create_permission("permission_getown", "Authorizes users to get only own permissions", False)
+        self.permission_center.create_permission("permission_list", "Authorizes users to list existing", False)
+        self.permission_center.create_permission("permission_set", "Authorizes users to set all permissions", False)
+        self.permission_center.create_permission("permission_setown", "Authorizes users to set only own permissions", False)
+        self.permission_center.create_permission("subscription_add", "Authorizes users add others in entity roster", False)
+        self.permission_center.create_permission("subscription_remove", "Authorizes users remove others in entity roster", False)
         self.log.info("permissions of %s initialized" % self.jid)
     
     
@@ -589,7 +589,7 @@ class TNArchipelEntity:
                         excluded = True
             if excluded: continue
             
-            resources = self.roster.getResources(barejid);
+            resources = self.roster.getResources(barejid)
             if len(resources) == 0:
                 broadcast = xmpp.Message(body=message, typ="headline", to=barejid)
                 self.log.info("SHOUTING : shouting message to %s" % (barejid))
@@ -674,7 +674,7 @@ class TNArchipelEntity:
         self.log.info("%s is authorizing jid %s" % (str(self.jid), str(jid)))
         
         if not self.roster: self.roster = self.xmppclient.getRoster()
-        self.roster.Authorize(jid);
+        self.roster.Authorize(jid)
     
     
     def unauthorize(self, jid):
@@ -687,7 +687,7 @@ class TNArchipelEntity:
         self.log.info("%s is authorizing jid %s" % (str(self.jid), str(jid)))
         
         if not self.roster: self.roster = self.xmppclient.getRoster()
-        self.roster.Unauthorize(jid);
+        self.roster.Unauthorize(jid)
     
     
     def is_subscribed(self, jid):
@@ -970,7 +970,7 @@ class TNArchipelEntity:
         
         if action == "settags":
             reply = self.iq_set_tags(iq)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
@@ -981,15 +981,15 @@ class TNArchipelEntity:
         @type tags String
         @param tags the string containing tags separated by ';;'
         """
-        current_id = None;
+        current_id = None
         for item in self.pubSubNodeTags.get_items():
             if item.getTag("tag") and item.getTag("tag").getAttr("jid") == self.jid.getStripped():
-                current_id = item.getAttr("id");
+                current_id = item.getAttr("id")
         if current_id:
             self.pubSubNodeTags.remove_item(current_id, callback=self.did_clean_old_tags, user_info=tags)
         else:
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": tags})
-            self.pubSubNodeTags.add_item(tagNode);
+            self.pubSubNodeTags.add_item(tagNode)
     
     
     def did_clean_old_tags(self, resp, user_info):
@@ -998,7 +998,7 @@ class TNArchipelEntity:
         """
         if resp.getType() == "result":
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})
-            self.pubSubNodeTags.add_item(tagNode);
+            self.pubSubNodeTags.add_item(tagNode)
         else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
     
@@ -1191,27 +1191,27 @@ class TNArchipelEntity:
                 
         if action == "list":
             reply = self.iq_list_permission(iq)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if action == "set":
             reply = self.iq_set_permission(iq, onlyown=False)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         if action == "setown":
             reply = self.iq_set_permission(iq, onlyown=True)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "get":
             reply = self.iq_get_permission(iq, onlyown=False)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "getown":
             reply = self.iq_get_permission(iq, onlyown=True)
-            conn.send(reply);
+            conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
@@ -1234,7 +1234,7 @@ class TNArchipelEntity:
                     if not perm.getAttr("permission_target") == iq.getFrom().getStripped():
                         raise Exception("You cannot set permissions of other users")
             
-            perm_targets = [];
+            perm_targets = []
             for perm in perms:
                 perm_type   = perm.getAttr("permission_type")
                 perm_target = perm.getAttr("permission_target")
@@ -1301,7 +1301,7 @@ class TNArchipelEntity:
                 if permissions:
                     for perm in permissions:
                         nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name}))
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_GET_PERMISSIONS)
@@ -1323,7 +1323,7 @@ class TNArchipelEntity:
             if permissions:
                 for perm in permissions:
                     nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name, "default": perm.defaultValue, "description": perm.description}))
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
             
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LIST_PERMISSIONS)

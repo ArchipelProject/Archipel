@@ -47,14 +47,14 @@ class TNXMPPServerController:
         self.xmlrpc_server          = xmlrpclib.ServerProxy(self.xmlrpc_call)
         
         # permissions
-        self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False);
-        self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False);
-        self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False);
-        self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False);
-        self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False);
-        self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False);
-        self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False);
-        self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False);
+        self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
+        self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
+        self.entity.permission_center.create_permission("xmppserver_groups_list", "Authorizes user to list shared groups", False)
+        self.entity.permission_center.create_permission("xmppserver_groups_addusers", "Authorizes user to add users in shared groups", False)
+        self.entity.permission_center.create_permission("xmppserver_groups_deleteusers", "Authorizes user to remove users from shared groups", False)
+        self.entity.permission_center.create_permission("xmppserver_users_register", "Authorizes user to register XMPP users", False)
+        self.entity.permission_center.create_permission("xmppserver_users_unregister", "Authorizes user to unregister XMPP users", False)
+        self.entity.permission_center.create_permission("xmppserver_users_list", "Authorizes user to list XMPP users", False)
     
     
     ### XMPP Processing for shared groups
@@ -175,7 +175,7 @@ class TNXMPPServerController:
                     newNode.addChild("user", attrs={"jid": member["member"]})
                 
                 groupsNode.append(newNode)
-            reply.setQueryPayload(groupsNode);
+            reply.setQueryPayload(groupsNode)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
@@ -345,7 +345,7 @@ class TNXMPPServerController:
                 finally:
                     nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
                 
-            reply.setQueryPayload(nodes);
+            reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply

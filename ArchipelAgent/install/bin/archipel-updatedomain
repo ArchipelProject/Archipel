@@ -44,7 +44,7 @@ def update(dbfile, newdomain):
     
     for vm in c:
         jid, password, date, comment, name = vm
-        newjid = jid.split("@")[0] + "@" + newdomain;
+        newjid = jid.split("@")[0] + "@" + newdomain
         
         db.execute("UPDATE virtualmachines SET jid='%s' WHERE jid='%s'" % (newjid, jid))
     db.commit()
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     
         for o, a in opts:
             if o in ("--file"):
-                dbfile = a;
+                dbfile = a
             if o in ("--domain"):
                 domain = a
             if o in ("-h", "--help"):

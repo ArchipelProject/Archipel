@@ -91,9 +91,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         self.is_migrating               = False
         self.libvirt_event_callback_id  = None
-        self.triggers                   = {};
-        self.watchers                   = {};
-        self.entity_type                = "virtualmachine";
+        self.triggers                   = {}
+        self.watchers                   = {}
+        self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
         
         # create VM folders if not exists
@@ -106,20 +106,20 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         # permissions
         permission_db_file              = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
         permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = archipel.core.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name);
+        self.permission_center          = archipel.core.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
         self.init_permissions()
         
         # hooks
-        self.create_hook("HOOK_VM_CREATE");
-        self.create_hook("HOOK_VM_SHUTOFF");
-        self.create_hook("HOOK_VM_STOP");
-        self.create_hook("HOOK_VM_DESTROY");
-        self.create_hook("HOOK_VM_SUSPEND");
-        self.create_hook("HOOK_VM_RESUME");
-        self.create_hook("HOOK_VM_UNDEFINE");
-        self.create_hook("HOOK_VM_DEFINE");
-        self.create_hook("HOOK_VM_INITIALIZE");
-        self.create_hook("HOOK_VM_TERMINATE");
+        self.create_hook("HOOK_VM_CREATE")
+        self.create_hook("HOOK_VM_SHUTOFF")
+        self.create_hook("HOOK_VM_STOP")
+        self.create_hook("HOOK_VM_DESTROY")
+        self.create_hook("HOOK_VM_SUSPEND")
+        self.create_hook("HOOK_VM_RESUME")
+        self.create_hook("HOOK_VM_UNDEFINE")
+        self.create_hook("HOOK_VM_DEFINE")
+        self.create_hook("HOOK_VM_INITIALIZE")
+        self.create_hook("HOOK_VM_TERMINATE")
         
         # actions on auth
         self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
@@ -138,14 +138,14 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     def lock(self):
         self.log.info("acquiring lock")
-        self.locked = True;
+        self.locked = True
         self.lock_timer = Timer(self.maximum_lock_time, self.unlock)
         self.lock_timer.start()
     
     
     def unlock(self):
         self.log.info("releasing lock")
-        self.locked = False;
+        self.locked = False
         if self.lock_timer:
             self.lock_timer.cancel()
     
@@ -227,23 +227,23 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     def init_permissions(self):
         """initialize the permssions"""
         TNArchipelEntity.init_permissions(self)
-        self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False);
-        self.permission_center.create_permission("create", "Authorizes users to create (start) virtual machine", False);
-        self.permission_center.create_permission("shutdown", "Authorizes users to shutdown virtual machine", False);
-        self.permission_center.create_permission("destroy", "Authorizes users to destroy virtual machine", False);
-        self.permission_center.create_permission("reboot", "Authorizes users to reboot virtual machine", False);
-        self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False);
-        self.permission_center.create_permission("resume", "Authorizes users to resume virtual machine", False);
-        self.permission_center.create_permission("vncdisplay", "Authorizes users to access the vnc display port", False);
-        self.permission_center.create_permission("xmldesc", "Authorizes users to access the XML description of the virtual machine", False);
-        self.permission_center.create_permission("migrate", "Authorizes users to perform live migration", False);
-        self.permission_center.create_permission("autostart", "Authorizes users to set the virtual machine autostart", False);
-        self.permission_center.create_permission("memory", "Authorizes users to change memory in live", False);
-        self.permission_center.create_permission("setvcpus", "Authorizes users to set the number of virtual CPU in live", False);
-        self.permission_center.create_permission("networkinfo", "Authorizes users to access virtual machine's network informations", False);
-        self.permission_center.create_permission("define", "Authorizes users to define virtual machine", False);
-        self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False);
-        self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False);
+        self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False)
+        self.permission_center.create_permission("create", "Authorizes users to create (start) virtual machine", False)
+        self.permission_center.create_permission("shutdown", "Authorizes users to shutdown virtual machine", False)
+        self.permission_center.create_permission("destroy", "Authorizes users to destroy virtual machine", False)
+        self.permission_center.create_permission("reboot", "Authorizes users to reboot virtual machine", False)
+        self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False)
+        self.permission_center.create_permission("resume", "Authorizes users to resume virtual machine", False)
+        self.permission_center.create_permission("vncdisplay", "Authorizes users to access the vnc display port", False)
+        self.permission_center.create_permission("xmldesc", "Authorizes users to access the XML description of the virtual machine", False)
+        self.permission_center.create_permission("migrate", "Authorizes users to perform live migration", False)
+        self.permission_center.create_permission("autostart", "Authorizes users to set the virtual machine autostart", False)
+        self.permission_center.create_permission("memory", "Authorizes users to change memory in live", False)
+        self.permission_center.create_permission("setvcpus", "Authorizes users to set the number of virtual CPU in live", False)
+        self.permission_center.create_permission("networkinfo", "Authorizes users to access virtual machine's network informations", False)
+        self.permission_center.create_permission("define", "Authorizes users to define virtual machine", False)
+        self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
+        self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
     
     
     def register_handler(self):
@@ -321,7 +321,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         if self.domain:
             self.log.info("already connected to domain. ignoring.")
-            return;
+            return
         
         try:
             self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
@@ -387,8 +387,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 self.push_change("virtualmachine:definition", "undefined", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_UNDEFINE")
-                self.domain = None;
-                self.description = None;
+                self.domain = None
+                self.description = None
             
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
@@ -411,7 +411,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         if not self.libvirt_event_callback_id is None:
             self.log.info("removing the libvirt event listener for %s" % self.jid)
             self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
-            self.libvirt_event_callback_id = None;
+            self.libvirt_event_callback_id = None
     
     
     def disconnect(self):
@@ -420,7 +420,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         self.log.info("%s is disconnecting from everything" % self.jid)
         
-        self.remove_libvirt_handler();
+        self.remove_libvirt_handler()
         
         if self.libvirt_connection:
             self.libvirt_connection.close()
@@ -439,12 +439,12 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         novnc_proxy_port        = self.vncdisplay()["proxy"]
         self.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         
-        cert = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
-        if cert.lower() in ("none", "no", "false"): cert = None;
+        cert = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file")
+        if cert.lower() in ("none", "no", "false"): cert = None
         self.log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
-        onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl");
+        onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl")
         self.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
-        self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl);
+        self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl)
         self.novnc_proxy.start()
         self.push_change("virtualmachine:control", "websocketvncstart", excludedgroups=['vitualmachines'])
     
@@ -456,7 +456,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         if self.novnc_proxy:
             self.log.info("stopping novnc proxy")
             self.novnc_proxy.stop()
-            self.novnc_proxy = None;
+            self.novnc_proxy = None
             self.push_change("virtualmachine:control", "websocketvncstop", excludedgroups=['vitualmachines'])
     
     
@@ -581,17 +581,17 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             raise xmpp.protocol.NodeProcessed
         
         elif action == "autostart":
-            reply = self.iq_autostart(iq);
+            reply = self.iq_autostart(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         elif action == "memory":
-            reply = self.iq_memory(iq);
+            reply = self.iq_memory(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
         elif action == "setvcpus":
-            reply = self.iq_setvcpus(iq);
+            reply = self.iq_setvcpus(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
             
@@ -602,7 +602,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         
         
         # elif action == "setpincpus":
-        #     reply = self.iq_setcpuspin(iq);
+        #     reply = self.iq_setcpuspin(iq)
         #     conn.send(reply)
         #     raise xmpp.protocol.NodeProcessed
     
@@ -713,9 +713,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         
         netstats = []
         for nic in interfaces_nodes:
-            name    = nic.getTag("alias").getAttr("name");
-            target  = nic.getTag("target").getAttr("dev"); 
-            stats   = self.domain.interfaceStats(target);
+            name    = nic.getTag("alias").getAttr("name")
+            target  = nic.getTag("target").getAttr("dev")
+            stats   = self.domain.interfaceStats(target)
             netstats.append({
                 "name": name,
                 "rx_bytes": stats[0],
@@ -728,13 +728,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 "tx_drop": stats[7]
             })
         
-        return netstats;
+        return netstats
     
     
     def setMemory(self, value):
         value = long(value)
         if value < 10 :
-            value = 10;
+            value = 10
         self.domain.setMemory(value)
         t = Timer(1.0, self.memoryTimer, kwargs={"requestedMemory": value})
         t.start()
@@ -759,7 +759,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         
     # def setCPUsPin(self, vcpu, cpumap):
     #     self.lock()
-    #     self.domain.pinVcpu(int(value)); # no no non
+    #     self.domain.pinVcpu(int(value)) # no no non
     #     self.unlock()
     
     
@@ -777,11 +777,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                     "onlyssl"       : False, 
                     "supportssl"    : False}
         proxyport = directport + 1000
-        supportSSL = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file");
+        supportSSL = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file")
         if supportSSL.lower() in ("none", "no", "false"): 
-            supportSSL = False;
+            supportSSL = False
         else: 
-            supportSSL = True;
+            supportSSL = True
         return {"direct"        : directport, 
                 "proxy"         : proxyport, 
                 "onlyssl"       : self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl"), 
@@ -798,7 +798,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def define(self, xmldesc):
-        self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc));
+        self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
@@ -806,17 +806,17 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def undefine(self):
-        self.remove_libvirt_handler();
+        self.remove_libvirt_handler()
         self.domain.undefine()
-        self.definition = None;
-        self.domain = None;
+        self.definition = None
+        self.domain = None
         self.log.info("virtual machine undefined")
     
     
     def undefine_and_disconnect(self):
-        self.remove_libvirt_handler();
+        self.remove_libvirt_handler()
         self.domain.undefine()
-        self.definition = None;
+        self.definition = None
         self.unlock()
         self.disconnect()
         self.log.info("virtual machine undefined and disconnected")
@@ -871,7 +871,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         try:
             remote_hypervisor_uri = resp.getTag("query").getTag("uri").getCDATA()
         except Exception as ex:
-            self.is_migrating = False;
+            self.is_migrating = False
         
         self.change_presence(presence_show=self.xmppstatusshow, presence_status="Migrating...")
         thread.start_new_thread(self.migrate_step3, (remote_hypervisor_uri,))
@@ -886,7 +886,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         try:
             self.domain.migrateToURI(remote_hypervisor_uri, flags, None, 0)
         except Exception as ex:
-            self.is_migrating = False;
+            self.is_migrating = False
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             self.log.error("can't migrate because of : %s" % str(ex))
@@ -925,7 +925,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.watchers[name] = TNArchipelTriggerWatcher(self, name, targetjid, triggername, onaction, offaction)
         self.trigger_database.execute("insert into watchers values(?,?,?,?,?,?)", (name, str(targetjid), triggername, onaction.__name__, offaction.__name__, state))
         self.trigger_database.commit()
-        if state == ARCHIPEL_WATCHER_STATE_ON: self.watchers[name].watch();
+        if state == ARCHIPEL_WATCHER_STATE_ON: self.watchers[name].watch()
     
     
     def remove_watcher(self, name, force=False):
@@ -953,7 +953,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         try:
             hyp_jid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("hypervisorjid"))
             self.migrate_step1(hyp_jid)
-            reply =  iq.buildReply("result");
+            reply =  iq.buildReply("result")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MIGRATE)
         return reply

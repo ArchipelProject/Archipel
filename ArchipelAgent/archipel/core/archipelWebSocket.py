@@ -68,17 +68,17 @@ class TNArchipelWebSocket(threading.Thread):
         
         self.target_port        = target_port
         self.target_host        = target_host
-        self.cert               = certfile;
+        self.cert               = certfile
         self.listen_host        = listen_host
         self.listen_port        = listen_port
         self.ssl_only           = onlySSL
         self.buffer_size        = 65536
         self.base64encode       = base64encode
-        self.clientSockets      = [];
+        self.clientSockets      = []
         self.policy_response    = """<cross-domain-policy><allow-access-from domain="*" to-ports="*" /></cross-domain-policy>\n"""
         self.server_handshake   = WEBPROXY_HANDSHAKE
-        self.lsock              = None;
-        self.on                 = True;
+        self.lsock              = None
+        self.on                 = True
     
     
     def __encode(self, buf):
@@ -260,7 +260,7 @@ class TNArchipelWebSocket(threading.Thread):
                     else:
                         cpartial = cpartial + buf
         except:
-            log.info("WEBSOCKETPROXY: client %s disconnected" % str(addr));
+            log.info("WEBSOCKETPROXY: client %s disconnected" % str(addr))
             if client: client.close()
             if target: target.close()
         
@@ -320,7 +320,7 @@ class TNArchipelWebSocket(threading.Thread):
         for c in self.clientSockets:
             if c[0]: c[0].close()
             if c[1] and c[1] != c[0]: c[1].close()
-        socket.create_connection(((self.listen_host, self.listen_port)));
+        socket.create_connection(((self.listen_host, self.listen_port)))
         self.lsock.close()
         log.info("WEBSOCKETPROXY: thread stopped")
     

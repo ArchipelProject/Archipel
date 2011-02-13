@@ -28,11 +28,11 @@ def __module_init__iphone_notification_vm(self):
     self.log.info("initializing iPhone notification for virtual machine")
     
     self.iphone_notifications = []
-    creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");
+    creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key")
     
     for cred in creds.split(",,"):
-        iphone_n = appnotificator.AppNotificator(cred);
-        self.iphone_notifications.append(iphone_n);
+        iphone_n = appnotificator.AppNotificator(cred)
+        self.iphone_notifications.append(iphone_n)
         
         self.register_hook("HOOK_VM_CREATE", iphone_n.vm_create)
         self.register_hook("HOOK_VM_SHUTOFF", iphone_n.vm_shutoff)
@@ -48,11 +48,11 @@ def __module_init__iphone_notification_hypervisor(self):
     self.log.info("initializing iPhone notification for hypervisor")
     
     self.iphone_notifications = []
-    creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key");
+    creds = self.configuration.get("IPHONENOTIFICATION", "credentials_key")
     
     for cred in creds.split(",,"):
-        iphone_n = appnotificator.AppNotificator(cred);
-        self.iphone_notifications.append(iphone_n);
+        iphone_n = appnotificator.AppNotificator(cred)
+        self.iphone_notifications.append(iphone_n)
         
         self.register_hook("HOOK_HYPERVISOR_ALLOC", iphone_n.hypervisor_alloc)
         self.register_hook("HOOK_HYPERVISOR_FREE", iphone_n.hypervisor_free)

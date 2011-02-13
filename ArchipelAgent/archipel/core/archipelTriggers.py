@@ -20,14 +20,14 @@ import archipel.core.pubsub
 import datetime
 from archipel.utils import *
 
-ARCHIPEL_TRIGGER_MODE_MANUAL    = 0;
-ARCHIPEL_TRIGGER_MODE_AUTO      = 1;
+ARCHIPEL_TRIGGER_MODE_MANUAL    = 0
+ARCHIPEL_TRIGGER_MODE_AUTO      = 1
 
-ARCHIPEL_TRIGGER_STATE_OFF      = 0;
-ARCHIPEL_TRIGGER_STATE_ON       = 1;
+ARCHIPEL_TRIGGER_STATE_OFF      = 0
+ARCHIPEL_TRIGGER_STATE_ON       = 1
 
-ARCHIPEL_WATCHER_STATE_OFF      = 0;
-ARCHIPEL_WATCHER_STATE_ON       = 1;
+ARCHIPEL_WATCHER_STATE_OFF      = 0
+ARCHIPEL_WATCHER_STATE_ON       = 1
 
 class TNArchipelTrigger:
     """this is the representation of a basic trigger"""
@@ -129,7 +129,7 @@ class TNArchipelTriggerWatcher:
     
     def on_event(self, event):
         try:
-            state = event.getTag("event").getTag("items").getTag("item").getTag("trigger").getTag("state").getCDATA();
+            state = event.getTag("event").getTag("items").getTag("item").getTag("trigger").getTag("state").getCDATA()
             if int(state) == ARCHIPEL_TRIGGER_STATE_ON:
                 if self.triggeronaction: self.triggeronaction()
             else:

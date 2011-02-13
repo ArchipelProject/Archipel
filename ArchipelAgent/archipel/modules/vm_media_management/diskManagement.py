@@ -43,12 +43,12 @@ class TNMediaManagement:
         self.shared_isos_folder =  shared_isos_folder
         
         # permissions 
-        self.entity.permission_center.create_permission("drives_create", "Authorizes user to get create a drive", False);
-        self.entity.permission_center.create_permission("drives_delete", "Authorizes user to delete a drive", False);
-        self.entity.permission_center.create_permission("drives_get", "Authorizes user to get all drives", False);
-        self.entity.permission_center.create_permission("drives_getiso", "Authorizes user to get existing ISO images", False);
-        self.entity.permission_center.create_permission("drives_convert", "Authorizes user to convert a drive", False);
-        self.entity.permission_center.create_permission("drives_rename", "Authorizes user to rename a drive", False);
+        self.entity.permission_center.create_permission("drives_create", "Authorizes user to get create a drive", False)
+        self.entity.permission_center.create_permission("drives_delete", "Authorizes user to delete a drive", False)
+        self.entity.permission_center.create_permission("drives_get", "Authorizes user to get all drives", False)
+        self.entity.permission_center.create_permission("drives_getiso", "Authorizes user to get existing ISO images", False)
+        self.entity.permission_center.create_permission("drives_convert", "Authorizes user to convert a drive", False)
+        self.entity.permission_center.create_permission("drives_rename", "Authorizes user to rename a drive", False)
     
     
     
@@ -104,7 +104,7 @@ class TNMediaManagement:
             disk_size   = query_node.getTag("archipel").getAttr("size")
             disk_unit   = query_node.getTag("archipel").getAttr("unit")
             format      = query_node.getTag("archipel").getAttr("format")
-            disk_path   = self.entity.folder + "/" + disk_name + "." + format;
+            disk_path   = self.entity.folder + "/" + disk_name + "." + format
             
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try")
@@ -144,7 +144,7 @@ class TNMediaManagement:
             query_node  = iq.getTag("query")
             path        = query_node.getTag("archipel").getAttr("path")
             format      = query_node.getTag("archipel").getAttr("format")
-            disk_path   = path.replace(path.split(".")[-1], "") + format;
+            disk_path   = path.replace(path.split(".")[-1], "") + format
             
             if os.path.exists(disk_path):
                 raise Exception("The disk with same name and extension already exists.")
@@ -232,7 +232,7 @@ class TNMediaManagement:
                     path = disk_node.getTag('source').getAttr('file')
                     if path == secure_disk_path:
                         devices_node.delChild(disk_node)
-                        have_undefined_at_least_on_disk = True;
+                        have_undefined_at_least_on_disk = True
                 
                 if have_undefined_at_least_on_disk:
                     xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')

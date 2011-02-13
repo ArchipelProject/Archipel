@@ -56,7 +56,7 @@ if __name__ == "__main__":
         opts, args = getopt.getopt(sys.argv[1:], "hcd", ["jid=", "password=", "pubsubserver=", "help", "create", "delete"])
         for o, a in opts:
             if o in ("--jid"):
-                jid = xmpp.JID(a);
+                jid = xmpp.JID(a)
             if o in ("--password"):
                 password = a
             if o in ("--pubsubserver"):
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     config = init_conf("/etc/archipel/archipel.conf")
     
     xmppclient = xmpp.Client(jid.getDomain(), debug=[])
-    xmppclient.connect();
+    xmppclient.connect()
 
     if xmppclient.auth(jid.getNode(), password, "configurator") == None:
         print "\033[31mERROR: bad authentication. exiting\033[0m"
