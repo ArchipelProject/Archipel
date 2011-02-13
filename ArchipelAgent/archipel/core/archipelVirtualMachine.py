@@ -610,6 +610,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         it understands IQ of type:
             - define (the domain xml must be sent as payload of IQ, and the uuid *MUST*, be the same as the JID of the client)
             - undefine (undefine a virtual machine domain)
+            - capabilities
             
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
