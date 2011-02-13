@@ -132,6 +132,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPTextField             fieldMemory;
     @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldPreferencesMemory;
+    @outlet CPTextField             fieldPreferencesArchitecture;
+    @outlet CPTextField             fieldPreferencesEmulator;
     @outlet CPTextField             fieldVNCPassword;
     @outlet CPView                  maskingView;
     @outlet CPView                  viewDeviceVirtualDrives;
@@ -197,7 +199,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"], @"TNDescDefaultACPI",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"], @"TNDescDefaultAPIC",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"], @"TNDescDefaultHugePages",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType"
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultEmulator"], @"TNDescDefaultEmulator",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultArchitecture"], @"TNDescDefaultArchitecture"
     ]];
 
     [fieldJID setSelectable:YES];
@@ -553,6 +557,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [defaults setObject:[buttonPreferencesOnCrash title] forKey:@"TNDescDefaultOnCrash"];
     [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
     [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
+    [defaults setObject:[fieldPreferencesEmulator stringValue] forKey:@"TNDescDefaultEmulator"];
+    [defaults setObject:[fieldPreferencesArchitecture stringValue] forKey:@"TNDescDefaultArchitecture"];
+
     [defaults setBool:[switchPreferencesPAE isOn] forKey:@"TNDescDefaultPAE"];
     [defaults setBool:[switchPreferencesACPI isOn] forKey:@"TNDescDefaultACPI"];
     [defaults setBool:[switchPreferencesAPIC isOn] forKey:@"TNDescDefaultAPIC"];
@@ -566,6 +573,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
+    [fieldPreferencesArchitecture setIntValue:[defaults objectForKey:@"TNDescDefaultArchitecture"]];
+    [fieldPreferencesEmulator setIntValue:[defaults objectForKey:@"TNDescDefaultEmulator"]];
     [buttonPreferencesNumberOfCPUs selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultNumberCPU"]];
     [buttonPreferencesBoot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultBoot"]];
     [buttonPreferencesVNCKeyMap selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultVNCKeymap"]];
@@ -1058,6 +1067,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (BOOL)_didReceiveXMLDesc:(TNStropheStanza)aStanza
 {
+    var defaults = [CPUserDefaults standardUserDefaults];
+
     if ([aStanza type] == @"result")
     {
         var domain          = [aStanza firstChildWithName:@"domain"],
@@ -1094,10 +1105,10 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [buttonArchitecture removeAllItems];
         [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
         if ([buttonArchitecture indexOfItemWithTitle:arch] == -1)
-        {
-            [buttonArchitecture selectItemAtIndex:0];
-            //shouldRefresh = YES;
-        }
+            if ([[buttonArchitecture itemTitles] containsObject:[defaults objectForKey:@"TNDescDefaultArchitecture"]])
+                [buttonArchitecture selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultArchitecture"]];
+            else
+                [buttonArchitecture selectItemAtIndex:0];
         else
             [buttonArchitecture selectItemWithTitle:arch];
 
@@ -1196,10 +1207,10 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [buttonHypervisor removeAllItems];
         [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
         if ([buttonHypervisor indexOfItemWithTitle:hypervisor] == -1)
-        {
-            [buttonHypervisor selectItemAtIndex:0];
-            //shouldRefresh = YES;
-        }
+            if ([[buttonHypervisor itemTitles] containsObject:[defaults objectForKey:@"TNDescDefaultEmulator"]])
+                [buttonHypervisor selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultEmulator"]];
+            else
+                [buttonHypervisor selectItemAtIndex:0];
         else
             [buttonHypervisor selectItemWithTitle:hypervisor];
 
@@ -1363,7 +1374,10 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
             [buttonArchitecture removeAllItems];
             [buttonArchitecture addItemsWithTitles:[_supportedCapabilities allKeys]];
-            [buttonArchitecture selectItemAtIndex:0];
+            if ([[buttonArchitecture itemTitles] containsObject:[defaults objectForKey:@"TNDescDefaultArchitecture"]])
+                [buttonArchitecture selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultArchitecture"]];
+            else
+                [buttonArchitecture selectItemAtIndex:0];
 
             var capabilities = [_supportedCapabilities objectForKey:[buttonArchitecture title]];
 
@@ -1379,13 +1393,16 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             if ([capabilities containsKey:@"domains"])
             {
                 [buttonHypervisor addItemsWithTitles:[[capabilities objectForKey:@"domains"] allKeys]];
-                [buttonHypervisor selectItemAtIndex:0];
+                if ([[buttonHypervisor itemTitles] containsObject:[defaults objectForKey:@"TNDescDefaultEmulator"]])
+                    [buttonHypervisor selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultEmulator"]];
+                else
+                    [buttonHypervisor selectItemAtIndex:0];
                 [self setControl:buttonHypervisor enabledAccordingToPermission:@"define"];
             }
 
             [buttonMachines setEnabled:NO];
             [buttonMachines removeAllItems];
-            if ([capabilities containsKey:@"domains"] && [[[[capabilities objectForKey:@"domains"]  objectForKey:[buttonHypervisor title]] objectForKey:@"machines"] count] > 0)
+            if ([capabilities containsKey:@"domains"] && [[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"] count] > 0)
             {
                 [buttonMachines addItemsWithTitles:[[[capabilities objectForKey:@"domains"] objectForKey:[buttonHypervisor title]] objectForKey:@"machines"]];
                 [buttonMachines selectItemAtIndex:0];

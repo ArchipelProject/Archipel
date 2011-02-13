@@ -59,6 +59,10 @@
         <integer>0</integer>
         <key>TNDescDefaultInputType</key>
         <string>tablet</string>
+        <key>TNDescDefaultArchitecture</key>
+        <string>x86_64</string>
+        <key>TNDescDefaultEmulator</key>
+        <string>kvm</string>
         
         <key>MandatoryPermissions</key>
         <array>
