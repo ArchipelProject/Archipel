@@ -120,7 +120,8 @@ def prepare_environment(prefix="", force=False):
     print ""
     print "\033[32m[SUCCESS]\033[0m : installation initialization complete"
     print ""
-    print "\033[35m ** IMPORTANT NOTE: you now need to edit /etc/archipel/archipel.conf top match your informations **\033[0m"
+    print "\033[35m ** IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf top match your informations **\033[0m"
+    print "\033[35m ** IMPORTANT NOTE 2: if this is not already done, you need to run archipel-tagnode and archipel-rolesnode **\033[0m"
     print ""
 
 
