@@ -395,6 +395,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None
                 self.description = None
+                self.remove_libvirt_handler()
             
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
@@ -812,10 +813,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def undefine(self):
-        self.remove_libvirt_handler()
+        if not self.domain:
+            self.log.warning("virtual machine is already undefined")
+            return
         self.domain.undefine()
-        self.definition = None
-        self.domain = None
         self.log.info("virtual machine undefined")
     
     
