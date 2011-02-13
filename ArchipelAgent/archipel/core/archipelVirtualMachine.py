@@ -502,6 +502,12 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             - reboot
             - suspend
             - resume
+            - vncdisplay
+            - xmldesc
+            - migrate
+            - autostart
+            - memory
+            - networkinfo
         
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
