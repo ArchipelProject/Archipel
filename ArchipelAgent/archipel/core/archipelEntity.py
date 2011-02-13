@@ -1356,12 +1356,12 @@ class TNArchipelEntity:
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 elif self.auto_reconnect:
                     self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 five seconds")
-                    self.log.error("TRACEBACK: %s" % traceback.extract_stack())
+                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
                 else:
                     self.log.error("LOOP EXCEPTION : End of loop forced by exception : %s" % str(ex))
-                    self.log.error("TRACEBACK: %s" % traceback.extract_stack())
+                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 print traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback)
         if self.xmppclient.isConnected():
