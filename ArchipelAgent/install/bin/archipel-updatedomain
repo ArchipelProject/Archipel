@@ -67,14 +67,19 @@ if __name__ == "__main__":
                 sys.exit(0)
     except Exception as ex:
         print "\033[31mERROR: %s \033[0m\n" % str(ex)
-    
-    if len(commands.getoutput("ps -ef | grep runarchipel.py | grep -v grep")) > 0:
-        print "\033[31mERROR: Archipel is running. please stop it before running this script\033[0m\n"
-        sys.exit(1)
+
+    for p in ("/var/lock/subsys/archipel", "/var/lock/archipel", "/tmp/.lock-archipel"):
+        if os.path.exists(p):
+            print "\033[31mERROR: Archipel is running. please stop it before running this script\n\033[0m"
+            sys.exit(1)
 
     if not dbfile or not domain :
         print HELP
         sys.exit(-1)
-    
+
+    if not os.path.exists(dbfile):
+        print "\033[31mERROR: database %s doesn't exist\n\033[0m" % dbfile
+        sys.exit(1)
+
     update(dbfile, domain)
     
