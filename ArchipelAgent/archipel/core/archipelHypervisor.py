@@ -154,7 +154,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         self.manage_persistance()
         
         # action on auth
-        self.register_actions_to_perform_on_auth("set_vcard")
+        self.register_actions_to_perform_on_auth("manage_vcard")
         self.register_actions_to_perform_on_auth("update_presence")
         
     
@@ -347,10 +347,8 @@ class TNArchipelHypervisor(TNArchipelEntity):
         
         self.add_jid(vm_jid, [ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         
-        if not requested_name:
-            name = self.generate_name()
-        else:
-            name = requested_name
+        if not requested_name: name = self.generate_name()
+        else: name = requested_name
         
         self.log.info("starting xmpp threaded virtual machine")
         vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
@@ -494,10 +492,8 @@ class TNArchipelHypervisor(TNArchipelEntity):
         @return: a ready-to-send IQ containing the results
         """
         try:
-            try:
-                requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
-            except:
-                requested_name = None
+            try: requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            except: requested_name = None
         
             vm = self.alloc(iq.getFrom(), requested_name=requested_name)
         

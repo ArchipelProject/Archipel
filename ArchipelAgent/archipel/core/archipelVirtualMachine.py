@@ -124,7 +124,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         # actions on auth
         self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
         self.register_actions_to_perform_on_auth("connect_domain", None)
-        self.register_actions_to_perform_on_auth("set_vcard")
+        self.register_actions_to_perform_on_auth("manage_vcard")
         
         # messages
         self.register_for_messages()
@@ -306,10 +306,12 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             self.perform_hooks("HOOK_VM_INITIALIZE")
         except libvirt.libvirtError as ex:
             if ex.get_error_code() == 42:
-                self.log.info("Exception raised #{0} : {1}".format(ex.get_error_code(), ex))
+                self.log.info("Exception raised %s : %s" % (ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+            else:
+                self.log.error("Exception raised %s : %s" % (ex.get_error_code(), ex))
     
     
     def connect_domain(self):
@@ -324,15 +326,19 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             return
         
         try:
-            self.domain     = self.libvirt_connection.lookupByUUIDString(self.uuid)
+            self.domain = self.libvirt_connection.lookupByUUIDString(self.uuid)
+        except:
+            self.log.warning("Can't connect to domain with UUID %s" % self.uuid)
+            self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
+            return
+        
+        try:
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
             self.log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
             self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
             self.set_presence_according_to_libvirt_info()
         except Exception as ex:
-            self.log.error("can't connect to libvirt : " + str(ex))
-            self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)        
-        
+            self.log.error("Exception while connecting to domain : %s" % str(ex))
     
     
     def on_domain_event(self, conn, dom, event, detail, opaque):

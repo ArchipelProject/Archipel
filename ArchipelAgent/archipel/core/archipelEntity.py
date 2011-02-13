@@ -224,10 +224,8 @@ class TNArchipelEntity:
         self.log.info("sucessfully authenticated")
         self.recover_pubsubs()
         self.register_handler()
-        self.xmppclient.sendInitPresence()
         self.roster = self.xmppclient.getRoster()
         self.isAuth = True
-        self.get_vcard()
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
     
@@ -386,6 +384,9 @@ class TNArchipelEntity:
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
+        if presence.getFrom().getStripped() == self.jid.getStripped(): raise xmpp.protocol.NodeProcessed
+        if not presence.getType() in ("subscribe", "unsubscribe"): raise xmpp.protocol.NodeProcessed
+        
         self.log.info("presence stanza received from %s: %s" % (presence.getFrom(), presence.getType()))
         
         # update roster is necessary
@@ -394,8 +395,6 @@ class TNArchipelEntity:
         typ = presence.getType()
         jid = presence.getFrom()
         
-        if not typ in ("subscribe", "unsubscribe") or self.jid.getStripped() == jid.getStripped():
-            raise xmpp.protocol.NodeProcessed
         
         self.log.info("managing subscribtion request with type %s" % presence.getType())
         
@@ -712,71 +711,58 @@ class TNArchipelEntity:
     
     ### VCARD management
     
-    def get_vcard(self):
+    def manage_vcard(self, params=None):
         """
         retrieve vCard from server
         """
         self.log.info("asking for own vCard")
-        node_iq = xmpp.Iq(typ='get', frm=self.jid)
+        node_iq = xmpp.Iq(typ='get')
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)
     
     
     def did_receive_vcard(self, conn, vcard):
         """
-        callback of get_vcard()
+        callback of manage_vcard()
         """
         self.vCard = vcard.getTag("vCard")
-        if self.vCard and self.vCard.getTag("PHOTO"):
-            self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
+        if self.vCard and self.vCard.getTag("PHOTO"): self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
         self.log.info("own vcard retrieved")
+        self.set_vcard()
     
     
-    def set_vcard(self, params=None):
+    def set_vcard(self, params={}):
         """
         allows to define a vCard type for the entry
-        
-        @type params: dict
-        @param params: adict containing at least option avatar_file key
         """
         self.log.info("vcard making started")
         
-        node_iq = xmpp.Iq(typ='set', xmlns=None)
+        node_iq     = xmpp.Iq(typ='set', xmlns=None)
+        type_node   = xmpp.Node(tag="TYPE")
+        payload     = []
         
-        type_node = xmpp.Node(tag="TYPE")
         type_node.setData(self.entity_type)
-        
-        name_node = None
+        payload.append(type_node)
         if self.name:
             name_node = xmpp.Node(tag="NAME")
             name_node.setData(self.name)
+            payload.append(name_node)
         
-        if (self.configuration.getboolean("GLOBAL", "use_avatar")):
+        if self.configuration.getboolean("GLOBAL", "use_avatar"):
             if not self.b64Avatar:
-                photo_data = self.b64avatar_from_filename(self.default_avatar)
-            else:
-                photo_data = self.b64Avatar
+                if params and params["filename"]: self.b64avatar_from_filename(params["filename"])
+                else: self.b64avatar_from_filename(self.default_avatar)
         
             node_photo_content_type = xmpp.Node(tag="TYPE")
             node_photo_content_type.setData("image/png")
-                    
             node_photo_data = xmpp.Node(tag="BINVAL")
-            node_photo_data.setData(photo_data)
+            node_photo_data.setData(self.b64Avatar)
+            node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
+            payload.append(node_photo)
         
-            if self.vCard and self.vCard.getTag("PHOTO"):
-                old_photo_binval = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
-                if old_photo_binval == photo_data:
-                    self.log.info("vCard photo hasn't change.")
-                    self.send_update_vcard(None, None, hashlib.sha224(photo_data).hexdigest())
-            
-            node_photo  = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
-            node_iq.addChild(name="vCard", payload=[type_node, node_photo, name_node], namespace="vcard-temp")
-            self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard, args={"photo_hash": hashlib.sha224(photo_data).hexdigest()})
-        else:
-            node_iq.addChild(name="vCard", payload=[type_node, name_node], namespace="vcard-temp")
-            self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
-        
-        self.log.info("vcard information sent with type: {0}".format(self.entity_type))        
+        node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
+        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
+        self.log.info("vcard information sent with type: {0}".format(self.entity_type))
     
     
     def send_update_vcard(self, conn, presence, photo_hash=None):
@@ -792,12 +778,11 @@ class TNArchipelEntity:
         @type photo_hash: string
         @param photo_hash: the SHA-1 hash of the photo that changes (optionnal)
         """
-        node_presence = xmpp.Presence(frm=self.jid, status=self.xmppstatus, show=self.xmppstatusshow)
-        
+        node_presence = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         if photo_hash:
             node_photo_sha1 = xmpp.Node(tag="photo")
             node_photo_sha1.setData(photo_hash)
-            node_presence.addChild(name="x", namespace='vcard-temp:x:update', payload=[node_photo_sha1])
+        node_presence.addChild(name="x", namespace='vcard-temp:x:update')
         
         self.xmppclient.send(node_presence)
         self.log.info("vcard update presence sent") 
@@ -886,8 +871,8 @@ class TNArchipelEntity:
         @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
         """
         name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
-        self.b64Avatar = self.b64avatar_from_filename(name)
-        self.set_vcard()
+        self.b64Avatar = None
+        self.set_vcard(params={"filename": name})
     
     
     def b64avatar_from_filename(self, image):
@@ -895,7 +880,8 @@ class TNArchipelEntity:
         f = open(os.path.join(avatar_dir, image), "r")
         photo_data = base64.b64encode(f.read())
         f.close()
-        return photo_data
+        self.b64Avatar = photo_data
+        return self.b64Avatar
     
     
     def process_avatar_iq(self, conn, iq):
@@ -1356,14 +1342,14 @@ class TNArchipelEntity:
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
                 elif self.auto_reconnect:
                     self.log.error("LOOP EXCEPTION : Disconnected from server. Trying to reconnect in 5 five seconds")
-                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback))
+                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
                     time.sleep(5.0)
                 else:
                     self.log.error("LOOP EXCEPTION : End of loop forced by exception : %s" % str(ex))
-                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback))
+                    self.log.error("TRACEBACK: %s" % traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-                print traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback)
+                print traceback.format_exception(sys.exc_type, sys.exc_value, sys.exc_traceback)
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
     
