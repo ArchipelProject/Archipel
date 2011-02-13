@@ -1363,7 +1363,7 @@ class TNArchipelEntity:
                     self.log.error("LOOP EXCEPTION : End of loop forced by exception : %s" % str(ex))
                     self.log.error("TRACEBACK: %s" % traceback.extract_stack())
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-                print traceback.extract_stack()
+                print traceback.format_exception(sys.exc_type, sys.last_value, sys.last_traceback)
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
     
