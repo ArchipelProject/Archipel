@@ -144,6 +144,12 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 
     var connectionJID = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
 
+    if (![connectionJID domain])
+    {
+        [message setStringValue:@"Full JID required"];
+        return;
+    }
+
     [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
 
     var stropheClient = [TNStropheIMClient IMClientWithService:[[boshService stringValue] lowercaseString] JID:connectionJID password:[password stringValue] rosterClass:TNDatasourceRoster];
