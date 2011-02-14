@@ -292,7 +292,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
             self.log.info("virtual machine state is %d" %  dominfo[0])
-            if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING:
+            if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.create_novnc_proxy()
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_ON)
@@ -361,13 +361,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
                 self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
                 self.perform_hooks("HOOK_VM_SUSPEND")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
-                
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and not detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
                 self.perform_hooks("HOOK_VM_RESUME")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
-                
+            
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
