@@ -69,6 +69,8 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 */
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+
     _currentUserPermissions = [CPArray array];
     _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 

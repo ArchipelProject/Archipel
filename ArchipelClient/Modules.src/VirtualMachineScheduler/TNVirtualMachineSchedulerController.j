@@ -78,6 +78,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
 
 - (void)awakeFromCib
 {
+    [fieldJID setSelectable:YES];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];

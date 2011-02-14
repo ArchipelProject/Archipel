@@ -38,8 +38,12 @@
 #pragma mark -
 #pragma mark Initialization
 
-// put your initializations here
-
+/*! called at cib awaking
+*/
+- (void)awakeFromCib
+{
+    [fieldJID setSelectable:YES];
+}
 
 #pragma mark -
 #pragma mark TNModule overrides
