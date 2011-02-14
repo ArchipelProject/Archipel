@@ -46,12 +46,25 @@ class TNHypervisorHealth:
         self.entity.permission_center.create_permission("health_history", "Authorizes user to get the health history", False)
         self.entity.permission_center.create_permission("health_info", "Authorizes user to get entity information", False)
         self.entity.permission_center.create_permission("health_logs", "Authorizes user to get entity logs", False)
-    
+        
+        registrar_items = [
+                            {   "commands" : ["health"], 
+                                "parameters": [{"name": "limit", "description": "Max number of returned entries. Equals 1 if ommited"}],
+                                "method": self.message_health_info,
+                                "permissions": ["health_info"],
+                                "description": "Get my last health information" },
+                            {   "commands" : ["logs"], 
+                                "parameters": [{"name": "limit", "description": "Max number of returned entries. Equals 1 if ommited"}],
+                                "method": self.message_get_logs,
+                                "permissions": ["health_logs"],
+                                "description": "Get my last logs information" }
+                            ]
+        
+        self.entity.add_message_registrar_items(registrar_items)
     
     
     
     ### XMPP Processing
-    
     
     def process_iq(self, conn, iq):
         """
@@ -76,6 +89,7 @@ class TNHypervisorHealth:
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+    
     
     
     def iq_health_info_history(self, iq):
@@ -111,6 +125,7 @@ class TNHypervisorHealth:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_HISTORY)
         return reply
+    
     
     
     def iq_health_info(self, iq):
@@ -156,6 +171,21 @@ class TNHypervisorHealth:
         return reply
     
     
+    def message_health_info(self, msg):
+        """
+        handle the health info request message
+        """
+        try:
+            tokens = msg.getBody().split()
+            if len(tokens) == 1 :   limit = 1
+            elif len(tokens) == 2 : limit = int(tokens[1])
+            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            stats = self.collector.get_collected_stats(limit)
+            return str(stats)
+        except Exception as ex:
+            return build_error_message(self, ex)
+    
+    
     
     def iq_get_logs(self, iq):
         """
@@ -174,8 +204,6 @@ class TNHypervisorHealth:
             nodes = []
             for line in output.split("\n"):
                 infos = line.split("::")
-                # log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": infos[2], "method": infos[3]})
-                # log_node.setData(infos[4])
                 log_node = xmpp.Node("log", attrs={"level": infos[0], "date": infos[1], "file": "", "method": ""})
                 log_node.setData(line)
                 nodes.append(log_node)
@@ -184,6 +212,21 @@ class TNHypervisorHealth:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_LOG)
         return reply
+    
+    
+    def message_get_logs(self, msg):
+        """
+        handle the log info request message
+        """
+        try:
+            tokens = msg.getBody().split()
+            if len(tokens) == 1 :   limit = 1
+            elif len(tokens) == 2 : limit = int(tokens[1])
+            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            output = commands.getoutput("tail -n %d %s" % (limit, self.logfile))
+            return output
+        except Exception as ex:
+            return build_error_message(self, ex)
     
 
 
