@@ -72,7 +72,7 @@ class TNHypervisorNetworks:
                                     "permissions": ["network_destroy"],
                                     "description": "Stop the given network" }
                                 ]
-
+        
             self.entity.add_message_registrar_items(registrar_items)
     
     
@@ -157,6 +157,8 @@ class TNHypervisorNetworks:
         self.entity.push_change("network", "undefined", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         
     
+    
+    
     ### XMPP Processing
     
     def process_iq_for_hypervisor(self, conn, iq):
@@ -240,6 +242,7 @@ class TNHypervisorNetworks:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE)
         return reply
+    
     
     
     def iq_undefine(self, iq):
@@ -417,6 +420,7 @@ class TNHypervisorNetworks:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES)
         return reply
+    
     
     
     def iq_bridges(self, iq):

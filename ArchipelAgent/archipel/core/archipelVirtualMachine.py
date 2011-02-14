@@ -126,8 +126,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.register_actions_to_perform_on_auth("connect_domain", None)
         self.register_actions_to_perform_on_auth("manage_vcard")
         
-        # messages
-        self.register_for_messages()
+        # vocabulary
+        self.init_vocabulary()
         
         # modules
         self.initialize_modules()
@@ -150,7 +150,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             self.lock_timer.cancel()
     
     
-    def register_for_messages(self):
+    def init_vocabulary(self):
         """"
         this method register for user messages
         """

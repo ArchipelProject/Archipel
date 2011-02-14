@@ -55,6 +55,7 @@ You can communicate with me using text commands, just like if you were chatting 
 I try to understand you as much as I can, but you have to be nice with me.\
 Note that you can use more complex sentence than describe into the following list. For example, if you see \
 in the command ["how are you"], I'll understand any sentence containing "how are you". Parameters (if any) are separated with spaces.
+Note that the text you enter must start with the command: "How are you" works, "Hello, how are you" don't.
 
 For example, you can send command using the following form:
 command param1 param2 param3
@@ -1093,17 +1094,16 @@ class TNArchipelEntity:
         """
         parse the registrar and execute commands if necessary
         """
-        
         body = "%s" % msg.getBody().lower()
-        reply_stanza.setBody("not understood")
+        reply_stanza.setBody("I'm sorry, I've not understood what you mean. You can type 'help' to get all command I understand")
         
-        if body.find("help") >= 0:
+        if body.find("help", 0, len("help")) >= 0:
             reply_stanza.setBody(self.build_help(msg))
         else:
             loop = True
             for registrar_item in self.messages_registrar:
                 for cmd in registrar_item["commands"]:
-                    if body.find(cmd) >= 0:
+                    if body.find(cmd, 0, len(cmd)) >= 0:
                         granted  = True
                         if registrar_item.has_key("permissions"):
                             granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
