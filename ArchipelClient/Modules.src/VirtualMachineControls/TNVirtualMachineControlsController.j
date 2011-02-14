@@ -513,11 +513,9 @@ TNArchipelTransportBarReboot    = 4;
             humanState = @"No status";
             break;
         case VIR_DOMAIN_RUNNING:
+        case VIR_DOMAIN_BLOCKED:
             [self enableButtonsForRunning];
             humanState = @"Running";
-            break;
-        case VIR_DOMAIN_BLOCKED:
-            humanState = @"Blocked";
             break;
         case VIR_DOMAIN_PAUSED:
             [self enableButtonsForPaused]
