@@ -34,6 +34,7 @@
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
+@import "Controllers/TNLocalizationCenter.j"
 @import "Controllers/TNModuleController.j"
 @import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
