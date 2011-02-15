@@ -1184,9 +1184,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         }
 
         //input type
-        if ((hypervisor == TNXMLDescHypervisorKVM)
-            || (hypervisor == TNXMLDescHypervisorQemu)
-            || (hypervisor == TNXMLDescHypervisorKQemu))
+        if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu])
         {
             [self setControl:buttonInputType enabledAccordingToPermission:@"define"];
 
@@ -1610,8 +1608,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     //////////////////////////////////////////
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu, TNXMLDescHypervisorXen]])
     {
-        [stanza addChildWithName:@"input" andAttributes:{"bus": "usb", "type": [buttonInputType title]}];
-        [stanza up];
+        if (![self isHypervisor:hypervisor inList:[TNXMLDescHypervisorXen]])
+        {
+            [stanza addChildWithName:@"input" andAttributes:{"bus": @"usb", "type": [buttonInputType title]}];
+            [stanza up];
+        }
 
         if ([fieldVNCPassword stringValue] != @"")
         {
@@ -1621,6 +1622,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
                 "port": "-1",
                 "keymap": VNCKeymap,
                 "passwd": VNCPassword}];
+            [stanza up];
         }
         else
         {
@@ -1629,8 +1631,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
                 "type": "vnc",
                 "port": "-1",
                 "keymap": VNCKeymap}];
+            [stanza up];
         }
-        [stanza up];
     }
 
     //devices up
