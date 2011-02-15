@@ -46,6 +46,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     @outlet TNSwitch        credentialRemember;
 
     TNStropheStanza         _userVCard          @accessors(property=userVCard);
+    BOOL                    _isConnecting;
 }
 
 #pragma mark -
@@ -79,6 +80,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
 
     [connectButton setBezelStyle:CPRoundedBezelStyle];
+    _isConnecting = NO;
 }
 
 /*! Initialize credentials informations according to the Application Defaults
@@ -126,6 +128,13 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (IBAction)connect:(id)sender
 {
+    if (_isConnecting)
+    {
+        _isConnecting = NO;
+        [[TNStropheIMClient defaultClient] disconnect];
+        return;
+    }
+
     var defaults    = [CPUserDefaults standardUserDefaults];
 
     if ([credentialRemember state] == CPOnState)
@@ -156,6 +165,8 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
+
+    _isConnecting = YES;
     [stropheClient connect];
 }
 
@@ -178,6 +189,8 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)client:(TNStropheIMClient)aStropheClient errorCondition:(CPString)anError
 {
+    _isConnecting = NO;
+
     switch (anError)
     {
         case "host-unknown":
@@ -187,6 +200,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
             [message setStringValue:anError];
     }
     [connectButton setEnabled:YES];
+    [connectButton setTitle:@"Connect"];
     [spinning setHidden:YES];
 }
 
@@ -195,8 +209,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
+    _isConnecting = YES;
+
     [message setStringValue:@"Connecting..."];
-    [connectButton setEnabled:NO];
+    [connectButton setTitle:@"Stop"];
     [spinning setHidden:NO];
 }
 
@@ -205,6 +221,8 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)onStropheConnected:(TNStropheIMClient)aStropheClient
 {
+    _isConnecting = NO;
+
     [message setStringValue:@"Connected"];
     [spinning setHidden:YES];
 
@@ -219,8 +237,11 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)onStropheConnectFail:(TNStropheIMClient)aStropheClient
 {
+    _isConnecting = NO;
+
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
+    [connectButton setTitle:@"Connect"];
     [message setStringValue:@"Connection failed"];
 
     CPLog.info(@"XMPP connection failed");
@@ -240,8 +261,11 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)onStropheAuthFail:(TNStropheIMClient)aStropheClient
 {
+    _isConnecting = NO;
+
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
+    [connectButton setTitle:@"Connect"];
     [message setStringValue:@"Authentication failed"];
 
     CPLog.info(@"XMPP auth failed");
@@ -252,8 +276,11 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)onStropheError:(TNStropheIMClient)aStropheClient
 {
+    _isConnecting = NO;
+
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
+    [connectButton setTitle:@"Connect"];
     [message setStringValue:@"Unknown error"];
 
     CPLog.info(@"XMPP unknown error");
@@ -265,7 +292,6 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 - (void)onStropheDisconnecting:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:NO];
-    [connectButton setEnabled:NO];
     [message setStringValue:@"Disconnecting..."];
 
    CPLog.info(@"XMPP is disconnecting");
@@ -279,6 +305,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
+    [connectButton setTitle:@"Connect"];
     [message setStringValue:@"Disconnected"];
 
     CPLog.info(@"XMPP connection is now disconnected");
