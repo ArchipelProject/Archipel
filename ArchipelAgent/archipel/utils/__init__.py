@@ -63,6 +63,10 @@ ARCHIPEL_LOG_INFO                               = 1
 ARCHIPEL_LOG_WARNING                            = 2
 ARCHIPEL_LOG_ERROR                              = 3
 
+# hypervisor kinds
+ARCHIPEL_HYPERVISOR_TYPE_QEMU                   = "QEMU"
+ARCHIPEL_HYPERVISOR_TYPE_XEN                    = "XEN"
+
 log = logging.getLogger('archipel')
 
 class TNArchipelLogger:

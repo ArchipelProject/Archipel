@@ -441,7 +441,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
         """
-        if not self.libvirt_connection.getType() == "QEMU": 
+        if not self.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU: 
             self.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.libvirt_connection.getType())
             return
         
@@ -540,7 +540,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if not self.libvirt_connection.getType() == "QEMU" and action == "vncdisplay":
+        if not self.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU and action == "vncdisplay":
             reply = build_error_iq(self, "Hypervisor %s doesn't support VNC" % self.libvirt_connection.getType(), iq, ARCHIPEL_NS_ERROR_INVALID_HYPERVISOR)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
