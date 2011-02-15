@@ -278,7 +278,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         if not xmldesc.getTag('name'): xmldesc.addChild(name='name')
         xmldesc.getTag('name').setData(self.name)
         
-        return str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+        ret = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
+        self.log.debug("generated XML desc is : %s" % ret)
+        return ret
     
     
     def set_presence_according_to_libvirt_info(self):
