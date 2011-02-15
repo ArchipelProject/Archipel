@@ -133,7 +133,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.initialize_modules()
     
     
-    
     ### Utilities
     
     def lock(self):
@@ -442,6 +441,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
         """
+        if not self.libvirt_connection.getType() == "QEMU": 
+            self.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.libvirt_connection.getType())
+            return
+        
         current_vnc_port        = self.vncdisplay()["direct"]
         novnc_proxy_port        = self.vncdisplay()["proxy"]
         self.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
@@ -536,82 +539,32 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             reply = build_error_iq(self, "virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-            
-        if action == "info":
-            reply = self.iq_info(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "create":
-            reply = self.iq_create(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "shutdown":
-            reply = self.iq_shutdown(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "destroy":
-            reply = self.iq_destroy(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "reboot":
-            reply = self.iq_reboot(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "suspend":
-            reply = self.iq_suspend(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "resume":
-            reply = self.iq_resume(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "vncdisplay":
-            reply = self.iq_vncdisplay(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
         
-        elif action == "xmldesc":
-            reply = self.iq_xmldesc(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "migrate":
-            reply = self.iq_migrate(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "autostart":
-            reply = self.iq_autostart(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "memory":
-            reply = self.iq_memory(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "setvcpus":
-            reply = self.iq_setvcpus(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "networkinfo":
-            reply = self.iq_networkinfo(iq)
+        if not self.libvirt_connection.getType() == "QEMU" and action == "vncdisplay":
+            reply = build_error_iq(self, "Hypervisor %s doesn't support VNC" % self.libvirt_connection.getType(), iq, ARCHIPEL_NS_ERROR_INVALID_HYPERVISOR)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
         
-        # elif action == "setpincpus":
-        #     reply = self.iq_setcpuspin(iq)
-        #     conn.send(reply)
-        #     raise xmpp.protocol.NodeProcessed
+        if action == "info":            reply = self.iq_info(iq)
+        elif action == "create":        reply = self.iq_create(iq)
+        elif action == "shutdown":      reply = self.iq_shutdown(iq)
+        elif action == "destroy":       reply = self.iq_destroy(iq)
+        elif action == "reboot":        reply = self.iq_reboot(iq)
+        elif action == "suspend":       reply = self.iq_suspend(iq)
+        elif action == "resume":        reply = self.iq_resume(iq)
+        elif action == "vncdisplay":    reply = self.iq_vncdisplay(iq)
+        elif action == "xmldesc":       reply = self.iq_xmldesc(iq)
+        elif action == "migrate":       reply = self.iq_migrate(iq)
+        elif action == "autostart":     reply = self.iq_autostart(iq)
+        elif action == "memory":        reply = self.iq_memory(iq)
+        elif action == "setvcpus":      reply = self.iq_setvcpus(iq)            
+        elif action == "networkinfo":   reply = self.iq_networkinfo(iq)
+        #elif action == "setpincpus":   reply = self.iq_setcpuspin(iq)
+        
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
     
     
     def __process_iq_archipel_definition(self, conn, iq):
@@ -636,21 +589,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
-        if action == "define":
-            reply = self.iq_define(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "undefine":
-            reply = self.iq_undefine(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "define":          reply = self.iq_define(iq)
+        elif action == "undefine":      reply = self.iq_undefine(iq)
+        elif action == "capabilities":  reply = self.iq_capabilities(iq)
         
-        elif action == "capabilities":
-            reply = self.iq_capabilities(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
     
     
     
