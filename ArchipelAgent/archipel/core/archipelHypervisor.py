@@ -364,42 +364,18 @@ class TNArchipelHypervisor(TNArchipelEntity):
         # temp fix to authorize migration
         # We should find a way to authorize 
         # hypervisors to ask uri with another way
-        if not action in ('uri'):
-            self.check_perm(conn, iq, action, -1)
+        if not action in ('uri'): self.check_perm(conn, iq, action, -1)
         
         
-        if action == "alloc":
-            reply = self.iq_alloc(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "free":
-            reply = self.iq_free(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "rostervm":
-            reply = self.iq_roster(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "clone":
-            reply = self.iq_clone(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "alloc":           reply = self.iq_alloc(iq)
+        elif action == "free":          reply = self.iq_free(iq)
+        elif action == "rostervm":      reply = self.iq_roster(iq)
+        elif action == "clone":         reply = self.iq_clone(iq)
+        elif action == "ip":            reply = self.iq_ip(iq)
+        elif action == "uri":           reply = self.iq_libvirt_uri(iq)
+        elif action == "capabilities":  reply = self.iq_capabilities(iq)
         
-        elif action == "ip":
-            reply = self.iq_ip(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "uri":
-            reply = self.iq_libvirt_uri(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-            
-        elif action == "capabilities":
-            reply = self.iq_capabilities(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         

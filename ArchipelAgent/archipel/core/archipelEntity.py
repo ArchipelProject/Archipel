@@ -901,13 +901,10 @@ class TNArchipelEntity:
         action = self.check_acp(conn, iq)        
         self.check_perm(conn, iq, action, -1)
         
-        if action == "getavatars":
-            reply = self.iq_get_available_avatars(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "getavatars":  reply = self.iq_get_available_avatars(iq)
+        elif action == "setavatar": reply = self.iq_set_available_avatars(iq)
         
-        elif action == "setavatar":
-            reply = self.iq_set_available_avatars(iq)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
@@ -1175,28 +1172,13 @@ class TNArchipelEntity:
         if not action == "getown":
             self.check_perm(conn, iq, action, -1, prefix="permission_")
                 
-        if action == "list":
-            reply = self.iq_list_permission(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
+        if action == "list":        reply = self.iq_list_permission(iq)
+        elif action == "set":       reply = self.iq_set_permission(iq, onlyown=False)
+        elif action == "setown":    reply = self.iq_set_permission(iq, onlyown=True)
+        elif action == "get":       reply = self.iq_get_permission(iq, onlyown=False)
+        elif action == "getown":    reply = self.iq_get_permission(iq, onlyown=True)
         
-        if action == "set":
-            reply = self.iq_set_permission(iq, onlyown=False)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        if action == "setown":
-            reply = self.iq_set_permission(iq, onlyown=True)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "get":
-            reply = self.iq_get_permission(iq, onlyown=False)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        elif action == "getown":
-            reply = self.iq_get_permission(iq, onlyown=True)
+        if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
