@@ -21,14 +21,14 @@
 @import "../Resources/lang/localization.js"
 
 
-TNLocalizationCenterDefaultLocale = @"TNLocalizationCenterDefaultLocale";
+TNLocalizationCenterGeneralLocaleDomain = @"TNLocalizationCenterGeneralLocaleDomain";
 
 var defaultLocalizationCenter = nil;
 
 
 /*! @ingroup archipelcore
     localization manager.
-    All module should register own localization using the setLocale:forModule:
+    All module should register own localization using the setLocale:forDomain:
 */
 @implementation TNLocalizationCenter : CPObject
 {
@@ -81,7 +81,7 @@ var defaultLocalizationCenter = nil;
         _currentLanguage    = [TNLocalizationCenter navigatorLocale];
         _locales            = [CPDictionary dictionary];
 
-        [self setLocale:ARCHIPEL_LANGUAGE_REGISTRY forModule:TNLocalizationCenterDefaultLocale];
+        [self setLocale:ARCHIPEL_LANGUAGE_REGISTRY forDomain:TNLocalizationCenterGeneralLocaleDomain];
     }
 
     return self;
@@ -93,11 +93,15 @@ var defaultLocalizationCenter = nil;
 
 /*! set a locale for given module identifier
     @param aLocalization the JS locale object
-    @param aModuleIdentifier the identifier of the module
+    @param aDomainIdentifier the identifier of the module
 */
-- (void)setLocale:(id)aLocalization forModule:(CPString)aModuleIdentifier
+- (void)setLocale:(id)aLocalization forDomain:(CPString)aDomainIdentifier
 {
-    [_locales setObject:aLocalization forKey:aModuleIdentifier]
+    if ([_locales objectForKey:TNLocalizationCenterGeneralLocaleDomain]
+            && (aDomainIdentifier == TNLocalizationCenterGeneralLocaleDomain))
+        return;
+
+    [_locales setObject:aLocalization forKey:aDomainIdentifier]
 }
 
 
@@ -106,18 +110,18 @@ var defaultLocalizationCenter = nil;
 
 /*! get the locale for the given token according to current language
     @param aKey the localized token
-    @param aModuleIdentifier the module identifier
+    @param aDomainIdentifier the module identifier
     @return the CPString containing the translation. If translation is missing,
             it will use the default language. If this also missing, it will return
             the key
 */
-- (CPString)localize:(CPString)aToken forModule:(CPString)aModuleIdentifier
+- (CPString)localize:(CPString)aToken forDomain:(CPString)aDomainIdentifier
 {
-    if (![_locales objectForKey:aModuleIdentifier] || ![_locales objectForKey:aModuleIdentifier][aToken])
+    if (![_locales objectForKey:aDomainIdentifier] || ![_locales objectForKey:aDomainIdentifier][aToken])
         return aToken;
 
-    return [_locales objectForKey:aModuleIdentifier][aToken][_currentLanguage]
-            || [_locales objectForKey:aModuleIdentifier][aToken][_defaultLanguage];
+    return [_locales objectForKey:aDomainIdentifier][aToken][_currentLanguage]
+            || [_locales objectForKey:aDomainIdentifier][aToken][_defaultLanguage];
 }
 
 /*! get the locale for the given token according to current language
@@ -128,7 +132,7 @@ var defaultLocalizationCenter = nil;
 */
 - (CPString)localize:(CPString)aToken
 {
-    return [self localize:aToken forModule:TNLocalizationCenterDefaultLocale];
+    return [self localize:aToken forDomain:TNLocalizationCenterGeneralLocaleDomain];
 }
 
 @end
