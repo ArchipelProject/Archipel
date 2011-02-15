@@ -25,6 +25,7 @@ TNLocalizationCenterDefaultLocale = @"TNLocalizationCenterDefaultLocale";
 
 var defaultLocalizationCenter = nil;
 
+
 /*! @ingroup archipelcore
     localization manager.
     All module should register own localization using the setLocale:forModule:
@@ -37,8 +38,9 @@ var defaultLocalizationCenter = nil;
     CPString        _defaultLanguage;
 }
 
+
 #pragma mark -
-#pragma mark Initialization
+#pragma mark Class methods
 
 /*! return the default localization controller
     @return default TNLocalizationCenter
@@ -51,6 +53,9 @@ var defaultLocalizationCenter = nil;
     return defaultLocalizationCenter;
 }
 
+/*! return the navigator locale
+    @return CPString containing the locale
+*/
 + (CPString)navigatorLocale
 {
     if (!navigator)
@@ -62,6 +67,9 @@ var defaultLocalizationCenter = nil;
             || navigator.userLanguage;
 }
 
+
+#pragma mark -
+#pragma mark Initialization
 
 /*! initialize a new TNLocalizationCenter
 */
