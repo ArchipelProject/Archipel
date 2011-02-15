@@ -1472,8 +1472,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     //////////////////////////////////////////
     // OS PART
     //////////////////////////////////////////
-    [stanza addChildWithName:@"os"];
 
+    [stanza addChildWithName:@"os"];
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorLXC]])
     {
         [stanza addChildWithName:@"type"];
@@ -1493,8 +1493,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         [stanza addChildWithName:@"boot" andAttributes:{"dev": boot}]
         [stanza up];
-        [stanza up];
     }
+    [stanza up];
 
     //////////////////////////////////////////
     // POWER MANAGEMENT
