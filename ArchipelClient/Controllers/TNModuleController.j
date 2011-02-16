@@ -199,6 +199,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     }
 }
 
+
 #pragma mark -
 #pragma mark Storage
 
@@ -262,26 +263,18 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 /*! will load all CPBundle
 */
-- (void)_loadAllBundles
+- (void)_loadNextBundle
 {
-    CPLog.debug("going to parse the plist");
+    var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:_numberOfModulesLoaded],
+        path    = _modulesPath + [module objectForKey:@"folder"],
+        bundle  = [CPBundle bundleWithPath:path];
 
-    _numberOfModulesToLoad = [[_modulesPList objectForKey:@"Modules"] count];
+    CPLog.debug("Loading " + [CPBundle bundleWithPath:path]);
 
-    for (var i = 0; i < [[_modulesPList objectForKey:@"Modules"] count]; i++)
-    {
-        CPLog.debug("parsing " + [CPBundle bundleWithPath:path]);
+    if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
+        [_delegate moduleLoader:self willLoadBundle:bundle];
 
-        var module  = [[_modulesPList objectForKey:@"Modules"] objectAtIndex:i],
-            path    = _modulesPath + [module objectForKey:@"folder"],
-            bundle  = [CPBundle bundleWithPath:path];
-
-        if ([_delegate respondsToSelector:@selector(moduleLoader:willLoadBundle:)])
-            [_delegate moduleLoader:self willLoadBundle:bundle];
-
-        [bundle loadWithDelegate:self];
-    }
-
+    [bundle loadWithDelegate:self];
 }
 
 /*! will display the modules that have to be displayed according to the entity type.
@@ -619,11 +612,12 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     CPLog.info(@"Module.plist recovered");
 
-    _modulesPList = [cpdata plistObject];
+    _modulesPList           = [cpdata plistObject];
+    _numberOfModulesToLoad  = [[_modulesPList objectForKey:@"Modules"] count];
 
     [self _removeAllTabsFromModulesTabView];
 
-    [self _loadAllBundles];
+    [self _loadNextBundle];
 }
 
 /*! delegate of CPBundle. Will initialize all the modules in plist
@@ -640,11 +634,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     else if (moduleInsertionType == TNArchipelModuleTypeToolbar)
         [self manageToolbarItemLoad:aBundle];
 
-    if ([_delegate respondsToSelector:@selector(moduleLoader:hasLoadBundle:)])
-        [_delegate moduleLoader:self hasLoadBundle:aBundle];
-
     _numberOfModulesLoaded++;
     CPLog.debug("Loaded " + _numberOfModulesLoaded + " module(s) of " + _numberOfModulesToLoad)
+
+    if ([_delegate respondsToSelector:@selector(moduleLoader:loadedBundle:progress:)])
+        [_delegate moduleLoader:self loadedBundle:aBundle progress:(_numberOfModulesLoaded / _numberOfModulesToLoad)];
+
+
     if (_numberOfModulesLoaded == _numberOfModulesToLoad)
     {
         var center = [CPNotificationCenter defaultCenter];
@@ -656,6 +652,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
             [_delegate moduleLoaderLoadingComplete:self];
             [self insertModulesMenuItems];
         }
+    }
+    else
+    {
+        [self _loadNextBundle];
     }
 }
 

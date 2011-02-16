@@ -205,6 +205,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
     @outlet TNUserAvatarController  userAvatarController;
+    @outlet CPProgressIndicator     progressIndicatorModulesLoading;
+    @outlet CPTextField             labelModulesLoadingName;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -389,7 +391,13 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
     CPLog.trace(@"Starting loading all modules");
-    [moduleController load];
+    [CPProgressIndicator initialize];
+    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorBarStyle];
+    [progressIndicatorModulesLoading setMinValue:0.0];
+    [progressIndicatorModulesLoading setMaxValue:1.0];
+    [progressIndicatorModulesLoading setDoubleValue:0.0];
+    [progressIndicatorModulesLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ProgressBarBezel.png"]]]];
+    [labelModulesLoadingName setAlignment:CPCenterTextAlignment];
 
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
@@ -501,6 +509,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
 
     CPLog.info(@"Initialization of AppController OK");
+
+    [moduleController load];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -763,7 +773,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 - (void)allModuleReady:(CPNotification)aNotification
 {
 }
-
 
 - (void)didReceiveUserMessage:(CPNotification)aNotification
 {
@@ -1238,6 +1247,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [CPMenu popUpContextMenu:[aSender menu] withEvent:fake forView:aSender];
 }
 
+
 #pragma mark -
 #pragma mark User vCard management
 
@@ -1415,6 +1425,14 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
+/*! called when module controller has loaded a module
+*/
+- (void)moduleLoader:(TNModuleController)aLoader loadedBundle:(CPBundle)aBundle progress:(float)percent
+{
+    [progressIndicatorModulesLoading setDoubleValue:percent];
+    [labelModulesLoadingName setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+}
+
 /*! delegate of TNModuleController sent when all modules are loaded
 */
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
@@ -1461,7 +1479,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 {
     [[aTimer userInfo] setImage:_imageLedNoData];
 }
-
 
 /*! Growl delegate
 */
