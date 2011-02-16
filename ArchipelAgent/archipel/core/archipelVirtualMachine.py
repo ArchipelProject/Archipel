@@ -284,12 +284,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
     
     
     def set_presence_according_to_libvirt_info(self):
-        try:
-            self.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
-            
-            currentXMLDesc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
-            self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(currentXMLDesc))
-            
+        """
+        set XMPP status according to libvirt status
+        """
+        try:            
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
             self.log.info("virtual machine state is %d" %  dominfo[0])
