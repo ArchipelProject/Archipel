@@ -25,7 +25,6 @@
 @import "CPDate+Format.j"
 @import "CPOutlineView+Extend.j"
 @import "CPPlatformWindow+Title.j"
-@import "CPProgressIndicator+CPCoding.j"
 @import "CPSearchField+CancelButton.j"
 @import "CPSegmentedControl+SegmentView.j"
 @import "CPString+UUIDRFC4122.j"
