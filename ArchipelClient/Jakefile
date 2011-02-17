@@ -1,22 +1,22 @@
-/*  
+/*
  * Jakefile
- *    
+ *
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* enter the following information about you and your module */ 
+/* enter the following information about you and your module */
 var AUTHOR		= "Antoine Mercadal",
     EMAIL		= "antoine.mercadal@inframonde.eu",
     COMPANY		= "org.archipelproject",
@@ -27,7 +27,7 @@ var AUTHOR		= "Antoine Mercadal",
 
 
 require("./common.jake")
-    
+
 /* YOU SHOULD NOT HAVE TO CHANGE THE FOLLOWING */
 var ENV = require("system").env,
     stream = require("narwhal/term").stream,
@@ -90,11 +90,16 @@ task ("run-release", ["release"], function()
     OS.system(["open", FILE.join("Build", "Release", "Archipel", "index.html")]);
 });
 
-task ("deploy", ["release"], function()
+task ("press", ["release"], function()
 {
-    FILE.mkdirs(FILE.join("Build", "Deployment", "Archipel"));
-    OS.system(["press", "-f", FILE.join("Build", "Release", "Archipel"), FILE.join("Build", "Deployment", "Archipel")]);
-    printResults("Deployment")
+    FILE.mkdirs(FILE.join("Build", "Press", "Archipel"));
+    OS.system(["press", "-f", FILE.join("Build", "Release", "Archipel"), FILE.join("Build", "Press", "Archipel")]);
+});
+
+task ("flatten", ["press"], function()
+{
+    FILE.mkdirs(FILE.join("Build", "Flatten", "Archipel"));
+    OS.system(["flatten", "-f", "--verbose", "--split", "3", "-c", "closure-compiler", FILE.join("Build", "Press", "Archipel"), FILE.join("Build", "Flatten", "Archipel")]);
 });
 
 task ("desktop", ["release"], function()
