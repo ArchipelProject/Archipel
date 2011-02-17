@@ -118,7 +118,7 @@ var defaultLocalizationCenter = nil;
 - (CPString)localize:(CPString)aToken forDomain:(CPString)aDomainIdentifier
 {
     if (![_locales objectForKey:aDomainIdentifier] || ![_locales objectForKey:aDomainIdentifier][aToken])
-        return aToken;
+            return (aDomainIdentifier == TNLocalizationCenterGeneralLocaleDomain) ? aToken: [self localize:aToken forDomain:TNLocalizationCenterGeneralLocaleDomain];
 
     return [_locales objectForKey:aDomainIdentifier][aToken][_currentLanguage]
             || [_locales objectForKey:aDomainIdentifier][aToken][_defaultLanguage];
