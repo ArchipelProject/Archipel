@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import "Resources/lang/localization.js"
 
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
@@ -34,7 +35,6 @@
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
-@import "Controllers/TNLocalizationCenter.j"
 @import "Controllers/TNModuleController.j"
 @import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
@@ -52,7 +52,6 @@
 @import "Views/TNRosterDataViews.j"
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
-
 
 /*! @global
     @group TNArchipelEntityType

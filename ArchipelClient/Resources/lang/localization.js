@@ -1,4 +1,4 @@
-ARCHIPEL_LANGUAGE_REGISTRY = {
+GENERAL_LANGUAGE_REGISTRY = {
     "cancel" : {
         "en-us": "Cancel",
         "fr-fr": "Annuler",
