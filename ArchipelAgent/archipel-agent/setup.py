@@ -18,14 +18,7 @@
 import os, shutil
 from setuptools import setup, find_packages
 
-try:
-    f = open("../VERSION")
-    autoVersion = f.read()
-    f.close()
-except:
-    autoVersion = "1.0"
-
-VERSION = autoVersion
+VERSION             = '1.0.12'
 DESCRIPTION="""\
 ** Archipel Agent **
 

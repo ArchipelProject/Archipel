@@ -42,7 +42,8 @@ def process(path, build, upload):
         if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
             os.chdir(plugin_folder)
             if build and not upload:    os.system("python setup.py bdist_egg")
-            elif build and upload:      os.system("python setup.py bdist_egg")
+            elif build and upload:      os.system("python setup.py bdist_egg upload")
+            elif build and register:    os.system("python setup.py bdist_egg upload")
             os.chdir("..")
 
 if __name__ == "__main__":
@@ -61,6 +62,10 @@ if __name__ == "__main__":
     except Exception as ex:
         print "\033[31mERROR: %s \n\033[0m" % str(ex)
     
-    
+    if not build:
+        print HELP
+        sys.exit(1)
+        
+        
     process(PATH, build, upload)
     

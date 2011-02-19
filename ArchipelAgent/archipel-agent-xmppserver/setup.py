@@ -18,19 +18,11 @@
 from setuptools import setup, find_packages
 import sys, os
 
-try:
-    f = open("../VERSION")
-    autoVersion = f.read()
-    f.close()
-except:
-    autoVersion = "1.0"
-
-VERSION             = autoVersion
+VERSION             = '1.0.12'
 AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
-VERSION             = '1.0.1'
 NAME                = 'archipel-agent-xmppserver'
 SHORTDESCRIPTION    = "Can manage Ejabberd Server using XMLRPC module"
 LONGDESCRIPTION     = ""
