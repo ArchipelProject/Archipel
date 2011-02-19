@@ -21,7 +21,7 @@ import getopt
 
 
 HELP = """\
-publicsh (c) 2010 Antoine Mercadal
+publish (c) 2010 Antoine Mercadal
 This tool will allow you to build and/or upload all archipel official plugins
 
 usage :
@@ -29,6 +29,7 @@ usage :
 
     --build, -b     : build the bdist_egg target
     --upload, -u    : upload to pypi using your .pypirc
+    --register, -r  : register to pypi using your .pypirc
     --help, -h      : shows this message
 
 """
@@ -37,35 +38,36 @@ PATH    = os.path.dirname(os.path.realpath(__file__))
 os.chdir(PATH)
 
 
-def process(path, build, upload):
+def process(path, build, upload, register):
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
             os.chdir(plugin_folder)
+            if register:                os.system("python setup.py register")
             if build and not upload:    os.system("python setup.py bdist_egg")
             elif build and upload:      os.system("python setup.py bdist_egg upload")
             elif build and register:    os.system("python setup.py bdist_egg upload")
             os.chdir("..")
 
 if __name__ == "__main__":
-    build   = False
-    upload  = False
+    build       = False
+    upload      = False
+    register    = False
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hbu", ["help", "build", "upload"])
+        opts, args = getopt.getopt(sys.argv[1:], "hbur", ["help", "build", "upload", "register"])
         for o, a in opts:
-            if o in ("--build", "-b"):
-                build = True
-            if o in ("--upload", "-u"):
-                upload = True
+            if o in ("--build", "-b"):      build = True
+            if o in ("--upload", "-u"):     upload = True
+            if o in ("--register", "-r"):   register = True
             if o in ("-h", "--help"):
                 print HELP
                 sys.exit(0)
     except Exception as ex:
         print "\033[31mERROR: %s \n\033[0m" % str(ex)
     
-    if not build:
+    if not build and not register:
         print HELP
         sys.exit(1)
         
         
-    process(PATH, build, upload)
+    process(PATH, build, upload, register)
     
