@@ -373,13 +373,13 @@ class TNXMPPServerController (TNArchipelPlugin):
             users       = anwser["users"]
             
             for user in users:
+                entity_type = "human"
                 try:
                     anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "TYPE"})
-                    entity_type = anwser["content"]
+                    if anwser["content"] in ("hypervisor", "virtualmachine") : entity_type = anwser["content"]
                 except:
-                    entity_type = "human"
-                finally:
-                    nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
+                    pass
+                nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
                 
             reply.setQueryPayload(nodes)
         except Exception as ex:
