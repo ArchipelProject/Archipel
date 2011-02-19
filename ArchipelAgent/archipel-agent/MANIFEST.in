@@ -1,4 +1,4 @@
-include AUTHORS LICENSE setup.py setup.cfg
+include LICENSE setup.py setup.cfg
 recursive-include archipel *
 recursive-include install/bin *
 recursive-include install/etc/init.d *
