@@ -18,7 +18,7 @@
 import os, shutil
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.12'
+VERSION             = '1.0.13'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -69,16 +69,16 @@ setup(name='archipel-agent',
       install_requires=[
         "xmpppy>=0.5.0rc1",
         "sqlobject>=0.14.1",
-        "archipel-agent-action-scheduler",
-        "archipel-agent-hypervisor-geolocalization",
-        "archipel-agent-hypervisor-health",
-        "archipel-agent-hypervisor-network",
-        "archipel-agent-iphone-notification",
-        "archipel-agent-virtualmachine-oomkiller",
-        "archipel-agent-virtualmachine-snapshoting",
-        "archipel-agent-virtualmachine-storage",
-        "archipel-agent-vmcasting",
-        "archipel-agent-xmppserver"
+        "archipel-agent-action-scheduler>=1.0.12",
+        "archipel-agent-hypervisor-geolocalization>=1.0.12",
+        "archipel-agent-hypervisor-health>=1.0.12",
+        "archipel-agent-hypervisor-network>=1.0.12",
+        "archipel-agent-iphone-notification>=1.0.12",
+        "archipel-agent-virtualmachine-oomkiller>=1.0.12",
+        "archipel-agent-virtualmachine-snapshoting>=1.0.12",
+        "archipel-agent-virtualmachine-storage>=1.0.12",
+        "archipel-agent-vmcasting>=1.0.12",
+        "archipel-agent-xmppserver>=1.0.13"
       ],
       entry_points="""
         # -*- Entry points: -*-
