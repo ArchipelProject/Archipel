@@ -7,6 +7,6 @@
 *ArchipelClient/Modules.src/**/Build
 *ArchipelClient/Modules/**
 *.submodules_initialized
-*ArchipelAgent/build
-*ArchipelAgent/dist
-*ArchipelAgent/*.egg-info/**
+*ArchipelAgent/**/build
+*ArchipelAgent/**/dist
+*ArchipelAgent/**/*.egg-info/**

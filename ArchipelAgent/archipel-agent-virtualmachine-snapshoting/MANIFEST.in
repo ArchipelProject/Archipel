@@ -1,0 +1,2 @@
+include LICENSE setup.py setup.cfg
+recursive-include archipelagentvirtualmachinesnapshoting *
