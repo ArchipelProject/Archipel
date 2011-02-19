@@ -69,16 +69,16 @@ setup(name='archipel-agent',
       install_requires=[
         "xmpppy>=0.5.0rc1",
         "sqlobject>=0.14.1",
-        "archipel-agent-action-scheduler>=1.0.12",
-        "archipel-agent-hypervisor-geolocalization>=1.0.12",
-        "archipel-agent-hypervisor-health>=1.0.12",
-        "archipel-agent-hypervisor-network>=1.0.12",
-        "archipel-agent-iphone-notification>=1.0.12",
-        "archipel-agent-virtualmachine-oomkiller>=1.0.12",
-        "archipel-agent-virtualmachine-snapshoting>=1.0.12",
-        "archipel-agent-virtualmachine-storage>=1.0.12",
-        "archipel-agent-vmcasting>=1.0.12",
-        "archipel-agent-xmppserver>=1.0.13"
+        "archipel-agent-action-scheduler>=1.0.12beta",
+        "archipel-agent-hypervisor-geolocalization>=1.0.12beta",
+        "archipel-agent-hypervisor-health>=1.0.12beta",
+        "archipel-agent-hypervisor-network>=1.0.12beta",
+        "archipel-agent-iphone-notification>=1.0.12beta",
+        "archipel-agent-virtualmachine-oomkiller>=1.0.12beta",
+        "archipel-agent-virtualmachine-snapshoting>=1.0.12beta",
+        "archipel-agent-virtualmachine-storage>=1.0.12beta",
+        "archipel-agent-vmcasting>=1.0.12beta",
+        "archipel-agent-xmppserver>=1.0.13beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
