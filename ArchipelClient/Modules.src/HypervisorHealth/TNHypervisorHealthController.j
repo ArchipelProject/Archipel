@@ -20,9 +20,10 @@
 @import <AppKit/AppKit.j>
 @import <LPKit/LPKit.j>
 
-@import "TNDatasourceChartView.j";
-@import "TNDatasourcePieChartView.j";
-@import "TNLogEntryObject.j";
+@import "TNDatasourceChartView.j"
+@import "TNDatasourcePieChartView.j"
+@import "TNLogEntryObject.j"
+@import "TNCellPartitionView.j"
 
 TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health";
 TNArchipelTypeHypervisorHealthInfo          = @"info";
@@ -45,6 +46,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageMemoryLoading;
     @outlet CPScrollView        scrollViewLogsTable;
+    @outlet CPScrollView        scrollViewPartitionTable;
     @outlet CPSearchField       filterLogField;
     @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
@@ -62,16 +64,16 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     @outlet CPTextField         healthMemUsage;
     @outlet CPTextField         healthUptime;
     @outlet CPView              viewCharts;
-    @outlet CPView              viewGrapDiskContainer;
+    @outlet CPView              viewGraphDiskContainer;
     @outlet CPView              viewGraphCPU;
     @outlet CPView              viewGraphCPUContainer;
-    @outlet CPView              viewGraphDisk;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphLoadContainer;
     @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphMemoryContainer;
     @outlet CPView              viewLogs;
     @outlet CPView              viewLogsTableContainer;
+    @outlet CPView              viewPartitionTableContainer;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
@@ -80,6 +82,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     BOOL                        _tableLogDisplayMethodColumn;
     CPNumber                    _statsHistoryCollectionSize;
     CPTableView                 _tableLogs;
+    CPTableView                 _tablePartitions;
     CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
     float                       _timerInterval;
@@ -87,12 +90,12 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewLoad;
     LPChartView                 _chartViewMemory;
-    LPPieChartView              _chartViewDisk;
+    // LPPieChartView              _chartViewDisk;
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
     TNDatasourceChartView       _memoryDatasource;
-    TNDatasourcePieChartView    _disksDatasource;
     TNTableViewDataSource       _datasourceLogs;
+    TNTableViewDataSource       _datasourcePartitions;
 }
 
 
@@ -132,17 +135,17 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [viewGraphCPUContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
     [viewGraphMemoryContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
     [viewGraphLoadContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
-    [viewGrapDiskContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    [viewGraphDiskContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
 
     [viewGraphCPUContainer setBorderRadius:4];
     [viewGraphMemoryContainer setBorderRadius:4];
     [viewGraphLoadContainer setBorderRadius:4];
-    [viewGrapDiskContainer setBorderRadius:4];
+    [viewGraphDiskContainer setBorderRadius:4];
 
     var cpuViewFrame    = [viewGraphCPU bounds],
         memoryViewFrame = [viewGraphMemory bounds],
-        loadViewFrame   = [viewGraphLoad bounds],
-        diskViewFrame   = [viewGraphDisk bounds];
+        loadViewFrame   = [viewGraphLoad bounds];
+        // diskViewFrame   = [viewGraphDisk bounds];
 
     _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
     [_chartViewCPU setDrawViewPadding:1.0];
@@ -170,10 +173,10 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphLoad addSubview:_chartViewLoad];
 
-    _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
-    [_chartViewDisk setDrawView:[[TNPieChartDrawView alloc] init]];
-    [viewGraphDisk addSubview:_chartViewDisk];
-    [_chartViewDisk setDelegate:self];
+    // _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
+    // [_chartViewDisk setDrawView:[[TNPieChartDrawView alloc] init]];
+    // [viewGraphDisk addSubview:_chartViewDisk];
+    // [_chartViewDisk setDelegate:self];
 
 
     _timerInterval                  = [defaults floatForKey:@"TNArchipelHealthRefreshStatsInterval"];
@@ -196,6 +199,35 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [tabViewItemLogs setLabel:@"Logs"];
     [tabViewItemLogs setView:viewLogs];
     [tabViewInfos addTabViewItem:tabViewItemLogs];
+
+
+    // tables partition
+    _datasourcePartitions = [[TNTableViewDataSource alloc] init];
+    _tablePartitions     = [[CPTableView alloc] initWithFrame:[scrollViewPartitionTable bounds]];
+
+    [viewPartitionTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewPartitionTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [scrollViewPartitionTable setAutohidesScrollers:YES];
+    [scrollViewPartitionTable setDocumentView:_tablePartitions];
+
+    [_tablePartitions setUsesAlternatingRowBackgroundColors:YES];
+    [_tablePartitions setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tablePartitions setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
+    [_tablePartitions setAllowsEmptySelection:YES];
+    [_tablePartitions setAllowsMultipleSelection:NO];
+    [_tablePartitions setRowHeight:60.0];
+    [_tablePartitions setHeaderView:nil];
+    [_tablePartitions setCornerView:nil];
+
+    var columnPartitionCell = [[CPTableColumn alloc] initWithIdentifier:@"partition"],
+        partitionViewPrototype = [[TNCellPartitionView alloc] init];
+
+    [columnPartitionCell setWidth:400];
+    [columnPartitionCell setDataView:partitionViewPrototype];
+    [_tablePartitions addTableColumn:columnPartitionCell];
+    [_datasourcePartitions setTable:_tablePartitions];
+
+
 
     // logs tables
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
@@ -275,12 +307,11 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
-    _disksDatasource    = [[TNDatasourcePieChartView alloc] init];
 
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
     [_chartViewLoad setDataSource:_loadDatasource];
-    [_chartViewDisk setDataSource:_disksDatasource];
+    [_tablePartitions setDataSource:_datasourcePartitions];
     [_tableLogs setDataSource:_datasourceLogs];
 
     [self getHypervisorLog:nil];
@@ -313,8 +344,8 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         [_memoryDatasource removeAllObjects];
     if (_loadDatasource)
         [_loadDatasource removeAllObjects];
-    if (_disksDatasource)
-        [_disksDatasource removeAllObjects];
+    if (_datasourcePartitions)
+        [_datasourcePartitions removeAllObjects];
     if (_datasourceLogs)
         [_datasourceLogs removeAllObjects];
 
@@ -379,6 +410,29 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
 }
 
+
+#pragma mark -
+#pragma mark Utilities
+
+- (CPDictionary)parseDiskNodes:(TNStropheStanza)diskNode
+{
+    var ret = [CPArray array];
+
+    for (var i = 0; i < [[diskNode childrenWithName:@"partition"] count]; i++)
+    {
+        var partition   = [[diskNode childrenWithName:@"partition"] objectAtIndex:i],
+            part        = [CPDictionary dictionary];
+
+        [part setObject:[partition valueForAttribute:@"capacity"] forKey:@"capacity"];
+        [part setObject:[partition valueForAttribute:@"mount"] forKey:@"mount"];
+        [part setObject:[partition valueForAttribute:@"used"] forKey:@"used"];
+        [part setObject:[partition valueForAttribute:@"available"] forKey:@"available"];
+
+        [ret addObject:[CPDictionary dictionaryWithObjectsAndKeys:part, @"partition"]];
+    }
+
+    return ret;
+}
 
 #pragma mark -
 #pragma mark Actions
@@ -458,7 +512,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
                 swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
                 memUsed     = [[memNode valueForAttribute:@"used"] intValue],
                 diskNode    = [aStanza firstChildWithName:@"disk"],
-                diskPerc    = [[diskNode valueForAttribute:@"used-percentage"] intValue],
                 loadNode    = [aStanza firstChildWithName:@"load"],
                 loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
                 loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
@@ -471,7 +524,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             [healthMemUsage setStringValue:freeMem + " Mo"];
             [healthMemSwapped setStringValue:swapped + " Mo"];
 
-            [healthDiskUsage setStringValue:diskPerc];
+            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
             [healthLoad setStringValue:loadFive];
 
@@ -487,15 +540,15 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             [_loadDatasource pushData:loadFive inSet:1];
             [_loadDatasource pushData:loadFifteen inSet:2];
 
-            [_disksDatasource removeAllObjects];
-            [_disksDatasource pushData:diskPerc];
-            [_disksDatasource pushData:(100 - diskPerc)];
+            [_datasourcePartitions removeAllObjects];
+            [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
 
             /* reload the charts view */
             [_chartViewMemory reloadData];
             [_chartViewCPU reloadData];
             [_chartViewLoad reloadData];
-            [_chartViewDisk reloadData];
+            [_tablePartitions reloadData];
+
             CPLog.debug("current stats recovered");
         }
         catch(e)
@@ -581,13 +634,17 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
             [fieldHalfMemory setStringValue:Math.round(maxMem / 2) + "G"];
             [_chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
 
-            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"used-percentage"]];
+            [_datasourcePartitions removeAllObjects];
+            [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
+
+            [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
             /* reload the charts view */
             [_chartViewMemory reloadData];
             [_chartViewCPU reloadData];
             [_chartViewLoad reloadData];
-            [_chartViewDisk reloadData];
+
+            [_tablePartitions reloadData];
 
             CPLog.debug("Stats history recovered");
         }
