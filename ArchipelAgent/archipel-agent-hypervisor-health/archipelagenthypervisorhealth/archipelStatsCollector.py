@@ -19,10 +19,22 @@
 import sqlite3
 import datetime
 import commands
+import subprocess
 import time
 from threading import Thread
 from archipel.utils import *
 
+class TNParitionReader(object):
+    
+    def __init__(self):
+        pass
+    
+    def info(self):
+        df = subprocess.Popen(["df", "filename"], stdout=subprocess.PIPE)
+        output = df.communicate()[0]
+        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
+        print (device, size, used, available, percent, mountpoint)
+    
 
 class TNThreadedHealthCollector(Thread):
     """
@@ -39,7 +51,6 @@ class TNThreadedHealthCollector(Thread):
         self.stats_CPU              = []
         self.stats_memory           = []
         self.stats_load             = []
-        self.stats_disks            = []
         
         uname = commands.getoutput("uname -rsmo").split()
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
@@ -49,7 +60,6 @@ class TNThreadedHealthCollector(Thread):
         
         self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
-        self.cursor.execute("create table if not exists disk (collection_date date, total int, used int, free int, free_percentage int)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
         log.info("Database ready.")
         
@@ -75,10 +85,6 @@ class TNThreadedHealthCollector(Thread):
             date, one, five, fifteen = values
             self.stats_load.insert(0, {"date": date, "one": one, "five": five, "fifteen": fifteen})
         
-        self.cursor.execute("select * from disk order by collection_date desc limit %d" % self.max_cached_rows)
-        for values in self.cursor:
-            date, total, used, free, free_percentage = values
-            self.stats_disks.insert(0, {"date": date, "total": total, "used": used, "free": free, "free_percentage": free_percentage})
         log.info("statistics recovered")
     
     
@@ -90,17 +96,17 @@ class TNThreadedHealthCollector(Thread):
         """        
         log.debug("Retrieving last "+ str(limit) + " recorded stats data for sending")
         try:
-            uptime = commands.getoutput("uptime").split("up ")[1].split(",")[0]
-            uptime_stats = {"up" : uptime}
-            acpu    = self.stats_CPU[-limit:]
-            amem    = self.stats_memory[-limit:]
-            adisk   = self.stats_disks[-limit:]
-            aload   = self.stats_load[-limit:]
+            uptime          = commands.getoutput("uptime").split("up ")[1].split(",")[0]
+            uptime_stats    = {"up" : uptime}
+            acpu            = self.stats_CPU[-limit:]
+            amem            = self.stats_memory[-limit:]
+            adisk           = sorted(self.get_disk_stats(), cmp=lambda x,y: cmp(x["mount"], y["mount"]))
+            totalDisk       = self.get_disk_total()
+            aload           = self.stats_load[-limit:]
             acpu.reverse()
             amem.reverse()
-            adisk.reverse()
             aload.reverse()
-            return {"cpu": acpu, "memory": amem, "disk": adisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
+            return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
         except Exception as ex:
             log.error("stat recuperation fails. Exception %s" % str(ex))
             return None
@@ -133,9 +139,19 @@ class TNThreadedHealthCollector(Thread):
     
     
     def get_disk_stats(self):
-        disk_free = commands.getoutput("df -h --total | grep total").split()
-        total, used, free, freePrct = (disk_free[1], disk_free[2],disk_free[3], disk_free[4])
-        return {"date": datetime.datetime.now(), "total" : total, "used": used, "free": free, "free_percentage": freePrct}
+        df      = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE)
+        output  = df.communicate()[0]
+        ret     = []
+        out     = output.split("\n")[1:-1]
+        for l in out:
+            cell = l.split()
+            ret.append({"partition": cell[0], "blocks": cell[1], "used": cell[2], "available": cell[3], "capacity": cell[4], "mount": cell[5]})
+        return ret
+    
+    
+    def get_disk_total(self):
+        disk_total = commands.getoutput("df --total | grep total").split()
+        return {"used" : disk_total[2], "available": disk_total[3], "capacity":  disk_total[4]}
     
     
     def getTimeList(self):
@@ -167,7 +183,6 @@ class TNThreadedHealthCollector(Thread):
                 self.stats_CPU.append(self.get_cpu_stats())
                 self.stats_memory.append(self.get_memory_stats())
                 self.stats_load.append(self.get_load_stats())
-                self.stats_disks.append(self.get_disk_stats())
                 
                 if len(self.stats_CPU) >= self.max_cached_rows:
                     middle = (self.max_cached_rows - 1) /  2
@@ -175,20 +190,17 @@ class TNThreadedHealthCollector(Thread):
                     self.database_thread_connection.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
                     self.database_thread_connection.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
                     self.database_thread_connection.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
-                    self.database_thread_connection.executemany("insert into disk values(:date, :total, :used,:free, :free_percentage)", self.stats_disks[0:middle])
                     log.info("stats saved in database file")
                     
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
                     del self.stats_load[0:middle]
-                    del self.stats_disks[0:middle]
                     log.info("cached stats have been purged from memory")
                         
                     if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
                         self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        self.database_thread_connection.execute("delete from disk where collection_date=(select collection_date from disk order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         log.debug("old stored stats have been purged from memory")
                         
                     self.database_thread_connection.commit()
@@ -197,6 +209,6 @@ class TNThreadedHealthCollector(Thread):
             except Exception as ex:
                 log.error("stat collection fails. Exception %s" % str(ex))
     
-
+    
 
 

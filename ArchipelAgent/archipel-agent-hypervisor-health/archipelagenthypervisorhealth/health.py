@@ -154,10 +154,10 @@ class TNHypervisorHealth (TNArchipelPlugin):
             
             for i in range(number_of_rows):
                 statNode = xmpp.Node("stat")
-                statNode.addChild("memory", attrs={"free" : stats["memory"][i]["free"], "used": stats["memory"][i]["used"], "total": stats["memory"][i]["total"], "swapped": stats["memory"][i]["swapped"]} )
-                statNode.addChild("cpu", attrs={"id": stats["cpu"][i]["id"]})
-                statNode.addChild("disk", attrs={"total" : stats["disk"][i]["total"], "used":  stats["disk"][i]["used"], "free":  stats["disk"][i]["free"], "used-percentage":  stats["disk"][i]["free_percentage"]})
-                statNode.addChild("load", attrs={"one" : stats["load"][i]["one"], "five":  stats["load"][i]["five"], "fifteen":  stats["load"][i]["fifteen"]})
+                statNode.addChild("memory", attrs=stats["memory"][i])
+                statNode.addChild("cpu", attrs=stats["cpu"][i])
+                nodeDisk = statNode.addChild("disk")
+                statNode.addChild("load", attrs=stats["load"][i])
                 nodes.append(statNode)
             
             reply.setQueryPayload(nodes)
@@ -176,7 +176,6 @@ class TNHypervisorHealth (TNArchipelPlugin):
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results        
         """
-        # TODO : add some ACL here later
         try:
             reply = iq.buildReply("result") 
             
@@ -186,23 +185,24 @@ class TNHypervisorHealth (TNArchipelPlugin):
             if not stats:
                 reply = build_error_iq(self, "Unable to get stats. see hypervisor log", iq)
             else:
-                mem_free_node = xmpp.Node("memory", attrs={"free" : stats["memory"][0]["free"], "used": stats["memory"][0]["used"], "total": stats["memory"][0]["total"], "swapped": stats["memory"][0]["swapped"]} )
+                mem_free_node = xmpp.Node("memory", attrs=stats["memory"][0])
                 nodes.append(mem_free_node)
                 
-                cpu_node = xmpp.Node("cpu", attrs={"id": stats["cpu"][0]["id"]})
+                cpu_node = xmpp.Node("cpu", attrs=stats["cpu"][0])
                 nodes.append(cpu_node)
                 
-                disk_free_node = xmpp.Node("disk", attrs={"total" : stats["disk"][0]["total"], "used":  stats["disk"][0]["used"], "free":  stats["disk"][0]["free"], "used-percentage":  stats["disk"][0]["free_percentage"]})
+                disk_free_node = xmpp.Node("disk", attrs=stats["totaldisk"])
+                for s in stats["disk"]: disk_free_node.addChild("partition", attrs=s)
                 nodes.append(disk_free_node)
                 
-                load_node = xmpp.Node("load", attrs={"one" : stats["load"][0]["one"], "five" : stats["load"][0]["five"], "fifteen" : stats["load"][0]["fifteen"]})
+                load_node = xmpp.Node("load", attrs=stats["load"][0])
                 nodes.append(load_node)
                 
-                uptime_node = xmpp.Node("uptime", attrs={"up" : stats["uptime"]["up"]})
+                uptime_node = xmpp.Node("uptime", attrs=stats["uptime"])
                 nodes.append(uptime_node)
                 
-                uname_node = xmpp.Node("uname", attrs={"krelease": stats["uname"]["krelease"] , "kname": stats["uname"]["kname"] , "machine":stats["uname"]["machine"], "os": stats["uname"]["os"]})
-                nodes.append(uname_node)   
+                uname_node = xmpp.Node("uname", attrs=stats["uname"])
+                nodes.append(uname_node)
                 
                 reply.setQueryPayload(nodes)
         except Exception as ex:
