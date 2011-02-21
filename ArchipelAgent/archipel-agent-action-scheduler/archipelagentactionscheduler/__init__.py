@@ -25,4 +25,4 @@ def make_archipel_plugin(configuration, entity, group, excluded_plugins):
 
 def version():
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution(__name__))
+    return (__name__, pkg_resources.get_distribution("archipel-agent-action-scheduler").version)
