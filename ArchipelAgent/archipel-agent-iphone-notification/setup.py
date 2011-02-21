@@ -29,7 +29,9 @@ LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.hypervisor' : [
                             'factory=archipelagentiphonenotification:make_archipel_plugin'],
                         'archipel.plugin.virtualmachine' : [
-                            'factory=archipelagentiphonenotification:make_archipel_plugin']}
+                            'factory=archipelagentiphonenotification:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagentiphonenotification:version']}
 
 setup(name=NAME,
       version=VERSION,

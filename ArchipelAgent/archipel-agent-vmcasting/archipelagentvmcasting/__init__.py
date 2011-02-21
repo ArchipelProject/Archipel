@@ -27,3 +27,8 @@ def make_archipel_plugin(configuration, entity, group, excluded_plugins):
         return [{"info": hypervisorrepomanager.TNHypervisorRepoManager.plugin_info(),
                 "plugin":hypervisorrepomanager.TNHypervisorRepoManager(configuration, entity, group)}]
 
+
+def version():
+    import pkg_resources
+    return (__name__, pkg_resources.get_distribution(__name__))
+

@@ -21,3 +21,9 @@ import snapshoting
 def make_archipel_plugin(configuration, entity, group, excluded_plugins):
     return [{"info": snapshoting.TNSnapshoting.plugin_info(),
             "plugin": snapshoting.TNSnapshoting(configuration, entity, group)}]
+
+
+def version():
+    import pkg_resources
+    return (__name__, pkg_resources.get_distribution(__name__))
+

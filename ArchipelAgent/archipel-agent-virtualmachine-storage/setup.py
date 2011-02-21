@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-virtualmachine-storage'
 SHORTDESCRIPTION    = "Manage virtual machine storages"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine': [
-                            'factory=archipelagentvirtualmachinestorage:make_archipel_plugin']}
+                            'factory=archipelagentvirtualmachinestorage:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagentvirtualmachinestorage:version']}
 
 setup(name=NAME,
       version=VERSION,

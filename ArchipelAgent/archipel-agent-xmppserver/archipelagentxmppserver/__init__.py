@@ -21,3 +21,9 @@ import xmppserver
 def make_archipel_plugin(configuration, entity, group, excluded_plugins):
     return [{"info": xmppserver.TNXMPPServerController.plugin_info(),
             "plugin": xmppserver.TNXMPPServerController(configuration, entity, group)}]
+
+
+def version():
+    import pkg_resources
+    return (__name__, pkg_resources.get_distribution(__name__))
+

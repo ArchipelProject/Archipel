@@ -21,3 +21,9 @@ import geoloc
 def make_archipel_plugin(configuration, entity, group, excluded_plugins):
     return [{"info": geoloc.TNHypervisorGeolocalization.plugin_info(),
             "plugin":geoloc.TNHypervisorGeolocalization(configuration, entity, group)}]
+
+
+def version():
+    import pkg_resources
+    return (__name__, pkg_resources.get_distribution(__name__))
+

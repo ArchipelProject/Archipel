@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-virtualmachine-snapshoting'
 SHORTDESCRIPTION    = "Manage snapshoting for virtual machines"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine' : [
-                            'factory=archipelagentvirtualmachinesnapshoting:make_archipel_plugin']}
+                            'factory=archipelagentvirtualmachinesnapshoting:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagentvirtualmachinesnapshoting:version']}
 
 setup(name=NAME,
       version=VERSION,

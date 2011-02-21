@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-hypervisor-health'
 SHORTDESCRIPTION    = "Get health of hypervisors"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {'archipel.plugin.hypervisor' : [
-                            'factory=archipelagenthypervisorhealth:make_archipel_plugin']}
+                            'factory=archipelagenthypervisorhealth:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagenthypervisorhealth:version']}
 
 setup(name=NAME,
       version=VERSION,

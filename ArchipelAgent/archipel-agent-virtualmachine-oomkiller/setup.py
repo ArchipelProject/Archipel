@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-virtualmachine-oomkiller'
 SHORTDESCRIPTION    = "Manage OOM Killer prevention"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine' : [
-                            'factory=archipelagentvirtualmachineoomkiller:make_archipel_plugin']}
+                            'factory=archipelagentvirtualmachineoomkiller:make_archipel_plugin',
+                        'archipel.plugin' : [
+                            'version=archipelagentvirtualmachineoomkiller:version']]}
 
 setup(name=NAME,
       version=VERSION,

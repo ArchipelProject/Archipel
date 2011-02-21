@@ -63,6 +63,13 @@ def test_libvirt():
     return True
 
 
+def versions():
+    from pkg_resources import iter_entry_points
+    for version_method in iter_entry_points(group="archipel.plugin", name="version"):
+        method  = version_method.load()
+        print method()
+    
+
 def main():
     """
     main function of Archipel
@@ -83,7 +90,7 @@ def main():
 if __name__ == "__main__":
     if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
 
-    opts, args = getopt.getopt(sys.argv[1:], "hn", ["nofork", "config=", "help"])
+    opts, args = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
 
     configPath = "/etc/archipel/archipel.conf"
     fork = True
@@ -96,7 +103,10 @@ if __name__ == "__main__":
         if o in ("-h", "--help"):
             print ARCHIPEL_CMD_HELP
             sys.exit(ARCHIPEL_INIT_SUCCESS)
-
+        if o in ("-v", "--version"):
+            versions()
+            sys.exit(ARCHIPEL_INIT_SUCCESS)
+    
     try:
         config = init_conf(configPath)
     except:

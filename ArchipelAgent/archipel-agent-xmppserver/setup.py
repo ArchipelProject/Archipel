@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-xmppserver'
 SHORTDESCRIPTION    = "Can manage Ejabberd Server using XMLRPC module"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.hypervisor' :  [
-                            'factory=archipelagentxmppserver:make_archipel_plugin']}
+                            'factory=archipelagentxmppserver:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagentxmppserver:version']}
 
 setup(name=NAME,
       version=VERSION,

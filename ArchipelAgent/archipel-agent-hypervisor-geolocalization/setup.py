@@ -27,7 +27,9 @@ NAME                = 'archipel-agent-hypervisor-geolocalization'
 SHORTDESCRIPTION    = "Make hypervisor able to locate themselves in the world"
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {'archipel.plugin.hypervisor' : [
-                            'factory=archipelagenthypervisorgeolocalization:make_archipel_plugin']}
+                            'factory=archipelagenthypervisorgeolocalization:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagenthypervisorgeolocalization:version']}
 
 setup(name=NAME,
       version=VERSION,

@@ -22,3 +22,8 @@ def make_archipel_plugin(configuration, entity, group, excluded_plugins):
     return [{"info": appnotificator.AppNotificator.plugin_info(),
             "plugin": appnotificator.AppNotificator(configuration, entity, group)}]
 
+
+def version():
+    import pkg_resources
+    return (__name__, pkg_resources.get_distribution(__name__))
+

@@ -29,7 +29,9 @@ LONGDESCRIPTION     = ""
 ENTRY_POINTS        = { 'archipel.plugin.virtualmachine' : [
                             'factory=archipelagentactionscheduler:make_archipel_plugin'],
                         'archipel.plugin.hypervisor' : [
-                            'factory=archipelagentactionscheduler:make_archipel_plugin']}
+                            'factory=archipelagentactionscheduler:make_archipel_plugin'],
+                        'archipel.plugin' : [
+                            'version=archipelagentactionscheduler:version']}
 
 setup(name=NAME,
       version=VERSION,
