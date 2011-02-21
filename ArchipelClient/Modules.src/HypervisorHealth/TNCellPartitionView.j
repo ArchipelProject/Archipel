@@ -36,7 +36,7 @@
 */
 - (id)init
 {
-    if (self = [super initWithFrame:CPRectMake(0.0, 0.0, 100.0, 60.0)])
+    if (self = [super initWithFrame:CPRectMake(0.0, 0.0, 420.0, 60.0)])
     {
         [self setAutoresizingMask: CPViewWidthSizable];
 
@@ -47,20 +47,17 @@
 
         _usedLabel = [CPTextField labelWithTitle:@"Used: "];
         [_usedLabel setFont:[CPFont systemFontOfSize:10.0]];
+        [_usedLabel setFrameOrigin:CPPointMake(260.0, 3.0)];
+        [_usedLabel setAutoresizingMask:CPViewMinXMargin];
         [_usedLabel sizeToFit];
-        [_usedLabel setFrameOrigin:CPPointMake(3.0, 40.0)];
 
         _availableLabel = [CPTextField labelWithTitle:@"Available: "];
         [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
+        [_availableLabel setFrameOrigin:CPPointMake(330.0, 3.0)];
+        [_availableLabel setAutoresizingMask:CPViewMinXMargin];
         [_availableLabel sizeToFit];
-        [_availableLabel setFrameOrigin:CPPointMake(70.0, 40.0)];
 
-        _availableLabel = [CPTextField labelWithTitle:@"Available: "];
-        [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
-        [_availableLabel sizeToFit];
-        [_availableLabel setFrameOrigin:CPPointMake(70.0, 40.0)];
-
-        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(3.0, 22.0, 95.0, 16.0)];
+        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, 415.0, 16.0)];
         [_progressBar setAutoresizingMask:CPViewWidthSizable];
         [_progressBar setMaxValue:100];
         [_progressBar setMinValue:0];

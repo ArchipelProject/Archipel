@@ -215,7 +215,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [_tablePartitions setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
     [_tablePartitions setAllowsEmptySelection:YES];
     [_tablePartitions setAllowsMultipleSelection:NO];
-    [_tablePartitions setRowHeight:60.0];
+    [_tablePartitions setRowHeight:40.0];
     [_tablePartitions setHeaderView:nil];
     [_tablePartitions setCornerView:nil];
 
