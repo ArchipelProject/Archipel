@@ -67,6 +67,9 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [_tokenFieldTags setEditable:YES];
     [_tokenFieldTags setEnabled:NO];
     [_tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
+    [_tokenFieldTags setTarget:self];
+    [_tokenFieldTags setAction:@selector(performSetTags:)];
+
     [mainView addSubview:_tokenFieldTags];
 
 
