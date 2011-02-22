@@ -39,6 +39,7 @@ from threading import Timer, Thread
 import libvirt
 import sqlite3
 import thread
+import shutil
 
 from archipel.utils import *
 from archipel.archipelWebSocket import *
@@ -261,7 +262,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         remove the folder of the virtual with all its contents
         """
-        os.system("rm -rf " + self.folder)
+        # os.system("rm -rf %s" %s self.folder)
+        shutil.rmtree(self.folder)
     
     
     def set_automatic_libvirt_description(self, xmldesc):
@@ -853,7 +855,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         """
         perform threaded copy of the virtual machine and then define it
         """
-        os.system("cp -a %s/* %s" % (src_path, self.folder))
+        #os.system("cp -a %s/* %s" % (src_path, self.folder))
+        shutil.copytree(src_path, self.folder)
         self.log.info("defining the cloned virtual machine")
         self.define(newxml)
     

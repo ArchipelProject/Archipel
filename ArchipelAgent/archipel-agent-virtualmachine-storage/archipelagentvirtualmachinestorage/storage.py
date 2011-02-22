@@ -23,6 +23,8 @@ import archipel
 from archipel.archipelPlugin import TNArchipelPlugin
 import commands
 import os, sys
+import subprocess
+import shutil
 
 ARCHIPEL_NS_VM_DISK                     = "archipel:vm:disk"
 ARCHIPEL_ERROR_CODE_DRIVES_CREATE       = -3001
@@ -143,7 +145,8 @@ class TNStorageManagement (TNArchipelPlugin):
             if os.path.exists(disk_path):
                 raise Exception("The disk with name %s already exists." % disk_name)
             
-            ret = os.system("qemu-img create -f " + format + " " + disk_path + " " + disk_size + disk_unit)
+            #ret = os.system("qemu-img create -f " + format + " " + disk_path + " " + disk_size + disk_unit)
+            ret = subprocess.call(["qemu-img", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
             
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
@@ -179,7 +182,8 @@ class TNStorageManagement (TNArchipelPlugin):
                 raise Exception("The disk with same name and extension already exists.")
                 
             self.entity.change_presence(presence_show="dnd", presence_status="Converting a disk...")
-            ret = os.system("qemu-img convert " + path + " -O " + format + " " + disk_path)
+            #ret = os.system("qemu-img convert " + path + " -O " + format + " " + disk_path)
+            ret = subprocess.call(["qemu-img", "convert", path, "-O", format, disk_path])
             if not ret == 0:
                 raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret))
             
@@ -248,7 +252,8 @@ class TNStorageManagement (TNArchipelPlugin):
             old_show    = self.entity.xmppstatusshow
             self.entity.change_presence(presence_show="dnd", presence_status="Deleting a drive...")
             
-            os.system("rm -rf " + secure_disk_path)
+            #os.system("rm -rf " + secure_disk_path)
+            shutil.rmtree(secure_disk_path)
             
             disk_nodes = []
             if self.entity.definition:

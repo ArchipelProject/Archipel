@@ -22,6 +22,7 @@ import gzip
 from archipel.utils import *
 from threading import Thread
 import xmpp
+import shutil
 
 class TNApplianceCompresser(Thread):
     
@@ -87,9 +88,11 @@ class TNApplianceCompresser(Thread):
         tar.close()
         
         self.entity.log.info("TNApplianceCompresser: moving the tar file %s to repo %s" % (tar_file, self.hypervisor_repo_path))
-        os.system("mv %s %s" % (tar_file, self.hypervisor_repo_path))
+        #os.system("mv %s %s" % (tar_file, self.hypervisor_repo_path))
+        shutil.move(tar_file, self.hypervisor_repo_path)
         self.entity.log.info("TNApplianceCompresser: cleaning the working temp dir")
-        os.system("rm -rf %s" % self.working_dir)
+        # os.system("rm -rf %s" % self.working_dir)
+        shutil.rmtree(self.working_dir)
         self.callback()
 
     def compress_disk(self, path):

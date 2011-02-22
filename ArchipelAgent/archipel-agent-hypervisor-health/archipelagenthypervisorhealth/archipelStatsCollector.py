@@ -24,17 +24,6 @@ import time
 from threading import Thread
 from archipel.utils import *
 
-class TNParitionReader(object):
-    
-    def __init__(self):
-        pass
-    
-    def info(self):
-        df = subprocess.Popen(["df", "filename"], stdout=subprocess.PIPE)
-        output = df.communicate()[0]
-        device, size, used, available, percent, mountpoint = output.split("\n")[1].split()
-        print (device, size, used, available, percent, mountpoint)
-    
 
 class TNThreadedHealthCollector(Thread):
     """
@@ -52,7 +41,8 @@ class TNThreadedHealthCollector(Thread):
         self.stats_memory           = []
         self.stats_load             = []
         
-        uname = commands.getoutput("uname -rsmo").split()
+        # uname = commands.getoutput("uname -rsmo").split()
+        uname = subprocess.Popen(["uname", "-rsmo"], stdout=subprocess.PIPE).communicate()[0].split()
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
         
         self.database_query_connection = sqlite3.connect(self.database_file)
@@ -95,21 +85,17 @@ class TNThreadedHealthCollector(Thread):
         @return: the L{TNArchipelVirtualMachine} instance
         """        
         log.debug("Retrieving last "+ str(limit) + " recorded stats data for sending")
-        try:
-            uptime          = commands.getoutput("uptime").split("up ")[1].split(",")[0]
-            uptime_stats    = {"up" : uptime}
-            acpu            = self.stats_CPU[-limit:]
-            amem            = self.stats_memory[-limit:]
-            adisk           = sorted(self.get_disk_stats(), cmp=lambda x,y: cmp(x["mount"], y["mount"]))
-            totalDisk       = self.get_disk_total()
-            aload           = self.stats_load[-limit:]
-            acpu.reverse()
-            amem.reverse()
-            aload.reverse()
-            return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
-        except Exception as ex:
-            log.error("stat recuperation fails. Exception %s" % str(ex))
-            return None
+        uptime          = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("up ")[1].split(",")[0]
+        uptime_stats    = {"up" : uptime}
+        acpu            = self.stats_CPU[-limit:]
+        amem            = self.stats_memory[-limit:]
+        adisk           = sorted(self.get_disk_stats(), cmp=lambda x,y: cmp(x["mount"], y["mount"]))
+        totalDisk       = self.get_disk_total()
+        aload           = self.stats_load[-limit:]
+        acpu.reverse()
+        amem.reverse()
+        aload.reverse()
+        return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
     
     
     def get_memory_stats(self):
@@ -133,14 +119,14 @@ class TNThreadedHealthCollector(Thread):
     
     
     def get_load_stats(self):
-        load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
+        # load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
+        load_average = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("load average:")[1].split(", ")
         load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
         return {"date": datetime.datetime.now(), "one": load1min, "five": load5min, "fifteen": load15min}
     
     
     def get_disk_stats(self):
-        df      = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE)
-        output  = df.communicate()[0]
+        output  = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE).communicate()[0]
         ret     = []
         out     = output.split("\n")[1:-1]
         for l in out:
@@ -150,7 +136,7 @@ class TNThreadedHealthCollector(Thread):
     
     
     def get_disk_total(self):
-        disk_total = commands.getoutput("df --total | grep total").split()
+        disk_total = subprocess.Popen(["df", "--total", "|", "grep", "total"], stdout=subprocess.PIPE).communicate()[0].split()[1]
         return {"used" : disk_total[2], "available": disk_total[3], "capacity":  disk_total[4]}
     
     
