@@ -146,7 +146,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 raise Exception("The disk with name %s already exists." % disk_name)
             
             #ret = os.system("qemu-img create -f " + format + " " + disk_path + " " + disk_size + disk_unit)
-            ret = subprocess.call(["qemu-img", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
+            ret = subprocess.call(["qemu-img", "create", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
             
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
