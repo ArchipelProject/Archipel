@@ -210,11 +210,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
         for (var j = 0; j < [tags count]; j++)
         {
             var tag = [tags objectAtIndex:j];
-            if (tag
-                && (tag.indexOf(aSubstring) != -1)
-                && ![availableTags containsObject:tag]
-                && ![[_tokenFieldTags objectValue] containsObject:tag])
-                [availableTags addObjectsFromArray:tag];
+            if (tag && (tag.indexOf(aSubstring) != -1) && ![availableTags containsObject:tag] && ![[_tokenFieldTags objectValue] containsObject:tag])
+                [availableTags addObject:tag];
         }
     }
 
