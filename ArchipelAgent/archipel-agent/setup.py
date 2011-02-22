@@ -18,7 +18,7 @@
 import os, shutil
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.18'
+VERSION             = '1.0.19'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -76,7 +76,7 @@ setup(name='archipel-agent',
         "archipel-agent-iphone-notification>=1.0.14beta",
         "archipel-agent-virtualmachine-oomkiller>=1.0.14beta",
         "archipel-agent-virtualmachine-snapshoting>=1.0.14beta",
-        "archipel-agent-virtualmachine-storage>=1.0.16beta",
+        "archipel-agent-virtualmachine-storage>=1.0.17beta",
         "archipel-agent-vmcasting>=1.0.15beta",
         "archipel-agent-xmppserver>=1.0.15beta"
       ],
