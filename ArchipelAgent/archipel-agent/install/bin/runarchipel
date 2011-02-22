@@ -64,8 +64,11 @@ def test_libvirt():
 
 
 def versions():
-    from pkg_resources import iter_entry_points
-    for version_method in iter_entry_points(group="archipel.plugin", name="version"):
+    import pkg_resources
+    print "* Archipel Agent version : "
+    print ("archipelagent", pkg_resources.get_distribution("archipel-agent").version)    
+    print "* Installed plugins versions : "
+    for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
         method  = version_method.load()
         print method()
     
@@ -96,10 +99,8 @@ if __name__ == "__main__":
     fork = True
 
     for o, a in opts:
-        if o in ("--config"):
-            configPath = a
-        if o in ("-n", "--nofork"):
-            fork = False
+        if o in ("--config"): configPath = a
+        if o in ("-n", "--nofork"): fork = False
         if o in ("-h", "--help"):
             print ARCHIPEL_CMD_HELP
             sys.exit(ARCHIPEL_INIT_SUCCESS)
@@ -116,19 +117,13 @@ if __name__ == "__main__":
     if fork:
         try:
             pid = os.fork()
-            if pid > 0:
-                sys.exit(ARCHIPEL_INIT_SUCCESS)
-        except OSError as e:
-            os.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
-
-    if fork:
-        os.setsid()
-        os.umask(0)
-        try:
-            pid = os.fork()
-            if pid > 0:
-              sys.exit(ARCHIPEL_INIT_SUCCESS)
+            if pid == 0: main()
+            else: sys.exit(ARCHIPEL_INIT_SUCCESS)
         except OSError as e:
             sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
-
-    main()
+    else:
+        hyp = None
+        try:
+            main()
+        except KeyboardInterrupt:
+            sys.exit(ARCHIPEL_INIT_SUCCESS)
