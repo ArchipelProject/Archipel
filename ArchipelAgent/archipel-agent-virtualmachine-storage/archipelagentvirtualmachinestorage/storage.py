@@ -253,7 +253,7 @@ class TNStorageManagement (TNArchipelPlugin):
             self.entity.change_presence(presence_show="dnd", presence_status="Deleting a drive...")
             
             #os.system("rm -rf " + secure_disk_path)
-            os.unlinkrmtree(secure_disk_path)
+            os.unlink(secure_disk_path)
             
             disk_nodes = []
             if self.entity.definition:
