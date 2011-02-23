@@ -81,42 +81,45 @@ def send(credentials, message, title=None, long_message=None, subtitle=None,
     successfuly.
 
     """
-    # Create data to POST
-    data = {}
+    try:
+        # Create data to POST
+        data = {}
 
-    if credentials is None or credentials == "":
-        raise ValueError("Invalid user credentials")
-    if message is None or message == "":
-        raise ValueError("Invalid message")
+        if credentials is None or credentials == "":
+            raise ValueError("Invalid user credentials")
+        if message is None or message == "":
+            raise ValueError("Invalid message")
     
-    data['user_credentials'] = credentials
-    data['notification[message]'] = message
+        data['user_credentials'] = credentials
+        data['notification[message]'] = message
 
-    for key in ("title", "long_message", "long_message_preview",
-                "message_level", "action_loc_key", "run_command", "icon_url", "subtitle"):
-        value = locals()[key]
-        if value is not None:
-            data['notification[%s]' % key] = value
+        for key in ("title", "long_message", "long_message_preview",
+                    "message_level", "action_loc_key", "run_command", "icon_url", "subtitle"):
+            value = locals()[key]
+            if value is not None:
+                data['notification[%s]' % key] = value
     
-    if silent:
-        data['notification[silent]'] = 1
-    else:
-        data['notification[silent]'] = 0
-        if not 1 <= sound <= 7:
-            raise ValueError("sound must be an integer between 1 and 7")
-        data['notification[sound]'] = "%d.caf" % sound
+        if silent:
+            data['notification[silent]'] = 1
+        else:
+            data['notification[silent]'] = 0
+            if not 1 <= sound <= 7:
+                raise ValueError("sound must be an integer between 1 and 7")
+            data['notification[sound]'] = "%d.caf" % sound
 
-    # Encode the data
-    data = urllib.urlencode(data)
+        # Encode the data
+        data = urllib.urlencode(data)
 
-    # Send the notification
-    u = urllib.urlopen(SEND_URL, data)
-    success = (u.getcode() == 200)
-    if debug:
-        print >> sys.stderr, u.read()
-    u.close()
+        # Send the notification
+        u = urllib.urlopen(SEND_URL, data)
+        success = (u.getcode() == 200)
+        if debug:
+            print >> sys.stderr, u.read()
+        u.close()
 
-    return success
+        return success
+    except Exception as ex:
+        pass
 
 
 def send_async(*args, **kwargs):

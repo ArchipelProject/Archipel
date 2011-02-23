@@ -79,10 +79,12 @@ class AppNotificator (TNArchipelPlugin):
     
     
     def send(self, title, message, subtitle=None):
-        long_message_preview = message
-        for cred in self.credentials:
-            notifications.send_async(cred, message, title=title, subtitle=subtitle, icon_url="http://antoinemercadal.fr/logo_archipel.png", long_message_preview=long_message_preview)
-    
+        try:
+            long_message_preview = message
+            for cred in self.credentials:
+                notifications.send_async(cred, message, title=title, subtitle=subtitle, icon_url="http://antoinemercadal.fr/logo_archipel.png", long_message_preview=long_message_preview)
+        except:
+            self.entity.log.warning("cannot send iPhone notification: %s" % ex)
     
     def vm_create(self, entity, args):
         self.send("Archipel", "virtual machine %s has been started" % entity.name, subtitle="Virtual machine event")
