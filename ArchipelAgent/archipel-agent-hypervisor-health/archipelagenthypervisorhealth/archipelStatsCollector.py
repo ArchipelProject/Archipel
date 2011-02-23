@@ -136,7 +136,12 @@ class TNThreadedHealthCollector(Thread):
     
     
     def get_disk_total(self):
-        disk_total = subprocess.Popen(["df", "--total", "|", "grep", "total"], stdout=subprocess.PIPE).communicate()[0].split()[1]
+        out = subprocess.Popen(["df", "--total", "-P"], stdout=subprocess.PIPE).communicate()[0].split("\n");
+        for line in out:
+            line = line.split()
+            if line[0] == "total":
+                disk_total = line
+                break
         return {"used" : disk_total[2], "available": disk_total[3], "capacity":  disk_total[4]}
     
     
