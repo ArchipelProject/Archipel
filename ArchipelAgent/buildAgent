@@ -1,18 +1,18 @@
 #! /usr/bin/python
-# 
-# publish.py
-# 
+#
+# buildAgent
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -21,42 +21,51 @@ import getopt
 
 
 HELP = """\
-publish (c) 2010 Antoine Mercadal
+buildAgent (c) 2010 Antoine Mercadal
 This tool will allow you to build and/or upload all archipel official plugins
 
 usage :
-    publish [--help | -h] [--build | -b] [--upload | -u] 
+    buildAgent [--help | -h] [--build | -b] [--clean | -c] [--devinstall | -d] [--upload | -u]
 
-    --build, -b     : build the bdist_egg target
-    --upload, -u    : upload to pypi using your .pypirc
-    --register, -r  : register to pypi using your .pypirc
-    --help, -h      : shows this message
+    --build, -b         : build the bdist_egg target
+    --upload, -u        : upload to pypi using your .pypirc
+    --register, -r      : register to pypi using your .pypirc
+    --clean, -c         : clean build
+    --devinstall, -d    : force reinstallation (for developers)
+    --help, -h          : shows this message
 
 """
 
 PATH    = os.path.dirname(os.path.realpath(__file__))
-os.chdir(PATH)
-print "working on %s" % PATH
 
-def clean_build(notexit=False):
-    os.system('find %s -name "*.egg-info" -type d -exec rm -rf "{}" \;' % PATH)
-    os.system('find %s -name "build" -type d -exec rm -rf "{}" \;' % PATH)
-    os.system('find %s -name "dist" -type d -exec rm -rf "{}" \;' % PATH)
-    print "cleaned"
+
+def help():
+    """print help"""
+    print HELP
+    sys.exit(0)
+
+
+def clean_build(path, notexit=False):
+    """clean build"""
+    os.system('find %s -maxdepth 2 -name "*.egg-info" -type d -exec rm -rf "{}" \;' % path)
+    os.system('find %s -maxdepth 2 -name "build" -type d -exec rm -rf "{}" \;' % path)
+    os.system('find %s -maxdepth 2 -name "dist" -type d -exec rm -rf "{}" \;' % path)
+    print "\033[32mSUCCESS: build cleaned \033[0m\n"
     if not notexit: sys.exit(0)
 
 
 def devinstallation(path):
-    for plugin_folder in os.listdir(path):  
-        if os.path.isdir(plugin_folder):
-            cmd = "easy_install -m %s ; easy_install -H None -f %s -U -a --no-deps %s" % (plugin_folder, PATH, plugin_folder)
-            #print cmd
+    """force reinstall"""
+    for plugin_folder in os.listdir(path):
+        if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
+            cmd = "easy_install -m %s ; easy_install -H None -f %s -U -a --no-deps %s" % (plugin_folder, path, plugin_folder)
             os.system(cmd)
-    
+    print "\033[32mSUCCESS: installation done \033[0m\n"
+    sys.exit(0)
+
+
 def process(path, build, upload, register, clean, devinstall):
-    if clean or devinstall: clean_build(devinstall)
-    if devinstall: devinstallation(path)
-    
+    """parse command"""
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
             os.chdir(plugin_folder)
@@ -65,6 +74,8 @@ def process(path, build, upload, register, clean, devinstall):
             elif build and upload:      os.system("python setup.py bdist_egg upload")
             elif build and register:    os.system("python setup.py bdist_egg upload")
             os.chdir("..")
+    print "\033[32mSUCCESS: all action performed \033[0m\n"
+
 
 if __name__ == "__main__":
     build       = False
@@ -80,13 +91,14 @@ if __name__ == "__main__":
             if o in ("--register", "-r"):   register = True
             if o in ("--clean", "-c"):      clean = True
             if o in ("--devinstall", "-d"): devinstall = True
-            if o in ("-h", "--help"):
-                print HELP
-                sys.exit(0)
+            if o in ("-h", "--help"):       help()
     except Exception as ex:
         print "\033[31mERROR: %s \n\033[0m" % str(ex)
-    
-        
-        
+
+    if not (devinstall or clean) and not (build or register or upload): help()
+
+    os.chdir(PATH)
+    if clean or devinstall: clean_build(PATH, devinstall)
+    if devinstall: devinstallation(PATH)
+
     process(PATH, build, upload, register, clean, devinstall)
-    
