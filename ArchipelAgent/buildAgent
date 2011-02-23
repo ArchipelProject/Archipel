@@ -94,11 +94,8 @@ if __name__ == "__main__":
             if o in ("-h", "--help"):       help()
     except Exception as ex:
         print "\033[31mERROR: %s \n\033[0m" % str(ex)
-
     if not (devinstall or clean) and not (build or register or upload): help()
-
     os.chdir(PATH)
     if clean or devinstall: clean_build(PATH, devinstall)
     if devinstall: devinstallation(PATH)
-
     process(PATH, build, upload, register, clean, devinstall)
