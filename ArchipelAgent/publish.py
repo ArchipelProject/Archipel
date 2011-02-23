@@ -38,11 +38,17 @@ PATH    = os.path.dirname(os.path.realpath(__file__))
 os.chdir(PATH)
 
 
-def process(path, build, upload, register):
+def process(path, build, upload, register, clean):
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
             os.chdir(plugin_folder)
             if register:                os.system("python setup.py register")
+            if clean:
+                os.system('find . -name "*.egg-info" -type dir -exec rm -rf "{}" \;')
+                os.system('find . -name "build" -type dir -exec rm -rf "{}" \;')
+                os.system('find . -name "dist" -type dir -exec rm -rf "{}" \;')
+                print "cleaned"
+                sys.exit(0)
             if build and not upload:    os.system("python setup.py bdist_egg")
             elif build and upload:      os.system("python setup.py bdist_egg upload")
             elif build and register:    os.system("python setup.py bdist_egg upload")
@@ -52,22 +58,24 @@ if __name__ == "__main__":
     build       = False
     upload      = False
     register    = False
+    clean       = False
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hbur", ["help", "build", "upload", "register"])
+        opts, args = getopt.getopt(sys.argv[1:], "hburc", ["help", "build", "upload", "register", "clean"])
         for o, a in opts:
             if o in ("--build", "-b"):      build = True
             if o in ("--upload", "-u"):     upload = True
             if o in ("--register", "-r"):   register = True
+            if o in ("--clean", "-c"):      clean = True
             if o in ("-h", "--help"):
                 print HELP
                 sys.exit(0)
     except Exception as ex:
         print "\033[31mERROR: %s \n\033[0m" % str(ex)
     
-    if not build and not register:
+    if not build and not register and not clean:
         print HELP
         sys.exit(1)
         
         
-    process(PATH, build, upload, register)
+    process(PATH, build, upload, register, clean)
     
