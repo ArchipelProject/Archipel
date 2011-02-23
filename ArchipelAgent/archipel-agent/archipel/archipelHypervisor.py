@@ -143,11 +143,16 @@ class TNArchipelHypervisor(TNArchipelEntity):
         self.initialize_modules('archipel.plugin.hypervisor')
         
         # libvirt connection
-        self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
-        if self.libvirt_connection == None:
-            self.log.error("unable to connect libvirt")
-            sys.exit(-42) 
-        self.log.info("connected to  libvirt")
+        if self.configuration.has_option("GLOBAL", "libvirt_need_authentication") and self.configuration.getboolean("GLOBAL", "libvirt_need_authentication"):
+            auth = [[libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE], 
+                    self.libvirt_credential_callback, None]
+            self.libvirt_connection = libvirt.openAuth(self.local_libvirt_uri, auth, 0)
+        else:
+            self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
+            if self.libvirt_connection == None:
+                self.log.error("unable to connect libvirt")
+                sys.exit(-42)
+                self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
         self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
         self.capabilities = self.get_capabilities()
         
@@ -157,6 +162,19 @@ class TNArchipelHypervisor(TNArchipelEntity):
         # action on auth
         self.register_actions_to_perform_on_auth("manage_vcard")
         self.register_actions_to_perform_on_auth("update_presence")
+        
+    
+    
+    def libvirt_credential_callback(self, creds, cbdata):
+        """
+        manage the libvirt credentials
+        """
+        if creds[0][0] == libvirt.VIR_CRED_PASSPHRASE:
+            ## TODO:  manage this more
+            creds[0][4] = self.configuration.get("GLOBAL", "libvirt_auth_passwor")
+            return 0
+        else:
+            return -1
         
     
     
