@@ -17,23 +17,18 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-import os, sys, commands
-import new
+import os, sys
 import getopt
 import xmpp
-import socket
 
 from archipel.utils import *
 import archipel
-import archipel.libvirtEventLoop
-import archipel.archipelHypervisor
 
 
 ## error codes
 ARCHIPEL_INIT_SUCCESS           = 0
 ARCHIPEL_INIT_ERROR_NO_CONFIG   = 1
 ARCHIPEL_INIT_ERROR_NO_MODULE   = 2
-ARCHIPEL_INIT_ERROR_BAD_LIBVIRT = 3
 ARCHIPEL_INIT_ERROR_UNKNOWN     = 4
 
 
@@ -48,51 +43,35 @@ Options :
 * --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
 """
 
-def test_libvirt():
-    """test if all needed libvirt's function are present"""
-    try:
-        import libvirt
-    except:
-        print "\n\n\033[31mERROR: you need python libvirt module. I can't import it.\033[0m\n"
-        return False
-    try:
-        getattr(libvirt.virConnect, "domainEventRegisterAny")
-    except:
-        print "\n\n\033[31mERROR: your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.\033[0m\n"
-        return False
-    return True
+
+def format_version(info):
+    """format the verson info"""
+    print " - %s : %s" % (info[0], info[1])
 
 
 def versions():
     import pkg_resources
-    print "* Archipel Agent version : "
-    print ("archipelagent", pkg_resources.get_distribution("archipel-agent").version)    
-    print "* Installed plugins versions : "
+    """print versions of all installed modules"""
+    print "\033[32m* Archipel Agent version : \033[0m"
+    format_version(("archipelagent", pkg_resources.get_distribution("archipel-agent").version))
+    print "\n\033[32m* Installed worker : \033[0m"
+    for version_method in pkg_resources.iter_entry_points(group="archipel.worker", name="version"):
+        method  = version_method.load()
+        format_version(method())
+    print "\n\033[32m* Installed plugins versions : \033[0m"
     for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
         method  = version_method.load()
-        print method()
-    
+        format_version(method())
+
 
 def main():
-    """
-    main function of Archipel
-    """
-    # starting thre libvirt event loop
-    archipel.libvirtEventLoop.virEventLoopPureStart()
-    # initializing the hypervisor XMPP entity
-    jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
-    password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
-    database    = config.get("HYPERVISOR", "hypervisor_database_path")
-    name        = config.get("HYPERVISOR", "hypervisor_name")
-    jid.setResource(socket.gethostname())
-    hyp = archipel.archipelHypervisor.TNArchipelHypervisor(jid, password, config, name, database)
-    hyp.connect()
-    hyp.loop()
-
+    import pkg_resources
+    for main_method in pkg_resources.iter_entry_points(group="archipel.worker", name="init_worker"):
+        method = main_method.load()
+        method(config)
+    
 
 if __name__ == "__main__":
-    if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
-
     opts, args = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
 
     configPath = "/etc/archipel/archipel.conf"
@@ -122,7 +101,6 @@ if __name__ == "__main__":
         except OSError as e:
             sys.exit(ARCHIPEL_INIT_ERROR_UNKNOWN)
     else:
-        hyp = None
         try:
             main()
         except KeyboardInterrupt:

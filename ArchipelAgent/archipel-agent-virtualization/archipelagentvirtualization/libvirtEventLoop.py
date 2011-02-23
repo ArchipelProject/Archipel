@@ -7,7 +7,6 @@
 #################################################################################
 
 import sys
-import getopt
 import os
 import libvirt
 import select

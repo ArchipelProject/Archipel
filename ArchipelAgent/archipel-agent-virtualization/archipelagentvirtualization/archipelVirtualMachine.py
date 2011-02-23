@@ -42,10 +42,13 @@ import thread
 import shutil
 
 from archipel.utils import *
-from archipel.archipelWebSocket import *
-from archipel.libvirtEventLoop import *
-from archipel.archipelEntity import *
 from archipel.archipelTriggers import *
+from archipel.archipelEntity import *
+
+from archipelWebSocket import *
+from libvirtEventLoop import *
+from archipelLibvirtEntity import *
+
 
 ARCHIPEL_ERROR_CODE_VM_CREATE                   = -1001
 ARCHIPEL_ERROR_CODE_VM_SUSPEND                  = -1002
@@ -67,7 +70,7 @@ ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
 
 
-class TNArchipelVirtualMachine(TNArchipelEntity):
+class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have 
@@ -78,9 +81,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         contructor of the class
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
+        TNArchipelLibvirtEntity.__init__(self, configuration)
         
         self.hypervisor                 = hypervisor
-        self.libvirt_connection         = libvirt.open(self.configuration.get("GLOBAL", "libvirt_uri"))
         self.libvirt_status             = libvirt.VIR_DOMAIN_SHUTDOWN
         self.domain                     = None
         self.definition                 = None
@@ -96,6 +99,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity):
         self.watchers                   = {}
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+        
+        
+        self.connect_libvirt()
         
         # create VM folders if not exists
         if not os.path.isdir(self.folder): os.makedirs(self.folder)

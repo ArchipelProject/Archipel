@@ -32,8 +32,10 @@ import string
 import random
 import libvirt
 
+from archipel.archipelEntity import *
 from archipel.utils import *
-from archipelEntity import *
+
+from archipelLibvirtEntity import *
 from archipelVirtualMachine import *
 
 
@@ -87,7 +89,7 @@ class TNThreadedVirtualMachine(Thread):
 
 
 
-class TNArchipelHypervisor(TNArchipelEntity):
+class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
@@ -106,11 +108,11 @@ class TNArchipelHypervisor(TNArchipelEntity):
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
+        TNArchipelLibvirtEntity.__init__(self, configuration)
         
         self.virtualmachines            = {}
         self.database_file              = database_file
         self.xmppserveraddr             = self.jid.getDomain()
-        self.local_libvirt_uri          = self.configuration.get("GLOBAL", "libvirt_uri")
         self.entity_type                = "hypervisor"
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
@@ -142,16 +144,9 @@ class TNArchipelHypervisor(TNArchipelEntity):
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.hypervisor')
         
-        # libvirt connection
-        if self.configuration.has_option("GLOBAL", "libvirt_need_authentication") and self.configuration.getboolean("GLOBAL", "libvirt_need_authentication"):
-            auth = [[libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE], self.libvirt_credential_callback, None]
-            self.libvirt_connection = libvirt.openAuth(self.local_libvirt_uri, auth, 0)
-        else:
-            self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
-            if self.libvirt_connection == None:
-                self.log.error("unable to connect libvirt")
-                sys.exit(-42)
-                self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
+        # # libvirt connection
+        self.connect_libvirt()
+        
         try:
             self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
         except libvirt.libvirtError:
@@ -165,20 +160,6 @@ class TNArchipelHypervisor(TNArchipelEntity):
         # action on auth
         self.register_actions_to_perform_on_auth("manage_vcard")
         self.register_actions_to_perform_on_auth("update_presence")
-        
-    
-    
-    def libvirt_credential_callback(self, creds, cbdata):
-        """
-        manage the libvirt credentials
-        """
-        if creds[0][0] == libvirt.VIR_CRED_PASSPHRASE:
-            ## TODO:  manage this more
-            creds[0][4] = self.configuration.get("GLOBAL", "libvirt_auth_password")
-            return 0
-        else:
-            return -1
-        
     
     
     def update_presence(self, params=None):

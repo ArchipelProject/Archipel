@@ -69,6 +69,7 @@ setup(name='archipel-agent',
       install_requires=[
         "xmpppy>=0.5.0rc1",
         "sqlobject>=0.14.1",
+        "archipel-agent-virtualization>=1.0.1beta",
         "archipel-agent-action-scheduler>=1.0.14beta",
         "archipel-agent-hypervisor-geolocalization>=1.0.14beta",
         "archipel-agent-hypervisor-health>=1.0.16beta",
