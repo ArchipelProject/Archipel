@@ -171,7 +171,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         """
         if creds[0][0] == libvirt.VIR_CRED_PASSPHRASE:
             ## TODO:  manage this more
-            creds[0][4] = self.configuration.get("GLOBAL", "libvirt_auth_passwor")
+            creds[0][4] = self.configuration.get("GLOBAL", "libvirt_auth_password")
             return 0
         else:
             return -1
