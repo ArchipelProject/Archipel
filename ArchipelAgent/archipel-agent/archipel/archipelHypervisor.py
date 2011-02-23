@@ -144,8 +144,7 @@ class TNArchipelHypervisor(TNArchipelEntity):
         
         # libvirt connection
         if self.configuration.has_option("GLOBAL", "libvirt_need_authentication") and self.configuration.getboolean("GLOBAL", "libvirt_need_authentication"):
-            auth = [[libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE], 
-                    self.libvirt_credential_callback, None]
+            auth = [[libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE], self.libvirt_credential_callback, None]
             self.libvirt_connection = libvirt.openAuth(self.local_libvirt_uri, auth, 0)
         else:
             self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
@@ -153,7 +152,11 @@ class TNArchipelHypervisor(TNArchipelEntity):
                 self.log.error("unable to connect libvirt")
                 sys.exit(-42)
                 self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
-        self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
+        try:
+            self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None) 
+        except libvirt.libvirtError:
+            self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
+        
         self.capabilities = self.get_capabilities()
         
         # persistance
