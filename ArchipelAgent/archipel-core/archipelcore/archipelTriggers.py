@@ -18,7 +18,7 @@
 import xmpp
 import archipel.pubsub
 import datetime
-from archipel.utils import *
+from archipelcore.utils import *
 
 ARCHIPEL_TRIGGER_MODE_MANUAL    = 0
 ARCHIPEL_TRIGGER_MODE_AUTO      = 1

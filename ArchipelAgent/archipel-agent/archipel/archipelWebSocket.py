@@ -23,7 +23,7 @@ import threading
 import thread
 import sys, socket, ssl, optparse
 from select import select
-from archipel.utils import *
+from archipelcore.utils import *
 
 
 WEBPROXY_HANDSHAKE = """HTTP/1.1 101 Web Socket Protocol Handshake\r

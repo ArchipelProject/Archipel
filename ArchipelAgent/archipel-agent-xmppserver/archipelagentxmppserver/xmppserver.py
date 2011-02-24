@@ -22,7 +22,7 @@ import uuid
 import xmlrpclib
 import os, commands
 import re
-from archipel.utils import *
+from archipelcore.utils import *
 import archipel
 from archipel.archipelPlugin import TNArchipelPlugin
 

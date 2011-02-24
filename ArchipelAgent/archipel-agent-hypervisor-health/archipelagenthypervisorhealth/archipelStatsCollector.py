@@ -22,7 +22,7 @@ import commands
 import subprocess
 import time
 from threading import Thread
-from archipel.utils import *
+from archipelcore.utils import *
 
 
 class TNThreadedHealthCollector(Thread):

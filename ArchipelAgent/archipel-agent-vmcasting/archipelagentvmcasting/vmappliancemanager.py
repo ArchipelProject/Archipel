@@ -19,7 +19,7 @@
 import xmpp
 import appliancedecompresser
 import appliancecompresser
-from archipel.utils import *
+from archipelcore.utils import *
 import archipel
 from archipel.archipelPlugin import TNArchipelPlugin
 import sqlite3

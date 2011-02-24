@@ -23,33 +23,31 @@ AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
-NAME                = 'archipel-agent-virtualization'
-SHORTDESCRIPTION    = "Virtualization layer of Archipel"
+NAME                = 'archipel-core'
+SHORTDESCRIPTION    = "Base framework"
 LONGDESCRIPTION     = ""
-ENTRY_POINTS        = { 'archipel.worker' :  [
-                            'init_worker=archipelagentvirtualization:init_worker',
-                            'version=archipelagentvirtualization:version']}
+ENTRY_POINTS        = {}
 
 setup(name=NAME,
       version=VERSION,
       description=SHORTDESCRIPTION,
       long_description=LONGDESCRIPTION,
       classifiers=[
-          'Development Status :: 4 - Beta',
-          'Environment :: Console',
-          'Environment :: No Input/Output (Daemon)',
-          'Intended Audience :: Developers',
-          'Intended Audience :: Education',
-          'Intended Audience :: End Users/Desktop',
-          'Intended Audience :: Science/Research',
-          'Intended Audience :: System Administrators',
-          'Intended Audience :: Telecommunications Industry',
-          'License :: OSI Approved :: GNU Affero General Public License v3',
-          'Operating System :: POSIX :: Linux',
-          'Programming Language :: Python',
-          'Topic :: Internet',
-          'Topic :: System :: Emulators',
-          'Topic :: System :: Operating System'],
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
+        'Environment :: No Input/Output (Daemon)',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: End Users/Desktop',
+        'Intended Audience :: Science/Research',
+        'Intended Audience :: System Administrators',
+        'Intended Audience :: Telecommunications Industry',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
+        'Topic :: Internet',
+        'Topic :: System :: Emulators',
+        'Topic :: System :: Operating System'],
       keywords='archipel, virtualization, libvirt, orchestration',
       author=AUTHOR,
       author_email=MAIL,
@@ -59,7 +57,7 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "archipel-agent"
+        "xmpppy>=0.5.0rc1"
       ],
       entry_points=ENTRY_POINTS
       )

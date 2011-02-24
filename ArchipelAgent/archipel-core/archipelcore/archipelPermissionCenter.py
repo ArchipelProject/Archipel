@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from sqlobject import *
-from archipel.utils import *
+from archipelcore.utils import *
 
 class TNArchipelPermissionCenter:
     

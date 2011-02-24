@@ -57,7 +57,7 @@ def clean_build(path, notexit=False):
 def devinstallation(path):
     """force reinstall"""
     for plugin_folder in os.listdir(path):
-        if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
+        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
             cmd = "easy_install -m %s ; easy_install -H None -f %s -U -a --no-deps %s" % (plugin_folder, path, plugin_folder)
             os.system(cmd)
     print "\033[32mSUCCESS: installation done \033[0m\n"
@@ -67,7 +67,7 @@ def devinstallation(path):
 def process(path, build, upload, register, clean, devinstall):
     """parse command"""
     for plugin_folder in os.listdir(path):
-        if os.path.isdir(plugin_folder) and plugin_folder.startswith("archipel-agent"):
+        if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
             os.chdir(plugin_folder)
             if register:                os.system("python setup.py register")
             if build and not upload:    os.system("python setup.py bdist_egg")

@@ -35,7 +35,7 @@ import datetime
 import sqlite3
 from pkg_resources import iter_entry_points
 
-from archipel.utils import *
+from archipelcore.utils import *
 import archipel.pubsub
 import archipel.archipelPermissionCenter
 

@@ -18,7 +18,7 @@
 
 # we need to import the package containing the class to surclass
 import xmpp
-from archipel.utils import *
+from archipelcore.utils import *
 import archipel
 from archipel.archipelPlugin import TNArchipelPlugin
 import commands

@@ -41,9 +41,9 @@ import sqlite3
 import thread
 import shutil
 
-from archipel.utils import *
+from archipelcore.utils import *
 from archipel.archipelTriggers import *
-from archipel.archipelEntity import *
+from archipelcore.archipelEntity import *
 
 from archipelWebSocket import *
 from libvirtEventLoop import *

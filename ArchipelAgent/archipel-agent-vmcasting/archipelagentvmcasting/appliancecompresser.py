@@ -19,7 +19,7 @@ import os, sys
 import tempfile
 import tarfile
 import gzip
-from archipel.utils import *
+from archipelcore.utils import *
 from threading import Thread
 import xmpp
 import shutil

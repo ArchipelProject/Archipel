@@ -32,8 +32,8 @@ import string
 import random
 import libvirt
 
-from archipel.archipelEntity import *
-from archipel.utils import *
+from archipelcore.archipelEntity import *
+from archipelcore.utils import *
 
 from archipelLibvirtEntity import *
 from archipelVirtualMachine import *

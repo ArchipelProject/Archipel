@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import notifications
-from archipel.utils import *
+from archipelcore.utils import *
 from archipel.archipelPlugin import TNArchipelPlugin
 
 class AppNotificator (TNArchipelPlugin):
