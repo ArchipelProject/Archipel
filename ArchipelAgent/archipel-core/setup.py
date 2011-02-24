@@ -24,7 +24,7 @@ MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
 LICENSE             = 'AGPL'
 NAME                = 'archipel-core'
-SHORTDESCRIPTION    = "Base framework"
+SHORTDESCRIPTION    = "Base framework of Archipel."
 LONGDESCRIPTION     = ""
 ENTRY_POINTS        = {}
 
