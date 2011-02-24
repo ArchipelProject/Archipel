@@ -45,7 +45,6 @@ from archipelcore.utils import *
 from archipelcore.archipelTriggers import *
 from archipelcore.archipelEntity import *
 
-from archipelWebSocket import *
 from libvirtEventLoop import *
 from archipelLibvirtEntity import *
 
@@ -59,7 +58,6 @@ ARCHIPEL_ERROR_CODE_VM_REBOOT                   = -1006
 ARCHIPEL_ERROR_CODE_VM_DEFINE                   = -1007
 ARCHIPEL_ERROR_CODE_VM_UNDEFINE                 = -1008
 ARCHIPEL_ERROR_CODE_VM_INFO                     = -1009
-ARCHIPEL_ERROR_CODE_VM_VNC                      = -1010
 ARCHIPEL_ERROR_CODE_VM_XMLDESC                  = -1011
 ARCHIPEL_ERROR_CODE_VM_LOCKED                   = -1012
 ARCHIPEL_ERROR_CODE_VM_MIGRATE                  = -1013
@@ -127,6 +125,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.create_hook("HOOK_VM_DEFINE")
         self.create_hook("HOOK_VM_INITIALIZE")
         self.create_hook("HOOK_VM_TERMINATE")
+        self.create_hook("HOOK_VM_CRASH")
+        self.create_hook("HOOK_XMPP_CONNECT")
+        self.create_hook("HOOK_XMPP_DISCONNECT")
         
         # actions on auth
         self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
@@ -198,11 +199,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
                                 "permissions": ["info"],
                                 "description": "I'll give info about me" },
                             
-                            {  "commands" : ["vnc", "screen"], 
-                                "parameters": [],
-                                "method": self.message_vncdisplay,
-                                "permissions": ["vncdisplay"],
-                                "description": "I'll show my VNC port" },
                                 
                             {  "commands" : ["desc", "xml"], 
                                 "parameters": [],
@@ -241,7 +237,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.permission_center.create_permission("reboot", "Authorizes users to reboot virtual machine", False)
         self.permission_center.create_permission("suspend", "Authorizes users to suspend virtual machine ", False)
         self.permission_center.create_permission("resume", "Authorizes users to resume virtual machine", False)
-        self.permission_center.create_permission("vncdisplay", "Authorizes users to access the vnc display port", False)
         self.permission_center.create_permission("xmldesc", "Authorizes users to access the XML description of the virtual machine", False)
         self.permission_center.create_permission("migrate", "Authorizes users to perform live migration", False)
         self.permission_center.create_permission("autostart", "Authorizes users to set the virtual machine autostart", False)
@@ -302,7 +297,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             self.log.info("virtual machine state is %d" %  dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
-                self.create_novnc_proxy()
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_ON)
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
@@ -360,41 +354,38 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created", excludedgroups=['vitualmachines'])
-                self.create_novnc_proxy()
-                self.perform_hooks("HOOK_VM_CREATE")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_ON)
+                self.perform_hooks("HOOK_VM_CREATE")
             
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED and not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                 self.push_change("virtualmachine:control", "suspended", excludedgroups=['vitualmachines'])
-                self.perform_hooks("HOOK_VM_SUSPEND")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_SUSPEND")
             
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and not detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "resumed", excludedgroups=['vitualmachines'])
-                self.perform_hooks("HOOK_VM_RESUME")
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
+                self.perform_hooks("HOOK_VM_RESUME")
             
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_STOP")
-                self.stop_novnc_proxy()
             
             elif event == libvirt.VIR_DOMAIN_CRASHED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_CRASHED)
                 self.push_change("virtualmachine:control", "crashed", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
-                self.stop_novnc_proxy()
+                self.perform_hooks("HOOK_VM_CRASH")
                 
             elif event == libvirt.VIR_DOMAIN_SHUTOFF:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTOFF)
                 self.push_change("virtualmachine:control", "shutoff", excludedgroups=['vitualmachines'])
                 self.triggers["libvirt_run"].set_state(ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_SHUTOFF")
-                self.stop_novnc_proxy()
             
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
@@ -441,42 +432,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             self.libvirt_connection.close()
             self.libvirt_connection = None
         
-        self.stop_novnc_proxy()
+        self.perform_hooks("HOOK_XMPP_DISCONNECT")
         
         TNArchipelEntity.disconnect(self)
-    
-    
-    def create_novnc_proxy(self):
-        """
-        create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
-        """
-        if not self.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU: 
-            self.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.libvirt_connection.getType())
-            return
-        
-        current_vnc_port        = self.vncdisplay()["direct"]
-        novnc_proxy_port        = self.vncdisplay()["proxy"]
-        self.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
-        
-        cert = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file")
-        if cert.lower() in ("none", "no", "false"): cert = None
-        self.log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
-        onlyssl = self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl")
-        self.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
-        self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl)
-        self.novnc_proxy.start()
-        self.push_change("virtualmachine:control", "websocketvncstart", excludedgroups=['vitualmachines'])
-    
-    
-    def stop_novnc_proxy(self):
-        """
-        stops the current novnc websocket proxy is any.
-        """
-        if self.novnc_proxy:
-            self.log.info("stopping novnc proxy")
-            self.novnc_proxy.stop()
-            self.novnc_proxy = None
-            self.push_change("virtualmachine:control", "websocketvncstop", excludedgroups=['vitualmachines'])
     
     
     def manage_trigger_persistance(self):
@@ -510,7 +468,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     
     
     
-    
     ### Process IQ 
     
     def __process_iq_archipel_control(self, conn, iq):
@@ -525,7 +482,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             - reboot
             - suspend
             - resume
-            - vncdisplay
             - xmldesc
             - migrate
             - autostart
@@ -544,13 +500,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             self.log.info("control action required but no libvirt connection")
             raise xmpp.protocol.NodeProcessed
         
-        if self.is_migrating and (not action in ("info", "vncdisplay", "xmldesc", "networkinfo")):
+        if self.is_migrating and (not action in ("info", "xmldesc", "networkinfo")):
             reply = build_error_iq(self, "virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-        
-        if not self.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU and action == "vncdisplay":
-            reply = build_error_iq(self, "Hypervisor %s doesn't support VNC" % self.libvirt_connection.getType(), iq, ARCHIPEL_NS_ERROR_INVALID_HYPERVISOR)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         
@@ -562,7 +513,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         elif action == "reboot":        reply = self.iq_reboot(iq)
         elif action == "suspend":       reply = self.iq_suspend(iq)
         elif action == "resume":        reply = self.iq_resume(iq)
-        elif action == "vncdisplay":    reply = self.iq_vncdisplay(iq)
         elif action == "xmldesc":       reply = self.iq_xmldesc(iq)
         elif action == "migrate":       reply = self.iq_migrate(iq)
         elif action == "autostart":     reply = self.iq_autostart(iq)
@@ -728,27 +678,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.domain.setAutostart(flag)
     
     
-    def vncdisplay(self):
-        xmldesc = self.domain.XMLDesc(0)
-        xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-        directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
-        if directport == -1:
-            return {"direct"        : -1, 
-                    "proxy"         : -1, 
-                    "onlyssl"       : False, 
-                    "supportssl"    : False}
-        proxyport = directport + 1000
-        supportSSL = self.configuration.get("VIRTUALMACHINE", "vnc_certificate_file")
-        if supportSSL.lower() in ("none", "no", "false"): 
-            supportSSL = False
-        else: 
-            supportSSL = True
-        return {"direct"        : directport, 
-                "proxy"         : proxyport, 
-                "onlyssl"       : self.configuration.getboolean("VIRTUALMACHINE", "vnc_only_ssl"), 
-                "supportssl"    : supportSSL}
-    
-    
     def xmldesc(self):
         xmldesc = self.domain.XMLDesc(libvirt.VIR_DOMAIN_XML_SECURE)
         descnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
@@ -854,7 +783,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     
     
     
-    
     ### Other stuffs
     
     def perform_threaded_copy(self, src_path, newxml):
@@ -907,9 +835,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     
     
     ### XMPP Controls
-     
-    
-    # iq control
     
     def iq_migrate(self, iq):
         try:
@@ -1195,42 +1120,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     
     
     
-    def iq_vncdisplay(self, iq):
-        """
-        get the VNC display used in the virtual machine.
-        
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        
-        @rtype: xmpp.Protocol.Iq
-        @return: a ready to send IQ containing the result of the action
-        """
-        reply = iq.buildReply("result")
-        try:
-            if not self.domain:
-                return iq.buildReply('ignore')
-            ports = self.vncdisplay()
-            payload = xmpp.Node("vncdisplay", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
-            reply.setQueryPayload([payload])
-        except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_VNC)
-        return reply
-    
-    
-    def message_vncdisplay(self, msg):
-        """
-        handle message vnc display order
-        """
-        try:
-            ports = self.vncdisplay()
-            return "you can connect to my screen at %s:%s" % (self.ipaddr, ports["direct"])
-        except Exception as ex:
-            return build_error_message(self, ex)
-    
-    
-    
     def iq_xmldesc(self, iq):
         """
         get the XML Desc of the virtual machine.
@@ -1259,7 +1148,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         handle message xmldesc order
         """
         return str(self.xmldesc())
-    
     
     
     
@@ -1459,7 +1347,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         
     
     
-        
+    
     
     # def iq_setcpuspin(self, iq):
     #     """

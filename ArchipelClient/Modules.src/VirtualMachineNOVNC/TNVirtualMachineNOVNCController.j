@@ -28,24 +28,24 @@
     using VNC.
 */
 
-TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
+TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmachine:vnc";
 
 /*! @ingroup virtualmachinevnc
-    @group TNArchipelTypeVirtualMachineControl
+    @group TNArchipelTypeVirtualMachineVNC
     namespave of vm control
 */
-TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
+TNArchipelTypeVirtualMachineVNC                 = @"archipel:virtualmachine:vnc";
 
 /*! @ingroup virtualmachinenovnc
-    @group TNArchipelTypeVirtualMachineControl
+    @group TNArchipelTypeVirtualMachineVNC
     get vnc display
 */
-TNArchipelTypeVirtualMachineControlVNCDisplay   = @"vncdisplay";
+TNArchipelTypeVirtualMachineVNCDisplay          = @"vncdisplay";
 
 
 
 /*! @ingroup virtualmachinenovnc
-    @group TNArchipelTypeVirtualMachineControl
+    @group TNArchipelTypeVirtualMachineVNC
     identifier prefix of zoom scaling
 */
 TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
@@ -179,7 +179,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCShowExternalWindowNotification object:nil];
     [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
 
-    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationControl];
+    [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVNC];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
@@ -276,7 +276,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 #pragma mark -
 #pragma mark Notification handlers
 
-/*! called when TNArchipelPushNotificationControl is recieved
+/*! called when TNArchipelPushNotificationVNC is recieved
     @param somePushInfo CPDictionary containing the push information
 */
 - (BOOL)_didReceivePush:(CPDictionary)somePushInfo
@@ -620,9 +620,9 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 {
     var stanza   = [TNStropheStanza iqWithType:@"get"];
 
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVNC}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlVNCDisplay}];
+        "action": TNArchipelTypeVirtualMachineVNCDisplay}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveVNCDisplay:) ofObject:self];
 }

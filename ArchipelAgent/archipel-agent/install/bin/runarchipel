@@ -24,7 +24,6 @@ import socket
 
 from archipelcore.utils import *
 
-import archipel.archipelWebSocket
 import archipel.archipelHypervisor
 import archipel.archipelVirtualMachine
 import archipel.libvirtEventLoop

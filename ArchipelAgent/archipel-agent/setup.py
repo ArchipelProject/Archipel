@@ -78,7 +78,8 @@ setup(name='archipel-agent',
         "archipel-agent-virtualmachine-snapshoting>=1.0.15beta",
         "archipel-agent-virtualmachine-storage>=1.0.19beta",
         "archipel-agent-vmcasting>=1.0.16beta",
-        "archipel-agent-xmppserver>=1.0.16beta"
+        "archipel-agent-xmppserver>=1.0.16beta",
+        "archipel-agent-virtualmachine-vnc>=1.0.1beta"
       ],
       entry_points="""
         # -*- Entry points: -*-
