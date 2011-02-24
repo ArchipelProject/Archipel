@@ -20,7 +20,7 @@ import commands
 import xmpp
 import os
 import archipel
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 from libvirt import *
 
 ARCHIPEL_NS_SNAPSHOTING                 = "archipel:virtualmachine:snapshoting"

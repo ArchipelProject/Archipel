@@ -20,7 +20,7 @@
 import xmpp
 from archipelcore.utils import *
 import archipel
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 import commands
 import sqlite3
 

@@ -21,7 +21,7 @@ import appliancedecompresser
 import appliancecompresser
 from archipelcore.utils import *
 import archipel
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 import sqlite3
 import os
 

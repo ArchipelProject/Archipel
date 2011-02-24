@@ -42,7 +42,7 @@ import thread
 import shutil
 
 from archipelcore.utils import *
-from archipel.archipelTriggers import *
+from archipelcore.archipelTriggers import *
 from archipelcore.archipelEntity import *
 
 from archipelWebSocket import *
@@ -113,7 +113,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         # permissions
         permission_db_file              = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
         permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = archipel.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
+        self.permission_center          = archipelcore.archipelPermissionCenter.TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
         self.init_permissions()
         
         # hooks

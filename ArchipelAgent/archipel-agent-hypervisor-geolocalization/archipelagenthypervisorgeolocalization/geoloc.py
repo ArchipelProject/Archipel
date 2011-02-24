@@ -21,7 +21,7 @@ import xmpp
 from archipelcore.utils import *
 import archipel
 import httplib
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 
 ARCHIPEL_NS_HYPERVISOR_GEOLOC           = "archipel:hypervisor:geolocalization"
 ARCHIPEL_ERROR_CODE_LOCALIZATION_GET    = -9001

@@ -24,7 +24,7 @@ import os, commands
 import re
 from archipelcore.utils import *
 import archipel
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 
 
 ARCHIPEL_NS_XMPPSERVER_GROUPS  = "archipel:xmppserver:groups"

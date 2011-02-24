@@ -16,7 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import xmpp
-import archipel.pubsub
+import archipelcore.pubsub
 import datetime
 from archipelcore.utils import *
 
@@ -54,7 +54,7 @@ class TNArchipelTrigger:
         self.check_method   = check_method
         self.check_interval = check_interval
         self.nodeName       = "/archipel/trigger/%s/%s" % (self.entity.jid.getStripped(), self.name)
-        self.pubSubNode     = archipel.pubsub.TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, self.nodeName)
+        self.pubSubNode     = archipelcore.pubsub.TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, self.nodeName)
         self.state          = ARCHIPEL_TRIGGER_STATE_OFF
         
         self.init_pubsub_node()
@@ -67,11 +67,11 @@ class TNArchipelTrigger:
         if not self.pubSubNode.recover():
             self.pubSubNode.create()                    
         self.pubSubNode.configure({
-            archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-            archipel.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
-            archipel.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            archipel.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-            archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         })
     
     

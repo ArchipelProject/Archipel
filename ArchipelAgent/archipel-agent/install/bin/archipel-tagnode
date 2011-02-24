@@ -23,7 +23,7 @@ import sys
 import getopt
 import commands
 
-import archipel.pubsub
+import archipelcore.pubsub
 
 
 HELP = """\
@@ -90,20 +90,20 @@ if __name__ == "__main__":
     #creating/getting the tag pubsub node
     tagNodeName = "/archipel/tags"
     
-    pubSubNodeTags = archipel.pubsub.TNPubSubNode(xmppclient, pubsubserver, tagNodeName)
+    pubSubNodeTags = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, tagNodeName)
     
     if action == "create":
         if not pubSubNodeTags.recover():
             pubSubNodeTags.create()
         pubSubNodeTags.configure({
-                archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                archipel.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 100,
-                archipel.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-                archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 100,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         })
         print "\033[32mSUCCESS: pubsub node /archipel/tags created!\033[0m"
     elif action == "delete":

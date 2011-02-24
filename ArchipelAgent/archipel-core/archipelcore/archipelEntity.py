@@ -36,8 +36,8 @@ import sqlite3
 from pkg_resources import iter_entry_points
 
 from archipelcore.utils import *
-import archipel.pubsub
-import archipel.archipelPermissionCenter
+import archipelcore.pubsub
+import archipelcore.archipelPermissionCenter
 
 
 ARCHIPEL_ERROR_CODE_AVATARS             = -1
@@ -281,37 +281,37 @@ class TNArchipelEntity:
         """
         # creating/getting the event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
-        self.pubSubNodeEvent = archipel.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
+        self.pubSubNodeEvent = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
         
         if not self.pubSubNodeEvent.recover():
             self.pubSubNodeEvent.create()
         self.pubSubNodeEvent.configure({
-            archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-            archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-            archipel.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
-            archipel.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-            archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-            archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+            archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         })
         
         # creating/getting the log pubsub node
         logNodeName = "/archipel/" + self.jid.getStripped() + "/logs"
-        self.pubSubNodeLog = archipel.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, logNodeName)
+        self.pubSubNodeLog = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, logNodeName)
         if not self.pubSubNodeLog.recover():
             self.pubSubNodeLog.create()
         self.pubSubNodeLog.configure({
-                archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipel.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
-                archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
-                archipel.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
-                archipel.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-                archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipel.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: self.configuration.get("LOGGING", "log_pubsub_max_items"),
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         })
         
         # creating/getting the tags pubsub node
         tagsNodeName = "/archipel/tags"
-        self.pubSubNodeTags = archipel.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
+        self.pubSubNodeTags = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
         if not self.pubSubNodeTags.recover():
             Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")        
     

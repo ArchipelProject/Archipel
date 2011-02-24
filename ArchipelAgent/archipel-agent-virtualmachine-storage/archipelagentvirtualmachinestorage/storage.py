@@ -20,7 +20,7 @@
 from archipelcore.utils import *
 import xmpp
 import archipel
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 import commands
 import os, sys
 import subprocess

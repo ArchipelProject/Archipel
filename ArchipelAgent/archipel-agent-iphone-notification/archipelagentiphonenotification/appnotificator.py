@@ -17,7 +17,7 @@
 
 import notifications
 from archipelcore.utils import *
-from archipel.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelPlugin import TNArchipelPlugin
 
 class AppNotificator (TNArchipelPlugin):
     
