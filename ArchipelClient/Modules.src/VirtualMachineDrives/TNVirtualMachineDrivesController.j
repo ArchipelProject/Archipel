@@ -466,13 +466,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     if (dSize == @"" || isNaN(dSize))
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must enter a numeric value" style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a numeric value" style:CPCriticalAlertStyle];
         return;
     }
 
     if (dName == @"")
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must enter a valid name" style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a valid name" style:CPCriticalAlertStyle];
         return;
     }
 
@@ -524,13 +524,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a media"];
          return;
     }
 
     if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You must choose a different format"];
+        [TNAlert showAlertWithMessage:@"Error" informative:@"You must choose a different format"];
         return;
 
     }
@@ -630,7 +630,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a media"];
+         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a media"];
          return;
     }
 
