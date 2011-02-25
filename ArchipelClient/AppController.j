@@ -268,10 +268,10 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
     // main split views
-    [mainHorizontalSplitView setIsPaneSplitter:YES];
+    [mainHorizontalSplitView setIsPaneSplitter:NO];
 
     // tags split views
-    [splitViewTagsContents setIsPaneSplitter:YES];
+    [splitViewTagsContents setIsPaneSplitter:NO];
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"pane-divider-thickness"]
 
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
@@ -305,7 +305,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     /* properties controller */
     CPLog.trace(@"initializing the leftSplitView");
-    [leftSplitView setIsPaneSplitter:YES];
+    [leftSplitView setIsPaneSplitter:NO];
     [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[leftSplitView subviews][1] removeFromSuperview];
     [leftSplitView addSubview:[propertiesController mainView]];
