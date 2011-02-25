@@ -272,7 +272,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     // tags split views
     [splitViewTagsContents setIsPaneSplitter:NO];
-    [splitViewTagsContents setValue:0.0 forThemeAttribute:@"pane-divider-thickness"]
+    [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
 
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
