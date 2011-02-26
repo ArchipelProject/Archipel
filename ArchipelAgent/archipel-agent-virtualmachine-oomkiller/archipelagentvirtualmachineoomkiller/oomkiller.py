@@ -162,6 +162,7 @@ class TNOOMKiller (TNArchipelPlugin):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="oom_")
         

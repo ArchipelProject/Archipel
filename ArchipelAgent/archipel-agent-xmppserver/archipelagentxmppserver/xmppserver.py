@@ -111,9 +111,9 @@ class TNXMPPServerController (TNArchipelPlugin):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="xmppserver_groups_")
-        reply = None
         
         if      action == "create":         reply = self.iq_group_create(iq)
         elif    action == "delete":         reply = self.iq_group_delete(iq)

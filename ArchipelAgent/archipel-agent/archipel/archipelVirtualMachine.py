@@ -493,6 +493,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.check_acp(conn, iq)        
         self.check_perm(conn, iq, action, -1)
         
@@ -540,6 +541,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.check_acp(conn, iq)        
         self.check_perm(conn, iq, action, -1)
         

@@ -918,6 +918,7 @@ class TNArchipelEntity:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.check_acp(conn, iq)        
         self.check_perm(conn, iq, action, -1)
         
@@ -1188,6 +1189,7 @@ class TNArchipelEntity:
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.check_acp(conn, iq)
         if not action == "getown":
             self.check_perm(conn, iq, action, -1, prefix="permission_")

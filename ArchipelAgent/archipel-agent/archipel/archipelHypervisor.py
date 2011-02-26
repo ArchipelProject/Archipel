@@ -362,6 +362,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
+        reply = None
         action = self.check_acp(conn, iq)
         
         # temp fix to authorize migration
