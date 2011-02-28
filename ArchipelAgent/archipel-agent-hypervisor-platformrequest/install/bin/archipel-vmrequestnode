@@ -94,7 +94,8 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
-                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
         })
         print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesVMRequest
     elif action == "delete":

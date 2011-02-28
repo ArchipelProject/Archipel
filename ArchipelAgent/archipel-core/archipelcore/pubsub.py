@@ -41,6 +41,7 @@ XMPP_PUBSUB_VAR_NOTIFY_SUB                                  = "pubsub#notify_sub
 XMPP_PUBSUB_VAR_MAX_PAYLOAD_SIZE                            = "pubsub#max_payload_size"
 XMPP_PUBSUB_VAR_TYPE                                        = "pubsub#type"
 XMPP_PUBSUB_VAR_BODY_XSLT                                   = "pubsub#body_xslt"
+XMPP_PUBSUB_VAR_ITEM_REPLY                                  = "pubsub#itemreply"
 
 XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN                           = "open"
 XMPP_PUBSUB_VAR_ACCESS_MODEL_ROSTER                         = "roster"
@@ -49,6 +50,8 @@ XMPP_PUBSUB_VAR_ACCESS_MODEL_WHITELIST                      = "whitelist"
 XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER              = "never"
 XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_ON_SUB             = "on_sub"
 XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_ON_SUB_PRESENCE    = "on_sub_and_presence"
+XMPP_PUBSUB_VAR_ITEM_REPLY_OWNER                            = "owner"
+XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER                        = "publisher"
 
 
 class TNPubSubNode:

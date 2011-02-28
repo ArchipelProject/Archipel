@@ -67,6 +67,11 @@ class TNPlatformRequests (TNArchipelPlugin):
     
     ### Utilities
     
+    
+    def perform_virtual_machine_creation(self, request):
+        return (True, xmpp.Node("anwser"))
+    
+    
     def manage_platform_vm_request(self, entity, args):
         """
         register to pubsub event node /archipel/platform/vmrequests
@@ -85,8 +90,23 @@ class TNPlatformRequests (TNArchipelPlugin):
         """
         triggered when a platform wide virtual machine request is received
         """
-        self.entity.log.info("received a platform-wide virtual machine request (NOT IMPLEMENTED YET)")
-        self.entity.log.debug("event is : %s" % str(event))
+        items = event.getTag("event").getTag("items").getTags("item")
+        
+        for item in items:
+            item_publisher = xmpp.JID(item.getAttr("publisher"))
+            if not item_publisher.getStripped() == self.entity.jid.getStripped():
+                try:
+                    self.entity.log.info("received a platform-wide virtual machine request from %s (NOT IMPLEMENTED YET)" % item_publisher)
+                    request_uuid = item.getTag("archipel").getAttr("uuid")
+                    answer, content = self.perform_virtual_machine_creation(item)
+                    if answer:
+                        answer_node = xmpp.Node("archipel", attrs={"uuid": request_uuid})
+                        answer_node.addChild(node=content)
+                        self.pubsub_vmrequestnode.add_item(answer_node)
+                except Exception as ex:
+                    self.entity.log.error("seems that request is not valid (%s) %s" % (str(ex), str(item)))
+                
+        
         ## RTO
     
     
