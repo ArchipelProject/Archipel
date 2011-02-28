@@ -109,6 +109,10 @@ class TNArchipelEntity:
         if self.name == "auto":
             self.name = self.resource
         
+        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
+        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
+        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
+        
         self.log.info("jid defined as %s" % (str(self.jid)))
         
         ip_conf = self.configuration.get("GLOBAL", "machine_ip")
@@ -226,6 +230,7 @@ class TNArchipelEntity:
         
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.log.info("sucessfully connected")
+        self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
         return True
     
     
@@ -250,6 +255,7 @@ class TNArchipelEntity:
         self.isAuth = True
         self.perform_all_registered_auth_actions()
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
+        self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
     
     
     def connect(self):
@@ -269,6 +275,7 @@ class TNArchipelEntity:
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+            self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
         else:
             self.log.warning("trying to disconnect, but not connected. ignoring")
     
