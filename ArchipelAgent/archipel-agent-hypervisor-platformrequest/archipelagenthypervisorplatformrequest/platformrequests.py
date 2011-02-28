@@ -85,7 +85,7 @@ class TNPlatformRequests (TNArchipelPlugin):
         """
         triggered when a platform wide virtual machine request is received
         """
-        self.entity.log.info("received a platform-wide virtual machine request (NOT IMPLEMENTED YET)"
+        self.entity.log.info("received a platform-wide virtual machine request (NOT IMPLEMENTED YET)")
         self.entity.log.debug("event is : %s" % str(event))
         ## RTO
     
