@@ -44,8 +44,8 @@ class TNArchipelVNC (TNArchipelPlugin):
         # vocabulary
         registrar_item = {  "commands" : ["vnc", "screen"], 
                             "parameters": [],
-                            "method": self.message_vncdisplay,
-                            "permissions": ["vncdisplay"],
+                            "method": self.message_display,
+                            "permissions": ["vnc_display"],
                             "description": "I'll show my VNC port" }
         self.entity.add_message_registrar_item(registrar_item)
         
@@ -111,8 +111,8 @@ class TNArchipelVNC (TNArchipelPlugin):
             self.entity.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
             return
         
-        current_vnc_port        = self.vncdisplay()["direct"]
-        novnc_proxy_port        = self.vncdisplay()["proxy"]
+        current_vnc_port        = self.display()["direct"]
+        novnc_proxy_port        = self.display()["proxy"]
         self.entity.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         
         cert = self.configuration.get("VNC", "vnc_certificate_file")
@@ -143,7 +143,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         this method is invoked when a ARCHIPEL_NS_VNC IQ is received.
         
         it understands IQ of type:
-            - vncdisplay
+            - display
         
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -156,14 +156,14 @@ class TNArchipelVNC (TNArchipelPlugin):
         
         if not self.entity.domain: raise xmpp.protocol.NodeProcessed
         
-        elif action == "vncdisplay":    reply = self.iq_vncdisplay(iq)
+        elif action == "display":    reply = self.iq_display(iq)
         
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
     
     
-    def vncdisplay(self):
+    def display(self):
         """
         return an dist containing VNC informations
         """
@@ -187,7 +187,7 @@ class TNArchipelVNC (TNArchipelPlugin):
                 "supportssl"    : supportSSL}
     
     
-    def iq_vncdisplay(self, iq):
+    def iq_display(self, iq):
         """
         get the VNC display used in the virtual machine.
         
@@ -201,8 +201,8 @@ class TNArchipelVNC (TNArchipelPlugin):
         try:
             if not self.entity.domain:
                 return iq.buildReply('ignore')
-            ports = self.vncdisplay()
-            payload = xmpp.Node("vncdisplay", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
+            ports = self.display()
+            payload = xmpp.Node("display", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
             reply.setQueryPayload([payload])
         except libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -211,12 +211,12 @@ class TNArchipelVNC (TNArchipelPlugin):
         return reply
     
     
-    def message_vncdisplay(self, msg):
+    def message_display(self, msg):
         """
         handle message vnc display order
         """
         try:
-            ports = self.vncdisplay()
+            ports = self.display()
             return "you can connect to my screen at %s:%s" % (self.entity.ipaddr, ports["direct"])
         except Exception as ex:
             return build_error_message(self, ex)

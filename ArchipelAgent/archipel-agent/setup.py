@@ -18,7 +18,7 @@
 import os, shutil
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.22'
+VERSION             = '1.0.23'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -79,7 +79,7 @@ setup(name='archipel-agent',
         "archipel-agent-virtualmachine-storage>=1.0.20beta",
         "archipel-agent-vmcasting>=1.0.17beta",
         "archipel-agent-xmppserver>=1.0.17beta",
-        "archipel-agent-virtualmachine-vnc>=1.0.2beta"
+        "archipel-agent-virtualmachine-vnc>=1.0.3beta"
       ],
       entry_points="""
         # -*- Entry points: -*-

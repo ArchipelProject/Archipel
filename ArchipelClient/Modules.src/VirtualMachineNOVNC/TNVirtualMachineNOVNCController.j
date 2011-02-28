@@ -40,7 +40,7 @@ TNArchipelTypeVirtualMachineVNC                 = @"archipel:virtualmachine:vnc"
     @group TNArchipelTypeVirtualMachineVNC
     get vnc display
 */
-TNArchipelTypeVirtualMachineVNCDisplay          = @"vncdisplay";
+TNArchipelTypeVirtualMachineVNCDisplay          = @"display";
 
 
 
@@ -635,7 +635,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     if ([aStanza type] == @"result")
     {
         var defaults    = [CPUserDefaults standardUserDefaults],
-            displayNode = [aStanza firstChildWithName:@"vncdisplay"];
+            displayNode = [aStanza firstChildWithName:@"display"];
 
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];
