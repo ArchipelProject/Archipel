@@ -30,11 +30,13 @@ import archipel.libvirtEventLoop
 
 
 ## error codes
-ARCHIPEL_INIT_SUCCESS           = 0
-ARCHIPEL_INIT_ERROR_NO_CONFIG   = 1
-ARCHIPEL_INIT_ERROR_NO_MODULE   = 2
-ARCHIPEL_INIT_ERROR_BAD_LIBVIRT = 3
-ARCHIPEL_INIT_ERROR_UNKNOWN     = 4
+ARCHIPEL_INIT_SUCCESS                   = 0
+ARCHIPEL_INIT_ERROR_NO_CONFIG           = 1
+ARCHIPEL_INIT_ERROR_NO_MODULE           = 2
+ARCHIPEL_INIT_ERROR_BAD_LIBVIRT         = 3
+ARCHIPEL_INIT_ERROR_UNKNOWN             = 4
+ARCHIPEL_INIT_ERROR_CONNECTION          = 5
+ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
 
 
 ## help message
@@ -100,8 +102,16 @@ def main():
     name        = config.get("HYPERVISOR", "hypervisor_name")
     jid.setResource(socket.gethostname())
     hyp = archipel.archipelHypervisor.TNArchipelHypervisor(jid, password, config, name, database)
-    hyp.connect()
-    hyp.loop()
+    try:
+        hyp.connect()
+    except Exception as ex:
+        log.error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)))
+        sys.exit(ARCHIPEL_INIT_ERROR_CONNECTION)
+    try:
+        hyp.loop()
+    except Exception as ex:
+        log.error("Exception has stoped the hypervisor main loop: %s" % str(ex))
+        sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
     
 
 if __name__ == "__main__":
