@@ -18,11 +18,12 @@
 from archipelagenthypervisorplatformrequest.scorecomputing import TNBasicPlatformScoreComputing
 
 class TNDefaultComputingUnit (TNBasicPlatformScoreComputing):
-
+    
     ### Initialization
     
     def __init__(self):
         TNBasicPlatformScoreComputing.__init__(self)
+    
     
     
     ## Plugin implementation
@@ -43,6 +44,7 @@ class TNDefaultComputingUnit (TNBasicPlatformScoreComputing):
                     "configuration-tokens"      : plugin_configuration_tokens }
     
     
+    
     ### Score computing
     
     def score(self, action=None):
@@ -60,4 +62,5 @@ class TNDefaultComputingUnit (TNBasicPlatformScoreComputing):
         """
         return 0.42 # TODO
     
+
 

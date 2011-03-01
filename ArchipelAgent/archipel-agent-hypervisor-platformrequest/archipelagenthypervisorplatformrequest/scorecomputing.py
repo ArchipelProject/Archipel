@@ -23,7 +23,6 @@ class TNBasicPlatformScoreComputing (object):
     your own computing system
     """
     
-    
     ### Initialization
     
     def __init__(self):

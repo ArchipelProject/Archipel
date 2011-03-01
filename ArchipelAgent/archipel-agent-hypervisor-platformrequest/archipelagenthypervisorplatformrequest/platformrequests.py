@@ -89,10 +89,13 @@ class TNPlatformRequests (TNArchipelPlugin):
             self.entity.log.info("PLATFORMREQ: using default computing unit")
         
     
+    
+    
     ### Performs platform actions
     
     def perform_virtual_machine_creation(self, request):
         return (self.computing_unit.score(), xmpp.Node("anwser"))
+    
     
     
     ### Pubsub management
@@ -116,6 +119,7 @@ class TNPlatformRequests (TNArchipelPlugin):
         self.pubsub_request_out_node.recover()
         self.entity.log.info("PLATFORMREQ: node %s recovered" % nodeVMRequestsOutName)
         
+    
     
     def _handle_request_event(self, event):
         """
