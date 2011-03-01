@@ -39,7 +39,6 @@ var __defaultPermissionCenter;
     CPImageView             _imageViewControlDisabledPrototype;
     CPString                _adminAccountName;
     int                     _adminAccountValidationMode;
-    TNPubSubNode            _pubSubPermission;
 }
 
 + (TNPermissionsCenter)defaultCenter
@@ -148,12 +147,8 @@ var __defaultPermissionCenter;
     var contact = [aNotification object],
         entityType = [[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]];
 
-
     if ((entityType == TNArchipelEntityTypeHypervisor) || (entityType == TNArchipelEntityTypeVirtualMachine))
-    {
         [self getPermissionForEntity:contact];
-    }
-
 }
 
 
@@ -322,7 +317,7 @@ var __defaultPermissionCenter;
 */
 - (void)getPermissionForEntity:(TNStropheContact)anEntity
 {
-    if (!anEntity || ([anEntity class] != TNStropheContact))
+    if (!anEntity || ([anEntity class] != TNStropheContact) || [anEntity XMPPShow] == TNStropheContactStatusOffline)
         return;
 
     CPLog.info("Ask permission to entity for entity " + anEntity);
