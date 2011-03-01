@@ -50,6 +50,7 @@ def clean_build(path, notexit=False):
     os.system('find %s -maxdepth 2 -name "*.egg-info" -type d -exec rm -rf "{}" \;' % path)
     os.system('find %s -maxdepth 2 -name "build" -type d -exec rm -rf "{}" \;' % path)
     os.system('find %s -maxdepth 2 -name "dist" -type d -exec rm -rf "{}" \;' % path)
+    os.system('find %s -maxdepth 2 -name "temp" -type d -exec rm -rf "{}" \;' % path)
     print "\033[32mSUCCESS: build cleaned \033[0m\n"
     if not notexit: sys.exit(0)
 
