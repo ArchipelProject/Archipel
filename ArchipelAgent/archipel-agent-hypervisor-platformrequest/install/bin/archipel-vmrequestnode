@@ -79,14 +79,15 @@ if __name__ == "__main__":
         sys.exit(0)
 
     #creating/getting the roles pubsub node
-    rolesVMRequest = "/archipel/platform/vmrequests"
-    
-    pubSubNodeVMRequest = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesVMRequest)
+    rolesInRequest          = "/archipel/platform/requests/in"
+    rolesOutRequest         = "/archipel/platform/requests/out"
+    pubSubNodeInRequest     = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesInRequest)
+    pubSubNodeOutRequest    = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesOutRequest)
     
     if action == "create":
-        if not pubSubNodeVMRequest.recover():
-            pubSubNodeVMRequest.create()
-        pubSubNodeVMRequest.configure({
+        if not pubSubNodeInRequest.recover():
+            pubSubNodeInRequest.create()
+        pubSubNodeInRequest.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
@@ -97,8 +98,29 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
         })
-        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesVMRequest
+        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesInRequest
+    
+    if action == "create":
+        if not pubSubNodeOutRequest.recover():
+            pubSubNodeOutRequest.create()
+        pubSubNodeOutRequest.configure({
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
+        })
+        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesOutRequest
+        
     elif action == "delete":
-        if pubSubNodeVMRequest.recover():
-            pubSubNodeVMRequest.delete()
-        print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesVMRequest
+        if pubSubNodeInRequest.recover():
+            pubSubNodeInRequest.delete()
+            print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesInRequest
+        if pubSubNodeOutRequest.recover():
+            pubSubNodeOutRequest.delete()
+            print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesOutRequest
+        
