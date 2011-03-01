@@ -586,7 +586,8 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
             "action": TNArchipelTypeHypervisorControlFree,
             "jid": [vm JID]}];
 
-        [[[TNStropheIMClient defaultClient] roster] removeContact:vm];
+        if ([[[TNStropheIMClient defaultClient] roster] containsJID:[vm JID]])
+            [[[TNStropheIMClient defaultClient] roster] removeContact:vm];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didDeleteVirtualMachine:) ofObject:self];
     }
