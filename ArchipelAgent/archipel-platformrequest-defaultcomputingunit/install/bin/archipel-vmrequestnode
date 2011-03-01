@@ -1,0 +1,126 @@
+#!/usr/bin/python -W ignore::DeprecationWarning
+# 
+# archipel-vmrequestnode
+# 
+# Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+# 
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.archipel-vmrequestnode
+
+
+import os
+import sys
+import getopt
+import xmpp
+import archipelcore.pubsub
+
+
+HELP = """\
+archipel-vmrequestnode (c) 2010 Antoine Mercadal
+this tool allow you to create the platform-wide vm request nodes
+
+usage :
+    archipel-vmrequestnode --jid=aJid --password=aPassword [--pubsubserver=pubsub.server] [--create | -c] [--delete | -d]
+    
+    --jid           : set the JID to use
+    --password      : set the password associated to the JID
+    --pubsubserver  : set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]
+    --create, -c    : create the node (default action)
+    --delete, -d    : delete the node
+    --help, -h      : shows this message
+
+"""
+
+if __name__ == "__main__":
+    jid = None
+    password = None
+    pubsubserver = None
+    action = "create"
+    
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hcd", ["jid=", "password=", "pubsubserver=", "help", "create", "delete"])
+        for o, a in opts:
+            if o in ("--jid"):
+                jid = xmpp.JID(a)
+            if o in ("--password"):
+                password = a
+            if o in ("--pubsubserver"):
+                pubsubserver = a
+            if o in ("--create", "-c"):
+                action = "create"
+            if o in ("--delete", "-d"):
+                action = "delete"
+            if o in ("-h", "--help"):
+                print HELP
+                sys.exit(0)
+    except Exception as ex:
+        print "\033[31mERROR: %s \n\033[0m" % str(ex)
+        
+    if not jid or not password :
+        print HELP
+        sys.exit(-1)
+    
+    if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
+    
+    xmppclient = xmpp.Client(jid.getDomain(), debug=[])
+    xmppclient.connect()
+
+    if xmppclient.auth(jid.getNode(), password, "configurator") == None:
+        print "\033[31mERROR: bad authentication. exiting\033[0m"
+        sys.exit(0)
+
+    #creating/getting the roles pubsub node
+    rolesInRequest          = "/archipel/platform/requests/in"
+    rolesOutRequest         = "/archipel/platform/requests/out"
+    pubSubNodeInRequest     = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesInRequest)
+    pubSubNodeOutRequest    = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesOutRequest)
+    
+    if action == "create":
+        if not pubSubNodeInRequest.recover():
+            pubSubNodeInRequest.create()
+        pubSubNodeInRequest.configure({
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
+        })
+        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesInRequest
+    
+    if action == "create":
+        if not pubSubNodeOutRequest.recover():
+            pubSubNodeOutRequest.create()
+        pubSubNodeOutRequest.configure({
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
+                archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
+        })
+        print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesOutRequest
+        
+    elif action == "delete":
+        if pubSubNodeInRequest.recover():
+            pubSubNodeInRequest.delete()
+            print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesInRequest
+        if pubSubNodeOutRequest.recover():
+            pubSubNodeOutRequest.delete()
+            print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesOutRequest
+        
