@@ -137,7 +137,7 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
 {
     var answerNode          = [aStanza firstChildWithName:@"archipel"],
         requestUUID         = [answerNode valueForAttribute:@"uuid"],
-        score               = parseFloat([answerNode valueForAttribute:@"score"]),
+        score               = [[answerNode valueForAttribute:@"score"] floatValue],
         publisher           = [[aStanza firstChildWithName:@"item"] valueForAttribute:@"publisher"],
         infos               = [CPDictionary dictionaryWithObjectsAndKeys:publisher, @"publisher", score, @"score"];
 
