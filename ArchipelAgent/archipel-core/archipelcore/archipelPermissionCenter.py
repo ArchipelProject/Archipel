@@ -333,11 +333,16 @@ class TNArchipelPermissionCenter:
     
     def check_permission(self, user_name, permission_name):
         """check if given user has given permission"""
+        permObject = self.get_permission(permission_name)
         
         if user_name == self.root_admin: return True
         if self.user_has_permission(user_name, "all"): return True
-        if not self.get_user(user_name): return False
-        if not self.get_permission(permission_name): return False
+        if not self.get_user(user_name):
+            if permObject and permObject.defaultValue == 1:
+                return True
+            else:
+                return False
+        if not permObject: return False
         if self.user_has_permission(user_name, permission_name): return True
         
         for role in self.get_user_roles(user_name):
