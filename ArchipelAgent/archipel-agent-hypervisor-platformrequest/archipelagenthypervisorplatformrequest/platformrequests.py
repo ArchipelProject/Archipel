@@ -26,6 +26,8 @@ from archipelcore.pubsub import *
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from scorecomputing import TNBasicPlatformScoreComputing
 
+ARCHIPEL_NS_PLATFORM = "archipel:platform"
+
 
 class TNPlatformRequests (TNArchipelPlugin):
     
@@ -44,6 +46,9 @@ class TNPlatformRequests (TNArchipelPlugin):
         # get eventual computing unit plugin
         self.load_computing_unit()
         
+        # creates permissions
+        self.entity.permission_center.create_permission("platform_allocvm", "Authorizes user to send cross platform request", True)
+        
         # register to the node vmrequest
         self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.manage_platform_vm_request)
     
@@ -52,7 +57,11 @@ class TNPlatformRequests (TNArchipelPlugin):
     ### Plugin interface
     
     def register_for_stanza(self):
-        pass
+        """
+        this method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza
+        """
+        self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_PLATFORM)
     
     
     @staticmethod
@@ -93,8 +102,8 @@ class TNPlatformRequests (TNArchipelPlugin):
     
     ### Performs platform actions
     
-    def perform_virtual_machine_creation(self, request):
-        return (self.computing_unit.score(), xmpp.Node("anwser"))
+    def perform_score_computing(self, request):
+        return self.computing_unit.score(request)
     
     
     
@@ -131,15 +140,63 @@ class TNPlatformRequests (TNArchipelPlugin):
             item_publisher = xmpp.JID(item.getAttr("publisher"))
             if not item_publisher.getStripped() == self.entity.jid.getStripped():
                 try:
-                    self.entity.log.info("PLATFORMREQ: received a platform-wide virtual machine request from %s (NOT IMPLEMENTED YET)" % item_publisher)
-                    request_uuid = item.getTag("archipel").getAttr("uuid")
-                    score, content = self.perform_virtual_machine_creation(item)
+                    self.entity.log.info("PLATFORMREQ: received a platform-wide virtual machine request from %s" % item_publisher)
+                    request_uuid    = item.getTag("archipel").getAttr("uuid")
+                    request_action  = item.getTag("archipel").getAttr("action");
+                    
+                    if not self.entity.permission_center.check_permission(item_publisher.getStripped(), "platform_%s" % request_action):
+                        self.entity.log.warning("user %s have no permission to perform platform action %s" % (item_publisher, request_action))
+                        return
+                    
+                    score = self.perform_score_computing(item)
                     if score:
                         answer_node = xmpp.Node("archipel", attrs={"uuid": request_uuid, "score": score})
-                        answer_node.addChild(node=content)
                         self.pubsub_request_out_node.add_item(answer_node)
                 except Exception as ex:
                     self.entity.log.error("PLATFORMREQ: seems that request is not valid (%s) %s" % (str(ex), str(item)))
     
+    
+    
+    ### XMPP Management
+    
+    def process_iq(self, conn, iq):
+        """
+        this method is invoked when a ARCHIPEL_NS_PLATFORM IQ is received.
+        
+        it understands IQ of type:
+            - allocvm
+            
+        @type conn: xmpp.Dispatcher
+        @param conn: ths instance of the current connection that send the stanza
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
+        reply = None
+        action = self.entity.check_acp(conn, iq)
+        self.entity.check_perm(conn, iq, action, -1, prefix="platform_")
+        
+        if action == "allocvm":   reply = self.iq_allocvm(iq)
+        
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed    
+    
+    
+    def iq_allocvm(self, iq):
+        """
+        return the value of the oom_adjust of the virtual machine
+        
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            self.entity.alloc(requester=iq.getFrom(), requested_name=None)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq)
+        return reply
     
 
