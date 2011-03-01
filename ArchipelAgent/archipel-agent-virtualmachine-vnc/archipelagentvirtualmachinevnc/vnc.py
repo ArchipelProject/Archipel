@@ -53,13 +53,13 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.permission_center.create_permission("vnc_display", "Authorizes users to access the vnc display port", False)    
         
         # hooks
-        self.entity.register_hook("HOOK_VM_CREATE", self.create_novnc_proxy)
-        self.entity.register_hook("HOOK_VM_CRASH", self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_VM_STOP", self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_VM_DESTROY", self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_VM_TERMINATE", self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_XMPP_DISCONNECT", self.stop_novnc_proxy)
-        self.entity.register_hook("HOOK_VM_INITIALIZE", self.awake_from_initialization)
+        self.entity.register_hook("HOOK_VM_CREATE", method=self.create_novnc_proxy)
+        self.entity.register_hook("HOOK_VM_CRASH", method=self.stop_novnc_proxy)
+        self.entity.register_hook("HOOK_VM_STOP", method=self.stop_novnc_proxy)
+        self.entity.register_hook("HOOK_VM_DESTROY", method=self.stop_novnc_proxy)
+        self.entity.register_hook("HOOK_VM_TERMINATE", method=self.stop_novnc_proxy)
+        self.entity.register_hook("HOOK_XMPP_DISCONNECT", method=self.stop_novnc_proxy)
+        self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.awake_from_initialization)
     
     
     
@@ -93,17 +93,17 @@ class TNArchipelVNC (TNArchipelPlugin):
     
     ### Utilities
     
-    def awake_from_initialization(self, entity, args):
+    def awake_from_initialization(self, origin, user_info, arguments):
         """
         will create or not the proxy according to the recovered status of the vm
         """
         if self.entity.domain:
             dominfo = self.entity.domain.info()
             if dominfo[0] == VIR_DOMAIN_RUNNING or dominfo[0] == VIR_DOMAIN_BLOCKED:
-                self.create_novnc_proxy(None, None)
+                self.create_novnc_proxy()
     
     
-    def create_novnc_proxy(self, entity, args):
+    def create_novnc_proxy(self, origin=None, user_info=None, arguments=None):
         """
         create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
         """
@@ -125,7 +125,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.push_change("virtualmachine:vnc", "websocketvncstart", excludedgroups=['vitualmachines'])
     
     
-    def stop_novnc_proxy(self, entity, args):
+    def stop_novnc_proxy(self, origin=None, user_info=None, parameters=None):
         """
         stops the current novnc websocket proxy is any.
         """

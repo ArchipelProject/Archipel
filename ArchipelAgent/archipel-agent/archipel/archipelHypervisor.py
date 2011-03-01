@@ -158,11 +158,11 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.manage_persistance()
         
         # action on auth
-        self.register_actions_to_perform_on_auth("manage_vcard")
-        self.register_actions_to_perform_on_auth("update_presence")
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
     
     
-    def update_presence(self, params=None):
+    def update_presence(self, origin=None, user_info=None, arguments=None):
         count   = len(self.virtualmachines)
         nup     = 0
         status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
@@ -327,7 +327,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 self.log.info("MIGRATION: virtual machine %s stopped because of live migration. Freeing softly" % vmjid)
                 self.free_for_migration(xmpp.JID(vmjid))
-                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", dom)
+                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmjid)
             except Exception as ex:
                 self.log.error("MIGRATION: can't free softly this virtual machine: %s" % str(ex))
             
@@ -340,7 +340,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
                 vmname  = desc.getTag(name="name").getCDATA()
                 self.log.info("MIGRATION: virtual machine %s resumed from live migration. Allocating softly" % vmjid)
                 self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
-                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", dom)
+                self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
                 self.log.warning("MIGRATION: can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
             
@@ -408,7 +408,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
         
         if requester:
             self.log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
-            vm.register_actions_to_perform_on_auth("add_jid", xmpp.JID(requester), persistant=False)
+            vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.add_jid_hook, user_info=xmpp.JID(requester), oneshot=True)
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
         
         self.log.info("registering the new VM in hypervisor's memory")
@@ -516,10 +516,10 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
         
         name = "%s (clone)" % xmppvm.name
         newvm = self.alloc(requester, requested_name=name)
-        newvm.register_actions_to_perform_on_auth("clone", {"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, persistant=False)
-        self.perform_hooks("HOOK_HYPERVISOR_CLONE", xmppvm)
-        self.push_change("hypervisor", "clone", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
         
+        newvm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=newvm.clone, user_info={"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, oneshot=True)
+        self.perform_hooks("HOOK_HYPERVISOR_CLONE", newvm)
+        self.push_change("hypervisor", "clone", excludedgroups=[ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
     
     
     def get_capabilities(self):

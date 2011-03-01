@@ -130,9 +130,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.create_hook("HOOK_XMPP_DISCONNECT")
         
         # actions on auth
-        self.register_actions_to_perform_on_auth("manage_trigger_persistance", None)
-        self.register_actions_to_perform_on_auth("connect_domain", None)
-        self.register_actions_to_perform_on_auth("manage_vcard")
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_trigger_persistance)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.connect_domain)
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         
         # vocabulary
         self.init_vocabulary()
@@ -251,12 +251,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
     def register_handler(self):
         """
         this method registers the events handlers.
-        it is invoked by super class __xmpp_connect() method
+        it is invoked by super class xmpp_connect() method
         """
+        TNArchipelEntity.register_handler(self)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_CONTROL)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
-        
-        TNArchipelEntity.register_handler(self)
     
     
     def remove_folder(self):
@@ -316,7 +315,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
                 self.log.error("Exception raised %s : %s" % (ex.get_error_code(), ex))
     
     
-    def connect_domain(self):
+    def connect_domain(self, origin=None, user_info=None, arguments=None):
         """
         Initialize the connection to the libvirt first, and
         then to the domain by looking the uuid used as JID Node
@@ -437,7 +436,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         TNArchipelEntity.disconnect(self)
     
     
-    def manage_trigger_persistance(self):
+    def manage_trigger_persistance(self, origin=None, user_info=None, arguments=None):
         """
         create or read the trigger database
         """ 
@@ -465,6 +464,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         #self.remove_watcher("totowatcher", force=True)
         #self.add_watcher("totowatcher", self.jid, "libvirt_run", self.TEST_ON, self.TEST_OFF)
         self.add_trigger("libvirt_run", "basic trigger based on libvirt RUNNING state")
+    
+    
+    def add_jid_hook(self, origin=None, user_info=None, arguments=None):
+        """
+        hook to add a JID
+        """
+        self.add_jid(xmpp.JID(user_info.getStripped()))
     
     
     
@@ -714,7 +720,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
         self.log.info("virtual machine undefined and disconnected")
     
     
-    def clone(self, info):
+    def clone(self, origin, user_info, parameters):
         """
         clone a vm from another
         info is a dict that contains following keys
@@ -722,9 +728,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
             - path : the vm path to clone (will clone * in it)
             - baseuuid : the base uuid of cloned vm, in order to replace it
         """
-        xml         = info["definition"]
-        path        = info["path"]
-        baseuuid    = info["baseuuid"]
+        xml         = user_info["definition"]
+        path        = user_info["path"]
+        baseuuid    = user_info["baseuuid"]
         xmlstring   = str(xml)
         xmlstring   = xmlstring.replace(baseuuid, self.uuid)
         newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()

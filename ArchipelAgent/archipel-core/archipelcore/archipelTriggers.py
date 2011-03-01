@@ -64,15 +64,15 @@ class TNArchipelTrigger:
         """
         intialize the pubsubnode. if it doesn't exists, it will be created and configured
         """
-        if not self.pubSubNode.recover():
-            self.pubSubNode.create()                    
+        if not self.pubSubNode.recover(wait=True):
+            self.pubSubNode.create(wait=True)
         self.pubSubNode.configure({
             archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_MAX_ITEMS: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_PERSIST_ITEMS: 0,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
-        })
+        }, wait=True)
     
     
     def delete_pubsub_node(self):

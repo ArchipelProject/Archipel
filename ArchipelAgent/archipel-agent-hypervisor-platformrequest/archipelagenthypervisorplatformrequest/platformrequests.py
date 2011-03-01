@@ -50,7 +50,7 @@ class TNPlatformRequests (TNArchipelPlugin):
         self.entity.permission_center.create_permission("platform_allocvm", "Authorizes user to send cross platform request", True)
         
         # register to the node vmrequest
-        self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.manage_platform_vm_request)
+        self.entity.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_platform_vm_request)
     
     
     
@@ -103,13 +103,20 @@ class TNPlatformRequests (TNArchipelPlugin):
     ### Performs platform actions
     
     def perform_score_computing(self, request):
+        """
+        compute the score for the given request
+        @type request: string
+        @param request: the requested action name
+        @rtype: float
+        @return: the score computed by the computing unit ([0.0, 1.0])
+        """
         return self.computing_unit.score(request)
     
     
     
     ### Pubsub management
     
-    def manage_platform_vm_request(self, entity, args):
+    def manage_platform_vm_request(self, origin, user_info, arguments):
         """
         register to pubsub event node /archipel/platform/requests/in
         and /archipel/platform/requests/out
@@ -184,7 +191,7 @@ class TNPlatformRequests (TNArchipelPlugin):
     
     def iq_allocvm(self, iq):
         """
-        return the value of the oom_adjust of the virtual machine
+        alloc a new VM on the hypervisor
         
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ

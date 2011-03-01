@@ -31,8 +31,15 @@ class TNArchipelLibvirtEntity:
             self.need_auth  = self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
         else:
             self.need_auth = None
-        
-        
+    
+    
+    def manage_vcard_hook(self, origin, user_info, parameters):
+        """
+        hook to manage VCard
+        """
+        self.manage_vcard()
+    
+    
     def connect_libvirt(self):
         """
         connect to the libvirt according to parameters in configuration

@@ -34,20 +34,20 @@ class AppNotificator (TNArchipelPlugin):
             self.credentials.append(cred)
         
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
-            self.entity.register_hook("HOOK_VM_CREATE", self.vm_create)
-            self.entity.register_hook("HOOK_VM_SHUTOFF", self.vm_shutoff)
-            self.entity.register_hook("HOOK_VM_STOP", self.vm_stop)
-            self.entity.register_hook("HOOK_VM_DESTROY", self.vm_destroy)
-            self.entity.register_hook("HOOK_VM_SUSPEND", self.vm_suspend)
-            self.entity.register_hook("HOOK_VM_RESUME", self.vm_resume)
-            self.entity.register_hook("HOOK_VM_UNDEFINE", self.vm_undefine)
-            self.entity.register_hook("HOOK_VM_DEFINE", self.vm_define)
+            self.entity.register_hook("HOOK_VM_CREATE", method=self.vm_create)
+            self.entity.register_hook("HOOK_VM_SHUTOFF", method=self.vm_shutoff)
+            self.entity.register_hook("HOOK_VM_STOP", method=self.vm_stop)
+            self.entity.register_hook("HOOK_VM_DESTROY", method=self.vm_destroy)
+            self.entity.register_hook("HOOK_VM_SUSPEND", method=self.vm_suspend)
+            self.entity.register_hook("HOOK_VM_RESUME", method=self.vm_resume)
+            self.entity.register_hook("HOOK_VM_UNDEFINE", method=self.vm_undefine)
+            self.entity.register_hook("HOOK_VM_DEFINE", method=self.vm_define)
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
-            self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", self.hypervisor_alloc)
-            self.entity.register_hook("HOOK_HYPERVISOR_FREE", self.hypervisor_free)
-            self.entity.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", self.hypervisor_migrate_leave)
-            self.entity.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", self.hypervisor_migrate_arrive)
-            self.entity.register_hook("HOOK_HYPERVISOR_CLONE", self.hypervisor_clone)
+            self.entity.register_hook("HOOK_HYPERVISOR_ALLOC", method=self.hypervisor_alloc)
+            self.entity.register_hook("HOOK_HYPERVISOR_FREE", method=self.hypervisor_free)
+            self.entity.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", method=self.hypervisor_migrate_leave)
+            self.entity.register_hook("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", method=self.hypervisor_migrate_arrive)
+            self.entity.register_hook("HOOK_HYPERVISOR_CLONE", method=self.hypervisor_clone)
     
     
     ### Plugin interface
@@ -86,56 +86,56 @@ class AppNotificator (TNArchipelPlugin):
         except:
             self.entity.log.warning("cannot send iPhone notification: %s" % ex)
     
-    def vm_create(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been started" % entity.name, subtitle="Virtual machine event")
+    def vm_create(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been started" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_shutoff(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been shut off" % entity.name, subtitle="Virtual machine event")
+    def vm_shutoff(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been shut off" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_stop(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been stopped" % entity.name, subtitle="Virtual machine event")
+    def vm_stop(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been stopped" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_destroy(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been destroyed" % entity.name, subtitle="Virtual machine event")
+    def vm_destroy(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been destroyed" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_suspend(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been suspended" % entity.name, subtitle="Virtual machine event")
+    def vm_suspend(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been suspended" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_resume(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been resumed" % entity.name, subtitle="Virtual machine event")
+    def vm_resume(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been resumed" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_undefine(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been undefined" % entity.name, subtitle="Virtual machine event")
+    def vm_undefine(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been undefined" % origin.name, subtitle="Virtual machine event")
     
     
-    def vm_define(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been defined" % entity.name, subtitle="Virtual machine event")
+    def vm_define(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been defined" % origin.name, subtitle="Virtual machine event")
 
 
 
-    def hypervisor_alloc(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been allocated" % args.name, subtitle="Hypervisor event")
+    def hypervisor_alloc(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been allocated" % parameters.name, subtitle="Hypervisor event")
     
     
-    def hypervisor_free(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been removed" % args.name, subtitle="Hypervisor event")
+    def hypervisor_free(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been removed" % parameters.name, subtitle="Hypervisor event")
     
     
-    def hypervisor_clone(self, entity, args):
-        self.send("Archipel", "virtual machine %s has been cloned" % args.name, subtitle="Hypervisor event")
+    def hypervisor_clone(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has been cloned" % parameters.name, subtitle="Hypervisor event")
     
     
-    def hypervisor_migrate_leave(self, entity, args):
-        self.send("Archipel", "virtual machine %s has migrate to another hypervisor" % args.name, subtitle="Hypervisor event")
+    def hypervisor_migrate_leave(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has migrate to another hypervisor" % parameters, subtitle="Hypervisor event")
     
     
-    def hypervisor_migrate_arrive(self, entity, args):
-        self.send("Archipel", "virtual machine %s has juste arrived from another hypervisor" % args.name, subtitle="Hypervisor event")
+    def hypervisor_migrate_arrive(self, origin, user_info, parameters):
+        self.send("Archipel", "virtual machine %s has juste arrived from another hypervisor" % parameters, subtitle="Hypervisor event")
     
 

@@ -112,6 +112,11 @@ class TNArchipelEntity:
         self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
         self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
         self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
+        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
+        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
+        
+        ## recover/create pubsub after connection
+        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
         
         self.log.info("jid defined as %s" % (str(self.jid)))
         
@@ -150,6 +155,7 @@ class TNArchipelEntity:
                 
                 self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
                 self.plugins.append(plugin)
+    
     
     def check_acp(self, conn, iq):
         """check is iq is a valid ACP and return action"""
@@ -249,12 +255,10 @@ class TNArchipelEntity:
             sys.exit(0)
         
         self.log.info("sucessfully authenticated")
-        self.recover_pubsubs()
+        self.isAuth = True
+        self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.register_handler()
         self.roster = self.xmppclient.getRoster()
-        self.isAuth = True
-        self.perform_all_registered_auth_actions()
-        self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
     
     
@@ -282,7 +286,7 @@ class TNArchipelEntity:
     
     ### Pubsub
     
-    def recover_pubsubs(self):
+    def recover_pubsubs(self, origin, user_info, arguments):
         """
         create or get the current hypervisor pubsub node.
         """
@@ -290,8 +294,8 @@ class TNArchipelEntity:
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
         
-        if not self.pubSubNodeEvent.recover():
-            self.pubSubNodeEvent.create()
+        if not self.pubSubNodeEvent.recover(wait=True):
+            self.pubSubNodeEvent.create(wait=True)
         self.pubSubNodeEvent.configure({
             archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
@@ -299,13 +303,13 @@ class TNArchipelEntity:
             archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
-        })
+        }, wait=True)
         
         # creating/getting the log pubsub node
         logNodeName = "/archipel/" + self.jid.getStripped() + "/logs"
         self.pubSubNodeLog = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, logNodeName)
-        if not self.pubSubNodeLog.recover():
-            self.pubSubNodeLog.create()
+        if not self.pubSubNodeLog.recover(wait=True):
+            self.pubSubNodeLog.create(wait=True)
         self.pubSubNodeLog.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_NOTIFICATION: 1,
@@ -314,12 +318,12 @@ class TNArchipelEntity:
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
-        })
+        }, wait=True)
         
-        # creating/getting the tags pubsub node
+        # getting the tags pubsub node
         tagsNodeName = "/archipel/tags"
         self.pubSubNodeTags = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
-        if not self.pubSubNodeTags.recover():
+        if not self.pubSubNodeTags.recover(wait=True):
             Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")        
     
     
@@ -350,30 +354,43 @@ class TNArchipelEntity:
         return False
     
     
-    def register_hook(self, hookname, m):
-        """register a method that will be triggered by a hook"""
+    def register_hook(self, hookname, method, user_info=None, oneshot=False):
+        """
+        register a method that will be triggered by a hook
+        """
         if self.hooks.has_key(hookname):
-            self.hooks[hookname].append(m)
-            self.log.info("HOOK: registering hook method %s for hook name %s" % (m.__name__, hookname))
+            self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
+            self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
             return True
         return False
     
     
     def unregister_hook(self, hookname, m):
-        """unregister a method from a hook"""
+        """
+        unregister a method from a hook
+        """
         if self.hooks.has_key(hookname):
-            self.hooks[hookname].remove(m)
+            for hook in self.hooks[hookname]:
+                if hook["method"] == m:
+                    self.hooks[hookname].remove(hook)
+                    break;
             self.log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
     
     
-    def perform_hooks(self, hookname, args=None):
+    def perform_hooks(self, hookname, arguments=None):
         self.log.info("HOOK: going to run methods for hook %s" % hookname)
-        for m in self.hooks[hookname]:
+        for info in self.hooks[hookname]:
+            m           = info["method"]
+            oneshot     = info["oneshot"]
+            user_info   = info["user_info"]
             try:
                 self.log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
-                m(self, args)
+                m(self, user_info, arguments)
+                if oneshot:
+                    self.log.info("HOOK: this hook was oneshot. removing it")
+                    self.unregister_hook(hookname, m)
             except Exception as ex:
                 self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
     
@@ -392,12 +409,10 @@ class TNArchipelEntity:
         self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
-        
-        self.log.info("handlers registred")
-        
         for plugin in self.plugins: 
             self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
-            plugin["plugin"].register_for_stanza();
+            plugin["plugin"].register_for_stanza()
+        self.log.info("handlers registred")
     
     
     
@@ -498,66 +513,7 @@ class TNArchipelEntity:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_REMOVE_SUBSCRIPTION)
         return reply
-    
-    
-    
-    ### Register actions on auth
-    
-    def register_actions_to_perform_on_auth(self, method_name, args=[], persistant=True):
-        """
-        Allows object to register actions (method of this class) to perform
-        when the XMPP Client will be online.
-        
-        @type method_name: string
-        @param method_name: the name of the method to launch
-        @type args: Array
-        @param args: an array containing the arguments to pass to the method
-        """
-        self.log.info("registering action to perform on auth :%s" % method_name)
-        
-        if self.isAuth:
-            self.log.info("performing action right now, because we are already authenticated")
-            
-            if persistant:
-                self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args, "persistant": persistant})
-            
-            if hasattr(self, method_name):
-                m = getattr(self, method_name)
-                if args and len(args) > 0:
-                    m(args)
-                else:
-                    m()
-        else:
-            self.registered_actions_to_perform_on_connection.append({"name":method_name, "args": args, "persistant": persistant})
-    
-    
-    def perform_all_registered_auth_actions(self):
-        """
-        Parse the all the registered actions for connection, and execute them
-        """
-        if not self.isAuth:
-            return
-        
-        self.log.debug("going to perform action to perform on auth: %s" % str(self.registered_actions_to_perform_on_connection))
-        
-        actions_to_purge = []
-        
-        for action in self.registered_actions_to_perform_on_connection:
-            self.log.debug("performing action %s" % str(action))
-            if hasattr(self, action["name"]):
-                m = getattr(self, action["name"])
-                if action["args"] != None:
-                    m(action["args"])
-                else:
-                    m()
-            if not action["persistant"]:
-                actions_to_purge.append(action)
-        
-        for oneshot_action in actions_to_purge:
-            self.log.debug("purging non persistant action %s" % str(oneshot_action))
-            self.registered_actions_to_perform_on_connection.remove(oneshot_action)
-        
-        self.log.debug("all registred actions have been done")
+
     
     
     
@@ -739,7 +695,7 @@ class TNArchipelEntity:
     
     ### VCARD management
     
-    def manage_vcard(self, params=None):
+    def manage_vcard(self):
         """
         retrieve vCard from server
         """
@@ -1334,6 +1290,8 @@ class TNArchipelEntity:
         """
         This is the main loop of the client
         """
+        if self.loop_status == ARCHIPEL_XMPP_LOOP_ON:
+            self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
         while not self.loop_status == ARCHIPEL_XMPP_LOOP_OFF:
             try:
                 if self.loop_status == ARCHIPEL_XMPP_LOOP_REMOVE_USER:
@@ -1343,6 +1301,7 @@ class TNArchipelEntity:
                     if self.xmppclient.isConnected():
                         self.xmppclient.Process(3)
                 elif self.loop_status == ARCHIPEL_XMPP_LOOP_RESTART:
+                    self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
                     if self.xmppclient.isConnected():
                         self.xmppclient.disconnect()
                     time.sleep(1.0)
@@ -1362,8 +1321,11 @@ class TNArchipelEntity:
                     t, v, tr = sys.exc_info()
                     self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
+
+        self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
+        
     
 
 

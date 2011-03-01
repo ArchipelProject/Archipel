@@ -37,9 +37,9 @@ class TNOOMKiller (TNArchipelPlugin):
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         
-        self.entity.register_hook("HOOK_VM_INITIALIZE", self.vm_initialized)
-        self.entity.register_hook("HOOK_VM_CREATE", self.vm_create)
-        self.entity.register_hook("HOOK_VM_TERMINATE", self.vm_terminate)
+        self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.vm_initialized)
+        self.entity.register_hook("HOOK_VM_CREATE", method=self.vm_create)
+        self.entity.register_hook("HOOK_VM_TERMINATE", method=self.vm_terminate)
         
         self.database = sqlite3.connect(self.configuration.get("OOMKILLER", "database"), check_same_thread=False)
         self.database.execute("create table if not exists oomkiller (uuid text unique, adjust int)")
@@ -88,14 +88,14 @@ class TNOOMKiller (TNArchipelPlugin):
     
     ### Hooks
     
-    def vm_create(self, entity, args):
+    def vm_create(self, origin, user_info, parameters):
         oom_info = self.get_oom_info()
         self.entity.log.info("OOM value retrieved %s" % str(oom_info))
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
         self.entity.log.info("oom valuee for vm with uuid %s have been restored" % self.entity.uuid)
     
     
-    def vm_terminate(self, entity, args):
+    def vm_terminate(self, origin, user_info, parameters):
         self.cursor.execute("DELETE FROM oomkiller WHERE uuid=?", (self.entity.uuid,))
         self.database.commit()
         self.cursor.close()
@@ -103,7 +103,7 @@ class TNOOMKiller (TNArchipelPlugin):
         self.entity.log.info("oom information for vm with uuid %s has been removed" % self.entity.uuid)
     
     
-    def vm_initialized(self, entity, args):
+    def vm_initialized(self, origin, user_info, parameters):
         oom_info = self.get_oom_info()
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
         self.entity.log.info("oom information for vm with uuid %s have been removed" % self.entity.uuid)
