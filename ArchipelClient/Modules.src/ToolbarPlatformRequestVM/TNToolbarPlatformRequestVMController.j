@@ -20,6 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNArchipelNSPlatform                            = @"archipel:platform";
+TNArchipelActionPlatformAllocVM                 = @"allocvm";
 
 TNArchipelNodeNamePlatformRequestIn             = @"/archipel/platform/requests/in";
 TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/out";
@@ -76,9 +78,61 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
 
 - (void)checkPlatformAnswers:(CPTimer)aTimer
 {
-    var requestUUID = [aTimer userInfo];
+    var requestUUID = [aTimer userInfo],
+        anwsers     = [_currentRequests objectForKey:requestUUID],
+        maxValue    = 0,
+        selectedPublisher;
 
-    CPLog.warn([_currentRequests objectForKey:requestUUID]);
+    if ([anwsers count] == 0)
+    {
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Platform Request" message:@"Nobody has answered to your request" icon:TNGrowlIconWarning];
+        return;
+    }
+
+    for (var i = 0; i < [anwsers count]; i++)
+    {
+        var anwser  = [anwsers objectAtIndex:i],
+            score   = [anwser objectForKey:@"score"];
+
+        if (MAX(maxValue, score) == score)
+            selectedPublisher = [anwser objectForKey:@"publisher"];
+    }
+
+    [self allocVirtualMachineOnHypervisor:[TNStropheJID stropheJIDWithString:selectedPublisher]];
+}
+
+
+#pragma mark -
+#pragma mark Processing
+
+/*! send the allocvm command to the given XMPP entity
+    @param aJid TNStropheJID representing the taret
+*/
+- (void)allocVirtualMachineOnHypervisor:(TNStropheJID)aJid
+{
+    var stanza  = [TNStropheStanza iqWithType:@"set"],
+        uid     = [_connection getUniqueId],
+        params  = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [stanza setTo:aJid];
+    [stanza setID:uid];
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelNSPlatform}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelActionPlatformAllocVM}];
+
+    [_connection registerSelector:@selector(_didAllocVirtualMachine:) ofObject:self withDict:params];
+    [_connection send:stanza];
+}
+
+/*! compute the allocvm result
+    @params aStanza the stanza containing the answer
+*/
+- (void)_didAllocVirtualMachine:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Platform Request" message:@"Your virtual machine request has been handled by " + [[aStanza from] bare]];
+    else
+        [self handleIqErrorFromStanza:aStanza];
 }
 
 
@@ -91,7 +145,7 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
 - (IBAction)toolbarItemClicked:(id)aSender
 {
     var uuid = [CPString UUID],
-        requestNode = [[TNXMLNode alloc] initWithName:@"archipel" andAttributes:{"uuid": uuid}];
+        requestNode = [[TNXMLNode alloc] initWithName:@"archipel" andAttributes:{"uuid": uuid, "action": TNArchipelActionPlatformAllocVM}];
 
     // register the current request in the registry
     [_currentRequests setObject:[CPArray array] forKey:uuid];
