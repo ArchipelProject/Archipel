@@ -79,7 +79,7 @@ class TNArchipelTrigger:
         """
         remove the pubsub node
         """
-        self.pubSubNode.delete(nowait=True)
+        self.pubSubNode.delete(wait=True)
     
     
     def set_state(self, state):
