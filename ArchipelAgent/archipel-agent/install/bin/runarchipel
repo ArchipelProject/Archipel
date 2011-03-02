@@ -22,13 +22,6 @@ import getopt
 import xmpp
 import socket
 
-from archipelcore.utils import *
-
-import archipel.archipelHypervisor
-import archipel.archipelVirtualMachine
-import archipel.libvirtEventLoop
-
-
 ## error codes
 ARCHIPEL_INIT_SUCCESS                   = 0
 ARCHIPEL_INIT_ERROR_NO_CONFIG           = 1
@@ -37,6 +30,14 @@ ARCHIPEL_INIT_ERROR_BAD_LIBVIRT         = 3
 ARCHIPEL_INIT_ERROR_UNKNOWN             = 4
 ARCHIPEL_INIT_ERROR_CONNECTION          = 5
 ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
+
+try:
+    from archipelcore.utils import *
+    from archipel.archipelHypervisor import TNArchipelHypervisor
+    from archipel.libvirtEventLoop import virEventLoopPureStart
+except ImportError as ex:
+    print "\033[31mERROR: %s\033[0m" % str(ex)
+    sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
 
 ## help message
@@ -56,6 +57,12 @@ def format_version(info):
     print " - %s : %s" % (info[0], info[1])
 
 
+def help():
+    """display help"""
+    print ARCHIPEL_CMD_HELP
+    sys.exit(ARCHIPEL_INIT_SUCCESS)
+
+
 def versions():
     import pkg_resources
     """print versions of all installed modules"""
@@ -69,6 +76,7 @@ def versions():
     for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
         method  = version_method.load()
         format_version(method())
+    sys.exit(ARCHIPEL_INIT_SUCCESS)
 
 
 def test_libvirt():
@@ -93,7 +101,7 @@ def main():
     if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
     
     # starting thre libvirt event loop
-    archipel.libvirtEventLoop.virEventLoopPureStart()
+    virEventLoopPureStart()
     
     # initializing the hypervisor XMPP entity
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
@@ -101,34 +109,32 @@ def main():
     database    = config.get("HYPERVISOR", "hypervisor_database_path")
     name        = config.get("HYPERVISOR", "hypervisor_name")
     jid.setResource(socket.gethostname())
-    hyp = archipel.archipelHypervisor.TNArchipelHypervisor(jid, password, config, name, database)
+    hyp = TNArchipelHypervisor(jid, password, config, name, database)
     try:
         hyp.connect()
     except Exception as ex:
-        log.error("Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)))
+        log.error("RUNARCHIPEL: Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)))
         sys.exit(ARCHIPEL_INIT_ERROR_CONNECTION)
     try:
         hyp.loop()
     except Exception as ex:
-        log.error("Exception has stoped the hypervisor main loop: %s" % str(ex))
+        log.error("RUNARCHIPEL: Exception has stoped the hypervisor main loop: %s" % str(ex))
         sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
     
 
 if __name__ == "__main__":
-    opts, args = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
-
-    configPath = "/etc/archipel/archipel.conf"
-    fork = True
-
+    """
+    Main loop of the program
+    """
+    opts, args  = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
+    configPath  = "/etc/archipel/archipel.conf"
+    fork        = True
+    
     for o, a in opts:
-        if o in ("--config"): configPath = a
-        if o in ("-n", "--nofork"): fork = False
-        if o in ("-h", "--help"):
-            print ARCHIPEL_CMD_HELP
-            sys.exit(ARCHIPEL_INIT_SUCCESS)
-        if o in ("-v", "--version"):
-            versions()
-            sys.exit(ARCHIPEL_INIT_SUCCESS)
+        if o in ("--config"):           configPath = a
+        if o in ("-n", "--nofork"):     fork = False
+        if o in ("-h", "--help"):       help()
+        if o in ("-v", "--version"):    versions()
     
     try:
         config = init_conf(configPath)
@@ -148,3 +154,4 @@ if __name__ == "__main__":
             main()
         except KeyboardInterrupt:
             sys.exit(ARCHIPEL_INIT_SUCCESS)
+
