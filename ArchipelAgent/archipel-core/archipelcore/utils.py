@@ -43,8 +43,6 @@ ARCHIPEL_NS_SERVICE_MESSAGE                     = "headline"
 ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
 ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
 ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
-ARCHIPEL_NS_AVATAR                              = "archipel:avatar"
-ARCHIPEL_NS_TAGS                                = "archipel:tags"
 ARCHIPEL_NS_PERMISSIONS                         = "archipel:permissions"
 ARCHIPEL_NS_SUBSCRIPTION                        = "archipel:subscription"
 

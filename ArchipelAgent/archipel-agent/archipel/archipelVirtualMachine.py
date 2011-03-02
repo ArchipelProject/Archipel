@@ -44,6 +44,9 @@ import shutil
 from archipelcore.utils import *
 from archipelcore.archipelTriggers import *
 from archipelcore.archipelEntity import *
+from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelTaggableEntity import TNTaggableEntity
+from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 
 from libvirtEventLoop import *
 from archipelLibvirtEntity import *
@@ -68,7 +71,7 @@ ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
 
 
-class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity):
+class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have 

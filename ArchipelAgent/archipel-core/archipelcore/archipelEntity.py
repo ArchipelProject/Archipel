@@ -22,12 +22,9 @@ This provides basic XMPP features, like connecting, auth...
 """
 import xmpp
 import sys
-import glob
 import uuid
 import os
 import socket
-import base64
-import hashlib
 import time
 import threading
 import traceback
@@ -36,17 +33,18 @@ import sqlite3
 from pkg_resources import iter_entry_points
 
 from archipelcore.utils import *
+from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelTaggableEntity import TNTaggableEntity
+from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
+
 import archipelcore.pubsub
 import archipelcore.archipelPermissionCenter
 
 
-ARCHIPEL_ERROR_CODE_AVATARS             = -1
-ARCHIPEL_ERROR_CODE_SET_AVATAR          = -2
 ARCHIPEL_ERROR_CODE_MESSAGE             = -3
 ARCHIPEL_ERROR_CODE_GET_PERMISSIONS     = -4
 ARCHIPEL_ERROR_CODE_SET_PERMISSIONS     = -5
 ARCHIPEL_ERROR_CODE_LIST_PERMISSIONS    = -6
-ARCHIPEL_ERROR_CODE_SET_TAGS            = -7
 ARCHIPEL_ERROR_CODE_ADD_SUBSCRIPTION    = -8
 ARCHIPEL_ERROR_CODE_REMOVE_SUBSCRIPTION = -9
 
@@ -63,8 +61,7 @@ command param1 param2 param3
 
 """
 
-
-class TNArchipelEntity:
+class TNArchipelEntity (object):
     """
     this class represent a basic XMPP Client
     """
@@ -77,7 +74,6 @@ class TNArchipelEntity:
         @type password: string
         @param password: the password of the JID account.
         """
-        self.registered_actions_to_perform_on_connection = []
         self.name                   = name
         self.xmppstatus             = None
         self.xmppstatusshow         = None
@@ -98,25 +94,28 @@ class TNArchipelEntity:
         self.log                    = TNArchipelLogger(self)
         self.pubSubNodeEvent        = None
         self.pubSubNodeLog          = None
-        self.pubSubNodeTags         = None
-        self.hooks                  = {}
-        self.b64Avatar              = None
-        self.default_avatar         = "default.png"
         self.entity_type            = "not-defined"
         self.permission_center      = None
         self.plugins                = [];
         
-        if self.name == "auto":
-            self.name = self.resource
+        if isinstance(self, TNHookableEntity):
+            TNHookableEntity.__init__(self, self.log)
+        if isinstance(self, TNAvatarControllableEntity):
+            TNAvatarControllableEntity.__init__(self, configuration, self.permission_center, self.xmppclient, self.log)
+        if isinstance(self, TNTaggableEntity):
+            TNTaggableEntity.__init__(self, self.pubsubserver, self.jid, self.xmppclient, self.permission_center, self.log)
         
-        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
-        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
-        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
-        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
-        self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
+        if self.name == "auto": self.name = self.resource
         
-        ## recover/create pubsub after connection
-        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
+        if isinstance(self, TNHookableEntity):
+            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
+            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_DISCONNECTED")
+            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
+            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STARTED")
+            self.create_hook("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
+        
+            ## recover/create pubsub after connection
+            self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", self.recover_pubsubs)
         
         self.log.info("jid defined as %s" % (str(self.jid)))
         
@@ -195,12 +194,15 @@ class TNArchipelEntity:
         overrides this to add custom permissions
         """
         self.log.info("initializing permissions of %s" % self.jid)
+        
+        if isinstance(self, TNTaggableEntity):
+            TNTaggableEntity.init_permissions(self)
+        if isinstance(self, TNAvatarControllableEntity):
+            TNAvatarControllableEntity.init_permissions(self)
+        
         self.permission_center.create_permission("all", "All permissions are granted", False)
         self.permission_center.create_permission("presence", "Authorizes users to request presences", False)
         self.permission_center.create_permission("message", "Authorizes users to send messages", False)
-        self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
-        self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
-        self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
         self.permission_center.create_permission("permission_get", "Authorizes users to get all permissions", True)
         self.permission_center.create_permission("permission_getown", "Authorizes users to get only own permissions", False)
         self.permission_center.create_permission("permission_list", "Authorizes users to list existing", False)
@@ -310,10 +312,11 @@ class TNArchipelEntity:
         create or get the current hypervisor pubsub node.
         arguments here are used to be HOOK compliant see @register_hook
         """
+        TNTaggableEntity.recover_pubsubs(self, origin, user_info, arguments)
+        
         # creating/getting the event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
-        
         if not self.pubSubNodeEvent.recover(wait=True):
             self.pubSubNodeEvent.create(wait=True)
         self.pubSubNodeEvent.configure({
@@ -340,11 +343,6 @@ class TNArchipelEntity:
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         }, wait=True)
         
-        # getting the tags pubsub node
-        tagsNodeName = "/archipel/tags"
-        self.pubSubNodeTags = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
-        if not self.pubSubNodeTags.recover(wait=True):
-            Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")        
     
     
     def remove_pubsubs(self):
@@ -359,103 +357,6 @@ class TNArchipelEntity:
     
     
     
-    ### Hooks management
-    
-    def create_hook(self, hookname):
-        """
-        create a new hook
-        @type hookname: string
-        @param hookname: the name of the new hook
-        """
-        self.hooks[hookname] = []
-        self.log.info("HOOK: creating hook with name %s" % hookname)
-        return True
-    
-    
-    def remove_hook(self, hookname):
-        """
-        remove an existing hook. All registered method in the hook
-        will be removed
-        
-        @type hookname: string
-        @param hookname: the name of the hook to remove
-        
-        @rtype: boolean
-        @return: True in case of success
-        """
-        if self.hooks.has_key(hookname):
-            for hook in self.hooks[hookname]: self.hooks[hookname].remove(hook)
-            del self.hooks[hookname]
-            self.log.info("HOOK: removing hook with name %s" % hookname)
-            return True
-        return False
-    
-    
-    def register_hook(self, hookname, method, user_info=None, oneshot=False):
-        """
-        register a method that will be triggered by a hook. The methood must use
-        the following prototype: method(origin, user_info, arguments)
-        
-        @type hookname: string
-        @param hookname: the name of the hook
-        @type method: function
-        @param method: the method to register with the hook.
-        @type user_info: object
-        @param user_info: user info you want to pass to the method when it'll be peformed
-        @type oneshot: boolean
-        @param oneshot: if True, the method will be unregistered after first performing
-        """
-        # if the hook is not existing, we create it
-        if not self.hooks.has_key(hookname): self.create_hook(hookname)
-        self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
-        self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
-    
-    
-    def unregister_hook(self, hookname, m):
-        """
-        unregister a method from a hook.
-        
-        @type hookname: string
-        @param hookname: the name of the hook
-        @type method: function
-        @param method: the method to unregister from the hook
-        
-        @rtype: boolean
-        @return: True in case of success
-        """
-        if self.hooks.has_key(hookname):
-            for hook in self.hooks[hookname]:
-                if hook["method"] == m:
-                    self.hooks[hookname].remove(hook)
-                    break;
-            self.log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
-            return True
-        return False
-    
-    
-    def perform_hooks(self, hookname, arguments=None):
-        """
-        perform all registered methods for the given hook
-        
-        @type hookname: string
-        @param hookname: the name of the hook
-        @type arguments: object
-        @param arguments: random object that will be given to the registered methods as "argument" kargs
-        """
-        self.log.info("HOOK: going to run methods for hook %s" % hookname)
-        for info in self.hooks[hookname]:
-            m           = info["method"]
-            oneshot     = info["oneshot"]
-            user_info   = info["user_info"]
-            try:
-                self.log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
-                m(self, user_info, arguments)
-                if oneshot:
-                    self.log.info("HOOK: this hook was oneshot. removing it")
-                    self.unregister_hook(hookname, m)
-            except Exception as ex:
-                self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
-    
     
     
     ### Basic handlers
@@ -465,10 +366,13 @@ class TNArchipelEntity:
         this method have to be overloaded in order to register handler for 
         XMPP events
         """
+        if isinstance(self, TNTaggableEntity):
+            TNTaggableEntity.register_handler(self)
+        if isinstance(self, TNAvatarControllableEntity):
+            TNAvatarControllableEntity.register_handler(self)
+        
         self.xmppclient.RegisterHandler('presence', self.process_presence)
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
-        self.xmppclient.RegisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
-        self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
         for plugin in self.plugins: 
@@ -909,162 +813,6 @@ class TNArchipelEntity:
         self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
     
     
-    ### Avatars
-    
-    def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg", "gif"]):
-        """
-        return a stanza with a list of availables avatars
-        encoded in base64
-        """
-        path = self.configuration.get("GLOBAL", "machine_avatar_directory")
-        resp = xmpp.Node("avatars")
-        
-        for ctype in supported_file_extensions:
-            for img in glob.glob(os.path.join(path, "*.%s" % ctype)):
-                f = open(img, 'r')
-                data = base64.b64encode(f.read())
-                f.close()
-                node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1], "content-type": "image/%s" % ctype})
-                node_img.setData(data)
-        
-        return resp
-    
-    
-    def set_avatar(self, name):
-        """
-        change the current avatar of the entity.
-        @type name string
-        @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
-        """
-        name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
-        self.b64Avatar = None
-        self.set_vcard(params={"filename": name})
-    
-    
-    def b64avatar_from_filename(self, image):
-        avatar_dir  = self.configuration.get("GLOBAL", "machine_avatar_directory")
-        f = open(os.path.join(avatar_dir, image), "r")
-        photo_data = base64.b64encode(f.read())
-        f.close()
-        self.b64Avatar = photo_data
-        return self.b64Avatar
-    
-    
-    def process_avatar_iq(self, conn, iq):
-        """
-        this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
-        
-        it understands IQ of type:
-            - alloc
-            - free
-        
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        reply = None
-        action = self.check_acp(conn, iq)        
-        self.check_perm(conn, iq, action, -1)
-        
-        if action == "getavatars":  reply = self.iq_get_available_avatars(iq)
-        elif action == "setavatar": reply = self.iq_set_available_avatars(iq)
-        
-        if reply:
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-    
-    
-    def iq_get_available_avatars(self, iq):
-        """
-        return a list of availables avatars
-        """
-        try:
-            reply = iq.buildReply("result")
-            reply.setQueryPayload([self.get_available_avatars()])
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
-        return reply
-    
-    
-    def iq_set_available_avatars(self, iq):
-        """
-        set the current avatars of the virtual machine
-        """
-        try:
-            reply = iq.buildReply("result")
-            avatar = iq.getTag("query").getTag("archipel").getAttr("avatar")
-            self.set_avatar(avatar)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
-        return reply
-    
-    
-    
-    ### Tags
-    
-    def process_tags_iq(self, conn, iq):
-        """
-        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
-        
-        it understands IQ of type:
-            - settags
-            
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the stanza
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the received IQ
-        """
-        action = self.check_acp(conn, iq)        
-        self.check_perm(conn, iq, action, -1)
-        
-        if action == "settags":
-            reply = self.iq_set_tags(iq)
-            conn.send(reply)
-            raise xmpp.protocol.NodeProcessed
-    
-    
-    def set_tags(self, tags):
-        """
-        set the tags of the current entity
-        
-        @type tags String
-        @param tags the string containing tags separated by ';;'
-        """
-        current_id = None
-        for item in self.pubSubNodeTags.get_items():
-            if item.getTag("tag") and item.getTag("tag").getAttr("jid") == self.jid.getStripped():
-                current_id = item.getAttr("id")
-        if current_id:
-            self.pubSubNodeTags.remove_item(current_id, callback=self.did_clean_old_tags, user_info=tags)
-        else:
-            tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": tags})
-            self.pubSubNodeTags.add_item(tagNode)
-    
-    
-    def did_clean_old_tags(self, resp, user_info):
-        """
-        callback called when old tags has been removed if any
-        """
-        if resp.getType() == "result":
-            tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})
-            self.pubSubNodeTags.add_item(tagNode)
-        else:
-            raise Exception("Tags unable to set tags. answer is: " + str(resp))
-    
-    
-    def iq_set_tags(self, iq):
-        """
-        set the current tags
-        """
-        try:
-            reply = iq.buildReply("result")
-            tags = iq.getTag("query").getTag("archipel").getAttr("tags")
-            self.set_tags(tags)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_TAGS)
-        return reply
-    
     
     
     ### XMPP Message registrars
@@ -1403,11 +1151,10 @@ class TNArchipelEntity:
                     t, v, tr = sys.exc_info()
                     self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-
+        
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
-        
     
 
 

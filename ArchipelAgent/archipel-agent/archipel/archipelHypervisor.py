@@ -34,6 +34,9 @@ import libvirt
 
 from archipelcore.archipelEntity import *
 from archipelcore.utils import *
+from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelTaggableEntity import TNTaggableEntity
+from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 
 from archipelLibvirtEntity import *
 from archipelVirtualMachine import *
@@ -89,7 +92,7 @@ class TNThreadedVirtualMachine(Thread):
 
 
 
-class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
+class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already

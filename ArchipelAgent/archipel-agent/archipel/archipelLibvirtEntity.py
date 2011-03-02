@@ -18,7 +18,7 @@
 
 import libvirt
 
-class TNArchipelLibvirtEntity:
+class TNArchipelLibvirtEntity (object):
     
     def __init__(self, configuration):
         """
