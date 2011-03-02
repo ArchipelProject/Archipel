@@ -1,25 +1,27 @@
-# 
+#
 # archipelAvatarControllableEntity.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import glob
 import base64
-import hashlib
+import glob
+import os
+import xmpp
 
-from archipelcore.utils import *
+from archipelcore.utils import build_error_iq
+
 
 ARCHIPEL_ERROR_CODE_AVATARS             = -1
 ARCHIPEL_ERROR_CODE_SET_AVATAR          = -2
@@ -32,7 +34,7 @@ class TNAvatarControllableEntity (object):
     this class makes TNArchipelEntity avatar controllable
     it allows to get and set avatars of the entity
     """
-    
+
     def __init__(self, configuration, permission_center, xmppclient, log):
         """
         initialize the TNAvatarControllableEntity
@@ -51,41 +53,41 @@ class TNAvatarControllableEntity (object):
         self.permission_center      = permission_center
         self.xmppclient             = xmppclient
         self.log                    = log
-    
-    
-    
+
+
+
     ### subclass must implement this
-    
+
     def check_acp(conn, iq):
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
-    
-    
+
+
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
-    
-    
+
+
     def set_vcard(self, params={}):
         raise Exception("Subclass of TNAvatarControllableEntity must implement set_vcard")
-    
-    
+
+
     def init_permissions(self):
         """
         intialize the Avatar permissions
         """
         self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
         self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
-    
-    
+
+
     def register_handler(self):
         """
         initialize the avatar handlers
         """
         self.xmppclient.RegisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
-    
-    
-    
+
+
+
     ### Avatars
-    
+
     def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg", "gif"]):
         """
         return a stanza with a list of availables avatars
@@ -101,8 +103,8 @@ class TNAvatarControllableEntity (object):
                 node_img = resp.addChild(name="avatar", attrs={"name": img.split("/")[-1], "content-type": "image/%s" % ctype})
                 node_img.setData(data)
         return resp
-    
-    
+
+
     def set_avatar(self, name):
         """
         change the current avatar of the entity.
@@ -112,8 +114,8 @@ class TNAvatarControllableEntity (object):
         name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
         self.b64Avatar = None
         self.set_vcard(params={"filename": name})
-    
-    
+
+
     def b64avatar_from_filename(self, image):
         """
         create a base64 encoded avatr from filename
@@ -128,8 +130,8 @@ class TNAvatarControllableEntity (object):
         f.close()
         self.b64Avatar = photo_data
         return self.b64Avatar
-    
-    
+
+
     def process_avatar_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
@@ -149,8 +151,8 @@ class TNAvatarControllableEntity (object):
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
-    
+
+
     def iq_get_available_avatars(self, iq):
         """
         return a list of availables avatars
@@ -161,8 +163,8 @@ class TNAvatarControllableEntity (object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
         return reply
-    
-    
+
+
     def iq_set_available_avatars(self, iq):
         """
         set the current avatars of the virtual machine
@@ -174,5 +176,5 @@ class TNAvatarControllableEntity (object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
         return reply
-    
+
 

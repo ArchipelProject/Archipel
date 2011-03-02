@@ -1,21 +1,25 @@
-# 
+#
 # archipelTaggableEntity.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from archipelcore.pubsub import *
+import xmpp
+
+from archipelcore.pubsub import TNPubSubNode
+from archipelcore.utils import build_error_iq
+
 
 ARCHIPEL_ERROR_CODE_SET_TAGS            = -7
 ARCHIPEL_NS_TAGS                                = "archipel:tags"
@@ -24,7 +28,7 @@ class TNTaggableEntity (object):
     """
     this class allow ArchipelEntity to be taggable
     """
-    
+
     def __init__(self, pubsubserver, jid, xmppclient, permission_center, log):
         """
         initialize the TNTaggableEntity
@@ -45,22 +49,22 @@ class TNTaggableEntity (object):
         self.permission_center  = permission_center
         self.jid                = jid
         self.log                = log
-    
-    
-    
+
+
+
     ### subclass must implement this
-    
+
     def check_acp(conn, iq):
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
-    
-    
+
+
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
-    
-    
-    
+
+
+
     ### Pubsub
-    
+
     def recover_pubsubs(self, origin, user_info, arguments):
         """
         get the global tag pubsub node
@@ -70,26 +74,26 @@ class TNTaggableEntity (object):
         tagsNodeName = "/archipel/tags"
         self.pubSubNodeTags = TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
         if not self.pubSubNodeTags.recover(wait=True):
-            Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")        
-    
-    
+            Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")
+
+
     def init_permissions(self):
         """
         initializes the tag permissions
         """
         self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
-    
-    
+
+
     def register_handler(self):
         """
         initializes the handlers for tags
         """
         self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
-    
-    
-    
+
+
+
     ### Tags
-    
+
     def process_tags_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
@@ -100,14 +104,14 @@ class TNTaggableEntity (object):
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
-        action = self.check_acp(conn, iq)        
+        action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
         if action == "settags":
             reply = self.iq_set_tags(iq)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
-    
+
+
     def set_tags(self, tags):
         """
         set the tags of the current entity
@@ -123,8 +127,8 @@ class TNTaggableEntity (object):
         else:
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": tags})
             self.pubSubNodeTags.add_item(tagNode)
-    
-    
+
+
     def did_clean_old_tags(self, resp, user_info):
         """
         callback called when old tags has been removed if any
@@ -134,8 +138,8 @@ class TNTaggableEntity (object):
             self.pubSubNodeTags.add_item(tagNode)
         else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
-    
-    
+
+
     def iq_set_tags(self, iq):
         """
         set the current tags
@@ -147,4 +151,4 @@ class TNTaggableEntity (object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_TAGS)
         return reply
-    
+

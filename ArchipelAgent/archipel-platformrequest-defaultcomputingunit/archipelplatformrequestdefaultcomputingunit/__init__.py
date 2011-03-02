@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # 
 # __init__.py
 # 
@@ -17,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import computingunit
+
 
 def make_computing_unit():
     return {"info": computingunit.TNDefaultComputingUnit.plugin_info(),

@@ -1,30 +1,30 @@
-# 
-# instancier.py
-# 
+#
+# vmappliancemanager.py
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
-import xmpp
-import appliancedecompresser
-import appliancecompresser
-from archipelcore.utils import *
-import archipel
-from archipelcore.archipelPlugin import TNArchipelPlugin
-import sqlite3
 import os
+import sqlite3
+import xmpp
 
+from archipelcore.archipelPlugin import TNArchipelPlugin
+from archipelcore.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
+from archipelcore.utils import build_error_iq
+
+import appliancecompresser
+import appliancedecompresser
 
 ARCHIPEL_NS_VIRTUALMACHINE_VMCASTING        = "archipel:virtualmachine:vmcasting"
 ARCHIPEL_APPLIANCES_INSTALLED               = 1
@@ -35,14 +35,14 @@ ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE    = -4004
 
 
 class TNVMApplianceManager (TNArchipelPlugin):
-    
+
     def __init__(self, configuration, entity, entry_point_group):
         """
         initialize the class
         @type database_path: string
         @param database_path: the path of the sqlite3 database to use
         @type temp_directory: string
-        @param temp_directory: the path of the working repository 
+        @param temp_directory: the path of the working repository
         @type disks_extensions: array
         @param disks_extensions: list of authorized file extensions
         @type hypervisor_repo_path: string
@@ -51,39 +51,39 @@ class TNVMApplianceManager (TNArchipelPlugin):
         @param entity: the entity of the module
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-        
+
         ## create directories if neede
         if not os.path.exists(self.configuration.get("VMCASTING", "repository_path")):  os.makedirs(self.configuration.get("VMCASTING", "repository_path"))
         if not os.path.exists(self.configuration.get("VMCASTING", "temp_path")):        os.makedirs(self.configuration.get("VMCASTING", "temp_path"))
         if not os.path.exists(self.configuration.get("VMCASTING", "own_vmcast_path")):  os.makedirs(self.configuration.get("VMCASTING", "own_vmcast_path"))
-        
+
         self.disks_extensions       =  self.configuration.get("VMCASTING", "disks_extensions").split(";")
         self.temp_directory         = self.configuration.get("VMCASTING", "temp_path")
         self.hypervisor_repo_path   = self.configuration.get("VMCASTING", "repository_path")
         self.is_installing          = False
         self.installing_media_uuid  = None
         self.is_installed           = False
-        
+
         self.database_connection = sqlite3.connect(self.configuration.get("VMCASTING", "vmcasting_database_path"), check_same_thread = False)
         self.cursor = self.database_connection.cursor()
-        
-        # permissions 
+
+        # permissions
         self.entity.permission_center.create_permission("appliance_get", "Authorizes user to get installed appliances", False)
         self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False)
         self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False)
         self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False)
-    
-    
+
+
     ### Plugin interface
-    
+
     def register_for_stanza(self):
         """
         this method will be called by the plugin user when it will be
         necessary to register module for listening to stanza
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VIRTUALMACHINE_VMCASTING)
-    
-    
+
+
     @staticmethod
     def plugin_info():
         """
@@ -99,15 +99,15 @@ class TNVMApplianceManager (TNArchipelPlugin):
                                             "repository_path",
                                             "vmcasting_database_path"]
 
-        return {    "common-name"               : plugin_friendly_name, 
+        return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
-    
-    
+
+
     ### Callbacks
-    
-    
+
+
     def finish_installing(self):
         self.is_installed = True
         self.is_installing = False
@@ -116,8 +116,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
         self.entity.change_status("Off")
         self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
-    
-    
+
+
     def error_installing(self, exception):
         self.is_installed = False
         self.is_installing = False
@@ -126,20 +126,20 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
         self.entity.change_status("Cannot install appliance")
         self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
-    
-    
+
+
     def finish_packaging(self):
         self.is_installing = False
         self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
         self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False)
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-    
-    
-    
-    
+
+
+
+
     ### XMPP Processing
-    
-    
+
+
     def process_iq(self, conn, iq):
         """
         process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
@@ -148,7 +148,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             - attach
             - detach
             - package
-        
+
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -157,22 +157,22 @@ class TNVMApplianceManager (TNArchipelPlugin):
         reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="appliance_")
-        
-        if self.entity.is_migrating and (not action in ("get")): reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_NS_ERROR_MIGRATING)        
+
+        if self.entity.is_migrating and (not action in ("get")): reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
         elif action == "get":       reply = self.iq_get(iq)
         elif action == "attach":    reply = self.iq_attach(iq)
         elif action == "detach":    reply = self.iq_detach(iq)
         elif action == "package":   reply = self.iq_package(iq)
-        
+
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
-    
-    
+
+
     def iq_get(self, iq):
         """
         get all installed appliances
-        
+
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -188,9 +188,9 @@ class TNVMApplianceManager (TNArchipelPlugin):
                 name = values[1]
                 description = values[2]
                 uuid = values[3]
-                
+
                 status = "none"
-                
+
                 if self.is_installing and (self.installing_media_uuid == uuid):
                     status = "installing"
                 else:
@@ -210,8 +210,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_GET)
         return reply
-    
-    
+
+
     def iq_attach(self, iq):
         """
         instanciate a new virtualmachine from an installed appliance
@@ -224,39 +224,39 @@ class TNVMApplianceManager (TNArchipelPlugin):
         try:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
-            
+
             if (self.is_installed):
                 raise Exception("You must detach from already attached template")
-            
+
             uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             requester = iq.getFrom()
-            
+
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid))
             for values in self.cursor:
                 name, description, url, uuid, status, source, save_path = values
-            
+
             self.entity.log.debug("Supported extensions : %s " % str(self.disks_extensions))
             self.entity.log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
             appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, self.error_installing, uuid, requester)
-            
+
             self.old_status  = self.entity.xmppstatus
             self.old_show    = self.entity.xmppstatusshow
             self.entity.change_presence(presence_show="dnd", presence_status="Installing from appliance...")
-            
+
             self.is_installing = True
             self.installing_media_uuid = uuid
             appliance_packager.start()
-            
+
             self.entity.push_change("vmcasting", "applianceinstalling", excludedgroups=['vitualmachines'])
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
-            
+
         return reply
-    
-  
+
+
     def iq_detach(self, iq):
         """
-        detach an installed appliance from a virtualmachine 
+        detach an installed appliance from a virtualmachine
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -274,8 +274,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
-    
-    
+
+
     def iq_package(self, iq):
         """
         package the current virtual machine
@@ -288,27 +288,27 @@ class TNVMApplianceManager (TNArchipelPlugin):
         try:
             if self.is_installing:
                 raise Exception("Virtual machine is already installing a package")
-            
+
             if not self.entity.definition:
                 raise Exception("Virtual machine is not defined")
-            
+
             disk_nodes      = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
             package_name    = iq.getTag("query").getTag("archipel").getAttr("name")
             paths           = []
-            
+
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
                 self.entity.log.error( self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
                 raise Exception("Appliance with name %s is already in hypervisor repository" % package_name)
-            
+
             self.old_status  = self.entity.xmppstatus
             self.old_show    = self.entity.xmppstatusshow
             self.entity.change_presence(presence_show="dnd", presence_status="Packaging myself...")
-            
+
             for disk_node in disk_nodes:
                 path = disk_node.getTag('source').getAttr('file')
                 paths.append(path)
-            
-            
+
+
             snapshots = []
             if self.entity.domain.hasCurrentSnapshot(0):
                 snapshot_names = self.entity.domain.snapshotListNames(0)
@@ -316,20 +316,19 @@ class TNVMApplianceManager (TNArchipelPlugin):
                     snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
                     desc = snapshotObject.getXMLDesc(0)
                     snapshots.append(desc)
-            
+
             working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
 
             ## create directories if needed
             if not os.path.exists(working_dir): os.makedirs(working_dir)
-            
+
             compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity)
-            
+
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])
             compressor.start()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)
         return reply
-    
-    
-        
+
+

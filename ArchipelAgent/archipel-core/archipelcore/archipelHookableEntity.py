@@ -1,27 +1,26 @@
-# 
+#
 # archipelHookableEntity.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from archipelcore.utils import *
 
 class TNHookableEntity (object):
     """
     this class make a TNArchipelEntity hooking capable
     """
-    
+
     def __init__(self, log):
         """
         initialize the TNHookableEntity
@@ -30,11 +29,11 @@ class TNHookableEntity (object):
         """
         self.hooks  = {}
         self.log    = log
-    
-    
-    
+
+
+
     ### Hooks management
-    
+
     def create_hook(self, hookname):
         """
         create a new hook
@@ -44,8 +43,8 @@ class TNHookableEntity (object):
         self.hooks[hookname] = []
         self.log.info("HOOK: creating hook with name %s" % hookname)
         return True
-    
-    
+
+
     def remove_hook(self, hookname):
         """
         remove an existing hook. All registered method in the hook
@@ -61,8 +60,8 @@ class TNHookableEntity (object):
             self.log.info("HOOK: removing hook with name %s" % hookname)
             return True
         return False
-    
-    
+
+
     def register_hook(self, hookname, method, user_info=None, oneshot=False):
         """
         register a method that will be triggered by a hook. The methood must use
@@ -80,8 +79,8 @@ class TNHookableEntity (object):
         if not self.hooks.has_key(hookname): self.create_hook(hookname)
         self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
         self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
-    
-    
+
+
     def unregister_hook(self, hookname, m):
         """
         unregister a method from a hook.
@@ -100,8 +99,8 @@ class TNHookableEntity (object):
             self.log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
             return True
         return False
-    
-    
+
+
     def perform_hooks(self, hookname, arguments=None):
         """
         perform all registered methods for the given hook
@@ -123,5 +122,5 @@ class TNHookableEntity (object):
                     self.unregister_hook(hookname, m)
             except Exception as ex:
                 self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
-    
+
 

@@ -6,13 +6,12 @@
 # Start off by implementing a general purpose event loop for anyones use
 #################################################################################
 
-import sys
-import os
 import libvirt
+import os
 import select
-import errno
-import time
 import threading
+import time
+
 
 #
 # This general purpose event loop will support waiting for file handle
@@ -182,7 +181,7 @@ class virEventLoopPure:
             # telling us to wakup. if so, then discard
             # the data just continue
             if fd == self.pipetrick[0]:
-                data = os.read(fd, 1)
+                os.read(fd, 1)
                 continue
 
             h = self.get_handle_by_fd(fd)

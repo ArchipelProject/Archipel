@@ -1,25 +1,28 @@
-# 
+#
 # archipelLibvirtEntity.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-
 import libvirt
+import sys
+
+
+ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR   = "libvirt:error:generic"
 
 class TNArchipelLibvirtEntity (object):
-    
+
     def __init__(self, configuration):
         """
         initialize the TNArchipelLibvirtEntity
@@ -31,15 +34,15 @@ class TNArchipelLibvirtEntity (object):
             self.need_auth  = self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
         else:
             self.need_auth = None
-    
-    
+
+
     def manage_vcard_hook(self, origin, user_info, parameters):
         """
         hook to manage VCard
         """
         self.manage_vcard()
-    
-    
+
+
     def connect_libvirt(self):
         """
         connect to the libvirt according to parameters in configuration
@@ -53,9 +56,9 @@ class TNArchipelLibvirtEntity (object):
                 self.log.error("unable to connect libvirt")
                 sys.exit(-42)
         self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
-    
-    
-    
+
+
+
     def libvirt_credential_callback(self, creds, cbdata):
         """
         manage the libvirt credentials

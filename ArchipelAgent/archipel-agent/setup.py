@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os, shutil
+import os
 from setuptools import setup, find_packages
 
 VERSION             = '1.0.24'

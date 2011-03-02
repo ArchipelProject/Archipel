@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 # Copyright (c) 2009, Thomas Jost <thomas.jost@gmail.com>
-# 
+#
 # Permission  to use,  copy, modify,  and/or  distribute this  software for  any
 # purpose  with  or without  fee  is hereby  granted,  provided  that the  above
 # copyright notice and this permission notice appear in all copies.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS"  AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
 # REGARD TO  THIS SOFTWARE INCLUDING  ALL IMPLIED WARRANTIES  OF MERCHANTABILITY
 # AND FITNESS. IN  NO EVENT SHALL THE AUTHOR BE LIABLE  FOR ANY SPECIAL, DIRECT,
@@ -32,7 +32,6 @@ __author__ = "Thomas Jost <thomas.jost@gmail.com>"
 __version__ = "0.1"
 
 
-import sys
 import thread
 import urllib
 import xml.dom.minidom
@@ -42,7 +41,7 @@ SEND_URL = "https://www.appnotifications.com/account/notifications.xml"
 
 def get_credentials(email, password):
     """Get the user's credentials token."""
-    
+
     # Create data to POST
     data = {
         'user_session[email]': email,
@@ -89,7 +88,7 @@ def send(credentials, message, title=None, long_message=None, subtitle=None,
             raise ValueError("Invalid user credentials")
         if message is None or message == "":
             raise ValueError("Invalid message")
-    
+
         data['user_credentials'] = credentials
         data['notification[message]'] = message
 
@@ -98,7 +97,7 @@ def send(credentials, message, title=None, long_message=None, subtitle=None,
             value = locals()[key]
             if value is not None:
                 data['notification[%s]' % key] = value
-    
+
         if silent:
             data['notification[silent]'] = 1
         else:
@@ -118,7 +117,7 @@ def send(credentials, message, title=None, long_message=None, subtitle=None,
         u.close()
 
         return success
-    except Exception as ex:
+    except:
         pass
 
 
@@ -127,14 +126,14 @@ def send_async(*args, **kwargs):
     message to be sent.
 
     This function does return the ID of the thread that does the HTTP request.
-    
+
     """
     return thread.start_new_thread(send, args, kwargs)
 
 
 if __name__ == '__main__':
     import sys, time
-    
+
     if len(sys.argv) != 3:
         print >> sys.stderr, "Syntax: %s credentials message" % sys.argv[0]
     else:

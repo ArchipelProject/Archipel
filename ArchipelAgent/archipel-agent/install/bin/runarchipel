@@ -32,7 +32,7 @@ ARCHIPEL_INIT_ERROR_CONNECTION          = 5
 ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION   = 6
 
 try:
-    from archipelcore.utils import *
+    from archipelcore.utils import init_conf
     from archipel.archipelHypervisor import TNArchipelHypervisor
     from archipel.libvirtEventLoop import virEventLoopPureStart
 except ImportError as ex:

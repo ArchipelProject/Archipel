@@ -1,17 +1,17 @@
-# 
+#
 # utils.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -20,57 +20,17 @@
 this module contains some functions that allow objects to use advanced logging
 functionalities or others common stuffs
 """
-import sys, os
-import datetime
+
 import ConfigParser
-import xmpp
 import inspect
 import logging
 import logging.handlers
-import traceback
+import os
+import xmpp
 
-# XMPP groups
-ARCHIPEL_XMPP_GROUP_VM                          = "virtualmachines"
-ARCHIPEL_XMPP_GROUP_HYPERVISOR                  = "hypervisors"
-ARCHIPEL_XMPP_GROUP_CONTROLLER                  = "controllers"
 
 # Namespaces
-ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR               = "libvirt:error:generic"
-ARCHIPEL_NS_PERMISSION_ERROR                    = "archipel:error:permission"
 ARCHIPEL_NS_GENERIC_ERROR                       = "archipel:error:generic"
-ARCHIPEL_NS_IQ_PUSH                             = "archipel:push"
-ARCHIPEL_NS_SERVICE_MESSAGE                     = "headline"
-ARCHIPEL_NS_HYPERVISOR_CONTROL                  = "archipel:hypervisor:control"
-ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
-ARCHIPEL_NS_VM_DEFINITION                       = "archipel:vm:definition"
-ARCHIPEL_NS_PERMISSIONS                         = "archipel:permissions"
-ARCHIPEL_NS_SUBSCRIPTION                        = "archipel:subscription"
-
-# XMPP shows
-ARCHIPEL_XMPP_SHOW_ONLINE                       = "Online"
-ARCHIPEL_XMPP_SHOW_RUNNING                      = "Running"
-ARCHIPEL_XMPP_SHOW_PAUSED                       = "Paused"
-ARCHIPEL_XMPP_SHOW_SHUTDOWNED                   = "Off"
-ARCHIPEL_XMPP_SHOW_SHUTDOWNING                  = "Shutdowning..."
-ARCHIPEL_XMPP_SHOW_BLOCKED                      = "Blocked"
-ARCHIPEL_XMPP_SHOW_SHUTOFF                      = "Shutted off"
-ARCHIPEL_XMPP_SHOW_ERROR                        = "Error"
-ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
-ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
-
-# XMPP main loop status
-ARCHIPEL_XMPP_LOOP_OFF                          = 0
-ARCHIPEL_XMPP_LOOP_ON                           = 1
-ARCHIPEL_XMPP_LOOP_RESTART                      = 2
-ARCHIPEL_XMPP_LOOP_REMOVE_USER                  = 3
-
-ARCHIPEL_LIBVIRT_SECRET_JID                     = "D52FA978-FD3B-4ED8-9EF9-A1F5B5311E06"
-ARCHIPEL_LIBVIRT_SECRET_PASSWORD                = "884DCDDE-81E7-4374-A103-78314A4BDB92"
-
-# errors
-ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED         = -42
-ARCHIPEL_NS_ERROR_MIGRATING                     = -43
-ARCHIPEL_NS_ERROR_INVALID_HYPERVISOR            = -44
 
 
 ARCHIPEL_LOG_LEVEL                              = 0
@@ -79,9 +39,6 @@ ARCHIPEL_LOG_INFO                               = 1
 ARCHIPEL_LOG_WARNING                            = 2
 ARCHIPEL_LOG_ERROR                              = 3
 
-# hypervisor kinds
-ARCHIPEL_HYPERVISOR_TYPE_QEMU                   = "QEMU"
-ARCHIPEL_HYPERVISOR_TYPE_XEN                    = "XEN"
 
 log = logging.getLogger('archipel')
 
@@ -90,11 +47,11 @@ class TNArchipelLogger:
         self.xmppclient = xmppconn
         self.entity     = entity
         self.pubSubNode = pubsubnode
-    
+
     def __log(self, level, msg):
         log = logging.getLogger('archipel')
         msg = "\033[33m%s.%s (%s)\033[0m::%s" % (self.entity.__class__.__name__, inspect.stack()[2][3],  self.entity.jid, msg)
-        if level < ARCHIPEL_LOG_LEVEL: 
+        if level < ARCHIPEL_LOG_LEVEL:
             return
         elif level == ARCHIPEL_LOG_DEBUG:
             log.debug(msg)
@@ -104,29 +61,29 @@ class TNArchipelLogger:
             log.warning(msg)
         elif level == ARCHIPEL_LOG_ERROR:
              log.error(msg)
-            
+
         # if self.xmppclient and self.pubSubNode:
         #     log = xmpp.Node(tag="log", attrs={"date": datetime.datetime.now(), "level": str(level)})
         #     log.setData(msg)
         #     self.pubSubNode.add_item(log)
-    
-        
-        
+
+
+
     def debug(self, msg):
         self.__log(ARCHIPEL_LOG_DEBUG, msg)
-    
-    
+
+
     def info(self, msg):
         self.__log(ARCHIPEL_LOG_INFO, msg)
-    
-    
+
+
     def warning(self, msg):
         self.__log(ARCHIPEL_LOG_WARNING, msg)
-    
-    
+
+
     def error(self, msg):
         self.__log(ARCHIPEL_LOG_ERROR, msg)
-    
+
 
 
 class ColorFormatter(logging.Formatter):
@@ -140,13 +97,13 @@ class ColorFormatter(logging.Formatter):
         rec = rec.replace("$whiteColor",    "\033[37m")
         rec = rec.replace("$noColor",       "\033[0m")
         return rec
-    
+
 
 
 
 def init_conf(path):
     """
-    this method intialize the configuration object (that will be passed to all 
+    this method intialize the configuration object (that will be passed to all
     entities) from a given path
     @type path: string
     @param path: teh path of the config file to read
@@ -166,9 +123,9 @@ def init_conf(path):
     elif logging_level == "critical":
         level = logging.CRITICAL
     log_file = conf.get("LOGGING", "logging_file_path")
-    
+
     if not os.path.exists(os.path.dirname(log_file)): os.makedirs(os.path.dirname(log_file))
-    
+
     logger          = globals()["log"]
     max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
     backup_count    = conf.getint("LOGGING", "logging_backup_count")
@@ -177,7 +134,7 @@ def init_conf(path):
     handler.setFormatter(log_format)
     logger.addHandler(handler)
     logger.setLevel(level)
-    
+
     return conf
 
 

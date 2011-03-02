@@ -16,7 +16,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
-import sys, os
 
 VERSION             = '1.0.18'
 AUTHOR              = 'Antoine Mercadal'

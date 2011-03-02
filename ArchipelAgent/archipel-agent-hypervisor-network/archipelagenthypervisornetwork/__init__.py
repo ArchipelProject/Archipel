@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # 
 # __init__.py
 # 
@@ -17,6 +16,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import network
+
 
 def make_archipel_plugin(configuration, entity, group, excluded_plugins):
     return [{"info": network.TNHypervisorNetworks.plugin_info(),
