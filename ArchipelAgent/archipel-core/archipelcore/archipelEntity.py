@@ -130,6 +130,8 @@ class TNArchipelEntity:
     def initialize_modules(self, group):
         """
         this will initializes all plugins
+        @type group: string
+        @param group: the name of the entry point group to load
         """
         excluded_plugins = [];
                     
@@ -158,7 +160,21 @@ class TNArchipelEntity:
     
     
     def check_acp(self, conn, iq):
-        """check is iq is a valid ACP and return action"""
+        """
+        check is iq is a valid ACP and return action. it it's not valid, 
+        the will terminate the stanza processing and will return to the origin
+        client a standard Archipel error IQ
+        
+        @type conn: xmpp connection
+        @param conn: the current current XMPP connection
+        @type iq: xmpp.Iq
+        @param iq: the iq to check
+        
+        @rtype: string or none
+        @return: if the ACP is valid, it will return the requested action.
+        otherwise it'll send ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED iq to the sender
+        and raise xmpp.protocol.NodeProcessed
+        """
         try:
             action = iq.getTag("query").getTag("archipel").getAttr("action")
             self.log.info("acp received: from: %s, type: %s, namespace: %s, action: %s" % (iq.getFrom(), iq.getType(), iq.getQueryNS(), action))
@@ -275,7 +291,9 @@ class TNArchipelEntity:
     
     
     def disconnect(self):
-        """Close the connections from XMPP server"""
+        """
+        Close the connections from XMPP server
+        """
         if self.xmppclient and self.xmppclient.isConnected():
             self.isAuth = False
             self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
@@ -284,11 +302,13 @@ class TNArchipelEntity:
             self.log.warning("trying to disconnect, but not connected. ignoring")
     
     
+    
     ### Pubsub
     
     def recover_pubsubs(self, origin, user_info, arguments):
         """
         create or get the current hypervisor pubsub node.
+        arguments here are used to be HOOK compliant see @register_hook
         """
         # creating/getting the event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
@@ -328,26 +348,43 @@ class TNArchipelEntity:
     
     
     def remove_pubsubs(self):
+        """
+        delete own entity pubsubs
+        """
         self.log.info("removing pubsub node for log")
-        self.pubSubNodeLog.delete(nowait=False)
+        self.pubSubNodeLog.delete(wait=True)
         
         self.log.info("removing pubsub node for events")
-        self.pubSubNodeEvent.delete(nowait=False)
+        self.pubSubNodeEvent.delete(wait=True)
     
     
     
     ### Hooks management
     
     def create_hook(self, hookname):
-        """register a new hook"""
+        """
+        create a new hook
+        @type hookname: string
+        @param hookname: the name of the new hook
+        """
         self.hooks[hookname] = []
         self.log.info("HOOK: creating hook with name %s" % hookname)
         return True
     
     
     def remove_hook(self, hookname):
-        """unregister an existing hook"""
+        """
+        remove an existing hook. All registered method in the hook
+        will be removed
+        
+        @type hookname: string
+        @param hookname: the name of the hook to remove
+        
+        @rtype: boolean
+        @return: True in case of success
+        """
         if self.hooks.has_key(hookname):
+            for hook in self.hooks[hookname]: self.hooks[hookname].remove(hook)
             del self.hooks[hookname]
             self.log.info("HOOK: removing hook with name %s" % hookname)
             return True
@@ -356,18 +393,35 @@ class TNArchipelEntity:
     
     def register_hook(self, hookname, method, user_info=None, oneshot=False):
         """
-        register a method that will be triggered by a hook
+        register a method that will be triggered by a hook. The methood must use
+        the following prototype: method(origin, user_info, arguments)
+        
+        @type hookname: string
+        @param hookname: the name of the hook
+        @type method: function
+        @param method: the method to register with the hook.
+        @type user_info: object
+        @param user_info: user info you want to pass to the method when it'll be peformed
+        @type oneshot: boolean
+        @param oneshot: if True, the method will be unregistered after first performing
         """
-        if self.hooks.has_key(hookname):
-            self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
-            self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
-            return True
-        return False
+        # if the hook is not existing, we create it
+        if not self.hooks.has_key(hookname): self.create_hook(hookname)
+        self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
+        self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
     
     
     def unregister_hook(self, hookname, m):
         """
-        unregister a method from a hook
+        unregister a method from a hook.
+        
+        @type hookname: string
+        @param hookname: the name of the hook
+        @type method: function
+        @param method: the method to unregister from the hook
+        
+        @rtype: boolean
+        @return: True in case of success
         """
         if self.hooks.has_key(hookname):
             for hook in self.hooks[hookname]:
@@ -380,6 +434,14 @@ class TNArchipelEntity:
     
     
     def perform_hooks(self, hookname, arguments=None):
+        """
+        perform all registered methods for the given hook
+        
+        @type hookname: string
+        @param hookname: the name of the hook
+        @type arguments: object
+        @param arguments: random object that will be given to the registered methods as "argument" kargs
+        """
         self.log.info("HOOK: going to run methods for hook %s" % hookname)
         for info in self.hooks[hookname]:
             m           = info["method"]
@@ -513,7 +575,6 @@ class TNArchipelEntity:
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_REMOVE_SUBSCRIPTION)
         return reply
-
     
     
     
@@ -522,6 +583,11 @@ class TNArchipelEntity:
     def change_presence(self, presence_show=None, presence_status=None):
         """
         change the presence of the entity
+        
+        @type presence_show: string
+        @param presence_show: the value of the XMPP show
+        @type presence_status: string
+        @param presence_status: the value of the XMPP status
         """
         self.xmppstatus     = presence_status
         self.xmppstatusshow = presence_show
@@ -535,6 +601,8 @@ class TNArchipelEntity:
     def change_status(self, presence_status):
         """
         change only the status of the entity
+        @type presence_status: string
+        @param presence_status: the value of the XMPP status
         """
         self.xmppstatus = presence_status
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
@@ -545,6 +613,12 @@ class TNArchipelEntity:
         """
         push a change using archipel push system.
         this system will change with inclusion of pubsub
+        @type namespace: string
+        @param namespace: the namespace of the push. it will be prefixed with @ARCHIPEL_NS_IQ_PUSH
+        @type change: string
+        @param change: the change value (can be anything, like 'newvm' in the context of the namespace)
+        @type excludedgroups: array
+        @param excludedgroups: roster group to exclude from the push
         """
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
         
@@ -555,7 +629,15 @@ class TNArchipelEntity:
     
     
     def shout(self, subject, message, excludedgroups=None):
-        """send a message to everybody in roster"""
+        """
+        send a message to everybody in roster
+        @type subject: string
+        @param subject: the xmpp subject of the message
+        @type message: string
+        @param message: the content of the message
+        @type excludedgroups: array
+        @param excludedgroups: roster group to exclude from the push
+        """
         for barejid in self.roster.getItems():
             excluded = False
             if self.jid.getStripped() == barejid:
@@ -811,20 +893,20 @@ class TNArchipelEntity:
     
     
     def process_inband_unregistration(self):
+        """
+        perform the inband unregistration. The account will be removed
+        from the server, and so, the loop will be interrupted
+        """
         self.remove_pubsubs()
-        
         self.log.info("trying to unregister")
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         iq.setQueryNS("jabber:iq:register")
-        
         remove_node = xmpp.Node(tag="remove")
-        
         iq.setQueryPayload([remove_node])
         self.log.info("unregistration information sent. waiting for response")
         resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
-        self.log.info("account removed!")
+        self.log.info("account removed")
         self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-    
     
     
     ### Avatars
