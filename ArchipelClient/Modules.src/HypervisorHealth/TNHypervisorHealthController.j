@@ -303,6 +303,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
@@ -410,10 +411,44 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
 }
 
+/*! called when presence of user changed and evenutally stops the timers
+    @param aNotification the notification
+*/
+- (void)_didUpdatePresence:(CPNotification)aNotification
+{
+    if ([_entity XMPPShow] === TNStropheContactStatusOffline)
+    {
+        if (_timerStats)
+        {
+            [_timerStats invalidate];
+            CPLog.debug("timer for stats invalidated");
+            _timerStats = nil;
+        }
+
+        if (_timerLogs)
+        {
+            [_timerLogs invalidate];
+            CPLog.debug("timer for logs invalidated");
+            _timerLogs = nil;
+        }
+    }
+    else
+    {
+        if (!_timerStats)
+            _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+
+        if (!_timerLogs)
+            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+    }
+}
+
 
 #pragma mark -
 #pragma mark Utilities
 
+/*! parse diskNode info to get a CPTableView valid object
+    @parse diskNode TNStropheStanza containing the disk info
+*/
 - (CPDictionary)parseDiskNodes:(TNStropheStanza)diskNode
 {
     var ret = [CPArray array];
@@ -434,10 +469,11 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     return ret;
 }
 
+
 #pragma mark -
 #pragma mark Actions
 
-/*! Action that make the auto-refresh on or off
+/*! Action that make the auto refresh on or off
     @param sender the sender of the action
 */
 - (IBAction)handleAutoRefresh
