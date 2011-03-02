@@ -474,7 +474,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity):
         
         del self.virtualmachines[uuid]
         
-        self.log.info("unregistering vm from jabber server")
+        self.log.info("starting the vm removing procedure")
         vm.inband_unregistration()
         self.perform_hooks("HOOK_HYPERVISOR_FREE", vm)
         self.log.info("XMPP Virtual Machine %s sucessfully destroyed" % jid)
