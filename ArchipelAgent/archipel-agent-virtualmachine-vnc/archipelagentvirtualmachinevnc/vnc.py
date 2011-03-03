@@ -127,7 +127,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
         self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl)
         self.novnc_proxy.start()
-        self.entity.push_change("virtualmachine:vnc", "websocketvncstart", excludedgroups=['vitualmachines'])
+        self.entity.push_change("virtualmachine:vnc", "websocketvncstart")
 
 
     def stop_novnc_proxy(self, origin=None, user_info=None, parameters=None):
@@ -137,7 +137,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         if self.novnc_proxy:
             self.entity.log.info("stopping novnc proxy")
             self.novnc_proxy.stop()
-            self.entity.push_change("virtualmachine:vnc", "websocketvncstop", excludedgroups=['vitualmachines'])
+            self.entity.push_change("virtualmachine:vnc", "websocketvncstop")
 
 
 

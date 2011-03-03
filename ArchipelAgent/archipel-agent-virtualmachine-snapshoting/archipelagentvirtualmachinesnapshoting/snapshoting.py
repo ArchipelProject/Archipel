@@ -19,7 +19,7 @@ import libvirt
 import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
-from archipelcore.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
+from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
 
 from archipel.archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
@@ -148,8 +148,8 @@ class TNSnapshoting (TNArchipelPlugin):
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
 
             self.entity.log.info("snapshot with name %s created" % name)
-            self.entity.push_change("snapshoting", "taken", excludedgroups=['vitualmachines'])
-            self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.push_change("snapshoting", "taken")
+            self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while snapshoting")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -251,8 +251,8 @@ class TNSnapshoting (TNArchipelPlugin):
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
 
             self.entity.log.info("snapshot with name %s deleted" % name)
-            self.entity.push_change("snapshoting", "deleted", excludedgroups=['vitualmachines'])
-            self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.push_change("snapshoting", "deleted")
+            self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
@@ -286,8 +286,8 @@ class TNSnapshoting (TNArchipelPlugin):
             self.entity.domain.revertToSnapshot(snapshotObject, 0)
 
             self.entity.log.info("reverted to snapshot with name %s " % name)
-            self.entity.push_change("snapshoting", "restored", excludedgroups=['vitualmachines'])
-            self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.push_change("snapshoting", "restored")
+            self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
             self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)

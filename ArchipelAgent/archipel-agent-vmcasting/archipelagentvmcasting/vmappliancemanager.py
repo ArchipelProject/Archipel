@@ -20,7 +20,7 @@ import sqlite3
 import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
-from archipelcore.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
+from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
 
 import appliancecompresser
@@ -113,9 +113,9 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.is_installing = False
         self.installing_media_uuid = None
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceinstalled", excludedgroups=['vitualmachines'])
+        self.entity.push_change("vmcasting", "applianceinstalled")
         self.entity.change_status("Off")
-        self.entity.shout("appliance", "I've terminated to install from applicance.", excludedgroups=['vitualmachines'])
+        self.entity.shout("appliance", "I've terminated to install from applicance.")
 
 
     def error_installing(self, exception):
@@ -123,15 +123,16 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.is_installing = False
         self.installing_media_uuid = None
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceerror", excludedgroups=['vitualmachines'])
+        self.entity.push_change("vmcasting", "applianceerror")
         self.entity.change_status("Cannot install appliance")
         self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
 
 
     def finish_packaging(self):
         self.is_installing = False
-        self.entity.push_change("vmcasting", "packaged", excludedgroups=['vitualmachines'])
-        self.entity.hypervisor.module_vmcasting.parse_own_repo(loop=False)
+        self.entity.push_change("vmcasting", "packaged")
+        hypervisor_vmcast_plugin = self.entity.hypervisor.get_plugin["hypervisor_vmcasts"]["plugin"]
+        hypervisor_vmcast_plugin.parse_own_repo(loop=False)
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
 
 
@@ -247,7 +248,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             self.installing_media_uuid = uuid
             appliance_packager.start()
 
-            self.entity.push_change("vmcasting", "applianceinstalling", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "applianceinstalling")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
 
@@ -270,7 +271,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             package_file_path = self.entity.folder + "/current.package"
             os.unlink(package_file_path)
             self.is_installed = False
-            self.entity.push_change("vmcasting", "appliancedetached", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "appliancedetached")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
@@ -325,7 +326,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity)
 
             self.is_installing = True
-            self.entity.push_change("vmcasting", "packaging", excludedgroups=['vitualmachines'])
+            self.entity.push_change("vmcasting", "packaging")
             compressor.start()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)

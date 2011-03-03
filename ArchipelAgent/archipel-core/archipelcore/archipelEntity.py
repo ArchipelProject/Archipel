@@ -169,6 +169,20 @@ class TNArchipelEntity (object):
                 self.plugins.append(plugin)
 
 
+    def get_plugin(self, identifier):
+        """
+        return the plugin object with given identifier
+        @type identifier: string
+        @param identifier: the identifier of the plugin
+        @rtype: object
+        @return: the requested plugin or None
+        """
+        for plugin in self.plugins:
+            if plugin["info"][identifier] == identifier:
+                return plugin;
+        return None
+
+
     def check_acp(self, conn, iq):
         """
         check is iq is a valid ACP and return action. it it's not valid,

@@ -21,7 +21,7 @@ import subprocess
 import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
-from archipelcore.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
+from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
 from archipelcore.utils import build_error_iq
 
 
@@ -153,8 +153,8 @@ class TNStorageManagement (TNArchipelPlugin):
 
             reply = iq.buildReply("result")
             self.entity.log.info("disk created")
-            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit), excludedgroups=['vitualmachines'])
-            self.entity.push_change("disk", "created", excludedgroups=['vitualmachines'])
+            self.entity.shout("disk", "I've just created a new hard drive named %s with size of %s%s." % (disk_name, disk_size, disk_unit))
+            self.entity.push_change("disk", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CREATE)
         return reply
@@ -192,8 +192,8 @@ class TNStorageManagement (TNArchipelPlugin):
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
             self.entity.log.info("convertion of  created")
-            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format), excludedgroups=['vitualmachines'])
-            self.entity.push_change("disk", "converted", excludedgroups=['vitualmachines'])
+            self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
+            self.entity.push_change("disk", "converted")
         except Exception as ex:
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_CONVERT)
@@ -225,8 +225,8 @@ class TNStorageManagement (TNArchipelPlugin):
 
             reply = iq.buildReply("result")
             self.entity.log.info("renamed hard drive %s into  %s" % (path, newname))
-            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname), excludedgroups=['vitualmachines'])
-            self.entity.push_change("disk", "renamed", excludedgroups=['vitualmachines'])
+            self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
+            self.entity.push_change("disk", "renamed")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_RENAME)
         return reply
@@ -271,14 +271,14 @@ class TNStorageManagement (TNArchipelPlugin):
                 if have_undefined_at_least_on_disk:
                     xml = str(self.entity.definition).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
                     self.entity.libvirt_connection.defineXML(xml)
-                    self.entity.push_change("virtualmachine:definition", "defined", excludedgroups=['vitualmachines'])
+                    self.entity.push_change("virtualmachine:definition", "defined")
 
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
 
             reply = iq.buildReply("result")
             self.entity.log.info("disk %s deleted" % secure_disk_path)
-            self.entity.push_change("disk", "deleted", excludedgroups=['vitualmachines'])
-            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name), excludedgroups=['vitualmachines'])
+            self.entity.push_change("disk", "deleted")
+            self.entity.shout("disk", "I've just deleted the hard drive named %s." % (disk_name))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_DELETE)
         return reply

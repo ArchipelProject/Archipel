@@ -29,7 +29,7 @@ import uuid as moduuid
 import xmpp
 from threading import Thread
 
-from archipelcore.archipelPermissionsCenter import TNArchipelPermissionCenter
+from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
@@ -410,10 +410,6 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
         vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
 
-        self.log.info("adding the xmpp vm %s to my roster" % (str(vm_jid)))
-
-        self.add_jid(vm_jid, [ARCHIPEL_XMPP_GROUP_VM, ARCHIPEL_XMPP_GROUP_HYPERVISOR])
-
         if not requested_name: name = self.generate_name()
         else: name = requested_name
 
@@ -467,6 +463,11 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
 
 
     def free(self, jid):
+        """
+        remove the XMPP container of VM with given jid
+        @type jid: xmpp.JID
+        @param jid: the JID of the VM to free
+        """
         uuid    = jid.getNode()
         vm      = self.virtualmachines[uuid]
 
@@ -476,10 +477,6 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
 
         self.log.info("launch %s's terminate method" % jid)
         vm.terminate()
-
-        self.log.info("removing the xmpp vm %s from my roster" % jid)
-        self.remove_jid(jid)
-
         vm.remove_folder()
 
         self.log.info("unregistering the VM from hypervisor's database")
@@ -511,7 +508,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
-        self.remove_jid(jid)
+        #self.remove_jid(jid)
         self.update_presence()
 
 
@@ -557,18 +554,18 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """
-        try:
-            try: requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
-            except: requested_name = None
-            vm      = self.alloc(iq.getFrom(), requested_name=requested_name)
-            reply   = iq.buildReply("result")
-            payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
-            reply.setQueryPayload([payload])
-            self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid))
-        except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
-        except Exception as ex:
-            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC)
+        # try:
+        try: requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
+        except: requested_name = None
+        vm      = self.alloc(iq.getFrom(), requested_name=requested_name)
+        reply   = iq.buildReply("result")
+        payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
+        reply.setQueryPayload([payload])
+        self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid))
+        # except libvirt.libvirtError as ex:
+        #     reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        # except Exception as ex:
+        #     reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ALLOC)
 
         return reply
 
@@ -721,7 +718,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         try:
             reply = iq.buildReply("result")
             nodes = []
-            for uuid, vm in self.virtualmachines.iteritems():#self.roster.getItems():
+            for uuid, vm in self.virtualmachines.iteritems():
                 n = xmpp.Node("item")
                 n.addData(vm.jid.getStripped())
                 nodes.append(n)

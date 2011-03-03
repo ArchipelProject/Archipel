@@ -132,10 +132,7 @@ class TNApplianceDownloader(Thread):
         """
         self.total_size = total_size
         percentage = (float(blocks_count) * float(block_size)) / float(total_size) * 100
-        #print str(float(blocks_count)) +  "*" + str(float(block_size)) + "/"  + str(float(total_size)) + "*"  + "100"
-        # print "downloading: " + str(percentage) + "%"
-        if percentage >= 100.0:
-            self.finish_callback(self.uuid, self.save_path)
+        if percentage >= 100.0: self.finish_callback(self.uuid, self.save_path)
 
         self.progress = percentage
 
@@ -257,7 +254,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
           del self.download_queue[uuid]
           self.database_connection.commit()
           self.entity.push_change("vmcasting", "download_complete")
-          self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid), excludedgroups=['vitualmachines'])
+          self.entity.shout("vmcast", "I've finished to download appliance %s" % (uuid))
           self.entity.change_status(self.old_entity_status)
 
 
@@ -278,9 +275,13 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         nodes = []
         tmp_cursor = self.database_connection.cursor()
 
-        for values in sources:
-            name, description, url, uuid = values
+        content = []
 
+        ## this will avoid to parse two times the content of the cursor if we udpate
+        for values in sources: content.append(values)
+
+        for values in content:
+            name, description, url, uuid = values
             self.entity.log.debug("TNHypervisorRepoManager: parsing feed with url %s" % url)
 
             source_node = xmpp.Node(tag="source", attrs={"name": name, "description": description, "url": url, "uuid": uuid})
@@ -299,7 +300,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
                 raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed")
 
             try:
-                tmp_cursor.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url))
+                self.database_connection.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url))
                 self.database_connection.commit()
             except Exception as ex:
                 self.entity.log.debug("TNHypervisorRepoManager: unable to update source because: " + str(ex))
@@ -402,8 +403,8 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         url         = iq.getTag("query").getTag("archipel").getAttr("url")
 
         try:
-            if not url or url=="":
-                raise Exception("IncorrectStanza", "Stanza must have url")
+            if not url or url == "":
+                raise Exception("IncorrectStanza", "Stanza must have url: %s" % str(iq))
 
             try:
                 f = urllib.urlopen(url)
@@ -421,7 +422,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             self.parseRSS()
 
             self.entity.push_change("vmcasting", "register")
-            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.shout("vmcast", "I'm now registred to vmcast %s as asked by %s" % (url, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_REGISTER)
         return reply
@@ -445,7 +446,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             self.cursor.execute("DELETE FROM vmcastappliances WHERE source='%s'" % uuid)
             self.database_connection.commit()
             self.entity.push_change("vmcasting", "unregister")
-            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.shout("vmcast", "I'm now unregistred from vmcast %s as asked by %s" % (uuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_UNREGISTER)
         return reply
@@ -468,7 +469,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             self.cursor.execute("UPDATE vmcastappliances SET status=%d WHERE uuid='%s'" % (ARCHIPEL_APPLIANCES_INSTALLING, dl_uuid))
             self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid='%s'" % dl_uuid)
             self.database_connection.commit()
-
+            self.old_entity_status = self.entity.xmppstatus
             self.entity.push_change("vmcasting", "download_start")
 
             for values in self.cursor:
@@ -477,7 +478,6 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
                 self.download_queue[uuid] = downloader
                 downloader.daemon  = True
                 downloader.start()
-            self.old_entity_status = self.entity.xmppstatus
             self.entity.change_status("Downloading appliance...")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DOWNLOADAPPLIANCE)
@@ -597,7 +597,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             self.database_connection.commit()
 
             self.entity.push_change("vmcasting", "appliancedeleted")
-            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()), excludedgroups=['vitualmachines'])
+            self.entity.shout("vmcast", "I've just delete appliance %s as asked by %s" % (uuid, iq.getFrom()))
 
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE)

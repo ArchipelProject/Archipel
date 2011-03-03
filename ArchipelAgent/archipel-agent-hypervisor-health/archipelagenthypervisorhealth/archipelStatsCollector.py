@@ -40,7 +40,6 @@ class TNThreadedHealthCollector(Thread):
         self.stats_memory           = []
         self.stats_load             = []
 
-        # uname = commands.getoutput("uname -rsmo").split()
         uname = subprocess.Popen(["uname", "-rsmo"], stdout=subprocess.PIPE).communicate()[0].split()
         self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
 
@@ -118,7 +117,6 @@ class TNThreadedHealthCollector(Thread):
 
 
     def get_load_stats(self):
-        # load_average = commands.getoutput("uptime").split("load average:")[1].split(", ")
         load_average = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("load average:")[1].split(", ")
         load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
         return {"date": datetime.datetime.now(), "one": load1min, "five": load5min, "fifteen": load15min}
