@@ -32,8 +32,7 @@ class TNArchipelLibvirtEntity (object):
         self.local_libvirt_uri = self.configuration.get("GLOBAL", "libvirt_uri")
         self.libvirt_connection = None
         if self.configuration.has_option("GLOBAL", "libvirt_need_authentication"):
-            self.need_auth =
-                self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
+            self.need_auth = self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
         else:
             self.need_auth = None
 
