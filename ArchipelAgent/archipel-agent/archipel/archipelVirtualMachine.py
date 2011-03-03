@@ -1368,25 +1368,22 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         """
         return "Hello %s! How are you today ?" % msg.getFrom().getNode()
 
-    # def iq_setcpuspin(self, iq):
-    #     """
-    #     set number of virtual cpus
-    #
-    #     @type iq: xmpp.Protocol.Iq
-    #     @param iq: the received IQ
-    #
-    #     @rtype: xmpp.Protocol.Iq
-    #     @return: a ready to send IQ containing the result of the action
-    #     """
-    #     try:
-    #         reply = iq.buildReply("result")
-    #         cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
-    #         self.setVCPUs(cpus)
-    #         self.log.info("virtual machine number of cpus is set to %d" % cpus)
-    #         self.push_change("virtualmachine:control", "nvcpu")
-    #     except libvirt.libvirtError as ex:
-    #         reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
-    #     except Exception as ex:
-    #         reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
-    #     return reply
-    #
+    def iq_setcpuspin(self, iq):
+        """
+        set number of virtual cpus
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            cpus = int(iq.getTag("query").getTag("archipel").getAttr("value"))
+            self.setVCPUs(cpus)
+            self.log.info("virtual machine number of cpus is set to %d" % cpus)
+            self.push_change("virtualmachine:control", "nvcpu")
+        except libvirt.libvirtError as ex:
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
+        return reply
