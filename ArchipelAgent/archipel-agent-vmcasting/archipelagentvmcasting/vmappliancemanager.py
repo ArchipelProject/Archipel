@@ -39,14 +39,6 @@ class TNVMApplianceManager (TNArchipelPlugin):
     def __init__(self, configuration, entity, entry_point_group):
         """
         initialize the class
-        @type database_path: string
-        @param database_path: the path of the sqlite3 database to use
-        @type temp_directory: string
-        @param temp_directory: the path of the working repository
-        @type disks_extensions: array
-        @param disks_extensions: list of authorized file extensions
-        @type hypervisor_repo_path: string
-        @param hypervisor_repo_path: destination of newly created packages
         @type entity: TNArchipelVirtualMachine
         @param entity: the entity of the module
         """
@@ -59,7 +51,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
 
         self.disks_extensions       =  self.configuration.get("VMCASTING", "disks_extensions").split(";")
         self.temp_directory         = self.configuration.get("VMCASTING", "temp_path")
-        self.hypervisor_repo_path   = self.configuration.get("VMCASTING", "repository_path")
+        self.hypervisor_repo_path   = self.configuration.get("VMCASTING", "own_vmcast_path")
         self.is_installing          = False
         self.installing_media_uuid  = None
         self.is_installed           = False
@@ -131,7 +123,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
     def finish_packaging(self):
         self.is_installing = False
         self.entity.push_change("vmcasting", "packaged")
-        hypervisor_vmcast_plugin = self.entity.hypervisor.get_plugin["hypervisor_vmcasts"]["plugin"]
+        hypervisor_vmcast_plugin = self.entity.hypervisor.get_plugin("hypervisor_vmcasts")
         hypervisor_vmcast_plugin.parse_own_repo(loop=False)
         self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
 
@@ -298,7 +290,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             paths           = []
 
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
-                self.entity.log.error( self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
+                self.entity.log.error(self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. aborting")
                 raise Exception("Appliance with name %s is already in hypervisor repository" % package_name)
 
             self.old_status  = self.entity.xmppstatus

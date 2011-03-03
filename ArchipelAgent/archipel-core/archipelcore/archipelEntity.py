@@ -151,9 +151,7 @@ class TNArchipelEntity (object):
             plugins             = method(self.configuration, self, group, excluded_plugins)
 
             for plugin in plugins:
-
                 plugin_info     = plugin["info"]
-
                 if plugin_info["configuration-section"]:
                     if not self.configuration.has_section(plugin_info["configuration-section"]):
                         excluded_plugins.append(plugin_info["identifier"])
@@ -178,8 +176,8 @@ class TNArchipelEntity (object):
         @return: the requested plugin or None
         """
         for plugin in self.plugins:
-            if plugin["info"][identifier] == identifier:
-                return plugin;
+            if plugin["info"]["identifier"] == identifier:
+                return plugin["plugin"]
         return None
 
 
