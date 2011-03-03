@@ -334,6 +334,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 */
 - (IBAction)addNewVMCast:(id)aSender
 {
+    [windowNewCastURL close];
     [self addNewVMCast];
 }
 
