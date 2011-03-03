@@ -19,7 +19,8 @@ import libvirt
 import sys
 
 
-ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR   = "libvirt:error:generic"
+ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
+
 
 class TNArchipelLibvirtEntity (object):
 
@@ -27,21 +28,20 @@ class TNArchipelLibvirtEntity (object):
         """
         initialize the TNArchipelLibvirtEntity
         """
-        self.configuration      = configuration
-        self.local_libvirt_uri  = self.configuration.get("GLOBAL", "libvirt_uri")
+        self.configuration = configuration
+        self.local_libvirt_uri = self.configuration.get("GLOBAL", "libvirt_uri")
         self.libvirt_connection = None
         if self.configuration.has_option("GLOBAL", "libvirt_need_authentication"):
-            self.need_auth  = self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
+            self.need_auth =
+                self.configuration.getboolean("GLOBAL", "libvirt_need_authentication")
         else:
             self.need_auth = None
-
 
     def manage_vcard_hook(self, origin, user_info, parameters):
         """
         hook to manage VCard
         """
         self.manage_vcard()
-
 
     def connect_libvirt(self):
         """
@@ -56,8 +56,6 @@ class TNArchipelLibvirtEntity (object):
                 self.log.error("unable to connect libvirt")
                 sys.exit(-42)
         self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
-
-
 
     def libvirt_credential_callback(self, creds, cbdata):
         """
