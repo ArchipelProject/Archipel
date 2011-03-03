@@ -22,7 +22,7 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 from archipelStatsCollector import TNThreadedHealthCollector
 
-x
+
 ARCHIPEL_NS_HYPERVISOR_HEALTH       = "archipel:hypervisor:health"
 ARCHIPEL_ERROR_CODE_HEALTH_HISTORY  = -8001
 ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
