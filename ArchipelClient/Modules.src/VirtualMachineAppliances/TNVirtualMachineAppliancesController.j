@@ -497,7 +497,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been detached"];
 
-        [self setControl:_attachButton currentEntityHasPermission:@"appliance_attach"];
+        [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
     }
     else
     {
