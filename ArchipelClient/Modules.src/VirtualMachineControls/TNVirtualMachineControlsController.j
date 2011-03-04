@@ -117,6 +117,7 @@ TNArchipelTransportBarReboot    = 4;
     TNTableViewDataSource           _datasourceHypervisors;
 }
 
+
 #pragma mark -
 #pragma mark Initialization
 
@@ -142,8 +143,6 @@ TNArchipelTransportBarReboot    = 4;
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
 
-
-
     _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
     _imageDestroy           = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CGSizeMake(16, 16)];
@@ -159,8 +158,6 @@ TNArchipelTransportBarReboot    = 4;
     _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-selected.png"] size:CGSizeMake(16, 16)];
     _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
     _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
-
-
 
     [maskingView setBackgroundColor:[CPColor whiteColor]];
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -239,8 +236,8 @@ TNArchipelTransportBarReboot    = 4;
     [_migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
-
     [_migrateButton setEnabled:NO];
+
     [buttonBarMigration setButtons:[_migrateButton]];
 
     //TNSwitch
@@ -252,7 +249,6 @@ TNArchipelTransportBarReboot    = 4;
 
     [switchPreventOOMKiller setTarget:self];
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
-
 }
 
 
@@ -850,10 +846,10 @@ TNArchipelTransportBarReboot    = 4;
             }
         }
 
-        var index               = [[_tableHypervisors selectedRowIndexes] firstIndex];
+        var index = [[_tableHypervisors selectedRowIndexes] firstIndex];
         if (index != -1)
         {
-            var selectedHypervisor  = [_datasourceHypervisors objectAtIndex:index];
+            var selectedHypervisor = [_datasourceHypervisors objectAtIndex:index];
 
             if ([selectedHypervisor fullJID] == _currentHypervisorJID)
                 [_migrateButton setEnabled:NO];
