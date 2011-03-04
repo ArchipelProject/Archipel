@@ -21,6 +21,7 @@
 
 TNArchipelRosterOutlineViewReload           = @"TNArchipelRosterOutlineViewReload";
 TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowNotification";
+TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectAll";
 
 /*! @ingroup archipelcore
     Subclass of TNOutlineView. This will display the roster according to the TNDatasourceRoster given as datasource.
@@ -51,6 +52,7 @@ TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowN
         [columnOutline setWidth:12.0];
 
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(reload:) name:TNArchipelRosterOutlineViewReload object:nil];
+        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(deselectAll:) name:TNArchipelRosterOutlineViewDeselectAll object:nil];
         [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didPropertiesViewUpdate:) name:TNArchipelPropertiesViewDidShowNotification object:nil];
 
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -96,6 +98,15 @@ TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowN
     }
 
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
+}
+
+/*! called when TNArchipelRosterOutlineViewDeselectAll is received.
+    It will deselect all
+    @param aNotification the notification
+*/
+- (void)deselectAll:(CPNotification)aNotification
+{
+    [self deselectAll];
 }
 
 /*! called when TNArchipelPropertiesViewDidShowNotification is received.
