@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import commands
 import os
 import subprocess
 import xmpp
@@ -268,10 +267,10 @@ class TNStorageManagement (TNArchipelPlugin):
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            disks = commands.getoutput("ls " + self.entity.folder).split()
+            disks = subprocess.Popen(["ls", self.entity.folder], stdout=subprocess.PIPE).communicate()[0].split()
             nodes = []
             for disk in disks:
-                file_cmd_output = commands.getoutput("file " + self.entity.folder + "/" + disk).lower()
+                file_cmd_output = subprocess.Popen(["file", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
 
                 if (file_cmd_output.find("format: qcow") > -1 \
                 or file_cmd_output.find("boot sector") > -1 \
@@ -279,7 +278,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 or file_cmd_output.find("data") > -1\
                 or file_cmd_output.find("user-mode linux cow file") > -1) \
                 and file_cmd_output.find("sqlite") == -1:
-                    diskinfo = commands.getoutput(self.qemu_img_bin + " info " + self.entity.folder + "/" + disk).split("\n") ## TODO: use subprocess
+                    diskinfo = subprocess.Popen([self.qemu_img_bin, "info", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].split("\n")
                     node = xmpp.Node(tag="disk", attrs={"name": disk.split('.')[0],
                         "path": self.entity.folder + "/" + disk,
                         "format": diskinfo[1].split(": ")[1],
@@ -304,14 +303,14 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         try:
             nodes = []
-            isos = commands.getoutput("ls " + self.entity.folder).split()
+            isos = subprocess.Popen(["ls", self.entity.folder], stdout=subprocess.PIPE).communicate()[0].split()
             for iso in isos:
-                if commands.getoutput("file " + self.entity.folder + "/" + iso).lower().find("iso 9660") > -1:
+                if subprocess.Popen(["file", "%s/%s" % (self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.entity.folder + "/" + iso})
                     nodes.append(node)
-            sharedisos = commands.getoutput("ls " + self.shared_isos_folder).split()
+            sharedisos = subprocess.Popen(["ls", self.shared_isos_folder], stdout=subprocess.PIPE).communicate()[0].split()
             for iso in sharedisos:
-                if commands.getoutput("file " + self.shared_isos_folder + "/" + iso).lower().find("iso 9660") > -1:
+                if subprocess.Popen(["file", "%s/%s" % (self.shared_isos_folder, iso)], stdout=subprocess.PIPE).communicate()[0].lower().find("iso 9660") > -1:
                     node = xmpp.Node(tag="iso", attrs={"name": iso, "path": self.shared_isos_folder + "/" + iso})
                     nodes.append(node)
             reply = iq.buildReply("result")
