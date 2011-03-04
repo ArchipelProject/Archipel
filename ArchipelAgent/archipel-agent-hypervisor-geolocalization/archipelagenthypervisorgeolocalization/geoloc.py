@@ -25,20 +25,26 @@ from archipelcore.utils import build_error_iq
 ARCHIPEL_NS_HYPERVISOR_GEOLOC           = "archipel:hypervisor:geolocalization"
 ARCHIPEL_ERROR_CODE_LOCALIZATION_GET    = -9001
 
+
 class TNHypervisorGeolocalization (TNArchipelPlugin):
+    """
+    this plugin allow to geolocalize the hypervisor
+    """
 
     def __init__(self, configuration, entity, entry_point_group):
         """
         initialize the module
-        @type entity TNArchipelEntity
-        @param entity the module entity
+        @type configuration: Configuration object
+        @param configuration: the configuration
+        @type entity: L{TNArchipelEntity}
+        @param entity: the entity that owns the plugin
+        @type entry_point_group: string
+        @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-
-        mode    = self.configuration.get("GEOLOCALIZATION", "localization_mode");
+        mode    = self.configuration.get("GEOLOCALIZATION", "localization_mode")
         lat     = ""
         lon     = ""
-
         if mode == "auto":
             service         = self.configuration.get("GEOLOCALIZATION", "localization_service_url")
             request         = self.configuration.get("GEOLOCALIZATION", "localization_service_request")
@@ -51,20 +57,16 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         else:
             lat = self.configuration.getfloat("GEOLOCALIZATION", "localization_latitude")
             lon = self.configuration.getfloat("GEOLOCALIZATION", "localization_longitude")
-
         string = "<gelocalization><Latitude>"+str(lat)+"</Latitude>\n<Longitude>"+str(lon)+"</Longitude></gelocalization>"
         self.localization_information = xmpp.simplexml.NodeBuilder(data=string).getDom()
-
         registrar_item = {  "commands" : ["where are you", "localize"],
                             "parameters": {},
                             "method": self.message_get,
                             "permissions": ["geolocalization_get"],
                             "description": "give my the latitude and longitude." }
-
         self.entity.add_message_registrar_item(registrar_item)
-
         # permissions
-        self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False);
+        self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False)
 
 
     ### Plugin interface
@@ -75,7 +77,6 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         necessary to register module for listening to stanza
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_GEOLOC)
-
 
     @staticmethod
     def plugin_info():
@@ -92,7 +93,6 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
                                             "localization_service_request",
                                             "localization_service_method",
                                             "localization_service_response_root_node"]
-
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -101,14 +101,11 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
 
     ### XMPP Processing
 
-
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_HYPERVISOR_GEOLOC IQ is received.
-
         it understands IQ of type:
             - get
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -117,15 +114,18 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="geolocalization_")
-
-        if action == "get": reply = self.iq_get(iq)
-
+        if action == "get":
+            reply = self.iq_get(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def iq_get(self, iq):
+        """
+        return the geolocalization information
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        """
         reply = iq.buildReply("result")
         try:
             reply.setQueryPayload([self.localization_information])
@@ -133,11 +133,14 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LOCALIZATION_GET)
         return reply
 
-
     def message_get(self, msg):
+        """
+        return the geolocalization information asked by message
+        @type iq: xmpp.Protocol.Message
+        @param iq: the received message
+        @rtype: string
+        @return: string containing the answer to send
+        """
         lat = self.localization_information.getTagData("Latitude")
         lon = self.localization_information.getTagData("Longitude")
         return "I'm localized at longitude: %s latitude: %s" % (lon, lat)
-
-
-

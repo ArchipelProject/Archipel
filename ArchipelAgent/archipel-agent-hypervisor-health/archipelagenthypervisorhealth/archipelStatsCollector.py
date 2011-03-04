@@ -28,9 +28,18 @@ class TNThreadedHealthCollector(Thread):
     """
     this class collects hypervisor stats regularly
     """
+
     def __init__(self, database_file, collection_interval, max_rows_before_purge, max_cached_rows):
         """
         the contructor of the class
+        @type database_file: string
+        @param database_file: the path of the database
+        @type collection_interval: integer
+        @param collection_interval: the intervale between two collection
+        @type max_rows_before_purge: integer
+        @param max_rows_before_purge: max number of rows that can be stored in database
+        @type max_rows_before_purge: integer
+        @param max_rows_before_purge: max number of rows that are cached into memory
         """
         self.database_file          = database_file
         self.collection_interval    = collection_interval
@@ -39,55 +48,50 @@ class TNThreadedHealthCollector(Thread):
         self.stats_CPU              = []
         self.stats_memory           = []
         self.stats_load             = []
-
         uname = subprocess.Popen(["uname", "-rsmo"], stdout=subprocess.PIPE).communicate()[0].split()
-        self.uname_stats = {"krelease": uname[0] , "kname": uname[1] , "machine": uname[2], "os": uname[3]}
-
+        self.uname_stats = {"krelease": uname[0], "kname": uname[1], "machine": uname[2], "os": uname[3]}
         self.database_query_connection = sqlite3.connect(self.database_file)
         self.cursor = self.database_query_connection.cursor()
-
         self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
         log.info("Database ready.")
-
         self.recover_stored_stats()
-
         Thread.__init__(self)
 
-
     def recover_stored_stats(self):
+        """
+        recover info from database
+        """
         log.info("recovering stored statistics. It may take a while...")
         self.cursor.execute("select * from cpu order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, idle = values
             self.stats_CPU.insert(0, {"date": date, "id": idle})
-
         self.cursor.execute("select * from memory order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, free, used, total, swapped = values
-            self.stats_memory.insert(0, {"date": date, "free": free, "used" : used, "total": total, "swapped": swapped})
-
+            self.stats_memory.insert(0, {"date": date, "free": free, "used": used, "total": total, "swapped": swapped})
         self.cursor.execute("select * from load order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, one, five, fifteen = values
             self.stats_load.insert(0, {"date": date, "one": one, "five": five, "fifteen": fifteen})
-
         log.info("statistics recovered")
-
 
     def get_collected_stats(self, limit=1):
         """
         this method return the current L{TNArchipelVirtualMachine} instance
+        @type limit: integer
+        @param limit: the max number of row to get
         @rtype: TNArchipelVirtualMachine
         @return: the L{TNArchipelVirtualMachine} instance
         """
         log.debug("Retrieving last "+ str(limit) + " recorded stats data for sending")
         uptime          = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("up ")[1].split(",")[0]
-        uptime_stats    = {"up" : uptime}
+        uptime_stats    = {"up": uptime}
         acpu            = self.stats_CPU[-limit:]
         amem            = self.stats_memory[-limit:]
-        adisk           = sorted(self.get_disk_stats(), cmp=lambda x,y: cmp(x["mount"], y["mount"]))
+        adisk           = sorted(self.get_disk_stats(), cmp=lambda x, y: cmp(x["mount"], y["mount"]))
         totalDisk       = self.get_disk_total()
         aload           = self.stats_load[-limit:]
         acpu.reverse()
@@ -95,34 +99,48 @@ class TNThreadedHealthCollector(Thread):
         aload.reverse()
         return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
 
-
     def get_memory_stats(self):
+        """
+        get memory stats
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
         file_meminfo    = open('/proc/meminfo')
         meminfo         = file_meminfo.read()
         file_meminfo.close()
-
         meminfolines    = meminfo.split("\n")
         memTotal        = int(meminfolines[0].split()[1])
         memFree         = int(meminfolines[1].split()[1])
         swapped         = int(meminfolines[4].split()[1])
         memUsed         = memTotal - memFree
-
-        return {"date": datetime.datetime.now(), "free": memFree, "used" : memUsed, "total": memTotal, "swapped": swapped}
-
+        return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped}
 
     def get_cpu_stats(self):
+        """
+        get CPU stats
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
         dt      = self.deltaTime(1)
         cpuPct  = (dt[len(dt) - 1] * 100.00 / sum(dt))
         return {"date": datetime.datetime.now(), "id": cpuPct}
 
-
     def get_load_stats(self):
+        """
+        get loads stats
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
         load_average = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("load average:")[1].split(", ")
         load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
         return {"date": datetime.datetime.now(), "one": load1min, "five": load5min, "fifteen": load15min}
 
-
     def get_disk_stats(self):
+        """
+        get drive usage stats
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
         output  = subprocess.Popen(["df", "-P"], stdout=subprocess.PIPE).communicate()[0]
         ret     = []
         out     = output.split("\n")[1:-1]
@@ -131,18 +149,24 @@ class TNThreadedHealthCollector(Thread):
             ret.append({"partition": cell[0], "blocks": cell[1], "used": cell[2], "available": cell[3], "capacity": cell[4], "mount": cell[5]})
         return ret
 
-
     def get_disk_total(self):
-        out = subprocess.Popen(["df", "--total", "-P"], stdout=subprocess.PIPE).communicate()[0].split("\n");
+        """
+        get total size of drive used stats
+        @rtype: dict
+        @return: dictionnary containing the informations
+        """
+        out = subprocess.Popen(["df", "--total", "-P"], stdout=subprocess.PIPE).communicate()[0].split("\n")
         for line in out:
             line = line.split()
             if line[0] == "total":
                 disk_total = line
                 break
-        return {"used" : disk_total[2], "available": disk_total[3], "capacity":  disk_total[4]}
-
+        return {"used": disk_total[2], "available": disk_total[3], "capacity": disk_total[4]}
 
     def getTimeList(self):
+        """
+        ignore
+        """
         statFile = file("/proc/stat", "r")
         timeList = statFile.readline().split(" ")[2:6]
         statFile.close()
@@ -150,22 +174,22 @@ class TNThreadedHealthCollector(Thread):
             timeList[i] = int(timeList[i])
         return timeList
 
-
     def deltaTime(self, interval):
+        """
+        ignore
+        """
         x = self.getTimeList()
         time.sleep(interval)
         y = self.getTimeList()
-        for i in range(len(x))  :
+        for i in range(len(x)):
             y[i] -= x[i]
         return y
-
 
     def run(self):
         """
         overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
         """
         self.database_thread_connection = sqlite3.connect(self.database_file)
-
         while(1):
             try:
                 self.stats_CPU.append(self.get_cpu_stats())
@@ -173,7 +197,7 @@ class TNThreadedHealthCollector(Thread):
                 self.stats_load.append(self.get_load_stats())
 
                 if len(self.stats_CPU) >= self.max_cached_rows:
-                    middle = (self.max_cached_rows - 1) /  2
+                    middle = (self.max_cached_rows - 1) / 2
 
                     self.database_thread_connection.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
                     self.database_thread_connection.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
@@ -183,6 +207,7 @@ class TNThreadedHealthCollector(Thread):
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
                     del self.stats_load[0:middle]
+
                     log.info("cached stats have been purged from memory")
 
                     if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
@@ -196,7 +221,4 @@ class TNThreadedHealthCollector(Thread):
                 time.sleep(self.collection_interval)
             except Exception as ex:
                 log.error("stat collection fails. Exception %s" % str(ex))
-
-
-
 
