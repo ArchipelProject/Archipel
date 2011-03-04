@@ -39,13 +39,15 @@ class TNArchipelVNC (TNArchipelPlugin):
     def __init__(self, configuration, entity, entry_point_group):
         """
         initialize the module
-        @type entity TNArchipelEntity
-        @param entity the module entity
+        @type configuration: Configuration object
+        @param configuration: the configuration
+        @type entity: L{TNArchipelEntity}
+        @param entity: the entity that owns the plugin
+        @type entry_point_group: string
+        @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-
         self.novnc_proxy = None
-
         # vocabulary
         registrar_item = {  "commands" : ["vnc", "screen"],
                             "parameters": [],
@@ -53,10 +55,8 @@ class TNArchipelVNC (TNArchipelPlugin):
                             "permissions": ["vnc_display"],
                             "description": "I'll show my VNC port" }
         self.entity.add_message_registrar_item(registrar_item)
-
         # permissions
         self.entity.permission_center.create_permission("vnc_display", "Authorizes users to access the vnc display port", False)
-
         # hooks
         self.entity.register_hook("HOOK_VM_CREATE", method=self.create_novnc_proxy)
         self.entity.register_hook("HOOK_VM_CRASH", method=self.stop_novnc_proxy)
@@ -65,7 +65,6 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.register_hook("HOOK_VM_TERMINATE", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_XMPP_DISCONNECT", method=self.stop_novnc_proxy)
         self.entity.register_hook("HOOK_VM_INITIALIZE", method=self.awake_from_initialization)
-
 
 
     ### Plugin interface
@@ -77,23 +76,22 @@ class TNArchipelVNC (TNArchipelPlugin):
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VNC)
 
-
     @staticmethod
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
         plugin_friendly_name           = "Virtual Machine VNC Screen"
         plugin_identifier              = "vnc"
         plugin_configuration_section   = "VNC"
         plugin_configuration_tokens    = [  "vnc_certificate_file",
                                             "vnc_only_ssl"]
-
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
-
 
 
     ### Utilities
@@ -101,27 +99,37 @@ class TNArchipelVNC (TNArchipelPlugin):
     def awake_from_initialization(self, origin, user_info, arguments):
         """
         will create or not the proxy according to the recovered status of the vm
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtim argument
         """
         if self.entity.domain:
             dominfo = self.entity.domain.info()
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.create_novnc_proxy()
 
-
     def create_novnc_proxy(self, origin=None, user_info=None, arguments=None):
         """
         create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc)
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtim argument
         """
         if not self.entity.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU:
             self.entity.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
             return
-
         current_vnc_port        = self.display()["direct"]
         novnc_proxy_port        = self.display()["proxy"]
         self.entity.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
-
         cert = self.configuration.get("VNC", "vnc_certificate_file")
-        if cert.lower() in ("none", "no", "false"): cert = None
+        if cert.lower() in ("none", "no", "false"):
+            cert = None
         self.entity.log.info("virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VNC", "vnc_only_ssl")
         self.entity.log.info("virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
@@ -129,10 +137,15 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.novnc_proxy.start()
         self.entity.push_change("virtualmachine:vnc", "websocketvncstart")
 
-
     def stop_novnc_proxy(self, origin=None, user_info=None, parameters=None):
         """
         stops the current novnc websocket proxy is any.
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtim argument
         """
         if self.novnc_proxy:
             self.entity.log.info("stopping novnc proxy")
@@ -140,16 +153,13 @@ class TNArchipelVNC (TNArchipelPlugin):
             self.entity.push_change("virtualmachine:vnc", "websocketvncstop")
 
 
-
     ### XMPP Processing
 
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_VNC IQ is received.
-
         it understands IQ of type:
             - display
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -158,19 +168,19 @@ class TNArchipelVNC (TNArchipelPlugin):
         reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="vnc_")
-
-        if not self.entity.domain: raise xmpp.protocol.NodeProcessed
-
-        elif action == "display":    reply = self.iq_display(iq)
-
+        if not self.entity.domain:
+            raise xmpp.protocol.NodeProcessed
+        elif action == "display":
+            reply = self.iq_display(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def display(self):
         """
         return an dist containing VNC informations
+        @rtype: dict
+        @return: dict containing the information about VNC screen
         """
         xmldesc = self.entity.domain.XMLDesc(0)
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
@@ -191,14 +201,11 @@ class TNArchipelVNC (TNArchipelPlugin):
                 "onlyssl"       : self.configuration.getboolean("VNC", "vnc_only_ssl"),
                 "supportssl"    : supportSSL}
 
-
     def iq_display(self, iq):
         """
         get the VNC display used in the virtual machine.
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -215,10 +222,13 @@ class TNArchipelVNC (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_VNC)
         return reply
 
-
     def message_display(self, msg):
         """
         handle message vnc display order
+        @type msg: xmpp.Protocol.Message
+        @param msg: the request message
+        @rtype: string
+        @return: the answer
         """
         try:
             ports = self.display()

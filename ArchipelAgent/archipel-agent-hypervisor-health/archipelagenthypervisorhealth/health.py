@@ -81,8 +81,9 @@ class TNHypervisorHealth (TNArchipelPlugin):
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
-        # mandatory by TNArchipelPlugin
         plugin_friendly_name           = "Hypervisor Health"
         plugin_identifier              = "hypervisor_health"
         plugin_configuration_section   = "HEALTH"

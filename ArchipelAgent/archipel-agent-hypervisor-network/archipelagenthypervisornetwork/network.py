@@ -97,6 +97,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
         plugin_friendly_name           = "Hypervisor Networks"
         plugin_identifier              = "hypervisor_network"
@@ -300,6 +302,10 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def message_create(self, msg):
         """
         handle the creation request message
+        @type msg: xmpp.Protocol.Message
+        @param iq: the received message
+        @rtype: xmpp.Protocol.Message
+        @return: a ready to send Message containing the result of the action
         """
         try:
             tokens = msg.getBody().split()

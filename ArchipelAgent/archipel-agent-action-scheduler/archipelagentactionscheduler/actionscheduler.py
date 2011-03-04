@@ -71,6 +71,11 @@ class TNActionScheduler (TNArchipelPlugin):
 
     @staticmethod
     def plugin_info():
+        """
+        return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
+        """
         plugin_friendly_name           = "Action Scheduler"
         plugin_identifier              = "action_scheduler"
         plugin_configuration_section   = "SCHEDULER"

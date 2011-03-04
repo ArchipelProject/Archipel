@@ -82,6 +82,8 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
         plugin_friendly_name           = "Hypervisor Geolocalization"
         plugin_identifier              = "geolocalization"

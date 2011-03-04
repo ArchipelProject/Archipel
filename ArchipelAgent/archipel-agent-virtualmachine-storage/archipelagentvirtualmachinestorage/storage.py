@@ -78,6 +78,8 @@ class TNStorageManagement (TNArchipelPlugin):
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
         plugin_friendly_name           = "Virtual Machine Storage"
         plugin_identifier              = "storage"

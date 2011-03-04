@@ -33,23 +33,26 @@ ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE     = -2004
 ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT     = -2005
 ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE   = -2006
 
+
 class TNSnapshoting (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
         initialize the module
-        @type entity TNArchipelEntity
-        @param entity the module entity
+        @type configuration: Configuration object
+        @param configuration: the configuration
+        @type entity: L{TNArchipelEntity}
+        @param entity: the entity that owns the plugin
+        @type entry_point_group: string
+        @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-
         # permissions
         self.entity.permission_center.create_permission("snapshot_take", "Authorizes user to get take a snapshot", False)
         self.entity.permission_center.create_permission("snapshot_delete", "Authorizes user to delete a snapshot", False)
         self.entity.permission_center.create_permission("snapshot_get", "Authorizes user to get all snapshots", False)
         self.entity.permission_center.create_permission("snapshot_current", "Authorizes user to get current used snapshot", False)
         self.entity.permission_center.create_permission("snapshot_revert", "Authorizes user to revert to a snapshot", False)
-
 
     ### Plugin interface
 
@@ -60,17 +63,17 @@ class TNSnapshoting (TNArchipelPlugin):
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_SNAPSHOTING)
 
-
     @staticmethod
     def plugin_info():
         """
         return inforations about the plugin
+        @rtype: dict
+        @return: dictionary contaning plugin informations
         """
         plugin_friendly_name           = "Virtual Machine Snapshoting"
         plugin_identifier              = "snapshoting"
         plugin_configuration_section   = None
         plugin_configuration_tokens    = None
-
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -79,18 +82,15 @@ class TNSnapshoting (TNArchipelPlugin):
 
     ### XMPP Processing
 
-
     def process_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_SNAPSHOTING IQ is received.
-
         it understands IQ of type:
             - take
             - delete
             - get
             - current
             - revert
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -99,30 +99,29 @@ class TNSnapshoting (TNArchipelPlugin):
         reply = None
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="snapshot_")
-
         if not self.entity.domain:
             raise xmpp.protocol.NodeProcessed
-
         if self.entity.is_migrating and (not action in ("current", "get")):
             reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
-        elif action == "take":      reply = self.iq_take(iq)
-        elif action == "delete":    reply = self.iq_delete(iq)
-        elif action == "get":       reply = self.iq_get(iq)
-        elif action == "current":   reply = self.iq_getcurrent(iq)
-        elif action == "revert":    reply = self.iq_revert(iq)
-
+        elif action == "take":
+            reply = self.iq_take(iq)
+        elif action == "delete":
+            reply = self.iq_delete(iq)
+        elif action == "get":
+            reply = self.iq_get(iq)
+        elif action == "current":
+            reply = self.iq_getcurrent(iq)
+        elif action == "revert":
+            reply = self.iq_revert(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def iq_take(self, iq):
         """
         creating a snapshot
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -132,7 +131,6 @@ class TNSnapshoting (TNArchipelPlugin):
             name        = xmlDesc.getTag('name').getData()
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
-
             try:
                 devices_node = self.entity.definition.getTag('devices')
                 disk_nodes = devices_node.getTags('disk', attrs={'type': 'file'})
@@ -140,13 +138,10 @@ class TNSnapshoting (TNArchipelPlugin):
                     raise
             except:
                 return build_error_iq(self, Exception("Virtual machine hasn't any drive to snapshot"), iq, code=ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE)
-
             self.entity.log.info("creating snapshot with name %s desc :%s" % (name, xmlDesc))
-
             self.entity.change_presence(presence_show="dnd", presence_status="Snapshoting...")
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-
             self.entity.log.info("snapshot with name %s created" % name)
             self.entity.push_change("snapshoting", "taken")
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()))
@@ -166,17 +161,13 @@ class TNSnapshoting (TNArchipelPlugin):
                 snapshotObject.delete(libvirt.VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             except:
                 pass
-
         return reply
-
 
     def iq_get(self, iq):
         """
         list all a snapshot
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -197,14 +188,11 @@ class TNSnapshoting (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_GET)
         return reply
 
-
     def iq_getcurrent(self, iq):
         """
         return current snapshot
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -224,14 +212,11 @@ class TNSnapshoting (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_CURRENT)
         return reply
 
-
     def iq_delete(self, iq):
         """
         return current snapshot
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -239,17 +224,13 @@ class TNSnapshoting (TNArchipelPlugin):
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getTag("archipel").getAttr('name')
-
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
-
             self.entity.log.info("deleting snapshot with name %s" % name)
-
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(libvirt.VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-
             self.entity.log.info("snapshot with name %s deleted" % name)
             self.entity.push_change("snapshoting", "deleted")
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()))
@@ -261,14 +242,11 @@ class TNSnapshoting (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
         return reply
 
-
     def iq_revert(self, iq):
         """
         return current snapshot
-
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
-
         @rtype: xmpp.Protocol.Iq
         @return: a ready to send IQ containing the result of the action
         """
@@ -276,15 +254,11 @@ class TNSnapshoting (TNArchipelPlugin):
             reply = iq.buildReply("result")
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getTag("archipel").getAttr('name')
-
-            old_show    = self.entity.xmppstatusshow
-
+            old_show = self.entity.xmppstatusshow
             self.entity.log.info("restoring snapshot with name %s" % name)
-
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             self.entity.domain.revertToSnapshot(snapshotObject, 0)
-
             self.entity.log.info("reverted to snapshot with name %s " % name)
             self.entity.push_change("snapshoting", "restored")
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
