@@ -983,7 +983,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if ([guests count] == 0)
         {
             _supportedCapabilities = nil;
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Capabilities" message:@"Your hypervisor have not pushed any guest support." icon:TNGrowlIconError];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Capabilities" message:@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry." icon:TNGrowlIconError];
             [self displayMaskingView:YES];
         }
 
