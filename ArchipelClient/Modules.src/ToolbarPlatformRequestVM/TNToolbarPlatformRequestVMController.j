@@ -70,6 +70,8 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
 
     [_pubSubRequestOut setDelegate:self];
     [_pubSubRequestOut recoverSubscriptions];
+
+    [_toolbarItem setEnabled:NO];
 }
 
 
@@ -169,9 +171,13 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
         CPLog.info("sucessfully subscriptions retreived for node " + [aPubSubNode name]);
         if ([aPubSubNode numberOfSubscriptions] == 0)
             [aPubSubNode subscribe];
+        [_toolbarItem setEnabled:YES];
     }
     else
+    {
+        [_toolbarItem setEnabled:NO];
         CPLog.error("cannot retrieve subscriptions for node " + [aPubSubNode name]);
+    }
 }
 
 /*! delegate of TNPubSubNode
