@@ -73,18 +73,27 @@ command param1 param2 param3
 
 """
 
+
 class TNArchipelEntity (object):
     """
     this class represent a basic XMPP Client
     """
+
     def __init__(self, jid, password, configuration, name, auto_register=True, auto_reconnect=True):
         """
         The constructor of the class.
-
         @type jid: string
         @param jid: the jid of the client.
         @type password: string
         @param password: the password of the JID account.
+        @type configuration: Config object
+        @param configuration: the configuration object
+        @type name: string
+        @param name: the name of the entity
+        @type auto_register: Boolean
+        @param auto_register: if rTue, entity will try to create a XMPP account if needed
+        @type auto_reconnect: Boolean
+        @param auto_reconnect: if True, entity will try to reconnect if disconnected
         """
         self.name                   = name
         self.xmppstatus             = None
@@ -117,7 +126,8 @@ class TNArchipelEntity (object):
         if isinstance(self, TNTaggableEntity):
             TNTaggableEntity.__init__(self, self.pubsubserver, self.jid, self.xmppclient, self.permission_center, self.log)
 
-        if self.name == "auto": self.name = self.resource
+        if self.name == "auto":
+            self.name = self.resource
 
         if isinstance(self, TNHookableEntity):
             self.create_hook("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
@@ -137,19 +147,16 @@ class TNArchipelEntity (object):
         else:
             self.ipaddr = ip_conf
 
-
     def initialize_modules(self, group):
         """
         this will initializes all plugins
         @type group: string
         @param group: the name of the entry point group to load
         """
-        excluded_plugins = [];
-
+        excluded_plugins = []
         for factory_method in iter_entry_points(group=group, name="factory"):
             method              = factory_method.load()
             plugins             = method(self.configuration, self, group, excluded_plugins)
-
             for plugin in plugins:
                 plugin_info     = plugin["info"]
                 if plugin_info["configuration-section"]:
@@ -162,10 +169,8 @@ class TNArchipelEntity (object):
                             excluded_plugins.append(plugin_info["identifier"])
                             self.log.error("PLUGIN: plugin %s needs configuration option with name %s" % (plugin_info["identifier"], needed_token))
                             sys.exit(-1)
-
                 self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
                 self.plugins.append(plugin)
-
 
     def get_plugin(self, identifier):
         """
@@ -180,18 +185,15 @@ class TNArchipelEntity (object):
                 return plugin["plugin"]
         return None
 
-
     def check_acp(self, conn, iq):
         """
         check is iq is a valid ACP and return action. it it's not valid,
         the will terminate the stanza processing and will return to the origin
         client a standard Archipel error IQ
-
         @type conn: xmpp connection
         @param conn: the current current XMPP connection
         @type iq: xmpp.Iq
         @param iq: the iq to check
-
         @rtype: string or none
         @return: if the ACP is valid, it will return the requested action.
         otherwise it'll send ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED iq to the sender
@@ -207,8 +209,6 @@ class TNArchipelEntity (object):
             raise xmpp.protocol.NodeProcessed
 
 
-
-
     ### Permissions
 
     def init_permissions(self):
@@ -217,12 +217,10 @@ class TNArchipelEntity (object):
         overrides this to add custom permissions
         """
         self.log.info("initializing permissions of %s" % self.jid)
-
         if isinstance(self, TNTaggableEntity):
             TNTaggableEntity.init_permissions(self)
         if isinstance(self, TNAvatarControllableEntity):
             TNAvatarControllableEntity.init_permissions(self)
-
         self.permission_center.create_permission("all", "All permissions are granted", False)
         self.permission_center.create_permission("presence", "Authorizes users to request presences", False)
         self.permission_center.create_permission("message", "Authorizes users to send messages", False)
@@ -235,11 +233,9 @@ class TNArchipelEntity (object):
         self.permission_center.create_permission("subscription_remove", "Authorizes users remove others in entity roster", False)
         self.log.info("permissions of %s initialized" % self.jid)
 
-
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         """
         check if given from of stanza has a given permission
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type stanza: xmpp.Node
@@ -257,14 +253,14 @@ class TNArchipelEntity (object):
             raise xmpp.protocol.NodeProcessed
 
 
-
     ### Server connection
 
     def connect_xmpp(self):
         """
         Initialize the connection to the the XMPP server
-
         exit on any error.
+        @rtype: Boolean
+        @return: True in case of success
         """
         self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #debug=['dispatcher', 'nodebuilder', 'protocol'])
         if self.xmppclient.connect() == "":
@@ -274,12 +270,10 @@ class TNArchipelEntity (object):
                 return False
             else:
                 sys.exit(-1)
-
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.log.info("sucessfully connected")
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
         return True
-
 
     def auth_xmpp(self):
         """
@@ -294,14 +288,12 @@ class TNArchipelEntity (object):
                 return
             self.log.error("bad authentication. exiting")
             sys.exit(0)
-
         self.log.info("sucessfully authenticated")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
         self.register_handler()
         self.roster = self.xmppclient.getRoster()
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
-
 
     def connect(self):
         """
@@ -310,10 +302,8 @@ class TNArchipelEntity (object):
         if self.xmppclient and self.xmppclient.isConnected():
             self.log.warning("trying to connect, but already connected. ignoring")
             return
-
         if self.connect_xmpp():
             self.auth_xmpp()
-
 
     def disconnect(self):
         """
@@ -326,8 +316,6 @@ class TNArchipelEntity (object):
         else:
             self.log.warning("trying to disconnect, but not connected. ignoring")
 
-
-
     ### Pubsub
 
     def recover_pubsubs(self, origin, user_info, arguments):
@@ -336,7 +324,6 @@ class TNArchipelEntity (object):
         arguments here are used to be HOOK compliant see @register_hook
         """
         TNTaggableEntity.recover_pubsubs(self, origin, user_info, arguments)
-
         # creating/getting the event pubsub node
         eventNodeName = "/archipel/" + self.jid.getStripped() + "/events"
         self.pubSubNodeEvent = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, eventNodeName)
@@ -350,7 +337,6 @@ class TNArchipelEntity (object):
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
             archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         }, wait=True)
-
         # creating/getting the log pubsub node
         logNodeName = "/archipel/" + self.jid.getStripped() + "/logs"
         self.pubSubNodeLog = archipelcore.pubsub.TNPubSubNode(self.xmppclient, self.pubsubserver, logNodeName)
@@ -366,20 +352,14 @@ class TNArchipelEntity (object):
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         }, wait=True)
 
-
-
     def remove_pubsubs(self):
         """
         delete own entity pubsubs
         """
         self.log.info("removing pubsub node for log")
         self.pubSubNodeLog.delete(wait=True)
-
         self.log.info("removing pubsub node for events")
         self.pubSubNodeEvent.delete(wait=True)
-
-
-
 
 
     ### Basic handlers
@@ -393,7 +373,6 @@ class TNArchipelEntity (object):
             TNTaggableEntity.register_handler(self)
         if isinstance(self, TNAvatarControllableEntity):
             TNAvatarControllableEntity.register_handler(self)
-
         self.xmppclient.RegisterHandler('presence', self.process_presence)
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
@@ -404,45 +383,39 @@ class TNArchipelEntity (object):
         self.log.info("handlers registred")
 
 
-
     ### Presence Management
 
     def process_presence(self, conn, presence):
         """
         process presence stanzas
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
-        if presence.getFrom().getStripped() == self.jid.getStripped(): raise xmpp.protocol.NodeProcessed
-        if not presence.getType() in ("subscribe", "unsubscribe"): raise xmpp.protocol.NodeProcessed
-
+        if presence.getFrom().getStripped() == self.jid.getStripped():
+            raise xmpp.protocol.NodeProcessed
+        if not presence.getType() in ("subscribe", "unsubscribe"):
+            raise xmpp.protocol.NodeProcessed
         self.log.info("presence stanza received from %s: %s" % (presence.getFrom(), presence.getType()))
-
         # update roster is necessary
-        if not self.roster: self.roster = self.xmppclient.getRoster()
-
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         typ = presence.getType()
         jid = presence.getFrom()
-
-
         self.log.info("managing subscribtion request with type %s" % presence.getType())
-
         # check permissions
         if not self.permission_center.check_permission(jid.getStripped(), "presence"):
             if typ == "subscribe":
                 self.unsubscribe(jid)
             self.remove_jid(jid)
             raise xmpp.protocol.NodeProcessed
-
         # if everything is all right, process request
-        if typ == "subscribe":      self.authorize(jid)
-        elif typ == "unsubscribe":  self.remove_jid(jid)
-
+        if typ == "subscribe":
+            self.authorize(jid)
+        elif typ == "unsubscribe":
+            self.remove_jid(jid)
         raise xmpp.protocol.NodeProcessed
-
 
 
     ### Subscription Management
@@ -451,35 +424,35 @@ class TNArchipelEntity (object):
         """
         process presence iq with namespace ARCHIPEL_NS_SUBSCRIPTION.
         this allows to ask entity to subscribe to others users
-
         it understands:
             - add
             - remove
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
         @param presence: the received IQ
         """
-
+        reply = None
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1, prefix="subscription_")
-
-        if action == "add":         reply = self.iq_add_subscription(iq)
-        elif action == "remove":    reply = self.iq_remove_subscription(iq)
-
-        conn.send(reply)
-        raise xmpp.protocol.NodeProcessed
-
+        if action == "add":
+            reply = self.iq_add_subscription(iq)
+        elif action == "remove":
+            reply = self.iq_remove_subscription(iq)
+        if reply:
+            conn.send(reply)
+            raise xmpp.protocol.NodeProcessed
 
     def iq_add_subscription(self, iq):
         """
         add a JID in the entity roster
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ containing the request
         """
         try:
             reply = iq.buildReply("result")
             jid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-            self.log.info("add jid %s into %s's roster" %  (str(jid), str(self.jid)))
+            self.log.info("add jid %s into %s's roster" % (str(jid), str(self.jid)))
             self.permission_center.grant_permission_to_user("presence", jid.getStripped())
             self.push_change("permissions", "set")
             self.add_jid(jid)
@@ -488,10 +461,11 @@ class TNArchipelEntity (object):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_ADD_SUBSCRIPTION)
         return reply
 
-
     def iq_remove_subscription(self, iq):
         """
         remove a JID from the entity roster
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ containing the request
         """
         try:
             reply = iq.buildReply("result")
@@ -504,13 +478,11 @@ class TNArchipelEntity (object):
         return reply
 
 
-
     ### XMPP Utilities
 
     def change_presence(self, presence_show=None, presence_status=None):
         """
         change the presence of the entity
-
         @type presence_show: string
         @param presence_show: the value of the XMPP show
         @type presence_status: string
@@ -518,12 +490,9 @@ class TNArchipelEntity (object):
         """
         self.xmppstatus     = presence_status
         self.xmppstatusshow = presence_show
-
         self.log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
-
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         self.xmppclient.send(pres)
-
 
     def change_status(self, presence_status):
         """
@@ -535,7 +504,6 @@ class TNArchipelEntity (object):
         pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
         self.xmppclient.send(pres)
 
-
     def push_change(self, namespace, change):
         """
         push a change using archipel push system.
@@ -546,12 +514,9 @@ class TNArchipelEntity (object):
         @param change: the change value (can be anything, like 'newvm' in the context of the namespace)
         """
         ns = ARCHIPEL_NS_IQ_PUSH + ":" + namespace
-
         self.log.info("PUSH : pushing %s->%s" % (ns, change))
-
         push = xmpp.Node(tag="push", attrs={"date": datetime.datetime.now(), "xmlns": ns, "change": change})
         self.pubSubNodeEvent.add_item(push)
-
 
     def shout(self, subject, message):
         """
@@ -562,7 +527,8 @@ class TNArchipelEntity (object):
         @param message: the content of the message
         """
         for barejid in self.roster.getItems():
-            if self.jid.getStripped() == barejid: continue
+            if self.jid.getStripped() == barejid:
+                continue
             resources = self.roster.getResources(barejid)
             if len(resources) == 0:
                 broadcast = xmpp.Message(body=message, typ="headline", to=barejid)
@@ -575,98 +541,83 @@ class TNArchipelEntity (object):
                     self.xmppclient.send(broadcast)
 
 
-
     ### XMPP Roster
 
     def add_jid(self, jid, groups=[]):
         """
         Add a jid to the VM Roster and authorizes it
-
         @type jid: xmpp.JID
         @param jid: this jid to add
         """
         self.log.info("adding JID %s to roster of %s" % (str(jid), str(self.jid)))
-
-        if not self.roster: self.roster = self.xmppclient.getRoster()
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         self.roster.setItem(jid=jid.getStripped(), groups=groups)
         self.subscribe(jid)
-
         self.push_change("subscription", "added")
-
 
     def remove_jid(self, jid):
         """
         Remove a jid from roster and unauthorizes it
-
         @type jid: xmpp.JID
         @param jid: this jid to remove
         """
         self.log.info("%s is removing jid %s from it's roster" % (str(self.jid), str(jid)))
-
-        if not self.roster: self.roster = self.xmppclient.getRoster()
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         self.roster.delItem(jid.getStripped())
         self.push_change("subscription", "removed")
-
 
     def subscribe(self, jid):
         """
         perform a subscription. we do not user the xmpp.roster.Subscribe()
         because it doesn't support the name
-
         @type jid: xmpp.JID
         @param jid: this jid to remove
         """
         self.log.info("%s is subscribing to jid %s" % (str(self.jid), str(jid)))
-
         presence = xmpp.Presence(to=jid, typ='subscribe')
-        if self.name: presence.addChild(name="nick", namespace="http://jabber.org/protocol/nick", payload=self.name)
+        if self.name:
+            presence.addChild(name="nick", namespace="http://jabber.org/protocol/nick", payload=self.name)
         self.xmppclient.send(presence)
-
 
     def unsubscribe(self, jid):
         """
         perform a unsubscription.
-
         @type jid: xmpp.JID
         @param jid: this jid to remove
         """
         self.log.info("%s is unsubscribing from jid %s" % (str(self.jid), str(jid)))
-
-        if not self.roster: self.roster = self.xmppclient.getRoster()
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         self.roster.Unsubscribe(jid.getStripped())
         self.roster.Unauthorize(jid.getStripped())
-
 
     def authorize(self, jid):
         """
         authorize the given JID
-
         @type jid: xmpp.JID
         @param jid: this jid to remove
         """
         self.log.info("%s is authorizing jid %s" % (str(self.jid), str(jid)))
-
-        if not self.roster: self.roster = self.xmppclient.getRoster()
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         self.roster.Authorize(jid)
-
 
     def unauthorize(self, jid):
         """
         unauthorize the given JID
-
         @type jid: xmpp.JID
         @param jid: this jid to remove
         """
         self.log.info("%s is authorizing jid %s" % (str(self.jid), str(jid)))
-
-        if not self.roster: self.roster = self.xmppclient.getRoster()
+        if not self.roster:
+            self.roster = self.xmppclient.getRoster()
         self.roster.Unauthorize(jid)
-
 
     def is_subscribed(self, jid):
         """
         Check if the JID is authorized or not
-
         @type jid: string
         @param jid: the jid to check in policy
         @rtype : boolean
@@ -675,12 +626,12 @@ class TNArchipelEntity (object):
         try:
             subs = self.roster.getSubscription(str(jid))
             self.log.info("stanza sent form authorized JID {0}".format(jid))
-            if subs in ("both", "to"): return True
-            else: return False
+            if subs in ("both", "to"):
+                return True
+            return False
         except KeyError:
             self.log.info("stanza sent form unauthorized JID {0}".format(jid))
             return False
-
 
 
     ### VCARD management
@@ -694,57 +645,54 @@ class TNArchipelEntity (object):
         node_iq.addChild(name="vCard", namespace="vcard-temp")
         self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.did_receive_vcard)
 
-
     def did_receive_vcard(self, conn, vcard):
         """
         callback of manage_vcard()
         """
         self.vCard = vcard.getTag("vCard")
-        if self.vCard and self.vCard.getTag("PHOTO"): self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
+        if self.vCard and self.vCard.getTag("PHOTO"):
+            self.b64Avatar = self.vCard.getTag("PHOTO").getTag("BINVAL").getCDATA()
         self.log.info("own vcard retrieved")
         self.set_vcard()
-
 
     def set_vcard(self, params={}):
         """
         allows to define a vCard type for the entry
+        set the vcard of the entity
+        @type params: dict
+        @param params: the parameters of the vCard
         """
         self.log.info("vcard making started")
-
         node_iq     = xmpp.Iq(typ='set', xmlns=None)
         type_node   = xmpp.Node(tag="TYPE")
         payload     = []
-
         type_node.setData(self.entity_type)
         payload.append(type_node)
         if self.name:
             name_node = xmpp.Node(tag="NAME")
             name_node.setData(self.name)
             payload.append(name_node)
-
         if self.configuration.getboolean("GLOBAL", "use_avatar"):
             if not self.b64Avatar:
-                if params and params["filename"]: self.b64avatar_from_filename(params["filename"])
-                else: self.b64avatar_from_filename(self.default_avatar)
-
+                if params and params["filename"]:
+                    self.b64avatar_from_filename(params["filename"])
+                else:
+                    self.b64avatar_from_filename(self.default_avatar)
             node_photo_content_type = xmpp.Node(tag="TYPE")
             node_photo_content_type.setData("image/png")
             node_photo_data = xmpp.Node(tag="BINVAL")
             node_photo_data.setData(self.b64Avatar)
             node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
             payload.append(node_photo)
-
         node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
         self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
         self.log.info("vcard information sent with type: {0}".format(self.entity_type))
-
 
     def send_update_vcard(self, conn, presence, photo_hash=None):
         """
         this method is called by set_vcard_entity_type when the update of the
         vCard is OK. It will send the presence stanza to indicates the update of
         the vCard
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type presence: xmpp.Protocol.Iq
@@ -757,10 +705,8 @@ class TNArchipelEntity (object):
             node_photo_sha1 = xmpp.Node(tag="photo")
             node_photo_sha1.setData(photo_hash)
         node_presence.addChild(name="x", namespace='vcard-temp:x:update')
-
         self.xmppclient.send(node_presence)
         self.log.info("vcard update presence sent")
-
 
 
     ### Inband registration management
@@ -771,7 +717,6 @@ class TNArchipelEntity (object):
         """
         if not self.auto_register:
             return
-
         self.log.info("trying to register with %s to %s" % (self.jid.getNode(), self.jid.getDomain()))
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         payload_username = xmpp.Node(tag="username")
@@ -780,25 +725,20 @@ class TNArchipelEntity (object):
         payload_password.addData(self.password)
         iq.setQueryNS("jabber:iq:register")
         iq.setQueryPayload([payload_username, payload_password])
-
         self.log.info("registration information sent. wait for response")
         resp_iq = self.xmppclient.SendAndWaitForResponse(iq)
-
         if resp_iq.getType() == "error":
             self.log.error("unable to register : %s" % str(resp_iq))
             sys.exit(-1)
-
         elif resp_iq.getType() == "result":
             self.log.info("the registration complete")
             self.loop_status = ARCHIPEL_XMPP_LOOP_RESTART
-
 
     def inband_unregistration(self):
         """
         Do a in-band unregistration
         """
         self.loop_status = ARCHIPEL_XMPP_LOOP_REMOVE_USER
-
 
     def process_inband_unregistration(self):
         """
@@ -820,14 +760,11 @@ class TNArchipelEntity (object):
         self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
 
 
-
-
     ### XMPP Message registrars
 
     def process_message(self, conn, msg):
         """
         Handler for incoming message.
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type msg: xmpp.Protocol.Message
@@ -835,27 +772,22 @@ class TNArchipelEntity (object):
         """
         try:
             self.log.info("chat message received from %s to %s: %s" % (msg.getFrom(), str(self.jid), msg.getBody()))
-
             reply_stanza = self.filter_message(msg)
             reply = None
-
             if reply_stanza:
                 if self.permission_center.check_permission(str(msg.getFrom().getStripped()), "message"):
-                     reply = self.build_reply(reply_stanza, msg)
+                    reply = self.build_reply(reply_stanza, msg)
                 else:
-                   reply = msg.buildReply("I'm sorry, my parents aren't allowing me to talk to strangers")
+                    reply = msg.buildReply("I'm sorry, my parents aren't allowing me to talk to strangers")
         except Exception as ex:
             reply = msg.buildReply("Cannot process the message: error is %s" % str(ex))
-
         if reply:
             conn.send(reply)
-
 
     def add_message_registrar_item(self, item):
         """
         Register a method described in item
         the item use the following form:
-
         {  "commands" :     ["command trigger 1", "command trigger 2"],
             "parameters":   [
                                 {"name": "param1", "description": "the description of the first param"},
@@ -865,32 +797,26 @@ class TNArchipelEntity (object):
             "permissions":   "the permissions in a array you need to process the command",
             "description":  "A general description of the command"
         }
-
         The "method" key take any method with type (string)aMethod(raw_command_message). The return string
         will be sent to the requester
-
         @type item: dictionnary
         @param item: the dictionnary describing the registrar item
         """
         self.log.debug("module have registred a method %s for commands %s" % (str(item["method"]), str(item["commands"])))
         self.messages_registrar.append(item)
 
-
     def add_message_registrar_items(self, items):
         """
         register an array of item see @add_message_registrar_item
-
         @type item: array
         @param item: an array of messages_registrar items
         """
         for item in items:
             self.add_message_registrar_item(item)
 
-
     def filter_message(self, msg):
         """
         this method filter archipel push messages and archipel service messages
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type msg: xmpp.Protocol.Message
@@ -907,14 +833,16 @@ class TNArchipelEntity (object):
             self.log.info("message ignored from %s (%s)" % (msg.getFrom(), msg.getType()))
             return False
 
-
     def build_reply(self, reply_stanza, msg):
         """
         parse the registrar and execute commands if necessary
+        @type reply_stanza: xmpp.Node
+        @param reply_stanza: the stanza to use to reply
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message
         """
         body = "%s" % msg.getBody().lower()
         reply_stanza.setBody("I'm sorry, I've not understood what you mean. You can type 'help' to get all command I understand")
-
         if body.find("help", 0, len("help")) >= 0:
             reply_stanza.setBody(self.build_help(msg))
         else:
@@ -923,9 +851,8 @@ class TNArchipelEntity (object):
                 for cmd in registrar_item["commands"]:
                     if body.find(cmd, 0, len(cmd)) >= 0:
                         granted  = True
-                        if registrar_item.has_key("permissions"):
+                        if "permissions" in registrar_item:
                             granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
-
                         if granted:
                             m = registrar_item["method"]
                             resp = m(msg)
@@ -936,24 +863,21 @@ class TNArchipelEntity (object):
                         break
                 if not loop:
                     break
-
         return reply_stanza
-
 
     def build_help(self, msg):
         """
         build the help message according to the current registrar
-
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message
         @return the string containing the help message
         """
         resp = ARCHIPEL_MESSAGING_HELP_MESSAGE
         for registrar_item in self.messages_registrar:
-            if not registrar_item.has_key("ignore"):
-
+            if not "ignore" in registrar_item:
                 granted = True
-                if registrar_item.has_key("permissions"):
+                if "permissions" in registrar_item:
                     granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
-
                 if granted:
                     cmds = str(registrar_item["commands"])
                     desc = registrar_item["description"]
@@ -961,16 +885,12 @@ class TNArchipelEntity (object):
                     params_string = ""
                     for p in params:
                         params_string += "%s: %s\n" % (p["name"], p["description"])
-
                     if params_string == "":
                         params_string = "No parameters"
                     else:
                         params_string = params_string[:-1]
-
                     resp += "%s: %s\n%s\n\n" % (cmds, desc, params_string)
-
         return resp
-
 
 
     ### Permission IQ
@@ -978,12 +898,10 @@ class TNArchipelEntity (object):
     def process_permission_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_PERMISSIONS IQ is received.
-
         it understands IQ of type:
             - list
             - get
             - set
-
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -993,22 +911,23 @@ class TNArchipelEntity (object):
         action = self.check_acp(conn, iq)
         if not action == "getown":
             self.check_perm(conn, iq, action, -1, prefix="permission_")
-
-        if action == "list":        reply = self.iq_list_permission(iq)
-        elif action == "set":       reply = self.iq_set_permission(iq, onlyown=False)
-        elif action == "setown":    reply = self.iq_set_permission(iq, onlyown=True)
-        elif action == "get":       reply = self.iq_get_permission(iq, onlyown=False)
-        elif action == "getown":    reply = self.iq_get_permission(iq, onlyown=True)
-
+        if action == "list":
+            reply = self.iq_list_permission(iq)
+        elif action == "set":
+            reply = self.iq_set_permission(iq, onlyown=False)
+        elif action == "setown":
+            reply = self.iq_set_permission(iq, onlyown=True)
+        elif action == "get":
+            reply = self.iq_get_permission(iq, onlyown=False)
+        elif action == "getown":
+            reply = self.iq_get_permission(iq, onlyown=True)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def iq_set_permission(self, iq, onlyown):
         """
         set a list of permission
-
         @type iq: xmpp.Node
         @param iq: the original request IQ
         @type onlyown: Boolean
@@ -1018,19 +937,16 @@ class TNArchipelEntity (object):
             reply   = iq.buildReply("result")
             errors  = []
             perms   = iq.getTag("query").getTag("archipel").getTags(name="permission")
-
             if onlyown:
                 for perm in perms:
                     if not perm.getAttr("permission_target") == iq.getFrom().getStripped():
                         raise Exception("You cannot set permissions of other users")
-
             perm_targets = []
             for perm in perms:
                 perm_type   = perm.getAttr("permission_type")
                 perm_target = perm.getAttr("permission_target")
                 perm_name   = perm.getAttr("permission_name")
                 perm_value  = perm.getAttr("permission_value")
-
                 if perm_type == "role":
                     if perm_value.upper() in ("1", "TRUE", "YES", "Y"):
                         if not self.permission_center.grant_permission_to_role(perm_name, perm_target):
@@ -1038,7 +954,6 @@ class TNArchipelEntity (object):
                     else:
                         if not self.permission_center.revoke_permission_to_role(perm_name, perm_target):
                             errors.append("cannot revoke permission %s on role %s" % (perm_name, perm_target))
-
                 elif perm_type == "user":
                     if perm_value.upper() in ("1", "TRUE", "YES", "Y", "OUI", "O"):
                         self.log.info("granting permission %s to user %s" % (perm_name, perm_target))
@@ -1048,7 +963,6 @@ class TNArchipelEntity (object):
                         self.log.info("revoking permission %s to user %s" % (perm_name, perm_target))
                         if not self.permission_center.revoke_permission_to_user(perm_name, perm_target):
                             errors.append("cannot revoke permission %s on user %s" % (perm_name, perm_target))
-
                     if perm_name == "presence":
                         if self.permission_center.check_permission(perm_target, "presence"):
                             self.authorize(xmpp.JID(perm_target))
@@ -1056,22 +970,17 @@ class TNArchipelEntity (object):
                             self.unauthorize(xmpp.JID(perm_target))
                 if not perm_target in perm_targets:
                     perm_targets.append(perm_target)
-
             if len(errors) > 0:
-                reply =  build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
-
+                reply = build_error_iq(self, str(errors), iq, ARCHIPEL_NS_PERMISSION_ERROR)
             for target in perm_targets:
                 self.push_change("permissions", target)
-
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_PERMISSIONS)
         return reply
 
-
     def iq_get_permission(self, iq, onlyown):
         """
         return the list of permissions of a user
-
         @type iq: xmpp.Node
         @param iq: the original request IQ
         @type onlyown: Boolean
@@ -1082,21 +991,17 @@ class TNArchipelEntity (object):
             nodes = []
             perm_type   = iq.getTag("query").getTag("archipel").getAttr("permission_type")
             perm_target = iq.getTag("query").getTag("archipel").getAttr("permission_target")
-
             if onlyown and not perm_target == iq.getFrom().getStripped():
                 raise Exception("You cannot get permissions of other users")
-
             if perm_type == "user":
                 permissions = self.permission_center.get_user_permissions(perm_target)
                 if permissions:
                     for perm in permissions:
                         nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name}))
             reply.setQueryPayload(nodes)
-
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_GET_PERMISSIONS)
         return reply
-
 
     def iq_list_permission(self, iq):
         """
@@ -1104,22 +1009,17 @@ class TNArchipelEntity (object):
         @type iq: xmpp.Node
         @param iq: the original request IQ
         """
-
         try:
             reply = iq.buildReply("result")
             nodes = []
-
             permissions = self.permission_center.get_permissions()
             if permissions:
                 for perm in permissions:
                     nodes.append(xmpp.Node(tag="permission", attrs={"name": perm.name, "default": perm.defaultValue, "description": perm.description}))
             reply.setQueryPayload(nodes)
-
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_LIST_PERMISSIONS)
         return reply
-
-
 
     ### Loop
 
@@ -1158,12 +1058,6 @@ class TNArchipelEntity (object):
                     t, v, tr = sys.exc_info()
                     self.log.error("TRACEBACK: %s" % traceback.format_exception(t, v, tr))
                     self.loop_status = ARCHIPEL_XMPP_LOOP_OFF
-
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_LOOP_STOPPED")
         if self.xmppclient.isConnected():
             self.xmppclient.disconnect()
-
-
-
-
-

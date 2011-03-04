@@ -55,20 +55,44 @@ class TNAvatarControllableEntity (object):
         self.log                    = log
 
 
-
     ### subclass must implement this
 
     def check_acp(conn, iq):
+        """
+        function that verify if the ACP is valid
+        @type conn: xmpp.Dispatcher
+        @param conn: the connection
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ to check
+        @raise: Exception if not implemented
+        """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
 
-
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
+        """
+        function that verify if the permissions are granted
+        @type conn: xmpp.Dispatcher
+        @param conn: the connection
+        @type stanza: xmpp.Node
+        @param stanza: the stanza containing the action
+        @type action_name: string
+        @param action_name: the action to check
+        @type error_code: int
+        @param error_code: the error code to return
+        @type prefix: string
+        @param prefix: the prefix of the action
+        @raise: Exception if not implemented
+        """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
 
-
     def set_vcard(self, params={}):
+        """
+        set the vcard of the entity
+        @type params: dict
+        @param params: the parameters of the vCard
+        @raise: Exception if not implemented
+        """
         raise Exception("Subclass of TNAvatarControllableEntity must implement set_vcard")
-
 
     def init_permissions(self):
         """
@@ -77,13 +101,11 @@ class TNAvatarControllableEntity (object):
         self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
         self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
 
-
     def register_handler(self):
         """
         initialize the avatar handlers
         """
         self.xmppclient.RegisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
-
 
 
     ### Avatars
@@ -104,7 +126,6 @@ class TNAvatarControllableEntity (object):
                 node_img.setData(data)
         return resp
 
-
     def set_avatar(self, name):
         """
         change the current avatar of the entity.
@@ -114,7 +135,6 @@ class TNAvatarControllableEntity (object):
         name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
         self.b64Avatar = None
         self.set_vcard(params={"filename": name})
-
 
     def b64avatar_from_filename(self, image):
         """
@@ -131,7 +151,6 @@ class TNAvatarControllableEntity (object):
         self.b64Avatar = photo_data
         return self.b64Avatar
 
-
     def process_avatar_iq(self, conn, iq):
         """
         this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
@@ -146,16 +165,19 @@ class TNAvatarControllableEntity (object):
         reply = None
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
-        if action == "getavatars":  reply = self.iq_get_available_avatars(iq)
-        elif action == "setavatar": reply = self.iq_set_available_avatars(iq)
+        if action == "getavatars":
+            reply = self.iq_get_available_avatars(iq)
+        elif action == "setavatar":
+            reply = self.iq_set_available_avatars(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def iq_get_available_avatars(self, iq):
         """
         return a list of availables avatars
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ containing the request
         """
         try:
             reply = iq.buildReply("result")
@@ -164,10 +186,11 @@ class TNAvatarControllableEntity (object):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_AVATARS)
         return reply
 
-
     def iq_set_available_avatars(self, iq):
         """
         set the current avatars of the virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ containing the request
         """
         try:
             reply = iq.buildReply("result")
@@ -176,5 +199,3 @@ class TNAvatarControllableEntity (object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_AVATAR)
         return reply
-
-

@@ -32,7 +32,6 @@ import xmpp
 # Namespaces
 ARCHIPEL_NS_GENERIC_ERROR                       = "archipel:error:generic"
 
-
 ARCHIPEL_LOG_LEVEL                              = 0
 ARCHIPEL_LOG_DEBUG                              = 0
 ARCHIPEL_LOG_INFO                               = 1
@@ -43,6 +42,10 @@ ARCHIPEL_LOG_ERROR                              = 3
 log = logging.getLogger('archipel')
 
 class TNArchipelLogger:
+    """
+    archipel logger implt
+    """
+
     def __init__(self, entity, pubsubnode=None, xmppconn=None):
         self.xmppclient = xmppconn
         self.entity     = entity
@@ -67,19 +70,14 @@ class TNArchipelLogger:
         #     log.setData(msg)
         #     self.pubSubNode.add_item(log)
 
-
-
     def debug(self, msg):
         self.__log(ARCHIPEL_LOG_DEBUG, msg)
-
 
     def info(self, msg):
         self.__log(ARCHIPEL_LOG_INFO, msg)
 
-
     def warning(self, msg):
         self.__log(ARCHIPEL_LOG_WARNING, msg)
-
 
     def error(self, msg):
         self.__log(ARCHIPEL_LOG_ERROR, msg)
@@ -87,6 +85,9 @@ class TNArchipelLogger:
 
 
 class ColorFormatter(logging.Formatter):
+    """
+    Archipel log formatter
+    """
     def format(self, record):
         rec = logging.Formatter.format(self, record)
         rec = rec.replace("DEBUG",      "\033[35mDEBUG   \033[0m")
@@ -97,8 +98,6 @@ class ColorFormatter(logging.Formatter):
         rec = rec.replace("$whiteColor",    "\033[37m")
         rec = rec.replace("$noColor",       "\033[0m")
         return rec
-
-
 
 
 def init_conf(path):
@@ -123,9 +122,8 @@ def init_conf(path):
     elif logging_level == "critical":
         level = logging.CRITICAL
     log_file = conf.get("LOGGING", "logging_file_path")
-
-    if not os.path.exists(os.path.dirname(log_file)): os.makedirs(os.path.dirname(log_file))
-
+    if not os.path.exists(os.path.dirname(log_file)):
+        os.makedirs(os.path.dirname(log_file))
     logger          = globals()["log"]
     max_bytes       = conf.getint("LOGGING", "logging_max_bytes")
     backup_count    = conf.getint("LOGGING", "logging_backup_count")
@@ -134,7 +132,6 @@ def init_conf(path):
     handler.setFormatter(log_format)
     logger.addHandler(handler)
     logger.setLevel(level)
-
     return conf
 
 
@@ -149,7 +146,6 @@ def build_error_iq(originclass, ex, iq, code=-1, ns=ARCHIPEL_NS_GENERIC_ERROR):
     error.addChild(name="text", payload=str(ex))
     reply.addChild(node=error)
     return reply
-
 
 def build_error_message(originclass, ex):
     caller = inspect.stack()[3][3]

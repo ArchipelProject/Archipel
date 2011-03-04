@@ -24,6 +24,7 @@ from archipelcore.utils import build_error_iq
 ARCHIPEL_ERROR_CODE_SET_TAGS            = -7
 ARCHIPEL_NS_TAGS                                = "archipel:tags"
 
+
 class TNTaggableEntity (object):
     """
     this class allow ArchipelEntity to be taggable
@@ -50,17 +51,35 @@ class TNTaggableEntity (object):
         self.jid                = jid
         self.log                = log
 
-
-
     ### subclass must implement this
 
     def check_acp(conn, iq):
+        """
+        function that verify if the ACP is valid
+        @type conn: xmpp.Dispatcher
+        @param conn: the connection
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the IQ to check
+        @raise: Exception if not implemented
+        """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
 
-
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
+        """
+        function that verify if the permissions are granted
+        @type conn: xmpp.Dispatcher
+        @param conn: the connection
+        @type stanza: xmpp.Node
+        @param stanza: the stanza containing the action
+        @type action_name: string
+        @param action_name: the action to check
+        @type error_code: int
+        @param error_code: the error code to return
+        @type prefix: string
+        @param prefix: the prefix of the action
+        @raise: Exception if not implemented
+        """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
-
 
 
     ### Pubsub
@@ -68,7 +87,7 @@ class TNTaggableEntity (object):
     def recover_pubsubs(self, origin, user_info, arguments):
         """
         get the global tag pubsub node
-        arguments here are used to be HOOK compliant see @register_hook
+        arguments here are used to be HOOK compliant see register_hook of L{TNHookableEntity}
         """
         # getting the tags pubsub node
         tagsNodeName = "/archipel/tags"
@@ -76,20 +95,17 @@ class TNTaggableEntity (object):
         if not self.pubSubNodeTags.recover(wait=True):
             Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")
 
-
     def init_permissions(self):
         """
         initializes the tag permissions
         """
         self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
 
-
     def register_handler(self):
         """
         initializes the handlers for tags
         """
         self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
-
 
 
     ### Tags
@@ -111,7 +127,6 @@ class TNTaggableEntity (object):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def set_tags(self, tags):
         """
         set the tags of the current entity
@@ -128,10 +143,10 @@ class TNTaggableEntity (object):
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": tags})
             self.pubSubNodeTags.add_item(tagNode)
 
-
     def did_clean_old_tags(self, resp, user_info):
         """
         callback called when old tags has been removed if any
+        @raise: Exception is unable to clean old tags
         """
         if resp.getType() == "result":
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})
@@ -139,10 +154,13 @@ class TNTaggableEntity (object):
         else:
             raise Exception("Tags unable to set tags. answer is: " + str(resp))
 
-
     def iq_set_tags(self, iq):
         """
         set the current tags
+        @type iq: xmpp.Protocol.IQ
+        @param iq: the IQ containing the request
+        @rtype: xmpp.Protocol.IQ
+        @return: the IQ containing the answer
         """
         try:
             reply = iq.buildReply("result")
@@ -151,4 +169,3 @@ class TNTaggableEntity (object):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SET_TAGS)
         return reply
-
