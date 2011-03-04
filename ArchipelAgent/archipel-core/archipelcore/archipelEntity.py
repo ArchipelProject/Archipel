@@ -850,7 +850,7 @@ class TNArchipelEntity (object):
             for registrar_item in self.messages_registrar:
                 for cmd in registrar_item["commands"]:
                     if body.find(cmd, 0, len(cmd)) >= 0:
-                        granted  = True
+                        granted = True
                         if "permissions" in registrar_item:
                             granted = self.permission_center.check_permissions(msg.getFrom().getStripped(), registrar_item["permissions"])
                         if granted:
