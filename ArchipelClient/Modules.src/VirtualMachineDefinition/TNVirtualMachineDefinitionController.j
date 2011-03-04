@@ -759,6 +759,21 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
+        [self displayMaskingView:YES];
+    }
+    else
+    {
+        [self displayMaskingView:NO];
+    }
+}
+
+/*! display or hide the masking view
+    @param shouldDisplay displays if YES, hide if NO
+*/
+- (void)displayMaskingView:(BOOL)shouldDisplay
+{
+    if (shouldDisplay)
+    {
         if (![maskingView superview])
         {
             [maskingView setFrame:[[self view] bounds]];
@@ -964,6 +979,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         var guests = [aStanza childrenWithName:@"guest"];
 
         _supportedCapabilities = [CPDictionary dictionary];
+
+        if ([guests count] == 0)
+        {
+            _supportedCapabilities = nil;
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Capabilities" message:@"Your hypervisor have not pushed any guest support." icon:TNGrowlIconError];
+            [self displayMaskingView:YES];
+        }
 
         for (var i = 0; i < [guests count]; i++)
         {
