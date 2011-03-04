@@ -273,6 +273,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 file_cmd_output = subprocess.Popen(["file", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
 
                 if (file_cmd_output.find("format: qcow") > -1 \
+                or file_cmd_output.find("qemu qcow image") > -1 \
                 or file_cmd_output.find("boot sector") > -1 \
                 or file_cmd_output.find("vmware") > -1\
                 or file_cmd_output.find("data") > -1\
