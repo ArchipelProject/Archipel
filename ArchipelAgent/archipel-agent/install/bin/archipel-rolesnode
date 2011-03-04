@@ -85,8 +85,8 @@ if __name__ == "__main__":
     pubSubNodeRoles = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesNodeName)
     
     if action == "create":
-        if not pubSubNodeRoles.recover():
-            pubSubNodeRoles.create()
+        if not pubSubNodeRoles.recover(wait=True):
+            pubSubNodeRoles.create(wait=True)
         pubSubNodeRoles.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
@@ -96,9 +96,9 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
-        })
+        }, wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/roles created!\033[0m"
     elif action == "delete":
-        if pubSubNodeRoles.recover():
-            pubSubNodeRoles.delete()
+        if pubSubNodeRoles.recover(wait=True):
+            pubSubNodeRoles.delete(wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/roles deleted!\033[0m"

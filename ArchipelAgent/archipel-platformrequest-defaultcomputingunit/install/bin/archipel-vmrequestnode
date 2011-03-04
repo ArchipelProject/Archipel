@@ -85,8 +85,8 @@ if __name__ == "__main__":
     pubSubNodeOutRequest    = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesOutRequest)
     
     if action == "create":
-        if not pubSubNodeInRequest.recover():
-            pubSubNodeInRequest.create()
+        if not pubSubNodeInRequest.recover(wait=True):
+            pubSubNodeInRequest.create(wait=True)
         pubSubNodeInRequest.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
@@ -97,12 +97,12 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
-        })
+        }, wait=True)
         print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesInRequest
     
     if action == "create":
-        if not pubSubNodeOutRequest.recover():
-            pubSubNodeOutRequest.create()
+        if not pubSubNodeOutRequest.recover(wait=True):
+            pubSubNodeOutRequest.create(wait=True)
         pubSubNodeOutRequest.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
@@ -113,14 +113,14 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY: archipelcore.pubsub.XMPP_PUBSUB_VAR_ITEM_REPLY_PUBLISHER
-        })
+        }, wait=True)
         print "\033[32mSUCCESS: pubsub node %s created!\033[0m" % rolesOutRequest
         
     elif action == "delete":
-        if pubSubNodeInRequest.recover():
-            pubSubNodeInRequest.delete()
+        if pubSubNodeInRequest.recover(wait=True):
+            pubSubNodeInRequest.delete(wait=True)
             print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesInRequest
-        if pubSubNodeOutRequest.recover():
-            pubSubNodeOutRequest.delete()
+        if pubSubNodeOutRequest.recover(wait=True):
+            pubSubNodeOutRequest.delete(wait=True)
             print "\033[32mSUCCESS: pubsub node %s deleted!\033[0m" % rolesOutRequest
         

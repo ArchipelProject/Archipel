@@ -93,8 +93,8 @@ if __name__ == "__main__":
     pubSubNodeTags = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, tagNodeName)
     
     if action == "create":
-        if not pubSubNodeTags.recover():
-            pubSubNodeTags.create()
+        if not pubSubNodeTags.recover(wait=True):
+            pubSubNodeTags.create(wait=True)
         pubSubNodeTags.configure({
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_PUBLISH_MODEL: archipelcore.pubsub.XMPP_PUBSUB_VAR_ACCESS_MODEL_OPEN,
@@ -104,9 +104,9 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_NOTIFY_RECTRACT: 0,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1,
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
-        })
+        }, wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/tags created!\033[0m"
     elif action == "delete":
-        if pubSubNodeTags.recover():
-            pubSubNodeTags.delete()
+        if pubSubNodeTags.recover(wait=True):
+            pubSubNodeTags.delete(wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/tags deleted!\033[0m"
