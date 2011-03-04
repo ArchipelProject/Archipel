@@ -39,6 +39,7 @@ TNArchipelTypeVirtualMachineControlInfo         = @"info";
 TNArchipelTypeVirtualMachineControlCreate       = @"create";
 TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
 TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
+TNArchipelTypeVirtualMachineControlFree         = @"free";
 TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
 TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
 TNArchipelTypeVirtualMachineControlResume       = @"resume";
@@ -73,8 +74,13 @@ TNArchipelTransportBarReboot    = 4;
 */
 @implementation TNVirtualMachineControlsController : TNModule
 {
+    @outlet CPButton                buttonKill;
+    @outlet CPButtonBar             buttonBarMigration;
     @outlet CPImageView             imageState;
+    @outlet CPScrollView            scrollViewTableHypervisors;
+    @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
+    @outlet CPSlider                sliderMemory;
     @outlet CPTextField             fieldInfoConsumedCPU;
     @outlet CPTextField             fieldInfoCPUs;
     @outlet CPTextField             fieldInfoMem;
@@ -83,36 +89,32 @@ TNArchipelTransportBarReboot    = 4;
     @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldOOMAdjust;
     @outlet CPTextField             fieldOOMScore;
-    @outlet CPView                  maskingView;
-    @outlet CPScrollView            scrollViewTableHypervisors;
-    @outlet CPSearchField           filterHypervisors;
-    @outlet CPButtonBar             buttonBarMigration;
-    @outlet CPView                  viewTableHypervisorsContainer;
-    @outlet CPSlider                sliderMemory;
-    @outlet TNTextFieldStepper      stepperCPU;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
+    @outlet CPView                  maskingView;
+    @outlet CPView                  viewTableHypervisorsContainer;
     @outlet TNSwitch                switchAutoStart;
     @outlet TNSwitch                switchPreventOOMKiller;
+    @outlet TNTextFieldStepper      stepperCPU;
 
-    CPTableView             _tableHypervisors;
-    TNTableViewDataSource   _datasourceHypervisors;
-    CPButton                _migrateButton;
-    CPString                _currentHypervisorJID;
-
-    CPNumber    _VMLibvirtStatus;
-    CPImage     _imagePlay;
-    CPImage     _imageStop;
-    CPImage     _imageDestroy;
-    CPImage     _imagePause;
-    CPImage     _imageReboot;
-    CPImage     _imageResume;
-    CPImage     _imagePlayDisabled;
-    CPImage     _imageStopDisabled;
-    CPImage     _imageDestroyDisabled;
-    CPImage     _imagePauseDisabled;
-    CPImage     _imageRebootDisabled;
-    CPImage     _imagePlaySelected;
-    CPImage     _imageStopSelected;
+    CPButton                        _migrateButton;
+    CPImage                         _imageDestroy;
+    CPImage                         _imageDestroyDisabled;
+    CPImage                         _imagePause;
+    CPImage                         _imagePauseDisabled;
+    CPImage                         _imagePlay;
+    CPImage                         _imagePlayDisabled;
+    CPImage                         _imagePlaySelected;
+    CPImage                         _imageReboot;
+    CPImage                         _imageRebootDisabled;
+    CPImage                         _imageResume;
+    CPImage                         _imageStop;
+    CPImage                         _imageStopDisabled;
+    CPImage                         _imageStopSelected;
+    CPNumber                        _VMLibvirtStatus;
+    CPString                        _currentHypervisorJID;
+    CPTableView                     _tableHypervisors;
+    TNStropheJID                    _JIDOfVirtualMachineToFree;
+    TNTableViewDataSource           _datasourceHypervisors;
 }
 
 #pragma mark -
@@ -371,6 +373,7 @@ TNArchipelTransportBarReboot    = 4;
     [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
     [self setControl:sliderMemory enabledAccordingToPermission:@"memory" specialCondition:isOnline];
     [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus" specialCondition:isOnline];
+    [self setControl:buttonKill enabledAccordingToPermission:@"free"];
 
     [viewTableHypervisorsContainer setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
     [filterHypervisors setHidden:!([self currentEntityHasPermission:@"migrate"] && isOnline)];
@@ -745,6 +748,14 @@ TNArchipelTransportBarReboot    = 4;
 - (IBAction)migrate:(id)aSender
 {
     [self migrate];
+}
+
+/*! send free command
+    @param aSender the sender of the action
+*/
+- (IBAction)free:(id)aSender
+{
+    [self free];
 }
 
 
@@ -1279,6 +1290,52 @@ TNArchipelTransportBarReboot    = 4;
     if ([aStanza type] == @"result")
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started."];
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+
+    return NO;
+}
+
+/*! send free command. but ask for user confirmation
+*/
+- (void)free
+{
+    var alert = [TNAlert alertWithMessage:@"Kill virtual machine?"
+                                informative:@"You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?"
+                                 target:self
+                                 actions:[["Kill", @selector(performFree:)], ["Cancel", nil]]];
+
+    [alert runModal];
+}
+
+/*! send free command
+*/
+- (void)performFree:(id)someUserInfo
+{
+    var stanza  = [TNStropheStanza iqWithType:@"set"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlFree}];
+
+    _JIDOfVirtualMachineToFree = [_entity JID];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didFree:)];
+}
+
+/*! compute the destroy result
+    @param aStanza TNStropheStanza containing the results
+*/
+- (BOOL)_didFree:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        [[[TNStropheIMClient defaultClient] roster] removeContactWithJID:_JIDOfVirtualMachineToFree];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine killed."];
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewDeselectAll object:self];
+        _JIDOfVirtualMachineToFree = nil;
     }
     else
     {
