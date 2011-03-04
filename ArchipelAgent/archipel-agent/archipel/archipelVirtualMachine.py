@@ -66,6 +66,7 @@ ARCHIPEL_ERROR_CODE_VM_AUTOSTART                = -1015
 ARCHIPEL_ERROR_CODE_VM_MEMORY                   = -1016
 ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
+ARCHIPEL_ERROR_CODE_VM_FREE                     = -1020
 ARCHIPEL_ERROR_CODE_VM_MIGRATING                = -43
 
 ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
@@ -141,6 +142,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         self.create_hook("HOOK_VM_DEFINE")
         self.create_hook("HOOK_VM_INITIALIZE")
         self.create_hook("HOOK_VM_TERMINATE")
+        self.create_hook("HOOK_VM_FREE")
         self.create_hook("HOOK_VM_CRASH")
         self.create_hook("HOOK_XMPP_CONNECT")
         self.create_hook("HOOK_XMPP_DISCONNECT")
@@ -248,6 +250,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         self.permission_center.create_permission("define", "Authorizes users to define virtual machine", False)
         self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
+        self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
 
     def register_handler(self):
         """
@@ -333,6 +336,19 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             self.log.error("Exception while connecting to domain : %s" % str(ex))
 
     def on_domain_event(self, conn, dom, event, detail, opaque):
+        """
+        called when a libvirt event is triggered
+        @type conn: libvirt.connection
+        @param conn: the libvirt connection
+        @type dom: libvirt.domain
+        @param dom: the domain that has triggered the event
+        @type event: int
+        @param event: the event
+        @type detail: int
+        @param detail: the detail associated to the event
+        @type opaque: ?
+        @param opaque: so opaque that I don't know
+        """
         self.log.info("libvirt event received: %d with detail %s" % (event, detail))
         if self.is_migrating:
             self.log.info("event received but virtual machine is migrating.")
@@ -392,6 +408,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             self.unlock()
 
     def remove_libvirt_handler(self):
+        """
+        remove the libvirt event listener handler
+        """
         if not self.libvirt_event_callback_id is None:
             self.log.info("removing the libvirt event listener for %s" % self.jid)
             self.libvirt_connection.domainEventDeregisterAny(self.libvirt_event_callback_id)
@@ -502,9 +521,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             reply = self.iq_setvcpus(iq)
         elif action == "networkinfo":
             reply = self.iq_networkinfo(iq)
+        elif action == "free":
+            reply = self.iq_free(iq)
         # elif action == "setpincpus":
         #     reply = self.iq_setcpuspin(iq)
-
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -807,6 +827,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             self.change_presence(presence_show=self.xmppstatusshow, presence_status="Can't migrate.")
             self.shout("migration", "I can't migrate to %s because exception has been raised: %s" % (remote_hypervisor_uri, str(ex)))
             self.log.error("can't migrate because of : %s" % str(ex))
+
+    def free(self):
+        """
+        will run the hypervisor to free virtual machine
+        """
+        self.perform_hooks("HOOK_VM_FREE")
+        self.hypervisor.free(self.jid)
 
 
     ### Other stuffs
@@ -1386,4 +1413,20 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_MEMORY)
+        return reply
+
+    def iq_free(self, iq):
+        """
+        set number of virtual cpus
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            self.log.info("virtual machine will be freed now")
+            self.free()
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_FREE)
         return reply
