@@ -28,7 +28,7 @@
 @import <MessageBoard/MessageBoard.j>
 @import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
-@import <LPKit/LPCrashReporter.j>
+// @import <LPKit/LPCrashReporter.j>
 
 @import "Categories/TNCategories.j"
 @import "Controllers/TNAvatarController.j"
