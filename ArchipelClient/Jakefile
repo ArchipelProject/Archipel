@@ -17,12 +17,12 @@
  */
 
 /* enter the following information about you and your module */
-var AUTHOR		= "Antoine Mercadal",
-    EMAIL		= "antoine.mercadal@inframonde.eu",
-    COMPANY		= "org.archipelproject",
-    NAME 		= "Archipel",
-    SUMMARY		= "The next-gen virtualization orchestrator",
-    VERSION		= "1.0";
+var AUTHOR      = "Antoine Mercadal",
+    EMAIL       = "antoine.mercadal@inframonde.eu",
+    COMPANY     = "org.archipelproject",
+    NAME        = "Archipel",
+    SUMMARY     = "The next-gen virtualization orchestrator",
+    VERSION     = "1.0";
 
 
 
@@ -66,7 +66,6 @@ task ("build", ["Archipel"], function()
 {
     printResults(configuration);
 });
-
 
 task ("debug", function()
 {

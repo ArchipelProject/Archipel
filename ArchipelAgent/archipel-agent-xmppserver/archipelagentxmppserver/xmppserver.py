@@ -22,8 +22,17 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq
 
 
-ARCHIPEL_NS_XMPPSERVER_GROUPS  = "archipel:xmppserver:groups"
-ARCHIPEL_NS_XMPPSERVER_USERS   = "archipel:xmppserver:users"
+ARCHIPEL_NS_XMPPSERVER_GROUPS   = "archipel:xmppserver:groups"
+ARCHIPEL_NS_XMPPSERVER_USERS    = "archipel:xmppserver:users"
+
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS       = -10001
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE         = -10002
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE         = -10003
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS    = -10004
+ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST           = -10005
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST           = -10006
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER       = -10007
+ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER     = -10008
 
 
 class TNXMPPServerController (TNArchipelPlugin):
@@ -39,13 +48,14 @@ class TNXMPPServerController (TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-        self.xmpp_server            = entity.jid.getDomain()
-        self.xmlrpc_host            = self.configuration.get("XMPPSERVER", "xmlrpc_host")
-        self.xmlrpc_port            = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
-        self.xmlrpc_user            = self.configuration.get("XMPPSERVER", "xmlrpc_user")
-        self.xmlrpc_password        = self.configuration.get("XMPPSERVER", "xmlrpc_password")
-        self.xmlrpc_call            = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
-        self.xmlrpc_server          = xmlrpclib.ServerProxy(self.xmlrpc_call)
+        self.xmpp_server        = entity.jid.getDomain()
+        self.xmlrpc_host        = self.configuration.get("XMPPSERVER", "xmlrpc_host")
+        self.xmlrpc_port        = self.configuration.getint("XMPPSERVER", "xmlrpc_port")
+        self.xmlrpc_user        = self.configuration.get("XMPPSERVER", "xmlrpc_user")
+        self.xmlrpc_password    = self.configuration.get("XMPPSERVER", "xmlrpc_password")
+        self.xmlrpc_call        = "http://%s:%s@%s:%s/" % (self.xmlrpc_user, self.xmlrpc_password, self.xmlrpc_host, self.xmlrpc_port)
+        self.xmlrpc_server      = xmlrpclib.ServerProxy(self.xmlrpc_call)
+
         # permissions
         self.entity.permission_center.create_permission("xmppserver_groups_create", "Authorizes user to create shared groups", False)
         self.entity.permission_center.create_permission("xmppserver_groups_delete", "Authorizes user to delete shared groups", False)
@@ -139,7 +149,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.info("creating a new shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
         return reply
 
     def iq_group_delete(self, iq):
@@ -160,7 +170,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             self.entity.log.info("removing a shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
         return reply
 
     def iq_group_list(self, iq):
@@ -195,7 +205,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 groupsNode.append(newNode)
             reply.setQueryPayload(groupsNode)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_LIST)
         return reply
 
     def iq_group_add_users(self, iq):
@@ -219,7 +229,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS)
         return reply
 
     def iq_group_delete_users(self, iq):
@@ -243,7 +253,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS)
         return reply
 
 
@@ -295,7 +305,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("registred a new user user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
         return reply
 
     def iq_users_unregister(self, iq):
@@ -318,7 +328,7 @@ class TNXMPPServerController (TNArchipelPlugin):
                 self.entity.log.info("unregistred user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)
         return reply
 
     def iq_users_list(self, iq):
@@ -346,5 +356,5 @@ class TNXMPPServerController (TNArchipelPlugin):
                 nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))
             reply.setQueryPayload(nodes)
         except Exception as ex:
-            reply = build_error_iq(self, ex, iq)
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_LIST)
         return reply

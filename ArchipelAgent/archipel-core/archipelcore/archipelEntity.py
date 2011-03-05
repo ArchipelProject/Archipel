@@ -156,7 +156,7 @@ class TNArchipelEntity (object):
         excluded_plugins = []
         for factory_method in iter_entry_points(group=group, name="factory"):
             method              = factory_method.load()
-            plugins             = method(self.configuration, self, group, excluded_plugins)
+            plugins             = method(self.configuration, self, group)
             for plugin in plugins:
                 plugin_info     = plugin["info"]
                 if plugin_info["configuration-section"]:

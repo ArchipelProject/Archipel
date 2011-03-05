@@ -53,6 +53,7 @@
 @import "Views/TNSearchField.j"
 @import "Views/TNSwitch.j"
 
+
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -321,6 +322,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
     [filterField setOutlineView:_rosterOutlineView];
+    [filterField setMaximumRecents:10];
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
