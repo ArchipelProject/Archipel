@@ -179,7 +179,12 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
     def update_presence(self, origin=None, user_info=None, arguments=None):
         """
         set the presence of the hypervisor
-        parameters are here to be HOOK compliant
+        @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtim argument
         """
         count   = len(self.virtualmachines)
         status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
@@ -237,7 +242,9 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         self.add_message_registrar_items(registrar_items)
 
     def init_permissions(self):
-        """initialize the permssions"""
+        """
+        initialize the permssions
+        """
         TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False)
         self.permission_center.create_permission("free", "Authorizes users to free allocated virtual machines", False)
@@ -263,8 +270,9 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
             string_jid, password, date, comment, name = vm
             jid = xmpp.JID(string_jid)
             jid.setResource(self.jid.getNode())
-            vm = self.create_threaded_vm(jid, password, name)
-            self.virtualmachines[vm.jid.getNode()] = vm.get_instance()
+            vm_thread = self.create_threaded_vm(jid, password, name)
+            self.virtualmachines[vm.jid.getNode()] = vm_thread.get_instance()
+            vm_thread.start()
 
     def create_threaded_vm(self, jid, password, name):
         """
@@ -276,9 +284,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @rtype: L{TNThreadedVirtualMachine}
         @return: a L{TNThreadedVirtualMachine} instance of the virtual machine
         """
-        vm = TNThreadedVirtualMachine(jid, password, self, self.configuration, name)
-        vm.start()
-        return vm
+        return TNThreadedVirtualMachine(jid, password, self, self.configuration, name)
 
     def generate_name(self):
         """
@@ -402,13 +408,17 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
 
     ###  Hypervisor controls
 
-    def alloc(self, requester=None, requested_name=None):
+    def alloc(self, requester=None, requested_name=None, start=True):
         """
         Alloc a new XMPP entity
         @type requester: xmpp.JID
         @param requester: the JID of the migrated VM to alloc
         @type requested_name: string
         @param requested_name: the requested name for the VM if None, will be generated
+        @type start: Boolean
+        @param start: if True, start the vm immediatly
+        @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
+        @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
         vmuuid      = str(moduuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
@@ -420,7 +430,8 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
             name = requested_name
 
         self.log.info("starting xmpp threaded virtual machine")
-        vm = self.create_threaded_vm(vm_jid, vm_password, name).get_instance()
+        vm_thread = self.create_threaded_vm(vm_jid, vm_password, name)
+        vm = vm_thread.get_instance()
 
         if requester:
             self.log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
@@ -436,7 +447,11 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         self.log.info("XMPP Virtual Machine instance sucessfully initialized")
         self.perform_hooks("HOOK_HYPERVISOR_ALLOC", vm)
         self.push_change("hypervisor", "alloc")
-        return vm
+        if start:
+            vm_thread.start()
+            return vm
+        else:
+            return vm_thread
 
     def alloc_for_migration(self, jid, name, password):
         """
@@ -448,12 +463,13 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @type password: string
         @param password: the password of the migrated VM to alloc
         """
-        uuid    = jid.getNode()
+        uuid = jid.getNode()
 
         jid.setResource(self.jid.getNode())
         self.log.info("starting xmpp threaded virtual machine with incoming jid : %s" % jid)
-        vm = self.create_threaded_vm(jid, password, name).get_instance()
-
+        vm_thread = self.create_threaded_vm(jid, password, name)
+        vm = vm_thread.get_instance()
+        vm_thread.start()
         self.log.info("registering the new VM in hypervisor's memory")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
         self.database.commit()
@@ -521,19 +537,24 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @type requester: xmpp.JID
         @param requester: JID of the requester
         """
-        xmppvm      = self.virtualmachines[uuid]
-        xmldesc     = xmppvm.definition
+        xmppvm = self.virtualmachines[uuid]
+        xmldesc = xmppvm.definition
 
-        if not xmldesc: raise Exception('The mother vm has to be defined to be cloned')
+        if not xmldesc:
+            raise Exception('The mother vm has to be defined to be cloned')
 
         dominfo = xmppvm.domain.info()
         if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother vm has to be stopped to be cloned')
 
         name = "%s (clone)" % xmppvm.name
-        newvm = self.alloc(requester, requested_name=name)
-
-        newvm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=newvm.clone, user_info={"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid}, oneshot=True)
+        newvm_thread = self.alloc(requester, requested_name=name, start=False)
+        newvm = newvm_thread.get_instance()
+        newvm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED",
+                            method=newvm.clone,
+                            user_info={"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid},
+                            oneshot=True)
+        newvm_thread.start()
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", newvm)
         self.push_change("hypervisor", "clone")
 
@@ -560,8 +581,8 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
                 requested_name = iq.getTag("query").getTag("archipel").getAttr("name")
             except:
                 requested_name = None
-            vm      = self.alloc(iq.getFrom(), requested_name=requested_name)
-            reply   = iq.buildReply("result")
+            vm = self.alloc(iq.getFrom(), requested_name=requested_name)
+            reply = iq.buildReply("result")
             payload = xmpp.Node("virtualmachine", attrs={"jid": str(vm.jid.getStripped())})
             reply.setQueryPayload([payload])
             self.shout("virtualmachine", "A new Archipel Virtual Machine has been created by %s with uuid %s" % (iq.getFrom(), vm.uuid))
@@ -584,7 +605,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
             name = None
             if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             name = tokens[1]
-            vm = self.alloc(msg.getFrom(), name);
+            vm = self.alloc(msg.getFrom(), name)
             return "Archipel VM with name %s has been allocated using JID %s" % (vm.name, vm.jid)
         except Exception as ex:
             return build_error_message(self, ex)
@@ -598,10 +619,10 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @return: a ready-to-send IQ containing the results
         """
         try:
-            reply       = iq.buildReply("result")
-            vmjid       = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
-            name        = iq.getTag("query").getTag("archipel").getAttr("name")
-            password    = iq.getTag("query").getTag("archipel").getAttr("password")
+            reply = iq.buildReply("result")
+            vmjid = xmpp.JID(iq.getTag("query").getTag("archipel").getAttr("jid"))
+            name = iq.getTag("query").getTag("archipel").getAttr("name")
+            password = iq.getTag("query").getTag("archipel").getAttr("password")
 
             self.alloc_for_migration(vmjid, name, password)
 

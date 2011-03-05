@@ -763,7 +763,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
     def clone(self, origin, user_info, parameters):
         """
         clone a vm from another
-        info is a dict that contains following keys
+        user_info is a dict that contains following keys
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
             - baseuuid : the base uuid of cloned vm, in order to replace it
