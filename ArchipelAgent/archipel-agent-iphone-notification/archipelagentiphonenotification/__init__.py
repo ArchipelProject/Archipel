@@ -18,7 +18,7 @@
 import appnotificator
 
 
-def make_archipel_plugin(configuration, entity, groupdef make_archipel_plugin(configuration, entity, group):
+def make_archipel_plugin(configuration, entity, group):
     """
     this function is the plugin factory. It will be called by the object you want
     want to be plugged in. It must return a list whit at least on dictionary containing
@@ -31,7 +31,7 @@ def make_archipel_plugin(configuration, entity, groupdef make_archipel_plugin(co
     @param group: the entry point group name in which the plugin has been loaded
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
-    """):
+    """
     return [{"info": appnotificator.AppNotificator.plugin_info(),
             "plugin": appnotificator.AppNotificator(configuration, entity, group)}]
 
