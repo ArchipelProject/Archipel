@@ -107,17 +107,22 @@ class TNHookableEntity (object):
         @param arguments: random object that will be given to the registered methods as "argument" kargs
         """
         self.log.info("HOOK: going to run methods for hook %s" % hookname)
+        hook_to_remove = []
         for info in self.hooks[hookname]:
             m           = info["method"]
             oneshot     = info["oneshot"]
             user_info   = info["user_info"]
             try:
-                self.log.info("HOOK: performing method %s registered in hook with name %s" % (m.__name__, hookname))
+                self.log.debug("HOOK: performing method %s registered in hook with name %s and user_info: %s (oneshot: %s)" % (m.__name__, hookname, str(user_info), str(oneshot)))
                 m(self, user_info, arguments)
                 if oneshot:
-                    self.log.info("HOOK: this hook was oneshot. removing it")
-                    self.unregister_hook(hookname, m)
+                    self.log.info("HOOK: this hook was oneshot. registering for deletion")
+                    hook_to_remove.append(m)
             except Exception as ex:
                 self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
+
+            for hook_method in hook_to_remove:
+                self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))
+                self.unregister_hook(hookname, hook_method)
 
 
