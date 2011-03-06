@@ -184,7 +184,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @type user_info: object
         @param user_info: random user info
         @type parameters: object
-        @param parameters: runtim argument
+        @param parameters: runtime arguments
         """
         count   = len(self.virtualmachines)
         status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
@@ -271,7 +271,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
             jid = xmpp.JID(string_jid)
             jid.setResource(self.jid.getNode())
             vm_thread = self.create_threaded_vm(jid, password, name)
-            self.virtualmachines[vm.jid.getNode()] = vm_thread.get_instance()
+            self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
             vm_thread.start()
 
     def create_threaded_vm(self, jid, password, name):
@@ -537,7 +537,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @type requester: xmpp.JID
         @param requester: JID of the requester
         """
-        xmppvm = self.virtualmachines[uuid]
+        xmppvm = self.get_vm_by_uuid(uuid)
         xmldesc = xmppvm.definition
 
         if not xmldesc:
@@ -550,7 +550,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         name = "%s (clone)" % xmppvm.name
         newvm_thread = self.alloc(requester, requested_name=name, start=False)
         newvm = newvm_thread.get_instance()
-        newvm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED",
+        newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
                             user_info={"definition": xmldesc, "path": xmppvm.folder, "baseuuid": uuid},
                             oneshot=True)

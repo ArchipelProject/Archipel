@@ -326,6 +326,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         except:
             self.log.warning("Can't connect to domain with UUID %s" % self.uuid)
             self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
+            self.perform_hooks("HOOK_VM_INITIALIZE")
             return
         try:
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
@@ -767,6 +768,12 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
             - baseuuid : the base uuid of cloned vm, in order to replace it
+            @type origin: L{TNArchipelEntity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user info
+        @type parameters: object
+        @param parameters: runtime arguments
         """
         xml         = user_info["definition"]
         path        = user_info["path"]
@@ -778,7 +785,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
         self.log.info("starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
-        thread.start_new_thread(self.perform_threaded_copy, (path, newxml))
+        thread.start_new_thread(self.perform_threaded_cloning, (path, newxml))
 
     def migrate_step1(self, destination_jid):
         """
@@ -838,12 +845,17 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
 
     ### Other stuffs
 
-    def perform_threaded_copy(self, src_path, newxml):
+    def perform_threaded_cloning(self, src_path, newxml):
         """
         perform threaded copy of the virtual machine and then define it
+        @type src_path: string
+        @param src_path: the path of the folder of the origin VM
+        @type newxml: xmpp.Node
+        @param newxml: the origin XML description
         """
-        shutil.copytree(src_path, self.folder)
-        self.log.info("defining the cloned virtual machine")
+        for token in os.listdir(src_path):
+            self.log.debug("CLONING: copying item %s/%s to %s" % (src_path, token, self.folder))
+            shutil.copy("%s/%s" % (src_path, token), self.folder)
         self.define(newxml)
 
     def add_trigger(self, name, description):
