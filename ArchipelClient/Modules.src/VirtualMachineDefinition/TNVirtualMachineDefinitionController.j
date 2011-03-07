@@ -65,7 +65,8 @@ TNXMLDescHypervisorOpenNebula   = @"one";
 
 TNXMLDescVNCKeymapFR            = @"fr";
 TNXMLDescVNCKeymapEN_US         = @"en-us";
-TNXMLDescVNCKeymaps             = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR];
+TNXMLDescVNCKeymapDeutch        = @"de";
+TNXMLDescVNCKeymaps             = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR, TNXMLDescVNCKeymapDeutch];
 
 
 TNXMLDescLifeCycleDestroy           = @"destroy";
