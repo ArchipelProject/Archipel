@@ -68,10 +68,6 @@ def versions():
     """print versions of all installed modules"""
     print "\033[32m* Archipel Agent version : \033[0m"
     format_version(("archipelagent", pkg_resources.get_distribution("archipel-agent").version))
-    print "\n\033[32m* Installed worker : \033[0m"
-    for version_method in pkg_resources.iter_entry_points(group="archipel.worker", name="version"):
-        method  = version_method.load()
-        format_version(method())
     print "\n\033[32m* Installed plugins versions : \033[0m"
     for version_method in pkg_resources.iter_entry_points(group="archipel.plugin", name="version"):
         method  = version_method.load()
@@ -99,10 +95,10 @@ def main():
     main function of Archipel
     """
     if not test_libvirt(): sys.exit(ARCHIPEL_INIT_ERROR_BAD_LIBVIRT)
-    
+
     # starting thre libvirt event loop
     virEventLoopPureStart()
-    
+
     # initializing the hypervisor XMPP entity
     jid         = xmpp.JID(config.get("HYPERVISOR", "hypervisor_xmpp_jid"))
     password    = config.get("HYPERVISOR", "hypervisor_xmpp_password")
@@ -120,7 +116,7 @@ def main():
     except Exception as ex:
         log.error("RUNARCHIPEL: Exception has stoped the hypervisor main loop: %s" % str(ex))
         sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
-    
+
 
 if __name__ == "__main__":
     """
@@ -129,13 +125,13 @@ if __name__ == "__main__":
     opts, args  = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
     configPath  = "/etc/archipel/archipel.conf"
     fork        = True
-    
+
     for o, a in opts:
         if o in ("--config"):           configPath = a
         if o in ("-n", "--nofork"):     fork = False
         if o in ("-h", "--help"):       help()
         if o in ("-v", "--version"):    versions()
-    
+
     try:
         config = init_conf(configPath)
     except:
