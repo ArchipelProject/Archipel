@@ -121,7 +121,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        if not self.entity.libvirt_connection.getType() == ARCHIPEL_HYPERVISOR_TYPE_QEMU:
+        if not self.entity.libvirt_connection.getType().upper() == ARCHIPEL_HYPERVISOR_TYPE_QEMU:
             self.entity.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
             return
         current_vnc_port        = self.display()["direct"]
