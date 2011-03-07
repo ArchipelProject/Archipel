@@ -352,7 +352,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         """
         self.log.info("libvirt event received: %d with detail %s" % (event, detail))
         if self.is_migrating:
-            self.log.info("event received but virtual machine is migrating.")
+            self.log.info("event received but virtual machine is migrating. ignoring")
             return
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
@@ -580,7 +580,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         """
         self.lock()
         self.domain.shutdown()
-        if (self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING):
+        if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
         self.log.info("virtual machine shutdowned")
 
@@ -605,16 +605,27 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         suspend (pause) the domain
         """
         self.lock()
-        self.domain.suspend()
+        ret = self.domain.suspend()
         self.log.info("virtual machine suspended")
+        # libvirt has no way to know this with xen
+        # so if the return is 0, we assume it's OK
+        # and we simulate the event
+        if ret == 0 and self.libvirt_connection.getType().upper() == "XEN":
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, libvirt.VIR_DOMAIN_EVENT_SUSPENDED_PAUSED, None)
 
     def resume(self):
         """
         resume (unpause) the domain
         """
         self.lock()
-        self.domain.resume()
+        ret = self.domain.resume()
         self.log.info("virtual machine resumed")
+        # libvirt has no way to know this with xen
+        # so if the return is 0, we assume it's OK
+        # and we simulate the event
+        if ret == 0 and self.libvirt_connection.getType().upper() == "XEN":
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
+
 
     def info(self):
         """
@@ -738,6 +749,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
+
+        # libvirt has no way to know this with xen
+        # so if the return is 0, we assume it's OK
+        # and we simulate the event
+        if self.libvirt_connection.getType().upper() == "XEN":
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_DEFINED, 0, None)
+
         return xmldesc
 
     def undefine(self):
@@ -798,7 +816,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             raise Exception('Virtual machine is already migrating')
         if not self.definition:
             raise Exception('Virtual machine must be defined')
-        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING:
+        if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
             raise Exception('Virtual machine must be running')
         if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
             raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
