@@ -146,6 +146,7 @@
 {
     [super willUnload];
 
+    [self save];
     [_messages removeAllObjects];
     [_messageBoard removeAllMessages:nil];
 
