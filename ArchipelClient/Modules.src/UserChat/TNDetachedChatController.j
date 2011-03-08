@@ -170,8 +170,15 @@ else
     {
         for (var i = 0; i < [_messageHistory count]; i++)
         {
-            var message = [_messageHistory objectAtIndex:i];
-            [_messageBoard addMessage:[message objectForKey:@"message"] from:[message objectForKey:@"name"] date:[message objectForKey:@"date"] color:[message objectForKey:@"color"]];
+            var message = [_messageHistory objectAtIndex:i],
+                avatar = nil;
+
+            if ([message objectForKey:@"name"] != @"me")
+                avatar = [_entity avatar];
+            else
+                avatar = [[TNStropheIMClient defaultClient] avatar];
+
+            [_messageBoard addMessage:[message objectForKey:@"message"] from:[message objectForKey:@"name"] date:[message objectForKey:@"date"] color:[message objectForKey:@"color"] avatar:avatar];
         }
 
         var newScrollOrigin = CPMakePoint(0.0, [[_scrollView documentView] frame].size.height);
@@ -193,9 +200,15 @@ else
     var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
         date            = [CPDate date],
         newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
-        frame           = [[_scrollView documentView] frame];
+        frame           = [[_scrollView documentView] frame],
+        avatar          = nil;
 
-    [_messageBoard addMessage:aMessage from:aSender date:date color:color];
+    if (aSender != @"me")
+        avatar = [_entity avatar];
+    else
+        avatar = [[TNStropheIMClient defaultClient] avatar];
+
+    [_messageBoard addMessage:aMessage from:aSender date:date color:color avatar:avatar];
 
     // scroll to bottom;
     var newScrollOrigin = CPMakePoint(0.0, frame.size.height);

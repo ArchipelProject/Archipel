@@ -335,9 +335,14 @@
         var author  = [[lastConversation objectAtIndex:j] objectForKey:@"name"],
             message = [[lastConversation objectAtIndex:j] objectForKey:@"message"],
             color   = [[lastConversation objectAtIndex:j] objectForKey:@"color"],
-            date   = [[lastConversation objectAtIndex:j] objectForKey:@"date"];
+            date    = [[lastConversation objectAtIndex:j] objectForKey:@"date"],
+            avatar  = nil;
 
-        [_messageBoard addMessage:message from:author date:date color:color];
+        if (author != @"me")
+            avatar = [_entity avatar];
+        else
+            avatar = [[TNStropheIMClient defaultClient] avatar];
+        [_messageBoard addMessage:message from:author date:date color:color avatar:avatar];
     }
 }
 
@@ -358,10 +363,16 @@
     var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
         date            = [CPDate date],
         newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
-        frame           = [[messagesScrollView documentView] frame];
+        frame           = [[messagesScrollView documentView] frame],
+        avatar          = nil;
 
     [_messages addObject:newMessageDict];
-    [_messageBoard addMessage:aMessage from:aSender date:date color:color];
+
+    if (aSender != @"me")
+        avatar = [_entity avatar];
+    else
+        avatar = [[TNStropheIMClient defaultClient] avatar];
+    [_messageBoard addMessage:aMessage from:aSender date:date color:color avatar:avatar];
 
     // scroll to bottom;
     var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
