@@ -171,14 +171,21 @@ else
         for (var i = 0; i < [_messageHistory count]; i++)
         {
             var message = [_messageHistory objectAtIndex:i],
-                avatar = nil;
+                avatar = nil,
+                position = nil;
 
             if ([message objectForKey:@"name"] != @"me")
+            {
                 avatar = [_entity avatar];
+                position = TNMessageViewAvatarPositionRight;
+            }
             else
+            {
                 avatar = [[TNStropheIMClient defaultClient] avatar];
+                position = TNMessageViewAvatarPositionLeft;
+            }
 
-            [_messageBoard addMessage:[message objectForKey:@"message"] from:[message objectForKey:@"name"] date:[message objectForKey:@"date"] color:[message objectForKey:@"color"] avatar:avatar];
+            [_messageBoard addMessage:[message objectForKey:@"message"] from:[message objectForKey:@"name"] date:[message objectForKey:@"date"] color:[message objectForKey:@"color"] avatar:avatar position:position];
         }
 
         var newScrollOrigin = CPMakePoint(0.0, [[_scrollView documentView] frame].size.height);
@@ -197,18 +204,26 @@ else
 */
 - (void)appendMessageToBoard:(CPString)aMessage from:(CPString)aSender
 {
-    var color           = (aSender == @"me") ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
+    var color           = (aSender == @"me") ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
         date            = [CPDate date],
         newMessageDict  = [CPDictionary dictionaryWithObjectsAndKeys:aSender, @"name", aMessage, @"message", color, @"color", date, @"date"],
         frame           = [[_scrollView documentView] frame],
-        avatar          = nil;
+        avatar          = nil,
+        position        = nil;
 
     if (aSender != @"me")
+    {
         avatar = [_entity avatar];
+        position = TNMessageViewAvatarPositionRight;
+    }
     else
+    {
+        position = TNMessageViewAvatarPositionLeft;
         avatar = [[TNStropheIMClient defaultClient] avatar];
+    }
 
-    [_messageBoard addMessage:aMessage from:aSender date:date color:color avatar:avatar];
+
+    [_messageBoard addMessage:aMessage from:aSender date:date color:color avatar:avatar position:position];
 
     // scroll to bottom;
     var newScrollOrigin = CPMakePoint(0.0, frame.size.height);
