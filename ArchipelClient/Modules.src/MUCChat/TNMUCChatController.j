@@ -34,17 +34,18 @@
 {
     @outlet CPScrollView        scrollViewMessageContainer;
     @outlet CPScrollView        scrollViewPeople;
-    @outlet CPTextField         textFieldMessage;
-    @outlet CPTextField         fieldPreferencesDefaultService;
     @outlet CPTextField         fieldPreferencesDefaultRoom;
+    @outlet CPTextField         fieldPreferencesDefaultService;
+    @outlet CPTextField         textFieldMessage;
 
     CPArray                     _toolbarItemImages;
+    CPSound                     _audioTagReceive;
     CPTableView                 _tableViewPeople;
     int                         _numberOfNotices;
     TNMessageBoard              _messageBoard;
     TNStropheMUCRoom            _session;
     TNTableViewDataSource       _peopleDatasource;
-    DOMElement                  _audioTagReceive;
+
 }
 
 #pragma mark -
@@ -89,10 +90,7 @@
     var bundle = [CPBundle bundleForClass:[self class]],
         sound = [bundle pathForResource:@"Stoof.wav"];
 
-    _audioTagReceive = document.createElement('audio');
-    _audioTagReceive.setAttribute("src", sound);
-    _audioTagReceive.setAttribute("autobuffer", "autobuffer");
-    document.body.appendChild(_audioTagReceive);
+    _audioTagReceive = [[CPSound alloc] initWithContentsOfFile:sound byReference:NO];
 
     _toolbarItemImages = [
         [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"icon.png"] size:CPSizeMake(32,32)],
@@ -302,16 +300,31 @@
 */
 - (void)mucRoom:(TNStropheMUCRoom)aRoom receivedMessage:(CPDictionary)aMessage
 {
-    var color = ([aMessage valueForKey:@"from"] == [[TNStropheIMClient defaultClient] JID]) ? [CPColor colorWithHexString:@"d9dfe8"] : [CPColor colorWithHexString:@"ffffff"],
-        isNotice = ([aMessage valueForKey:"body"].indexOf([[[TNStropheIMClient defaultClient] JID] node]) != -1)
+    var color = ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage valueForKey:@"from"] JID] resource]) ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
+        isNotice = ([aMessage valueForKey:"body"].indexOf([[[TNStropheIMClient defaultClient] JID] node]) != -1),
+        avatar,
+        position;
 
     if (isNotice)
-        color = [CPColor colorWithHexString:@"D1E28B"];
+        color = TNMessageViewBubbleColorNotice;
+
+    if ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage valueForKey:@"from"] JID] resource])
+    {
+        avatar = [[TNStropheIMClient defaultClient] avatar];
+        position= TNMessageViewAvatarPositionLeft;
+    }
+    else
+    {
+        position= TNMessageViewAvatarPositionRight;
+    }
+
 
     [_messageBoard addMessage:[aMessage valueForKey:"body"]
                          from:[[aMessage valueForKey:"from"] nickname]
                          date:[aMessage valueForKey:"time"]
-                        color:color];
+                        color:color
+                        avatar:avatar
+                        position:position];
 
     [self scrollToBottom];
 
@@ -322,7 +335,7 @@
 
         [_toolbarItem setImage:_toolbarItemImages[index]];
         [_toolbar _reloadToolbarItems];
-        _audioTagReceive.play();
+        [_audioTagReceive play];
     }
 }
 
