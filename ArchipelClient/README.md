@@ -43,4 +43,4 @@ at <http://app.archipelproject.org>
 
 # License
 
-Archipel is distributed under AGPL v3. See the LICENSE file
+Archipel is distributed under AGPL v3. See the LICENSE file.
