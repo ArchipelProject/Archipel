@@ -461,7 +461,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-    [_mainToolbar _reloadToolbarItems];
+    //[_mainToolbar _reloadToolbarItems];
 
     [currentModuleController initializeModule];
     [currentModuleController setName:moduleName];

@@ -179,13 +179,13 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     @outlet CPButtonBar             buttonBarLeft;
     @outlet CPImageView             ledIn;
     @outlet CPImageView             ledOut;
+    @outlet CPProgressIndicator     progressIndicatorModulesLoading;
     @outlet CPSplitView             leftSplitView;
     @outlet CPSplitView             mainHorizontalSplitView;
     @outlet CPSplitView             splitViewTagsContents;
     @outlet CPTextField             labelCurrentUser;
+    @outlet CPTextField             labelModulesLoadingName;
     @outlet CPTextField             textFieldAboutVersion;
-    @outlet CPTextField             textFieldLoadingModuleLabel;
-    @outlet CPTextField             textFieldLoadingModuleTitle;
     @outlet CPView                  filterView;
     @outlet CPView                  leftView;
     @outlet CPView                  rightView;
@@ -198,18 +198,20 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     @outlet TNConnectionController  connectionController;
     @outlet TNContactsController    contactsController;
     @outlet TNGroupsController      groupsController;
-    @outlet TNModalWindow           windowModuleLoading;
     @outlet TNModuleController      moduleController;
     @outlet TNPreferencesController preferencesController;
     @outlet TNPropertiesController  propertiesController;
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
     @outlet TNUserAvatarController  userAvatarController;
-    @outlet CPProgressIndicator     progressIndicatorModulesLoading;
-    @outlet CPTextField             labelModulesLoadingName;
+
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
+    CPButton                        _hideButton;
+    CPButton                        _userAvatarButton;
+    CPImage                         _hideButtonImageDisable;
+    CPImage                         _hideButtonImageEnable;
     CPImage                         _imageLedInData;
     CPImage                         _imageLedNoData;
     CPImage                         _imageLedOutData;
@@ -230,10 +232,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     TNRosterDataViewGroup           _rosterDataViewForGroups;
     TNToolbar                       _mainToolbar;
     TNViewHypervisorControl         _currentRightViewContent;
-    CPButton                        _hideButton;
-    CPImage                         _hideButtonImageEnable;
-    CPImage                         _hideButtonImageDisable;
-    CPButton                        _userAvatarButton;
+    CPView                          _viewRosterMask;
+
 }
 
 
@@ -366,17 +366,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [self makeMainMenu];
 
 
-    /* module Loader */
-    [windowModuleLoading center];
-    [windowModuleLoading makeKeyAndOrderFront:nil];
-    [textFieldLoadingModuleTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [textFieldLoadingModuleTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [textFieldLoadingModuleTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
-
-    [textFieldLoadingModuleLabel setTextShadowOffset:CGSizeMake(0.0, 1.0)];
-    [textFieldLoadingModuleLabel setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-
-
     CPLog.trace(@"initializing moduleController");
     _tempNumberOfReadyModules = -1;
 
@@ -391,12 +380,15 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
+    var progressBarSize = CPSizeMake(CGRectGetWidth([leftView frame]) - 15, 16.0);
     CPLog.trace(@"Starting loading all modules");
     [CPProgressIndicator initialize];
     [progressIndicatorModulesLoading setStyle:CPProgressIndicatorBarStyle];
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
     [progressIndicatorModulesLoading setDoubleValue:0.0];
+    [progressIndicatorModulesLoading setFrameSize:progressBarSize];
+    [labelModulesLoadingName setFrameSize:progressBarSize];
     [progressIndicatorModulesLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ProgressBarBezel.png"]]]];
     [labelModulesLoadingName setAlignment:CPCenterTextAlignment];
 
@@ -511,7 +503,17 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     CPLog.info(@"Initialization of AppController OK");
 
-    [moduleController load];
+    [[connectionController mainWindow] center];
+    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
+    [connectionController initCredentials];
+
+    /* roster view mask */
+    var maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-stripes.png"]];
+    _viewRosterMask = [[CPView alloc] initWithFrame:[leftView bounds]];
+    [_viewRosterMask setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
+    [_viewRosterMask setAlphaValue:0.5];
+    [_viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [leftView addSubview:_viewRosterMask];
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -668,6 +670,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_mainToolbar setPosition:902 forToolbarItemIdentifier:TNToolBarItemTags];
     [_mainToolbar setPosition:903 forToolbarItemIdentifier:TNToolBarItemHelp];
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
+
+    [_mainToolbar reloadToolbarItems];
 }
 
 /*! initialize the avatar button
@@ -690,6 +694,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_userAvatarButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"] size:TNUserAvatarSize]];
 
     [[_mainToolbar customSubViews] addObject:_userAvatarButton];
+    [_mainToolbar reloadToolbarItems];
 }
 
 
@@ -731,6 +736,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
+
+    [moduleController load];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -1441,12 +1448,10 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPLog.info(@"All modules have been loaded");
     CPLog.trace(@"Positionning the connection window");
 
-    [windowModuleLoading orderOut:nil];
-    [[connectionController mainWindow] center];
-    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
-    [connectionController initCredentials];
-
+    [progressIndicatorModulesLoading setHidden:YES];
+    [labelModulesLoadingName setHidden:YES];
     [_mainToolbar reloadToolbarItems];
+    [_viewRosterMask removeFromSuperview];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
