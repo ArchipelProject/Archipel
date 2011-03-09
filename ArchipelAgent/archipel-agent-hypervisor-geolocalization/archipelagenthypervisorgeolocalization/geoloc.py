@@ -42,32 +42,36 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
-        mode    = self.configuration.get("GEOLOCALIZATION", "localization_mode")
-        lat     = ""
-        lon     = ""
-        if mode == "auto":
-            service         = self.configuration.get("GEOLOCALIZATION", "localization_service_url")
-            request         = self.configuration.get("GEOLOCALIZATION", "localization_service_request")
-            method          = self.configuration.get("GEOLOCALIZATION", "localization_service_method")
-            conn = httplib.HTTPConnection(service)
-            conn.request(method, request)
-            data_node = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom()
-            lat = data_node.getTagData("Latitude")
-            lon = data_node.getTagData("Longitude")
-        else:
-            lat = self.configuration.getfloat("GEOLOCALIZATION", "localization_latitude")
-            lon = self.configuration.getfloat("GEOLOCALIZATION", "localization_longitude")
-        string = "<gelocalization><Latitude>"+str(lat)+"</Latitude>\n<Longitude>"+str(lon)+"</Longitude></gelocalization>"
-        self.localization_information = xmpp.simplexml.NodeBuilder(data=string).getDom()
-        registrar_item = {  "commands" : ["where are you", "localize"],
-                            "parameters": {},
-                            "method": self.message_get,
-                            "permissions": ["geolocalization_get"],
-                            "description": "give my the latitude and longitude." }
-        self.entity.add_message_registrar_item(registrar_item)
-        # permissions
-        self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False)
-
+        self.plugin_deactivated = False
+        try:
+            mode    = self.configuration.get("GEOLOCALIZATION", "localization_mode")
+            lat     = ""
+            lon     = ""
+            if mode == "auto":
+                service         = self.configuration.get("GEOLOCALIZATION", "localization_service_url")
+                request         = self.configuration.get("GEOLOCALIZATION", "localization_service_request")
+                method          = self.configuration.get("GEOLOCALIZATION", "localization_service_method")
+                conn = httplib.HTTPConnection(service)
+                conn.request(method, request)
+                data_node = xmpp.simplexml.NodeBuilder(data=str(conn.getresponse().read())).getDom()
+                lat = data_node.getTagData("Latitude")
+                lon = data_node.getTagData("Longitude")
+            else:
+                lat = self.configuration.getfloat("GEOLOCALIZATION", "localization_latitude")
+                lon = self.configuration.getfloat("GEOLOCALIZATION", "localization_longitude")
+            string = "<gelocalization><Latitude>"+str(lat)+"</Latitude>\n<Longitude>"+str(lon)+"</Longitude></gelocalization>"
+            self.localization_information = xmpp.simplexml.NodeBuilder(data=string).getDom()
+            registrar_item = {  "commands" : ["where are you", "localize"],
+                                "parameters": {},
+                                "method": self.message_get,
+                                "permissions": ["geolocalization_get"],
+                                "description": "give my the latitude and longitude." }
+            self.entity.add_message_registrar_item(registrar_item)
+            # permissions
+            self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False)
+        except Exception as ex:
+            self.plugin_deactivated = True;
+            self.entity.log.error("cannot initialize geolocalization. plugin deactivated. Exception: %s" % str(ex))
 
     ### Plugin interface
 
@@ -76,6 +80,8 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         this method will be called by the plugin user when it will be
         necessary to register module for listening to stanza
         """
+        if self.plugin_deactivated:
+            return
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_GEOLOC)
 
     @staticmethod
