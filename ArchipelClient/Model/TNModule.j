@@ -493,6 +493,15 @@ TNArchipelErrorGeneral                  = 1;
     _isVisible = NO;
 }
 
+/*! this message will be send by the module controler
+    in order to know if the module can be hide
+    @return YES if it's OK
+*/
+- (BOOL)shouldHide
+{
+    return YES;
+}
+
 /*! this message is sent when the MainMenu is ready
     i.e. you can insert your module menu items;
 */

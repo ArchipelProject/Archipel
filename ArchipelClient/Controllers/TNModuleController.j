@@ -573,6 +573,26 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark -
 #pragma mark Delegates
 
+/*! TNiTunesTabView delegate. Wil check if current tab item is OK to be hidden
+    @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
+    @param anItem the item that should be selected
+*/
+- (BOOL)tabView:(TNiTunesTabView)aTabView shouldSelectTabViewItem:(TNModuleTabViewItem)anItem
+{
+    if ([aTabView numberOfTabViewItems] <= 0)
+        return YES;
+
+    var currentTabItem = [aTabView selectedTabViewItem];
+
+    if (!currentTabItem)
+        return YES;
+
+    var currentModule = [currentTabItem module];
+
+    return [currentModule shouldHide];
+}
+
+
 /*! TNiTunesTabView delegate. Will sent willHide to current tab module and willShow to the one that will be be display
     @param aTabView the TNiTunesTabView that sent the message (_mainTabView)
     @param anItem the new selected item
