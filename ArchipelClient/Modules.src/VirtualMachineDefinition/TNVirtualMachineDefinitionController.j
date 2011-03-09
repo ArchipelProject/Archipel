@@ -101,6 +101,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     @outlet CPButton                buttonAddNic;
     @outlet CPButton                buttonClocks;
+    @outlet CPButton                buttonDefine;
     @outlet CPButton                buttonDelNic;
     @outlet CPButton                buttonDomainType;
     @outlet CPButton                buttonOnCrash;
@@ -110,6 +111,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPButton                buttonXMLEditor;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
+    @outlet CPImageView             imageViewDefinitionEdited;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonGuests;
     @outlet CPPopUpButton           buttonInputType;
@@ -152,6 +154,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet TNSwitch                switchPreferencesHugePages;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
 
+    BOOL                            _basicDefinitionEdited;
+    BOOL                            _definitionRecovered;
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
     CPButton                        _minusButtonDrives;
@@ -161,6 +165,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     CPColor                         _bezelColor;
     CPColor                         _buttonBezelHighlighted;
     CPColor                         _buttonBezelSelected;
+    CPImage                         _imageDefining;
+    CPImage                         _imageEdited;
     CPString                        _stringXMLDesc;
     CPTableView                     _tableDrives;
     CPTableView                     _tableNetworkNics;
@@ -462,6 +468,12 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
     [stepperNumberCPUs setAction:@selector(performCPUStepperClick:)];
+
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"]];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"]];
+    [imageViewDefinitionEdited setImage:_imageEdited];
+    [imageViewDefinitionEdited setHidden:YES];
+    [buttonDefine setEnabled:NO];
 }
 
 
@@ -474,10 +486,18 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     [super willLoad];
 
+    _basicDefinitionEdited  = NO;
+    _definitionRecovered    = NO;
+    [imageViewDefinitionEdited setHidden:YES];
+    [imageViewDefinitionEdited setImage:_imageEdited];
+    [buttonDefine setEnabled:NO];
+
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
+    [center addObserver:self selector:@selector(_didBasicDefintionEdit:) name:CPControlTextDidChangeNotification object:fieldMemory];
+    [center addObserver:self selector:@selector(_didBasicDefintionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
@@ -530,6 +550,25 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     return YES;
 }
+
+/*! return YES if module can be hidden
+*/
+- (BOOL)shouldHide
+{
+    if (_basicDefinitionEdited)
+    {
+        var alert = [TNAlert alertWithMessage:@"Unsaved changes"
+                                    informative:@"You have made some changes in the virtual machine definition. Would you like save these changes?"
+                                     target:self
+                                     actions:[["Define", @selector(defineXML:)], ["Cancel", nil]]];
+        [alert runModal];
+        return NO;
+    }
+
+    return YES;
+}
+
+
 
 /*! called when users saves preferences
 */
@@ -669,9 +708,29 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     return YES;
 }
 
+/*! called when a basic definition field has changed
+    @param aNotification the notification
+*/
+- (void)_didBasicDefintionEdit:(CPNotification)aNotification
+{
+    [self handleDefintionEdition];
+}
+
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! handle definition changes
+*/
+- (void)handleDefintionEdition
+{
+    if (!_definitionRecovered)
+        return;
+
+    _basicDefinitionEdited = YES;
+    [imageViewDefinitionEdited setHidden:NO];
+    [buttonDefine setEnabled:YES];
+}
 
 /*! generate a random Mac address.
     @return CPString containing a random Mac address
@@ -937,6 +996,14 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [windowXMLEditor makeKeyAndOrderFront:aSender];
 }
 
+/*! make the definition set as edited
+    @param sender the sender of the action
+*/
+- (IBAction)makeDefinitionEdited:(id)aSender
+{
+    [self handleDefintionEdition];
+}
+
 /*! define XML
     @param sender the sender of the action
 */
@@ -1075,14 +1142,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
      [self defineXML];
 }
 
-/*! called when CPU stepper is clicked. it will update the text field value and defineXML
-    @param sender the sender of the action
-*/
-- (IBAction)performCPUStepperClick:(id)aSender
-{
-    var cpu = [stepperNumberCPUs doubleValue];
-}
-
 /*! perpare the interface according to the selected guest
     @param aSender the sender of the action
 */
@@ -1125,6 +1184,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         [buttonMachines selectItemWithTitle:defaultMachine];
     else
         [buttonMachines selectItemAtIndex:0];
+
+    [self handleDefintionEdition];
 }
 
 
@@ -1427,7 +1488,10 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         [_nicsDatasource addObject:newNic];
     }
+
     [_tableNetworkNics reloadData];
+
+    _definitionRecovered = YES;
 
     return NO;
 }
@@ -1688,6 +1752,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stanza up];
 
     // send stanza
+    [imageViewDefinitionEdited setImage:_imageDefining];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
@@ -1703,6 +1768,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addNode:descNode];
 
+    [imageViewDefinitionEdited setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
     [windowXMLEditor close];
 }
@@ -1718,6 +1784,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (responseType == @"result")
     {
         CPLog.info(@"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated")
+        _basicDefinitionEdited  = NO;
+        _definitionRecovered    = NO;
+        [imageViewDefinitionEdited setHidden:YES];
+        [imageViewDefinitionEdited setImage:_imageEdited];
+        [buttonDefine setEnabled:NO];
     }
     else if (responseType == @"error")
     {
