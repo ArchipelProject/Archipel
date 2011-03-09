@@ -111,7 +111,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPButton                buttonXMLEditor;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
-    @outlet CPImageView             imageViewDefinitionEdited;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonGuests;
     @outlet CPPopUpButton           buttonInputType;
@@ -172,6 +171,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     CPTableView                     _tableNetworkNics;
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
+    CPDictionary                    _currentBasicSettingsValues;
 }
 
 
@@ -451,13 +451,13 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     // switch
     [switchAPIC setTarget:self];
-    [switchAPIC setAction:@selector(defineXML:)];
+    [switchAPIC setAction:@selector(makeDefinitionEdited:)];
     [switchACPI setTarget:self];
-    [switchACPI setAction:@selector(defineXML:)];
+    [switchACPI setAction:@selector(makeDefinitionEdited:)];
     [switchPAE setTarget:self];
-    [switchPAE setAction:@selector(defineXML:)];
+    [switchPAE setAction:@selector(makeDefinitionEdited:)];
     [switchHugePages setTarget:self];
-    [switchHugePages setAction:@selector(defineXML:)];
+    [switchHugePages setAction:@selector(makeDefinitionEdited:)];
 
 
     //CPUStepper
@@ -467,12 +467,10 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
-    [stepperNumberCPUs setAction:@selector(performCPUStepperClick:)];
+    [stepperNumberCPUs setAction:@selector(makeDefinitionEdited:)];
 
-    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"]];
-    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"]];
-    [imageViewDefinitionEdited setImage:_imageEdited];
-    [imageViewDefinitionEdited setHidden:YES];
+    _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
+    _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16.0, 16.0)];
     [buttonDefine setEnabled:NO];
 }
 
@@ -486,18 +484,16 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     [super willLoad];
 
-    _basicDefinitionEdited  = NO;
-    _definitionRecovered    = NO;
-    [imageViewDefinitionEdited setHidden:YES];
-    [imageViewDefinitionEdited setImage:_imageEdited];
-    [buttonDefine setEnabled:NO];
+    _definitionRecovered = NO;
+    _currentBasicSettingsValues = [CPDictionary dictionary];
+    [self handleDefinitionEdition:NO];
 
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(_didBasicDefintionEdit:) name:CPControlTextDidChangeNotification object:fieldMemory];
-    [center addObserver:self selector:@selector(_didBasicDefintionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
+    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldMemory];
+    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
@@ -711,25 +707,86 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 /*! called when a basic definition field has changed
     @param aNotification the notification
 */
-- (void)_didBasicDefintionEdit:(CPNotification)aNotification
+- (void)_didBasicDefinitionEdit:(CPNotification)aNotification
 {
-    [self handleDefintionEdition];
+    [self handleDefinitionEdition:YES];
 }
 
 
 #pragma mark -
 #pragma mark Utilities
 
-/*! handle definition changes
+/*! handle definition changes. If all values match ones stored in
+    _currentBasicSettingsValues, then it will put the GUI in not edited mode
+    @param shouldSetEdited if yes, will try to set GUI in edited mode
 */
-- (void)handleDefintionEdition
+- (void)handleDefinitionEdition:(BOOL)shouldSetEdited
 {
-    if (!_definitionRecovered)
-        return;
+    if (shouldSetEdited)
+    {
+        if (!_definitionRecovered)
+            return;
 
-    _basicDefinitionEdited = YES;
-    [imageViewDefinitionEdited setHidden:NO];
+        if ([self doesBasicValueMatchGUI])
+        {
+            _basicDefinitionEdited = NO;
+            [self markGUIAsNotEdited];
+            return;
+        }
+
+
+        _basicDefinitionEdited = YES;
+        [self markGUIAsEdited];
+    }
+    else
+    {
+        _basicDefinitionEdited  = NO;
+        [self markGUIAsNotEdited];
+    }
+}
+
+/*! set the GUI in the mode "something has been edited"
+*/
+- (void)markGUIAsEdited
+{
     [buttonDefine setEnabled:YES];
+    [buttonDefine setThemeState:CPThemeStateDefault];
+    [buttonDefine setImage:_imageEdited];
+}
+
+/*! set the GUI in the mode "nothing has been edited"
+*/
+- (void)markGUIAsNotEdited
+{
+    [buttonDefine setImage:nil];
+    [buttonDefine setEnabled:NO];
+    [buttonDefine unsetThemeState:CPThemeStateDefault];
+}
+
+/*! return YES if all values of the GUI matches ones stored
+    in _currentBasicSettingsValues
+    @return boolean YES or NO
+*/
+- (BOOL)doesBasicValueMatchGUI
+{
+    return (([_currentBasicSettingsValues objectForKey:@"memory"] == [fieldMemory intValue] * 1024)
+        && [_currentBasicSettingsValues objectForKey:@"vcpu"] == [stepperNumberCPUs intValue]
+        && [_currentBasicSettingsValues objectForKey:@"boot"] == [buttonBoot title]
+        && [_currentBasicSettingsValues objectForKey:@"input"] == [buttonInputType title]
+        && [_currentBasicSettingsValues objectForKey:@"keymap"] == [buttonVNCKeymap title]
+        && (![_currentBasicSettingsValues objectForKey:@"passwd"]
+            || [_currentBasicSettingsValues objectForKey:@"passwd"] == [fieldVNCPassword stringValue])
+        && [_currentBasicSettingsValues objectForKey:@"onCrash"] == [buttonOnCrash title]
+        && [_currentBasicSettingsValues objectForKey:@"onReboot"] == [buttonOnReboot title]
+        && [_currentBasicSettingsValues objectForKey:@"onPowerOff"] == [buttonOnPowerOff title]
+        && [_currentBasicSettingsValues objectForKey:@"hypervisor"] == [buttonDomainType title]
+        && [_currentBasicSettingsValues objectForKey:@"machine"] == [buttonMachines title]
+        && [_currentBasicSettingsValues objectForKey:@"clock"] == [buttonClocks title]
+        && [_currentBasicSettingsValues valueForKey:@"acpi"] == [switchACPI isOn]
+        && [_currentBasicSettingsValues valueForKey:@"apic"] == [switchAPIC isOn]
+        && [_currentBasicSettingsValues valueForKey:@"pae"] == [switchPAE isOn]
+        && [_currentBasicSettingsValues valueForKey:@"hugepages"] == [switchHugePages isOn]
+        && [_currentBasicSettingsValues objectForKey:@"type"] + @" (" + [_currentBasicSettingsValues objectForKey:@"arch"] + @")" == [buttonGuests title])
 }
 
 /*! generate a random Mac address.
@@ -964,7 +1021,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
             if (toggle)
                 [switchACPI setEnabled:YES];
-
             [switchACPI setOn:on animated:NO sendAction:NO];
         }
 
@@ -980,7 +1036,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [switchAPIC setOn:on animated:NO sendAction:NO];
         }
     }
-
 }
 
 
@@ -1001,7 +1056,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (IBAction)makeDefinitionEdited:(id)aSender
 {
-    [self handleDefintionEdition];
+    [self handleDefinitionEdition:YES];
 }
 
 /*! define XML
@@ -1185,7 +1240,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     else
         [buttonMachines selectItemAtIndex:0];
 
-    [self handleDefintionEdition];
+    [self handleDefinitionEdition:YES];
 }
 
 
@@ -1283,6 +1338,9 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [self handleIqErrorFromStanza:aStanza];
 
         [self buildGUIAccordingToCurrentGuest];
+        _definitionRecovered = YES;
+        [self handleDefinitionEdition:NO];
+
         return;
     }
 
@@ -1309,6 +1367,19 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [self selectGuestWithType:type architecture:arch];
     [self buildGUIAccordingToCurrentGuest];
 
+    // store current values for matching edition
+    [_currentBasicSettingsValues setObject:memory forKey:@"memory"];
+    [_currentBasicSettingsValues setObject:hypervisor forKey:@"hypervisor"];
+    [_currentBasicSettingsValues setObject:type forKey:@"type"];
+    [_currentBasicSettingsValues setObject:arch forKey:@"arch"];
+    [_currentBasicSettingsValues setObject:machine forKey:@"machine"];
+    [_currentBasicSettingsValues setObject:vcpu forKey:@"vcpu"];
+    [_currentBasicSettingsValues setObject:boot forKey:@"boot"];
+    [_currentBasicSettingsValues setObject:[onPowerOff text] forKey:@"onPowerOff"];
+    [_currentBasicSettingsValues setObject:[onReboot text] forKey:@"onReboot"];
+    [_currentBasicSettingsValues setObject:[onCrash text] forKey:@"onCrash"];
+    [_currentBasicSettingsValues setObject:[clock valueForAttribute:@"offset"] forKey:@"clock"];
+    [_currentBasicSettingsValues setObject:input forKey:@"input"];
 
     // BASIC SETTINGS
 
@@ -1381,9 +1452,16 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
                     passwd = [graphic valueForAttribute:@"passwd"];
 
                 if (keymap)
+                {
+                    [_currentBasicSettingsValues setObject:keymap forKey:@"keymap"];
                     [buttonVNCKeymap selectItemWithTitle:keymap];
+                }
+
                 if (passwd)
+                {
+                    [_currentBasicSettingsValues setObject:passwd forKey:@"passwd"];
                     [fieldVNCPassword setStringValue:passwd];
+                }
             }
         }
     }
@@ -1409,23 +1487,42 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     // ADVANCED FEATURES
 
     // APIC
+    [_currentBasicSettingsValues setValue:NO forKey:@"apic"];
+    [switchAPIC setOn:NO animated:NO sendAction:NO];
     if ([features containsChildrenWithName:@"apic"])
+    {
+        [_currentBasicSettingsValues setValue:YES forKey:@"apic"];
         [switchAPIC setOn:YES animated:NO sendAction:NO];
+    }
 
     // ACPI
+    [_currentBasicSettingsValues setValue:NO forKey:@"acpi"];
+    [switchACPI setOn:NO animated:NO sendAction:NO];
     if ([features containsChildrenWithName:@"acpi"])
-        [switchACPI setOn:YES animated:YES sendAction:NO];
+    {
+        [_currentBasicSettingsValues setValue:YES forKey:@"acpi"];
+        [switchACPI setOn:YES animated:NO sendAction:NO];
+    }
 
     // PAE
+    [_currentBasicSettingsValues setValue:NO forKey:@"pae"];
+    [switchPAE setOn:NO animated:NO sendAction:NO];
     if ([features containsChildrenWithName:@"pae"])
-        [switchPAE setOn:NO animated:YES sendAction:NO];
+    {
+        [_currentBasicSettingsValues setValue:YES forKey:@"pae"];
+        [switchPAE setOn:YES animated:NO sendAction:NO];
+    }
 
     // huge pages
-    [switchHugePages setOn:NO animated:YES sendAction:NO];
+    [_currentBasicSettingsValues setValue:NO forKey:@"hugepages"];
+    [switchHugePages setOn:NO animated:NO sendAction:NO];
     if (memoryBacking)
     {
         if ([memoryBacking containsChildrenWithName:@"hugepages"])
-            [switchHugePages setOn:YES animated:YES sendAction:NO];
+        {
+            [_currentBasicSettingsValues setValue:YES forKey:@"hugepages"];
+            [switchHugePages setOn:YES animated:NO sendAction:NO];
+        }
     }
 
     //clock
@@ -1492,7 +1589,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [_tableNetworkNics reloadData];
 
     _definitionRecovered = YES;
-
+    [self handleDefinitionEdition:NO];
     return NO;
 }
 
@@ -1752,7 +1849,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stanza up];
 
     // send stanza
-    [imageViewDefinitionEdited setImage:_imageDefining];
+    [buttonDefine setImage:_imageDefining];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:) ofObject:self withSpecificID:uid];
 }
 
@@ -1768,7 +1865,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stanza addChildWithName:@"archipel" andAttributes:{"action": TNArchipelTypeVirtualMachineDefinitionDefine}];
     [stanza addNode:descNode];
 
-    [imageViewDefinitionEdited setImage:_imageDefining];
+    [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
     [windowXMLEditor close];
 }
@@ -1784,11 +1881,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (responseType == @"result")
     {
         CPLog.info(@"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated")
-        _basicDefinitionEdited  = NO;
-        _definitionRecovered    = NO;
-        [imageViewDefinitionEdited setHidden:YES];
-        [imageViewDefinitionEdited setImage:_imageEdited];
-        [buttonDefine setEnabled:NO];
+        [self handleDefinitionEdition:NO];
     }
     else if (responseType == @"error")
     {
