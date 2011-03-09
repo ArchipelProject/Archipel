@@ -1357,6 +1357,20 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 }
 
 /*! Delegate of TNOutlineView
+    it will check if all loaded module are ok to be hidden, otherwise
+    it will disallow to change selection
+*/
+- (BOOL)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
+{
+    var shouldSelect = YES;
+
+    for (var i = 0; i < [[moduleController loadedTabModules] count]; i++)
+        shouldSelect = shouldSelect && [[[moduleController loadedTabModules] objectAtIndex:i] shouldHide];
+
+    return shouldSelect;
+}
+
+/*! Delegate of TNOutlineView
     will be performed when selection changes. Tab Modules displaying
     @param aNotification the received notification
 */
