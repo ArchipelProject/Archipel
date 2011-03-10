@@ -1,5 +1,7 @@
 #!/bin/bash
 #
+# Copyright 2010-2011, Antoine Mercadal (antoine.mercadal@trivialdev.com) - TrivialDev
+# Copyright 2011, Franck Villaume (franck.villaume@trivialdev.com) - TrivialDev
 # chkconfig: - 01 99
 # description: Archipel Agent Daemon
 # processname: runarchipel.py
@@ -8,8 +10,21 @@
 #
 # archipel - this script starts and stops the archipel daemon
 
-# Source function library.
-
+# the following is the LSB init header see
+# http://www.linux-foundation.org/spec//booksets/LSB-Core-generic/LSB-Core-generic.html#INITSCRCOMCONV
+#
+### BEGIN INIT INFO
+# Provides: archipel
+# Required-Start: $network libvirtd
+# Required-Stop: $network
+# Should-Stop: libvirtd
+# Default-Start: 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description:  daemon for archipel orchestrator suite
+# Description: This is a daemon for managing hypervisor
+#              thru libvirtd. The agent is a bridge between libvirtd and
+#              xmpp server.
+### END INIT INFO
 
 ARCHIPEL=`which runarchipel`
 PROG=$(basename $ARCHIPEL)
