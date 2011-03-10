@@ -251,7 +251,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         center      = [CPNotificationCenter defaultCenter],
         posx;
 
-    // register defaults defaults
+    /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
@@ -263,13 +263,13 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations"
     ]];
 
-    // register logs
+    /* register logs */
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
-    // main split views
+    /* main split views */
     [mainHorizontalSplitView setIsPaneSplitter:NO];
 
-    // tags split views
+    /* tags split views */
     [splitViewTagsContents setIsPaneSplitter:NO];
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
 
@@ -403,7 +403,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
     _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
 
-    // buttonBar
+    /* buttonBar */
     CPLog.trace(@"Initializing the roster button bar");
     [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
@@ -427,7 +427,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
     [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
     [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-
 
     [plusButton setTarget:self];
     [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
@@ -454,10 +453,10 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [buttons addObject:_hideButton];
     [buttonBarLeft setButtons:buttons];
 
-    // copyright;
+    /* copyright */
     [self copyright];
 
-    // connection label
+    /* connection label */
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
@@ -465,7 +464,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
 
-    // about window
+    /* about window */
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
     [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
@@ -502,7 +501,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
     [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
 
-
+    /* Placing the connection window */
     _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
@@ -811,7 +810,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     [_rosterOutlineView reloadData];
 }
-
 
 
 #pragma mark -
