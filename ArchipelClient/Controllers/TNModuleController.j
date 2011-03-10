@@ -65,7 +65,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
 
 
-
 /*! @ingroup archipelcore
 
     this is the Archipel Module loader.
@@ -80,6 +79,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     @outlet  CPView                 viewPermissionDenied;
 
     BOOL                            _allModulesReady                @accessors(getter=isAllModulesReady);
+    BOOL                            _moduleLoadingStarted           @accessors(getter=isModuleLoadingStarted);
     CPArray                         _loadedTabModules               @accessors(getter=loadedTabModules);
     CPDictionary                    _loadedToolbarModules           @accessors(getter=loadedToolbarModules);
     CPMenu                          _modulesMenu                    @accessors(property=modulesMenu);
@@ -126,6 +126,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _numberOfReadyModules                   = 0;
         _allModulesReady                        = NO;
         _deactivateModuleTabItemPositionStorage = NO;
+        _moduleLoadingStarted                   = NO;
     }
 
     return self;
@@ -257,6 +258,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var request     = [CPURLRequest requestWithURL:[CPURL URLWithString:@"Modules/modules.plist"]],
         connection  = [CPURLConnection connectionWithRequest:request delegate:self];
 
+    _moduleLoadingStarted = YES;
     [connection cancel];
     [connection start];
 }

@@ -205,7 +205,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     @outlet TNTagsController        tagsController;
     @outlet TNUserAvatarController  userAvatarController;
 
-    BOOL                            _moduleLoadingStarted;
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
     CPButton                        _hideButton;
@@ -500,18 +499,14 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
 
-    CPLog.info(@"Initialization of AppController OK");
+    CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
+    [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
+
 
     _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [connectionController initCredentials];
-    if ([connectionController areCredentialRecovered])
-    {
-        _moduleLoadingStarted = YES;
-        [moduleController load];
-    }
-
 
     /* roster view mask */
     var maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-stripes.png"]];
@@ -520,6 +515,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_viewRosterMask setAlphaValue:0.5];
     [_viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [leftView addSubview:_viewRosterMask];
+
+    CPLog.info(@"Initialization of AppController OK");
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -707,6 +704,16 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 #pragma mark -
 #pragma mark Notifications handlers
 
+/*! called when connectionController starts connection
+    it will eventually start to loads the modules
+    @param aNotification the notification
+*/
+- (void)didConnectionStart:(CPNotification)aNotification
+{
+    if (![moduleController isModuleLoadingStarted])
+        [moduleController load];
+}
+
 /*! Notification responder of TNStropheConnection
     will be performed on login
     @param aNotification the received notification. This notification will contains as object the TNStropheConnection
@@ -742,9 +749,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
-
-    if (!_moduleLoadingStarted)
-        [moduleController load];
 }
 
 /*! Notification responder of TNStropheConnection

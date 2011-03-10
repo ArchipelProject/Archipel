@@ -24,6 +24,7 @@
 
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";
+TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnectionStarted";
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to manage connection to XMPP Server
@@ -167,7 +168,8 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
-    var connectionJID = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
+    var connectionJID   = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
+
 
     if (![connectionJID domain])
     {
@@ -182,6 +184,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     [stropheClient setDelegate:self];
     [stropheClient setDefaultClient];
 
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNConnectionControllerConnectionStarted object:self];
     _isConnecting = YES;
     [stropheClient connect];
 }
