@@ -205,7 +205,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     @outlet TNTagsController        tagsController;
     @outlet TNUserAvatarController  userAvatarController;
 
-
+    BOOL                            _moduleLoadingStarted;
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
     CPButton                        _hideButton;
@@ -223,6 +223,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     CPTimer                         _ledInTimer;
     CPTimer                         _ledOutTimer;
     CPTimer                         _moduleLoadingDelay;
+    CPView                          _viewRosterMask;
     CPWindow                        _helpWindow;
     int                             _tempNumberOfReadyModules;
     TNiTunesTabView                 _moduleTabView;
@@ -232,8 +233,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     TNRosterDataViewGroup           _rosterDataViewForGroups;
     TNToolbar                       _mainToolbar;
     TNViewHypervisorControl         _currentRightViewContent;
-    CPView                          _viewRosterMask;
-
 }
 
 
@@ -503,9 +502,16 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     CPLog.info(@"Initialization of AppController OK");
 
+    _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [connectionController initCredentials];
+    if ([connectionController areCredentialRecovered])
+    {
+        _moduleLoadingStarted = YES;
+        [moduleController load];
+    }
+
 
     /* roster view mask */
     var maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-stripes.png"]];
@@ -737,7 +743,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
 
-    [moduleController load];
+    if (!_moduleLoadingStarted)
+        [moduleController load];
 }
 
 /*! Notification responder of TNStropheConnection

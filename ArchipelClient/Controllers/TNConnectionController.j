@@ -41,10 +41,12 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
     @outlet CPTextField     labelTitle;
     @outlet CPTextField     message;
     @outlet CPTextField     password;
-    @outlet TNModalWindow   mainWindow          @accessors(readonly);
+    @outlet TNModalWindow   mainWindow              @accessors(readonly);
     @outlet TNSwitch        credentialRemember;
 
-    TNStropheStanza         _userVCard          @accessors(property=userVCard);
+    BOOL                    _credentialRecovered    @accessors(getter=areCredentialRecovered);
+    TNStropheStanza         _userVCard              @accessors(property=userVCard);
+
     BOOL                    _isConnecting;
 }
 
@@ -55,6 +57,7 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
 */
 - (void)awakeFromCib
 {
+    _credentialRecovered = NO;
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:connectButton];
 
@@ -116,7 +119,10 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
         [credentialRemember setState:CPOffState];
 
     if (lastRememberCred)
+    {
+        _credentialRecovered = YES;
         [self connect:nil];
+    }
 }
 
 
@@ -152,11 +158,12 @@ TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurren
         [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
         [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
-
+        _credentialRecovered = YES;
         CPLog.info("logging information saved");
     }
     else
     {
+        _credentialRecovered = NO;
         [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
