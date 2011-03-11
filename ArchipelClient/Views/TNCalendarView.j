@@ -37,7 +37,7 @@
                         ]
                     isVertical:NO]];
 
-    return [CPDictionary dictionaryWithObjectsAndKeys:  @"ccc",                                 @"grid-color",
+    return [CPDictionary dictionaryWithObjectsAndKeys:  [CPColor colorWithHexString:@"ccc"],    @"grid-color",
                                                         bgImage,                                @"background-color",
                                                         40,                                     @"header-height",
                                                         headerBgImage,                          @"header-background-color",
