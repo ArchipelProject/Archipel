@@ -81,7 +81,9 @@ if __name__ == "__main__":
     if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
     
     xmppclient = xmpp.Client(jid.getDomain(), debug=[])
-    xmppclient.connect()
+    if not xmppclient.connect():
+        print "\033[31mERROR: cannot connect to the server. exiting\033[0m"
+        sys.exit(0)
 
     if xmppclient.auth(jid.getNode(), password, "configurator") == None:
         print "\033[31mERROR: bad authentication. exiting\033[0m"
