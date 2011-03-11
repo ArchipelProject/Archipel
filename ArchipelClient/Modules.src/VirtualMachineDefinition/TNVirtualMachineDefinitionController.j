@@ -1568,10 +1568,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     [_tableDrives reloadData];
 
-    // THE dirty temporary solution
-    setTimeout(function(){[_tableDrives setNeedsLayout]; [_tableDrives setNeedsDisplay:YES]}, 1000);
-
-
     // NICS
     [_nicsDatasource removeAllObjects];
     for (var i = 0; i < [interfaces count]; i++)

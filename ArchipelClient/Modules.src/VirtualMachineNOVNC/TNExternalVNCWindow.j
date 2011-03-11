@@ -127,6 +127,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [self setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
     [[self platformWindow] setTitle:[self title]];
     [[self platformWindow] DOMWindow].onbeforeunload = function(){
+        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
         [self close];
         // FIXME: should we free self ?
     };
