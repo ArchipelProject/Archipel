@@ -85,7 +85,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewLoad;
     LPChartView                 _chartViewMemory;
-    // LPPieChartView              _chartViewDisk;
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
     TNDatasourceChartView       _memoryDatasource;
@@ -415,13 +414,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
     else
     {
-        var defaults = [CPUserDefaults standardUserDefaults];
-
-        if (!_timerStats)
-            _timerStats = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
-
-        if (!_timerLogs)
-            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+        [self handleAutoRefresh];
     }
 }
 
@@ -481,15 +474,16 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
     else
     {
-        var defaults = [CPUserDefaults standardUserDefaults];
+        var defaults = [CPUserDefaults standardUserDefaults],
+            interval = MAX([defaults floatForKey:@"TNArchipelHealthRefreshStatsInterval"], 5.0);
         if (!_timerStats)
         {
-            _timerStats = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+            _timerStats = [CPTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
             CPLog.debug("timer for stats started from switch action");
         }
         if (!_timerLogs)
         {
-            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
             CPLog.debug("timer for logs started from switch action");
         }
     }
@@ -685,7 +679,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
 
-    //[self getHypervisorHealth:nil];
+    [self getHypervisorHealth:nil];
     [self handleAutoRefresh];
 
     return NO;
