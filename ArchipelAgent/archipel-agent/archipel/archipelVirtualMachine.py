@@ -795,12 +795,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         """
         xml         = user_info["definition"]
         path        = user_info["path"]
-        baseuuid    = user_info["baseuuid"]
+        parentuuid  = user_info["parentuuid"]
         xmlstring   = str(xml)
-        xmlstring   = xmlstring.replace(baseuuid, self.uuid)
+        xmlstring   = xmlstring.replace(parentuuid, self.uuid)
         newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
 
-        self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, baseuuid))
+        self.log.debug("new XML description is now %s" % str(newxml))
+        self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, parentuuid))
         self.change_presence(presence_show="dnd", presence_status="Cloning...")
         self.log.info("starting threaded copy of base virtual repository from %s to %s" % (path, self.folder))
         thread.start_new_thread(self.perform_threaded_cloning, (path, newxml))
