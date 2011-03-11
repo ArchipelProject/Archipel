@@ -78,15 +78,10 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
 
-    BOOL                        _tableLogDisplayFileColumn;
-    BOOL                        _tableLogDisplayMethodColumn;
-    CPNumber                    _statsHistoryCollectionSize;
     CPTableView                 _tableLogs;
     CPTableView                 _tablePartitions;
     CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
-    float                       _timerInterval;
-    int                         _maxLogEntries;
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewLoad;
     LPChartView                 _chartViewMemory;
@@ -173,18 +168,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphLoad addSubview:_chartViewLoad];
 
-    // _chartViewDisk   = [[LPPieChartView alloc] initWithFrame:diskViewFrame];
-    // [_chartViewDisk setDrawView:[[TNPieChartDrawView alloc] init]];
-    // [viewGraphDisk addSubview:_chartViewDisk];
-    // [_chartViewDisk setDelegate:self];
-
-
-    _timerInterval                  = [defaults floatForKey:@"TNArchipelHealthRefreshStatsInterval"];
-    _statsHistoryCollectionSize     = [defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"];
-    _maxLogEntries                  = [defaults integerForKey:@"TNArchipelHealthMaxLogEntry"];
-    _tableLogDisplayFileColumn      = [defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"];
-    _tableLogDisplayMethodColumn    = [defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"];
-
 
     // tabview
     [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
@@ -226,8 +209,6 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [columnPartitionCell setDataView:partitionViewPrototype];
     [_tablePartitions addTableColumn:columnPartitionCell];
     [_datasourcePartitions setTable:_tablePartitions];
-
-
 
     // logs tables
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
@@ -272,10 +253,10 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [_tableLogs addTableColumn:columnLogLevel];
     [_tableLogs addTableColumn:columnLogDate];
 
-    if (_tableLogDisplayFileColumn)
+    if ([defaults boolForKey:@"TNArchipelHealthTableLogDisplayFileColumn"])
         [_tableLogs addTableColumn:columnLogFile];
 
-    if (_tableLogDisplayMethodColumn)
+    if ([defaults boolForKey:@"TNArchipelHealthTableLogDisplayMethodColumn"])
         [_tableLogs addTableColumn:columnLogMethod];
 
     [_tableLogs addTableColumn:columnLogMessage];
@@ -315,7 +296,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [_tablePartitions setDataSource:_datasourcePartitions];
     [_tableLogs setDataSource:_datasourceLogs];
 
-    [self getHypervisorLog:nil];
+    // [self getHypervisorLog:nil];
     [self getHypervisorHealthHistory];
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -434,11 +415,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
     else
     {
+        var defaults = [CPUserDefaults standardUserDefaults];
+
         if (!_timerStats)
-            _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+            _timerStats = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
 
         if (!_timerLogs)
-            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
     }
 }
 
@@ -498,14 +481,15 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     }
     else
     {
+        var defaults = [CPUserDefaults standardUserDefaults];
         if (!_timerStats)
         {
-            _timerStats = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
+            _timerStats = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
             CPLog.debug("timer for stats started from switch action");
         }
         if (!_timerLogs)
         {
-            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:_timerInterval target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
+            _timerLogs  = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelHealthAutoRefreshStats"] target:self selector:@selector(getHypervisorLog:) userInfo:nil repeats:YES];
             CPLog.debug("timer for logs started from switch action");
         }
     }
@@ -609,12 +593,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (void)getHypervisorHealthHistory
 {
-    var stanza    = [TNStropheStanza iqWithType:@"get"];
+    var stanza    = [TNStropheStanza iqWithType:@"get"],
+        defaults  = [CPUserDefaults standardUserDefaults];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorHealthHistory,
-        "limit": _statsHistoryCollectionSize}];
+        "limit": [defaults integerForKey:@"TNArchipelHealthStatsHistoryCollectionSize"]}];
 
     [imageCPULoading setHidden:NO];
     [imageMemoryLoading setHidden:NO];
@@ -700,7 +685,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
 
-    [self getHypervisorHealth:nil];
+    //[self getHypervisorHealth:nil];
     [self handleAutoRefresh];
 
     return NO;
@@ -710,13 +695,14 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 */
 - (void)getHypervisorLog:(CPTimer)aTimer
 {
-    var stanza    = [TNStropheStanza iqWithType:@"get"];
+    var stanza      = [TNStropheStanza iqWithType:@"get"],
+        defaults    = [CPUserDefaults standardUserDefaults];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorHealth}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "xmlns": TNArchipelTypeHypervisorHealth,
         "action": TNArchipelTypeHypervisorHealthLog,
-        "limit": _maxLogEntries}];
+        "limit": [defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorLog:)];
 }
