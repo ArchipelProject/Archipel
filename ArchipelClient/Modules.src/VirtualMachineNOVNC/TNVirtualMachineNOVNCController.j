@@ -95,12 +95,9 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     BOOL                    _vncOnlySSL;
     BOOL                    _vncSupportSSL;
     BOOL                    _useSSL;
-    BOOL                    _preferSSL;
     CPString                _vncProxyPort;
     CPString                _vncDirectPort;
     TNVNCView               _vncView;
-    int                     _NOVNCheckRate;
-    int                     _NOVNCFBURate;
 }
 
 
@@ -410,9 +407,11 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     var defaults    = [CPUserDefaults standardUserDefaults],
         scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
         passwordKey = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID],
-        lastScale   = [defaults objectForKey:scaleKey];
+        lastScale   = [defaults objectForKey:scaleKey],
+        defaults    = [CPUserDefaults standardUserDefaults],
+        preferSSL   = [defaults boolForKey:@"NOVNCPreferSSL"];
 
-    if ((_vncOnlySSL) || (_preferSSL && _vncSupportSSL))
+    if ((_vncOnlySSL) || (preferSSL && _vncSupportSSL))
         _useSSL = YES;
 
     if ((navigator.appVersion.indexOf("Chrome") == -1) && _useSSL)
@@ -452,8 +451,8 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         [checkboxPasswordRemember setState:CPOffState];
     }
 
-    [_vncView setCheckRate:_NOVNCheckRate];
-    [_vncView setFrameBufferRequestRate:_NOVNCFBURate];
+    [_vncView setCheckRate:[defaults integerForKey:@"NOVNCheckRate"]];
+    [_vncView setFrameBufferRequestRate:[defaults integerForKey:@"NOVNCFBURate"]];
     [_vncView setHost:_VMHost];
     [_vncView setPort:_vncProxyPort];
     [_vncView setPassword:[fieldPassword stringValue]];
@@ -462,7 +461,9 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     [_vncView setEncrypted:_useSSL];
     [_vncView setDelegate:self];
 
-    CPLog.info("VNC: connecting to " + _VMHost + ":" + _vncProxyPort + " using SSL:" + _useSSL);
+    CPLog.info("VNC: connecting to " + _VMHost + ":" + _vncProxyPort + " using SSL:"
+                + _useSSL + "(checkRate: " + [defaults integerForKey:@"NOVNCheckRate"]
+                + ", FBURate: " + [defaults integerForKey:@"NOVNCFBURate"]);
     [_vncView load];
     [_vncView connect:nil];
 }
@@ -586,6 +587,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 
     var winFrame    = CGRectMake(100, 100, 800, 600),
         pfWinFrame  = CGRectMake(100, 100, 800, 600),
+        defaults    = [CPUserDefaults standardUserDefaults],
         VNCWindow,
         platformVNCWindow;
 
@@ -606,7 +608,7 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
     }
 
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:_NOVNCheckRate FBURate:_NOVNCFBURate entity:_entity];
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:[defaults integerForKey:@"NOVNCheckRate"] FBURate:[defaults integerForKey:@"NOVNCFBURate"] entity:_entity];
     [VNCWindow makeKeyAndOrderFront:nil];
 }
 
@@ -643,9 +645,6 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
         _vncSupportSSL  = ([displayNode valueForAttribute:@"supportssl"] == "True") ? YES : NO;
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
         _useSSL         = NO;
-        _preferSSL      = ([defaults boolForKey:@"NOVNCPreferSSL"] == 1) ? YES: NO;
-        _NOVNCFBURate   = [defaults integerForKey:@"NOVNCFBURate"];
-        _NOVNCheckRate  = [defaults integerForKey:@"NOVNCheckRate"];
 
         if (parseInt(_vncProxyPort) != -1)
             [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
@@ -690,11 +689,8 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
             }
             else
             {
-                [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Connection fail"
-                                         message:@"Cannot connect to the VNC screen at " + _VMHost + @":" + _vncProxyPort
-                                            icon:TNGrowlIconError];
                 [imageViewSecureConnection setHidden:YES];
-                CPLog.error(@"Cannot connect to the VNC screen at " + _VMHost + @":" + _vncProxyPort);
+                CPLog.error(@"disconnected from the VNC screen at " + _VMHost + @":" + _vncProxyPort);
             }
             [_vncView resetSize];
             break;
