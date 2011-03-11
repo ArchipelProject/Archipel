@@ -373,6 +373,7 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeEntityScheduleJobs}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveJobs:) ofObject:self];
 }
 
@@ -400,9 +401,11 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
             [_datasourceJobs addObject:newJob];
         }
         [_tableJobs reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 

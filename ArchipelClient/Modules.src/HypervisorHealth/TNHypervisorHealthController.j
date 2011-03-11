@@ -600,6 +600,7 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
     [imageLoadLoading setHidden:NO];
     [imageDiskLoading setHidden:NO];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorHealthHistory:)];
 }
 
@@ -667,10 +668,11 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
         {
             CPLog.warn("populating the charts has been interupted");
         }
-
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"error")
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 

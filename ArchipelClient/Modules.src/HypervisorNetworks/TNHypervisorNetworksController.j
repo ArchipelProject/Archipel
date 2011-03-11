@@ -405,6 +405,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorNetworkGet}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNetworks:)];
 }
 
@@ -485,9 +486,11 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
         }
 
         [_tableViewNetworks reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 }

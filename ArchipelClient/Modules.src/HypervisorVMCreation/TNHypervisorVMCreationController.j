@@ -47,12 +47,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     @outlet CPSearchField   fieldFilterVM;
     @outlet CPTextField     fieldJID;
     @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldNewVMRequestedName;
     @outlet CPTextField     fieldNewSubscriptionTarget;
+    @outlet CPTextField     fieldNewVMRequestedName;
     @outlet CPTextField     fieldRemoveSubscriptionTarget;
     @outlet CPView          viewTableContainer;
-    @outlet CPWindow        windowNewVirtualMachine;
     @outlet CPWindow        windowNewSubscription;
+    @outlet CPWindow        windowNewVirtualMachine;
     @outlet CPWindow        windowRemoveSubscription;
 
     CPButton                _cloneButton;
@@ -437,7 +437,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)performAddToRoster:(id)someUserInfo
 {
-    var vm      = someUserInfo;
+    var vm = someUserInfo;
 
     [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[vm nickname] inGroupWithName:@"General"];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[vm JID]];
@@ -454,6 +454,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorControlRosterVM}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorRoster:) ofObject:self];
 }
 
@@ -491,10 +492,12 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         }
 
         [_tableVirtualMachines reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
         [self handleIqErrorFromStanza:aStanza];
+        [self setModuleStatus:TNArchipelModuleStatusError];
     }
 
     return NO;

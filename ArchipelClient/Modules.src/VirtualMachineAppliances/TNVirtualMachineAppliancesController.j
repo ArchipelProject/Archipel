@@ -358,6 +358,7 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingGet}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveInstalledAppliances:) ofObject:self];
 }
 
@@ -385,9 +386,11 @@ TNArchipelPushNotificationVMCasting                         = @"archipel:push:vm
             [_appliancesDatasource addObject:newAppliance];
         }
         [_tableAppliances reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 

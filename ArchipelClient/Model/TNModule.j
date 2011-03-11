@@ -30,6 +30,9 @@ TNArchipelErrorPermission               = 0;
 TNArchipelErrorGeneral                  = 1;
 
 
+TNArchipelModuleStatusError             = 1;
+TNArchipelModuleStatusReady             = 3;
+TNArchipelModuleStatusWaiting           = 2;
 
 /*! @ingroup archipelcore
     This is the root class of every module.
@@ -63,6 +66,7 @@ TNArchipelErrorGeneral                  = 1;
 */
 @implementation TNModule : CPViewController
 {
+    @outlet CPImageView             imageViewModuleReady;
     @outlet CPView                  viewPreferences             @accessors;
 
     BOOL                            _isActive                   @accessors(property=isActive, readonly);
@@ -83,12 +87,16 @@ TNArchipelErrorGeneral                  = 1;
     id                              _moduleType                 @accessors(property=moduleType);
     int                             _animationDuration          @accessors(property=animationDuration);
     int                             _index                      @accessors(property=index);
+    int                             _moduleStatus               @accessors(getter=moduleStatus);
     TNStropheGroup                  _group                      @accessors(property=group);
 
     BOOL                            _pubSubPermissionRegistred;
     BOOL                            _registredToPermissionCenter;
     CPArray                         _pubsubRegistrar;
     CPArray                         _registredSelectors;
+    CPImage                         _imageModuleError;
+    CPImage                         _imageModuleReady;
+    CPImage                         _imageModuleWaiting;
     id                              _pubSubHandlerId;
 }
 
@@ -104,6 +112,13 @@ TNArchipelErrorGeneral                  = 1;
     _registredSelectors     = [CPArray array];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
+
+    var mainBundle = [CPBundle mainBundle];
+
+    _imageModuleReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/ready.png"] size:CPSizeMake(16.0, 16.0)];
+    _imageModuleWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/waiting.png"] size:CPSizeMake(16.0, 16.0)];
+    _imageModuleError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/error.png"] size:CPSizeMake(16.0, 16.0)];
+
 }
 
 
@@ -540,6 +555,32 @@ TNArchipelErrorGeneral                  = 1;
 - (IBAction)toolbarItemClicked:(id)sender
 {
     // executed when users click toolbar item in case of toolbar module
+}
+
+#pragma mark -
+#pragma mark GUI utilities
+
+/*! set the module status
+    @param aStatus the module status
+*/
+- (void)setModuleStatus:(int)aStatus
+{
+    if (_moduleStatus == aStatus)
+        return;
+
+    _moduleStatus = aStatus;
+    switch (aStatus)
+    {
+        case TNArchipelModuleStatusReady:
+            [imageViewModuleReady setImage:_imageModuleReady];
+            break;
+        case TNArchipelModuleStatusWaiting:
+            [imageViewModuleReady setImage:_imageModuleWaiting];
+            break;
+        case TNArchipelModuleStatusError:
+            [imageViewModuleReady setImage:_imageModuleError];
+            break;
+    }
 }
 
 

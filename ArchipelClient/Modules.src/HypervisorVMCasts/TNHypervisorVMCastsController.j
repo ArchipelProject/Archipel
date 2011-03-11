@@ -393,6 +393,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorVMCastingGet}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveVMCasts:)];
 }
 
@@ -435,9 +436,13 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
         }
         [_mainOutlineView reloadData];
         [_mainOutlineView recoverExpandedWithBaseKey:TNArchipelVMCastsOpenedVMCasts itemKeyPath:@"name"];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"error")
+    {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
+    }
 
     return NO;
 }

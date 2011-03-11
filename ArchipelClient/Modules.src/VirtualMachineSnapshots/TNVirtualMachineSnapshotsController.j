@@ -362,6 +362,7 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeHypervisorSnapshotGet}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [self sendStanza:stanza andRegisterSelector:@selector(_didGetSnapshots:)];
 }
 
@@ -440,15 +441,17 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
                 [obj setCurrent:YES];
                 break;
             }
-
         }
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"ignore")
     {
         [fieldInfo setStringValue:@"There is no snapshot for this virtual machine"];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"error")
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 

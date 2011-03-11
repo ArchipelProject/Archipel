@@ -403,6 +403,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypePermissionsList}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceivePermissions:) ofObject:self];
 
 }
@@ -429,9 +430,11 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         }
 
         [_tablePermissions reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 }
@@ -456,6 +459,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         "permission_type": "user",
         "permission_target": aUser}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveUserPermissions:) ofObject:self];
 }
 

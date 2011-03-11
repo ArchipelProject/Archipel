@@ -419,6 +419,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDiskGet}];
 
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveDisksInfo:) ofObject:self];
 }
 
@@ -446,9 +447,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             [_mediasDatasource addObject:newMedia];
         }
         [_tableMedias reloadData];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else
     {
+        [self setModuleStatus:TNArchipelModuleStatusError];
         [self handleIqErrorFromStanza:aStanza];
     }
 
