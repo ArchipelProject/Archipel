@@ -292,7 +292,17 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @rtype: string
         @return: a generated name
         """
-        return self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
+        search = True
+        currentName = None
+        while search:
+            try:
+                currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
+                self.libvirt_connection.lookupByName(currentName)
+                search = False
+            except:
+                self.log.info("trying to use generate name %s but it's already taken. Generating another one" % currentName)
+                pass
+        return currentName
 
     def get_vm_by_name(self, name):
         """
@@ -547,12 +557,12 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother vm has to be stopped to be cloned')
 
-        name = "%s (clone)" % xmppvm.name
+        name = "%s (clone of %s)" % (self.generate_name(), xmppvm.name)
         newvm_thread = self.alloc(requester, requested_name=name, start=False)
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
                             method=newvm.clone,
-                            user_info={"definition": xmldesc, "path": xmppvm.folder, "parentuuid": uuid},
+                            user_info={"definition": xmldesc, "path": xmppvm.folder, "parentuuid": uuid, "parentname": self.name},
                             oneshot=True)
         newvm_thread.start()
         self.perform_hooks("HOOK_HYPERVISOR_CLONE", newvm)

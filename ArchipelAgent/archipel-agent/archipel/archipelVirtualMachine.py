@@ -793,12 +793,14 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         @type parameters: object
         @param parameters: runtime arguments
         """
-        xml         = user_info["definition"]
-        path        = user_info["path"]
-        parentuuid  = user_info["parentuuid"]
-        xmlstring   = str(xml)
-        xmlstring   = xmlstring.replace(parentuuid, self.uuid)
-        newxml      = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+        xml = user_info["definition"]
+        path = user_info["path"]
+        parentuuid = user_info["parentuuid"]
+        parentname = user_info["parentname"]
+        xmlstring = str(xml)
+        xmlstring = xmlstring.replace(parentuuid, self.uuid)
+        xmlstring = xmlstring.replace(parentname, self.name)
+        newxml = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
 
         self.log.debug("new XML description is now %s" % str(newxml))
         self.log.info("starting to clone virtual machine %s from %s" % (self.uuid, parentuuid))
