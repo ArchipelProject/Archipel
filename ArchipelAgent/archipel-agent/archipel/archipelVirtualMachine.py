@@ -330,7 +330,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             return
         try:
             self.definition = xmpp.simplexml.NodeBuilder(data=str(self.domain.XMLDesc(0))).getDom()
-            self.log.info("sucessfully connect to domain uuid {0}".format(self.uuid))
+            self.log.info("sucessfully connect to domain uuid %s" % self.uuid)
             self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(self.domain, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.on_domain_event, None)
             self.set_presence_according_to_libvirt_info()
         except Exception as ex:
@@ -1262,7 +1262,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
             domain_uuid = domain_node.getTag("uuid").getData()
 
             if domain_uuid != self.jid.getNode():
-                raise Exception('IncorrectUUID', "given UUID {0} doesn't match JID {1}".format(domain_uuid, self.jid.getNode()))
+                raise Exception('IncorrectUUID', "given UUID %s doesn't match JID %s" % (domain_uuid, self.jid.getNode()))
 
             self.define(domain_node)
             self.log.info("virtual machine XML is defined")

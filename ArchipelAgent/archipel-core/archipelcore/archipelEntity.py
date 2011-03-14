@@ -625,12 +625,12 @@ class TNArchipelEntity (object):
         """
         try:
             subs = self.roster.getSubscription(str(jid))
-            self.log.info("stanza sent form authorized JID {0}".format(jid))
+            self.log.info("stanza sent form authorized JID %s" % jid)
             if subs in ("both", "to"):
                 return True
             return False
         except KeyError:
-            self.log.info("stanza sent form unauthorized JID {0}".format(jid))
+            self.log.info("stanza sent form unauthorized JID %s" % jid)
             return False
 
 
@@ -662,31 +662,34 @@ class TNArchipelEntity (object):
         @type params: dict
         @param params: the parameters of the vCard
         """
-        self.log.info("vcard making started")
-        node_iq     = xmpp.Iq(typ='set', xmlns=None)
-        type_node   = xmpp.Node(tag="TYPE")
-        payload     = []
-        type_node.setData(self.entity_type)
-        payload.append(type_node)
-        if self.name:
-            name_node = xmpp.Node(tag="NAME")
-            name_node.setData(self.name)
-            payload.append(name_node)
-        if self.configuration.getboolean("GLOBAL", "use_avatar"):
-            if not self.b64Avatar:
-                if params and params["filename"]:
-                    self.b64avatar_from_filename(params["filename"])
-                else:
-                    self.b64avatar_from_filename(self.default_avatar)
-            node_photo_content_type = xmpp.Node(tag="TYPE")
-            node_photo_content_type.setData("image/png")
-            node_photo_data = xmpp.Node(tag="BINVAL")
-            node_photo_data.setData(self.b64Avatar)
-            node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
-            payload.append(node_photo)
-        node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
-        self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
-        self.log.info("vcard information sent with type: {0}".format(self.entity_type))
+        try:
+            self.log.info("vcard making started")
+            node_iq     = xmpp.Iq(typ='set', xmlns=None)
+            type_node   = xmpp.Node(tag="TYPE")
+            payload     = []
+            type_node.setData(self.entity_type)
+            payload.append(type_node)
+            if self.name:
+                name_node = xmpp.Node(tag="NAME")
+                name_node.setData(self.name)
+                payload.append(name_node)
+            if self.configuration.getboolean("GLOBAL", "use_avatar"):
+                if not self.b64Avatar:
+                    if params and params["filename"]:
+                        self.b64avatar_from_filename(params["filename"])
+                    else:
+                        self.b64avatar_from_filename(self.default_avatar)
+                node_photo_content_type = xmpp.Node(tag="TYPE")
+                node_photo_content_type.setData("image/png")
+                node_photo_data = xmpp.Node(tag="BINVAL")
+                node_photo_data.setData(self.b64Avatar)
+                node_photo = xmpp.Node(tag="PHOTO", payload=[node_photo_content_type, node_photo_data])
+                payload.append(node_photo)
+            node_iq.addChild(name="vCard", payload=payload, namespace="vcard-temp")
+            self.xmppclient.SendAndCallForResponse(stanza=node_iq, func=self.send_update_vcard)
+            self.log.info("vcard information sent with type: %s" % self.entity_type)
+        except Exception as ex:
+            self.log.error("error during setting vcard (set_vcard) using stanza: %s EXCEPTION IS: %s" % (str(node_iq), str(ex)))
 
     def send_update_vcard(self, conn, presence, photo_hash=None):
         """

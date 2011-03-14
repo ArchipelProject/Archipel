@@ -143,7 +143,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         names_file.close()
         self.number_of_names = len(self.generated_names) - 1
 
-        self.log.info("server address defined as {0}".format(self.xmppserveraddr))
+        self.log.info("server address defined as %s" % self.xmppserveraddr)
 
         # hooks
         self.create_hook("HOOK_HYPERVISOR_ALLOC")
@@ -260,7 +260,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a
         blank database file.
         """
-        self.log.info("opening database file {0}".format(self.database_file))
+        self.log.info("opening database file %s" % self.database_file)
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
         self.log.info("populating database if not exists")
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text, name text)")
