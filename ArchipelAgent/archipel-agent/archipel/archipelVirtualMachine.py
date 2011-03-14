@@ -46,7 +46,7 @@ import archipelcore.archipelTriggers
 from archipelcore.utils import build_error_iq, build_error_message
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
-from archipelLibvirtEntity import TNArchipelLibvirtEntity
+import archipelLibvirtEntity
 
 
 ARCHIPEL_ERROR_CODE_VM_CREATE                   = -1001
@@ -84,7 +84,7 @@ ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
 ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 
 
-class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
+class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have
@@ -95,7 +95,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         contructor of the class
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
-        TNArchipelLibvirtEntity.__init__(self, configuration)
+        archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
         self.hypervisor                 = hypervisor
         self.libvirt_status             = libvirt.VIR_DOMAIN_SHUTDOWN
@@ -570,8 +570,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         create the domain
         """
         self.lock()
-        self.domain.create()
+        ret = self.domain.create()
         self.log.info("virtual machine created")
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STARTED, libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED, None)
         return str(self.domain.ID())
 
     def shutdown(self):
@@ -579,9 +581,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         shutdown the domain
         """
         self.lock()
-        self.domain.shutdown()
+        ret = self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
         self.log.info("virtual machine shutdowned")
 
     def destroy(self):
@@ -589,7 +593,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         destroy the domain
         """
         self.lock()
-        self.domain.destroy()
+        ret = self.domain.destroy()
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
         self.log.info("virtual machine destroyed")
 
     def reboot(self):
@@ -607,10 +613,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         self.lock()
         ret = self.domain.suspend()
         self.log.info("virtual machine suspended")
-        # libvirt has no way to know this with xen
-        # so if the return is 0, we assume it's OK
-        # and we simulate the event
-        if ret == 0 and self.libvirt_connection.getType().upper() == "XEN":
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, libvirt.VIR_DOMAIN_EVENT_SUSPENDED_PAUSED, None)
 
     def resume(self):
@@ -620,10 +623,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         self.lock()
         ret = self.domain.resume()
         self.log.info("virtual machine resumed")
-        # libvirt has no way to know this with xen
-        # so if the return is 0, we assume it's OK
-        # and we simulate the event
-        if ret == 0 and self.libvirt_connection.getType().upper() == "XEN":
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
 
 
@@ -745,15 +745,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         @rtype: xmpp.Node
         @return: the XML description
         """
-        self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
+        ret = self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
-
-        # libvirt has no way to know this with xen
-        # so if the return is 0, we assume it's OK
-        # and we simulate the event
-        if self.libvirt_connection.getType().upper() == "XEN":
+        if ret and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_DEFINED, 0, None)
 
         return xmldesc
@@ -765,7 +761,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         if not self.domain:
             self.log.warning("virtual machine is already undefined")
             return
-        self.domain.undefine()
+        ret = self.domain.undefine()
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_UNDEFINED, 0, None)
         self.log.info("virtual machine undefined")
 
     def undefine_and_disconnect(self):
@@ -815,6 +813,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity, TNArchipelLibvirtEntity, TNHook
         Then ask for the destination_jid hypervisor what is his
         libvirt uri
         """
+        if not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment')
         if self.is_migrating:
             raise Exception('Virtual machine is already migrating')
         if not self.definition:

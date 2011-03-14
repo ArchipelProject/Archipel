@@ -37,8 +37,8 @@ from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
-from archipelLibvirtEntity import TNArchipelLibvirtEntity
 from archipelVirtualMachine import TNArchipelVirtualMachine
+import archipelLibvirtEntity
 
 
 # Errors
@@ -103,7 +103,7 @@ class TNThreadedVirtualMachine(Thread):
         self.xmppvm.loop()
 
 
-class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
+class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     this class represent an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
@@ -123,7 +123,7 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         @param database_file: the sqlite3 file to store existing VM for persistance
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
-        TNArchipelLibvirtEntity.__init__(self, configuration)
+        archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
 
         self.virtualmachines            = {}
         self.database_file              = database_file
@@ -162,10 +162,11 @@ class TNArchipelHypervisor(TNArchipelEntity, TNArchipelLibvirtEntity, TNHookable
         # # libvirt connection
         self.connect_libvirt()
 
-        try:
-            self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None)
-        except libvirt.libvirtError:
-            self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
+        if self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+            try:
+                self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None)
+            except libvirt.libvirtError:
+                self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
 
         self.capabilities = self.get_capabilities()
 

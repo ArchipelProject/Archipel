@@ -21,6 +21,11 @@ import sys
 
 ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
 
+# hypervisor kinds
+ARCHIPEL_HYPERVISOR_TYPE_QEMU       = "QEMU"
+ARCHIPEL_HYPERVISOR_TYPE_XEN        = "XEN"
+ARCHIPEL_HYPERVISOR_TYPE_OPENVZ     = "OPENVZ"
+ARCHIPEL_HYPERVISOR_TYPE_LXC        = "LXC"
 
 class TNArchipelLibvirtEntity (object):
 
@@ -66,3 +71,21 @@ class TNArchipelLibvirtEntity (object):
             return 0
         else:
             return -1
+
+    def current_hypervisor(self):
+        """
+        return the result of libvirt getType() function
+        @rtype: string
+        @return: uppercased string name of the current hypervisor
+        """
+        return self.libvirt_connection.getType().upper()
+
+    def is_hypervisor(self, names):
+        """
+        return True is hypervisor is one of the given names (tupple)
+        @type names: tupple
+        @param names: tupple containing names
+        @rtype: boolean
+        @return: True of False
+        """
+        return self.current_hypervisor() in names

@@ -20,18 +20,13 @@ import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
-
-from archipel.archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
+import archipel.archipelLibvirtEntity
 
 from archipelWebSocket import TNArchipelWebSocket
 
 
 ARCHIPEL_NS_VNC                 = "archipel:virtualmachine:vnc"
 ARCHIPEL_ERROR_CODE_VM_VNC      = -1010
-
-# hypervisor kinds
-ARCHIPEL_HYPERVISOR_TYPE_QEMU   = "QEMU"
-ARCHIPEL_HYPERVISOR_TYPE_XEN    = "XEN"
 
 
 class TNArchipelVNC (TNArchipelPlugin):
@@ -121,7 +116,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        if not self.entity.libvirt_connection.getType().upper() == ARCHIPEL_HYPERVISOR_TYPE_QEMU:
+        if not self.entity.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.entity.log.warning("aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
             return
         current_vnc_port        = self.display()["direct"]
@@ -217,7 +212,7 @@ class TNArchipelVNC (TNArchipelPlugin):
             payload = xmpp.Node("display", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
+            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=archipel.archipelLibvirtEntity.ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_VNC)
         return reply
