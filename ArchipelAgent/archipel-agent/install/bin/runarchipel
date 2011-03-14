@@ -48,7 +48,7 @@ def help():
     print ARCHIPEL_CMD_HELP
     sys.exit(ARCHIPEL_INIT_SUCCESS)
 
-def versions():
+def versions(option, opt, value, parser):
     import pkg_resources
     """print versions of all installed modules"""
     print "\033[32m* Archipel Agent version : \033[0m"
@@ -116,6 +116,10 @@ if __name__ == "__main__":
                         help="run archipel in the current process. Do not fork. This is for testing",
                         metavar="FORK",
                         default=True)
+    parser.add_option("-v", "--version",
+                        action="callback",
+                        help="display the version of all components",
+                        callback=versions)
 
     options, args = parser.parse_args()
     try:
