@@ -17,32 +17,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import sys, os
-import getopt
-
-
-HELP = """\
-buildAgent (c) 2010 Antoine Mercadal
-This tool will allow you to build and/or upload all archipel official plugins
-
-usage :
-    buildAgent [--help | -h] [--build | -b] [--clean | -c] [--devinstall | -d] [--upload | -u]
-
-    --build, -b         : build the bdist_egg target
-    --upload, -u        : upload to pypi using your .pypirc
-    --register, -r      : register to pypi using your .pypirc
-    --clean, -c         : clean build
-    --devinstall, -d    : force reinstallation (for developers)
-    --help, -h          : shows this message
-
-"""
+from optparse import OptionParser
 
 PATH    = os.path.dirname(os.path.realpath(__file__))
-
-
-def help():
-    """print help"""
-    print HELP
-    sys.exit(0)
 
 
 def clean_build(path, notexit=False):
@@ -79,24 +56,41 @@ def process(path, build, upload, register, clean, devinstall):
 
 
 if __name__ == "__main__":
-    build       = False
-    upload      = False
-    register    = False
-    clean       = False
-    devinstall  = False
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hburcd", ["help", "build", "upload", "register", "clean", "devinstall"])
-        for o, a in opts:
-            if o in ("--build", "-b"):      build = True
-            if o in ("--upload", "-u"):     upload = True
-            if o in ("--register", "-r"):   register = True
-            if o in ("--clean", "-c"):      clean = True
-            if o in ("--devinstall", "-d"): devinstall = True
-            if o in ("-h", "--help"):       help()
-    except Exception as ex:
-        print "\033[31mERROR: %s \n\033[0m" % str(ex)
-    if not (devinstall or clean) and not (build or register or upload): help()
+    parser = OptionParser()
+    parser.add_option("-b", "--build",
+                        dest="build",
+                        help="build the bdist_egg target",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-u", "--upload",
+                        dest="upload",
+                        help="upload to pypi using your .pypirc",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-r", "--register",
+                        dest="register",
+                        help="register to pypi using your .pypirc",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-c", "--clean",
+                        dest="clean",
+                        help="clean build",
+                        action="store_true",
+                        default=False)
+    parser.add_option("-d", "--devinstall",
+                        dest="devinstall",
+                        help="force reinstallation (for developers)",
+                        action="store_true",
+                        default=False)
+
+    options, args = parser.parse_args()
+
+
+    if not (options.devinstall or options.clean) and not (options.build or options.register or options.upload):
+        parser.error("Wrong usage. see --help for help")
     os.chdir(PATH)
-    if clean or devinstall: clean_build(PATH, devinstall)
-    if devinstall: devinstallation(PATH)
-    process(PATH, build, upload, register, clean, devinstall)
+    if options.clean or options.devinstall:
+        clean_build(PATH, options.devinstall)
+    if options.devinstall:
+        devinstallation(PATH)
+    process(PATH, options.build, options.upload, options.register, options.clean, options.devinstall)

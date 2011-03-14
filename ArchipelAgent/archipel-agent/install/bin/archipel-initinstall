@@ -1,18 +1,18 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
-# 
+#
 # archipel-initinstall
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -20,23 +20,9 @@
 import os
 import sqlite3
 import sys
-import getopt
 import shutil
+from optparse import OptionParser
 
-HELP = """\
-archipel-initinstall (c) 2010 Antoine Mercadal
-this tool should be run right after installing Archipel Agent from the egg. it will
-create necessary folders and install default configuration. Then, you should go and
-edit /etc/archipel/archipel.conf to match your platform configuration
-
-usage :
-    archipel-initinstall [--help | -h] [--prefix=aPrefix] [--force | -f]
-
-    --prefix        : all installation folders and files will be prefixed with given value
-    --force, -f     : before installing, clean all existing folder and files.
-    --help, -h      : shows this message
-
-"""
 
 def prepare_environment(prefix="", force=False):
     from pkg_resources import Requirement, resource_filename
@@ -126,19 +112,18 @@ def prepare_environment(prefix="", force=False):
 
 
 if __name__ == "__main__":
-    prefix  = ""
-    clean   = False
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hf", ["help", "prefix=", "forces"])
-        for o, a in opts:
-            if o in ("--prefix"):
-                prefix = a
-            if o in ("--force", "-f"):
-                clean = True
-            if o in ("-h", "--help"):
-                print HELP
-                sys.exit(0)
-    except Exception as ex:
-        print "\033[31mERROR: %s \n\033[0m" % str(ex)
+    parser = OptionParser()
+    parser.add_option("-p", "--prefix",
+                        dest="prefix",
+                        help="all installation folders and files will be prefixed with given value",
+                        metavar="PREFIX",
+                        default="/")
+    parser.add_option("-f", "--force",
+                        dest="clean",
+                        help="before installing, clean all existing folder and files.",
+                        metavar="SERVER",
+                        default=False)
 
-    prepare_environment(prefix, clean)
+    options, args = parser.parse_args()
+
+    prepare_environment(options.prefix, options.clean)

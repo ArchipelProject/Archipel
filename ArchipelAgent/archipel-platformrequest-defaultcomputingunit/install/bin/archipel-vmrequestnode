@@ -19,26 +19,8 @@
 
 import os
 import sys
-import getopt
 import xmpp
 import archipelcore.pubsub
-
-
-HELP = """\
-archipel-vmrequestnode (c) 2010 Antoine Mercadal
-this tool allow you to create the platform-wide vm request nodes
-
-usage :
-    archipel-vmrequestnode --jid=aJid --password=aPassword [--pubsubserver=pubsub.server] [--create | -c] [--delete | -d]
-    
-    --jid           : set the JID to use
-    --password      : set the password associated to the JID
-    --pubsubserver  : set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]
-    --create, -c    : create the node (default action)
-    --delete, -d    : delete the node
-    --help, -h      : shows this message
-
-"""
 
 if __name__ == "__main__":
     jid = None

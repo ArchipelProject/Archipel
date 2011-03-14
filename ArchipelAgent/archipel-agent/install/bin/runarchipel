@@ -18,7 +18,7 @@
 
 
 import os, sys
-import getopt
+from optparse import OptionParser
 import xmpp
 import socket
 
@@ -39,29 +39,14 @@ except ImportError as ex:
     print "\033[31mERROR: %s\033[0m" % str(ex)
     sys.exit(ARCHIPEL_INIT_ERROR_NO_MODULE)
 
-
-## help message
-ARCHIPEL_CMD_HELP   = """\
-Archipel Agent (c) 2010 Antoine Mercadal
-
-usage: runarchipel [--nofork] [--config=</path/to/conf>]
-
-Options :
-* --nofork : run archipel in the current process. Do not fork. This is for testing.
-* --config : The path of the config file to use. Default is /etc/archipel/archipel.conf
-"""
-
-
 def format_version(info):
     """format the verson info"""
     print " - %s : %s" % (info[0], info[1])
-
 
 def help():
     """display help"""
     print ARCHIPEL_CMD_HELP
     sys.exit(ARCHIPEL_INIT_SUCCESS)
-
 
 def versions():
     import pkg_resources
@@ -73,7 +58,6 @@ def versions():
         method  = version_method.load()
         format_version(method())
     sys.exit(ARCHIPEL_INIT_SUCCESS)
-
 
 def test_libvirt():
     """test if all needed libvirt's function are present"""
@@ -88,7 +72,6 @@ def test_libvirt():
         print "\n\n\033[31mERROR: your libvirt copy doesn't handle Events correctly. please update to 0.8.3+.\033[0m\n"
         return False
     return True
-
 
 def main():
     """
@@ -122,23 +105,26 @@ if __name__ == "__main__":
     """
     Main loop of the program
     """
-    opts, args  = getopt.getopt(sys.argv[1:], "hnv", ["nofork", "config=", "help", "version"])
-    configPath  = "/etc/archipel/archipel.conf"
-    fork        = True
+    parser = OptionParser()
+    parser.add_option("-c", "--config",
+                        dest="config",
+                        help="the config file to use",
+                        metavar="CONFIG",
+                        default="/etc/archipel/archipel.conf")
+    parser.add_option("-n", "--nofork",
+                        dest="fork",
+                        help="run archipel in the current process. Do not fork. This is for testing",
+                        metavar="FORK",
+                        default=True)
 
-    for o, a in opts:
-        if o in ("--config"):           configPath = a
-        if o in ("-n", "--nofork"):     fork = False
-        if o in ("-h", "--help"):       help()
-        if o in ("-v", "--version"):    versions()
-
+    options, args = parser.parse_args()
     try:
-        config = init_conf(configPath)
+        config = init_conf(options.config)
     except:
-        print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % configPath
+        print "\033[31mCONFIG: unable to read configuration file %s\033[0m" % options.config
         sys.exit(ARCHIPEL_INIT_ERROR_NO_CONFIG)
 
-    if fork:
+    if options.fork:
         try:
             pid = os.fork()
             if pid == 0: main()

@@ -1,77 +1,32 @@
 #!/usr/bin/python -W ignore::DeprecationWarning
-# 
+#
 # archipel-rolesnode
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 import os
 import sys
-import getopt
+from optparse import OptionParser
 import xmpp
 import archipelcore.pubsub
 
 
-HELP = """\
-archipel-rolesnode (c) 2010 Antoine Mercadal
-this tool allows to create a new permissions template node. 
-you should create this node using admin account (or a special dedicated account)
-
-usage :
-    archipel-rolesnode --jid=aJid --password=aPassword --pubsubserver=pubsub.server [--create] [--delete]
-    
-    --jid           : set the JID to use
-    --password      : set the password associated to the JID
-    --pubsubserver  : set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]
-    --create, -c    : create the node (default action)
-    --delete, -d    : delete the node
-    --help, -h      : shows this message
-
-"""
-
-if __name__ == "__main__":
-    jid = None
-    password = None
-    pubsubserver = None
-    action = "create"
-    
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hcd", ["jid=", "password=", "pubsubserver=", "help", "create", "delete"])
-        for o, a in opts:
-            if o in ("--jid"):
-                jid = xmpp.JID(a)
-            if o in ("--password"):
-                password = a
-            if o in ("--pubsubserver"):
-                pubsubserver = a
-            if o in ("--create", "-c"):
-                action = "create"
-            if o in ("--delete", "-d"):
-                action = "delete"
-            if o in ("-h", "--help"):
-                print HELP
-                sys.exit(0)
-    except Exception as ex:
-        print "\033[31mERROR: %s \n\033[0m" % str(ex)
-        
-    if not jid or not password :
-        print HELP
-        sys.exit(-1)
-    
+def perform(jid, password, pubsubserver, action):
     if not pubsubserver : pubsubserver = "pubsub." + jid.getDomain()
-    
+
     xmppclient = xmpp.Client(jid.getDomain(), debug=[])
     if not xmppclient.connect():
         print "\033[31mERROR: cannot connect to the server. exiting\033[0m"
@@ -83,10 +38,10 @@ if __name__ == "__main__":
 
     #creating/getting the roles pubsub node
     rolesNodeName = "/archipel/roles"
-    
+
     pubSubNodeRoles = archipelcore.pubsub.TNPubSubNode(xmppclient, pubsubserver, rolesNodeName)
-    
-    if action == "create":
+
+    if action:
         if not pubSubNodeRoles.recover(wait=True):
             pubSubNodeRoles.create(wait=True)
         pubSubNodeRoles.configure({
@@ -100,7 +55,40 @@ if __name__ == "__main__":
                 archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM: archipelcore.pubsub.XMPP_PUBSUB_VAR_SEND_LAST_PUBLISHED_ITEM_NEVER
         }, wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/roles created!\033[0m"
-    elif action == "delete":
+    else:
         if pubSubNodeRoles.recover(wait=True):
             pubSubNodeRoles.delete(wait=True)
         print "\033[32mSUCCESS: pubsub node /archipel/roles deleted!\033[0m"
+
+if __name__ == "__main__":
+    parser = OptionParser()
+    parser.add_option("-j", "--jid",
+                        dest="jid",
+                        help="set the JID to use",
+                        metavar="JID")
+    parser.add_option("-p", "--password",
+                        dest="password",
+                        help="set the password associated to the JID",
+                        metavar="PASSWORD")
+    parser.add_option("-P", "--pubsubserver",
+                        dest="pubsubserver",
+                        help="set the pubsubserver to use. if not given it will be pubsub.[jid.getDomain()]",
+                        metavar="PUBSUBSERVER",
+                        default=None)
+    parser.add_option("-c", "--create",
+                        action="store_true",
+                        dest="action",
+                        help="create the node (default action)",
+                        metavar="ACTION",
+                        default=True)
+    parser.add_option("-d", "--delete",
+                        action="store_false",
+                        dest="action",
+                        help="delete the node",
+                        metavar="ACTION")
+    options, args = parser.parse_args()
+
+    if not options.jid or not options.password:
+        parser.error("you must enter a JID and a PASSWORD. see --help for help")
+
+    perform(xmpp.JID(options.jid), options.password, options.pubsubserver, options.action)
