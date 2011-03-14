@@ -572,7 +572,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         self.lock()
         ret = self.domain.create()
         self.log.info("virtual machine created")
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STARTED, libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED, None)
         return str(self.domain.ID())
 
@@ -584,7 +584,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         ret = self.domain.shutdown()
         if self.info()["state"] == libvirt.VIR_DOMAIN_RUNNING or self.info()["state"] == libvirt.VIR_DOMAIN_BLOCKED:
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
         self.log.info("virtual machine shutdowned")
 
@@ -594,7 +594,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         """
         self.lock()
         ret = self.domain.destroy()
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
         self.log.info("virtual machine destroyed")
 
@@ -749,7 +749,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         if not self.domain:
             self.connect_domain()
         self.definition = xmldesc
-        if ret and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if ret and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_DEFINED, 0, None)
 
         return xmldesc
@@ -762,7 +762,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
             self.log.warning("virtual machine is already undefined")
             return
         ret = self.domain.undefine()
-        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_UNDEFINED, 0, None)
         self.log.info("virtual machine undefined")
 

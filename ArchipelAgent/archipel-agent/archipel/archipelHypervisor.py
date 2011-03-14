@@ -162,12 +162,13 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         # # libvirt connection
         self.connect_libvirt()
 
-        if self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
+        if self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             try:
                 self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None)
             except libvirt.libvirtError:
                 self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
-
+        else:
+            self.log.warning("your hypervisor doesn't support libvirt eventing. using fake event loop.")
         self.capabilities = self.get_capabilities()
 
         # persistance
