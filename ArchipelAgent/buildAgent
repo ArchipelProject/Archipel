@@ -32,7 +32,7 @@ def clean_build(path, notexit=False):
     if not notexit: sys.exit(0)
 
 
-def devinstallation(path):
+def forceinstallation(path):
     """force reinstall"""
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
@@ -41,16 +41,19 @@ def devinstallation(path):
     print "\033[32mSUCCESS: installation done \033[0m\n"
     sys.exit(0)
 
-
 def process(path, build, upload, register, clean, devinstall):
     """parse command"""
     for plugin_folder in os.listdir(path):
         if os.path.isdir(plugin_folder) and (plugin_folder.startswith("archipel-agent") or plugin_folder.startswith("archipel-core")):
             os.chdir(plugin_folder)
-            if register:                os.system("python setup.py register")
-            if build and not upload:    os.system("python setup.py bdist_egg")
-            elif build and upload:      os.system("python setup.py bdist_egg upload")
-            elif build and register:    os.system("python setup.py bdist_egg upload")
+            if devinstall:
+                os.system("python setup.py develop --no-deps")
+            elif register:
+                os.system("python setup.py register")
+            elif build and not upload:
+                os.system("python setup.py bdist_egg")
+            elif build and upload:
+                os.system("python setup.py bdist_egg upload")
             os.chdir("..")
     print "\033[32mSUCCESS: all action performed \033[0m\n"
 
@@ -77,20 +80,25 @@ if __name__ == "__main__":
                         help="clean build",
                         action="store_true",
                         default=False)
+    parser.add_option("-f", "--force",
+                        dest="forceinstall",
+                        help="force (re)installation (for developers)",
+                        action="store_true",
+                        default=False)
     parser.add_option("-d", "--devinstall",
                         dest="devinstall",
-                        help="force reinstallation (for developers)",
+                        help="symlink the eggs",
                         action="store_true",
                         default=False)
 
     options, args = parser.parse_args()
-
 
     if not (options.devinstall or options.clean) and not (options.build or options.register or options.upload):
         parser.error("Wrong usage. see --help for help")
     os.chdir(PATH)
     if options.clean or options.devinstall:
         clean_build(PATH, options.devinstall)
-    if options.devinstall:
-        devinstallation(PATH)
+    if options.forceinstall:
+        forceinstallation(PATH)
+
     process(PATH, options.build, options.upload, options.register, options.clean, options.devinstall)

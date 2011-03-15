@@ -35,6 +35,9 @@ eggs installation from your machine just run
 
     # sudo ./buildAgent -d
 
+it will symlinks the eggs to the site-packages. to update you just have to git pull, no needs for further installation
+of the eggs
+
 Then edit the first line of /etc/archipel/archipel.conf to match your ejabberd server.
 Finally start it using :
 
