@@ -18,7 +18,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.29'
+VERSION             = '1.0.30'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -72,7 +72,7 @@ setup(name='archipel-agent',
         "archipel-agent-action-scheduler>=1.0.20beta",
         "archipel-agent-hypervisor-geolocalization>=1.0.20beta",
         "archipel-agent-hypervisor-health>=1.0.22beta",
-        "archipel-agent-hypervisor-network>=1.0.20beta",
+        "archipel-agent-hypervisor-network>=1.0.21beta",
         "archipel-agent-iphone-notification>=1.0.19beta",
         "archipel-agent-virtualmachine-oomkiller>=1.0.20beta",
         "archipel-agent-virtualmachine-snapshoting>=1.0.21beta",
