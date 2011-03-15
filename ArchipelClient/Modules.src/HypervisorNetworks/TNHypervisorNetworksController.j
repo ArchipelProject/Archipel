@@ -31,6 +31,7 @@ TNArchipelTypeHypervisorNetworkDefine       = @"define";
 TNArchipelTypeHypervisorNetworkUndefine     = @"undefine";
 TNArchipelTypeHypervisorNetworkCreate       = @"create";
 TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
+TNArchipelTypeHypervisorNetworkGetNics      = @"getnics";
 
 
 /*! @defgroup  hypervisornetworks Module Hypervisor Networks
@@ -210,6 +211,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
+    [self getHypervisorNICS];
 }
 
 /*! called when module becomes visible
@@ -495,6 +497,42 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     }
 }
 
+- (void)getHypervisorNICS
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkGetNics}];
+
+    [self setModuleStatus:TNArchipelModuleStatusWaiting];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNics:)];
+}
+
+- (void)_didReceiveHypervisorNics:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var nics    = [aStanza childrenWithName:@"nic"],
+            names   = [CPArray array];
+
+        for (var i = 0; i < [nics count]; i++)
+        {
+            var nic = [nics objectAtIndex:i],
+                name = [nic valueForAttribute:@"name"];
+
+            if (name.indexOf("vnet") == -1)
+                [names addObject:name];
+        }
+        [networkController setCurrentNetworkInterfaces:names];
+        [self setModuleStatus:TNArchipelModuleStatusReady];
+    }
+    else
+    {
+        [self setModuleStatus:TNArchipelModuleStatusError];
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
 
 #pragma mark -
 #pragma mark Action
@@ -720,7 +758,7 @@ TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
     }
 }
 
-/*! compute the answer of hypervisor after activating/deactivating a network
+/*! compute the answer of hypervisor after activating or deactivating a network
     @param aStanza TNStropheStanza containing the answer
     @return NO to unregister selector
 */

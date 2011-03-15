@@ -44,6 +44,7 @@
     @outlet CPView          viewTableHostsContainer;
     @outlet CPView          viewTableRangesContainer;
 
+    CPArray                 _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     CPTableView             _externalTable              @accessors(property=tableNetwork);
     TNHypervisorNetwork     _network                    @accessors(property=network);
     id                      _delegate                   @accessors(property=delegate);
@@ -87,7 +88,6 @@
     [buttonForwardMode addItemsWithTitles:["route", "nat"]];
 
     [buttonForwardDevice removeAllItems];
-    [buttonForwardDevice addItemsWithTitles:["nothing", "eth0", "eth1", "eth2", "eth3", "eth4", "eth5", "eth6"]];
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
@@ -191,8 +191,10 @@
 #pragma mark -
 #pragma mark CPWindow override
 
-- (void)update;
+- (void)update
 {
+    [buttonForwardDevice removeAllItems];
+    [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
     [fieldNetworkName setStringValue:[_network networkName]];
     [fieldBridgeName setStringValue:[_network bridgeName]];
     [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
