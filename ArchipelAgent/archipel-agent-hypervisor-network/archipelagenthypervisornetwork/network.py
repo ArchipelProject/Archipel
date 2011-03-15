@@ -33,6 +33,7 @@ ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY    = -7004
 ARCHIPEL_ERROR_CODE_NETWORKS_GET        = -7005
 ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES    = -7006
 ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES   = -7007
+ARCHIPEL_ERROR_CODE_NETWORKS_GETNICS    = -7008
 
 
 class TNHypervisorNetworks (TNArchipelPlugin):
@@ -60,9 +61,10 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.entity.permission_center.create_permission("network_get", "Authorizes user to get all networks informations", False)
             self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
             self.entity.permission_center.create_permission("network_bridges", "Authorizes user to get existing bridges", False)
+            self.entity.permission_center.create_permission("network_getnics", "Authorizes user to get existing network interfaces", False)
             registrar_items = [
                                 {   "commands" : ["list networks"],
-                                    "parameters": {},
+                                    "parameters": [],
                                     "method": self.message_get,
                                     "permissions": ["network_get"],
                                     "description": "List all networks" },
@@ -75,7 +77,12 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                                     "parameters": [{"name": "identifier", "description": "The identifer of the network, UUID or name"}],
                                     "method": self.message_destroy,
                                     "permissions": ["network_destroy"],
-                                    "description": "Stop the given network" }
+                                    "description": "Stop the given network" },
+                                {   "commands" : ["nics", "network cards"],
+                                    "parameters": [],
+                                    "method": self.message_getnics,
+                                    "permissions": ["network_getnics"],
+                                    "description": "Get the list of all my network interfaces" }
                                 ]
 
             self.entity.add_message_registrar_items(registrar_items)
@@ -182,6 +189,20 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         self.entity.push_change("network", "undefined")
 
 
+
+    def getnics(self):
+        """
+        return the list of all network interfaces
+        @rtype: list
+        @return: list containing network cards names
+        """
+        f = open("/proc/net/dev", 'r')
+        content = f.read()
+        f.close()
+        splitted = content.split('\n')[2:-1]
+        return map(lambda x: x.split(":")[0].replace(" ", ""), splitted)
+
+
     ### XMPP Processing
 
     def process_iq_for_hypervisor(self, conn, iq):
@@ -195,6 +216,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             - get
             - bridges
             - getnames
+            - getnics
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -217,6 +239,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             reply = self.iq_bridges(iq)
         elif action == "getnames":
             reply = self.iq_get_names(iq)
+        elif action == "getnics":
+            reply = self.iq_get_nics(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -446,9 +470,41 @@ class TNHypervisorNetworks (TNArchipelPlugin):
                 bridge_node = xmpp.Node(tag="bridge", attrs={"name": bridge_name})
                 bridges_names.append(bridge_node)
             reply.setQueryPayload(bridges_names)
-        except libvirt.libvirtError as ex:
-            reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES)
         return reply
 
+    def iq_get_nics(self, iq):
+        """
+        list all existing networks cards on the hypervisor
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            for n in self.getnics():
+                nodes.append(xmpp.Node("nic", attrs={"name": n}))
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNICS)
+        return reply
+
+    def message_getnics(self, msg):
+        """
+        get all the nics of the hypervisor
+        @type msg: xmpp.Protocol.Message
+        @param msg: the message containing the request
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            nics = self.getnics()
+            ret = "Sure. Here are my current available network interfaces:\n"
+            for n in nics:
+                ret += "    - %s\n" % n
+            return ret
+        except Exception as ex:
+            return build_error_message(self, ex)
