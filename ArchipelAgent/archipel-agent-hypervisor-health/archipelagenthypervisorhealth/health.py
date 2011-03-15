@@ -167,19 +167,38 @@ class TNHypervisorHealth (TNArchipelPlugin):
             if not stats:
                 reply = build_error_iq(self, "Unable to get stats. see hypervisor log", iq)
             else:
-                mem_free_node = xmpp.Node("memory", attrs=stats["memory"][0])
-                nodes.append(mem_free_node)
-                cpu_node = xmpp.Node("cpu", attrs=stats["cpu"][0])
-                nodes.append(cpu_node)
-                disk_free_node = xmpp.Node("disk", attrs=stats["totaldisk"])
-                for s in stats["disk"]: disk_free_node.addChild("partition", attrs=s)
-                nodes.append(disk_free_node)
-                load_node = xmpp.Node("load", attrs=stats["load"][0])
-                nodes.append(load_node)
-                uptime_node = xmpp.Node("uptime", attrs=stats["uptime"])
-                nodes.append(uptime_node)
-                uname_node = xmpp.Node("uname", attrs=stats["uname"])
-                nodes.append(uname_node)
+                try:
+                    mem_free_node = xmpp.Node("memory", attrs=stats["memory"][0])
+                    nodes.append(mem_free_node)
+                except Exception as ex:
+                    raise Exception("unable to append memory stats node", ex)
+                try:
+                    cpu_node = xmpp.Node("cpu", attrs=stats["cpu"][0])
+                    nodes.append(cpu_node)
+                except Exception as ex:
+                    raise Exception("unable to append cpu stats node", ex)
+                try:
+                    disk_free_node = xmpp.Node("disk", attrs=stats["totaldisk"])
+                    for s in stats["disk"]:
+                        disk_free_node.addChild("partition", attrs=s)
+                    nodes.append(disk_free_node)
+                except Exception as ex:
+                    raise Exception("unable to append disk stats node", ex)
+                try:
+                    load_node = xmpp.Node("load", attrs=stats["load"][0])
+                    nodes.append(load_node)
+                except Exception as ex:
+                    raise Exception("unable to append load avergae stats node", ex)
+                try:
+                    uptime_node = xmpp.Node("uptime", attrs=stats["uptime"])
+                    nodes.append(uptime_node)
+                except Exception as ex:
+                    raise Exception("unable to append uptime stats node", ex)
+                try:
+                    uname_node = xmpp.Node("uname", attrs=stats["uname"])
+                    nodes.append(uname_node)
+                except Exception as ex:
+                    raise Exception("unable to append uname node", ex)
                 reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)

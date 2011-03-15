@@ -86,18 +86,54 @@ class TNThreadedHealthCollector(Thread):
         @rtype: TNArchipelVirtualMachine
         @return: the L{TNArchipelVirtualMachine} instance
         """
-        log.debug("Retrieving last "+ str(limit) + " recorded stats data for sending")
-        uptime          = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("up ")[1].split(",")[0]
-        uptime_stats    = {"up": uptime}
-        acpu            = self.stats_CPU[-limit:]
-        amem            = self.stats_memory[-limit:]
-        adisk           = sorted(self.get_disk_stats(), cmp=lambda x, y: cmp(x["mount"], y["mount"]))
-        totalDisk       = self.get_disk_total()
-        aload           = self.stats_load[-limit:]
+        log.debug("STATCOLLECTOR: Retrieving last "+ str(limit) + " recorded stats data for sending")
+        try:
+            uptime = self.get_uptime()
+            uptime_stats    = {"up": "%dd %dh" % (uptime[0], uptime[1])} #TODO: it's obvious it would be better to not do this
+        except Exception as ex:
+            raise Exception("Unable to get uptime", ex)
+        try:
+            acpu = self.stats_CPU[-limit:]
+        except Exception as ex:
+            raise Exception("Unable to get CPU stats", ex)
+        try:
+            amem = self.stats_memory[-limit:]
+        except Exception as ex:
+            raise Exception("Unable to get memory", ex)
+        try:
+            adisk = sorted(self.get_disk_stats(), cmp=lambda x, y: cmp(x["mount"], y["mount"]))
+            totalDisk = self.get_disk_total()
+        except Exception as ex:
+            raise Exception("Unable to get disks information", ex)
+        try:
+            aload = self.stats_load[-limit:]
+        except Exception as ex:
+            raise Exception("Unable to get disks information", ex)
         acpu.reverse()
         amem.reverse()
         aload.reverse()
-        return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk, "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
+        return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk,
+                "load": aload, "uptime": uptime_stats, "uname": self.uname_stats}
+
+    def get_uptime(self):
+        """
+        get the uptime from /proc/uptime.
+        code taken from http://thesmithfam.org/blog/2005/11/19/python-uptime-script/
+        @rtype: tupple
+        @return: days, hours, minutes, seconds
+        """
+        f = open( "/proc/uptime" )
+        contents = f.read().split()
+        f.close()
+        total_seconds = float(contents[0])
+        MINUTE = 60
+        HOUR = MINUTE * 60
+        DAY = HOUR * 24
+        days = int(total_seconds / DAY)
+        hours = int((total_seconds % DAY) / HOUR)
+        minutes = int((total_seconds % HOUR) / MINUTE)
+        seconds = int(total_seconds % MINUTE)
+        return (days, hours, minutes, seconds)
 
     def get_memory_stats(self):
         """
@@ -105,14 +141,14 @@ class TNThreadedHealthCollector(Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        file_meminfo    = open('/proc/meminfo')
-        meminfo         = file_meminfo.read()
+        file_meminfo = open('/proc/meminfo')
+        meminfo = file_meminfo.read()
         file_meminfo.close()
-        meminfolines    = meminfo.split("\n")
-        memTotal        = int(meminfolines[0].split()[1])
-        memFree         = int(meminfolines[1].split()[1])
-        swapped         = int(meminfolines[4].split()[1])
-        memUsed         = memTotal - memFree
+        meminfolines = meminfo.split("\n")
+        memTotal = int(meminfolines[0].split()[1])
+        memFree = int(meminfolines[1].split()[1])
+        swapped = int(meminfolines[4].split()[1])
+        memUsed = memTotal - memFree
         return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped}
 
     def get_cpu_stats(self):
@@ -121,8 +157,8 @@ class TNThreadedHealthCollector(Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        dt      = self.deltaTime(1)
-        cpuPct  = (dt[len(dt) - 1] * 100.00 / sum(dt))
+        dt = self.deltaTime(1)
+        cpuPct = (dt[len(dt) - 1] * 100.00 / sum(dt))
         return {"date": datetime.datetime.now(), "id": cpuPct}
 
     def get_load_stats(self):
@@ -131,8 +167,12 @@ class TNThreadedHealthCollector(Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        load_average = subprocess.Popen(["uptime"], stdout=subprocess.PIPE).communicate()[0].split("load average:")[1].split(", ")
-        load1min, load5min, load15min = (float(load_average[0]), float(load_average[1]), float(load_average[2]))
+        f = open("/proc/loadavg")
+        contents = f.read().split()
+        f.close()
+        load1min = float(contents[0])
+        load5min = float(contents[1])
+        load15min = float(contents[2])
         return {"date": datetime.datetime.now(), "one": load1min, "five": load5min, "fifteen": load15min}
 
     def get_disk_stats(self):
@@ -167,7 +207,7 @@ class TNThreadedHealthCollector(Thread):
         """
         ignore
         """
-        statFile = file("/proc/stat", "r")
+        statFile = file("/proc/stat")
         timeList = statFile.readline().split(" ")[2:6]
         statFile.close()
         for i in range(len(timeList)):
@@ -221,4 +261,3 @@ class TNThreadedHealthCollector(Thread):
                 time.sleep(self.collection_interval)
             except Exception as ex:
                 log.error("stat collection fails. Exception %s" % str(ex))
-
