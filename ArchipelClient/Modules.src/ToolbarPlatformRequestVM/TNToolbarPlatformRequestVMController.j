@@ -154,7 +154,7 @@ TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/
 
     [_pubSubRequestIn publishItem:requestNode];
 
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Platform Request" message:@"Your request has been sent to the plateform"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Platform Request" message:@"Your request has been sent to the platform"];
     [CPTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(checkPlatformAnswers:) userInfo:uuid repeats:NO];
 }
 
