@@ -297,13 +297,10 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         search = True
         currentName = None
         while search:
-            try:
-                currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
-                self.libvirt_connection.lookupByName(currentName)
-                search = False
-            except:
+            currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
+            if not self.get_vm_by_name(currentName):
                 self.log.info("trying to use generate name %s but it's already taken. Generating another one" % currentName)
-                pass
+                search = False
         return currentName
 
     def get_vm_by_name(self, name):
@@ -439,7 +436,10 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         if not requested_name:
             name = self.generate_name()
         else:
-            name = requested_name
+            if not self.get_vm_by_name(requested_name):
+                name = requested_name
+            else:
+                raise Exception("this hypervisor already have virtual machine named %s. please choose another one." % requested_name)
 
         self.log.info("starting xmpp threaded virtual machine")
         vm_thread = self.create_threaded_vm(vm_jid, vm_password, name)
