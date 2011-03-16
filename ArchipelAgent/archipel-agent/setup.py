@@ -18,7 +18,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.31'
+VERSION             = '1.0.32'
 DESCRIPTION="""\
 ** Archipel Agent **
 
