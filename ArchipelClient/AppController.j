@@ -520,6 +520,9 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [leftView addSubview:_viewRosterMask];
 
+    [ledOut setToolTip:@"This LED is ON when XMPP data are sent"];
+    [ledIn setToolTip:@"This LED is ON when XMPP data are received"];
+
     CPLog.info(@"Initialization of AppController OK");
 }
 
