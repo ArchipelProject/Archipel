@@ -65,29 +65,39 @@
 - (void)awakeFromCib
 {
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
-    _minusButtonDHCPHosts= [CPButtonBar minusButton];
-    [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
+    [_plusButtonDHCPHosts setToolTip:@"Create a new DHCP reservation"];
+
+    _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
+    [_minusButtonDHCPHosts setToolTip:@"Remove selected DHCP reservation"];
+
+    [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
+
 
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
-    _minusButtonDHCPRanges = [CPButtonBar minusButton];
-    [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
+    [_plusButtonDHCPRanges setToolTip:@"Create a new DHCP range"];
+
+    _minusButtonDHCPRanges = [CPButtonBar minusButton];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
+    [_minusButtonDHCPRanges setToolTip:@"Remove selected DHCP range"];
 
+    [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
 
     [viewTableRangesContainer setBorderedWithHexColor:@"#C0C7D2"];
     [viewTableHostsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     [buttonForwardMode removeAllItems];
     [buttonForwardMode addItemsWithTitles:["route", "nat"]];
+    [buttonForwardMode setToolTip:@"Choose the forward mode for this virtual network"];
 
     [buttonForwardDevice removeAllItems];
+    [buttonForwardDevice setToolTip:@"Select the hypervisor network card you want to use for this virtual network"];
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
@@ -185,6 +195,14 @@
     [tabViewDHCPHostsItem setView:viewHostsConf];
     [tabViewDHCPHostsItem setLabel:@"DHCP Hosts"];
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
+
+    [fieldNetworkName setToolTip:@"Enter the name of the virtual network"];
+    [fieldBridgeName setToolTip:@"Enter the name of the bridge to create when this network is activated"];
+    [fieldBridgeDelay setToolTip:@"Enter the value of delay for the bridge"];
+    [fieldBridgeIP setToolTip:@"The IP address to assign to the bridge"];
+    [fieldBridgeNetmask setToolTip:@"The netmask to use for the bridge"];
+    [checkBoxSTPEnabled setToolTip:@"Activate or deactivate Spanning Tree Protocol for the bridge"];
+    [checkBoxDHCPEnabled setToolTip:@"Enable DHCP for this virtual network"];
 }
 
 

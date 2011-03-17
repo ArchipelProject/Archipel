@@ -132,30 +132,34 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(addVirtualMachine:)];
+    [_plusButton setToolTip:@"Ask hypervisor to create a new virtual machine"];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(deleteVirtualMachine:)];
+    [_minusButton setToolTip:@"Ask hypervisor to completely destroy all selected virtual machine"];
 
     _addSubscriptionButton = [CPButtonBar plusButton];
     [_addSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-add.png"] size:CPSizeMake(16, 16)]];
     [_addSubscriptionButton setTarget:self];
     [_addSubscriptionButton setAction:@selector(openAddSubscriptionWindow:)];
+    [_addSubscriptionButton setToolTip:@"Ask the virtual machine to add in its contact a user"];
 
     _removeSubscriptionButton = [CPButtonBar plusButton];
     [_removeSubscriptionButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/subscription-remove.png"] size:CPSizeMake(16, 16)]];
     [_removeSubscriptionButton setTarget:self];
     [_removeSubscriptionButton setAction:@selector(openRemoveSubscriptionWindow:)];
-
-
-    [_minusButton setEnabled:NO];
-    [_addSubscriptionButton setEnabled:NO];
-    [_removeSubscriptionButton setEnabled:NO];
+    [_removeSubscriptionButton setToolTip:@"Ask the virtual machine to remove a user from its contact"];
 
     _cloneButton = [CPButtonBar minusButton];
     [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/branch.png"] size:CPSizeMake(16, 16)]];
     [_cloneButton setTarget:self];
     [_cloneButton setAction:@selector(cloneVirtualMachine:)];
+    [_cloneButton setToolTip:@"Create a clone virtual machine from the selected one"];
+
+    [_minusButton setEnabled:NO];
+    [_addSubscriptionButton setEnabled:NO];
+    [_removeSubscriptionButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _cloneButton, _addSubscriptionButton, _removeSubscriptionButton]];
 

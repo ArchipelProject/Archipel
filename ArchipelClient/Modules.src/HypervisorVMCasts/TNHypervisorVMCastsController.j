@@ -139,25 +139,31 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVMCastURLWindow:)];
+    [_plusButton setToolTip:@"Register to a new VMCast feed"];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(remove:)];
+    [_minusButton setToolTip:@"Unregister from a VMCast feed"];
 
     _downloadButton = [CPButtonBar plusButton];
     [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
+    [_downloadButton setToolTip:@"Start to download selected appliance"];
 
     _downloadQueueButton = [CPButtonBar plusButton];
     [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
+    [_downloadQueueButton setToolTip:@"Show all current downloads"];
 
     [_minusButton setEnabled:NO];
     [_downloadButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
+
+    [checkBoxOnlyInstalled setToolTip:@"If checked, it will only displayed installed appliances"];
 }
 
 #pragma mark -
@@ -678,11 +684,13 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
 
             [self setControl:_downloadButton enabledAccordingToPermission:@"vmcasting_downloadappliance" specialCondition:conditionNotInstalled];
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance" specialCondition:conditionInstalled];
+            [_minusButton setToolTip:@"Delete the selected appliance from the hypervisor repository"];
         }
         else if ([object class] == TNVMCastSource)
         {
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"];
             [_downloadButton setEnabled:NO]
+            [_minusButton setToolTip:@"Unregister from a VMCast feed"];
         }
     }
 }

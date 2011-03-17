@@ -160,25 +160,30 @@ TNArchipelTypeHypervisorNetworkGetNics      = @"getnics";
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(addNetwork:)];
+    [_plusButton setToolTip:@"Create a new network"];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(delNetwork:)];
+    [_minusButton setToolTip:@"Delete selected networks"];
 
     _activateButton = [CPButtonBar plusButton];
     [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(16, 16)]];
     [_activateButton setTarget:self];
     [_activateButton setAction:@selector(activateNetwork:)];
+    [_activateButton setToolTip:@"Activate selected networks"];
 
     _deactivateButton = [CPButtonBar plusButton];
     [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CPSizeMake(16, 16)]];
     [_deactivateButton setTarget:self];
     [_deactivateButton setAction:@selector(deactivateNetwork:)];
+    [_deactivateButton setToolTip:@"Deactivate selected networks"];
 
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNetwork:)];
+    [_editButton setToolTip:@"Open configuration panel for selected network"];
 
     [_minusButton setEnabled:NO];
     [_activateButton setEnabled:NO];
