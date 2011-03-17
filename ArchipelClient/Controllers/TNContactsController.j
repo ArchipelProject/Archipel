@@ -42,6 +42,10 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
 
+    [newContactName setToolTip:@"The display name of the new contact"];
+    [newContactGroup setToolTip:@"The group in which the contact will be added"];
+    [newContactJID setToolTip:@"The XMPP JID of the contact"];
+
     [mainWindow setDefaultButton:buttonAdd];
 }
 

@@ -72,7 +72,6 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     [mainView addSubview:_tokenFieldTags];
 
-
     _buttonSave = [CPButton buttonWithTitle:@" Tag "];
     [_buttonSave setBezelStyle:CPRoundedBezelStyle];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
@@ -87,6 +86,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didRetrieveSubscriptions:) name:TNStrophePubSubSubscriptionsRetrievedNotification object:nil];
 
     [[TNPermissionsCenter defaultCenter] addDelegate:self];
+
+    [_buttonSave setToolTip:@"Send the current tags to the entity"];
 }
 
 

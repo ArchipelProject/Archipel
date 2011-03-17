@@ -91,6 +91,11 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
 
+    [JID setToolTip:@"The JID to use to connect. It is always formatted like user@domain.com"];
+    [password setToolTip:@"The password associated to your XMPP account"];
+    [boshService setToolTip:@"The service BOSH (XMPP over HTTP) to use"];
+    [credentialRemember setToolTip:@"Turn this ON to remember your credential and connect automatically"];
+
     [connectButton setBezelStyle:CPRoundedBezelStyle];
     [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
     _isConnecting = NO;

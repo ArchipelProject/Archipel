@@ -46,6 +46,7 @@
 
 #pragma mark -
 #pragma mark Initialization
+
 /*! Initialization at CIB awaking
 */
 - (void)awakeFromCib
@@ -62,6 +63,12 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
 
     [mainWindow setDefaultButton:buttonSave];
+
+    [fieldBOSHResource setToolTip:@"The resource to use"];
+    [fieldModuleLoadingDelay setToolTip:@"Delay before loading a module. This avoid to load server with stanzas"];
+    [fieldWelcomePageUrl setToolTip:@"The URL of the welcome page"];
+    [switchUseAnimations setToolTip:@"Turn this ON to activate eye candy animation. Turn it off to gain performances"];
+    [buttonDebugLevel setToolTip:@"Set the log level of the client. The more verbose, the less performance."]
 }
 
 

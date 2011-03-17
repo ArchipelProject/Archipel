@@ -321,6 +321,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
+    [filterField setToolTip:@"Filter contacts by name or tags"];
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
@@ -433,14 +434,17 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
     [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
     [plusButton setMenu:plusMenu];
+    [plusButton setToolTip:@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user."];
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
     [minusButton setAction:@selector(toogleRemoveEntity:)];
+    [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
 
     [_hideButton setTarget:self];
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
+    [_hideButton setToolTip:@"Display or hide the properties view"];
 
     var buttons = [CPArray array];
 
@@ -463,6 +467,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [labelCurrentUser setAlignment:CPRightTextAlignment];
     [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
+    [labelCurrentUser setToolTip:@"The current logged account"];
 
     /* about window */
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
@@ -645,6 +650,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
         statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
 
+    [statusSelector setToolTip:@"Update your current XMPP status"];
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
     [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
     [statusSelector addItem:availableItem];
@@ -686,6 +692,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
 
+    [_userAvatarButton setToolTip:@"Change your current avatar. This picture will be visible by all your contacts"];
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
     [_userAvatarButton setBackgroundColor:[CPColor blackColor]];

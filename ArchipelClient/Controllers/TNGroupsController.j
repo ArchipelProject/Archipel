@@ -40,6 +40,8 @@
 */
 - (void)awakeFromCib
 {
+    [newGroupName setToolTip:@"The name of the new group"];
+
     [mainWindow setDefaultButton:buttonAdd];
 }
 
