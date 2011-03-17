@@ -158,6 +158,18 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
     [sliderScaling setContinuous:YES];
     [sliderScaling setMinValue:1];
     [sliderScaling setMaxValue:200];
+
+    [buttonGetPasteBoard setToolTip:@"Get the distant pasteboard (not implemented)"];
+    [buttonSendPasteBoard setToolTip:@"Send local pasteboard to the distant one (not implemented)"];
+    [buttonSendCtrlAtlDel setToolTip:@"Send the CTRL+ALT+DEL key combinaison"];
+    [buttonDirectURL setToolTip:@"Open the virtual screen in a new window"];
+    [buttonZoomFitToWindow setToolTip:@"Make the screen fit the current window"];
+    [buttonZoomReset setToolTip:@"Reset the zoom"];
+    [sliderScaling setToolTip:@"Adjust zoom"];
+
+    [fieldPreferencesCheckRate setToolTip:@"Set the VNC check rate value"];
+    [fieldPreferencesFBURefreshRate setToolTip:@"Set the VNC FBU refresg rate value"];
+    [switchPreferencesPreferSSL setToolTip:@"Prefer SSL connection if possible"];
 }
 
 

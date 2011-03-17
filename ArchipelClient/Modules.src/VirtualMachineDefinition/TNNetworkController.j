@@ -57,6 +57,10 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
 
     [buttonModel addItemsWithTitles:TNArchipelNICModels];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
+
+    [buttonSource setToolTip:@"Set the source to use"];
+    [buttonModel setToolTip:@"Set the model of the card"];
+    [fieldMac setToolTip:@"Set the MAC address of the card"];
 }
 
 
@@ -75,9 +79,13 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
         {
             case @"network":
                     [_delegate setControl:radio enabledAccordingToPermission:@"network_getnames"];
+                    if (![radio toolTip])
+                        [radio setToolTip:@"Use a activated hypervisor's network"];
                     break;
             case @"bridge":
                     [_delegate setControl:radio enabledAccordingToPermission:@"network_bridges"];
+                    if (![radio toolTip])
+                        [radio setToolTip:@"Use a hypervisor's bridge"];
                     break;
         }
     }

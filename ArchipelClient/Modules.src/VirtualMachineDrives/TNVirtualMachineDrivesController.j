@@ -166,21 +166,29 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     _plusButton  = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewDiskWindow:)];
+    [_plusButton setToolTip:@"Create a new virtual drive"];
 
     _minusButton  = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(removeDisk:)];
+    [_minusButton setEnabled:NO];
+    [_minusButton setToolTip:@"Delete selected virtual drives"];
 
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(openRenamePanel:)];
-
     [_editButton setEnabled:NO];
-    [_minusButton setEnabled:NO];
+    [_editButton setToolTip:@"Edit selected virtual drive"];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
 
+    [fieldEditDiskName setToolTip:@"Set the name of the virtual drive"];
+    [buttonEditDiskFormat setToolTip:@"Choose the format of the virtual drive"];
+    [fieldNewDiskName setToolTip:@"Set the name of the new virtual drive"];
+    [fieldNewDiskSize setToolTip:@"Set the size of the new virtual drive"];
+    [buttonNewDiskFormat setToolTip:@"Set the format of the new virtual drive"];
+    [buttonNewDiskSizeUnit setToolTip:@"Set the unit of size for the new virtual drive"];
 }
 
 

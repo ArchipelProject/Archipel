@@ -265,6 +265,13 @@ TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_"
 
     [filterLogField setTarget:_datasourceLogs];
     [filterLogField setAction:@selector(filterObjects:)];
+
+    [fieldPreferencesAutoRefresh setToolTip:@"Set the delay between asking hypervisor statistics"];
+    [fieldPreferencesMaxItems setToolTip:@"Set the max number of statistic entries to fetch"];
+    [fieldPreferencesMaxLogEntries setToolTip:@"Set the max number of log item to fetch"];
+    [switchPreferencesShowColunmMethod setToolTip:@"Display the method column in the log table"];
+    [switchPreferencesShowColunmFile setToolTip:@"Display the file column in the log table"];
+    [switchPreferencesAutoRefresh setToolTip:@"Activate the statistics auto fetching"];
 }
 
 

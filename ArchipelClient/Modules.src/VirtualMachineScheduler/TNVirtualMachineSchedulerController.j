@@ -123,10 +123,12 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
+    [_buttonSchedule setToolTip:@"Add a new scheduled action"];
 
     [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [_buttonUnschedule setTarget:self];
     [_buttonUnschedule setAction:@selector(unschedule:)];
+    [_buttonUnschedule setToolTip:@"Remove selected scheduled action"];
 
     [buttonBarJobs setButtons:[_buttonSchedule, _buttonUnschedule]];
 
@@ -158,6 +160,8 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     [stepperNewRecurrentJobDay setMinValue:1];
     [stepperNewRecurrentJobHour setMaxValue:23];
     [stepperNewRecurrentJobHour setMinValue:0];
+
+
 }
 
 

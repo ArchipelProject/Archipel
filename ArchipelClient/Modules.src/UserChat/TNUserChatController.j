@@ -107,6 +107,11 @@
     _soundMessage = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.wav"] byReference:NO];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
+
+    [buttonClear setToolTip:@"Clear all the content of the chat history"];
+    [buttonDetach setToolTip:@"Open chat in a new window"];
+
+    [fieldPreferencesMaxChatMessage setToolTip:@"Set the max number of message to store. High value can decrease performances"];
 }
 
 

@@ -223,35 +223,45 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
     _buttonBezelSelected        = [CPColor colorWithPatternImage:centerBezelSelected];
 
-    _plusButtonDrives   = [CPButtonBar plusButton];
-    _minusButtonDrives  = [CPButtonBar minusButton];
-    _editButtonDrives   = [CPButtonBar plusButton];
-
+    _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
+    [_plusButtonDrives setToolTip:@"Add a virtual drive"];
+
+    _minusButtonDrives = [CPButtonBar minusButton];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
+    [_minusButtonDrives setEnabled:NO];
+    [_minusButtonDrives setToolTip:@"Delete selected drives"];
+
+    _editButtonDrives = [CPButtonBar plusButton];
     [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
-    [_minusButtonDrives setEnabled:NO];
     [_editButtonDrives setEnabled:NO];
+    [_editButtonDrives setToolTip:@"Edit selected drive"];
+
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
 
 
-    _plusButtonNics     = [CPButtonBar plusButton];
-    _minusButtonNics    = [CPButtonBar minusButton];
-    _editButtonNics     = [CPButtonBar plusButton];
-
+    _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
+    [_plusButtonNics setToolTip:@"Add a virtual network card"];
+
+    _minusButtonNics = [CPButtonBar minusButton];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
+    [_minusButtonNics setEnabled:NO];
+    [_minusButtonNics setToolTip:@"Remove selected virtual network card"];
+
+    _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editNetworkCard:)];
-    [_minusButtonNics setEnabled:NO];
     [_editButtonNics setEnabled:NO];
+    [_editButtonNics setToolTip:@"Edit selected virtual network card"];
+
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
 
 
@@ -456,9 +466,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [switchACPI setAction:@selector(makeDefinitionEdited:)];
     [switchPAE setTarget:self];
     [switchPAE setAction:@selector(makeDefinitionEdited:)];
+    [switchAPIC setToolTip:@"Enable or disable PAE"];
+
     [switchHugePages setTarget:self];
     [switchHugePages setAction:@selector(makeDefinitionEdited:)];
-
+    [switchHugePages setToolTip:@"Enable or disable usage of huge pages backed memory"];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:4];
@@ -468,10 +480,42 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
     [stepperNumberCPUs setAction:@selector(makeDefinitionEdited:)];
+    [stepperNumberCPUs setToolTip:@"Set the number of virtual CPUs"];
 
     _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
     _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16.0, 16.0)];
     [buttonDefine setEnabled:NO];
+    [buttonDefine setToolTip:@"Save changes"];
+
+    [buttonBoot setToolTip:@"Set boot origin"];
+    [buttonClocks setToolTip:@"Set the mode of the virtual machine clock"];
+    [buttonDomainType setToolTip:@"Set the domain type"];
+    [buttonGuests setToolTip:@"Set the guest type"];
+    [buttonInputType setToolTip:@"Set the input device"];
+    [buttonMachines setToolTip:@"Set the domain machine type"];
+    [buttonOnCrash setToolTip:@"Set what to do when virtual machine crashes"];
+    [buttonOnPowerOff setToolTip:@"Set what to do when virtual machine is stopped"];
+    [buttonOnReboot setToolTip:@"Set what to do when virtual machine is rebooted"];
+    [buttonUndefine setToolTip:@"Undefine the domain"];
+    [buttonVNCKeymap setToolTip:@"Set the VNC keymap to use"];
+    [switchPAE setToolTip:@"Enable usage of PAE"];
+    [switchAPIC setToolTip:@"Enable usage of APIC"];
+    [switchACPI setToolTip:@"Enable usage of ACPI (allow to use 'shutdown' control)"];
+    [fieldMemory setToolTip:@"Set amount of memort (in Mb)"];
+    [fieldVNCPassword setToolTip:@"Set the VNC password (no password if blank)"];
+    [buttonPreferencesBoot setToolTip:@"Set the default boot device for new domains"];
+    [buttonPreferencesClockOffset setToolTip:@"Set the default clock offset for new domains"];
+    [buttonPreferencesInput setToolTip:@"Set the default input type for new domains"];
+    [buttonPreferencesNumberOfCPUs setToolTip:@"Set the default number of CPUs for new domains"];
+    [buttonPreferencesOnCrash setToolTip:@"Set the default behaviour on crash for new domains"];
+    [buttonPreferencesOnPowerOff setToolTip:@"Set the default behaviour on power off for new domains"];
+    [buttonPreferencesOnReboot setToolTip:@"Set the default behaviour on reboot for new domains"];
+    [buttonPreferencesVNCKeyMap setToolTip:@"Set the default VNC keymap for new domains"];
+    [fieldPreferencesDomainType setToolTip:@"Set the default domain type for new domains"];
+    [fieldPreferencesGuest setToolTip:@"Set the default guest for new domains"];
+    [fieldPreferencesMachine setToolTip:@"Set the default machine type for new domains"];
+    [fieldPreferencesMemory setToolTip:@"Set the default amount of memory for new domains"];
+    [switchPreferencesHugePages setToolTip:@"Set the default usage of huge pages for new domains"];
 }
 
 

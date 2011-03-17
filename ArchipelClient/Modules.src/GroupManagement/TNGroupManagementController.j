@@ -121,26 +121,32 @@ TNArchipelActionTypeReboot                      = @"Reboot";
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
+    [createButton setToolTip:@"Start all selected virtual machines"];
 
     [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
+    [shutdownButton setToolTip:@"Shutdown all selected virtual machines"];
 
     [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
+    [destroyButton setToolTip:@"Destroy all selected virtual machines"];
 
     [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
+    [suspendButton setToolTip:@"Pause all selected virtual machines"];
 
     [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
+    [resumeButton setToolTip:@"Resume all selected virtual machines"];
 
     [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
+    [rebootButton setToolTip:@"Reboot all selected virtual machines (not supported by all hypervisors)"];
 
     [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton]];
 

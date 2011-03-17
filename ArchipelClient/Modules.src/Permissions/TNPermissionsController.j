@@ -123,16 +123,19 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
     [_saveButton setTarget:self];
     [_saveButton setAction:@selector(changePermissionsState:)];
+    [_saveButton setToolTip:@"Save the current set of permissions"];
 
     _saveAsTemplateButton = [CPButtonBar plusButton];
     [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CPSizeMake(16, 16)]];
     [_saveAsTemplateButton setTarget:rolesController];
     [_saveAsTemplateButton setAction:@selector(openNewTemplateWindow:)];
+    [_saveAsTemplateButton setToolTip:@"Save the current set of permissions as a role"];
 
     _applyRoleButton = [CPButtonBar plusButton];
     [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CPSizeMake(16, 16)]];
     [_applyRoleButton setTarget:self];
     [_applyRoleButton setAction:@selector(openRolesWindow:)];
+    [_applyRoleButton setToolTip:@"Select a role as permissions template"];
 
     [buttonBarControl setButtons:[_saveButton, _saveAsTemplateButton, _applyRoleButton]];
 
@@ -144,6 +147,8 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
     [buttonUser setAction:@selector(changeCurrentUser:)];
 
     [rolesController setDelegate:self];
+
+    [buttonUser setToolTip:@"Manage the permission of the selected user"];
 }
 
 

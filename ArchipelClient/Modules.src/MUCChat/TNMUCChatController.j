@@ -114,6 +114,8 @@
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"], @"TNArchipelMUCDefaultRoom"
     ]];
 
+    [fieldPreferencesDefaultService setToolTip:@"set the conference server to use"];
+    [fieldPreferencesDefaultRoom setToolTip:@"set the room to connect to"];
 }
 
 

@@ -148,19 +148,21 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_plusButton setTarget:self];
     [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
+    [_plusButton setToolTip:@"Take a new snapshot"];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CPSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
+    [_minusButton setToolTip:@"Delete selected snapshot"];
+    [_minusButton setEnabled:NO];
 
     _revertButton = [CPButtonBar minusButton];
     [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CPSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
-
+    [_revertButton setToolTip:@"Revert virtual machine to the state stored in selected snapshot"];
     [_revertButton setEnabled:NO];
-    [_minusButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];
 }

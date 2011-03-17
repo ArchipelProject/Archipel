@@ -86,6 +86,11 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonType addItemsWithTitles:TNXMLDescDriveTypes];
     [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
+
+    [buttonBus setToolTip:@"Set the bus to use for the drive"];
+    [buttonSource setToolTip:@"Set the source to use for the drive"];
+    [buttonTarget setToolTip:@"Set the target to use for the drive"];
+    [buttonTarget setToolTip:@"Set the type of drive the drive"];
 }
 
 
@@ -104,9 +109,13 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         {
             case @"hard drive":
                     [_delegate setControl:radio enabledAccordingToPermission:@"drives_get"];
+                    if (![radio toolTip])
+                        [radio setToolTip:@"Define the drive as a disk"];
                     break;
             case @"cd/dvd":
-                [_delegate setControl:radio enabledAccordingToPermission:@"drives_getiso"];
+                    [_delegate setControl:radio enabledAccordingToPermission:@"drives_getiso"];
+                    if (![radio toolTip])
+                        [radio setToolTip:@"Define the drive as a CD/DVD"];
                     break;
         }
     }

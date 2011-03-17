@@ -102,11 +102,13 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
     [_addButton setTarget:self];
     [_addButton setAction:@selector(openRegisterUserWindow:)];
+    [_addButton setToolTip:@"Create a new user account"];
 
     _deleteButton = [CPButtonBar plusButton];
     [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteButton setTarget:self];
     [_deleteButton setAction:@selector(unregisterUser:)];
+    [_deleteButton setToolTip:@"Delete selected user accounts"];
 
     [buttonBarControl setButtons:[_addButton, _deleteButton]];
 

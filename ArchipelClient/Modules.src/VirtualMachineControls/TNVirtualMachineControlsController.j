@@ -136,12 +136,14 @@ TNArchipelTransportBarReboot    = 4;
     [fieldJID setSelectable:YES];
     [sliderMemory setSendsActionOnEndEditing:YES];
     [sliderMemory setContinuous:NO];
+    [sliderMemory setToolTip:@"Adjust the maximum amout of memory of the VM (only when running)"];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
+    [stepperCPU setToolTip:@"Adjust the number of virtual CPUs of the VM (only when running)"];
 
     _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
@@ -165,6 +167,7 @@ TNArchipelTransportBarReboot    = 4;
 
     [fieldJID setSelectable:YES];
 
+    [buttonBarTransport setToolTip:@"Control the virtual machine"];
     [buttonBarTransport setSegmentCount:5];
     [buttonBarTransport setLabel:@"Play" forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
@@ -237,18 +240,25 @@ TNArchipelTransportBarReboot    = 4;
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
+    [_migrateButton setToolTip:@"Trigger a live migration from current hypervisor to selected one"];
 
     [buttonBarMigration setButtons:[_migrateButton]];
 
-    //TNSwitch
-    // switchAutoStart = [TNSwitch switchWithFrame:CGRectMake(653, 130, 77, 24)];
-    // [[self view] addSubview:switchAutoStart];
-
     [switchAutoStart setTarget:self];
     [switchAutoStart setAction:@selector(setAutostart:)];
+    [switchAutoStart setToolTip:@"If ON, the virtual machine will start with hypervisor"];
 
     [switchPreventOOMKiller setTarget:self];
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
+    [switchPreventOOMKiller setToolTip:@"If ON, the virtual machine process will never been destroyed by OOM killer"];
+
+    [fieldInfoMem setToolTip:@"Current amount of memory"];
+    [fieldInfoConsumedCPU setToolTip:@"Total of consumed physical CPU time"];
+    [fieldInfoState setToolTip:@"Current state of the virtual machine"];
+    [fieldOOMScore setToolTip:@"Current OOM score for the virtual machine"];
+    [fieldOOMAdjust setToolTip:@"Current OOM adjust value of the virtual machine"];
+    [buttonKill setToolTip:@"Will definitly delete the virtual machine, and all it's informations"];
+    [fieldPreferencesMaxCPUs setToolTip:@"Max number of virtual CPUs"];
 }
 
 
