@@ -23,11 +23,11 @@
 */
 @implementation TNLogEntry : CPObject
 {
-    CPString    _level      @accessors(setter=setLevel:);
     CPString    _date       @accessors(property=date);
     CPString    _file       @accessors(property=file);
+    CPString    _level      @accessors(setter=setLevel:);
+    CPString    _message    @accessors(setter=setMessage:);
     CPString    _method     @accessors(property=method);
-    CPString    _message    @accessors(property=message);
 }
 
 
@@ -53,23 +53,45 @@
     return log;
 }
 
+#pragma mark -
+#pragma mark Utilities
+
+/*! strip terminal colors chars
+    @param aString the string to strip
+    @return stripped string
+*/
+- (CPString)stripTerminalColors:(CPString)aString
+{
+    return aString.replace(new RegExp('\\[[0-9]+m', "g"), "");
+}
+
 
 #pragma mark -
 #pragma mark Accessors
-/*! will clean up log message from eventual colors
+
+/*! will clean up log level from eventual colors
     @return cleaned level string
 */
 - (CPString)level
 {
-    var ret = _level;
-    ret = ret.replace("[0m", "");
-    ret = ret.replace("[31m", "");
-    ret = ret.replace("[32m", "");
-    ret = ret.replace("[33m", "");
-    ret = ret.replace("[35m", "");
-    ret = ret.replace("[37m", "");
+    return [self stripTerminalColors:_level];
+}
 
-    return ret;
+/*! will clean up log message from eventual colors
+    @return cleaned message string
+*/
+- (CPString)message
+{
+    _message = _message.replace("DEBUG", "");
+    _message = _message.replace("INFO", "");
+    _message = _message.replace("WARNING", "");
+    _message = _message.replace("ERROR", "");
+    _message = _message.replace("CRITICAL", "");
+    _message = _message.replace(new RegExp('[0-9]+-[0-9]+-[0-9]+ [0-9]+:[0-9]+:[0-9]+', 'g'), '');
+    _message = _message.replace('::::', '');
+    _message = _message.replace('::', ' ');
+
+    return [self stripTerminalColors:_message];
 }
 
 @end
