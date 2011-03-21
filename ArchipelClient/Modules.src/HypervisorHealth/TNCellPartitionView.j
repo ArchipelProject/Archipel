@@ -71,6 +71,37 @@
     return self;
 }
 
+#pragma mark -
+#pragma mark Utilities
+
+/*! format a size string from a given integer size in Kb
+    @param  aSize integer containing the size in Kb.
+    @return CPString containing "XX Unit" where Unit can be Kb, Mb or Gb
+*/
+- (CPString)formatSize:(int)aSize
+{
+    var usedKind = @"Gb";
+
+    if (Math.round(aSize / 1024 / 1024) == 0)
+    {
+        aSize = Math.round(aSize / 1024);
+        usedKind = @"Mb";
+        if (aSize == 0)
+        {
+            aSize = Math.round(aSize / 1024);
+            usedKind = @"Kb";
+        }
+    }
+    else
+        aSize = Math.round(aSize / 1024 / 1024);
+
+    return @"" + aSize + usedKind + @"";
+}
+
+
+#pragma mark -
+#pragma mark CPColumn view protocol
+
 /*! set the object value of the cell
     @params aValue the current value
 */
@@ -81,10 +112,11 @@
     [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
     [_nameLabel sizeToFit];
 
-    [_usedLabel setStringValue:@"Used: " + Math.round([aContent objectForKey:@"used"] / 1024 / 1024) + @"Gb"];
+
+    [_usedLabel setStringValue:@"Used: " + [self formatSize:[[aContent objectForKey:@"used"] intValue]]];
     [_usedLabel sizeToFit];
 
-    [_availableLabel setStringValue:@"Available: " + Math.round([aContent objectForKey:@"available"] / 1024 / 1024) + @"Gb"];
+    [_availableLabel setStringValue:@"Available: " + [self formatSize:[[aContent objectForKey:@"available"] intValue]]];
     [_availableLabel sizeToFit];
 }
 
