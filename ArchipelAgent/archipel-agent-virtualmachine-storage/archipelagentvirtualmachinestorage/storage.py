@@ -190,7 +190,7 @@ class TNStorageManagement (TNArchipelPlugin):
             self.entity.define(xmpp.simplexml.NodeBuilder(data=descriptionString).getDom())
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
-            self.entity.log.info("convertion of  created")
+            self.entity.log.info("disk as been converted from %s to %s" % (path, disk_path))
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
         except Exception as ex:
