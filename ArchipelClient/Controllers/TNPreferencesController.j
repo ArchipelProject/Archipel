@@ -58,7 +58,7 @@
     [tabViewMain addTabViewItem:tabViewItemPreferencesGeneral];
 
     [buttonDebugLevel removeAllItems];
-    [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warning", @"error", @"critical"]];
+    [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warn", @"error", @"critical"]];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
 

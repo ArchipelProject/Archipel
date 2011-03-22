@@ -198,9 +198,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnReboot"], @"TNDescDefaultOnReboot",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"], @"TNDescDefaultOnCrash",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"], @"TNDescDefaultClockOffset",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultPAE"], @"TNDescDefaultPAE",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultACPI"], @"TNDescDefaultACPI",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultAPIC"], @"TNDescDefaultAPIC",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"], @"TNDescDefaultHugePages",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"], @"TNDescDefaultDomainType",
@@ -628,7 +625,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [defaults setObject:[fieldPreferencesDomainType stringValue] forKey:@"TNDescDefaultDomainType"];
     [defaults setObject:[fieldPreferencesGuest stringValue] forKey:@"TNDescDefaultGuest"];
     [defaults setObject:[fieldPreferencesMachine stringValue] forKey:@"TNDescDefaultMachine"];
-    [defaults setObject:[fieldPreferencesMemory intValue] forKey:@"TNDescDefaultMemory"];
+    [defaults setObject:[fieldPreferencesMemory stringValue] forKey:@"TNDescDefaultMemory"];
 }
 
 /*! called when users gets preferences
@@ -648,7 +645,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [fieldPreferencesDomainType setStringValue:[defaults objectForKey:@"TNDescDefaultDomainType"]];
     [fieldPreferencesGuest setStringValue:[defaults objectForKey:@"TNDescDefaultGuest"]];
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
-    [fieldPreferencesMemory setIntValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
+    [fieldPreferencesMemory setStringValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
     [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
 }
 
@@ -855,7 +852,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 {
     var defaults    = [CPUserDefaults standardUserDefaults],
         cpu         = [defaults integerForKey:@"TNDescDefaultNumberCPU"],
-        mem         = [defaults integerForKey:@"TNDescDefaultMemory"],
+        mem         = [defaults objectForKey:@"TNDescDefaultMemory"],
         vnck        = [defaults objectForKey:@"TNDescDefaultVNCKeymap"],
         opo         = [defaults objectForKey:@"TNDescDefaultOnPowerOff"],
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],
@@ -868,7 +865,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         input       = [defaults objectForKey:@"TNDescDefaultInputType"];
 
     [stepperNumberCPUs setDoubleValue:cpu];
-    [fieldMemory setStringValue:@""];
+    [fieldMemory setStringValue:mem];
     [fieldVNCPassword setStringValue:@""];
     [fieldStringXMLDesc setStringValue:@""];
     [buttonVNCKeymap selectItemWithTitle:vnck];
