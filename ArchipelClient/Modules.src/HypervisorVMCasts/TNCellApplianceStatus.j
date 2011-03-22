@@ -41,7 +41,7 @@
     if (self = [super init])
     {
         _imageStatus = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 16, 16)];
-        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 2, 200, 100)];
+        _fieldStatus = [[CPTextField alloc] initWithFrame:CGRectMake(15, 5, 200, 100)];
 
         [self addSubview:_imageStatus];
         [self addSubview:_fieldStatus];
