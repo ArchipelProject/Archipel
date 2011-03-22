@@ -25,6 +25,7 @@
 @implementation TNDrive : CPObject
 {
     CPString _bus       @accessors(property=bus);
+    CPString _cache     @accessors(property=cache);
     CPString _device    @accessors(property=device);
     CPString _source    @accessors(property=source);
     CPString _target    @accessors(property=target);
@@ -43,7 +44,7 @@
     @param aBus the drive bus
     @return initialized TNDrive
 */
-+ (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus
++ (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus cache:(CPString)aCacheMode
 {
     var drive = [[TNDrive alloc] init];
     [drive setType:aType];
@@ -51,6 +52,7 @@
     [drive setSource:aSource];
     [drive setTarget:aTarget];
     [drive setBus:aBus];
+    [drive setCache:aCacheMode];
 
     return drive;
 }

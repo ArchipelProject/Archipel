@@ -290,7 +290,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"],
         driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"],
         driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"],
-        driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"];
+        driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"],
+        driveColumnCache = [[CPTableColumn alloc] initWithIdentifier:@"cache"];
 
     [[driveColumnType headerView] setStringValue:@"Type"];
     [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
@@ -308,14 +309,18 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [[driveColumnBus headerView] setStringValue:@"Bus"];
     [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
 
+    [[driveColumnCache headerView] setStringValue:@"Cache mode"];
+    [driveColumnCache setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"cache" ascending:YES]];
+
     [_tableDrives addTableColumn:driveColumnType];
     [_tableDrives addTableColumn:driveColumnDevice];
     [_tableDrives addTableColumn:driveColumnTarget];
     [_tableDrives addTableColumn:driveColumnBus];
+    [_tableDrives addTableColumn:driveColumnCache];
     [_tableDrives addTableColumn:driveColumnSource];
 
     [_drivesDatasource setTable:_tableDrives];
-    [_drivesDatasource setSearchableKeyPaths:[@"type", @"device", @"target", @"source", @"bus"]];
+    [_drivesDatasource setSearchableKeyPaths:[@"type", @"device", @"target", @"source", @"bus", @"cache"]];
 
     [_tableDrives setDataSource:_drivesDatasource];
 
@@ -1188,7 +1193,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide"];
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:@"none"];
 
     [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
@@ -1604,7 +1609,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"],
             iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"],
             iSource     = (iType == @"file") ? [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"] : [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"dev"],
-            newDrive    =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus];
+            iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : @"none",
+            newDrive    =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus cache:iCache];
 
         [_drivesDatasource addObject:newDrive];
     }
@@ -1816,7 +1822,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! FIXME!
         {
-            [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2"}];
+            [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2", "cache": [drive cache]}];
             [stanza up];
         }
         if ([drive type] == @"file")

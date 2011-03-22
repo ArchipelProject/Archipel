@@ -50,6 +50,12 @@ TNXMLDescDiskBusSCSI    = @"scsi";
 TNXMLDescDiskBusVIRTIO  = @"virtio";
 TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescDiskBusVIRTIO];
 
+TNXMLDescDiskCacheDefault       = @"default";
+TNXMLDescDiskCacheNone          = @"none";
+TNXMLDescDiskCacheWritethrough  = @"writethrough";
+TNXMLDescDiskCacheWriteback     = @"writeback";
+TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCacheNone, TNXMLDescDiskCacheWritethrough, TNXMLDescDiskCacheWriteback];
+
 
 /*! @ingroup virtualmachinedefinition
     this is the virtual drive editor
@@ -61,6 +67,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonTarget;
     @outlet CPPopUpButton   buttonType;
+    @outlet CPPopUpButton   buttonCache;
     @outlet CPRadioGroup    radioDriveType;
     @outlet CPTextField     fieldDevicePath;
 
@@ -82,15 +89,18 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     [buttonTarget removeAllItems];
     [buttonBus removeAllItems];
     [buttonSource removeAllItems];
+    [buttonCache removeAllItems];
 
     [buttonType addItemsWithTitles:TNXMLDescDriveTypes];
     [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
+    [buttonCache addItemsWithTitles:TNXMLDescDiskCaches];
 
     [buttonBus setToolTip:@"Set the bus to use for the drive"];
     [buttonSource setToolTip:@"Set the source to use for the drive"];
     [buttonTarget setToolTip:@"Set the target to use for the drive"];
-    [buttonTarget setToolTip:@"Set the type of drive the drive"];
+    [buttonTarget setToolTip:@"Set the type of the drive"];
+    [buttonCache setToolTip:@"Set the cache mode the drive"];
 }
 
 
@@ -146,8 +156,8 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
         [self getISOsInfo];
 
 
+    [buttonCache selectItemWithTitle:[_drive cache]];
     [buttonType selectItemWithTitle:[_drive type]];
-
     [buttonType selectItemWithTitle:[_drive type]]
     [self driveTypeDidChange:nil];
 
@@ -156,6 +166,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
     [buttonBus setTarget:self];
     [buttonBus setAction:@selector(populateTargetButton:)];
+
 
     [self populateTargetButton:nil];
 }
@@ -183,6 +194,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
     }
 
     [_drive setType:[buttonType title]];
+    [_drive setCache:[buttonCache title]];
 
     var driveType = [[radioDriveType selectedRadio] title];
 
@@ -253,7 +265,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 [buttonTarget selectItemWithTitle:@"hda"];
                 break;
         }
-
+        [buttonCache setEnabled:YES];
         [self getDisksInfo];
     }
     else
@@ -272,7 +284,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
                 [buttonTarget selectItemWithTitle:@"hdc"];
                 break;
         }
-
+        [buttonCache setEnabled:NO];
         [self getISOsInfo];
     }
 }
@@ -289,6 +301,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
         [fieldDevicePath setEnabled:YES];
         [buttonSource setEnabled:NO];
+        [buttonCache setEnabled:NO];
 
         if (aSender)
             [fieldDevicePath setStringValue:@"/dev/cdrom"];
@@ -302,6 +315,7 @@ TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescD
 
         [fieldDevicePath setEnabled:NO];
         [buttonSource setEnabled:YES];
+        [buttonCache setEnabled:YES];
 
         [fieldDevicePath setStringValue:@""];
     }
