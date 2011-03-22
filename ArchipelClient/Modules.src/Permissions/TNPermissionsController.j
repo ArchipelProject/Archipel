@@ -21,6 +21,7 @@
 @import <AppKit/AppKit.j>
 
 @import "TNRolesController.j"
+@import "TNXMPPUserDatasource.j"
 
 TNArchipelTypePermissions        = @"archipel:permissions";
 
@@ -45,14 +46,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 @implementation TNPermissionsController : TNModule
 {
     @outlet CPButtonBar             buttonBarControl;
-    @outlet CPPopUpButton           buttonUser;
     @outlet CPScrollView            scrollViewPermissions;
     @outlet CPSearchField           filterField;
     @outlet CPTextField             fieldJID                @accessors;
     @outlet CPTextField             fieldName               @accessors;
-    @outlet CPTextField             labelUser;
     @outlet CPView                  viewTableContainer;
     @outlet TNRolesController       rolesController;
+    @outlet CPScrollView            scrollViewUsers;
+    @outlet CPSplitView             splitView;
 
     CPArray                         _currentUserPermissions;
     CPButton                        _applyRoleButton;
@@ -61,6 +62,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     CPImage                         _defaultAvatar;
     CPTableView                     _tablePermissions;
     TNTableViewDataSource           _datasourcePermissions  @accessors(getter=datasourcePermissions);
+    TNXMPPUserDatasource            _datasourceUsers;
+    CPOutlineView                   _outlineViewUsers;
 }
 
 
@@ -76,7 +79,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     _currentUserPermissions = [CPArray array];
     _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
-    [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [splitView setBorderedWithHexColor:@"#C0C7D2"];
+
+    [viewTableContainer setHidden:YES];
 
     _datasourcePermissions  = [[TNTableViewDataSource alloc] init];
     _tablePermissions       = [[CPTableView alloc] initWithFrame:[scrollViewPermissions bounds]];
@@ -145,12 +150,25 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [filterField setTarget:_datasourcePermissions];
     [filterField setAction:@selector(filterObjects:)];
 
-    [buttonUser setTarget:self];
-    [buttonUser setAction:@selector(changeCurrentUser:)];
-
     [rolesController setDelegate:self];
 
-    [buttonUser setToolTip:@"Manage the permission of the selected user"];
+    [scrollViewUsers setAutohidesScrollers:YES];
+
+    _outlineViewUsers = [[CPOutlineView alloc] initWithFrame:[scrollViewUsers bounds]];
+    _datasourceUsers = [[TNXMPPUserDatasource alloc] init];
+
+    [_outlineViewUsers setCornerView:nil];
+    [_outlineViewUsers setAllowsColumnResizing:YES];
+    [_outlineViewUsers setUsesAlternatingRowBackgroundColors:YES];
+    [_outlineViewUsers setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
+    [_outlineViewUsers setDataSource:_datasourceUsers];
+    [_outlineViewUsers setBackgroundColor:[CPColor blueColor]];
+    [scrollViewUsers setDocumentView:_outlineViewUsers];
+    var columnName  = [[CPTableColumn alloc] initWithIdentifier:@"description"];
+    [[columnName headerView] setStringValue:@"Users"];
+    [_outlineViewUsers setOutlineTableColumn:columnName];
+    [_outlineViewUsers addTableColumn:columnName];
+    [_outlineViewUsers reloadData];
 }
 
 
@@ -162,6 +180,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (BOOL)willLoad
 {
     [super willLoad];
+    [_datasourceUsers flush];
+    [_outlineViewUsers setDelegate:self];
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -169,42 +189,13 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
 
-    [buttonUser removeAllItems];
-
-    var items = [CPArray array],
-        item = [[TNMenuItem alloc] init];
-    [item setTitle:@"Me"];
-    [item setObjectValue:[[TNStropheIMClient defaultClient] JID]];
-
-    [buttonUser addItem:item];
-    [buttonUser addItem:[CPMenuItem separatorItem]];
-
     for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
     {
-        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
-            item = [[TNMenuItem alloc] init],
-            img = ([contact avatar]) ? [[contact avatar] copy] : _defaultAvatar;
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
         if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
-        {
-            [img setSize:CPSizeMake(18, 18)];
-
-            [item setTitle:@"  " + [contact nickname]]; // sic..
-            [item setObjectValue:[contact JID]];
-            [item setImage:img];
-            [items addObject:item];
-        }
+            [_datasourceUsers addRosterUser:[contact JID]];
     }
-
-    var sortDescriptor  = [CPSortDescriptor sortDescriptorWithKey:@"title.uppercaseString" ascending:YES],
-        sortedItems     = [items sortedArrayUsingDescriptors:[CPArray arrayWithObject:sortDescriptor]];
-
-    for (var i = 0; i < [sortedItems count]; i++)
-        [buttonUser addItem:[sortedItems objectAtIndex:i]];
-
-    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
-
-    [buttonUser addItem:[CPMenuItem separatorItem]];
 
     [self getXMPPUsers];
 }
@@ -236,18 +227,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)permissionsChanged
 {
-    if ([self currentEntityHasPermission:@"permission_get"])
-    {
-        [buttonUser setHidden:NO];
-        [labelUser setHidden:NO];
-    }
-    else
-    {
-        [buttonUser setHidden:YES];
-        [labelUser setHidden:YES];
-        [buttonUser selectItemWithTitle:@"Me"];
+    if (![self currentEntityHasPermission:@"permission_get"])
         [self changeCurrentUser:nil];
-    }
 
     var hasSetOwn   = [self currentEntityHasPermission:@"permission_setown"],
         hasSet      = [self currentEntityHasPermission:@"permission_set"];
@@ -290,7 +271,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
-    [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
+    [self changeCurrentUser:nil];
 
     return YES;
 }
@@ -377,8 +358,34 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (IBAction)changeCurrentUser:(id)aSender
 {
-    if ([[buttonUser selectedItem] respondsToSelector:@selector(objectValue)])
-        [self getUserPermissions:[[[buttonUser selectedItem] objectValue] bare]];
+    if ([_outlineViewUsers numberOfSelectedRows] > 0)
+    {
+        var selectedIndexes = [_outlineViewUsers selectedRowIndexes],
+            object          = [_outlineViewUsers itemAtRow:[selectedIndexes firstIndex]];
+
+        if ([object class] == @"TNStropheJID")
+        {
+            [viewTableContainer setHidden:NO];
+            [self getUserPermissions:[object bare]];
+        }
+        else if (object == @"Me")
+        {
+            [viewTableContainer setHidden:NO];
+            [self getUserPermissions:[[[TNStropheIMClient defaultClient] JID] bare]];
+        }
+        else
+        {
+            [_datasourcePermissions removeAllObjects];
+            [_tablePermissions reloadData];
+            [viewTableContainer setHidden:YES];
+        }
+    }
+    else
+    {
+        [_datasourcePermissions removeAllObjects];
+        [_tablePermissions reloadData];
+        [viewTableContainer setHidden:YES];
+    }
 }
 
 /*! will open the new role window
@@ -497,7 +504,9 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 - (void)changePermissionsState
 {
     var stanza = [TNStropheStanza iqWithType:@"set"],
-        currentAction = TNArchipelTypePermissionsSetOwn;
+        currentAction = TNArchipelTypePermissionsSetOwn,
+        selectedIndexes = [_outlineViewUsers selectedRowIndexes],
+        permissionTarget = [_outlineViewUsers itemAtRow:[selectedIndexes firstIndex]];
 
     if ([self currentEntityHasPermission:@"permission_set"])
         currentAction = TNArchipelTypePermissionsSet
@@ -506,11 +515,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [stanza addChildWithName:@"archipel" andAttributes:{
         @"action": currentAction}];
 
+
     for (var i = 0; i < [_datasourcePermissions count]; i++)
     {
         var perm = [_datasourcePermissions objectAtIndex:i];
         [stanza addChildWithName:@"permission" andAttributes:{
-            @"permission_target": [[[buttonUser selectedItem] objectValue] bare],
+            @"permission_target": permissionTarget,
             @"permission_type": @"user",
             @"permission_name": [perm objectForKey:@"name"],
             @"permission_value": ([perm valueForKey:@"state"] === CPOnState),
@@ -534,7 +544,6 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 - (void)getXMPPUsers
 {
-
     var hypervisors = [CPArray array],
         servers = [CPArray array];
 
@@ -580,16 +589,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         {
             var user    = [users objectAtIndex:i],
                 jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
-                type    = [user valueForAttribute:@"type"],
-                item    = [[TNMenuItem alloc] init];
+                type    = [user valueForAttribute:@"type"];
 
             if (type == @"human")
-            {
-                [item setTitle:@"  " + jid];
-                [item setObjectValue:jid];
-                [buttonUser addItem:item];
-            }
+                [_datasourceUsers addXMPPUser:jid];
         }
+        [_outlineViewUsers expandAll];
     }
     else
     {
@@ -597,7 +602,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     }
 }
 
+
+#pragma mark -
+#pragma mark Delegate
+
+- (void)outlineViewSelectionDidChange:(CPNotification)aNotification
+{
+    [self changeCurrentUser:nil];
+}
 @end
-
-
-
