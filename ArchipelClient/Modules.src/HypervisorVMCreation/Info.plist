@@ -17,22 +17,24 @@
         <key>PluginDisplayName</key>
         <string>Virtual Machines</string>
         <key>InsertionType</key>
-		<string>tab</string>
-		<key>TabIndex</key>
-		<integer>1</integer>
-		<key>SupportedEntityTypes</key>
-		<array>
-			<string>hypervisor</string>
-		</array>
-		<key>UseModuleMenu</key>
-		<integer>1</integer>
+        <string>tab</string>
+        <key>TabIndex</key>
+        <integer>1</integer>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
+        <key>SupportedEntityTypes</key>
+        <array>
+            <string>hypervisor</string>
+        </array>
+        <key>UseModuleMenu</key>
+        <integer>1</integer>
         <key>CibName</key>
         <string>HypervisorVMCreation</string>
-        
+
         <!-- <key>MandatoryPermissions</key>
         <array>
             <string>rostervm</string>
         </array> -->
-        
+
     </dict>
 </plist>

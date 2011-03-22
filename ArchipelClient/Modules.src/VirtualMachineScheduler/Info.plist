@@ -71,15 +71,17 @@
         <key>SupportedEntityTypes</key>
         <array>
             <string>virtualmachine</string>
-			<string>hypervisor</string>
+            <string>hypervisor</string>
         </array>
         
         <!--
             If set to 0, the module will not register menu item
         -->
         <key>UseModuleMenu</key>
-		<integer>1</integer>
+        <integer>1</integer>
         
+        <key>FullscreenModule</key>
+        <integer>1</integer>
         
         <!--
             This indicate to the module loader which CIB to load.

@@ -7,13 +7,13 @@
         -->
         <key>CPBundleIdentifier</key>
         <string>org.archipelproject.HypervisorVMCasts</string>
-        
+
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
-        
+
         <key>CPBundlePackageType</key>
         <string>280N</string>
-        
+
         <key>CPBundleVersion</key>
         <string>1.0</string>
 
@@ -22,27 +22,30 @@
 
         <key>CPPrincipalClass</key>
         <string>TNHypervisorVMCastsController</string>
-        
+
         <key>PluginDisplayName</key>
         <string>VMCasts</string>
-        
+
         <key>InsertionType</key>
         <string>tab</string>
-        
+
         <key>TabIndex</key>
         <string>4</string>
-        
+
         <key>SupportedEntityTypes</key>
         <array>
             <string>hypervisor</string>
         </array>
-        
+
         <key>UseModuleMenu</key>
 		<integer>1</integer>
-        
+
+        <key>FullscreenModule</key>
+        <integer>1</integer>
+
         <key>CibName</key>
         <string>HypervisorVMCasts</string>
-        
+
         <key>MandatoryPermissions</key>
         <array>
             <string>vmcasting_get</string>

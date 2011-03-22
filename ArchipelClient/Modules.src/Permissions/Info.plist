@@ -7,51 +7,54 @@
         -->
         <key>CPBundleIdentifier</key>
         <string>org.archipelproject.permissions</string>
-        
+
         <!--
             Version of this plist file. Must be 1.0
         -->
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The package type. Must be 280N
         -->
         <key>CPBundlePackageType</key>
         <string>280N</string>
-        
+
         <!--
             The version of CPBundle. Must be 1.0
         -->
         <key>CPBundleVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The name of the bundle
         -->
         <key>CPBundleName</key>
         <string>Permissions</string>
-        
+
         <!--
             The main class of the module.
         -->
         <key>CPPrincipalClass</key>
         <string>TNPermissionsController</string>
-        
+
+        <key>FullscreenModule</key>
+        <integer>1</integer>
+
         <!--
             The plugin display name. This will be display as name of
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
         <string>Permissions</string>
-        
+
         <!--
             The desired tabulation index. If two module have the same tabIndex,
             they are displayed in the load order.
         -->
         <key>TabIndex</key>
         <integer>20</integer>
-        
+
         <!--
             The type of the module. It can be
              - tab : for tabbed modules
@@ -59,9 +62,9 @@
         -->
         <key>InsertionType</key>
         <string>tab</string>
-        
+
         <!--
-            This defines on which entity type the module have to been displayed. It 
+            This defines on which entity type the module have to been displayed. It
             can be the following :
              - virtualmachine
              - hypervisor
@@ -73,14 +76,14 @@
             <string>virtualmachine</string>
             <string>hypervisor</string>
         </array>
-        
+
         <!--
             If set to 0, the module will not register menu item
         -->
         <key>UseModuleMenu</key>
     <integer>1</integer>
-        
-        
+
+
         <!--
             This indicate to the module loader which CIB to load.
             It must be the fileName without the .cib extension

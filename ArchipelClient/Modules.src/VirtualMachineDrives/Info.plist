@@ -17,18 +17,19 @@
         <key>PluginDisplayName</key>
         <string>Disks</string>
         <key>InsertionType</key>
-		<string>tab</string>
-		<key>TabIndex</key>
-		<integer>3</integer>
-		<key>SupportedEntityTypes</key>
-		<array>
-		    <string>virtualmachine</string>
-		</array>		
-		<key>UseModuleMenu</key>
-		<integer>1</integer>
+        <string>tab</string>
+        <key>TabIndex</key>
+        <integer>3</integer>
+        <key>SupportedEntityTypes</key>
+        <array>
+            <string>virtualmachine</string>
+        </array>
+        <key>UseModuleMenu</key>
+        <integer>1</integer>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
         <key>CibName</key>
         <string>VirtualMachineDrives</string>
-        
         <key>MandatoryPermissions</key>
         <array>
             <string>drives_get</string>
