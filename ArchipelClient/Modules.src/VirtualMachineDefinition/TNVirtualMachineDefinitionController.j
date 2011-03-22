@@ -123,6 +123,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet CPPopUpButton           buttonPreferencesOnPowerOff;
     @outlet CPPopUpButton           buttonPreferencesOnReboot;
     @outlet CPPopUpButton           buttonPreferencesVNCKeyMap;
+    @outlet CPPopUpButton           buttonPreferencesDriveCache;
     @outlet CPPopUpButton           buttonVNCKeymap;
     @outlet CPScrollView            scrollViewForDrives;
     @outlet CPScrollView            scrollViewForNics;
@@ -202,7 +203,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"], @"TNDescDefaultDomainType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultGuest"], @"TNDescDefaultGuest",
-            [bundle objectForInfoDictionaryKey:@"TNDescDefaultMachine"], @"TNDescDefaultMachine"
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultMachine"], @"TNDescDefaultMachine",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"], @"TNDescDefaultDriveCacheMode"
     ]];
 
     [fieldJID setSelectable:YES];
@@ -413,6 +415,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [buttonPreferencesOnCrash removeAllItems];
     [buttonPreferencesClockOffset removeAllItems];
     [buttonPreferencesInput removeAllItems];
+    [buttonPreferencesDriveCache removeAllItems];
 
     [buttonBoot addItemsWithTitles:TNXMLDescBoots];
     [buttonPreferencesBoot addItemsWithTitles:TNXMLDescBoots];
@@ -436,6 +439,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
     [buttonPreferencesInput addItemsWithTitles:TNXMLDescInputTypes];
+
+    [buttonPreferencesDriveCache addItemsWithTitles:TNXMLDescDiskCaches];
 
     [switchPAE setOn:NO animated:YES sendAction:NO];
     [switchACPI setOn:NO animated:YES sendAction:NO];
@@ -513,6 +518,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [buttonPreferencesOnPowerOff setToolTip:@"Set the default behaviour on power off for new domains"];
     [buttonPreferencesOnReboot setToolTip:@"Set the default behaviour on reboot for new domains"];
     [buttonPreferencesVNCKeyMap setToolTip:@"Set the default VNC keymap for new domains"];
+    [buttonPreferencesDriveCache setToolTip:@"Set the default drive cache for new drives"];
     [fieldPreferencesDomainType setToolTip:@"Set the default domain type for new domains"];
     [fieldPreferencesGuest setToolTip:@"Set the default guest for new domains"];
     [fieldPreferencesMachine setToolTip:@"Set the default machine type for new domains"];
@@ -627,6 +633,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [defaults setObject:[buttonPreferencesOnPowerOff title] forKey:@"TNDescDefaultOnPowerOff"];
     [defaults setObject:[buttonPreferencesOnReboot title] forKey:@"TNDescDefaultOnReboot"];
     [defaults setObject:[buttonPreferencesVNCKeyMap title] forKey:@"TNDescDefaultVNCKeymap"];
+    [defaults setObject:[buttonPreferencesDriveCache title] forKey:@"TNDescDefaultDriveCacheMode"];
     [defaults setObject:[fieldPreferencesDomainType stringValue] forKey:@"TNDescDefaultDomainType"];
     [defaults setObject:[fieldPreferencesGuest stringValue] forKey:@"TNDescDefaultGuest"];
     [defaults setObject:[fieldPreferencesMachine stringValue] forKey:@"TNDescDefaultMachine"];
@@ -647,6 +654,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [buttonPreferencesOnPowerOff selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnPowerOff"]];
     [buttonPreferencesOnReboot selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultOnReboot"]];
     [buttonPreferencesVNCKeyMap selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultVNCKeymap"]];
+    [buttonPreferencesDriveCache selectItemWithTitle:[defaults objectForKey:@"TNDescDefaultDriveCacheMode"]];
     [fieldPreferencesDomainType setStringValue:[defaults objectForKey:@"TNDescDefaultDomainType"]];
     [fieldPreferencesGuest setStringValue:[defaults objectForKey:@"TNDescDefaultGuest"]];
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
@@ -1193,7 +1201,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:@"default"];
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:[[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDriveCacheMode"]];
 
     [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
@@ -1609,7 +1617,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"],
             iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"],
             iSource     = (iType == @"file") ? [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"] : [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"dev"],
-            iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : @"default",
+            iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : [defaults objectForKey:@"TNDescDefaultDriveCacheMode"],
             newDrive    =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus cache:iCache];
 
         [_drivesDatasource addObject:newDrive];

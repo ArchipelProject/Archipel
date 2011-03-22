@@ -59,6 +59,8 @@
         <string>kvm</string>
         <key>TNDescDefaultMachine</key>
         <string>pc-0.13</string>
+        <key>TNDescDefaultDriveCacheMode</key>
+        <string>none</string>
         <key>MandatoryPermissions</key>
         <array>
             <string>xmldesc</string>
