@@ -352,8 +352,16 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [scrollView setAutohidesScrollers:YES];
     [scrollView setBackgroundColor:[CPColor whiteColor]];
 
-    frame.size.height = [[aModule view] bounds].size.height;
-    [[aModule view] setFrame:frame];
+    if ([[aModule bundle] objectForInfoDictionaryKey:@"FullscreenModule"])
+    {
+        [[aModule view] setFrame:frame];
+        [[aModule view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
+    }
+    else
+    {
+        frame.size.height = [[aModule view] bounds].size.height;
+        [[aModule view] setFrame:frame];
+    }
 
     [newViewItem setModule:aModule];
     [newViewItem setLabel:[aModule label]];
