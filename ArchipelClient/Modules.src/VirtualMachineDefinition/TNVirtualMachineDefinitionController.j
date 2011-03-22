@@ -1193,7 +1193,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:@"none"];
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:@"default"];
 
     [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
@@ -1609,7 +1609,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             iTarget     = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"dev"],
             iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"],
             iSource     = (iType == @"file") ? [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"] : [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"dev"],
-            iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : @"none",
+            iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : @"default",
             newDrive    =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus cache:iCache];
 
         [_drivesDatasource addObject:newDrive];
