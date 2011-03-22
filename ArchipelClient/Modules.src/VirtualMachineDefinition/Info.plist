@@ -20,6 +20,8 @@
         <string>tab</string>
         <key>TabIndex</key>
         <integer>1</integer>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
         <key>CibName</key>
         <string>VirtualMachineDefinition</string>
         <key>SupportedEntityTypes</key>

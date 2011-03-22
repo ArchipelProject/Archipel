@@ -167,7 +167,6 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
     [buttonBus setTarget:self];
     [buttonBus setAction:@selector(populateTargetButton:)];
 
-
     [self populateTargetButton:nil];
 }
 
@@ -203,13 +202,12 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
     else
         [_drive setDevice:@"cdrom"];
 
-
     [_drive setTarget:[buttonTarget title]];
     [_drive setBus:[buttonBus title]];
 
     [_table reloadData];
 
-    [_delegate defineXML:aSender];
+    [_delegate handleDefinitionEdition:YES];
     [mainWindow close];
 }
 

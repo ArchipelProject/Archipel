@@ -137,7 +137,7 @@ TNArchipelNICTypes  = ["network", "bridge", "user"];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
 
-    [_delegate defineXML:aSender];
+    [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
     [mainWindow close];
 }

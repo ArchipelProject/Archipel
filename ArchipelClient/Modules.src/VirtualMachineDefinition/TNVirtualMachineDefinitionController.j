@@ -153,8 +153,11 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     @outlet TNSwitch                switchPAE;
     @outlet TNSwitch                switchPreferencesHugePages;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
+    @outlet CPScrollView            scrollViewContentView;
+    @outlet CPView                  viewBottomControl;
+    @outlet CPView                  viewMainContent;
 
-    BOOL                            _basicDefinitionEdited;
+    BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                            _definitionRecovered;
     CPButton                        _editButtonDrives;
     CPButton                        _editButtonNics;
@@ -184,7 +187,24 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 - (void)awakeFromCib
 {
     var bundle      = [CPBundle bundleForClass:[self class]],
-        defaults    = [CPUserDefaults standardUserDefaults];
+        defaults    = [CPUserDefaults standardUserDefaults],
+        imageBg     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];
+
+    [scrollViewContentView setDocumentView:viewMainContent];
+    [scrollViewContentView setAutohidesScrollers:YES];
+    var frameSize = [scrollViewContentView contentSize];
+    frameSize.height = [viewMainContent frameSize].height;
+    [viewMainContent setFrameOrigin:CPPointMake(0.0, 0.0)];
+    [viewMainContent setFrameSize:frameSize];
+    [viewMainContent setAutoresizingMask:CPViewWidthSizable];
+    [viewBottomControl setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
+
+     var inset = CGInsetMake(2, 2, 2, 5);
+    [buttonUndefine setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"undefine.png"] size:CPSizeMake(16, 16)]];
+    [buttonUndefine setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
+    [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
+
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
     [fieldStringXMLDesc setFrameSize:CPSizeMake(591, 378)];
@@ -494,6 +514,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     [buttonDefine setEnabled:NO];
     [buttonDefine setToolTip:@"Save changes"];
 
+    [buttonXMLEditor setToolTip:@"Open the XML editor"];
     [buttonBoot setToolTip:@"Set boot origin"];
     [buttonClocks setToolTip:@"Set the mode of the virtual machine clock"];
     [buttonDomainType setToolTip:@"Set the domain type"];
@@ -603,7 +624,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 */
 - (BOOL)shouldHide
 {
-    if (_basicDefinitionEdited)
+    if (_definitionEdited)
     {
         var alert = [TNAlert alertWithMessage:@"Unsaved changes"
                                     informative:@"You have made some changes in the virtual machine definition. Would you like save these changes?"
@@ -781,20 +802,19 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
         if (!_definitionRecovered)
             return;
 
-        if ([self doesBasicValueMatchGUI])
-        {
-            _basicDefinitionEdited = NO;
-            [self markGUIAsNotEdited];
-            return;
-        }
+        // if ([self doesBasicValueMatchGUI])
+        // {
+        //     _definitionEdited = NO;
+        //     [self markGUIAsNotEdited];
+        //     return;
+        // }
 
-
-        _basicDefinitionEdited = YES;
+        _definitionEdited = YES;
         [self markGUIAsEdited];
     }
     else
     {
-        _basicDefinitionEdited  = NO;
+        _definitionEdited = NO;
         [self markGUIAsNotEdited];
     }
 }
@@ -1190,7 +1210,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
      [_tableNetworkNics reloadData];
      [_tableNetworkNics deselectAll];
-     [self defineXML];
+     [self handleDefinitionEdition:YES];
 }
 
 /*! add a drive
@@ -1250,7 +1270,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
      [_tableDrives reloadData];
      [_tableDrives deselectAll];
-     [self defineXML];
+     [self handleDefinitionEdition:YES];
 }
 
 /*! perpare the interface according to the selected guest
