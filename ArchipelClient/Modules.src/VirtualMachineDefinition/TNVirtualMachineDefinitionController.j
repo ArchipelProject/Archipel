@@ -1133,7 +1133,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     [_nicsDatasource addObject:defaultNic];
     [_tableNetworkNics reloadData];
-    [self defineXML];
+    [networkController setNic:defaultNic];
+    [networkController showWindow:aSender];
 }
 
 /*! open the network editor
@@ -1191,7 +1192,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
     [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
-    [self defineXML];
+    [driveController setDrive:defaultDrive];
+    [driveController showWindow:aSender];
 }
 
 /*! open the drive editor
