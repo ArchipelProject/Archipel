@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
+TNXMPPUserDatasourceMe = @"ME";
+TNXMPPUserDatasourceRosterUsers = @"ROSTER USERS";
+TNXMPPUserDatasourceServerUsers = @"SERVER USERS";
 /*! @ingroup permissions
     This object represent a datasource for the outline view
 */
@@ -37,7 +39,7 @@
     {
         _rosterUsers = [CPArray array];
         _serverUsers = [CPArray array];
-        _titles = [@"Me", @"Roster Users", @"Server Users"];
+        _titles = [TNXMPPUserDatasourceMe, TNXMPPUserDatasourceRosterUsers, TNXMPPUserDatasourceServerUsers];
     }
 
     return self;
@@ -53,7 +55,7 @@
     [_serverUsers addObject:aContact];
 }
 
-- (void)flush
+- (void)removeAllObjects
 {
     [_rosterUsers removeAllObjects];
     [_serverUsers removeAllObjects];
@@ -69,9 +71,9 @@
     }
     else
     {
-        if (item == @"Roster Users")
+        if (item == TNXMPPUserDatasourceRosterUsers)
             return [_rosterUsers count];
-        else if (item == @"Server Users")
+        else if (item == TNXMPPUserDatasourceServerUsers)
             return [_serverUsers count];
     }
 }
@@ -80,7 +82,7 @@
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-    return ([item class] == @"CPString" && item != @"Me") ? YES : NO;
+    return ([item class] == @"CPString" && item != TNXMPPUserDatasourceMe) ? YES : NO;
 }
 
 /*! CPOutlineView Delegate
@@ -93,9 +95,9 @@
     }
     else
     {
-        if (item == @"Roster Users")
+        if (item == TNXMPPUserDatasourceRosterUsers)
             return [_rosterUsers objectAtIndex:index];
-        else if (item == @"Server Users")
+        else if (item == TNXMPPUserDatasourceServerUsers)
             return [_serverUsers objectAtIndex:index];
     }
 }
@@ -108,12 +110,5 @@
 
     return [item valueForKey:identifier];
 }
-
-// - (void)tableView:(CPTableView)aTableView sortDescriptorsDidChange:(CPArray)oldDescriptors
-// {
-//     [_contents sortUsingDescriptors:[aTableView sortDescriptors]];
-//
-//     [aTableView reloadData];
-// }
 
 @end
