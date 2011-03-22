@@ -176,7 +176,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 {
     [buttonHypervisors removeAllItems];
 
-
     var servers = [CPArray array],
         items = [CPArray array];
 

@@ -32,6 +32,8 @@ TNArchipelTypePermissionsSetOwn = @"setown";
 
 TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
+var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
+    TNArchipelTypeXMPPServerUsersList               = @"list";
 
 /*! @defgroup  permissionsmodule Module Permissions
     @desc This module allow to manages entity permissions
@@ -204,11 +206,7 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
 
     [buttonUser addItem:[CPMenuItem separatorItem]];
 
-    var item = [[TNMenuItem alloc] init];
-    [item setTitle:@"Manual"];
-    [item setObjectValue:nil];
-
-    [buttonUser addItem:item];
+    [self getXMPPUsers];
 }
 
 /*! called when module becomes visible
@@ -532,6 +530,72 @@ TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
         [self handleIqErrorFromStanza:aStanza];
 }
 
+/*! ask for permissions of given user
+*/
+- (void)getXMPPUsers
+{
+
+    var hypervisors = [CPArray array],
+        servers = [CPArray array];
+
+    for (var i = 0; i < [[[[TNStropheIMClient defaultClient] roster] contacts] count]; i++)
+    {
+        var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i],
+            item = [[TNMenuItem alloc] init];
+
+        if (([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] === TNArchipelEntityTypeHypervisor)
+            && ([contact XMPPShow] != TNStropheContactStatusOffline)
+            && ![hypervisors containsObject:contact]
+            && ![servers containsObject:[[contact JID] domain]])
+        {
+            if (![[TNPermissionsCenter defaultCenter] hasPermission:@"xmppserver_users_list" forEntity:contact])
+                continue;
+            [servers addObject:[[contact JID] domain]];
+            [hypervisors addObject:contact];
+        }
+    }
+
+    for (var i = 0; i < [hypervisors count]; i++)
+    {
+        var stanza = [TNStropheStanza iqWithType:@"get"];
+
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeXMPPServerUsers}];
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeXMPPServerUsersList}];
+
+        [[hypervisors objectAtIndex:i] sendStanza:stanza andRegisterSelector:@selector(_didGetXMPPUsers:) ofObject:self];
+    }
+}
+
+/*! compute the answer containing the user' permissions
+    @param aStanza TNStropheStanza containing the answer
+*/
+- (void)_didGetXMPPUsers:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var users = [aStanza childrenWithName:@"user"];
+
+        for (var i = 0; i < [users count]; i++)
+        {
+            var user    = [users objectAtIndex:i],
+                jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
+                type    = [user valueForAttribute:@"type"],
+                item    = [[TNMenuItem alloc] init];
+
+            if (type == @"human")
+            {
+                [item setTitle:@"  " + jid];
+                [item setObjectValue:jid];
+                [buttonUser addItem:item];
+            }
+        }
+    }
+    else
+    {
+        [self handleIqErrorFromStanza:aStanza];
+    }
+}
 
 @end
 
