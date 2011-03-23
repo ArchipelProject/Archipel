@@ -53,7 +53,7 @@ app ("Archipel", function(task)
     task.setEmail(EMAIL);
     task.setSummary(SUMMARY);
     task.setSources(new FileList("*.j", "Controllers/*.j", "Views/*.j", "Model/*.j", "Categories/*.j"));
-    task.setResources(new FileList("Resources/*"));
+    task.setResources(new FileList("Resources/**/**"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")

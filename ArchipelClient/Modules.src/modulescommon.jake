@@ -40,7 +40,7 @@ framework (NAME, function(task)
     task.setEmail(EMAIL);
     task.setSummary(SUMMARY);
     task.setSources(FILELIST);
-    task.setResources(new FileList("Resources/*"));
+    task.setResources(new FileList("Resources/**/**"));
     task.setInfoPlistPath("Info.plist");
 
     if (configuration === "Debug")
