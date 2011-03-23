@@ -583,8 +583,8 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     // Contacts
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@"n"];
-        [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@"d"];
+        [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@""];
+        [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@""];
         [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
 
