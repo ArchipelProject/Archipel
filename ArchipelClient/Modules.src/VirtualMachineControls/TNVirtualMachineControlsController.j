@@ -743,7 +743,7 @@ TNArchipelTransportBarReboot    = 4;
     else
     {
         [fieldInfoMem setTextColor:[CPColor grayColor]];
-        [fieldInfoMem setStringValue:Math.round([sliderMemory intValue] / 1024) + @" Mb"];
+        [fieldInfoMem setStringValue:Math.round([sliderMemory intValue] / 1024) + @" MB"];
     }
 }
 
@@ -807,7 +807,7 @@ TNArchipelTransportBarReboot    = 4;
         _currentHypervisorJID = hypervisor;
 
         [fieldInfoMem setTextColor:[CPColor blackColor]];
-        [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" Mb"];
+        [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
         [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
 
