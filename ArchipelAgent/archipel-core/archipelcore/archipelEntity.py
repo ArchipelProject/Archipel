@@ -154,11 +154,25 @@ class TNArchipelEntity (object):
         @param group: the name of the entry point group to load
         """
         excluded_plugins = []
+        loading_module_policy = self.configuration.get("GLOBAL", "module_loading_policy")
+        if not loading_module_policy in ('restrictive', 'permissive'):
+           self.log.error("PLUGIN: loading_module_policy in configuration must be set to 'restrictive' or 'permissive'. Consider this as a major failure.")
+           return
         for factory_method in iter_entry_points(group=group, name="factory"):
             method              = factory_method.load()
             plugins             = method(self.configuration, self, group)
             for plugin in plugins:
                 plugin_info     = plugin["info"]
+
+                if loading_module_policy == "restrictive":
+                    if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
+                        self.log.info("PLUGIN: plugin %s has not been loaded as it is not desfined in configuration and loading mode is restrictive" % plugin_info["identifier"])
+                        continue
+                elif loading_module_policy == "permissive":
+                    if self.configuration.has_option("MODULES", plugin_info["identifier"]):
+                        if not self.configuration.getboolean("MODULES", plugin_info["identifier"]):
+                            self.log.info("PLUGIN: plugin %s has not been loaded as it is excluded by configuration" % plugin_info["identifier"])
+                            continue
                 if plugin_info["configuration-section"]:
                     if not self.configuration.has_section(plugin_info["configuration-section"]):
                         excluded_plugins.append(plugin_info["identifier"])
