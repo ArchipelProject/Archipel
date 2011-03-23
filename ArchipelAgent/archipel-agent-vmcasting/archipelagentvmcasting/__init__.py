@@ -48,5 +48,5 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-vmcasting").version)
+    return (__name__, pkg_resources.get_distribution("archipel-agent-vmcasting").version, [vmappliancemanager.TNVMApplianceManager.plugin_info(), hypervisorrepomanager.TNHypervisorRepoManager.plugin_info()])
 

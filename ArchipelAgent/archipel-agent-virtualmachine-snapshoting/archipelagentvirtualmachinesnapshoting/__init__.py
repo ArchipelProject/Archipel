@@ -44,4 +44,4 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-virtualmachine-snapshoting").version)
+    return (__name__, pkg_resources.get_distribution("archipel-agent-virtualmachine-snapshoting").version, [snapshoting.TNSnapshoting.plugin_info()])

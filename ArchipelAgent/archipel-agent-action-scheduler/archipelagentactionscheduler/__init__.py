@@ -44,4 +44,4 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-action-scheduler").version)
+    return (__name__, pkg_resources.get_distribution("archipel-agent-action-scheduler").version, [actionscheduler.TNActionScheduler.plugin_info()])

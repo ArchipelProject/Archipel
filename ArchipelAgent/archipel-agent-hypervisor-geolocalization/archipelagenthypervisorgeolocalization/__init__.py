@@ -44,5 +44,5 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-hypervisor-geolocalization").version)
+    return (__name__, pkg_resources.get_distribution("archipel-agent-hypervisor-geolocalization").version, [geoloc.TNHypervisorGeolocalization.plugin_info()])
 

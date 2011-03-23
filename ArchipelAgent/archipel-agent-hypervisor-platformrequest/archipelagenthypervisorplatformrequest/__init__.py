@@ -44,6 +44,6 @@ def version():
     @return: tupple containing the package name and the version
     """
     import pkg_resources
-    return (__name__, pkg_resources.get_distribution("archipel-agent-hypervisor-platformrequest").version)
+    return (__name__, pkg_resources.get_distribution("archipel-agent-hypervisor-platformrequest").version, [platformrequests.TNPlatformRequests.plugin_info()])
 
 
