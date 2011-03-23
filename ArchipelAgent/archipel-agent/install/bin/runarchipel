@@ -44,8 +44,10 @@ def format_version(info):
     if (len(info) == 2):
         print " - %s: %s" % (info[0], info[1])
     else:
-        identifiers = map(lambda x: x["identifier"], info[2])
-        print " - %s (\033[35m%s\033[0m) : %s" % (info[0], identifiers, info[1])
+        print " - %s: %s" % (info[0], info[1])
+        print "   Provides plugins :"
+        for p in info[2]:
+            print "     - %s" % p["indentifier"]
 
 def help():
     """display help"""
