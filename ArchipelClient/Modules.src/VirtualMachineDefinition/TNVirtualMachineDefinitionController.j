@@ -1848,9 +1848,14 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         [stanza addChildWithName:@"disk" andAttributes:{"device": [drive device], "type": [drive type]}];
 
-        if ([[drive source] uppercaseString].indexOf("QCOW2") != -1) // !!!!!! Argh! FIXME!
+        if ([[drive source] uppercaseString].indexOf(".QCOW2") != -1) // !!!!!! Argh! FIXME!
         {
             [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2", "cache": [drive cache]}];
+            [stanza up];
+        }
+        if ([[drive source] uppercaseString].indexOf(".RAW") != -1) // !!!!!! Argh! FIXME!
+        {
+            [stanza addChildWithName:@"driver" andAttributes:{"type": "raw", "cache": [drive cache]}];
             [stanza up];
         }
         if ([drive type] == @"file")
