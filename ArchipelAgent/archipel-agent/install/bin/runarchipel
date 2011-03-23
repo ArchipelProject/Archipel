@@ -45,9 +45,8 @@ def format_version(info):
         print " - %s: %s" % (info[0], info[1])
     else:
         print " - %s: %s" % (info[0], info[1])
-        print "   Provides plugins :"
         for p in info[2]:
-            print "     - %s" % p["indentifier"]
+            print "     + \033[35m%s\033[0m" % p["identifier"]
 
 def help():
     """display help"""
