@@ -134,8 +134,7 @@ TNArchipelTransportBarReboot    = 4;
     ]];
 
     [fieldJID setSelectable:YES];
-    [sliderMemory setSendsActionOnEndEditing:YES];
-    [sliderMemory setContinuous:NO];
+    [sliderMemory setContinuous:YES];
     [sliderMemory setToolTip:@"Adjust the maximum amout of memory of the VM (only when running)"];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
@@ -737,7 +736,15 @@ TNArchipelTransportBarReboot    = 4;
 */
 - (IBAction)setMemory:(id)aSender
 {
-    [self setMemory];
+    if ([[CPApp currentEvent] type] == CPLeftMouseUp)
+    {
+        [self setMemory];
+    }
+    else
+    {
+        [fieldInfoMem setTextColor:[CPColor grayColor]];
+        [fieldInfoMem setStringValue:Math.round([sliderMemory intValue] / 1024) + @" Mb"];
+    }
 }
 
 /*! send set vCPUs command
@@ -799,7 +806,8 @@ TNArchipelTransportBarReboot    = 4;
 
         _currentHypervisorJID = hypervisor;
 
-        [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" Mo"];
+        [fieldInfoMem setTextColor:[CPColor blackColor]];
+        [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" Mb"];
         [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
 
