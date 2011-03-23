@@ -807,7 +807,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         @return: a ready-to-send IQ containing the results
         """
         try:
-            network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.resource)
+            network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
             reply = iq.buildReply("result")
             reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri)
         except Exception as ex:
