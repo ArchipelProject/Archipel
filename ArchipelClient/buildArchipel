@@ -1,18 +1,18 @@
 #!/usr/bin/python
-# 
+#
 # build.py
-# 
+#
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
 # License, or (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU Affero General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -30,15 +30,15 @@ os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", [   "project", "all", "modules=", "allmodules", "native=", "clean", 
-                                                                    "config=", "build", "installmodules", "uninstallmodules", 
+        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", [   "project", "all", "modules=", "allmodules", "native=", "clean",
+                                                                    "config=", "build", "installmodules", "uninstallmodules",
                                                                     "generateplist", "help", "example", "ignoremodules=",
                                                                     "sdk=", "export=", ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
         sys.exit(2);
-    
+
     opt_build_config            = "debug";
     opt_should_build            = False;
     opt_should_copy_modules     = False;
@@ -53,135 +53,135 @@ def main():
     opt_ignore_modules_paths    = [];
     opt_build_paths             = [];
     allmodules_paths            = [];
-    
+
     # Parses all existing modules
     for folder in os.listdir(GLOBAL_MODULES_SRC_PATH):
         if os.path.isdir(GLOBAL_MODULES_SRC_PATH + folder):
             allmodules_paths.append(GLOBAL_MODULES_SRC_PATH + folder)
-            
+
     for o, a in opts:
         if o in ("--modules"):
             for p in a.split(","):
                 opt_modules_paths.append(GLOBAL_MODULES_SRC_PATH + p)
-        
+
         if o in ("-m", "--allmodules"):
             opt_modules_paths = allmodules_paths
-        
+
         if o in ("-a", "--all"):
             opt_modules_paths = allmodules_paths
             opt_build_paths.append(".");
-        
+
         if o in ("-p", "--project"):
             opt_build_paths.append(".");
-        
+
         if o in ("-C", "--clean"):
             opt_should_clean = True;
             opt_should_build = False;
-            
+
         if o in ("--native"):
             opt_build_native = a;
-        
+
         if o in ("--config"):
             opt_build_config = a.lower();
-        
+
         if o in ("-b", "--build"):
             opt_should_build = True;
-        
+
         if o in ("-I", "--installmodules"):
             opt_should_copy_modules = True;
-        
+
         if o in ("--ignoremodules"):
             for p in a.split(","):
                 opt_ignore_modules_paths.append(GLOBAL_MODULES_SRC_PATH + p)
-        
+
         if o in ("--sdk"):
             opt_export_sdk_path = a
-            
+
         if o in ("--export"):
             opt_export_archipel_path = a
-            
+
         if o in ("-u", "--uninstallmodules"):
             opt_should_copy_modules = False;
             opt_should_remove_modules = True;
-        
+
         if o in ("-g", "--generateplist"):
             opt_should_generate_plist = True;
-        
+
         if o in ("-h", "--help"):
             usage();
-        
+
         if o in ("-e", "--example"):
             example();
-    
+
     # append any chosen modules to the build path
     opt_build_paths.extend(opt_modules_paths);
-    
+
     if not opt_export_sdk_path and not opt_export_archipel_path:
-        if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules 
+        if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules
                 and not opt_should_copy_modules and not opt_should_build and not opt_should_clean):
             print "Error: no targets specified. Use --help for usage"
             sys.exit(-1)
-    
+
     # clean if asked
     if opt_should_clean:
         clean(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
-    
+
     if opt_should_build:
         build(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
-        
+
     if opt_should_generate_plist:
-        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths)    
-    
+        generate_modules_plist(opt_modules_paths, opt_ignore_modules_paths)
+
     if (opt_should_build and len(opt_modules_paths) > 0) or opt_should_copy_modules:
         copy_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths)
-    
+
     if opt_should_remove_modules:
         remove_modules(opt_modules_paths, opt_build_config, opt_ignore_modules_paths);
-        
+
     if opt_build_native:
-        make_native_app(opt_build_native, opt_build_config);    
-    
+        make_native_app(opt_build_native, opt_build_config);
+
     if opt_export_sdk_path:
         export_sdk(opt_export_sdk_path);
-    
+
     if opt_export_archipel_path:
         export_archipel(opt_export_archipel_path, opt_build_config);
-    
+
 
 
 def clean(paths, config, ignorepaths):
     for path in paths:
         if path in ignorepaths:
             continue
-            
+
         build_path = path + "/Build/"
         print "# removing " + build_path
         shutil.rmtree(build_path, ignore_errors=True);
-        remove_modules([path], config, ignorepaths)    
+        remove_modules([path], config, ignorepaths)
 
 
 def build(paths, config, ignorepaths):
     return_code = 0;
-    
+
     print "# begining build #%s" % (GLOBAL_BUILD_NUMBER)
-    
+
     for path in paths:
         if path in ignorepaths:
             continue
-            
+
         if path.lower().find("sample") > -1:
             continue
-        
-        print "# moving to " + path 
+
+        print "# moving to " + path
         os.chdir(path);
-        
+
         print "# jaking..."
         return_code = os.system("jake %s" % config);
-                        
+
         if not str(return_code) == "0":
             print "# Error in build : " + str(return_code)
-            sys.exit("error during build")        
-        
+            sys.exit("error during build")
+
         print "# Build success."
         print "# get back to " + GLOBAL_BASE_PATH
         os.chdir(GLOBAL_BASE_PATH);
@@ -193,18 +193,18 @@ def copy_modules(modules_paths, config, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
-            
+
         if path.lower().find("sample") > -1:
             continue
-        
+
         config              = config.capitalize()
         module_name         = path.split("/")[-1]
         module_dest_path    = GLOBAL_MODULES_BUILD_PATH + "/";
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
-        
+
         remove_modules([path], config, ignorepaths);
-        
-        print "# copying module : " + module_name 
+
+        print "# copying module : " + module_name
         os.system("cp -a " + module_build_dir + " " + module_dest_path);
         os.system("cp -a " + GLOBAL_MODULES_BUILD_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", ""));
     os.system("cp -a " + GLOBAL_MODULES_PLIST_PATH + " " + GLOBAL_BUILD_PATH.replace("$CONFIG$", config).replace("*", "") + "/Modules");
@@ -214,15 +214,15 @@ def remove_modules(modules_paths, config, ignorepaths):
     for path in modules_paths:
         if path in ignorepaths:
             continue
-            
+
         if path.lower().find("sample") > -1:
             continue
-        
-            
+
+
         module_name         = path.split("/")[-1]
         module_dest_path   = GLOBAL_MODULES_BUILD_PATH + "/" + module_name;
         module_build_dir    = path + "/Build/" + config + "/" + module_name;
-        
+
         if os.system("rm -rf " + module_dest_path) == 0:
             print "# removed module build " + module_name
 
@@ -243,23 +243,23 @@ def generate_modules_plist(modules_paths, ignorepaths):
     <dict>
         <key>Modules</key>
         <array>\n"""
-    
+
     for path in modules_paths:
         if path in ignorepaths:
             continue
-            
+
         if path.lower().find("sample") > -1:
             continue
-    
+
         module_name         = path.split("/")[-1]
         module_cell = "            <dict>\n                <key>folder</key>\n                <string>" + module_name + "</string>\n            </dict>\n"
         plist += module_cell;
-    
+
     plist +="""
         </array>
     </dict>
 </plist>"""
-    
+
     f = open(GLOBAL_MODULES_PLIST_PATH, "w");
     f.write(plist);
     f.close();
@@ -269,22 +269,22 @@ def usage():
     print """\
 This script build Archipel GUI according to a the following set of options.
 Copyright (c) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
-    
+
 Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
-    
+
     COMMAND are the following:
-        -b | --build             : build the TARGETS 
+        -b | --build             : build the TARGETS
         -C | --clean             : clean the TARGETS builded
-        
+
     CONFIG is the following:
         --config=<conf>          : <conf> can be 'release' of 'debug'. If ommited, default config is 'debug'.
-        
+
     TARGETS are the following:
         -a | --all               : build all. Projects and all modules;
         -p | --project           : build only Archipel without any modules;
         -m | --allmodules        : build only all modules;
         --modules=<list>         : build a given list of module. <list> is "moduleA,moduleC" whith no space.
-        
+
     OPTIONS are the following:
         -I | --installmodules    : copy all the already builded modules according to TARGET to the destination dir.
         -u | --uninstallmodules  : remove all the builded modules according to TARGET from the destination dir.
@@ -301,29 +301,29 @@ Usage: build.py COMMAND [CONFIG] TARGETS [OPTIONS]
 
 def example():
     print """\
-Here are some example of the use of the command. For further help 
+Here are some example of the use of the command. For further help
 use --help option.
-    
+
 Examples:
     build all modules and generate plist:
     # build.py -bmg
-    
+
     build only module2 in debug mode:
     # build.py --build --config=Debug --modules=module2
-    
+
     build all project and generate native app:
     # build.py -bag --native=MacOS
-    
+
     clean all:
     # build.py -Ca
-    
+
     clean only project, moduleA and moduleB:
     # build.py -Cp --modules=moduleA,moduleB
-    
+
     deep cleaning of anything (before packaging for example)
     # build.py -Cau
     """
-    
+
     sys.exit(0);
 
 
@@ -335,22 +335,37 @@ def export_sdk(path):
     os.system("cp -a Archipel.doxygen " + path + "/");
 
 
+def getAllCibs():
+    print "# get all cibs"
+    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e 'Modules.src/'")
+    cibs = ""
+    path = []
+    for o in out.split('\n'):
+        path.append(o)
+        cibs = "%s -P %s" % (cibs, o)
+    return (cibs, path)
+
 def export_archipel(path, config):
     print "# exporting flattened Archipel application to " + path
-    
+
     temp_path = "/tmp/Archipel-%s-b%s-flattened" % (config, GLOBAL_BUILD_NUMBER)
     final_path = "%s/Archipel-%s-b%s" % (path, config.capitalize(), GLOBAL_BUILD_NUMBER)
-    
+
     build_dir = GLOBAL_BUILD_PATH.replace("$CONFIG$", config.capitalize()).replace("/*", "");
-    os.system("flatten -f %s %s" % (build_dir, temp_path))
+    cibs = getAllCibs()
+    os.system("flatten %s -f %s %s" % (cibs[0], build_dir, temp_path))
     os.system("press -f %s %s" % (temp_path, final_path))
-    
+
+    print "# cleaning up CIBS files"
+    os.system("find %s -name *.cib -exec rm -rf {} \;" % final_path)
     print "# cleaning up png files"
     os.system("find %s -name *.png -exec rm -rf {} \;" % final_path)
     print "# cleaning up IE specific files"
     os.system("find %s -name MHTML*.txt -exec rm -rf {} \;" % final_path)
+    print "# cleaning up IE specific files"
+    os.system("find %s -name MHTML*.txt -exec rm -rf {} \;" % final_path)
     print "# cleaning up CommonJS.environment files"
-    os.system("find %s -name 'CommonJS.environment' -type dir -exec rm -rf {} \;" % final_path)
+    os.system("find %s -name 'CommonJS.environment' -type dir -exec rm -rf {} \; > /dev/null 2>&1" % final_path)
     print "# Restore not shrinked images"
     os.system("cp ./Resources/Backgrounds/background-icon.png %s/Resources/Backgrounds" % final_path)
     print "# Cleaning temp files"
