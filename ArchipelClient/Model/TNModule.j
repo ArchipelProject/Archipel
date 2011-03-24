@@ -510,9 +510,10 @@ TNArchipelModuleStatusWaiting           = 2;
 
 /*! this message will be send by the module controler
     in order to know if the module can be hide
+    @param the item that will be selected next
     @return YES if it's OK
 */
-- (BOOL)shouldHide
+- (BOOL)shouldHideAndSelectItem:(anItem)nextItem ofObject:(id)anObject
 {
     return YES;
 }

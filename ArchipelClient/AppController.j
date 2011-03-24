@@ -1382,7 +1382,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 - (BOOL)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
 {
     for (var i = 0; i < [[moduleController loadedTabModules] count]; i++)
-        if (![[[moduleController loadedTabModules] objectAtIndex:i] shouldHide])
+        if (![[[moduleController loadedTabModules] objectAtIndex:i] shouldHideAndSelectItem:anItem ofObject:anOutlineView])
             return NO;
 
     return YES;

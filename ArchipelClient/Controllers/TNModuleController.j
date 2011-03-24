@@ -599,7 +599,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     var currentModule = [currentTabItem module];
 
-    return [currentModule shouldHide];
+    return [currentModule shouldHideAndSelectItem:anItem ofObject:aTabView];
 }
 
 
