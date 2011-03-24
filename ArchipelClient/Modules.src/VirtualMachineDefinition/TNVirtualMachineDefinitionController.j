@@ -1850,7 +1850,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         if ([drive format])
         {
-            [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2", "cache": [drive cache]}];
+            [stanza addChildWithName:@"driver" andAttributes:{"type": [drive format], "cache": [drive cache]}];
             [stanza up];
         }
 
