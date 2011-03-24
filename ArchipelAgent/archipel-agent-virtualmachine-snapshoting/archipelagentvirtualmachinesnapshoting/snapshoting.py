@@ -255,10 +255,12 @@ class TNSnapshoting (TNArchipelPlugin):
             # xmlDesc = iq.getTag('query').getTag('uuid') would be better but not in API at this time.
             name = iq.getTag('query').getTag("archipel").getAttr('name')
             old_show = self.entity.xmppstatusshow
+            old_status = self.entity.xmppstatus
             self.entity.log.info("restoring snapshot with name %s" % name)
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             self.entity.domain.revertToSnapshot(snapshotObject, 0)
+            self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             self.entity.log.info("reverted to snapshot with name %s " % name)
             self.entity.push_change("snapshoting", "restored")
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
