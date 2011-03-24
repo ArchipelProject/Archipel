@@ -184,10 +184,15 @@ class TNStorageManagement (TNArchipelPlugin):
             if not ret == 0:
                 raise Exception("DriveError", "Unable to convert drive. Error code is " + str(ret))
             os.unlink(path)
-
-            descriptionString = str(self.entity.definition)
-            descriptionString = descriptionString.replace(path, disk_path)
-            self.entity.define(xmpp.simplexml.NodeBuilder(data=descriptionString).getDom())
+            for drive in self.entity.definition.getTag("devices").getTags("disk"):
+                if drive.getTag("source"):
+                    if drive.getTag("source").getAttr("file") == path:
+                        if drive.getTag("driver"):
+                            drive.getTag("driver").setAttr("type", format)
+                        if drive.getTag("source"):
+                            drive.getTag("source").setAttr("file", disk_path)
+                        self.entity.define(self.entity.definition)
+                        break
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
             self.entity.log.info("disk as been converted from %s to %s" % (path, disk_path))
