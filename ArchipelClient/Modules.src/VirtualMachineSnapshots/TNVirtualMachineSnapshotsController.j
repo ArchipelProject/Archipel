@@ -52,7 +52,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     @outlet CPTextField                 fieldJID;
     @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldNewSnapshotName;
-    @outlet CPView                      maskingView;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewSnapshot;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
@@ -183,7 +182,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
@@ -193,7 +191,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [_outlineViewSnapshots setDelegate:nil];
     [_outlineViewSnapshots setDelegate:self];
 
-    [self checkIfRunning];
     [self getSnapshots];
 }
 
@@ -216,8 +213,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 {
     if (![super willShow])
         return NO;
-
-    [self checkIfRunning];
 
     return YES;
 }
@@ -265,14 +260,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     }
 }
 
-/*! called if entity changes it presence and call checkIfRunning
-    @param aNotification the notification
-*/
-- (void)_didUpdatePresence:(CPNotification)aNotification
-{
-    [self checkIfRunning];
-}
-
 /*! called when an Archipel push is received
     @param somePushInfo CPDictionary containing the push information
 */
@@ -288,25 +275,6 @@ TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
     [self getSnapshots];
 
     return YES;
-}
-
-
-#pragma mark -
-#pragma mark Utilities
-
-/*! checks if virtual machine running. if yes displays the masking view
-*/
-- (void)checkIfRunning
-{
-    if ([_entity XMPPShow] == TNStropheContactStatusOnline || [_entity XMPPShow] == TNStropheContactStatusAway)
-    {
-        [maskingView removeFromSuperview];
-    }
-    else
-    {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
-    }
 }
 
 
