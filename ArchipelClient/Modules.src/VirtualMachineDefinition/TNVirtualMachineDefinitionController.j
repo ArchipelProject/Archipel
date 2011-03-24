@@ -633,22 +633,22 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
 /*! return YES if module can be hidden
 */
-- (BOOL)shouldHide
+- (BOOL)shouldHideAndSelectItem:(anItem)nextItem ofObject:(id)anObject
 {
     if (_definitionEdited)
     {
         var alert = [TNAlert alertWithMessage:@"Unsaved changes"
                                     informative:@"You have made some changes in the virtual machine definition. Would you like save these changes?"
                                      target:self
-                                     actions:[["Define", @selector(defineXML:)], ["Cancel", nil]]];
+                                     actions:[["Define", @selector(saveChanges:)], ["Discard", @selector(discardChanges:)]]];
+
+        [alert setUserInfo:[CPArray arrayWithObjects:nextItem, anObject]];
         [alert runModal];
         return NO;
     }
 
     return YES;
 }
-
-
 
 /*! called when users saves preferences
 */
@@ -801,6 +801,46 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
 #pragma mark -
 #pragma mark Utilities
+
+/*! Called when module should hide and user wants to discard changes
+    @param someUserInfo CPArray containing the next item and the object (the tabview or the roster outlineview)
+*/
+- (void)discardChanges:(id)someUserInfo
+{
+    var item = [someUserInfo objectAtIndex:0],
+        object = [someUserInfo objectAtIndex:1];
+
+    _definitionEdited = NO;
+    [self getXMLDesc];
+
+    if ([object class] == @"TNiTunesTabView")
+        [object selectTabViewItem:item];
+    else
+    {
+        var idx = [CPIndexSet indexSetWithIndex:[object rowForItem:item]];
+        [object selectRowIndexes:idx byExtendingSelection:NO]
+    }
+}
+
+/*! Called when module should hide and user wants to save changes
+    @param someUserInfo CPArray containing the next item and the object (the tabview or the roster outlineview)
+*/
+- (void)saveChanges:(id)someUserInfo
+{
+    var item = [someUserInfo objectAtIndex:0],
+        object = [someUserInfo objectAtIndex:1];
+
+    _definitionEdited = NO;
+    [self defineXML];
+
+    if ([object class] == @"TNiTunesTabView")
+        [object selectTabViewItem:item];
+    else
+    {
+        var idx = [CPIndexSet indexSetWithIndex:[object rowForItem:item]];
+        [object selectRowIndexes:idx byExtendingSelection:NO]
+    }
+}
 
 /*! handle definition changes. If all values match ones stored in
     _currentBasicSettingsValues, then it will put the GUI in not edited mode
