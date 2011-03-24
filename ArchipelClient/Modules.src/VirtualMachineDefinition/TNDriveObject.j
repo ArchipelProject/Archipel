@@ -30,6 +30,7 @@
     CPString _source    @accessors(property=source);
     CPString _target    @accessors(property=target);
     CPString _type      @accessors(property=type);
+    CPString _format    @accessors(property=format);
 }
 
 
@@ -44,7 +45,7 @@
     @param aBus the drive bus
     @return initialized TNDrive
 */
-+ (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus cache:(CPString)aCacheMode
++ (TNDrive)driveWithType:(CPString)aType device:(CPString)aDevice source:(CPString)aSource target:(CPString)aTarget bus:(CPString)aBus cache:(CPString)aCacheMode format:(CPString)aFormat
 {
     var drive = [[TNDrive alloc] init];
     [drive setType:aType];
@@ -53,6 +54,7 @@
     [drive setTarget:aTarget];
     [drive setBus:aBus];
     [drive setCache:aCacheMode];
+    [drive setFormat:aFormat]
 
     return drive;
 }

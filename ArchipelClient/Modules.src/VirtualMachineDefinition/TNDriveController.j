@@ -198,7 +198,10 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
     var driveType = [[radioDriveType selectedRadio] title];
 
     if (driveType == @"Hard drive")
+    {
         [_drive setDevice:@"disk"];
+        [_drive setFormat:[[buttonSource selectedItem] objectValue]];
+    }
     else
         [_drive setDevice:@"cdrom"];
 
@@ -370,10 +373,12 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
         {
             var disk    = [disks objectAtIndex:i],
                 vSize   = [[[disk valueForAttribute:@"virtualSize"] componentsSeparatedByString:@" "] objectAtIndex:0],
+                format  = [disk valueForAttribute:@"format"],
                 label   = [[[disk valueForAttribute:@"name"] componentsSeparatedByString:@"."] objectAtIndex:0] + " - " + vSize  + " (" + [disk valueForAttribute:@"diskSize"] + ")",
                 item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
 
             [item setStringValue:[disk valueForAttribute:@"path"]];
+            [item setObjectValue:format];
             [buttonSource addItem:item];
         }
 

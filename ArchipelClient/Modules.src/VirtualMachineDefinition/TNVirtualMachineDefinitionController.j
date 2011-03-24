@@ -1221,7 +1221,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:[[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDriveCacheMode"]];
+    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:@"hda" bus:@"ide" cache:[[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDriveCacheMode"] format:nil];
 
     [_drivesDatasource addObject:defaultDrive];
     [_tableDrives reloadData];
@@ -1638,7 +1638,8 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
             iBus        = [[currentDisk firstChildWithName:@"target"] valueForAttribute:@"bus"],
             iSource     = (iType == @"file") ? [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"file"] : [[currentDisk firstChildWithName:@"source"] valueForAttribute:@"dev"],
             iCache      = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"cache"] : [defaults objectForKey:@"TNDescDefaultDriveCacheMode"],
-            newDrive    =  [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus cache:iCache];
+            iFormat     = (iType == @"file" && [currentDisk firstChildWithName:@"driver"]) ? [[currentDisk firstChildWithName:@"driver"] valueForAttribute:@"type"] : nil,
+            newDrive    = [TNDrive driveWithType:iType device:iDevice source:iSource target:iTarget bus:iBus cache:iCache format:iFormat];
 
         [_drivesDatasource addObject:newDrive];
     }
@@ -1829,7 +1830,6 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
 
     // DEVICES
-
     [stanza addChildWithName:@"devices"];
 
     // emulator
@@ -1848,16 +1848,12 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
 
         [stanza addChildWithName:@"disk" andAttributes:{"device": [drive device], "type": [drive type]}];
 
-        if ([[drive source] uppercaseString].indexOf(".QCOW2") != -1) // !!!!!! Argh! FIXME!
+        if ([drive format])
         {
             [stanza addChildWithName:@"driver" andAttributes:{"type": "qcow2", "cache": [drive cache]}];
             [stanza up];
         }
-        if ([[drive source] uppercaseString].indexOf(".RAW") != -1) // !!!!!! Argh! FIXME!
-        {
-            [stanza addChildWithName:@"driver" andAttributes:{"type": "raw", "cache": [drive cache]}];
-            [stanza up];
-        }
+
         if ([drive type] == @"file")
             [stanza addChildWithName:@"source" andAttributes:{"file": [drive source]}];
         else if ([drive type] == @"block")
