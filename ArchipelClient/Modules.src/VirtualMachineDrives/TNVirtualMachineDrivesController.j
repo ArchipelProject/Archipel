@@ -373,6 +373,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
             diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
 
+        [buttonEditDiskFormat selectItemWithTitle:[diskObject format]];
         [windowDiskProperties center];
         [windowDiskProperties makeKeyAndOrderFront:nil];
         [fieldEditDiskName setStringValue:[diskObject name]];
