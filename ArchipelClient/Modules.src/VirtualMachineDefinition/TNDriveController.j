@@ -194,14 +194,12 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
 
     [_drive setType:[buttonType title]];
     [_drive setCache:[buttonCache title]];
+    [_drive setFormat:[[buttonSource selectedItem] objectValue]];
 
     var driveType = [[radioDriveType selectedRadio] title];
 
     if (driveType == @"Hard drive")
-    {
         [_drive setDevice:@"disk"];
-        [_drive setFormat:[[buttonSource selectedItem] objectValue]];
-    }
     else
         [_drive setDevice:@"cdrom"];
 
@@ -266,7 +264,6 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
                 [buttonTarget selectItemWithTitle:@"hda"];
                 break;
         }
-        [buttonCache setEnabled:YES];
         [self getDisksInfo];
     }
     else
@@ -285,7 +282,6 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
                 [buttonTarget selectItemWithTitle:@"hdc"];
                 break;
         }
-        [buttonCache setEnabled:NO];
         [self getISOsInfo];
     }
 }
@@ -302,7 +298,6 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
 
         [fieldDevicePath setEnabled:YES];
         [buttonSource setEnabled:NO];
-        [buttonCache setEnabled:NO];
 
         if (aSender)
             [fieldDevicePath setStringValue:@"/dev/cdrom"];
@@ -316,7 +311,6 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
 
         [fieldDevicePath setEnabled:NO];
         [buttonSource setEnabled:YES];
-        [buttonCache setEnabled:YES];
 
         [fieldDevicePath setStringValue:@""];
     }
@@ -427,7 +421,9 @@ TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCache
                 item    = [[TNMenuItem alloc] initWithTitle:label action:nil keyEquivalent:nil];
 
             [item setStringValue:[iso valueForAttribute:@"path"]];
+            [item setObjectValue:"raw"];
             [buttonSource addItem:item];
+
         }
 
         for (var i = 0; i < [[buttonSource itemArray] count]; i++)

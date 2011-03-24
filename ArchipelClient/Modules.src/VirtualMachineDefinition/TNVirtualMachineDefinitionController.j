@@ -311,34 +311,45 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"],
         driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"],
         driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target"],
-        driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"],
         driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"bus"],
-        driveColumnCache = [[CPTableColumn alloc] initWithIdentifier:@"cache"];
+        driveColumnCache = [[CPTableColumn alloc] initWithIdentifier:@"cache"],
+        driveColumnFormat = [[CPTableColumn alloc] initWithIdentifier:@"format"],
+        driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
 
     [[driveColumnType headerView] setStringValue:@"Type"];
+    [driveColumnType setWidth:80.0];
     [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
 
     [[driveColumnDevice headerView] setStringValue:@"Device"];
+    [driveColumnDevice setWidth:80.0];
     [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
 
     [[driveColumnTarget headerView] setStringValue:@"Target"];
+    [driveColumnTarget setWidth:80.0];
     [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
+
+    [[driveColumnBus headerView] setStringValue:@"Bus"];
+    [driveColumnBus setWidth:80.0];
+    [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
+
+    [[driveColumnCache headerView] setStringValue:@"Cache mode"];
+    [driveColumnCache setWidth:80.0];
+    [driveColumnCache setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"cache" ascending:YES]];
+
+    [[driveColumnFormat headerView] setStringValue:@"Format"];
+    [driveColumnFormat setWidth:80.0];
+    [driveColumnFormat setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"format" ascending:YES]];
 
     [driveColumnSource setWidth:300];
     [[driveColumnSource headerView] setStringValue:@"Source"];
     [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
-
-    [[driveColumnBus headerView] setStringValue:@"Bus"];
-    [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
-
-    [[driveColumnCache headerView] setStringValue:@"Cache mode"];
-    [driveColumnCache setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"cache" ascending:YES]];
 
     [_tableDrives addTableColumn:driveColumnType];
     [_tableDrives addTableColumn:driveColumnDevice];
     [_tableDrives addTableColumn:driveColumnTarget];
     [_tableDrives addTableColumn:driveColumnBus];
     [_tableDrives addTableColumn:driveColumnCache];
+    [_tableDrives addTableColumn:driveColumnFormat];
     [_tableDrives addTableColumn:driveColumnSource];
 
     [_drivesDatasource setTable:_tableDrives];
