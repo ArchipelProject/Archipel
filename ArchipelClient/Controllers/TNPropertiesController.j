@@ -181,8 +181,6 @@
     if (_isCollapsed)
         return;
 
-    var defaults = [CPUserDefaults standardUserDefaults];
-
     _isCollapsed = YES;
 
     [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
@@ -194,8 +192,6 @@
 {
     if (!_isCollapsed)
         return;
-
-    var defaults = [CPUserDefaults standardUserDefaults];
 
     _isCollapsed = NO;
 
