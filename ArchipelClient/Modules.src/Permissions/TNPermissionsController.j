@@ -602,7 +602,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
                 jid     = [TNStropheJID stropheJIDWithString:[user valueForAttribute:@"jid"]],
                 type    = [user valueForAttribute:@"type"];
 
-            if (type == @"human")
+            if (type == @"human" && ![jid bareEquals:[[TNStropheIMClient defaultClient] JID]])
                 [_datasourceUsers addXMPPUser:jid];
         }
         [_outlineViewUsers expandAll];
