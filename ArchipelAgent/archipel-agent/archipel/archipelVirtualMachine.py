@@ -122,13 +122,14 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
             os.makedirs(self.folder)
 
         # triggers
-        self.log.info("creating/opening the trigger database file %s/triggers.sqlite3" % self.folder)
-        self.trigger_database = sqlite3.connect(self.folder + "/triggers.sqlite3", check_same_thread=False)
+        self.triggers_db_file = self.folder + "/triggers.sqlite3"
+        self.log.info("creating/opening the trigger database file %s" % self.triggers_db_file)
+        self.trigger_database = sqlite3.connect(self.triggers_db_file, check_same_thread=False)
 
         # permissions
-        permission_db_file              = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
-        permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
+        self.permission_db_file         = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
+        self.permission_admin_name      = self.configuration.get("GLOBAL", "archipel_root_admin")
+        self.permission_center          = TNArchipelPermissionCenter(self.permission_db_file, self.permission_admin_name)
         self.init_permissions()
 
         # hooks
@@ -926,11 +927,15 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
     def terminate(self):
         """
         this method is called by hypervisor when VM is freed
+        it will perform HOOK_VM_TERMINATE, close databases
+        and remove own folder
         """
+        self.perform_hooks("HOOK_VM_TERMINATE")
         self.permission_center.close_database()
         self.trigger_database.close()
-        self.perform_hooks("HOOK_VM_TERMINATE")
-
+        os.unlink(self.permission_db_file)
+        os.unlink(self.triggers_db_file)
+        self.remove_folder()
 
     ### XMPP Controls
 

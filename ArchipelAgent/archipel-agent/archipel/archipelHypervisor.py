@@ -509,7 +509,6 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
         self.log.info("launch %s's terminate method" % jid)
         vm.terminate()
-        vm.remove_folder()
 
         self.log.info("unregistering the VM from hypervisor's database")
         self.database.execute("delete from virtualmachines where jid=?", (jid.getStripped(),))
