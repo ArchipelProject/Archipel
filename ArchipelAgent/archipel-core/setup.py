@@ -56,7 +56,8 @@ setup(name=NAME,
       include_package_data=True,
       zip_safe=False,
       install_requires=[
-        "xmpppy>=0.5.0rc1"
+        "xmpppy>=0.5.0rc1",
+        "sqlalchemy>=0.6.6"
       ],
       entry_points=ENTRY_POINTS
       )

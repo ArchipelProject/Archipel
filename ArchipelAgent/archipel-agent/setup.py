@@ -67,7 +67,6 @@ setup(name='archipel-agent',
       zip_safe=False,
       provides=["archipel"],
       install_requires=[
-        "sqlobject>=0.14.1",
         "archipel-core>=1.0.7beta",
         "archipel-agent-action-scheduler>=1.0.20beta",
         "archipel-agent-hypervisor-geolocalization>=1.0.20beta",
