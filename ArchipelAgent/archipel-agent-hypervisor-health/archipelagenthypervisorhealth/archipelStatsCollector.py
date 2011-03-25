@@ -146,7 +146,7 @@ class TNThreadedHealthCollector(Thread):
         file_meminfo.close()
         meminfolines = meminfo.split("\n")
         memTotal = int(meminfolines[0].split()[1])
-        memFree = int(meminfolines[1].split()[1])
+        memFree = int(meminfolines[1].split()[1]) + int(meminfolines[2].split()[1]) + int(meminfolines[3].split()[1])
         swapped = int(meminfolines[4].split()[1])
         memUsed = memTotal - memFree
         return {"date": datetime.datetime.now(), "free": memFree, "used": memUsed, "total": memTotal, "swapped": swapped}
