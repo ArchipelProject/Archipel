@@ -346,4 +346,7 @@ class TNArchipelPermissionCenter:
         """
         close the db connection
         """
-        pass
+        self.session.close_all()
+        self.engine.dispose()
+        del self.session
+        del self.engine
