@@ -937,6 +937,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         os.unlink(self.triggers_db_file)
         self.remove_folder()
 
+
     ### XMPP Controls
 
     def iq_migrate(self, iq):
