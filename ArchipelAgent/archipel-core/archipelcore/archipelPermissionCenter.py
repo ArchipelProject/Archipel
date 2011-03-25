@@ -507,3 +507,9 @@ class TNArchipelPermissionCenter:
             if not self.check_permission(user_name, perm):
                 return False
         return True
+
+    def close_database(self):
+        """
+        close the db connection
+        """
+        self.connection.close()

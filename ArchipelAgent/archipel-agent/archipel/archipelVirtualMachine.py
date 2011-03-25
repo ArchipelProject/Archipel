@@ -927,6 +927,8 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         """
         this method is called by hypervisor when VM is freed
         """
+        self.permission_center.close_database()
+        self.trigger_database.close()
         self.perform_hooks("HOOK_VM_TERMINATE")
 
 

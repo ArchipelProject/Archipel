@@ -58,7 +58,9 @@ class TNActionScheduler (TNArchipelPlugin):
         self.entity.permission_center.create_permission("scheduler_schedule", "Authorizes user to schedule a task", False)
         self.entity.permission_center.create_permission("scheduler_unschedule", "Authorizes user to unschedule a task", False)
         self.entity.permission_center.create_permission("scheduler_actions", "Authorizes user to get available actions", False)
-
+        # hooks
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.register_hook("HOOK_VM_TERMINATE", method=self.vm_terminate)
 
     ### Plugin interface
 
@@ -144,6 +146,17 @@ class TNActionScheduler (TNArchipelPlugin):
             str_date = "%s/%s/%s %s:%s:%s" % (year, month, day, hour, minute, second)
             self.scheduler.add_cron_job(self.do_job_for_vm, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[action, job_uuid, str_date, comment])
 
+    def vm_terminate(self, origin, user_info, arguments):
+        """
+        close the database connection
+        @type origin: L{TNArchipelEnity}
+        @param origin: the origin of the hook
+        @type user_info: object
+        @param user_info: random user information
+        @type arguments: object
+        @param arguments: runtime argument
+        """
+        self.database.close()
 
     ### Jobs
 
