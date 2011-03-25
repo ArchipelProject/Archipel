@@ -512,5 +512,4 @@ class TNArchipelPermissionCenter:
         """
         close the db connection
         """
-        self.
         self.connection.close()
