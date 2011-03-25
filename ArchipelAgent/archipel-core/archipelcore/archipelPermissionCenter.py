@@ -134,7 +134,7 @@ class TNArchipelPermissionCenter:
         try:
             trans = self.connection.transaction()
             self.TNArchipelUser(name=name, connection=self.connection)
-            trans.commit()
+            trans.commit(close=True)
             return True
         except sqlobject.dberrors.DuplicateEntryError:
             return False
@@ -164,7 +164,7 @@ class TNArchipelPermissionCenter:
         if user:
             trans = self.connection.transaction()
             user.destroySelf()
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -194,7 +194,7 @@ class TNArchipelPermissionCenter:
             trans = self.connection.transaction()
             log.info("setting permission %s to user %s" % (permission_name, user_name))
             perm.addTNArchipelUser(user)
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -218,7 +218,7 @@ class TNArchipelPermissionCenter:
         if user and perm:
             trans = self.connection.transaction()
             user.removeTNArchipelPermission(perm)
-            trans.commit()
+            trans.commit(close=True)
             self.TNArchipelUser.expired = True
             self.TNArchipelPermission.expired = True
             return True
@@ -301,7 +301,7 @@ class TNArchipelPermissionCenter:
         try:
             trans = self.connection.transaction()
             self.TNArchipelRole(name=name, description=description, connection=self.connection)
-            trans.commit()
+            trans.commit(close=True)
             return True
         except sqlobject.dberrors.DuplicateEntryError:
             return False
@@ -331,7 +331,7 @@ class TNArchipelPermissionCenter:
         if role:
             trans = self.connection.transaction()
             role.destroySelf()
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -351,7 +351,7 @@ class TNArchipelPermissionCenter:
         if user and role:
             trans = self.connection.transaction()
             role.addTNArchipelUser(user)
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -371,7 +371,7 @@ class TNArchipelPermissionCenter:
         if user and role:
             trans = self.connection.transaction()
             role.removeTNArchipelUser(user)
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -419,7 +419,7 @@ class TNArchipelPermissionCenter:
         if role and perm:
             trans = self.connection.transaction()
             perm.addTNArchipelRole(role)
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -439,7 +439,7 @@ class TNArchipelPermissionCenter:
         if role and perm:
             trans = self.connection.transaction()
             perm.addTNArchipelRole(role)
-            trans.commit()
+            trans.commit(close=True)
             return True
         else:
             return False
@@ -512,4 +512,5 @@ class TNArchipelPermissionCenter:
         """
         close the db connection
         """
+        self.
         self.connection.close()
