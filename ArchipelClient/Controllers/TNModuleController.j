@@ -437,6 +437,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
         moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
         moduleTabIndex          = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
+        moduleToolTip           = [aBundle objectForInfoDictionaryKey:@"ToolTip"],
         supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
         moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"],
         toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"],
@@ -447,6 +448,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [moduleToolbarItem setLabel:moduleLabel];
     [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
     [moduleToolbarItem setAlternateImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon-alt.png"] size:CPSizeMake(32, 32)]];
+    [moduleToolbarItem setToolTip:moduleToolTip];
 
     // if toolbar item only, no cib
     if (toolbarOnly)

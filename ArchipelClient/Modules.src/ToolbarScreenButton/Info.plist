@@ -89,5 +89,12 @@
         -->
         <!-- <key>CibName</key>
         <string>ToolbarPlayButton</string> -->
+
+        <!--
+            The tooltip of the toolbar item icon
+        -->
+        <key>ToolTip</key>
+        <string>Display the VNC screen of the current virtual machine</string>
+
     </dict>
 </plist>

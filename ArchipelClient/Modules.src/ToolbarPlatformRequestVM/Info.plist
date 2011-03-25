@@ -89,5 +89,12 @@
         -->
         <!-- <key>CibName</key>
         <string>ToolbarPlayButton</string> -->
+
+        <!--
+            The tooltip of the toolbar item icon
+        -->
+        <key>ToolTip</key>
+        <string>Ask a new virtual machine to your cloud</string>
+
     </dict>
 </plist>

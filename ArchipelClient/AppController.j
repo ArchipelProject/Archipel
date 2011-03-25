@@ -393,6 +393,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
+    [helpView setScrollMode:CPWebViewScrollNative];
     [self showHelpView];
 
     CPLog.trace(@"initializing Growl");
@@ -470,6 +471,7 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     [labelCurrentUser setToolTip:@"The current logged account"];
 
     /* about window */
+    [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
     [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
@@ -637,13 +639,13 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 */
 - (void)makeToolbar
 {
-    var bundle          = [CPBundle bundleForClass:self];
+    var bundle = [CPBundle bundleForClass:self];
 
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:)];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:)];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:)];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 120.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],

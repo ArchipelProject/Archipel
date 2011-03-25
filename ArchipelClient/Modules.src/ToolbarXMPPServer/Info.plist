@@ -7,25 +7,25 @@
         -->
         <key>CPBundleIdentifier</key>
         <string>org.archipelproject.toolbarxmppserver</string>
-        
+
         <!--
             Version of this plist file. Must be 1.0
         -->
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The package type. Must be 280N
         -->
         <key>CPBundlePackageType</key>
         <string>280N</string>
-        
+
         <!--
             The version of CPBundle. Must be 1.0
         -->
         <key>CPBundleVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The name of the bundle
         -->
@@ -37,20 +37,20 @@
         -->
         <key>CPPrincipalClass</key>
         <string>TNXMPPServerController</string>
-        
+
         <!--
             The plugin display name. This will be display as name of
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
         <string>XMPP Server</string>
-        
+
         <!--
             This value will be displayed when module is activate as the toolbat item title
         -->
         <key>AlternativePluginDisplayName</key>
         <string>XMPP Server</string>
-        
+
         <!--
             The type of the module. It can be
              - tab : for tabbed modules
@@ -58,34 +58,34 @@
         -->
         <key>InsertionType</key>
         <string>toolbar</string>
-        
+
         <!--
             The desired toolbar index. If two module have the same tabIndex,
             they are displayed in the load order.
         -->
         <key>ToolbarIndex</key>
         <string>500</string>
-        
+
         <!--
             If set to 1, no view is needed. module is just a toolbar item
         -->
         <key>ToolbarItemOnly</key>
         <integer>0</integer>
-        
+
         <!--
             This image will be displayed as toolbar item icon when module is unactivated.
             It must be in Resources folder
         -->
         <key>ToolbarIcon</key>
         <string>icon.png</string>
-        
+
         <!--
-            This image will be displayed as toolbar item icon when module is activated. 
+            This image will be displayed as toolbar item icon when module is activated.
             It must be in Resources folder
         -->
         <key>AlternativeToolbarIcon</key>
         <string>icon-alt.png</string>
-        
+
         <!--
             This indicate to the module loader which CIB to load.
             It must be the fileName without the .cib extension
@@ -93,6 +93,12 @@
         <key>CibName</key>
         <string>ToolbarXMPPServer</string>
 
-        
+        <!--
+            The tooltip of the toolbar item icon
+        -->
+        <key>ToolTip</key>
+        <string>Display an interface to create XMPP accounts and shared roster groups</string>
+
+
     </dict>
 </plist>
