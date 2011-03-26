@@ -84,7 +84,7 @@ class TNStorageManagement (TNArchipelPlugin):
         plugin_friendly_name           = "Virtual Machine Storage"
         plugin_identifier              = "storage"
         plugin_configuration_section   = "STORAGE"
-        plugin_configuration_tokens    = ["iso_base_path"]
+        plugin_configuration_tokens    = ["iso_base_path", "use_metadata_preallocation"]
 
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
@@ -144,6 +144,7 @@ class TNStorageManagement (TNArchipelPlugin):
             disk_size   = query_node.getTag("archipel").getAttr("size")
             disk_unit   = query_node.getTag("archipel").getAttr("unit")
             format      = query_node.getTag("archipel").getAttr("format")
+            prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             disk_path   = self.entity.folder + "/" + disk_name + "." + format
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
                 raise Exception("too big",  "You may be able to do it manually, but I won't try")
@@ -151,7 +152,12 @@ class TNStorageManagement (TNArchipelPlugin):
                 raise Exception("too big", "You may be able to do this manually, but I won't try")
             if os.path.exists(disk_path):
                 raise Exception("The disk with name %s already exists." % disk_name)
-            ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
+
+            if prealloc and prealloc == "metadata" and format == "qcow2" and self.entity.configuration.getboolean("STORAGE", "use_metadata_preallocation"):
+                self.entity.log.info("creating a QCOW2 file with preallocated metadata")
+                ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-o", "preallocation=metadata", disk_path, "%s%s" % (disk_size, disk_unit)])
+            else:
+                ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
             if not ret == 0:
                 raise Exception("DriveError", "Unable to create drive. Error code is " + str(ret))
             reply = iq.buildReply("result")
@@ -214,7 +220,7 @@ class TNStorageManagement (TNArchipelPlugin):
         try:
             query_node = iq.getTag("query")
             path = query_node.getTag("archipel").getAttr("path")
-            newname = query_node.getTag("archipel").getAttr("newname")
+            newname = query_node.getTag("archipel").getAttr("newname").replace(" ", "_").replace("/", "_").replace("..", "_")
             extension = path.split(".")[-1]
             newpath = os.path.join(self.entity.folder, "%s.%s" % (newname, extension))
             if os.path.exists(newpath):
@@ -282,7 +288,6 @@ class TNStorageManagement (TNArchipelPlugin):
             nodes = []
             for disk in disks:
                 file_cmd_output = subprocess.Popen(["file", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].lower()
-
                 if (file_cmd_output.find("format: qcow") > -1 \
                 or file_cmd_output.find("qemu qcow image") > -1 \
                 or file_cmd_output.find("boot sector") > -1 \
@@ -290,12 +295,14 @@ class TNStorageManagement (TNArchipelPlugin):
                 or file_cmd_output.find("data") > -1\
                 or file_cmd_output.find("user-mode linux cow file") > -1) \
                 and file_cmd_output.find("sqlite") == -1:
-                    diskinfo = subprocess.Popen([self.qemu_img_bin, "info", "%s/%s" % (self.entity.folder, disk)], stdout=subprocess.PIPE).communicate()[0].split("\n")
+                    diskPath = "%s/%s" % (self.entity.folder, disk)
+                    diskSize = os.path.getsize(diskPath)
+                    diskInfo = subprocess.Popen([self.qemu_img_bin, "info", diskPath], stdout=subprocess.PIPE).communicate()[0].split("\n")
                     node = xmpp.Node(tag="disk", attrs={"name": disk.split('.')[0],
-                        "path": self.entity.folder + "/" + disk,
-                        "format": diskinfo[1].split(": ")[1],
-                        "virtualSize": diskinfo[2].split(": ")[1],
-                        "diskSize": diskinfo[3].split(": ")[1],
+                        "path": diskPath,
+                        "format": diskInfo[1].split(": ")[1],
+                        "virtualSize": diskInfo[2].split(": ")[1],
+                        "diskSize": diskSize,
                     })
                     nodes.append(node)
             reply = iq.buildReply("result")
