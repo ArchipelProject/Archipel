@@ -19,7 +19,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "TNMediaObject.j";
+@import "TNMediaObject.j"
+@import "TNNewDriveController.j"
+@import "TNEditDriveController.j"
+
 
 TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
 TNArchipelTypeVirtualMachineDiskCreate  = @"create";
@@ -42,33 +45,26 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 */
 @implementation TNVirtualMachineDrivesController : TNModule
 {
-    @outlet CPButton        buttonConvert;
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPImageView     imageViewConverting;
-    @outlet CPPopUpButton   buttonEditDiskFormat;
-    @outlet CPPopUpButton   buttonNewDiskFormat;
-    @outlet CPPopUpButton   buttonNewDiskSizeUnit;
-    @outlet CPScrollView    scrollViewDisks;
-    @outlet CPSearchField   fieldFilter;
-    @outlet CPTextField     fieldEditDiskName;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldNewDiskName;
-    @outlet CPTextField     fieldNewDiskSize;
-    @outlet CPView          maskingView;
-    @outlet CPView          viewTableContainer;
-    @outlet CPWindow        windowDiskProperties;
-    @outlet CPWindow        windowNewDisk;
+    @outlet CPButtonBar             buttonBarControl;
+    @outlet CPScrollView            scrollViewDisks;
+    @outlet CPSearchField           fieldFilter;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldName;
+    @outlet CPView                  maskingView;
+    @outlet CPView                  viewTableContainer;
+    @outlet TNEditDriveController   editDriveController;
+    @outlet TNNewDriveController    newDriveController;
 
-    BOOL                    _isActive;
-    CPButton                _editButton;
-    CPButton                _minusButton;
-    CPButton                _plusButton;
-    CPTableView             _tableMedias;
-    id                      _registredDiskListeningId;
-    TNMedia                 _currentEditedDisk;
-    TNTableViewDataSource   _mediasDatasource;
+    BOOL                            _isActive               @accessors(getters=isActive);
+
+    CPButton                        _editButton;
+    CPButton                        _minusButton;
+    CPButton                        _plusButton;
+    CPTableView                     _tableMedias;
+    id                              _registredDiskListeningId;
+    TNTableViewDataSource           _mediasDatasource;
 }
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -81,19 +77,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
-    [buttonNewDiskSizeUnit removeAllItems];
-    [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
-
-    var formats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
-    [buttonNewDiskFormat removeAllItems];
-    [buttonNewDiskFormat addItemsWithTitles:formats];
-
-    [buttonEditDiskFormat removeAllItems];
-    [buttonEditDiskFormat addItemsWithTitles:formats];
-
     var bundle = [CPBundle mainBundle];
-    [imageViewConverting setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"]]];
-    [imageViewConverting setHidden:YES];
 
     // Media table view
     _mediasDatasource    = [[TNTableViewDataSource alloc] init];
@@ -144,7 +128,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     [_tableMedias addTableColumn:mediaColumPath];
 
     [_tableMedias setTarget:self];
-    [_tableMedias setDoubleAction:@selector(openRenamePanel:)];
+    [_tableMedias setDoubleAction:@selector(openEditWindow:)];
     [_tableMedias setDelegate:self];
 
     [_mediasDatasource setTable:_tableMedias];
@@ -152,14 +136,11 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
     [_tableMedias setDataSource:_mediasDatasource];
 
-    [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
-    [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
-
     [fieldFilter setTarget:_mediasDatasource];
     [fieldFilter setAction:@selector(filterObjects:)];
 
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Rename" action:@selector(openRenamePanel:) keyEquivalent:@""];
+    [menu addItemWithTitle:@"Rename" action:@selector(openEditWindow:) keyEquivalent:@""];
     [menu addItemWithTitle:@"Delete" action:@selector(removeDisk:) keyEquivalent:@""];
     [_tableMedias setMenu:menu];
 
@@ -177,18 +158,14 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
-    [_editButton setAction:@selector(openRenamePanel:)];
+    [_editButton setAction:@selector(openEditWindow:)];
     [_editButton setEnabled:NO];
     [_editButton setToolTip:@"Edit selected virtual drive"];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
 
-    [fieldEditDiskName setToolTip:@"Set the name of the virtual drive"];
-    [buttonEditDiskFormat setToolTip:@"Choose the format of the virtual drive"];
-    [fieldNewDiskName setToolTip:@"Set the name of the new virtual drive"];
-    [fieldNewDiskSize setToolTip:@"Set the size of the new virtual drive"];
-    [buttonNewDiskFormat setToolTip:@"Set the format of the new virtual drive"];
-    [buttonNewDiskSizeUnit setToolTip:@"Set the unit of size for the new virtual drive"];
+    [newDriveController setDelegate:self];
+    [editDriveController setDelegate:self];
 }
 
 
@@ -240,7 +217,7 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (void)menuReady
 {
     [[_menu addItemWithTitle:@"Create a drive" action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(openRenamePanel:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(openEditWindow:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:@"Delete selected drive" action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
 }
@@ -250,10 +227,10 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 - (void)permissionsChanged
 {
     if (![self currentEntityHasPermission:@"drives_create"])
-        [windowNewDisk close];
+        [newDriveController closeMainWindow];
 
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
-        [windowDiskProperties close];
+        [editDriveController closeMainWindow];
 
     [self tableViewSelectionDidChange:nil];
 }
@@ -341,18 +318,13 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 */
 - (IBAction)openNewDiskWindow:(id)aSender
 {
-    [fieldNewDiskName setStringValue:@""];
-    [fieldNewDiskSize setStringValue:@""];
-    [buttonNewDiskFormat selectItemWithTitle:@"qcow2"];
-    [windowNewDisk makeFirstResponder:fieldNewDiskName];
-    [windowNewDisk center];
-    [windowNewDisk makeKeyAndOrderFront:nil];
+    [newDriveController openMainWindow];
 }
 
 /*! opens the rename window
     @param aSender the sender of the action
 */
-- (IBAction)openRenamePanel:(id)aSender
+- (IBAction)openEditWindow:(id)aSender
 {
     if (![self currentEntityHasPermissions:[@"drives_convert", @"drives_rename"]])
         return;
@@ -373,37 +345,9 @@ TNArchipelPushNotificationDiskCreated    = @"created";
         var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
             diskObject      = [_mediasDatasource objectAtIndex:selectedIndex];
 
-        [buttonEditDiskFormat selectItemWithTitle:[diskObject format]];
-        [windowDiskProperties center];
-        [windowDiskProperties makeKeyAndOrderFront:nil];
-        [fieldEditDiskName setStringValue:[diskObject name]];
-
-        _currentEditedDisk = diskObject;
+        [editDriveController setCurrentEditedDisk:diskObject];
+        [editDriveController openMainWindow];
     }
-}
-
-/*! creates a disk
-    @param aSender the sender of the action
-*/
-- (IBAction)createDisk:(id)aSender
-{
-    [self createDisk];
-}
-
-/*! converts a disk
-    @param aSender the sender of the action
-*/
-- (IBAction)convert:(id)aSender
-{
-    [self convert];
-}
-
-/*! rename a disk
-    @param aSender the sender of the action
-*/
-- (IBAction)rename:(id)aSender
-{
-    [self rename];
 }
 
 /*! remove a disk
@@ -467,175 +411,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
     return NO;
 }
 
-/*! asks virtual machine to create a new disk
-*/
-- (void)createDisk
-{
-    var dUnit,
-        dName       = [fieldNewDiskName stringValue],
-        dSize       = [fieldNewDiskSize stringValue],
-        format      = [buttonNewDiskFormat title];
-
-    if (dSize == @"" || isNaN(dSize))
-    {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a numeric value" style:CPCriticalAlertStyle];
-        return;
-    }
-
-    if (dName == @"")
-    {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a valid name" style:CPCriticalAlertStyle];
-        return;
-    }
-
-    switch ([buttonNewDiskSizeUnit title])
-    {
-        case "Go":
-            dUnit = "G";
-            break;
-
-        case "Mo":
-            dUnit = "M";
-            break;
-    }
-
-
-    var stanza  = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineDiskCreate,
-        "name": dName,
-        "size": dSize,
-        "unit": dUnit,
-        "format": format}];
-
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didCreateDisk:) ofObject:self];
-
-    [windowNewDisk orderOut:nil];
-    [fieldNewDiskName setStringValue:@""];
-    [fieldNewDiskSize setStringValue:@""];
-}
-
-/*! compute virtual machine disk creation results
-    @param aStanza TNStropheStanza that contains the answer
-*/
-- (BOOL)_didCreateDisk:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-/*! asks virtual machine to connvert a disk
-*/
-- (void)convert
-{
-    if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
-    {
-         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a media"];
-         return;
-    }
-
-    if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
-    {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must choose a different format"];
-        return;
-
-    }
-
-    var selectedIndex   = [[_tableMedias selectedRowIndexes] firstIndex],
-        dName           = [_mediasDatasource objectAtIndex:selectedIndex],
-        stanza          = [TNStropheStanza iqWithType:@"set"];
-
-    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineDiskConvert,
-        "path": [dName path],
-        "format": [buttonEditDiskFormat title]}];
-
-    [windowDiskProperties orderOut:nil];
-
-    [imageViewConverting setHidden:NO];
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didConvertDisk:) ofObject:self];
-}
-
-/*! compute virtual machine disk conversion results
-    @param aStanza TNStropheStanza that contains the answer
-*/
-- (BOOL)_didConvertDisk:(TNStropheStanza)aStanza
-{
-    [imageViewConverting setHidden:YES];
-
-    if ([aStanza type] == @"result")
-    {
-        var growl   = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been converted"];
-    }
-    else if ([aStanza type] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
-/*! asks virtual machine to rename a disk
-*/
-- (void)rename
-{
-    [windowDiskProperties orderOut:nil];
-
-    if (_isActive)
-    {
-        var growl   = [TNGrowlCenter defaultCenter];
-
-        [growl pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
-
-        return;
-    }
-
-    if ([fieldEditDiskName stringValue] != [_currentEditedDisk name])
-    {
-        [_currentEditedDisk setName:[fieldEditDiskName stringValue]];
-        [self rename:_currentEditedDisk];
-
-        var stanza      = [TNStropheStanza iqWithType:@"set"];
-
-        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDisk}];
-        [stanza addChildWithName:@"archipel" andAttributes:{
-            "xmlns": TNArchipelTypeVirtualMachineDisk,
-            "action": TNArchipelTypeVirtualMachineDiskRename,
-            "path": [_currentEditedDisk path],
-            "newname": [_currentEditedDisk name]}];
-
-        [_entity sendStanza:stanza andRegisterSelector:@selector(_didRename:) ofObject:self];
-
-        _currentEditedDisk = nil;
-    }
-}
-
-/*! compute virtual machine disk renaming results
-    @param aStanza TNStropheStanza that contains the answer
-*/
-- (BOOL)_didRename:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-    {
-        var growl   = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Disk" message:@"Disk has been renamed"];
-    }
-    else if ([aStanza type] == @"error")
-    {
-        [self handleIqErrorFromStanza:aStanza];
-    }
-
-    return NO;
-}
-
 /*! asks virtual machine to remove a disk. but before ask a confirmation
 */
 - (void)removeDisk
@@ -670,7 +445,6 @@ TNArchipelPushNotificationDiskCreated    = @"created";
             "xmlns": TNArchipelTypeVirtualMachineDisk,
             "action": TNArchipelTypeVirtualMachineDiskDelete,
             "name": [dName path],
-            "format": [buttonEditDiskFormat title],
             "undefine": "yes"}];
 
         [_entity sendStanza:stanza andRegisterSelector:@selector(_didRemoveDisk:) ofObject:self];
@@ -703,6 +477,3 @@ TNArchipelPushNotificationDiskCreated    = @"created";
 
 
 @end
-
-
-

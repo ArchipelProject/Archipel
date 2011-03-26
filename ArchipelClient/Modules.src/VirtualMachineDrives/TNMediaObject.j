@@ -16,16 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
+
+
+TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
+
 
 /*! @ingroup virtualmachinedrives
     This class represent a media (a drive)
 */
 @implementation TNMedia : CPObject
 {
-    CPString    _diskSize        @accessors(property=diskSize);
+    CPString    _diskSize        @accessors(setter=setDiskSize:);
     CPString    _format          @accessors(property=format);
     CPString    _name            @accessors(property=name);
     CPString    _path            @accessors(property=path);
@@ -56,4 +59,24 @@
     return media;
 }
 
+
+- (CPString)diskSize
+{
+    var usedKind = @"GB";
+
+    if (Math.round(_diskSize / 1024 / 1024 / 1024) == 0)
+    {
+        _diskSize = Math.round(_diskSize / 1024 / 1024);
+        usedKind = @"MB";
+        if (_diskSize == 0)
+        {
+            _diskSize = Math.round(_diskSize / 1024);
+            usedKind = @"KB";
+        }
+    }
+    else
+        _diskSize = Math.round(_diskSize / 1024 / 1024 / 1024);
+
+    return @"" + _diskSize + usedKind + @"";
+}
 @end
