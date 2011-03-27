@@ -886,9 +886,9 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     var index   = [[_rosterOutlineView selectedRowIndexes] firstIndex],
         item    = [_rosterOutlineView itemAtRow:index];
 
-    if ([item class] == TNStropheContact)
+    if ([item isKindOfClass:TNStropheContact])
         [self deleteContact:sender];
-    else if ([item class] == TNStropheGroup)
+    else if ([item isKindOfClass:TNStropheGroup])
         [self deleteGroup:sender];
 }
 

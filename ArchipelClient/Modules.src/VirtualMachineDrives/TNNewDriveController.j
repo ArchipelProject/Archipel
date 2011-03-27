@@ -159,9 +159,7 @@
 - (BOOL)_didCreateDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"error")
-    {
         [self handleIqErrorFromStanza:aStanza];
-    }
 
     return NO;
 }

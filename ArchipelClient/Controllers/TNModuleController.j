@@ -161,7 +161,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [center addObserver:self selector:@selector(_didAllModulesReady:) name:TNArchipelModulesReadyNotification object:nil];
 
-    if ([_entity class] == TNStropheContact)
+    if ([_entity isKindOfClass:TNStropheContact])
     {
         _previousXMPPShow = [_entity XMPPShow];
 
@@ -220,7 +220,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     var defaults                = [CPUserDefaults standardUserDefaults],
         currentSelectedIndex    = [_mainTabView indexOfTabViewItem:anItem],
-        identifier              = ([_entity class] == TNStropheContact) ? [_entity JID] : [_entity name],
+        identifier              = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid                   = @"selectedTabIndexFor" + identifier;
 
     if (currentSelectedIndex == [defaults integerForKey:memid])
@@ -235,7 +235,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 - (void)recoverFromLastSelectedIndex
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
-        identifier          = ([_entity class] === TNStropheContact) ? [_entity JID] : [_entity name],
+        identifier          = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid               = @"selectedTabIndexFor" + identifier,
         oldSelectedIndex    = [defaults integerForKey:memid],
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];

@@ -118,11 +118,11 @@
 */
 - (void)changeNickNameNotification:(CPNotification)aNotification
 {
-    if (([_entity class] == TNStropheContact) && ([_entity nickname] != [entryName stringValue]))
+    if (([_entity isKindOfClass:TNStropheContact]) && ([_entity nickname] != [entryName stringValue]))
     {
         [[[TNStropheIMClient defaultClient] roster] changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
     }
-    else if (([_entity class] == TNStropheGroup) && ([_entity name] != [entryName stringValue]))
+    else if (([_entity isKindOfClass:TNStropheGroup]) && ([_entity name] != [entryName stringValue]))
     {
         var defaults    = [CPUserDefaults standardUserDefaults],
             oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
@@ -141,7 +141,7 @@
     var center      = [CPNotificationCenter defaultCenter],
         oldEntity   = _entity;
 
-    if (oldEntity && ([oldEntity class] == TNStropheContact))
+    if (oldEntity && [oldEntity isKindOfClass:TNStropheContact])
     {
         [center removeObserver:self name:TNStropheContactVCardReceivedNotification object:oldEntity];
         [center removeObserver:self name:TNStropheContactPresenceUpdatedNotification object:oldEntity];
@@ -149,7 +149,7 @@
 
     _entity = anEntity;
 
-    if (_entity && ([_entity class] == TNStropheContact))
+    if (_entity && ([_entity isKindOfClass:TNStropheContact]))
     {
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactVCardReceivedNotification object:_entity];
         [center addObserver:self selector:@selector(reload:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
@@ -210,7 +210,7 @@
         return;
     }
 
-    if ([_entity class] === TNStropheContact)
+    if ([_entity isKindOfClass:TNStropheContact])
     {
         [labelResource setStringValue:@"Resource :"];
         [labelStatus setHidden:NO];
@@ -261,7 +261,7 @@
         }
 
     }
-    else if ([_entity class] == TNStropheGroup)
+    else if ([_entity isKindOfClass:TNStropheGroup])
     {
         var population = ([_entity count] > 1) ? [_entity count] + @" contacts in group" : [_entity count] + @" contact in group";
 

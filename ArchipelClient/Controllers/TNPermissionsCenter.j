@@ -109,7 +109,7 @@ var __defaultPermissionCenter;
     for (var i = 0; i < [somePermissions count]; i++)
     {
 
-        if ([anEntity class] != TNStropheContact)
+        if (![anEntity isKindOfClass:TNStropheContact])
             return NO;
 
         if (((_adminAccountValidationMode === 1) && ([[[TNStropheIMClient defaultClient] JID] node] === _adminAccountName))
@@ -317,7 +317,7 @@ var __defaultPermissionCenter;
 */
 - (void)getPermissionForEntity:(TNStropheContact)anEntity
 {
-    if (!anEntity || ([anEntity class] != TNStropheContact) || [anEntity XMPPShow] == TNStropheContactStatusOffline)
+    if (!anEntity || (![anEntity isKindOfClass:TNStropheContact]) || [anEntity XMPPShow] == TNStropheContactStatusOffline)
         return;
 
     CPLog.info("Ask permission to entity for entity " + anEntity);

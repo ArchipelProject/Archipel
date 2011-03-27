@@ -34,10 +34,10 @@ TNDragTypeContact   = @"TNDragTypeContact";
     CPSearchField               _filterField        @accessors(property=filterField);
     CPString                    _filter             @accessors(property=filter);
 
-    TNPubSubNode                _pubsubTagsNode;
-    id                          _draggedItem;
-    CPDictionary                _tagsRegistry;
     BOOL                        _shouldDragDuplicate;
+    CPDictionary                _tagsRegistry;
+    id                          _draggedItem;
+    TNPubSubNode                _pubsubTagsNode;
 }
 
 
@@ -273,20 +273,16 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
     if (!item)
-    {
         return [[self _getGroupContainingEntriesMatching:_filter] count];
-    }
     else
-    {
         return [[self _getEntriesMatching:_filter inGroup:item] count];
-    }
 }
 
 /*! CPOutlineView Datasource
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-    return ([item class] == TNStropheGroup) ? YES : NO;
+    return [item isKindOfClass:TNStropheGroup];
 }
 
 /*! CPOutlineView Datasource
@@ -294,13 +290,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
     if (!item)
-    {
         return [[self _getGroupContainingEntriesMatching:_filter].sort() objectAtIndex:index];
-    }
     else
-    {
         return [[self _getEntriesMatching:_filter inGroup:item].sort() objectAtIndex:index];
-    }
 }
 
 /*! CPOutlineView Datasource
@@ -310,9 +302,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     var cid = [tableColumn identifier];
 
     if (cid == @"nickname")
-    {
         return item;
-    }
 }
 
 /*! CPOutlineView Datasource
@@ -338,12 +328,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (CPDragOperation)outlineView:(CPOutlineView)anOutlineView validateDrop:(id < CPDraggingInfo >)theInfo proposedItem:(id)theItem proposedChildIndex:(int)theIndex
 {
-    if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
+    if (([_draggedItem isKindOfClass:TNStropheContact]) && ([theItem isKindOfClass:TNStropheGroup]))
     {
         [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
         return CPDragOperationEvery;
     }
-    else if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup))
+    else if (([_draggedItem isKindOfClass:TNStropheGroup]) && ([theItem isKindOfClass:TNStropheGroup]))
     {
         [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
         return CPDragOperationEvery;
@@ -356,7 +346,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView acceptDrop:(id < CPDraggingInfo >)theInfo item:(id)theItem childIndex:(int)theIndex
 {
-    if (([_draggedItem class] == TNStropheGroup) && ([theItem class] == TNStropheGroup) && (theItem  != _draggedItem))
+    if (([_draggedItem isKindOfClass:TNStropheGroup]) && ([theItem isKindOfClass:TNStropheGroup]) && (theItem  != _draggedItem))
     {
         var center          = [CPNotificationCenter defaultCenter],
             contactsToMove  = [[_draggedItem contacts] copy];
@@ -372,7 +362,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
         return YES;
     }
-    else if (([_draggedItem class] == TNStropheContact) && ([theItem class] == TNStropheGroup))
+    else if (([_draggedItem isKindOfClass:TNStropheContact]) && ([theItem isKindOfClass:TNStropheGroup]))
     {
         if (_shouldDragDuplicate)
             [_draggedItem addGroup:theItem];
@@ -386,6 +376,5 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
     return NO;
 }
-
 
 @end

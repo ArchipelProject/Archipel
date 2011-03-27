@@ -57,7 +57,7 @@
     var defaults = [CPUserDefaults standardUserDefaults],
         alert;
 
-    if ([aGroup class] != TNStropheGroup)
+    if (![aGroup isKindOfClass:TNStropheGroup])
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError];
         return;

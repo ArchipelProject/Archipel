@@ -82,7 +82,7 @@ TNXMPPUserDatasourceServerUsers = @"SERVER USERS";
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-    return ([item class] == @"CPString" && item != TNXMPPUserDatasourceMe) ? YES : NO;
+    return ([item isKindOfClass:CPString] && item != TNXMPPUserDatasourceMe) ? YES : NO;
 }
 
 /*! CPOutlineView Delegate

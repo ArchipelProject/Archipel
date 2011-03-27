@@ -212,7 +212,7 @@ TNArchipelApplianceStatusString          = [@"", @"Installed", @"Installing", @"
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
-    return ([item class] == @"TNVMCastSource") ? YES : NO;
+    return [item isKindOfClass:TNVMCastSource];
 }
 
 /*! CPOutlineView Delegate

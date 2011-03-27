@@ -192,6 +192,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_datasourceUsers removeAllObjects];
     [_outlineViewUsers setDelegate:nil];
     [_outlineViewUsers setDelegate:self];
+    [_tablePermissions setDelegate:nil];
+    [_tablePermissions setDelegate:self];
 
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
@@ -374,7 +376,7 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         var selectedIndexes = [_outlineViewUsers selectedRowIndexes],
             object          = [_outlineViewUsers itemAtRow:[selectedIndexes firstIndex]];
 
-        if ([object class] == @"TNStropheJID")
+        if ([object isKindOfClass:TNStropheJID])
         {
             [viewTableContainer setHidden:NO];
             [self getUserPermissions:[object bare]];
@@ -618,6 +620,12 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 #pragma mark -
 #pragma mark Delegate
 
+- (void)tableView:(CPTableView)aTableView willDisplayView:(CPView)aView forTableColumn:(CPTableColumn)aColumn row:(int)aRow
+{
+    if ([aView isKindOfClass:CPCheckBox])
+        [aView setState:[[_datasourcePermissions objectAtIndex:aRow] objectForKey:@"state"]];
+}
+
 - (void)outlineViewSelectionDidChange:(CPNotification)aNotification
 {
     [self changeCurrentUser:nil];
@@ -625,14 +633,14 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 - (void)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
 {
-    return (([anItem class] == @"TNStropheJID") || anItem == TNXMPPUserDatasourceMe);
+    return ([anItem isKindOfClass:TNStropheJID] || anItem == TNXMPPUserDatasourceMe);
 }
 
 - (void)outlineView:(CPOutlineView)anOutlineView dataViewForTableColumn:(CPTableColumn)aColumn item:(id)anItem
 {
     var viewProto = [[CPTextField alloc] init];
 
-    if ([anItem class] != @"TNStropheJID")
+    if (![anItem isKindOfClass:TNStropheJID])
     {
         [viewProto setTextColor:[CPColor colorWithHexString:@"7F7F7F"]];
         [viewProto setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];

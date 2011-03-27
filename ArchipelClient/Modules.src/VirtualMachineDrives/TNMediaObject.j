@@ -62,21 +62,13 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 
 - (CPString)diskSize
 {
-    var usedKind = @"GB";
-
-    if (Math.round(_diskSize / 1024 / 1024 / 1024) == 0)
-    {
-        _diskSize = Math.round(_diskSize / 1024 / 1024);
-        usedKind = @"MB";
-        if (_diskSize == 0)
-        {
-            _diskSize = Math.round(_diskSize / 1024);
-            usedKind = @"KB";
-        }
-    }
+    if (Math.round(_diskSize / 1024 / 1024 / 1024) > 0)
+        return Math.round(_diskSize / 1024 / 1024 / 1024) + @"GB";
+    else if (Math.round(_diskSize / 1024 / 1024) > 0)
+        return Math.round(_diskSize / 1024 / 1024) + @"MB";
+    else if (Math.round(_diskSize / 1024) > 0)
+        return Math.round(_diskSize / 1024) + @"KB";
     else
-        _diskSize = Math.round(_diskSize / 1024 / 1024 / 1024);
-
-    return @"" + _diskSize + usedKind + @"";
+        return _diskSize + @"B";
 }
 @end

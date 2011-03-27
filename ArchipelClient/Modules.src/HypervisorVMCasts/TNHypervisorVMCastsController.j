@@ -255,9 +255,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex],
         currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
 
-    if (([currentVMCast class] == TNVMCast) && [self currentEntityHasPermission:@"vmcasting_unregister"])
+    if (([currentVMCast isKindOfClass:TNVMCast]) && [self currentEntityHasPermission:@"vmcasting_unregister"])
         [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"]
-    else if (([currentVMCast class] == TNVMCastSource) && [self currentEntityHasPermission:@"vmcasting_deleteappliance"])
+    else if (([currentVMCast isKindOfClass:TNVMCastSource]) && [self currentEntityHasPermission:@"vmcasting_deleteappliance"])
         [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance"]
     else
         [_minusButton setEnabled:NO];
@@ -521,9 +521,9 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
     var selectedIndex   = [[_mainOutlineView selectedRowIndexes] firstIndex],
         currentVMCast   = [_mainOutlineView itemAtRow:selectedIndex];
 
-    if ([currentVMCast class] == TNVMCast)
+    if ([currentVMCast isKindOfClass:TNVMCast])
         [self removeAppliance];
-    else if ([currentVMCast class] == TNVMCastSource)
+    else if ([currentVMCast isKindOfClass:TNVMCastSource])
         [self removeVMCast];
 
 }
@@ -677,7 +677,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
         var selectedIndexes = [_mainOutlineView selectedRowIndexes],
             object          = [_mainOutlineView itemAtRow:[selectedIndexes firstIndex]];
 
-        if ([object class] == TNVMCast)
+        if ([object isKindOfClass:TNVMCast])
         {
             var conditionNotInstalled = (([object status] == TNArchipelApplianceNotInstalled) || ([object status] == TNArchipelApplianceInstallationError)),
                 conditionInstalled = ([object status] == TNArchipelApplianceInstalled);
@@ -686,7 +686,7 @@ TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting"
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance" specialCondition:conditionInstalled];
             [_minusButton setToolTip:@"Delete the selected appliance from the hypervisor repository"];
         }
-        else if ([object class] == TNVMCastSource)
+        else if ([object isKindOfClass:TNVMCastSource])
         {
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"];
             [_downloadButton setEnabled:NO]

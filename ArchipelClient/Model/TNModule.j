@@ -187,7 +187,7 @@ TNArchipelModuleStatusWaiting           = 2;
 */
 - (void)registerSelector:(SEL)aSelector forPushNotificationType:(CPString)aPushType
 {
-    if ([_entity class] == TNStropheContact)
+    if ([_entity isKindOfClass:TNStropheContact])
     {
         var registrarItem = [CPDictionary dictionary];
 
@@ -272,7 +272,7 @@ TNArchipelModuleStatusWaiting           = 2;
 */
 - (BOOL)isEntityGranted:(TNStropheContact)anEntity
 {
-    if ([anEntity class] !== TNStropheContact)
+    if (![anEntity isKindOfClass:TNStropheContact])
         return YES;
 
     var defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];

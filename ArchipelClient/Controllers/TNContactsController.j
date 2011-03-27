@@ -157,7 +157,7 @@
 */
 - (void)deleteContact:(TNStropheContact)aContact
 {
-    if ([aContact class] != TNStropheContact)
+    if (![aContact isKindOfClass:TNStropheContact])
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
         return;

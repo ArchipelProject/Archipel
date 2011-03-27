@@ -813,7 +813,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     _definitionEdited = NO;
     [self getXMLDesc];
 
-    if ([object class] == @"TNiTunesTabView")
+    if ([object isKindOfClass:TNiTunesTabView])
         [object selectTabViewItem:item];
     else
     {
@@ -833,7 +833,7 @@ TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet
     _definitionEdited = NO;
     [self defineXML];
 
-    if ([object class] == @"TNiTunesTabView")
+    if ([object isKindOfClass:TNiTunesTabView])
         [object selectTabViewItem:item];
     else
     {

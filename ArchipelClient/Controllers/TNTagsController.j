@@ -148,7 +148,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     [_tokenFieldTags setObjectValue:[]];
 
-    if ([_currentRosterItem class] !== TNStropheContact)
+    if (![_currentRosterItem isKindOfClass:TNStropheContact])
     {
         [_tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
         [_buttonSave setEnabled:NO];
@@ -178,7 +178,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 */
 - (IBAction)performSetTags:(id)sender
 {
-    if ([_currentRosterItem class] != TNStropheContact)
+    if (![_currentRosterItem isKindOfClass:TNStropheContact])
         return;
 
     var stanza      = [TNStropheStanza iqWithType:@"set"],
