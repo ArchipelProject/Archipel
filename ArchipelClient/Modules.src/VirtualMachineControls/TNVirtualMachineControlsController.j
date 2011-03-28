@@ -113,7 +113,7 @@ TNArchipelTransportBarReboot    = 4;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
     CPTableView                     _tableHypervisors;
-    TNStropheJID                    _JIDOfVirtualMachineToFree;
+    TNStropheContact                _virtualMachineToFree;
     TNTableViewDataSource           _datasourceHypervisors;
 }
 
@@ -1335,7 +1335,7 @@ TNArchipelTransportBarReboot    = 4;
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineControlFree}];
 
-    _JIDOfVirtualMachineToFree = [_entity JID];
+    _virtualMachineToFree = _entity;
     [self sendStanza:stanza andRegisterSelector:@selector(_didFree:)];
 }
 
@@ -1346,10 +1346,10 @@ TNArchipelTransportBarReboot    = 4;
 {
     if ([aStanza type] == @"result")
     {
-        [[[TNStropheIMClient defaultClient] roster] removeContactWithJID:_JIDOfVirtualMachineToFree];
+        [[[TNStropheIMClient defaultClient] roster] removeContact:_virtualMachineToFree];
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine killed."];
         [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewDeselectAll object:self];
-        _JIDOfVirtualMachineToFree = nil;
+        _virtualMachineToFree = nil;
     }
     else
     {

@@ -87,7 +87,7 @@
         defaults = [CPUserDefaults standardUserDefaults],
         key     = TNArchipelRememberOpenedGroup + [group name];
 
-    [[[TNStropheIMClient defaultClient] roster] removeGroupAtPath:[group path]];
+    [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
     [defaults removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];

@@ -443,7 +443,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 {
     var vm = someUserInfo;
 
-    [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[vm nickname] inGroupWithName:@"General"];
+    [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[vm nickname] inGroupWithPath:nil];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[vm JID]];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:[vm JID]];
 }
@@ -477,7 +477,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
         for (var i = 0; i < [queryItems count]; i++)
         {
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
-                entry   = [[[TNStropheIMClient defaultClient] roster] firstContactWithBareJID:JID];
+                entry   = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:JID];
 
             if (entry)
             {
@@ -623,7 +623,7 @@ TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 */
 - (void)performRemoveFromRoster:(id)someUserInfo
 {
-    [[[TNStropheIMClient defaultClient] roster] removeContactWithJID:[someUserInfo JID]];
+    [[[TNStropheIMClient defaultClient] roster] removeContact:someUserInfo];
 }
 
 /*! clone a virtual machine. but ask user if he is sure before

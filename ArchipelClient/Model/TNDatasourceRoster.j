@@ -173,83 +173,35 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     _filterField = aField;
 
-    // [_filterField setSendsSearchStringImmediately:YES]
-    // [_filterField setTarget:self];
-    // [_filterField setAction:@selector(filterFieldDidChange:)];
+    [_filterField setSendsSearchStringImmediately:YES]
+    [_filterField setTarget:self];
+    [_filterField setAction:@selector(filterFieldDidChange:)];
 }
 
-// /*! Message use internally for filtering
-//     @param aFilter CPString containing the filter
-//     @return a CPArray containing the contacts that matches the filters
-// */
-// - (CPArray)_getEntriesMatching:(CPString)aFilter
-// {
-//     var theEntries      = [self contacts],
-//         filteredEntries = [CPArray array];
-//
-//     if (!aFilter)
-//         return theEntries;
-//
-//     for (var i = 0; i < [theEntries count]; i++)
-//     {
-//         var entry = [theEntries objectAtIndex:i];
-//
-//         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-//             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter uppercaseString]])
-//         {
-//             [filteredEntries addObject:entry];
-//         }
-//     }
-//     return filteredEntries;
-// }
-//
-// /*! Message use internally for filtering
-//     @param aFilter CPString containing the filter
-//     @param inGroup CPString containing the group of filter
-//     @return a CPArray containing the contacts in aGroup that matches the filters
-// */
-// - (CPArray)_getEntriesMatching:(CPString)aFilter inGroup:(TNStropheGroup)aGroup
-// {
-//     var filteredEntries = [CPArray array];
-//
-//     if (!aFilter)
-//         return [aGroup contacts];
-//
-//     for (var i = 0; i < [[aGroup contacts] count]; i++)
-//     {
-//         var entry = [[aGroup contacts] objectAtIndex:i];
-//
-//         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-//             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter lowercaseString]])
-//             [filteredEntries addObject:entry];
-//     }
-//
-//     return filteredEntries;
-// }
-//
-//
-// /*! Message use internally for filtering
-//     @param aFilter CPString containing the filter
-//     @return a CPArray groups containing contacts matching aFilter
-// */
-// - (CPArray)_getGroupContainingEntriesMatching:(CPString)aFilter
-// {
-//     var theGroups       = [self groups],
-//         filteredGroup   = [CPArray array];
-//
-//     if (!aFilter)
-//         return [self groups];
-//
-//     for (var i = 0; i < [theGroups count]; i++)
-//     {
-//         var group = [theGroups objectAtIndex:i];
-//
-//         if ([[self _getEntriesMatching:aFilter inGroup:group] count] > 0)
-//             [filteredGroup addObject:group];
-//     }
-//
-//     return filteredGroup;
-// }
+/*! Message use internally for filtering
+    @param aFilter CPString containing the filter
+    @return a CPArray containing the contacts that matches the filters
+*/
+- (CPArray)_getEntriesMatching
+{
+    var theEntries      = [self contacts],
+        filteredEntries = [CPArray array];
+
+    if (!_filter)
+        return theEntries;
+
+    for (var i = 0; i < [theEntries count]; i++)
+    {
+        var entry = [theEntries objectAtIndex:i];
+
+        if (([[entry nickname] uppercaseString].indexOf([_filter uppercaseString]) != -1)
+            || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[_filter lowercaseString]])
+        {
+            [filteredEntries addObject:entry];
+        }
+    }
+    return filteredEntries;
+}
 
 
 #pragma mark -
@@ -271,6 +223,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
+    if (_filter)
+        return [[self _getEntriesMatching] count];
+
     if (!item)
         return [_content count];
     else
@@ -284,6 +239,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (BOOL)outlineView:(CPOutlineView)anOutlineView isItemExpandable:(id)item
 {
+    if (_filter)
+        return NO;
+
     return [item isKindOfClass:TNStropheGroup];
 }
 
@@ -291,8 +249,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
+    if (_filter)
+        return [[self _getEntriesMatching].sort() objectAtIndex:index];
+
     if (!item)
-        return [_content objectAtIndex:index];
+        return [_content.sort() objectAtIndex:index];
     else
     {
         if ([item isKindOfClass:TNStropheGroup])
@@ -368,6 +329,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
         else
             [_content removeObject:_draggedItem];
         [theItem addSubGroup:_draggedItem];
+        for (var i = 0; i < [[_draggedItem contacts] count]; i++)
+            [[[_draggedItem contacts] objectAtIndex:i] sendRosterSet];
+
 
         _shouldDragDuplicate = NO;
 
@@ -396,10 +360,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
             }
             [_draggedItem setParentGroup:nil];
             [_content addObject:_draggedItem];
+            for (var i = 0; i < [[_draggedItem contacts] count]; i++)
+                [[[_draggedItem contacts] objectAtIndex:i] sendRosterSet];
         }
         else
         {
-            [_draggedItem setGroups:[]]
+            [_draggedItem setGroups:[]];
         }
         return YES;
     }

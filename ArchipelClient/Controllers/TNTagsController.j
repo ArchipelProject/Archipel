@@ -186,7 +186,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
         tagsString  = @"";
 
     for (var i = 0; i < [content count]; i++)
-        tagsString += [content objectAtIndex:i] + ";;";
+        tagsString += [[content objectAtIndex:i] lowercaseString] + ";;";
     tagsString = tagsString.slice(0,tagsString.length - 2);
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeTags}];

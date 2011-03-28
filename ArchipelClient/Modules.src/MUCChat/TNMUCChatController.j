@@ -287,7 +287,7 @@
 {
     var member  = someUserInfo;
 
-    [[[TNStropheIMClient defaultClient] roster] addContact:[member nickname] withName:[member nickname] inGroupWithName:@"General"];
+    [[[TNStropheIMClient defaultClient] roster] addContact:[member nickname] withName:[member nickname] inGroupWithPath:nil];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[member nickname]];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:[member nickname]];
 }
