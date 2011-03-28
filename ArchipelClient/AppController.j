@@ -781,11 +781,14 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
     var servers = [CPArray array],
         roster  = [aNotification object];
 
-    for (var i = 0; i < [[roster contacts] count]; i++)
+    for (var i = 0; i < [[roster content] count]; i++)
     {
-        var contact = [[roster contacts] objectAtIndex:i];
-        if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
-            [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
+        if ([[[roster content] objectAtIndex:i] isKindOfClass:TNStropheContact])
+        {
+            var contact = [[roster content] objectAtIndex:i];
+            if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
+                [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
+        }
     }
 
     [_pubSubController retrieveSubscriptions];

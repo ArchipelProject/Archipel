@@ -253,7 +253,7 @@
     {
         var rosterLayout            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
             contactFontSizeGroup    = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeGroup"];
-
+    
         [self setFont:[CPFont boldSystemFontOfSize:contactFontSizeGroup]];
         [self setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [self setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];

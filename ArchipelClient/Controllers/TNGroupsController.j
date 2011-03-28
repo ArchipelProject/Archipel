@@ -63,7 +63,7 @@
         return;
     }
 
-    if ([[aGroup contacts] count] != 0)
+    if ([[aGroup content] count] != 0)
     {
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
         return;
@@ -87,7 +87,7 @@
         defaults = [CPUserDefaults standardUserDefaults],
         key     = TNArchipelRememberOpenedGroup + [group name];
 
-    [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
+    [[[TNStropheIMClient defaultClient] roster] removeGroupAtPath:[group path]];
     [defaults removeObjectForKey:key];
 
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
@@ -121,7 +121,7 @@
     {
         var groupName = [newGroupName stringValue];
 
-        [[[TNStropheIMClient defaultClient] roster] addGroupWithName:groupName];
+        [[[TNStropheIMClient defaultClient] roster] addGroupWithPath:groupName];
         [newGroupName setStringValue:@""];
         CPLog.info(@"new group " + groupName + " added.");
 

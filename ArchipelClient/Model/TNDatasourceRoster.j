@@ -107,7 +107,6 @@ TNDragTypeContact   = @"TNDragTypeContact";
 #pragma mark -
 #pragma mark Notification handlers
 
-
 /*! Reload the content of the datasource
     @param aNotification CPNotification that trigger the message
 */
@@ -174,83 +173,83 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     _filterField = aField;
 
-    [_filterField setSendsSearchStringImmediately:YES]
-    [_filterField setTarget:self];
-    [_filterField setAction:@selector(filterFieldDidChange:)];
+    // [_filterField setSendsSearchStringImmediately:YES]
+    // [_filterField setTarget:self];
+    // [_filterField setAction:@selector(filterFieldDidChange:)];
 }
 
-/*! Message use internally for filtering
-    @param aFilter CPString containing the filter
-    @return a CPArray containing the contacts that matches the filters
-*/
-- (CPArray)_getEntriesMatching:(CPString)aFilter
-{
-    var theEntries      = [self contacts],
-        filteredEntries = [CPArray array];
-
-    if (!aFilter)
-        return theEntries;
-
-    for (var i = 0; i < [theEntries count]; i++)
-    {
-        var entry = [theEntries objectAtIndex:i];
-
-        if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-            || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter uppercaseString]])
-        {
-            [filteredEntries addObject:entry];
-        }
-    }
-    return filteredEntries;
-}
-
-/*! Message use internally for filtering
-    @param aFilter CPString containing the filter
-    @param inGroup CPString containing the group of filter
-    @return a CPArray containing the contacts in aGroup that matches the filters
-*/
-- (CPArray)_getEntriesMatching:(CPString)aFilter inGroup:(TNStropheGroup)aGroup
-{
-    var filteredEntries = [CPArray array];
-
-    if (!aFilter)
-        return [aGroup contacts];
-
-    for (var i = 0; i < [[aGroup contacts] count]; i++)
-    {
-        var entry = [[aGroup contacts] objectAtIndex:i];
-
-        if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
-            || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter lowercaseString]])
-            [filteredEntries addObject:entry];
-    }
-
-    return filteredEntries;
-}
-
-
-/*! Message use internally for filtering
-    @param aFilter CPString containing the filter
-    @return a CPArray groups containing contacts matching aFilter
-*/
-- (CPArray)_getGroupContainingEntriesMatching:(CPString)aFilter
-{
-    var theGroups       = [self groups],
-        filteredGroup   = [CPArray array];
-
-    if (!aFilter)
-        return [self groups];
-
-    for (var i = 0; i < [theGroups count]; i++)
-    {
-        var group = [theGroups objectAtIndex:i];
-
-        if ([[self _getEntriesMatching:aFilter inGroup:group] count] > 0)
-            [filteredGroup addObject:group];
-    }
-
-    return filteredGroup;
-}
+// /*! Message use internally for filtering
+//     @param aFilter CPString containing the filter
+//     @return a CPArray containing the contacts that matches the filters
+// */
+// - (CPArray)_getEntriesMatching:(CPString)aFilter
+// {
+//     var theEntries      = [self contacts],
+//         filteredEntries = [CPArray array];
+//
+//     if (!aFilter)
+//         return theEntries;
+//
+//     for (var i = 0; i < [theEntries count]; i++)
+//     {
+//         var entry = [theEntries objectAtIndex:i];
+//
+//         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
+//             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter uppercaseString]])
+//         {
+//             [filteredEntries addObject:entry];
+//         }
+//     }
+//     return filteredEntries;
+// }
+//
+// /*! Message use internally for filtering
+//     @param aFilter CPString containing the filter
+//     @param inGroup CPString containing the group of filter
+//     @return a CPArray containing the contacts in aGroup that matches the filters
+// */
+// - (CPArray)_getEntriesMatching:(CPString)aFilter inGroup:(TNStropheGroup)aGroup
+// {
+//     var filteredEntries = [CPArray array];
+//
+//     if (!aFilter)
+//         return [aGroup contacts];
+//
+//     for (var i = 0; i < [[aGroup contacts] count]; i++)
+//     {
+//         var entry = [[aGroup contacts] objectAtIndex:i];
+//
+//         if (([[entry nickname] uppercaseString].indexOf([aFilter uppercaseString]) != -1)
+//             || [[_tagsRegistry objectForKey:[[entry JID] bare]] containsObject:[aFilter lowercaseString]])
+//             [filteredEntries addObject:entry];
+//     }
+//
+//     return filteredEntries;
+// }
+//
+//
+// /*! Message use internally for filtering
+//     @param aFilter CPString containing the filter
+//     @return a CPArray groups containing contacts matching aFilter
+// */
+// - (CPArray)_getGroupContainingEntriesMatching:(CPString)aFilter
+// {
+//     var theGroups       = [self groups],
+//         filteredGroup   = [CPArray array];
+//
+//     if (!aFilter)
+//         return [self groups];
+//
+//     for (var i = 0; i < [theGroups count]; i++)
+//     {
+//         var group = [theGroups objectAtIndex:i];
+//
+//         if ([[self _getEntriesMatching:aFilter inGroup:group] count] > 0)
+//             [filteredGroup addObject:group];
+//     }
+//
+//     return filteredGroup;
+// }
 
 
 #pragma mark -
@@ -273,9 +272,12 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (int)outlineView:(CPOutlineView)anOutlineView numberOfChildrenOfItem:(id)item
 {
     if (!item)
-        return [[self _getGroupContainingEntriesMatching:_filter] count];
+        return [_content count];
     else
-        return [[self _getEntriesMatching:_filter inGroup:item] count];
+    {
+        return ([item isKindOfClass:TNStropheContact]) ? 0 : [[item content] count];
+    }
+
 }
 
 /*! CPOutlineView Datasource
@@ -290,9 +292,14 @@ TNDragTypeContact   = @"TNDragTypeContact";
 - (id)outlineView:(CPOutlineView)anOutlineView child:(int)index ofItem:(id)item
 {
     if (!item)
-        return [[self _getGroupContainingEntriesMatching:_filter].sort() objectAtIndex:index];
+        return [_content objectAtIndex:index];
     else
-        return [[self _getEntriesMatching:_filter inGroup:item].sort() objectAtIndex:index];
+    {
+        if ([item isKindOfClass:TNStropheGroup])
+            return [[item content] objectAtIndex:index];
+        else
+            return nil;
+    }
 }
 
 /*! CPOutlineView Datasource
@@ -338,6 +345,11 @@ TNDragTypeContact   = @"TNDragTypeContact";
         [anOutlineView setDropItem:theItem dropChildIndex:theIndex];
         return CPDragOperationEvery;
     }
+    else
+    {
+        [anOutlineView setDropItem:nil dropChildIndex:theIndex];
+        return CPDragOperationEvery;
+    }
 
     return CPDragOperationNone;
 }
@@ -351,14 +363,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
         var center          = [CPNotificationCenter defaultCenter],
             contactsToMove  = [[_draggedItem contacts] copy];
 
-        for (var i = 0; i < [contactsToMove count]; i++)
-        {
-            var contact = [contactsToMove objectAtIndex:i];
-            [contact setGroups:[theItem]];
-        }
+        if ([_draggedItem parentGroup])
+            [[_draggedItem parentGroup] removeSubGroup:_draggedItem];
+        else
+            [_content removeObject:_draggedItem];
+        [theItem addSubGroup:_draggedItem];
 
         _shouldDragDuplicate = NO;
-        [self removeGroup:_draggedItem];
 
         return YES;
     }
@@ -371,6 +382,25 @@ TNDragTypeContact   = @"TNDragTypeContact";
         _shouldDragDuplicate = NO;
         [[CPCursor arrowCursor] set];
 
+        return YES;
+    }
+    else
+    {
+        if ([_content containsObject:_draggedItem])
+            return NO;
+        if ([_draggedItem isKindOfClass:TNStropheGroup])
+        {
+            if ([_draggedItem parentGroup])
+            {
+                [[_draggedItem parentGroup] removeSubGroup:_draggedItem];
+            }
+            [_draggedItem setParentGroup:nil];
+            [_content addObject:_draggedItem];
+        }
+        else
+        {
+            [_draggedItem setGroups:[]]
+        }
         return YES;
     }
 

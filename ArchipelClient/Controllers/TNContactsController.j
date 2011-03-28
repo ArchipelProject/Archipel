@@ -108,26 +108,24 @@
 */
 - (IBAction)showWindow:(id)aSender
 {
-    var groups = [[[TNStropheIMClient defaultClient] roster] groups];
+    // var groups = [[[TNStropheIMClient defaultClient] roster] groups];
 
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
     [newContactGroup removeAllItems];
-    //[self makeFirstResponder:newContactJID];
 
-    if (![[[TNStropheIMClient defaultClient] roster] containsGroup:@"General"])
-    {
-        [newContactGroup addItemWithTitle:@"General"];
-    }
+    // if (![[[TNStropheIMClient defaultClient] roster] containsGroup:@"General"])
+    // {
+    //     [newContactGroup addItemWithTitle:@"General"];
+    // }
 
-    //@each (var group in groups)
-    for (var i = 0; i < [groups count]; i++)
-    {
-        var group   = [groups objectAtIndex:i];
-        [newContactGroup addItemWithTitle:[group name]];
-    }
+    // for (var i = 0; i < [groups count]; i++)
+    // {
+    //     var group   = [groups objectAtIndex:i];
+    //     [newContactGroup addItemWithTitle:[group name]];
+    // }
 
-    [newContactGroup selectItemWithTitle:@"General"];
+    //[newContactGroup selectItemWithTitle:@"General"];
 
     [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
@@ -138,18 +136,16 @@
 */
 - (IBAction)addContact:(id)aSender
 {
-    var group   = [newContactGroup title],
-        JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
-        name    = [newContactName stringValue],
-        growl   = [TNGrowlCenter defaultCenter];
+    var JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
+        name    = [newContactName stringValue];
 
-    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithName:group];
+    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
 
     [mainWindow performClose:nil];
 
     CPLog.info(@"added contact " + JID);
 
-    [growl pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
 }
 
 /*! will ask for deleting the selected contact

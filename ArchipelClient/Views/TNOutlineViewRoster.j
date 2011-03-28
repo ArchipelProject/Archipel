@@ -61,9 +61,9 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-        [self addTableColumn:columnOutline];
+        // [self addTableColumn:columnOutline];
         [self addTableColumn:columnLabel];
-        [self setOutlineTableColumn:columnOutline];
+        [self setOutlineTableColumn:columnLabel];
         [self setTarget:self];
         // [self setDoubleAction:@selector(onDoubleAction:)];
     }
@@ -96,7 +96,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         if ([self numberOfSelectedRows] > 0)
             [self deselectAll];
     }
-
+    
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
