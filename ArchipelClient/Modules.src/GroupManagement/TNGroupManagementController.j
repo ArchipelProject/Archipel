@@ -219,9 +219,10 @@ TNArchipelActionTypeReboot                      = @"Reboot";
 
     [_datasourceGroupVM removeAllObjects];
 
-    for (var i = 0; i < [[_entity contacts] count]; i++)
+    var contacts = [[[TNStropheIMClient defaultClient] roster] getAllContactsTreeFromGroup:_entity];
+    for (var i = 0; i < [contacts count]; i++)
     {
-        var contact = [[_entity contacts] objectAtIndex:i],
+        var contact = [contacts objectAtIndex:i],
             vCard   = [contact vCard];
 
         if (vCard && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard] == TNArchipelEntityTypeVirtualMachine))
