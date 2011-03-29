@@ -118,14 +118,22 @@ class TNThreadedHealthCollector(Thread):
     def get_uptime(self):
         """
         get the uptime from /proc/uptime.
+        code taken from http://thesmithfam.org/blog/2005/11/19/python-uptime-script/
         @rtype: tupple
         @return: days, hours, minutes, seconds
         """
         f = open( "/proc/uptime" )
         contents = f.read().split()
         f.close()
-        dt =  datetime.datetime(1,1,1) + datetime.timedelta(seconds=float(contents[0]))
-        return (dt.day-1, dt.hour, dt.minute, dt.second)
+        total_seconds = float(contents[0])
+        MINUTE = 60
+        HOUR = MINUTE * 60
+        DAY = HOUR * 24
+        days = int(total_seconds / DAY)
+        hours = int((total_seconds % DAY) / HOUR)
+        minutes = int((total_seconds % HOUR) / MINUTE)
+        seconds = int(total_seconds % MINUTE)
+        return (days, hours, minutes, seconds)
 
     def get_memory_stats(self):
         """
