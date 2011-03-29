@@ -339,7 +339,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     else if (([_draggedItem isKindOfClass:TNStropheContact]) && ([theItem isKindOfClass:TNStropheGroup]))
     {
         if (_shouldDragDuplicate)
-            [self addContact:_draggedItem inGroup:theItem];
+            [self addContact:_draggedItem inGroup:theItem push:YES];
         else
             [self setGroups:[CPArray arrayWithObject:theItem] ofContact:_draggedItem];
         _shouldDragDuplicate = NO;

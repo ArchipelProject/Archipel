@@ -54,6 +54,7 @@
 @import "Views/TNSwitch.j"
 
 
+
 /*! @global
     @group TNArchipelEntityType
     This represent a Hypervisor XMPP entity
@@ -337,7 +338,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"Display _helpWindow");
     _shouldShowHelpView = YES;
     [helpView setScrollMode:CPWebViewScrollNative];
-    [self showHelpView];
 
     CPLog.trace(@"initializing Growl");
     [growl setView:rightView];
@@ -447,6 +447,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
     [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
+
+    CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
+    [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
+
 
     /* Placing the connection window */
     _moduleLoadingStarted = NO;
@@ -671,9 +675,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    [preferencesController recoverFromXMPPServer];
+}
+
+/*! called when TNPreferencesControllerRestoredNotification is received
+    @param aNotification the notification
+*/
+- (void)didRetrieveConfiguration:(CPNotification)aNotification
+{
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
+
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Configuration retrieved" message:@"Your client configuration has been retrieved from the XMPP server"];
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
@@ -700,6 +714,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
+
+    [self showHelpView];
 }
 
 /*! Notification responder of TNStropheConnection

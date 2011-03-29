@@ -19,6 +19,11 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+@import "../Model/CKJSONKeyedArchiving.j"
+
+var TNArchipelXMPPPrivateStoragePrefsNamespace    = "archipel:preferences";
+
+TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredNotification";
 
 /*! @ingroup archipelcore
 
@@ -160,8 +165,84 @@
             [module savePreferences];
     }
 
+    [self saveToFromXMPPServer];
     [mainWindow close];
 }
 
+
+#pragma mark -
+#pragma mark Archiving
+
+/*! send the content of CPUserDefaults in the private storage of the
+    XMPP server
+*/
+- (void)saveToFromXMPPServer
+{
+    var connection  = [[TNStropheIMClient defaultClient] connection],
+        data        = [CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
+        uid         = [connection getUniqueId],
+        stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"set"}],
+        params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [stanza addChildWithName:@"query" andAttributes:{@"xmlns": @"jabber:iq:private"}];
+    [stanza addChildWithName:@"archipel" andAttributes:{@"xmlns": TNArchipelXMPPPrivateStoragePrefsNamespace}];
+    [stanza addTextNode:data];
+    [connection registerSelector:@selector(_didSaveToFromXMPPServer:) ofObject:self withDict:params];
+    [connection send:stanza];
+}
+
+/*! called when save result is received
+    @params aStanza the stanza containing the result
+*/
+- (BOOL)_didSaveToFromXMPPServer:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+        CPLog.info("configuration saved to XMPP server private storage");
+    else
+        CPLog.error("cannot save configuration saved to XMPP server private storage: " + aStanza);
+
+    return NO;
+}
+
+/*! get the content the private storage of the  XMPP server
+    and set it back in CPUserDefaults
+*/
+- (void)recoverFromXMPPServer
+{
+    var connection  = [[TNStropheIMClient defaultClient] connection],
+        data        = [CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
+        uid         = [connection getUniqueId],
+        stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"get"}],
+        params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
+
+    [stanza addChildWithName:@"query" andAttributes:{@"xmlns": @"jabber:iq:private"}];
+    [stanza addChildWithName:@"archipel" andAttributes:{@"xmlns": TNArchipelXMPPPrivateStoragePrefsNamespace}];
+    [connection registerSelector:@selector(_didRecoverFromXMPPServer:) ofObject:self withDict:params];
+    [connection send:stanza];
+}
+
+/*! called when recover result is received
+    @params aStanza the stanza containing the result
+*/
+- (BOOL)_didRecoverFromXMPPServer:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var data = [[aStanza firstChildWithName:@"archipel"] text];
+        if (data)
+        {
+            [CPUserDefaults standardUserDefaults]._domains = [CKJSONKeyedUnarchiver unarchiveObjectWithData:data];
+            [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
+            [[CPUserDefaults standardUserDefaults] synchronize];
+        }
+        CPLog.info("configuration restored from XMPP server private storage");
+    }
+    else
+        CPLog.error("cannot retrieve configuration saved to XMPP server private storage: " + aStanza);
+
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];
+
+    return NO;
+}
 
 @end
