@@ -19,8 +19,6 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-@import "../Model/CKJSONKeyedArchiving.j"
-
 var TNArchipelXMPPPrivateStoragePrefsNamespace    = "archipel:preferences";
 
 TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredNotification";
@@ -179,14 +177,14 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (void)saveToFromXMPPServer
 {
     var connection  = [[TNStropheIMClient defaultClient] connection],
-        data        = [CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
+        data        = [CPKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],//[CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
         uid         = [connection getUniqueId],
         stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"set"}],
         params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
 
     [stanza addChildWithName:@"query" andAttributes:{@"xmlns": @"jabber:iq:private"}];
     [stanza addChildWithName:@"archipel" andAttributes:{@"xmlns": TNArchipelXMPPPrivateStoragePrefsNamespace}];
-    [stanza addTextNode:data];
+    [stanza addTextNode:[data string]];
     [connection registerSelector:@selector(_didSaveToFromXMPPServer:) ofObject:self withDict:params];
     [connection send:stanza];
 }
@@ -210,7 +208,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (void)recoverFromXMPPServer
 {
     var connection  = [[TNStropheIMClient defaultClient] connection],
-        data        = [CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
         uid         = [connection getUniqueId],
         stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"get"}],
         params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
@@ -228,10 +225,11 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     if ([aStanza type] == @"result")
     {
-        var data = [[aStanza firstChildWithName:@"archipel"] text];
-        if (data)
+        var dataString = [[aStanza firstChildWithName:@"archipel"] text];
+        if (dataString)
         {
-            [CPUserDefaults standardUserDefaults]._domains = [CKJSONKeyedUnarchiver unarchiveObjectWithData:data];
+            var data =  [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:dataString]];
+            [CPUserDefaults standardUserDefaults]._domains = data;
             [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
             [[CPUserDefaults standardUserDefaults] synchronize];
         }
