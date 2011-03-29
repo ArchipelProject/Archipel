@@ -328,10 +328,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
             [[_draggedItem parentGroup] removeSubGroup:_draggedItem];
         else
             [_content removeObject:_draggedItem];
-        [theItem addSubGroup:_draggedItem];
-        for (var i = 0; i < [[_draggedItem contacts] count]; i++)
-            [[[_draggedItem contacts] objectAtIndex:i] sendRosterSet];
 
+        [theItem addSubGroup:_draggedItem];
+        [self sendRosterSet:[self getAllContactsTreeFromGroup:_draggedItem]];
 
         _shouldDragDuplicate = NO;
 
@@ -340,9 +339,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
     else if (([_draggedItem isKindOfClass:TNStropheContact]) && ([theItem isKindOfClass:TNStropheGroup]))
     {
         if (_shouldDragDuplicate)
-            [_draggedItem addGroup:theItem];
+            [self addContact:_draggedItem inGroup:theItem];
         else
-            [_draggedItem setGroups:[CPArray arrayWithObject:theItem]];
+            [self setGroups:[CPArray arrayWithObject:theItem] ofContact:_draggedItem];
         _shouldDragDuplicate = NO;
         [[CPCursor arrowCursor] set];
 
@@ -352,20 +351,20 @@ TNDragTypeContact   = @"TNDragTypeContact";
     {
         if ([_content containsObject:_draggedItem])
             return NO;
+
         if ([_draggedItem isKindOfClass:TNStropheGroup])
         {
+            var affectedContacts = [self getAllContactsTreeFromGroup:_draggedItem];
+
             if ([_draggedItem parentGroup])
-            {
                 [[_draggedItem parentGroup] removeSubGroup:_draggedItem];
-            }
-            [_draggedItem setParentGroup:nil];
+
             [_content addObject:_draggedItem];
-            for (var i = 0; i < [[_draggedItem contacts] count]; i++)
-                [[[_draggedItem contacts] objectAtIndex:i] sendRosterSet];
+            [self sendRosterSet:affectedContacts];
         }
         else
         {
-            [_draggedItem setGroups:[]];
+            [self setGroups:[CPArray array] ofContact:_draggedItem];
         }
         return YES;
     }

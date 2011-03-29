@@ -109,7 +109,6 @@
 */
 - (void)reload:(CPNotification)aNotification
 {
-    //setTimeout(function(){[self reload]}, 1000);
     [self reload]
 }
 
@@ -118,16 +117,18 @@
 */
 - (void)changeNickNameNotification:(CPNotification)aNotification
 {
+    var roster = [[TNStropheIMClient defaultClient] roster];
+
     if (([_entity isKindOfClass:TNStropheContact]) && ([_entity nickname] != [entryName stringValue]))
     {
-        [[[TNStropheIMClient defaultClient] roster] changeNickname:[entryName stringValue] ofContactWithJID:[_entity JID]];
+        [roster changeNickname:[entryName stringValue] ofContact:_entity];
     }
     else if (([_entity isKindOfClass:TNStropheGroup]) && ([_entity name] != [entryName stringValue]))
     {
         var defaults    = [CPUserDefaults standardUserDefaults],
             oldKey      = TNArchipelRememberOpenedGroup + [_entity name];
 
-        [_entity changeName:[entryName stringValue]];
+        [roster changeName:[entryName stringValue] ofGroup:_entity];
 
         [defaults removeObjectForKey:oldKey];
     }
