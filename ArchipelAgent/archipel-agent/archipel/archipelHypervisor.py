@@ -29,10 +29,11 @@ import uuid as moduuid
 import xmpp
 from threading import Thread
 
-from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
+from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 
@@ -203,6 +204,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         """
         initialize the base vocabulary
         """
+        TNArchipelEntity.init_vocabulary(self)
         registrar_items = [
                             {   "commands" : ["capabilities"],
                                 "parameters": [],

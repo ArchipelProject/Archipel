@@ -37,13 +37,14 @@ import thread
 import xmpp
 from threading import Timer
 
-from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
+from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
-import archipelcore.archipelTriggers
 from archipelcore.utils import build_error_iq, build_error_message
+import archipelcore.archipelTriggers
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 import archipelLibvirtEntity
@@ -84,7 +85,7 @@ ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
 ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 
 
-class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
+class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
     """
     this class represent an Virtual Machine, XMPP Capable.
     this class need to already have
@@ -179,6 +180,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         """"
         this method register for user messages
         """
+        TNArchipelEntity.init_vocabulary(self)
         registrar_items = [
                             {  "commands" : ["start", "create", "boot", "play", "run"],
                                 "parameters": [],
@@ -228,12 +230,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
                                 "ignore": True,
                                 "parameters": [],
                                 "method": self.message_hello,
-                                "description": "" },
-                            {  "commands" : ["roster", "users"],
-                                "parameters": [],
-                                "permissions": ["roster"],
-                                "method": self.message_roster,
-                                "description": "I'll give you the content of my roster" }
+                                "description": "" }
                         ]
         self.add_message_registrar_items(registrar_items)
 
@@ -257,7 +254,6 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
-        self.permission_center.create_permission("roster", "Authorizes users to get the content of my roster", False)
 
     def register_handler(self):
         """
@@ -1477,19 +1473,3 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_FREE)
         return reply
-
-
-    def message_roster(self, msg):
-        """
-        handle roster asking message
-        @type msg: xmpp.Protocol.Message
-        @param iq: the received message
-        @rtype: xmpp.Protocol.Message
-        @return: a ready to send Message containing the result of the action
-        """
-        ret = "Here is the content of my roster : \n"
-        for barejid in self.roster.getItems():
-            if self.jid.getStripped() == barejid:
-                continue
-            ret = "%s    - %s\n" % (ret, barejid)
-        return ret

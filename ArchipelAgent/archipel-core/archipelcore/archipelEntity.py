@@ -31,6 +31,7 @@ from pkg_resources import iter_entry_points
 
 from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
+from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import TNArchipelLogger, build_error_iq
 
@@ -125,6 +126,8 @@ class TNArchipelEntity (object):
             TNAvatarControllableEntity.__init__(self, configuration, self.permission_center, self.xmppclient, self.log)
         if isinstance(self, TNTaggableEntity):
             TNTaggableEntity.__init__(self, self.pubsubserver, self.jid, self.xmppclient, self.permission_center, self.log)
+        if isinstance(self, TNRosterQueryableEntity):
+            TNRosterQueryableEntity.__init__(self, configuration, self.permission_center, self.xmppclient, self.log)
 
         if self.name == "auto":
             self.name = self.resource
@@ -221,6 +224,16 @@ class TNArchipelEntity (object):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_NS_ERROR_QUERY_NOT_WELL_FORMED)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
+
+
+    ### vocabulary
+
+    def init_vocabulary(self):
+        """
+        initialize the vocabulary
+        """
+        if isinstance(self, TNRosterQueryableEntity):
+            TNRosterQueryableEntity.init_vocabulary(self)
 
 
     ### Permissions
