@@ -342,15 +342,15 @@ class TNXMPPServerController (TNArchipelPlugin):
         try:
             reply       = iq.buildReply("result")
             server      = self.entity.jid.getDomain()
-            anwser      = self.xmlrpc_server.registered_users({"host": server})
+            answer      = self.xmlrpc_server.registered_users({"host": server})
             nodes       = []
-            users       = anwser["users"]
+            users       = answer["users"]
             for user in users:
                 entity_type = "human"
                 try:
-                    anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
-                    if anwser["content"] in ("hypervisor", "virtualmachine"):
-                        entity_type = anwser["content"]
+                    answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                    if answer["content"] in ("hypervisor", "virtualmachine"):
+                        entity_type = answer["content"]
                 except:
                     pass
                 nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))

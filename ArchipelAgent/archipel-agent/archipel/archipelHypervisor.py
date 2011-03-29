@@ -90,7 +90,7 @@ class TNThreadedVirtualMachine(Thread):
 
     def get_instance(self):
         """
-        this method return the current L{TNArchipelVirtualMachine} instance
+        this method returns the current L{TNArchipelVirtualMachine} instance
         @rtype: ArchipelVirtualMachine
         @return: the L{ArchipelVirtualMachine} instance
         """
@@ -106,7 +106,7 @@ class TNThreadedVirtualMachine(Thread):
 
 class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
-    this class represent an Hypervisor XMPP Capable. This is an XMPP client
+    this class represents an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
     active XMPP VM, and remember which have been created.
     """
@@ -167,9 +167,9 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
             try:
                 self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None)
             except libvirt.libvirtError:
-                self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
+                self.log.error("We are sorry. But your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
         else:
-            self.log.warning("your hypervisor doesn't support libvirt eventing. using fake event loop.")
+            self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
         self.capabilities = self.get_capabilities()
 
         # persistance
@@ -227,7 +227,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
                                 "permissions": ["rostervm"],
                                 "description": "Get the content of my roster" },
                             {   "commands" : ["alloc"],
-                                "parameters": [{"name": "name", "description": "The name of the vm. if not given, it will be generated"}],
+                                "parameters": [{"name": "name", "description": "The name of the vm. If not given, it will be generated"}],
                                 "method": self.message_alloc,
                                 "permissions": ["alloc"],
                                 "description": "Allocate a new virtual machine" },
@@ -247,7 +247,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def init_permissions(self):
         """
-        initialize the permssions
+        initialize the permissions
         """
         TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False)
@@ -260,8 +260,8 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def manage_persistance(self):
         """
-        if the database_file parameter contain a valid populated sqlite3 database,
-        this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a
+        if the database_file parameter contains a valid populated sqlite3 database,
+        this method will recreate all the old L{TNArchipelVirtualMachine}. If not, it will create a
         blank database file.
         """
         self.log.info("opening database file %s" % self.database_file)
@@ -280,7 +280,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def create_threaded_vm(self, jid, password, name):
         """
-        this method creates a threaded L{TNArchipelVirtualMachine}, start it and return the Thread instance
+        this method creates a threaded L{TNArchipelVirtualMachine}, starts it and returns the Thread instance
         @type jid: string
         @param jid: the JID of the L{TNArchipelVirtualMachine}
         @type password: string

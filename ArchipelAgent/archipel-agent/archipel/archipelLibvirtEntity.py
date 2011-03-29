@@ -82,7 +82,7 @@ class TNArchipelLibvirtEntity (object):
 
     def is_hypervisor(self, names):
         """
-        return True is hypervisor is one of the given names (tupple)
+        return True if hypervisor is one of the given names (tupple)
         @type names: tupple
         @param names: tupple containing names
         @rtype: boolean
