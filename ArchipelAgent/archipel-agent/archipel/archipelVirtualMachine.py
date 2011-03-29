@@ -229,6 +229,11 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
                                 "parameters": [],
                                 "method": self.message_hello,
                                 "description": "" },
+                            {  "commands" : ["roster", "users"],
+                                "parameters": [],
+                                "permissions": ["roster"],
+                                "method": self.message_roster,
+                                "description": "I'll give you the content of my roster" }
                         ]
         self.add_message_registrar_items(registrar_items)
 
@@ -252,6 +257,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         self.permission_center.create_permission("undefine", "Authorizes users to undefine virtual machine", False)
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
+        self.permission_center.create_permission("roster", "Authorizes users to get the content of my roster", False)
 
     def register_handler(self):
         """
@@ -1471,3 +1477,19 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_FREE)
         return reply
+
+
+    def message_roster(self, msg):
+        """
+        handle roster asking message
+        @type msg: xmpp.Protocol.Message
+        @param iq: the received message
+        @rtype: xmpp.Protocol.Message
+        @return: a ready to send Message containing the result of the action
+        """
+        ret = "Here is the content of my roster : \n"
+        for barejid in self.roster.getItems():
+            if self.jid.getStripped() == barejid:
+                continue
+            ret = "%s    - %s\n" % (ret, barejid)
+        return ret
