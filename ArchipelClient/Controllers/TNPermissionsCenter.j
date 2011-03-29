@@ -18,10 +18,9 @@
 
 @import <Foundation/Foundation.j>
 
-TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
-
-TNArchipelTypePermissions               = @"archipel:permissions";
-TNArchipelTypePermissionsGetOwn         = @"getown";
+var TNArchipelPushNotificationPermissions   = @"archipel:push:permissions",
+    TNArchipelTypePermissions               = @"archipel:permissions",
+    TNArchipelTypePermissionsGetOwn         = @"getown";
 
 var __defaultPermissionCenter;
 

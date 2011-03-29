@@ -20,11 +20,10 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-TNArchipelTypeAvatar             = @"archipel:avatar";
-TNArchipelTypeAvatarGetAvatars   = @"getavatars";
-TNArchipelTypeAvatarSetAvatar    = @"setavatar";
-
-TNArchipelAvatarManagerThumbSize                = CGSizeMake(48, 48);
+var TNArchipelTypeAvatar                = @"archipel:avatar",
+    TNArchipelTypeAvatarGetAvatars      = @"getavatars",
+    TNArchipelTypeAvatarSetAvatar       = @"setavatar",
+    TNArchipelAvatarManagerThumbSize    = CGSizeMake(48, 48);
 
 /*! @ingroup archipelcore
     Simple TNBase64Image subclass that add a string to get the avatar filename

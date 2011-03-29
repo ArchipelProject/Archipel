@@ -80,43 +80,6 @@ TNArchipelEntityTypeUser            = @"user";
 TNArchipelEntityTypeGroup           = @"group";
 
 
-/*! @global
-    @group TNArchipelStatus
-    This string represent a status Available
-*/
-TNArchipelStatusAvailableLabel      = @"Available";
-
-/*! @global
-    @group TNArchipelStatus
-    This string represent a status Away
-*/
-TNArchipelStatusAwayLabel           = @"Away";
-
-/*! @global
-    @group TNArchipelStatus
-    This string represent a status Busy
-*/
-TNArchipelStatusBusyLabel           = @"Busy";
-
-/*! @global
-    @group TNArchipelStatus
-    This string represent a status DND
-*/
-TNArchipelStatusDNDLabel            = @"Do not disturb";
-
-
-/*! @global
-    @group TNArchipelNotification
-    ask for removing the current roster item
-*/
-TNArchipelActionRemoveSelectedRosterEntityNotification  = @"TNArchipelActionRemoveSelectedRosterEntityNotification";
-
-/*! @global
-    @group TNArchipelNotification
-    Sent when two groups has been merged
-*/
-TNArchipelGroupMergedNotification                       = @"TNArchipelGroupMergedNotification";
-
 
 /*! @global
     @group TNArchipelAction
@@ -131,38 +94,18 @@ TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificati
 TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
 
 
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item logout
-*/
-TNToolBarItemLogout         = @"TNToolBarItemLogout";
-
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item tags
-*/
-TNToolBarItemTags        = @"TNToolBarItemTags";
-
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item help
-*/
-TNToolBarItemHelp           = @"TNToolBarItemHelp";
-
-/*! @global
-    @group TNToolBarItem
-    identifier for item status
-*/
-TNToolBarItemStatus         = @"TNToolBarItemStatus";
-
-
-TNArchipelTagViewHeight     = 33.0;
-
-
 TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
+
+var TNArchipelStatusAvailableLabel  = @"Available",
+    TNArchipelStatusAwayLabel       = @"Away",
+    TNArchipelStatusBusyLabel       = @"Busy",
+    TNArchipelStatusDNDLabel        = @"Do not disturb",
+    TNToolBarItemLogout             = @"TNToolBarItemLogout",
+    TNToolBarItemTags               = @"TNToolBarItemTags",
+    TNToolBarItemHelp               = @"TNToolBarItemHelp",
+    TNToolBarItemStatus             = @"TNToolBarItemStatus",
+    TNArchipelTagViewHeight         = 33.0;
+
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
@@ -492,9 +435,6 @@ TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 
     CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
     [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
-
-    CPLog.trace(@"registering for notification TNArchipelActionRemoveSelectedRosterEntityNotification");
-    [center addObserver:self selector:@selector(toogleRemoveEntity:) name:TNArchipelActionRemoveSelectedRosterEntityNotification object:nil];
 
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];

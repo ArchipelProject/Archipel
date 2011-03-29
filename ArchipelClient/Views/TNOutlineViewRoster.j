@@ -96,7 +96,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         if ([self numberOfSelectedRows] > 0)
             [self deselectAll];
     }
-    
+
     [self recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 }
 
@@ -205,11 +205,6 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
 {
     switch ([anEvent keyCode])
     {
-        // case CPDeleteKeyCode:
-        //     var center = [CPNotificationCenter defaultCenter];
-        //     [center postNotificationName:TNArchipelActionRemoveSelectedRosterEntityNotification object:self];
-        //     break;
-
         case CPEscapeKeyCode:
             [_searchField _searchFieldCancel:self];
             break;

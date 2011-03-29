@@ -20,8 +20,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-TNArchipelTypeTags              = @"archipel:tags";
-TNArchipelTypeTagsSetTags       = @"settags";
+var TNArchipelTypeTags              = @"archipel:tags",
+    TNArchipelTypeTagsSetTags       = @"settags";
 
 
 TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification";

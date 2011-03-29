@@ -20,14 +20,9 @@
 @import <AppKit/AppKit.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 
-/*! @global
-    @group TNModule
-    the namespace of Archipel Push Notification stanzas.
-*/
-TNArchipelPushNotificationNamespace     = @"archipel:push";
 
-TNArchipelErrorPermission               = 0;
-TNArchipelErrorGeneral                  = 1;
+var TNArchipelErrorPermission           = 0,
+    TNArchipelErrorGeneral              = 1;
 
 
 TNArchipelModuleStatusError             = 1;
