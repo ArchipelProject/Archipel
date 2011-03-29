@@ -348,7 +348,7 @@ class TNXMPPServerController (TNArchipelPlugin):
             for user in users:
                 entity_type = "human"
                 try:
-                    anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "TYPE"})
+                    anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
                     if anwser["content"] in ("hypervisor", "virtualmachine"):
                         entity_type = anwser["content"]
                 except:
