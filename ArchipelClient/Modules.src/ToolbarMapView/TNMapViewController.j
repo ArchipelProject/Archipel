@@ -342,13 +342,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [[[TNStropheIMClient defaultClient] roster] contactWithJID:JID];
 
-            if (entry)
-            {
-               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-               {
-                    [_dataSourceVMOrigin addObject:entry];
-               }
-            }
+            if (entry && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine))
+                [_dataSourceVMOrigin addObject:entry];
         }
         [_tableVMOrigin reloadData];
     }
@@ -376,13 +371,8 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
             var JID     = [TNStropheJID stropheJIDWithString:[[queryItems objectAtIndex:i] text]],
                 entry   = [[[TNStropheIMClient defaultClient] roster] contactWithJID:JID];
 
-            if (entry)
-            {
-               if ([[[entry vCard] firstChildWithName:@"TYPE"] text] == "virtualmachine")
-               {
-                    [_dataSourceVMDestination addObject:entry];
-               }
-            }
+            if (entry && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[entry vCard]] == TNArchipelEntityTypeVirtualMachine))
+                [_dataSourceVMDestination addObject:entry];
         }
         [_tableVMDestination reloadData];
     }
@@ -442,7 +432,7 @@ TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
     {
         var item = [rosterItems objectAtIndex:i];
 
-        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
+        if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[item vCard]] == TNArchipelEntityTypeHypervisor)
             [self locationOfHypervisor:item]
     }
 }

@@ -89,7 +89,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (aVCard)
     {
-        var itemType = [[aVCard firstChildWithName:@"TYPE"] text];
+        var itemType = [[aVCard firstChildWithName:@"ROLE"] text];
 
         if ((itemType == TNArchipelEntityTypeVirtualMachine)
             || (itemType == TNArchipelEntityTypeHypervisor)

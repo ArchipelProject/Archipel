@@ -497,7 +497,7 @@ TNArchipelTransportBarReboot    = 4;
     {
         var item = [rosterItems objectAtIndex:i];
 
-        if ([[[item vCard] firstChildWithName:@"TYPE"] text] == @"hypervisor")
+        if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[item vCard]] == TNArchipelEntityTypeHypervisor)
         {
             var o = [[TNExtendedContact alloc] initWithNickName:[item nickname] fullJID:[[item JID] full]];
 

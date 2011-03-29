@@ -224,7 +224,7 @@ TNArchipelActionTypeReboot                      = @"Reboot";
         var contact = [[_entity contacts] objectAtIndex:i],
             vCard   = [contact vCard];
 
-        if (vCard && ([[vCard firstChildWithName:@"TYPE"] text] == TNArchipelEntityTypeVirtualMachine))
+        if (vCard && ([[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard] == TNArchipelEntityTypeVirtualMachine))
             [_datasourceGroupVM addObject:contact];
     }
 
