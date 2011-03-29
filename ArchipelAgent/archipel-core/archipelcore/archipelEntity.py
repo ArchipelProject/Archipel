@@ -679,12 +679,12 @@ class TNArchipelEntity (object):
         try:
             self.log.info("vcard making started")
             node_iq     = xmpp.Iq(typ='set', xmlns=None)
-            type_node   = xmpp.Node(tag="TYPE")
+            type_node   = xmpp.Node(tag="ROLE")
             payload     = []
             type_node.setData(self.entity_type)
             payload.append(type_node)
             if self.name:
-                name_node = xmpp.Node(tag="NAME")
+                name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
                 payload.append(name_node)
             if self.configuration.getboolean("GLOBAL", "use_avatar"):
