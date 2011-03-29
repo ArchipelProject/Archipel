@@ -25,8 +25,10 @@
             <string>group</string>
         </array>
         <key>UseModuleMenu</key>
-		<integer>1</integer>
+        <integer>1</integer>
         <key>CibName</key>
         <string>GroupManagement</string>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
     </dict>
 </plist>
