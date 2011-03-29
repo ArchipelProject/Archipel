@@ -26,7 +26,6 @@
 {
     @outlet CPButton        buttonAdd;
     @outlet CPButton        buttonCancel;
-    @outlet CPPopUpButton   newContactGroup;
     @outlet CPTextField     newContactJID;
     @outlet CPTextField     newContactName;
 
@@ -43,7 +42,6 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
 
     [newContactName setToolTip:@"The display name of the new contact"];
-    [newContactGroup setToolTip:@"The group in which the contact will be added"];
     [newContactJID setToolTip:@"The XMPP JID of the contact"];
 
     [mainWindow setDefaultButton:buttonAdd];
@@ -108,25 +106,8 @@
 */
 - (IBAction)showWindow:(id)aSender
 {
-    // var groups = [[[TNStropheIMClient defaultClient] roster] groups];
-
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
-    [newContactGroup removeAllItems];
-
-    // if (![[[TNStropheIMClient defaultClient] roster] containsGroup:@"General"])
-    // {
-    //     [newContactGroup addItemWithTitle:@"General"];
-    // }
-
-    // for (var i = 0; i < [groups count]; i++)
-    // {
-    //     var group   = [groups objectAtIndex:i];
-    //     [newContactGroup addItemWithTitle:[group name]];
-    // }
-
-    //[newContactGroup selectItemWithTitle:@"General"];
-
     [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
 }
@@ -139,6 +120,11 @@
     var JID     = [TNStropheJID stropheJIDWithString:[newContactJID stringValue]],
         name    = [newContactName stringValue];
 
+    if (![JID node] || ![JID domain] || [JID resource])
+    {
+        [TNAlert showAlertWithMessage:@"JID is not valid" informative:@"You must enter a JID using the form user@domain." style:CPCriticalAlertStyle];
+        return;
+    }
     [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
 
     [mainWindow performClose:nil];
