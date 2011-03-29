@@ -72,6 +72,7 @@ def prepare_environment(prefix="", force=False):
     try:
         sys.stdout.write(" - installing configuration to %s/etc/archipel:" % prefix)
         shutil.copytree(conf_folder, "%s/etc/archipel/" % prefix)
+        os.system("chmod 600 '%s/etc/archipel/archipel.conf'" % prefix)
         print "      \033[32m[OK]\033[0m"
     except OSError as (n, strerror):
         if n == errno.ENOENT:
