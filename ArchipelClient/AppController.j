@@ -675,6 +675,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    [preferencesController initXMPPStorage];
     [preferencesController recoverFromXMPPServer];
 }
 

@@ -19,7 +19,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
-var TNArchipelXMPPPrivateStoragePrefsNamespace    = "archipel:preferences";
+var TNArchipelXMPPPrivateStoragePrefsNamespace  = "archipel:preferences",
+    TNArchipelXMPPPrivateStoragePrefsKey        = @"archipel";
 
 TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredNotification";
 
@@ -44,6 +45,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet TNSwitch        switchUseAnimations;
 
     CPArray                 _modules;
+    TNStrophePrivateStorage _xmppStorage;
 }
 
 
@@ -63,8 +65,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel removeAllItems];
     [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warn", @"error", @"critical"]];
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
-
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
     [mainWindow setDefaultButton:buttonSave];
 
     [fieldBOSHResource setToolTip:@"The resource to use"];
@@ -74,14 +77,23 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel setToolTip:@"Set the log level of the client. The more verbose, the less performance."]
 }
 
+/*! initialize the XMPP storage
+*/
+- (void)initXMPPStorage
+{
+    var connection= [[TNStropheIMClient defaultClient] connection];
+    _xmppStorage = [TNStrophePrivateStorage strophePrivateStorageWithConnection:connection namespace:TNArchipelXMPPPrivateStoragePrefsNamespace];
+}
+
 
 #pragma mark -
 #pragma mark Notification handles
 
 /*! triggered when all modules are loaded. it will create the tab view
     containing the preferences view (if any) as item for each module
+    @param aNotification the notification
 */
-- (void)didModulesLoadComplete:(CPNotification)aNotification
+- (void)_didModulesLoadComplete:(CPNotification)aNotification
 {
     _moduleLoader = [aNotification object];
 
@@ -105,6 +117,23 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
             [tabViewMain addTabViewItem:tabViewModuleItem];
         }
     }
+}
+
+/*! trigger when storage is sucessfulll
+    @param aNotification the notification
+*/
+- (void)_didPreferencesSaveToXMPPServer:(CPNotification)aNotification
+{
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Preferences saved" message:@"Your preferences have been saved to the XMPP server"];
+}
+
+/*! trigger when storage is sucessfulll
+    @param aNotification the notification
+*/
+- (void)_didPreferencesFailToXMPPServer:(CPNotification)aNotification
+{
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Preferences saved" message:@"Cannot save your preferences to the XMPP server" icon:TNGrowlIconError];
+    CPLog.error("Cannot save your preferences to the XMPP server:" + [[aNotification userInfo] stringValue]);
 }
 
 
@@ -176,30 +205,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)saveToFromXMPPServer
 {
-    var connection  = [[TNStropheIMClient defaultClient] connection],
-        data        = [CPKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],//[CKJSONKeyedArchiver archivedDataWithRootObject:[CPUserDefaults standardUserDefaults]._domains],
-        uid         = [connection getUniqueId],
-        stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"set"}],
-        params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-
-    [stanza addChildWithName:@"query" andAttributes:{@"xmlns": @"jabber:iq:private"}];
-    [stanza addChildWithName:@"archipel" andAttributes:{@"xmlns": TNArchipelXMPPPrivateStoragePrefsNamespace}];
-    [stanza addTextNode:[data string]];
-    [connection registerSelector:@selector(_didSaveToFromXMPPServer:) ofObject:self withDict:params];
-    [connection send:stanza];
-}
-
-/*! called when save result is received
-    @params aStanza the stanza containing the result
-*/
-- (BOOL)_didSaveToFromXMPPServer:(TNStropheStanza)aStanza
-{
-    if ([aStanza type] == @"result")
-        CPLog.info("configuration saved to XMPP server private storage");
-    else
-        CPLog.error("cannot save configuration saved to XMPP server private storage: " + aStanza);
-
-    return NO;
+    [_xmppStorage setObject:[CPUserDefaults standardUserDefaults]._domains forKey:TNArchipelXMPPPrivateStoragePrefsKey];
 }
 
 /*! get the content the private storage of the  XMPP server
@@ -207,33 +213,20 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)recoverFromXMPPServer
 {
-    var connection  = [[TNStropheIMClient defaultClient] connection],
-        uid         = [connection getUniqueId],
-        stanza      = [TNStropheStanza iqWithAttributes:{@"id": uid, @"type": @"get"}],
-        params      = [CPDictionary dictionaryWithObjectsAndKeys:uid, @"id"];
-
-    [stanza addChildWithName:@"query" andAttributes:{@"xmlns": @"jabber:iq:private"}];
-    [stanza addChildWithName:@"archipel" andAttributes:{@"xmlns": TNArchipelXMPPPrivateStoragePrefsNamespace}];
-    [connection registerSelector:@selector(_didRecoverFromXMPPServer:) ofObject:self withDict:params];
-    [connection send:stanza];
+    [_xmppStorage objectForKey:TNArchipelXMPPPrivateStoragePrefsKey target:self selector:@selector(_objectRetrievedWithStanza:object:)];
 }
 
 /*! called when recover result is received
     @params aStanza the stanza containing the result
 */
-- (BOOL)_didRecoverFromXMPPServer:(TNStropheStanza)aStanza
+- (void)_objectRetrievedWithStanza:(TNStropheStanza)aStanza object:(id)anObject
 {
-    if ([aStanza type] == @"result")
+    if (anObject)
     {
-        var dataString = [[aStanza firstChildWithName:@"archipel"] text];
-        if (dataString)
-        {
-            var data =  [CPKeyedUnarchiver unarchiveObjectWithData:[CPData dataWithRawString:dataString]];
-            [CPUserDefaults standardUserDefaults]._domains = data;
-            [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
-            [[CPUserDefaults standardUserDefaults] synchronize];
-        }
-        CPLog.info("configuration restored from XMPP server private storage");
+        [CPUserDefaults standardUserDefaults]._domains = anObject;
+        [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
+        [[CPUserDefaults standardUserDefaults] synchronize];
+
     }
     else
         CPLog.error("cannot retrieve configuration saved to XMPP server private storage: " + aStanza);
