@@ -38,7 +38,7 @@
             the lower the value, the higher performances (but is more CPU / network intensive)
         -->
         <key>NOVNCFBURate</key>
-        <integer>141</integer>
+        <integer>1413</integer>
         
         <!--
             set the time in ms for the event check refresh
@@ -46,7 +46,7 @@
             the lower the value, the higher performances (but is more CPU / network intensive)
         -->
         <key>NOVNCheckRate</key>
-        <integer>30</integer>
+        <integer>217</integer>
         
         <key>MandatoryPermissions</key>
         <array>
