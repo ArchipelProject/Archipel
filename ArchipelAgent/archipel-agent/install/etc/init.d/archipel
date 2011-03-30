@@ -65,7 +65,7 @@ start() {
 stop() {
     if [[ ! -f $lockfile ]]; then
         echo -ne " * $PROGNAME is not running: \\033[31m[ERROR]\\033[0m\\n"
-        exit 6
+        return 6
     fi
 
     echo -ne " * Stopping $PROGNAME:\\r"

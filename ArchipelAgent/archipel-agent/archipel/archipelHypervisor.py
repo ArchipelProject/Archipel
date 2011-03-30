@@ -227,7 +227,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
                                 "permissions": ["rostervm"],
                                 "description": "Get the content of my roster" },
                             {   "commands" : ["alloc"],
-                                "parameters": [{"name": "name", "description": "The name of the vm. is not given, it will be generated"}],
+                                "parameters": [{"name": "name", "description": "The name of the vm. if not given, it will be generated"}],
                                 "method": self.message_alloc,
                                 "permissions": ["alloc"],
                                 "description": "Allocate a new virtual machine" },
@@ -616,8 +616,10 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         try:
             tokens = msg.getBody().split(None, 1)
             name = None
-            if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
-            name = tokens[1]
+            if len(tokens) == 2:
+                name = tokens[1]
+            else:
+                name = None
             vm = self.alloc(msg.getFrom(), name)
             return "Archipel VM with name %s has been allocated using JID %s" % (vm.name, vm.jid)
         except Exception as ex:
