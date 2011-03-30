@@ -223,10 +223,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     if (anObject)
     {
+        [CPUserDefaults resetStandardUserDefaults];
         [CPUserDefaults standardUserDefaults]._domains = anObject;
-        [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
         [[CPUserDefaults standardUserDefaults] synchronize];
-
     }
     else
         CPLog.error("cannot retrieve configuration saved to XMPP server private storage: " + aStanza);
