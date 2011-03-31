@@ -27,9 +27,9 @@ from optparse import OptionParser
 def prepare_environment(prefix="", force=False):
     from pkg_resources import Requirement, resource_filename
     import errno
-    init_script     = resource_filename(Requirement.parse("archipel-agent"),"system/etc/init.d/archipel")
-    conf_folder     = resource_filename(Requirement.parse("archipel-agent"),"system/etc/archipel")
-    lib_folder      = resource_filename(Requirement.parse("archipel-agent"),"system/var/lib/archipel")
+    init_script     = resource_filename(Requirement.parse("archipel-agent"),"install/etc/init.d/archipel")
+    conf_folder     = resource_filename(Requirement.parse("archipel-agent"),"install/etc/archipel")
+    lib_folder      = resource_filename(Requirement.parse("archipel-agent"),"install/var/lib/archipel")
 
     print init_script
 
