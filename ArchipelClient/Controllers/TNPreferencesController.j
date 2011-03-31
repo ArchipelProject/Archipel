@@ -19,6 +19,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/AppKit.j>
 
+TNPreferencesControllerSavePreferencesRequestNotification = @"TNPreferencesControllerSavePreferencesRequestNotification";
+
 var TNArchipelXMPPPrivateStoragePrefsNamespace  = "archipel:preferences",
     TNArchipelXMPPPrivateStoragePrefsKey        = @"archipel";
 
@@ -35,6 +37,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     @outlet CPButton        buttonCancel;
     @outlet CPButton        buttonSave;
+    @outlet CPCheckBox      checkBoxUpdate;
     @outlet CPPopUpButton   buttonDebugLevel;
     @outlet CPTabView       tabViewMain;
     @outlet CPTextField     fieldBOSHResource;
@@ -56,10 +59,19 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)awakeFromCib
 {
-    var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"];
+    var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
+        scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
+        moduleViewFrame = [viewPreferencesGeneral frame];
+
+    moduleViewFrame.size.width = [scrollViewContainer contentSize].width;
+    [viewPreferencesGeneral setFrame:moduleViewFrame];
+    [viewPreferencesGeneral setAutoresizingMask:CPViewWidthSizable];
+
+    [scrollViewContainer setAutohidesScrollers:YES];
+    [scrollViewContainer setDocumentView:viewPreferencesGeneral];
 
     [tabViewItemPreferencesGeneral setLabel:@"General"];
-    [tabViewItemPreferencesGeneral setView:viewPreferencesGeneral];
+    [tabViewItemPreferencesGeneral setView:scrollViewContainer];
     [tabViewMain addTabViewItem:tabViewItemPreferencesGeneral];
 
     [buttonDebugLevel removeAllItems];
@@ -68,6 +80,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(saveToFromXMPPServer:) name:TNPreferencesControllerSavePreferencesRequestNotification object:nil];
     [mainWindow setDefaultButton:buttonSave];
 
     [fieldBOSHResource setToolTip:@"The resource to use"];
@@ -110,10 +123,19 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
         if ([module viewPreferences] !== nil)
         {
-            var tabViewModuleItem = [[CPTabViewItem alloc] initWithIdentifier:[module name]];
+            var tabViewModuleItem = [[CPTabViewItem alloc] initWithIdentifier:[module name]],
+                scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
+                moduleViewFrame = [[module viewPreferences] frame];
+
+            moduleViewFrame.size.width = [scrollViewContainer contentSize].width;
+            [[module viewPreferences] setFrame:moduleViewFrame];
+            [[module viewPreferences] setAutoresizingMask:CPViewWidthSizable];
+
+            [scrollViewContainer setAutohidesScrollers:YES];
+            [scrollViewContainer setDocumentView:[module viewPreferences]];
 
             [tabViewModuleItem setLabel:[module label]];
-            [tabViewModuleItem setView:[module viewPreferences]];
+            [tabViewModuleItem setView:scrollViewContainer];
             [tabViewMain addTabViewItem:tabViewModuleItem];
         }
     }
@@ -136,25 +158,32 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     CPLog.error("Cannot save your preferences to the XMPP server:" + [[aNotification userInfo] stringValue]);
 }
 
+/*! proxy for saveToFromXMPPServer
+    @param aNotification the notification
+*/
+- (void)saveToFromXMPPServer:(CPNotification)aNotification
+{
+    [self saveToFromXMPPServer];
+}
+
 
 #pragma mark -
 #pragma mark Actions
 
 /*! When window is ordering front, refresh all general preferences
     and send message loadPreferences to all modules
+    @param aSender
 */
 - (IBAction)showWindow:(id)sender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
-
-    // hack...
-    [buttonDebugLevel selectItemWithTitle:@"info"];
 
     [fieldWelcomePageUrl setStringValue:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
+    [checkBoxUpdate setState:([defaults integerForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
 
     for (var i = 0; i < [_modules count]; i++)
     {
@@ -170,6 +199,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
 /*! When save button is pressed, saves all general preferences
     and send message savePreferences to all modules
+    @param aSender
 */
 - (IBAction)savePreferences:(id)sender
 {
@@ -180,6 +210,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
+    [defaults setInteger:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
 
     CPLogUnregister(CPLogConsole);
     CPLogRegister(CPLogConsole, [buttonDebugLevel title]);
@@ -196,6 +227,20 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [mainWindow close];
 }
 
+/*! clean the content of the XMPP storage
+    @param aSender
+*/
+- (IBAction)resetPreferences:(id)aSender
+{
+    var defaultsRegistration = [[CPUserDefaults standardUserDefaults]._domains objectForKey:CPRegistrationDomain];
+
+    [CPUserDefaults resetStandardUserDefaults];
+    [[CPUserDefaults standardUserDefaults] registerDefaults:defaultsRegistration];
+    [[CPUserDefaults standardUserDefaults]._domains setObject:[CPDictionary dictionary] forKey:CPApplicationDomain];
+    [[CPUserDefaults standardUserDefaults] synchronize];
+    [self cleanXMPPStorage];
+    [mainWindow close];
+}
 
 #pragma mark -
 #pragma mark Archiving
@@ -206,6 +251,11 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (void)saveToFromXMPPServer
 {
     [_xmppStorage setObject:[CPUserDefaults standardUserDefaults]._domains forKey:TNArchipelXMPPPrivateStoragePrefsKey];
+}
+
+- (void)cleanXMPPStorage
+{
+    [_xmppStorage setObject:nil forKey:TNArchipelXMPPPrivateStoragePrefsKey];
 }
 
 /*! get the content the private storage of the  XMPP server
@@ -223,12 +273,22 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     if (anObject)
     {
+        // get the credentials;
+        var jid = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHJID"],
+            password = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHPassword"],
+            service = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHService"],
+            remember = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHRememberCredentials"];
+
         [CPUserDefaults resetStandardUserDefaults];
         [CPUserDefaults standardUserDefaults]._domains = anObject;
         [[CPUserDefaults standardUserDefaults] synchronize];
+
+        // reinject creds
+        [[CPUserDefaults standardUserDefaults] setObject:jid forKey:@"TNArchipelBOSHJID"];
+        [[CPUserDefaults standardUserDefaults] setObject:password forKey:@"TNArchipelBOSHPassword"];
+        [[CPUserDefaults standardUserDefaults] setObject:service forKey:@"TNArchipelBOSHService"];
+        [[CPUserDefaults standardUserDefaults] setObject:remember forKey:@"TNArchipelBOSHRememberCredentials"];
     }
-    else
-        CPLog.error("cannot retrieve configuration saved to XMPP server private storage: " + aStanza);
 
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];
 
