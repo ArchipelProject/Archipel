@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # archipelLibvirtEntity.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,11 +32,12 @@ ARCHIPEL_HYPERVISOR_TYPE_XEN        = "XEN"
 ARCHIPEL_HYPERVISOR_TYPE_OPENVZ     = "OPENVZ"
 ARCHIPEL_HYPERVISOR_TYPE_LXC        = "LXC"
 
+
 class TNArchipelLibvirtEntity (object):
 
     def __init__(self, configuration):
         """
-        initialize the TNArchipelLibvirtEntity
+        Initialize the TNArchipelLibvirtEntity.
         """
         self.configuration = configuration
         self.local_libvirt_uri = self.configuration.get("GLOBAL", "libvirt_uri")
@@ -43,13 +49,13 @@ class TNArchipelLibvirtEntity (object):
 
     def manage_vcard_hook(self, origin, user_info, parameters):
         """
-        hook to manage VCard
+        Hook to manage VCard.
         """
         self.manage_vcard()
 
     def connect_libvirt(self):
         """
-        connect to the libvirt according to parameters in configuration
+        Connect to the libvirt according to parameters in configuration.
         """
         if self.need_auth:
             auth = [[libvirt.VIR_CRED_AUTHNAME, libvirt.VIR_CRED_PASSPHRASE], self.libvirt_credential_callback, None]
@@ -57,13 +63,13 @@ class TNArchipelLibvirtEntity (object):
         else:
             self.libvirt_connection = libvirt.open(self.local_libvirt_uri)
             if self.libvirt_connection == None:
-                self.log.error("unable to connect libvirt")
+                self.log.error("Unable to connect libvirt.")
                 sys.exit(-42)
-        self.log.info("connected to libvirt uri %s" % self.local_libvirt_uri)
+        self.log.info("Connected to libvirt uri %s" % self.local_libvirt_uri)
 
     def libvirt_credential_callback(self, creds, cbdata):
         """
-        manage the libvirt credentials
+        Manage the libvirt credentials.
         """
         if creds[0][0] == libvirt.VIR_CRED_PASSPHRASE:
             ## TODO:  manage this more
@@ -74,7 +80,7 @@ class TNArchipelLibvirtEntity (object):
 
     def current_hypervisor(self):
         """
-        return the result of libvirt getType() function
+        Return the result of libvirt getType() function.
         @rtype: string
         @return: uppercased string name of the current hypervisor
         """
@@ -82,7 +88,7 @@ class TNArchipelLibvirtEntity (object):
 
     def is_hypervisor(self, names):
         """
-        return True if hypervisor is one of the given names (tupple)
+        Return True if hypervisor is one of the given names (tupple).
         @type names: tupple
         @param names: tupple containing names
         @rtype: boolean

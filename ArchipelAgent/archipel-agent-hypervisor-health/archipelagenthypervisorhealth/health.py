@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # health.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,11 +32,12 @@ ARCHIPEL_ERROR_CODE_HEALTH_HISTORY  = -8001
 ARCHIPEL_ERROR_CODE_HEALTH_INFO     = -8002
 ARCHIPEL_ERROR_CODE_HEALTH_LOG      = -8003
 
+
 class TNHypervisorHealth (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -72,15 +77,15 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_HEALTH)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -101,8 +106,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_HEALTH IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_HEALTH IQ is received.
+        It understands IQ of type:
             - alloc
             - free
         @type conn: xmpp.Dispatcher
@@ -125,7 +130,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def iq_health_info_history(self, iq):
         """
-        get a range of old stat history according to the limit parameters in iq node
+        Get a range of old stat history according to the limit parameters in iq node.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -133,7 +138,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
         """
         try:
             reply = iq.buildReply("result")
-            self.entity.log.debug("converting stats into XML node")
+            self.entity.log.debug("Converting stats into XML node.")
             limit = int(iq.getTag("query").getTag("archipel").getAttr("limit"))
             nodes = []
             stats = self.collector.get_collected_stats(limit)
@@ -154,7 +159,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def iq_health_info(self, iq):
         """
-        send information about the hypervisor health info
+        Send information about the hypervisor health info.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -165,40 +170,40 @@ class TNHypervisorHealth (TNArchipelPlugin):
             nodes = []
             stats = self.collector.get_collected_stats(1)
             if not stats:
-                reply = build_error_iq(self, "Unable to get stats. see hypervisor log", iq)
+                reply = build_error_iq(self, "Unable to get stats. See hypervisor log", iq)
             else:
                 try:
                     mem_free_node = xmpp.Node("memory", attrs=stats["memory"][0])
                     nodes.append(mem_free_node)
                 except Exception as ex:
-                    raise Exception("unable to append memory stats node", ex)
+                    raise Exception("Unable to append memory stats node:", ex)
                 try:
                     cpu_node = xmpp.Node("cpu", attrs=stats["cpu"][0])
                     nodes.append(cpu_node)
                 except Exception as ex:
-                    raise Exception("unable to append cpu stats node", ex)
+                    raise Exception("Unable to append cpu stats node:", ex)
                 try:
                     disk_free_node = xmpp.Node("disk", attrs=stats["totaldisk"])
                     for s in stats["disk"]:
                         disk_free_node.addChild("partition", attrs=s)
                     nodes.append(disk_free_node)
                 except Exception as ex:
-                    raise Exception("unable to append disk stats node", ex)
+                    raise Exception("Unable to append disk stats node:", ex)
                 try:
                     load_node = xmpp.Node("load", attrs=stats["load"][0])
                     nodes.append(load_node)
                 except Exception as ex:
-                    raise Exception("unable to append load avergae stats node", ex)
+                    raise Exception("Unable to append load avergae stats node:", ex)
                 try:
                     uptime_node = xmpp.Node("uptime", attrs=stats["uptime"])
                     nodes.append(uptime_node)
                 except Exception as ex:
-                    raise Exception("unable to append uptime stats node", ex)
+                    raise Exception("Unable to append uptime stats node:", ex)
                 try:
                     uname_node = xmpp.Node("uname", attrs=stats["uname"])
                     nodes.append(uname_node)
                 except Exception as ex:
-                    raise Exception("unable to append uname node", ex)
+                    raise Exception("Unable to append uname node:", ex)
                 reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)
@@ -206,7 +211,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def message_health_info(self, msg):
         """
-        handle the health info request message
+        Handle the health info request message.
         @type msg: xmmp.Protocol.Message
         @param msg: the message
         @rtype: string
@@ -216,7 +221,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
             tokens = msg.getBody().split()
             if len(tokens) == 1 :   limit = 1
             elif len(tokens) == 2 : limit = int(tokens[1])
-            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help."
             stats = self.collector.get_collected_stats(limit)
             return str(stats)
         except Exception as ex:
@@ -224,7 +229,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def iq_get_logs(self, iq):
         """
-        read the hypervisor's log file
+        Read the hypervisor's log file.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -247,7 +252,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
 
     def message_get_logs(self, msg):
         """
-        handle the log info request message
+        Handle the log info request message.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -257,9 +262,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
             tokens = msg.getBody().split()
             if len(tokens) == 1 :   limit = 1
             elif len(tokens) == 2 : limit = int(tokens[1])
-            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+            else: return "I'm sorry, you use a wrong format. You can type 'help' to get help."
             output = commands.getoutput("tail -n %d %s" % (limit, self.logfile))
             return output
         except Exception as ex:
             return build_error_message(self, ex)
-

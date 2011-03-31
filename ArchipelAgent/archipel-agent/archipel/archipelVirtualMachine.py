@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # archipelVirtualMachine.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -88,12 +93,12 @@ ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
     """
     This class represents an Virtual Machine, XMPP Capable.
-    this class needs to already have
+    This class needs to already have .... end of story ? TODO fix the details
     """
 
     def __init__(self, jid, password, hypervisor, configuration, name):
         """
-        contructor of the class
+        Contructor of the class.
         """
         TNArchipelEntity.__init__(self, jid, password, configuration, name)
         archipelLibvirtEntity.TNArchipelLibvirtEntity.__init__(self, configuration)
@@ -124,7 +129,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
         # triggers
         self.triggers_db_file = self.folder + "/triggers.sqlite3"
-        self.log.info("creating/opening the trigger database file %s" % self.triggers_db_file)
+        self.log.info("Creating/opening the trigger database file %s" % self.triggers_db_file)
         self.trigger_database = sqlite3.connect(self.triggers_db_file, check_same_thread=False)
 
         # permissions
@@ -178,7 +183,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def init_vocabulary(self):
         """
-        This method registers for user messages
+        This method registers for user messages.
         """
         TNArchipelEntity.init_vocabulary(self)
         registrar_items = [
@@ -236,7 +241,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def init_permissions(self):
         """
-        Initialize the permissions
+        Initialize the permissions.
         """
         TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("info", "Authorizes users to access virtual machine information", False)
@@ -260,7 +265,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
     def register_handler(self):
         """
         This method registers the events handlers.
-        It is invoked by super class xmpp_connect() method
+        It is invoked by super class xmpp_connect() method.
         """
         TNArchipelEntity.register_handler(self)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_CONTROL)
@@ -268,13 +273,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def remove_folder(self):
         """
-        Remove the folder of the virtual with all its contents
+        Remove the folder of the virtual with all its contents.
         """
         shutil.rmtree(self.folder)
 
     def set_automatic_libvirt_description(self, xmldesc):
         """
-        Set the XML description's description of the VM
+        Set the XML description's description of the VM.
         """
         if not xmldesc.getTag('description'):
             xmldesc.addChild(name='description')
@@ -291,12 +296,12 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def set_presence_according_to_libvirt_info(self):
         """
-        Set XMPP status according to libvirt status
+        Set XMPP status according to libvirt status.
         """
         try:
             dominfo = self.domain.info()
             self.libvirt_status = dominfo[0]
-            self.log.info("virtual machine state is %d" % dominfo[0])
+            self.log.info("Virtual machine state is %d" % dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_ON)
@@ -343,7 +348,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def on_domain_event(self, conn, dom, event, detail, opaque):
         """
-        Called when a libvirt event is triggered
+        Called when a libvirt event is triggered.
         @type conn: libvirt.connection
         @param conn: the libvirt connection
         @type dom: libvirt.domain
@@ -357,7 +362,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         """
         self.log.info("Libvirt event received: %d with detail %s" % (event, detail))
         if self.is_migrating:
-            self.log.info("Event received but virtual machine is migrating. Ignoring")
+            self.log.info("Event received but virtual machine is migrating. Ignoring.")
             return
         try:
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
@@ -415,7 +420,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def remove_libvirt_handler(self):
         """
-        Remove the libvirt event listener handler
+        Remove the libvirt event listener handler.
         """
         if not self.libvirt_event_callback_id is None:
             self.log.info("Removing the libvirt event listener for %s" % self.jid)
@@ -424,7 +429,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def disconnect(self):
         """
-        Overrides the disconnect function
+        Overrides the disconnect function.
         """
         self.log.info("%s is disconnecting from everything" % self.jid)
         self.remove_libvirt_handler()
@@ -436,9 +441,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def manage_trigger_persistance(self, origin=None, user_info=None, arguments=None):
         """
-        Create or read the trigger database
+        Create or read the trigger database.
         """
-        self.log.info("Populating trigger database if not exists")
+        self.log.info("Populating trigger database if not exists.")
         self.trigger_database.execute("create table if not exists triggers (name text, description text, mode integer, check_method text, check_interval integer)")
         self.trigger_database.execute("create table if not exists watchers (name text, targetjid text, triggername text, triggeronaction text, triggeroffaction text, state integer)")
         c = self.trigger_database.cursor()
@@ -463,7 +468,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
-        Hook to add a JID
+        Hook to add a JID.
         """
         self.add_jid(xmpp.JID(user_info.getStripped()))
 
@@ -495,10 +500,10 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         action = self.check_acp(conn, iq)
         self.check_perm(conn, iq, action, -1)
         if not self.libvirt_connection:
-            self.log.info("Control action required but no libvirt connection")
+            self.log.info("Control action required but no libvirt connection.")
             raise xmpp.protocol.NodeProcessed
         if self.is_migrating and (not action in ("info", "xmldesc", "networkinfo")):
-            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
+            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
         if action == "info":
@@ -552,7 +557,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         self.check_perm(conn, iq, action, -1)
 
         if self.is_migrating and (not action in ("capabilities")):
-            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
+            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform this control operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
@@ -572,18 +577,18 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def create(self):
         """
-        Create the domain
+        Create the domain.
         """
         self.lock()
         ret = self.domain.create()
-        self.log.info("Virtual machine created")
+        self.log.info("Virtual machine created.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STARTED, libvirt.VIR_DOMAIN_EVENT_STARTED_BOOTED, None)
         return str(self.domain.ID())
 
     def shutdown(self):
         """
-        Shutdown the domain
+        Shutdown the domain.
         """
         self.lock()
         ret = self.domain.shutdown()
@@ -591,50 +596,50 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
             self.change_presence(self.xmppstatus, ARCHIPEL_XMPP_SHOW_SHUTDOWNING)
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_SHUTDOWN, None)
-        self.log.info("Virtual machine shutdowned")
+        self.log.info("Virtual machine shutdowned.")
 
     def destroy(self):
         """
-        Destroy the domain
+        Destroy the domain.
         """
         self.lock()
         ret = self.domain.destroy()
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_STOPPED, libvirt.VIR_DOMAIN_EVENT_STOPPED_DESTROYED, None)
-        self.log.info("Virtual machine destroyed")
+        self.log.info("Virtual machine destroyed.")
 
     def reboot(self):
         """
-        Reboot the domain
+        Reboot the domain.
         """
         self.lock()
         self.domain.reboot(0) # flags not used in libvirt but required.
-        self.log.info("Virtual machine rebooted")
+        self.log.info("Virtual machine rebooted.")
 
     def suspend(self):
         """
-        Suspend (pause) the domain
+        Suspend (pause) the domain.
         """
         self.lock()
         ret = self.domain.suspend()
-        self.log.info("Virtual machine suspended")
+        self.log.info("Virtual machine suspended.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_SUSPENDED, libvirt.VIR_DOMAIN_EVENT_SUSPENDED_PAUSED, None)
 
     def resume(self):
         """
-        Resume (unpause) the domain
+        Resume (unpause) the domain.
         """
         self.lock()
         ret = self.domain.resume()
-        self.log.info("Virtual machine resumed")
+        self.log.info("Virtual machine resumed.")
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
 
 
     def info(self):
         """
-        Return info of a domain
+        Return info of a domain.
         """
         dominfo = self.domain.info()
         try:
@@ -653,7 +658,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def network_info(self):
         """
-        Get network statistics on the domain
+        Get network statistics on the domain.
         """
         desc = xmpp.simplexml.NodeBuilder(data=self.domain.XMLDesc(0)).getDom()
         interfaces_nodes = desc.getTag("devices").getTags("interface")
@@ -677,7 +682,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def setMemory(self, value):
         """
-        Set memory value for running domain
+        Set memory value for running domain.
         @type value: int
         @param value: the new amount of memory
         """
@@ -690,7 +695,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def memoryTimer(self, requestedMemory, retry=3):
         """
-        timer called by setMemory() to check if action has been done
+        Timer called by setMemory() to check if action has been done.
         @type requestedMemory: int
         @param requestedMemory: the requested memory amount to check
         @type retry: int
@@ -706,7 +711,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def setVCPUs(self, value):
         """
-        Set the number of CPU for the domain
+        Set the number of CPU for the domain.
         @type value: int
         @param value: number of CPU to use
         """
@@ -723,7 +728,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def setAutostart(self, flag):
         """
-        Set autostart for the domain
+        Set autostart for the domain.
         @type flag: int
         @param flag: the value of autostart (1 or 0)
         """
@@ -731,7 +736,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def xmldesc(self):
         """
-        Get the XML description of the domain
+        Get the XML description of the domain.
         @rtype: xmpp.Node
         @return: the XML description
         """
@@ -743,7 +748,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def define(self, xmldesc):
         """
-        Define the domain from given XML description
+        Define the domain from given XML description.
         @type xmldesc: xmpp.Node
         @param xmldesc: the XML description
         @rtype: xmpp.Node
@@ -760,31 +765,31 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
 
     def undefine(self):
         """
-        Undefine the domain
+        Undefine the domain.
         """
         if not self.domain:
-            self.log.warning("Virtual machine is already undefined")
+            self.log.warning("Virtual machine is already undefined.")
             return
         ret = self.domain.undefine()
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_UNDEFINED, 0, None)
-        self.log.info("Virtual machine undefined")
+        self.log.info("Virtual machine undefined.")
 
     def undefine_and_disconnect(self):
         """
-        Undefine the domain and disconnect from XMPP
+        Undefine the domain and disconnect from XMPP.
         """
         self.remove_libvirt_handler()
         self.domain.undefine()
         self.definition = None
         self.unlock()
         self.disconnect()
-        self.log.info("Virtual machine undefined and disconnected")
+        self.log.info("Virtual machine undefined and disconnected.")
 
     def clone(self, origin, user_info, parameters):
         """
         Clone a vm from another
-        user_info is a dict that contains following keys
+        user_info is a dict that contains following keys:
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
             - baseuuid : the base uuid of cloned vm, in order to replace it
@@ -818,13 +823,13 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         libvirt uri.
         """
         if not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
-            raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment')
+            raise Exception('Archipel only supports Live migration for QEMU/KVM domains at the moment.')
         if self.is_migrating:
-            raise Exception('Virtual machine is already migrating')
+            raise Exception('Virtual machine is already migrating.')
         if not self.definition:
-            raise Exception('Virtual machine must be defined')
+            raise Exception('Virtual machine must be defined.')
         if not self.domain.info()[0] == libvirt.VIR_DOMAIN_RUNNING and not self.domain.info()[0] == libvirt.VIR_DOMAIN_BLOCKED:
-            raise Exception('Virtual machine must be running')
+            raise Exception('Virtual machine must be running.')
         if self.hypervisor.jid.getStripped() == destination_jid.getStripped():
             raise Exception('Virtual machine is already running on %s' % destination_jid.getStripped())
         self.is_migrating               = True
