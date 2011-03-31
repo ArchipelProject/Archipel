@@ -16,15 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNTableViewDataSource.j>
+
 @import "TNDHCPEntryObject.j";
 @import "TNHypervisorNetworkObject.j";
+
+
 
 /*! @ingroup hypervisornetworks
     The newtork window edition
 */
 @implementation TNWindowNetworkController : CPObject
 {
-    @outlet CPWindow        mainWindow;
     @outlet CPButtonBar     buttonBarControlDHCPHosts;
     @outlet CPButtonBar     buttonBarControlDHCPRanges;
     @outlet CPCheckBox      checkBoxDHCPEnabled;
@@ -43,11 +59,12 @@
     @outlet CPView          viewRangesConf;
     @outlet CPView          viewTableHostsContainer;
     @outlet CPView          viewTableRangesContainer;
+    @outlet CPWindow        mainWindow;
 
     CPArray                 _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
     CPTableView             _externalTable              @accessors(property=tableNetwork);
-    TNHypervisorNetwork     _network                    @accessors(property=network);
     id                      _delegate                   @accessors(property=delegate);
+    TNHypervisorNetwork     _network                    @accessors(property=network);
 
     CPButton                _minusButtonDHCPHosts;
     CPButton                _minusButtonDHCPRanges;

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <AppKit/AppKit.j>
+@import <AppKit/CPPlatformWindow.j>
 
 
 /*! @ingroup categories

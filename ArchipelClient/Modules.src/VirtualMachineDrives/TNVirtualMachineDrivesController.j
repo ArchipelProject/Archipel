@@ -17,23 +17,32 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
 
 @import "TNMediaObject.j"
 @import "TNNewDriveController.j"
 @import "TNEditDriveController.j"
 
 
-TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
-TNArchipelTypeVirtualMachineDiskCreate  = @"create";
-TNArchipelTypeVirtualMachineDiskDelete  = @"delete";
-TNArchipelTypeVirtualMachineDiskGet     = @"get";
-TNArchipelTypeVirtualMachineDiskConvert = @"convert";
-TNArchipelTypeVirtualMachineDiskRename  = @"rename";
-
-TNArchipelPushNotificationDisk           = @"archipel:push:disk";
-TNArchipelPushNotificationAppliance      = @"archipel:push:vmcasting";
-TNArchipelPushNotificationDiskCreated    = @"created";
+var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
+    TNArchipelTypeVirtualMachineDiskCreate  = @"create",
+    TNArchipelTypeVirtualMachineDiskDelete  = @"delete",
+    TNArchipelTypeVirtualMachineDiskGet     = @"get",
+    TNArchipelTypeVirtualMachineDiskConvert = @"convert",
+    TNArchipelTypeVirtualMachineDiskRename  = @"rename",
+    TNArchipelPushNotificationDisk          = @"archipel:push:disk",
+    TNArchipelPushNotificationAppliance     = @"archipel:push:vmcasting",
+    TNArchipelPushNotificationDiskCreated   = @"created";
 
 
 /*! @defgroup  virtualmachinedrives Module VirtualMachine Drives

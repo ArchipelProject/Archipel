@@ -17,13 +17,22 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
-TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
+@import <AppKit/CPButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPView.j>
 
-TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
+@import <TNKit/TNTableViewDataSource.j>
+
+
+
+var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
+    TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
+    TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control",
+    TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
+
 
 /*! @defgroup  toolbarmigration Module Toolbar Migration
 

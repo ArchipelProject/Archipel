@@ -18,6 +18,16 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPButton.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+
+@import "TNMediaObject.j"
+
+
 
 @implementation TNEditDriveController : CPObject
 {

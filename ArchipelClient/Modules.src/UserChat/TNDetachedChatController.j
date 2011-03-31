@@ -18,7 +18,14 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPPlatformWindow.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <MessageBoard/TNMessageBoard.j>
 
 
 if ([CPPlatform isBrowser])

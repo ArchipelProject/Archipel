@@ -18,6 +18,20 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+
+
 
 var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
     TNArchipelTypeXMPPServerUsersRegister           = @"register",
@@ -35,21 +49,21 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     @outlet CPTextField     fieldNewUserPassword;
     @outlet CPTextField     fieldNewUserPasswordConfirm;
     @outlet CPTextField     fieldNewUserUsername;
-    @outlet CPView          mainView        @accessors(getter=mainView);
+    @outlet CPView          mainView                        @accessors(getter=mainView);
     @outlet CPView          viewTableContainer;
     @outlet CPWindow        windowNewUser;
 
-    TNStropheContact        _entity             @accessors(setter=setEntity:);
-    TNTableViewDataSource   _datasourceUsers    @accessors(getter=datasource);
-    CPArray                 _users              @accessors(getter=users);
-    id                      _delegate           @accessors(property=delegate);
+    CPArray                 _users                          @accessors(getter=users);
+    id                      _delegate                       @accessors(property=delegate);
+    TNStropheContact        _entity                         @accessors(setter=setEntity:);
+    TNTableViewDataSource   _datasourceUsers                @accessors(getter=datasource);
 
-    CPTableView             _tableUsers;
     CPButton                _addButton;
     CPButton                _deleteButton;
     CPImage                 _iconEntityTypeHuman;
-    CPImage                 _iconEntityTypeVM;
     CPImage                 _iconEntityTypeHypervisor;
+    CPImage                 _iconEntityTypeVM;
+    CPTableView             _tableUsers;
 }
 
 #pragma mark -

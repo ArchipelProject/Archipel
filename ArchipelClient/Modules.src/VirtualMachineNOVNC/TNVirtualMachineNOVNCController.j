@@ -17,49 +17,28 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <LPKit/LPMultiLineTextField.j>
+@import <VNCCappuccino/TNVNCView.j>
 
 @import "TNExternalVNCWindow.j";
 @import "TNZoomAnimation.j";
 
 
-/*! @defgroup  virtualmachinevnc Module VirtualMachineVNC
-    @desc This module allows to access to virtual machine displays
-    using VNC.
-*/
 
-TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmachine:vnc";
-
-/*! @ingroup virtualmachinevnc
-    @group TNArchipelTypeVirtualMachineVNC
-    namespave of vm control
-*/
-TNArchipelTypeVirtualMachineVNC                 = @"archipel:virtualmachine:vnc";
-
-/*! @ingroup virtualmachinenovnc
-    @group TNArchipelTypeVirtualMachineVNC
-    get vnc display
-*/
-TNArchipelTypeVirtualMachineVNCDisplay          = @"display";
-
-
-
-/*! @ingroup virtualmachinenovnc
-    @group TNArchipelTypeVirtualMachineVNC
-    identifier prefix of zoom scaling
-*/
-TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_";
-
-
-/*! @ingroup virtualmachinenovnc
-    sent when vnc info of the current entity have been recovered
-*/
-TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification";
-
-/*! @ingroup virtualmachinenovnc
-    if received, will show external VNC window
-*/
-TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowNotification";
+var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmachine:vnc",
+    TNArchipelTypeVirtualMachineVNC                 = @"archipel:virtualmachine:vnc",
+    TNArchipelTypeVirtualMachineVNCDisplay          = @"display",
+    TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_",
+    TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification",
+    TNArchipelVNCShowExternalWindowNotification     = @"TNArchipelVNCShowExternalWindowNotification";
 
 
 /*! @ingroup virtualmachinenovnc
@@ -67,37 +46,37 @@ TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowN
 */
 @implementation TNVirtualMachineNOVNCController : TNModule
 {
-    @outlet CPScrollView    mainScrollView;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldName;
-    @outlet CPView          maskingView;
-    @outlet CPSlider        sliderScaling;
-    @outlet CPButton        buttonZoomFitToWindow;
-    @outlet CPButton        buttonZoomReset;
-    @outlet CPButton        buttonSendCtrlAtlDel;
-    @outlet CPButton        buttonSendPasteBoard;
-    @outlet CPButton        buttonGetPasteBoard;
-    @outlet CPTextField     fieldZoomValue;
-    @outlet CPTextField     fieldPassword;
-    @outlet CPButton        buttonDirectURL;
-    @outlet CPView          viewControls;
-    @outlet CPWindow        windowPassword;
-    @outlet CPWindow        windowPasteBoard;
-    @outlet LPMultiLineTextField        fieldPasteBoard;
-    @outlet CPImageView     imageViewSecureConnection;
-    @outlet CPCheckBox      checkboxPasswordRemember;
-    @outlet CPTextField     fieldPreferencesFBURefreshRate;
-    @outlet CPTextField     fieldPreferencesCheckRate;
-    @outlet TNSwitch        switchPreferencesPreferSSL;
+    @outlet CPButton                buttonDirectURL;
+    @outlet CPButton                buttonGetPasteBoard;
+    @outlet CPButton                buttonSendCtrlAtlDel;
+    @outlet CPButton                buttonSendPasteBoard;
+    @outlet CPButton                buttonZoomFitToWindow;
+    @outlet CPButton                buttonZoomReset;
+    @outlet CPCheckBox              checkboxPasswordRemember;
+    @outlet CPImageView             imageViewSecureConnection;
+    @outlet CPScrollView            mainScrollView;
+    @outlet CPSlider                sliderScaling;
+    @outlet CPTextField             fieldJID;
+    @outlet CPTextField             fieldName;
+    @outlet CPTextField             fieldPassword;
+    @outlet CPTextField             fieldPreferencesCheckRate;
+    @outlet CPTextField             fieldPreferencesFBURefreshRate;
+    @outlet CPTextField             fieldZoomValue;
+    @outlet CPView                  maskingView;
+    @outlet CPView                  viewControls;
+    @outlet CPWindow                windowPassword;
+    @outlet CPWindow                windowPasteBoard;
+    @outlet LPMultiLineTextField    fieldPasteBoard;
+    @outlet TNSwitch                switchPreferencesPreferSSL;
 
-    CPString                _url;
-    CPString                _VMHost;
-    BOOL                    _vncOnlySSL;
-    BOOL                    _vncSupportSSL;
-    BOOL                    _useSSL;
-    CPString                _vncProxyPort;
-    CPString                _vncDirectPort;
-    TNVNCView               _vncView;
+    BOOL                            _useSSL;
+    BOOL                            _vncOnlySSL;
+    BOOL                            _vncSupportSSL;
+    CPString                        _url;
+    CPString                        _VMHost;
+    CPString                        _vncDirectPort;
+    CPString                        _vncProxyPort;
+    TNVNCView                       _vncView;
 }
 
 

@@ -17,22 +17,34 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPOutlineView.j>
+@import <AppKit/CPProgressIndicator.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
 
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
 @import "TNVMCastDatasource.j";
 
-TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_";
 
-TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
-TNArchipelTypeHypervisorVMCastingGet                = @"get";
-TNArchipelTypeHypervisorVMCastingRegister           = @"register";
-TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister";
-TNArchipelTypeHypervisorVMCastingDownload           = @"downloadappliance";
-TNArchipelTypeHypervisorVMCastingDeleteAppliance    = @"deleteappliance";
 
-TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting";
+var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpenedVMCasts_",
+    TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
+    TNArchipelTypeHypervisorVMCastingGet                = @"get",
+    TNArchipelTypeHypervisorVMCastingRegister           = @"register",
+    TNArchipelTypeHypervisorVMCastingUnregister         = @"unregister",
+    TNArchipelTypeHypervisorVMCastingDownload           = @"downloadappliance",
+    TNArchipelTypeHypervisorVMCastingDeleteAppliance    = @"deleteappliance",
+    TNArchipelPushNotificationVMCasting                 = @"archipel:push:vmcasting";
 
 /*! @defgroup  hypervisorvmcasts Module Hypervisor VMCasts
 

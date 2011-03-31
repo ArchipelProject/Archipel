@@ -18,18 +18,29 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
 
 @import "TNInstalledAppliancesObject.j";
 
-TNArchipelTypeVirtualMachineVMCasting                       = @"archipel:virtualmachine:vmcasting";
 
-TNArchipelTypeVirtualMachineVMCastingGet                    = @"get";
-TNArchipelTypeVirtualMachineVMCastingAttach                 = @"attach";
-TNArchipelTypeVirtualMachineVMCastingDetach                 = @"detach";
-TNArchipelTypeVirtualMachineVMCastingPackage                = @"package";
 
-TNArchipelPushNotificationVMCasting                         = @"archipel:push:vmcasting";
+var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:vmcasting",
+    TNArchipelTypeVirtualMachineVMCastingGet        = @"get",
+    TNArchipelTypeVirtualMachineVMCastingAttach     = @"attach",
+    TNArchipelTypeVirtualMachineVMCastingDetach     = @"detach",
+    TNArchipelTypeVirtualMachineVMCastingPackage    = @"package",
+    TNArchipelPushNotificationVMCasting             = @"archipel:push:vmcasting";
 
 /*! @defgroup  virtualmachinepackaging Module VirtualMachine Appliances
     @desc Allow to attach virtual machine from installed appliances

@@ -17,11 +17,19 @@
  */
 
 @import <Foundation/Foundation.j>
+
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNTableViewDataSource.j>
+
 @import "TNCellPercentageView.j"
 
-TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting"
-TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
+
+var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:vmcasting",
+    TNArchipelTypeHypervisorVMCastingDownloadQueue      = @"downloadqueue";
 
 
 /*! @ingroup hypervisorvmcasts

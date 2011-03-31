@@ -16,11 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <AppKit/AppKit.j>
 @import <Foundation/Foundation.j>
 
-TNDHCPEntryTypeRange    = @"TNDHCPEntryTypeRange";
-TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
+
+
+var TNDHCPEntryTypeRange    = @"TNDHCPEntryTypeRange",
+    TNDHCPEntryTypeHost     = @"TNDHCPEntryTypeHost";
 
 /*! @ingroup hypervisornetworks
     this class represents a DHCP entry

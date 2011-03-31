@@ -17,7 +17,6 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
 
 TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];

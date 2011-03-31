@@ -17,10 +17,11 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
+@import <TNKit/TNToolbar.j>
+
+var TNArchipelControlNotification   = @"TNArchipelControlNotification",
+    TNArchipelControlDestroy        = @"TNArchipelControlDestroy";
 
 /*! @defgroup  toolbardestroybutton Module Toolbar Button Destroy
     @desc This module displays a toolbar item that can send destroy action to the current entity

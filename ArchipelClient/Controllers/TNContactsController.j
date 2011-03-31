@@ -17,7 +17,16 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+
+@import <StropheCappuccino/PubSub/TNPubSubController.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add a TNStropheContact

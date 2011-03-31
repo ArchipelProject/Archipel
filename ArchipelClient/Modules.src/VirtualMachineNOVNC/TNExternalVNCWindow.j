@@ -16,8 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
 
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNToolbar.j>
+@import <TNKit/TNToolbar.j>
+@import <VNCCappuccino/TNVNCView.j>
 
 var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     TNVNCWindowToolBarSendPasteboard    = @"TNVNCWindowToolBarSendPasteboard",
@@ -31,11 +37,11 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 @implementation TNExternalVNCWindow : CPWindow
 {
-    TNVNCView           _vncView;
-    TNToolbar           _mainToolbar;
-    TNStropheContact    _entity;
     CPImageView         _imageViewVirtualMachineAvatar;
     double              _currentZoom;
+    TNStropheContact    _entity;
+    TNToolbar           _mainToolbar;
+    TNVNCView           _vncView;
 }
 
 

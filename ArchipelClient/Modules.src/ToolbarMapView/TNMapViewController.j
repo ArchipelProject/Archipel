@@ -16,24 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPSplitView.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAlert.j>
 
 @import "MapKit/MKMapView.j";
 @import "TNDragDropTableViewDataSource.j";
 
 
-TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
-TNArchipelTypeHypervisorControlAlloc        = @"alloc";
-TNArchipelTypeHypervisorControlFree         = @"free";
-TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
 
-TNArchipelTypeHypervisorGeolocalization     = @"archipel:hypervisor:geolocalization";
-TNArchipelTypeHypervisorGeolocalizationGet  = @"get";
-
-TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
+var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
+    TNArchipelTypeHypervisorControlAlloc        = @"alloc",
+    TNArchipelTypeHypervisorControlFree         = @"free",
+    TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
+    TNArchipelTypeHypervisorGeolocalization     = @"archipel:hypervisor:geolocalization",
+    TNArchipelTypeHypervisorGeolocalizationGet  = @"get",
+    TNArchipelTypeVirtualMachineControl         = @"archipel:vm:control",
+    TNArchipelTypeVirtualMachineControlMigrate  = @"migrate";
 
 
 /*! @defgroup  toolbarmapview Module Toolbar Map View

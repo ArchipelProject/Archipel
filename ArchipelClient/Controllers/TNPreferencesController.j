@@ -17,7 +17,18 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <GrowlCappuccino/TNGrowlCenter.j>
+
+@import "../Views/TNSwitch.j"
 
 TNPreferencesControllerSavePreferencesRequestNotification = @"TNPreferencesControllerSavePreferencesRequestNotification";
 

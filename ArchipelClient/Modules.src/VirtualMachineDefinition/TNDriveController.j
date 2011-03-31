@@ -18,43 +18,38 @@
 
 @import "TNDriveObject.j"
 
-TNArchipelTypeVirtualMachineDisk       = @"archipel:vm:disk";
+var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
+    TNArchipelTypeVirtualMachineDiskGet     = @"get",
+    TNArchipelTypeVirtualMachineISOGet      = @"getiso",
+    TNXMLDescDriveTypeFile                  = @"file",
+    TNXMLDescDriveTypeBlock                 = @"block",
+    TNXMLDescDriveTypes                     = [TNXMLDescDriveTypeFile, TNXMLDescDriveTypeBlock],
+    TNXMLDescDiskTargetHda                  = @"hda",
+    TNXMLDescDiskTargetHdb                  = @"hdb",
+    TNXMLDescDiskTargetHdc                  = @"hdc",
+    TNXMLDescDiskTargetHdd                  = @"hdd",
+    TNXMLDescDiskTargetSda                  = @"sda",
+    TNXMLDescDiskTargetSdb                  = @"sdb",
+    TNXMLDescDiskTargetSdc                  = @"sdc",
+    TNXMLDescDiskTargetSdd                  = @"sdd",
+    TNXMLDescDiskTargets                    = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
+                                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd,
+                                                TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
+                                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd],
+    TNXMLDescDiskTargetsIDE                 = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
+                                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd],
+    TNXMLDescDiskTargetsSCSI                = [ TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
+                                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd],
+    TNXMLDescDiskBusIDE                     = @"ide",
+    TNXMLDescDiskBusSCSI                    = @"scsi",
+    TNXMLDescDiskBusVIRTIO                  = @"virtio",
+    TNXMLDescDiskBuses                      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescDiskBusVIRTIO],
+    TNXMLDescDiskCacheDefault               = @"default",
+    TNXMLDescDiskCacheNone                  = @"none",
+    TNXMLDescDiskCacheWritethrough          = @"writethrough",
+    TNXMLDescDiskCacheWriteback             = @"writeback";
 
-TNArchipelTypeVirtualMachineDiskGet    = @"get";
-TNArchipelTypeVirtualMachineISOGet     = @"getiso";
-
-TNXMLDescDriveTypeFile      = @"file";
-TNXMLDescDriveTypeBlock     = @"block";
-TNXMLDescDriveTypes         = [TNXMLDescDriveTypeFile, TNXMLDescDriveTypeBlock];
-
-TNXMLDescDiskTargetHda  = @"hda";
-TNXMLDescDiskTargetHdb  = @"hdb";
-TNXMLDescDiskTargetHdc  = @"hdc";
-TNXMLDescDiskTargetHdd  = @"hdd";
-TNXMLDescDiskTargetSda  = @"sda";
-TNXMLDescDiskTargetSdb  = @"sdb";
-TNXMLDescDiskTargetSdc  = @"sdc";
-TNXMLDescDiskTargetSdd  = @"sdd";
-
-TNXMLDescDiskTargets        = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
-                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd,
-                                TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
-                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd];
-TNXMLDescDiskTargetsIDE     = [ TNXMLDescDiskTargetHda, TNXMLDescDiskTargetHdb,
-                                TNXMLDescDiskTargetHdc, TNXMLDescDiskTargetHdd];
-TNXMLDescDiskTargetsSCSI    = [ TNXMLDescDiskTargetSda, TNXMLDescDiskTargetSdb,
-                                TNXMLDescDiskTargetSdc, TNXMLDescDiskTargetSdd]
-
-TNXMLDescDiskBusIDE     = @"ide";
-TNXMLDescDiskBusSCSI    = @"scsi";
-TNXMLDescDiskBusVIRTIO  = @"virtio";
-TNXMLDescDiskBuses      = [TNXMLDescDiskBusIDE, TNXMLDescDiskBusSCSI, TNXMLDescDiskBusVIRTIO];
-
-TNXMLDescDiskCacheDefault       = @"default";
-TNXMLDescDiskCacheNone          = @"none";
-TNXMLDescDiskCacheWritethrough  = @"writethrough";
-TNXMLDescDiskCacheWriteback     = @"writeback";
-TNXMLDescDiskCaches             = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCacheNone, TNXMLDescDiskCacheWritethrough, TNXMLDescDiskCacheWriteback];
+TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescDiskCacheNone, TNXMLDescDiskCacheWritethrough, TNXMLDescDiskCacheWriteback];
 
 
 /*! @ingroup virtualmachinedefinition

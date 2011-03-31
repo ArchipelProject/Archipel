@@ -18,7 +18,15 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPMenu.j>
+@import <AppKit/CPMenuItem.j>
+
+@import <StropheCappuccino/TNBase64Image.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <StropheCappuccino/TNXMLNode.j>
 
 /*! @ingroup archipelcore
     representation of the current user avatar controller

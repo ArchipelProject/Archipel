@@ -17,7 +17,11 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPOutlineView.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPTextField.j>
+
 
 TNArchipelRosterOutlineViewReload           = @"TNArchipelRosterOutlineViewReload";
 TNArchipelPropertiesViewDidShowNotification = @"TNArchipelPropertiesViewDidShowNotification";
@@ -61,11 +65,9 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
         [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-        // [self addTableColumn:columnOutline];
         [self addTableColumn:columnLabel];
         [self setOutlineTableColumn:columnLabel];
         [self setTarget:self];
-        // [self setDoubleAction:@selector(onDoubleAction:)];
     }
 
     return self;

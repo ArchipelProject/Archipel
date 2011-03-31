@@ -18,6 +18,14 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+
+
 
 @implementation TNNewDriveController : CPObject
 {

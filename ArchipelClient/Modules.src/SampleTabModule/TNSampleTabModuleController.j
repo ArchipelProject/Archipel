@@ -18,7 +18,8 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPTextField.j>
 
 /*! @defgroup  sampletabmodule Module SampleTabModule
     @desc Development starting point to create a Tab module

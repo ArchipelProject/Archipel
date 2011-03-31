@@ -17,19 +17,29 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control";
-TNArchipelTypeHypervisorControlAlloc        = @"alloc";
-TNArchipelTypeHypervisorControlFree         = @"free";
-TNArchipelTypeHypervisorControlRosterVM     = @"rostervm";
-TNArchipelTypeHypervisorControlClone        = @"clone";
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
 
-TNArchipelTypeSubscription                  = @"archipel:subscription";
-TNArchipelTypeSubscriptionAdd               = @"add";
-TNArchipelTypeSubscriptionRemove            = @"remove";
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
 
-TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
+
+var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
+    TNArchipelTypeHypervisorControlAlloc        = @"alloc",
+    TNArchipelTypeHypervisorControlFree         = @"free",
+    TNArchipelTypeHypervisorControlRosterVM     = @"rostervm",
+    TNArchipelTypeHypervisorControlClone        = @"clone",
+    TNArchipelTypeSubscription                  = @"archipel:subscription",
+    TNArchipelTypeSubscriptionAdd               = @"add",
+    TNArchipelTypeSubscriptionRemove            = @"remove",
+    TNArchipelPushNotificationHypervisor        = @"archipel:push:hypervisor";
 
 /*! @defgroup  hypervisorvmcreation Module Hypervisor VM Creation
     @desc This module allow to create and delete virtual machines

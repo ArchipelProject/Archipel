@@ -16,27 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheGlobals.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNTableViewDataSource.j>
 
 
 
-TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
-
-TNArchipelTypeVirtualMachineControlCreate       = @"create";
-TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
-TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
-TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
-TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
-TNArchipelTypeVirtualMachineControlResume       = @"resume";
-
-TNArchipelActionTypeCreate                      = @"Start";
-TNArchipelActionTypePause                       = @"Pause";
-TNArchipelActionTypeShutdown                    = @"Shutdown";
-TNArchipelActionTypeDestroy                     = @"Destroy";
-TNArchipelActionTypeResume                      = @"Resume";
-TNArchipelActionTypeReboot                      = @"Reboot";
+var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
+    TNArchipelTypeVirtualMachineControlCreate       = @"create",
+    TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown",
+    TNArchipelTypeVirtualMachineControlDestroy      = @"destroy",
+    TNArchipelTypeVirtualMachineControlReboot       = @"reboot",
+    TNArchipelTypeVirtualMachineControlSuspend      = @"suspend",
+    TNArchipelTypeVirtualMachineControlResume       = @"resume",
+    TNArchipelActionTypeCreate                      = @"Start",
+    TNArchipelActionTypePause                       = @"Pause",
+    TNArchipelActionTypeShutdown                    = @"Shutdown",
+    TNArchipelActionTypeDestroy                     = @"Destroy",
+    TNArchipelActionTypeResume                      = @"Resume",
+    TNArchipelActionTypeReboot                      = @"Reboot";
 
 /*! @defgroup  groupmanagement Module Group Management
     @desc This module allows to send controls to a list a virtual machine present in a Roster group

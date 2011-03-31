@@ -18,6 +18,9 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPProgressIndicator.j>
+
+
 
 @implementation TNCellPercentageView : CPView
 {

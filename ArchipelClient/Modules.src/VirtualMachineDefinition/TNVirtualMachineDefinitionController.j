@@ -17,8 +17,24 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <LPKit/LPKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPColor.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <LPKit/LPMultiLineTextField.j>
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTextFieldStepper.j>
 
 @import "TNDriveObject.j"
 @import "TNNetworkInterfaceObject.j"
@@ -26,69 +42,60 @@
 @import "TNNetworkController.j"
 @import "TNVirtualMachineGuestItem.j"
 
-TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition";
-
-TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc";
-TNArchipelTypeVirtualMachineDefinitionDefine        = @"define";
-TNArchipelTypeVirtualMachineDefinitionUndefine      = @"undefine";
-TNArchipelTypeVirtualMachineDefinitionCapabilities  = @"capabilities";
-
-TNArchipelPushNotificationDefinitition              = @"archipel:push:virtualmachine:definition";
-
-VIR_DOMAIN_NOSTATE          =   0;
-VIR_DOMAIN_RUNNING          =   1;
-VIR_DOMAIN_BLOCKED          =   2;
-VIR_DOMAIN_PAUSED           =   3;
-VIR_DOMAIN_SHUTDOWN         =   4;
-VIR_DOMAIN_SHUTOFF          =   5;
-VIR_DOMAIN_CRASHED          =   6;
-
-TNXMLDescBootHardDrive      = @"hd";
-TNXMLDescBootCDROM          = @"cdrom";
-TNXMLDescBootNetwork        = @"network";
-TNXMLDescBootFileDescriptor = @"fd";
-TNXMLDescBoots              = [ TNXMLDescBootHardDrive, TNXMLDescBootCDROM,
-                                TNXMLDescBootNetwork, TNXMLDescBootFileDescriptor];
 
 
-TNXMLDescHypervisorKVM          = @"kvm";
-TNXMLDescHypervisorXen          = @"xen";
-TNXMLDescHypervisorOpenVZ       = @"openvz";
-TNXMLDescHypervisorQemu         = @"qemu";
-TNXMLDescHypervisorKQemu        = @"kqemu";
-TNXMLDescHypervisorLXC          = @"lxc";
-TNXMLDescHypervisorUML          = @"uml";
-TNXMLDescHypervisorVBox         = @"vbox";
-TNXMLDescHypervisorVMWare       = @"vmware";
-TNXMLDescHypervisorOpenNebula   = @"one";
+var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control",
+    TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition",
+    TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc",
+    TNArchipelTypeVirtualMachineDefinitionDefine        = @"define",
+    TNArchipelTypeVirtualMachineDefinitionUndefine      = @"undefine",
+    TNArchipelTypeVirtualMachineDefinitionCapabilities  = @"capabilities",
+    TNArchipelPushNotificationDefinitition              = @"archipel:push:virtualmachine:definition",
+    VIR_DOMAIN_NOSTATE                                  =   0,
+    VIR_DOMAIN_RUNNING                                  =   1,
+    VIR_DOMAIN_BLOCKED                                  =   2,
+    VIR_DOMAIN_PAUSED                                   =   3,
+    VIR_DOMAIN_SHUTDOWN                                 =   4,
+    VIR_DOMAIN_SHUTOFF                                  =   5,
+    VIR_DOMAIN_CRASHED                                  =   6,
+    TNXMLDescBootHardDrive                              = @"hd",
+    TNXMLDescBootCDROM                                  = @"cdrom",
+    TNXMLDescBootNetwork                                = @"network",
+    TNXMLDescBootFileDescriptor                         = @"fd",
+    TNXMLDescBoots                                      = [ TNXMLDescBootHardDrive, TNXMLDescBootCDROM,
+                                                            TNXMLDescBootNetwork, TNXMLDescBootFileDescriptor],
+    TNXMLDescHypervisorKVM                              = @"kvm",
+    TNXMLDescHypervisorXen                              = @"xen",
+    TNXMLDescHypervisorOpenVZ                           = @"openvz",
+    TNXMLDescHypervisorQemu                             = @"qemu",
+    TNXMLDescHypervisorKQemu                            = @"kqemu",
+    TNXMLDescHypervisorLXC                              = @"lxc",
+    TNXMLDescHypervisorUML                              = @"uml",
+    TNXMLDescHypervisorVBox                             = @"vbox",
+    TNXMLDescHypervisorVMWare                           = @"vmware",
+    TNXMLDescHypervisorOpenNebula                       = @"one",
+    TNXMLDescVNCKeymapFR                                = @"fr",
+    TNXMLDescVNCKeymapEN_US                             = @"en-us",
+    TNXMLDescVNCKeymapDeutch                            = @"de",
+    TNXMLDescVNCKeymaps                                 = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR, TNXMLDescVNCKeymapDeutch],
+    TNXMLDescLifeCycleDestroy                           = @"destroy",
+    TNXMLDescLifeCycleRestart                           = @"restart",
+    TNXMLDescLifeCyclePreserve                          = @"preserve",
+    TNXMLDescLifeCycleRenameRestart                     = @"rename-restart",
+    TNXMLDescLifeCycles                                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart,
+                                                            TNXMLDescLifeCyclePreserve, TNXMLDescLifeCycleRenameRestart],
+    TNXMLDescFeaturePAE                                 = @"pae",
+    TNXMLDescFeatureACPI                                = @"acpi",
+    TNXMLDescFeatureAPIC                                = @"apic",
+    TNXMLDescClockUTC                                   = @"utc",
+    TNXMLDescClockLocalTime                             = @"localtime",
+    TNXMLDescClockTimezone                              = @"timezone",
+    TNXMLDescClockVariable                              = @"variable",
+    TNXMLDescClocks                                     = [TNXMLDescClockUTC, TNXMLDescClockLocalTime],
+    TNXMLDescInputTypeMouse                             = @"mouse",
+    TNXMLDescInputTypeTablet                            = @"tablet",
+    TNXMLDescInputTypes                                 = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet];
 
-TNXMLDescVNCKeymapFR            = @"fr";
-TNXMLDescVNCKeymapEN_US         = @"en-us";
-TNXMLDescVNCKeymapDeutch        = @"de";
-TNXMLDescVNCKeymaps             = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR, TNXMLDescVNCKeymapDeutch];
-
-
-TNXMLDescLifeCycleDestroy           = @"destroy";
-TNXMLDescLifeCycleRestart           = @"restart";
-TNXMLDescLifeCyclePreserve          = @"preserve";
-TNXMLDescLifeCycleRenameRestart     = @"rename-restart";
-TNXMLDescLifeCycles                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart,
-                                        TNXMLDescLifeCyclePreserve, TNXMLDescLifeCycleRenameRestart];
-
-TNXMLDescFeaturePAE                 = @"pae";
-TNXMLDescFeatureACPI                = @"acpi";
-TNXMLDescFeatureAPIC                = @"apic";
-
-TNXMLDescClockUTC       = @"utc";
-TNXMLDescClockLocalTime = @"localtime";
-TNXMLDescClockTimezone  = @"timezone";
-TNXMLDescClockVariable  = @"variable";
-TNXMLDescClocks         = [TNXMLDescClockUTC, TNXMLDescClockLocalTime];
-
-TNXMLDescInputTypeMouse     = @"mouse";
-TNXMLDescInputTypeTablet    = @"tablet";
-TNXMLDescInputTypes         = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet];
 
 /*! @defgroup virtualmachinedefinition Module VirtualMachine Definition
     @desc Allow to define virtual machines

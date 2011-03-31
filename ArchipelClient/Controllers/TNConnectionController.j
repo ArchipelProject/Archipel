@@ -17,10 +17,18 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPTextField.j>
+
+@import <StropheCappuccino/TNStropheStanza.j>
+@import <TNKit/TNLocalizationCenter.j>
 
 @import "../Model/TNDatasourceRoster.j"
+@import "../Views/TNModalWindow.j"
+@import "../Views/TNSwitch.j"
+
 
 
 TNConnectionControllerCurrentUserVCardRetreived = @"TNConnectionControllerCurrentUserVCardRetreived";

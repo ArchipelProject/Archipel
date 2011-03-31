@@ -16,16 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
+@import <AppKit/CPAnimation.j>
+
+
 
 /*! @ingroup virtualmachinenovnc
     Subclass of CPAnimation that handles zoom animation
 */
 @implementation TNZoomAnimation: CPAnimation
 {
-    float   _startZoomValue @accessors(property=startZoomValue);
-    float   _endZoomValue   @accessors(property=endZoomValue);
     float   _currentZoom    @accessors(getter=currentZoom);
+    float   _endZoomValue   @accessors(property=endZoomValue);
+    float   _startZoomValue @accessors(property=startZoomValue);
 }
 
 - (void)setCurrentProgress:(float)aProgress

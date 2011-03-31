@@ -16,8 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPSplitView.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+
 
 
 var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
@@ -33,40 +47,40 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 @implementation TNXMPPSharedGroupsController : CPObject
 {
-    @outlet CPView          mainView                    @accessors(getter=mainView);
-    @outlet CPWindow        windowNewGroup;
-    @outlet CPTextField     fieldNewGroupName;
-    @outlet CPTextField     fieldNewGroupDescription;
-    @outlet CPView          viewTableGroupsContainer;
-    @outlet CPView          viewTableUsersInGroupContainer;
-    @outlet CPScrollView    scrollViewUsers;
-    @outlet CPScrollView    scrollViewGroups;
-    @outlet CPScrollView    scrollViewUsersInGroup;
     @outlet CPButtonBar     buttonBarGroups;
     @outlet CPButtonBar     buttonBarUsersInGroups;
-    @outlet CPSearchField   filterFieldUsers;
-    @outlet CPSearchField   filterFieldGroups;
-    @outlet CPSearchField   filterFieldUsersInGroup;
     @outlet CPPopUpButton   buttonGroups;
-    @outlet CPWindow        windowAddUserInGroup;
+    @outlet CPScrollView    scrollViewGroups;
+    @outlet CPScrollView    scrollViewUsers;
+    @outlet CPScrollView    scrollViewUsersInGroup;
+    @outlet CPSearchField   filterFieldGroups;
+    @outlet CPSearchField   filterFieldUsers;
+    @outlet CPSearchField   filterFieldUsersInGroup;
     @outlet CPSplitView     splitViewVertical;
+    @outlet CPTextField     fieldNewGroupDescription;
+    @outlet CPTextField     fieldNewGroupName;
+    @outlet CPView          mainView                    @accessors(getter=mainView);
+    @outlet CPView          viewTableGroupsContainer;
+    @outlet CPView          viewTableUsersInGroupContainer;
+    @outlet CPWindow        windowAddUserInGroup;
+    @outlet CPWindow        windowNewGroup;
 
-    TNStropheContact        _entity             @accessors(setter=setEntity:);
     id                      _delegate           @accessors(property=delegate);
+    TNStropheContact        _entity             @accessors(setter=setEntity:);
     TNXMPPUsersController   _usersController    @accessors(setter=setUsersController:);
 
-    CPTableView             _tableUsers;
-    CPTableView             _tableGroups;
-    CPTableView             _tableUsersInGroup;
-    TNTableViewDataSource   _datasourceUsers;
-    TNTableViewDataSource   _datasourceGroups;
-    TNTableViewDataSource   _datasourceUsersInGroup;
     CPButton                _addGroupButton;
-    CPButton                _deleteGroupButton;
     CPButton                _addUserInGroupButton;
+    CPButton                _deleteGroupButton;
     CPButton                _deleteUserFromGroupButton;
+    CPTableView             _tableGroups;
+    CPTableView             _tableUsers;
+    CPTableView             _tableUsersInGroup;
     id                      _currentSelectedGroup;
     int                     _oldSelectedIndexesForGroupTable;
+    TNTableViewDataSource   _datasourceGroups;
+    TNTableViewDataSource   _datasourceUsers;
+    TNTableViewDataSource   _datasourceUsersInGroup;
 }
 
 #pragma mark -

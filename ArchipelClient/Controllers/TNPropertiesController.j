@@ -18,8 +18,18 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <StropheCappuccino/PubSub/TNPubSubController.j>
+@import <StropheCappuccino/TNStropheContact.j>
+
+@import "TNContactsController.j"
+@import "TNAvatarController.j"
 
 
 /*! @ingroup archipelcore

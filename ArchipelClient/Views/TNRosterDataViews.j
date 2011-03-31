@@ -17,10 +17,12 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPTextField.j>
 
-
+@import <StropheCappuccino/TNStropheContact.j>
 
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
@@ -253,7 +255,7 @@
     {
         var rosterLayout            = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
             contactFontSizeGroup    = [rosterLayout objectForKey:@"TNRosterDataViewContactFontSizeGroup"];
-    
+
         [self setFont:[CPFont boldSystemFontOfSize:contactFontSizeGroup]];
         [self setTextColor:[CPColor colorWithHexString:@"5F676F"]];
         [self setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];

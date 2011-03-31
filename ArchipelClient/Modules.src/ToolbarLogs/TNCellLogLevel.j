@@ -16,6 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPColor.j>
+
+
 
  /*! @ingroup toolbarlogs
      The data view of the level column

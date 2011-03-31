@@ -18,7 +18,15 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPCollectionView.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+
+
+@import <StropheCappuccino/TNBase64Image.j>
 
 var TNArchipelTypeAvatar                = @"archipel:avatar",
     TNArchipelTypeAvatarGetAvatars      = @"getavatars",

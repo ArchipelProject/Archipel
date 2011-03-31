@@ -16,9 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+
+
 TNXMPPUserDatasourceMe = @"ME";
 TNXMPPUserDatasourceRosterUsers = @"ROSTER USERS";
 TNXMPPUserDatasourceServerUsers = @"SERVER USERS";
+
+
 /*! @ingroup permissions
     This object represent a datasource for the outline view
 */

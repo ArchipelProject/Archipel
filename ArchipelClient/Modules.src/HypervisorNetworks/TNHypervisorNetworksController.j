@@ -17,21 +17,33 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <AppKit/CPCollectionView.j>
 
-@import "TNHypervisorNetworkObject.j"
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPCollectionView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+
 @import "TNDHCPEntryObject.j"
+@import "TNHypervisorNetworkObject.j"
 @import "TNWindowNetworkController.j"
 
-TNArchipelPushNotificationNetworks          = @"archipel:push:network";
-TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
-TNArchipelTypeHypervisorNetworkGet          = @"get";
-TNArchipelTypeHypervisorNetworkDefine       = @"define";
-TNArchipelTypeHypervisorNetworkUndefine     = @"undefine";
-TNArchipelTypeHypervisorNetworkCreate       = @"create";
-TNArchipelTypeHypervisorNetworkDestroy      = @"destroy";
-TNArchipelTypeHypervisorNetworkGetNics      = @"getnics";
+
+
+var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
+    TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
+    TNArchipelTypeHypervisorNetworkGet          = @"get",
+    TNArchipelTypeHypervisorNetworkDefine       = @"define",
+    TNArchipelTypeHypervisorNetworkUndefine     = @"undefine",
+    TNArchipelTypeHypervisorNetworkCreate       = @"create",
+    TNArchipelTypeHypervisorNetworkDestroy      = @"destroy",
+    TNArchipelTypeHypervisorNetworkGetNics      = @"getnics";
 
 
 /*! @defgroup  hypervisornetworks Module Hypervisor Networks

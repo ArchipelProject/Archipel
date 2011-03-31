@@ -18,7 +18,15 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSound.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <MessageBoard/TNMessageBoard.j>
 
 @import "TNDetachedChatController.j"
 

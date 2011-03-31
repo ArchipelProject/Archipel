@@ -17,8 +17,16 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
+
+@import <AppKit/CPOutlineView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableColumn.j>
+
+@import <StropheCappuccino/PubSub/TNPubSubNode.j>
+@import <StropheCappuccino/TNStropheRoster.j>
+@import <StropheCappuccino/TNXMLNode.j>
+
+
 
 /*! @global
     @group TNDragType

@@ -17,19 +17,26 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-@import "TNCellLogLevel.j";
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+
+@import <TNKit/TNTableViewDataSource.j>
+
 @import "TNArchipelClientLog.j";
+@import "TNCellLogLevel.j";
 
-TNLogLevelFatal = @"fatal";
-TNLogLevelError = @"error";
-TNLogLevelWarn  = @"warn";
-TNLogLevelInfo  = @"info";
-TNLogLevelDebug = @"debug";
-TNLogLevelTrace = @"trace";
 
-TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelWarn, TNLogLevelError, TNLogLevelFatal];
+
+var TNLogLevelFatal = @"fatal",
+    TNLogLevelError = @"error",
+    TNLogLevelWarn  = @"warn",
+    TNLogLevelInfo  = @"info",
+    TNLogLevelDebug = @"debug",
+    TNLogLevelTrace = @"trace",
+    TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelWarn, TNLogLevelError, TNLogLevelFatal];
 
 /*! @defgroup  toolbarlogs Module Toolbar Logs
     @desc This module displays Archipel Client logs
@@ -149,10 +156,10 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (void)save
 {
     // CPLogUnregister(_logFunction);
-    // 
+    //
     // var defaults = [CPUserDefaults standardUserDefaults];
     // [defaults setObject:[_datasourceLogs content] forKey:@"TNArchipelLogStored"];
-    // 
+    //
     // CPLogRegister(_logFunction, _logLevel);
 }
 
@@ -161,10 +168,10 @@ TNLogLevels     = [TNLogLevelTrace, TNLogLevelDebug, TNLogLevelInfo, TNLogLevelW
 - (void)restaure
 {
     // CPLogUnregister(_logFunction);
-    // 
+    //
     // var defaults        = [CPUserDefaults standardUserDefaults],
     //     recoveredLogs   = [defaults objectForKey:@"TNArchipelLogStored"];
-    // 
+    //
     // CPLogRegister(_logFunction, _logLevel);
     //[_datasourceLogs setContent:recoveredLogs ? recoveredLogs : [CPArray array]];
     [_datasourceLogs setContent:[CPArray array]];

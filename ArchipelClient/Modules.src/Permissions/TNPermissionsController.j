@@ -18,23 +18,33 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPSplitView.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNTableViewDataSource.j>
 
 @import "TNRolesController.j"
 @import "TNXMPPUserDatasource.j"
 
-TNArchipelTypePermissions        = @"archipel:permissions";
 
-TNArchipelTypePermissionsList   = @"list";
-TNArchipelTypePermissionsGet    = @"get";
-TNArchipelTypePermissionsSet    = @"set";
-TNArchipelTypePermissionsGetOwn = @"getown";
-TNArchipelTypePermissionsSetOwn = @"setown";
 
-TNArchipelPushNotificationPermissions   = @"archipel:push:permissions";
-
-var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:users",
-    TNArchipelTypeXMPPServerUsersList               = @"list";
+var TNArchipelTypePermissions               = @"archipel:permissions",
+    TNArchipelTypePermissionsList           = @"list",
+    TNArchipelTypePermissionsGet            = @"get",
+    TNArchipelTypePermissionsSet            = @"set",
+    TNArchipelTypePermissionsGetOwn         = @"getown",
+    TNArchipelTypePermissionsSetOwn         = @"setown",
+    TNArchipelPushNotificationPermissions   = @"archipel:push:permissions",
+    TNArchipelTypeXMPPServerUsers           = @"archipel:xmppserver:users",
+    TNArchipelTypeXMPPServerUsersList       = @"list";
 
 /*! @defgroup  permissionsmodule Module Permissions
     @desc This module allow to manages entity permissions

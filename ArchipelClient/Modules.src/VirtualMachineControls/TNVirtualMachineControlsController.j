@@ -17,52 +17,65 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPSegmentedControl.j>
+@import <AppKit/CPSlider.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTextFieldStepper.j>
 
 @import "TNExtendedContactObject.j"
 
-TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition";
-TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control";
-TNArchipelPushNotificationOOM                   = @"archipel:push:virtualmachine:oom";
 
-TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlPlay                           = @"TNArchipelControlPlay";
-TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
-TNArchipelControlResume                         = @"TNArchipelControlResume";
-TNArchipelControlStop                           = @"TNArchipelControlStop";
-TNArchipelControlDestroy                        = @"TNArchipelControlDestroy";
-TNArchipelControlReboot                         = @"TNArchipelControlReboot";
 
-TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control";
-TNArchipelTypeVirtualMachineOOM                 = @"archipel:vm:oom";
-TNArchipelTypeVirtualMachineControlInfo         = @"info";
-TNArchipelTypeVirtualMachineControlCreate       = @"create";
-TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown";
-TNArchipelTypeVirtualMachineControlDestroy      = @"destroy";
-TNArchipelTypeVirtualMachineControlFree         = @"free";
-TNArchipelTypeVirtualMachineControlReboot       = @"reboot";
-TNArchipelTypeVirtualMachineControlSuspend      = @"suspend";
-TNArchipelTypeVirtualMachineControlResume       = @"resume";
-TNArchipelTypeVirtualMachineControlMigrate      = @"migrate";
-TNArchipelTypeVirtualMachineControlAutostart    = @"autostart";
-TNArchipelTypeVirtualMachineControlMemory       = @"memory";
-TNArchipelTypeVirtualMachineControlVCPUs        = @"setvcpus";
-TNArchipelTypeVirtualMachineOOMSetAdjust        = @"setadjust";
-TNArchipelTypeVirtualMachineOOMGetAdjust        = @"getadjust";
-
-VIR_DOMAIN_NOSTATE  = 0;
-VIR_DOMAIN_RUNNING  = 1;
-VIR_DOMAIN_BLOCKED  = 2;
-VIR_DOMAIN_PAUSED   = 3;
-VIR_DOMAIN_SHUTDOWN = 4;
-VIR_DOMAIN_SHUTOFF  = 5;
-VIR_DOMAIN_CRASHED  = 6;
-
-TNArchipelTransportBarPlay      = 0;
-TNArchipelTransportBarPause     = 1;
-TNArchipelTransportBarStop      = 2;
-TNArchipelTransportBarDestroy   = 3
-TNArchipelTransportBarReboot    = 4;
+var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmachine:definition",
+    TNArchipelPushNotificationControl               = @"archipel:push:virtualmachine:control",
+    TNArchipelPushNotificationOOM                   = @"archipel:push:virtualmachine:oom",
+    TNArchipelControlNotification                   = @"TNArchipelControlNotification",
+    TNArchipelControlPlay                           = @"TNArchipelControlPlay",
+    TNArchipelControlSuspend                        = @"TNArchipelControlSuspend",
+    TNArchipelControlResume                         = @"TNArchipelControlResume",
+    TNArchipelControlStop                           = @"TNArchipelControlStop",
+    TNArchipelControlDestroy                        = @"TNArchipelControlDestroy",
+    TNArchipelControlReboot                         = @"TNArchipelControlReboot",
+    TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
+    TNArchipelTypeVirtualMachineOOM                 = @"archipel:vm:oom",
+    TNArchipelTypeVirtualMachineControlInfo         = @"info",
+    TNArchipelTypeVirtualMachineControlCreate       = @"create",
+    TNArchipelTypeVirtualMachineControlShutdown     = @"shutdown",
+    TNArchipelTypeVirtualMachineControlDestroy      = @"destroy",
+    TNArchipelTypeVirtualMachineControlFree         = @"free",
+    TNArchipelTypeVirtualMachineControlReboot       = @"reboot",
+    TNArchipelTypeVirtualMachineControlSuspend      = @"suspend",
+    TNArchipelTypeVirtualMachineControlResume       = @"resume",
+    TNArchipelTypeVirtualMachineControlMigrate      = @"migrate",
+    TNArchipelTypeVirtualMachineControlAutostart    = @"autostart",
+    TNArchipelTypeVirtualMachineControlMemory       = @"memory",
+    TNArchipelTypeVirtualMachineControlVCPUs        = @"setvcpus",
+    TNArchipelTypeVirtualMachineOOMSetAdjust        = @"setadjust",
+    TNArchipelTypeVirtualMachineOOMGetAdjust        = @"getadjust",
+    VIR_DOMAIN_NOSTATE                              = 0,
+    VIR_DOMAIN_RUNNING                              = 1,
+    VIR_DOMAIN_BLOCKED                              = 2,
+    VIR_DOMAIN_PAUSED                               = 3,
+    VIR_DOMAIN_SHUTDOWN                             = 4,
+    VIR_DOMAIN_SHUTOFF                              = 5,
+    VIR_DOMAIN_CRASHED                              = 6,
+    TNArchipelTransportBarPlay                      = 0,
+    TNArchipelTransportBarPause                     = 1,
+    TNArchipelTransportBarStop                      = 2,
+    TNArchipelTransportBarDestroy                   = 3,
+    TNArchipelTransportBarReboot                    = 4;
 
 
 /*! @defgroup  virtualmachinecontrols Module VirtualMachine Controls

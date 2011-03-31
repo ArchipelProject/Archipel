@@ -19,16 +19,32 @@
 @import "Resources/lang/localization.js"
 
 @import <Foundation/Foundation.j>
+
 @import <AppKit/AppKit.j>
-@import <TNKit/TNKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPMenu.j>
+@import <AppKit/CPMenuItem.j>
+@import <AppKit/CPPlatformWindow.j>
+@import <AppKit/CPProgressIndicator.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSplitView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+@import <AppKit/CPWindow.j>
+@import <AppKit/CPWebView.j>
+
 @import <GrowlCappuccino/GrowlCappuccino.j>
-@import <VNCCappuccino/VNCCappuccino.j>
 @import <iTunesTabView/iTunesTabView.j>
-@import <MessageBoard/MessageBoard.j>
-@import <LPKit/LPKit.j>
 @import <LPKit/LPMultiLineTextField.j>
-// @import <LPKit/LPCrashReporter.j>
+@import <StropheCappuccino/StropheCappuccino.j>
+@import <TNKit/TNAnimation.j>
+@import <TNKit/TNCategories.j>
+@import <TNKit/TNToolbar.j>
+@import <TNKit/TNToolTip.j>
+@import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
 @import "Controllers/TNAvatarController.j"
@@ -1137,6 +1153,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         [_helpWindow setPlatformWindow:_platformHelpWindow];
         [_platformHelpWindow orderFront:nil];
+        [_platformHelpWindow setTitle:@"Welcome to Archipel"];
     }
 
     [_helpWindow setDelegate:self];
@@ -1150,6 +1167,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if (!url || (url == @"local"))
         url = @"help/index.html";
 
+    [newHelpView setScrollMode:CPWebViewScrollNative];
     [newHelpView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
 

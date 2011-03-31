@@ -16,20 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPCheckBox.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNTextFieldStepper.j>
+
+
 
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
     @desc Scheduler control for virtual machines
 */
-TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler";
 
-TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler";
-TNArchipelTypeEntityScheduleSchedule    = @"schedule";
-TNArchipelTypeEntityScheduleUnschedule  = @"unschedule";
-TNArchipelTypeEntityScheduleJobs        = @"jobs";
-TNArchipelTypeEntityScheduleActions     = @"actions";
+var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
+    TNArchipelTypeEntitySchedule            = @"archipel:entity:scheduler",
+    TNArchipelTypeEntityScheduleSchedule    = @"schedule",
+    TNArchipelTypeEntityScheduleUnschedule  = @"unschedule",
+    TNArchipelTypeEntityScheduleJobs        = @"jobs",
+    TNArchipelTypeEntityScheduleActions     = @"actions";
 
 /*! @ingroup virtualmachinescheduler
     Main controller of the module
@@ -65,11 +79,11 @@ TNArchipelTypeEntityScheduleActions     = @"actions";
     @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
     @outlet TNTextFieldStepper      stepperSecond;
 
+    CPButton                        _buttonSchedule;
+    CPButton                        _buttonUnschedule;
     CPDate                          _scheduledDate;
     CPTableView                     _tableJobs;
     TNTableViewDataSource           _datasourceJobs;
-    CPButton                        _buttonSchedule;
-    CPButton                        _buttonUnschedule;
 }
 
 

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+@import <AppKit/CPSound.j>
 
 @import "AppController.j"
 

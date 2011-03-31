@@ -17,7 +17,10 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <LPKit/LPKit.j>
+
+@import <LPKit/LPChartView.j>
+
+
 
 /*! @ingroup hypervisorhealth
     Datasource for LPChartView

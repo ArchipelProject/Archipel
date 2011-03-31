@@ -16,6 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <LPKit/LPMultiLineTextField.j>
+@import <TNKit/TNAlert.j>
+
+@import "../Model/TNVersion.j"
+
+
 /*! @ingroup archipelcore
     this class allow to check for new version of the application
 */

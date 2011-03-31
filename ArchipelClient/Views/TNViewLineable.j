@@ -17,7 +17,7 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+@import <AppKit/CPView.j>
 
 @implementation TNViewLineable : CPView
 {

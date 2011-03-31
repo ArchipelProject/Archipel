@@ -18,8 +18,15 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <GrowlCappuccino/TNGrowlCenter.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <TNKit/TNAlert.j>
+
 
 /*! @ingroup archipelcore
     subclass of CPWindow that allows to add grou in roster

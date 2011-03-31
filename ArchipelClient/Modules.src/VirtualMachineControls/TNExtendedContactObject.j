@@ -18,7 +18,10 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPImage.j>
+
+
 
 // TODO: this class is useless
 

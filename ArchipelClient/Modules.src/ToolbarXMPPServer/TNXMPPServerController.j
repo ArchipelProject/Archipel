@@ -17,10 +17,15 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-@import "TNXMPPUsersController.j"
+@import <AppKit/CPImage.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPPopUpButton.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPView.j>
+
 @import "TNXMPPSharedGroupsController.j"
+@import "TNXMPPUsersController.j"
 
 var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:users";
 
@@ -34,14 +39,14 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 @implementation TNXMPPServerController : TNModule
 {
+    @outlet CPPopUpButton                   buttonHypervisors;
     @outlet CPTabView                       tabViewMain;
+    @outlet CPView                          viewBottom;
     @outlet TNXMPPSharedGroupsController    sharedGroupsController;
     @outlet TNXMPPUsersController           usersController;
-    @outlet CPPopUpButton                   buttonHypervisors;
-    @outlet CPView                          viewBottom;
 
-    CPImage     _defaultAvatar;
     BOOL        pushRegistred;
+    CPImage     _defaultAvatar;
 }
 
 #pragma mark -

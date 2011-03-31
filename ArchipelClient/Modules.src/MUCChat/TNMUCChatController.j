@@ -17,7 +17,16 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSound.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTextField.j>
+
+@import <MessageBoard/TNMessageBoard.j>
+@import <StropheCappuccino/MUC/TNStropheMUCRoom.j>
+@import <TNKit/TNAlert.j>
+@import <TNKit/TNTableViewDataSource.j>
 
 
 /*! @defgroup  mucchat Module Conference
@@ -45,7 +54,6 @@
     TNMessageBoard              _messageBoard;
     TNStropheMUCRoom            _session;
     TNTableViewDataSource       _peopleDatasource;
-
 }
 
 #pragma mark -

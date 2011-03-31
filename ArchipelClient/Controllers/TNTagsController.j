@@ -18,7 +18,18 @@
 
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPImage.j>
+@import <AppKit/CPTokenField.j>
+@import <AppKit/CPView.j>
+
+@import <StropheCappuccino/PubSub/TNPubSubController.j>
+@import <StropheCappuccino/PubSub/TNPubSubNode.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheJID.j>
+
+@import "TNPermissionsCenter.j"
 
 var TNArchipelTypeTags              = @"archipel:tags",
     TNArchipelTypeTagsSetTags       = @"settags";

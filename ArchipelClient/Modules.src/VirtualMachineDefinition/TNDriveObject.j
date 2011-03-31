@@ -17,7 +17,8 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+
 
 /*! @ingroup virtualmachinedefinition
     this object represent a virtual drive

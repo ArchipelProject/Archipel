@@ -18,17 +18,23 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPTextField.j>
+
+
+
 /*! @ingroup hypervisorvmcasts
     View that that represent the datacell for column status
 */
 @implementation TNCellApplianceStatus : CPView
 {
-    CPImageView     _imageStatus;
-    CPTextField     _fieldStatus;
+    CPImage         _iconError;
     CPImage         _iconInstalled;
     CPImage         _iconInstalling;
     CPImage         _iconNotInstalled;
-    CPImage         _iconError;
+    CPImageView     _imageStatus;
+    CPTextField     _fieldStatus;
 }
 
 #pragma mark -

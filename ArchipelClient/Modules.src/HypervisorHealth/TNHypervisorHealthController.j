@@ -17,20 +17,30 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <LPKit/LPKit.j>
 
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTableView.j>
+@import <AppKit/CPTabView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPView.j>
+
+@import <LPKit/LPChartView.j>
+@import <TNKit/TNTableViewDataSource.j>
+
+@import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
 @import "TNDatasourcePieChartView.j"
 @import "TNLogEntryObject.j"
-@import "TNCellPartitionView.j"
 
-TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health";
-TNArchipelTypeHypervisorHealthInfo          = @"info";
-TNArchipelTypeHypervisorHealthHistory       = @"history";
-TNArchipelTypeHypervisorHealthLog           = @"logs";
 
-TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
+
+var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
+    TNArchipelTypeHypervisorHealthInfo          = @"info",
+    TNArchipelTypeHypervisorHealthHistory       = @"history",
+    TNArchipelTypeHypervisorHealthLog           = @"logs",
+    TNArchipelHealthRefreshBaseKey              = @"TNArchipelHealthRefreshBaseKey_";
 
 /*! @defgroup  hypervisorhealth Module Hypervisor Health
     @desc This module display statistics about the hypervisor health

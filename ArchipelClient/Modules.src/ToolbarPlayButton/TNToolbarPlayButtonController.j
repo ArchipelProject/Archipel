@@ -17,11 +17,10 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
 
-TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlPlay                           = @"TNArchipelControlPlay";
+var TNArchipelControlNotification   = @"TNArchipelControlNotification",
+    TNArchipelControlPlay           = @"TNArchipelControlPlay";
 
 /*! @defgroup  toolbarplaybutton Module Toolbar Button Play
     @desc This module displays a toolbar item that can send play action to the current entity

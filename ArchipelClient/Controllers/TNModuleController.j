@@ -17,9 +17,16 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPMenu.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPToolbarItem.j>
+@import <AppKit/CPView.j>
+
+@import <iTunesTabView/TNiTunesTabView.j>
 @import <StropheCappuccino/StropheCappuccino.j>
-@import <iTunesTabView/iTunesTabView.j>
+@import <TNKit/TNToolbar.j>
 
 /*! @global
     @group TNArchipelModuleType

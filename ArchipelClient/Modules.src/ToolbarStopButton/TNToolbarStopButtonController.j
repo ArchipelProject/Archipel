@@ -17,11 +17,10 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
 
-TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlStop                           = @"TNArchipelControlStop";
+var TNArchipelControlNotification   = @"TNArchipelControlNotification",
+    TNArchipelControlStop           = @"TNArchipelControlStop";
 
 /*! @defgroup  toolbarstopbutton Module Toolbar Button Stop
     @desc This module displays a toolbar item that can send play stop to the current entity

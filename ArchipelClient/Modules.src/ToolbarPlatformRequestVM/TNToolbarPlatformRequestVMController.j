@@ -16,15 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
-TNArchipelNSPlatform                            = @"archipel:platform";
-TNArchipelActionPlatformAllocVM                 = @"allocvm";
+@import <StropheCappuccino/PubSub/TNPubSubNode.j>
+@import <StropheCappuccino/TNStropheConnection.j>
 
-TNArchipelNodeNamePlatformRequestIn             = @"/archipel/platform/requests/in";
-TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/out";
+
+
+var TNArchipelNSPlatform                            = @"archipel:platform",
+    TNArchipelActionPlatformAllocVM                 = @"allocvm",
+    TNArchipelNodeNamePlatformRequestIn             = @"/archipel/platform/requests/in",
+    TNArchipelNodeNamePlatformRequestOut            = @"/archipel/platform/requests/out";
 
 /*! @defgroup  toolbarplatformvmrequest Module Toolbar Platform VM Request
     @desc This module displays a toolbar item that can send platform wide Virtual machine request

@@ -17,9 +17,23 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
-@import <StropheCappuccino/StropheCappuccino.j>
 
+@import <AppKit/CPImage.j>
+@import <AppKit/CPImageView.j>
+@import <AppKit/CPMenu.j>
+@import <AppKit/CPMenuItem.j>
+@import <AppKit/CPToolbar.j>
+@import <AppKit/CPToolbarItem.j>
+@import <AppKit/CPView.j>
+
+@import <StropheCappuccino/TNStropheConnection.j>
+@import <StropheCappuccino/TNStropheContact.j>
+@import <StropheCappuccino/TNStropheGroup.j>
+@import <StropheCappuccino/TNStropheIMClient.j>
+@import <StropheCappuccino/TNStropheStanza.j>
+
+
+@import "../Controllers/TNPermissionsCenter.j"
 
 var TNArchipelErrorPermission           = 0,
     TNArchipelErrorGeneral              = 1;
@@ -583,7 +597,7 @@ TNArchipelModuleStatusWaiting           = 2;
 #pragma mark -
 #pragma mark Communication utilities
 
-/*! this message simplify the sending and the post-management of TNStropheStanza to the contact
+/*! this message simplify the sending and the post management of TNStropheStanza to the contact
     @param aStanza: TNStropheStanza to send to the contact
     @param aSelector: Selector to perform when contact send answer
 */
@@ -593,7 +607,7 @@ TNArchipelModuleStatusWaiting           = 2;
     [_registredSelectors addObject:selectorID];
 }
 
-/*! this message simplify the sending and the post-management of TNStropheStanza to the contact
+/*! this message simplify the sending and the post management of TNStropheStanza to the contact
     if also allow to define the XMPP uid of the stanza. This is useless in the most of case.
     @param aStanza: TNStropheStanza to send to the contact
     @param aSelector: Selector to perform when contact send answer

@@ -17,11 +17,10 @@
  */
 
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
 
 
-TNArchipelControlNotification                   = @"TNArchipelControlNotification";
-TNArchipelControlSuspend                        = @"TNArchipelControlSuspend";
+var TNArchipelControlNotification   = @"TNArchipelControlNotification",
+    TNArchipelControlSuspend        = @"TNArchipelControlSuspend";
 
 /*! @defgroup  toolbarpausebutton Module Toolbar Button Pause
     @desc This module displays a toolbar item that can send pause action to the current entity

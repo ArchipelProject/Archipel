@@ -18,12 +18,11 @@
 
 @import "TNNetworkInterfaceObject.j"
 
-TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network";
-TNArchipelTypeHypervisorNetworkGetNames     = @"getnames";
-TNArchipelTypeHypervisorNetworkBridges      = @"bridges";
-
-TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"];
-TNArchipelNICTypes  = ["network", "bridge", "user"];
+var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
+    TNArchipelTypeHypervisorNetworkGetNames     = @"getnames",
+    TNArchipelTypeHypervisorNetworkBridges      = @"bridges",
+    TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"],
+    TNArchipelNICTypes  = ["network", "bridge", "user"];
 
 
 /*! @ingroup virtualmachinedefinition

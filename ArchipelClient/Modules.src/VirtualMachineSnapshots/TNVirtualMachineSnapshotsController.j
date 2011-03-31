@@ -16,24 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 @import <Foundation/Foundation.j>
-@import <AppKit/AppKit.j>
+
+@import <AppKit/CPButton.j>
+@import <AppKit/CPButtonBar.j>
+@import <AppKit/CPScrollView.j>
+@import <AppKit/CPSearchField.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPTextField.j>
+@import <AppKit/CPWindow.j>
+
+@import <LPKit/LPMultiLineTextField.j>
+@import <TNKit/TNAlert.j>
 
 @import "TNSnapshot.j";
 @import "TNSnapshotsDatasource.j";
 
 
-TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_";
-
-TNArchipelPushNotificationSnapshoting       = @"archipel:push:snapshoting";
-TNArchipelTypeHypervisorSnapshot            = @"archipel:virtualmachine:snapshoting";
-TNArchipelTypeHypervisorSnapshotTake        = @"take";
-TNArchipelTypeHypervisorSnapshotGet         = @"get";
-TNArchipelTypeHypervisorSnapshotCurrent     = @"current";
-TNArchipelTypeHypervisorSnapshotDelete      = @"delete";
-TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
-
+var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSnapshots_",
+    TNArchipelPushNotificationSnapshoting       = @"archipel:push:snapshoting",
+    TNArchipelTypeHypervisorSnapshot            = @"archipel:virtualmachine:snapshoting",
+    TNArchipelTypeHypervisorSnapshotTake        = @"take",
+    TNArchipelTypeHypervisorSnapshotGet         = @"get",
+    TNArchipelTypeHypervisorSnapshotCurrent     = @"current",
+    TNArchipelTypeHypervisorSnapshotDelete      = @"delete",
+    TNArchipelTypeHypervisorSnapshotRevert      = @"revert";
 
 
 /*! @defgroup  virtualmachinesnapshoting Module VirtualMachine Snapshots

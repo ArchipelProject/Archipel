@@ -16,8 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@import <Foundation/Foundation.j>;
-@import <AppKit/AppKit.j>
+@import <Foundation/Foundation.j>
+
+@import <AppKit/CPOutlineView.j>
+@import <AppKit/CPSearchField.j>
 
 
 /*! @ingroup archipelcore
