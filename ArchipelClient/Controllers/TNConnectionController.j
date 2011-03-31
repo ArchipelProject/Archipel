@@ -156,7 +156,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         return;
     }
 
-    var defaults    = [CPUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([credentialRemember state] == CPOnState)
     {
