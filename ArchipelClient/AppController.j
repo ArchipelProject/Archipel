@@ -40,9 +40,11 @@
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
 @import "Controllers/TNTagsController.j"
+@import "Controllers/TNUpdateController.j"
 @import "Controllers/TNUserAvatarController.j"
 @import "Model/TNDatasourceRoster.j"
 @import "Model/TNModule.j"
+@import "Model/TNVersion.j"
 @import "Views/TNButtonBarPopUpButton.j"
 @import "Views/TNCalendarView.j"
 @import "Views/TNEditableLabel.j"
@@ -147,6 +149,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNPropertiesController  propertiesController;
     @outlet TNSearchField           filterField;
     @outlet TNTagsController        tagsController;
+    @outlet TNUpdateController      updateController;
     @outlet TNUserAvatarController  userAvatarController;
 
     BOOL                            _shouldShowHelpView;
@@ -198,13 +201,15 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelVersionHuman"], @"TNArchipelVersionHuman",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
             [bundle objectForInfoDictionaryKey:@"TNArchipelConsoleDebugLevel"], @"TNArchipelConsoleDebugLevel",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHService"], @"TNArchipelBOSHService",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate"
     ]];
 
     /* register logs */
@@ -417,7 +422,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
-    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersion"]];
+    [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersionHuman"]];
 
     /* dataviews for roster */
     _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
@@ -451,7 +456,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
-
     /* Placing the connection window */
     _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
@@ -468,6 +472,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [ledOut setToolTip:@"This LED is ON when XMPP data are sent"];
     [ledIn setToolTip:@"This LED is ON when XMPP data are received"];
+
+
+    /* Version checking */
+    var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
+        minor = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"minor"],
+        revision = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"revision"],
+        currentVersion = [TNVersion versionWithMajor:major minor:minor revision:revision];
+
+    CPLog.info(@"current version is " + currentVersion);
+    [updateController setCurrentVersion:currentVersion]
+    [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
 
     CPLog.info(@"Initialization of AppController OK");
 }
@@ -794,7 +809,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
         url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-        version     = [defaults objectForKey:@"TNArchipelVersion"];
+        version     = [defaults objectForKey:@"TNArchipelVersionHuman"];
 
     if (!url || (url == @"local"))
         url = @"help/index.html";
@@ -829,7 +844,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     copy.style.textAlign = "center";
     copy.style.marginLeft = "-350px";
     // copy.style.textShadow = "0px 1px 0px #C6CAD9";
-    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersion"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
+    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersionHuman"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
     document.body.appendChild(copy);
 
 }
@@ -1130,7 +1145,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults        = [CPUserDefaults standardUserDefaults],
         newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
         url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-        version         = [defaults objectForKey:@"TNArchipelVersion"];
+        version         = [defaults objectForKey:@"TNArchipelVersionHuman"];
 
     if (!url || (url == @"local"))
         url = @"help/index.html";
@@ -1446,6 +1461,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelModulesLoadingName setHidden:YES];
     [_mainToolbar reloadToolbarItems];
     [_viewRosterMask removeFromSuperview];
+
+    [updateController check];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
