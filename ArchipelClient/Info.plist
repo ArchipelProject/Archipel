@@ -64,8 +64,35 @@
     <!--
         Displayed version of Archipel Client
     -->
-    <key>TNArchipelVersion</key>
+    <key>TNArchipelVersionHuman</key>
     <string>Archipel Beta 1 (Saturn)</string>
+
+    <!--
+        Computing version of the client
+    -->
+    <key>TNArchipelVersion</key>
+    <dict>
+        <key>major</key>
+        <integer>0</integer>
+        <key>minor</key>
+        <integer>1</integer>
+        <key>revision</key>
+        <integer>0</integer>
+    </dict>
+
+    <!--
+        enable auto version check by default
+            - 1: enabled
+            - 0: disabled
+    -->
+    <key>TNArchipelAutoCheckUpdate</key>
+    <integer>1</integer>
+
+    <!--
+        URL of the update server (default is http://updates.archipelproject.org)
+    -->
+    <key>TNArchipelUpdateServerURL</key>
+    <string>http://updates.archipelproject.org</string>
 
     <!--
         Default log level. Using trace or debug can slow down the application
