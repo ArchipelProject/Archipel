@@ -124,8 +124,8 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 }
 
 
-#pragma mark -
-#pragma mark Actions
+// #pragma mark -
+// #pragma mark Actions
 
 /*! saves the change
     @param sender the sender of the action

@@ -25,6 +25,8 @@
 
 @import <TNKit/TNAlert.j>
 
+var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
+    TNArchipelTypeVirtualMachineDiskCreate  = @"create";
 
 
 @implementation TNNewDriveController : CPObject

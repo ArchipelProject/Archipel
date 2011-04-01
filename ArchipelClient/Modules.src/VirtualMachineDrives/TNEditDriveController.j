@@ -86,8 +86,8 @@
 }
 
 
-#pragma mark -
-#pragma mark Actions
+// #pragma mark -
+// #pragma mark Actions
 
 /*! converts a disk
     @param aSender the sender of the action
