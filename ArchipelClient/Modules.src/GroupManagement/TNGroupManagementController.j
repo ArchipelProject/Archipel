@@ -31,7 +31,7 @@
 @import <StropheCappuccino/TNStropheStanza.j>
 @import <TNKit/TNTableViewDataSource.j>
 
-
+@import "TNGroupedMigrationController.j";
 
 var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineControlCreate       = @"create",
@@ -40,6 +40,7 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineControlReboot       = @"reboot",
     TNArchipelTypeVirtualMachineControlSuspend      = @"suspend",
     TNArchipelTypeVirtualMachineControlResume       = @"resume",
+    TNArchipelTypeVirtualMachineControlMigrate      = @"migrate",
     TNArchipelActionTypeCreate                      = @"Start",
     TNArchipelActionTypePause                       = @"Pause",
     TNArchipelActionTypeShutdown                    = @"Shutdown",
@@ -56,15 +57,16 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 @implementation TNGroupManagementController : TNModule
 {
-    @outlet CPButtonBar             buttonBarControl;
-    @outlet CPScrollView            VMScrollView;
-    @outlet CPSearchField           filterField;
-    @outlet CPTextField             fieldJID                @accessors;
-    @outlet CPTextField             fieldName               @accessors;
-    @outlet CPView                  viewTableContainer;
+    @outlet CPButtonBar                     buttonBarControl;
+    @outlet CPScrollView                    VMScrollView;
+    @outlet CPSearchField                   filterField;
+    @outlet CPTextField                     fieldJID;
+    @outlet CPTextField                     fieldName;
+    @outlet CPView                          viewTableContainer;
+    @outlet TNGroupedMigrationController    groupedMigrationController;
 
-    CPTableView                     _tableVirtualMachines;
-    TNTableViewDataSource           _datasourceGroupVM;
+    CPTableView                             _tableVirtualMachines;
+    TNTableViewDataSource                   _datasourceGroupVM;
 }
 
 
@@ -125,7 +127,8 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
         destroyButton   = [CPButtonBar plusButton],
         suspendButton   = [CPButtonBar plusButton],
         resumeButton    = [CPButtonBar plusButton],
-        rebootButton    = [CPButtonBar plusButton];
+        rebootButton    = [CPButtonBar plusButton],
+        migrateButton   = [CPButtonBar plusButton];
 
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
@@ -157,10 +160,18 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [rebootButton setAction:@selector(reboot:)];
     [rebootButton setToolTip:@"Reboot all selected virtual machines (not supported by all hypervisors)"];
 
-    [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton]];
+    [migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
+    [migrateButton setTarget:self];
+    [migrateButton setAction:@selector(migrate:)];
+    [migrateButton setToolTip:@"Migrate all selected virtual machines"];
+
+
+    [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton, migrateButton]];
 
     [filterField setTarget:_datasourceGroupVM];
     [filterField setAction:@selector(filterObjects:)];
+
+    [groupedMigrationController setDelegate:self];
 }
 
 
@@ -313,6 +324,14 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [self applyAction:TNArchipelActionTypeReboot];
 }
 
+/*! Action that will open the grouped migration controller
+    @param sender the sender of the action
+*/
+- (IBAction)migrate:(id)aSender
+{
+    [groupedMigrationController showMainWindow:aSender];
+}
+
 
 #pragma mark -
 #pragma mark XMPP Management
@@ -385,5 +404,44 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     return NO;
 }
+
+
+/*! perform migration
+*/
+- (void)performGroupedMigration:(TNStropheContact)aDestination
+{
+    var indexes = [_tableVirtualMachines selectedRowIndexes],
+        objects = [_datasourceGroupVM objectsAtIndexes:indexes];
+
+    for (var i = 0; i < [objects count]; i++)
+    {
+        var vm      = [objects objectAtIndex:i],
+            stanza  = [TNStropheStanza iqWithType:@"set"];
+
+        [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeVirtualMachineControlMigrate,
+            "hypervisorjid": [aDestination JID]}];
+
+        [vm sendStanza:stanza andRegisterSelector:@selector(_didMigrate:) ofObject:self];
+    }
+}
+
+/*! Notify about the result of the migration
+    @param aStanza TNStropheStanza containing the result of the request
+*/
+- (BOOL)_didMigrate:(TNStropheStanza)aStanza
+{
+    var sender = [aStanza fromUser];
+
+    if ([aStanza type] == @"result")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" is migrating"];
+    else
+         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Cannot migrate virtual machine "+sender+ " to the selected hypervisor"];
+
+    [_tableVirtualMachines reloadData];
+    return NO;
+}
+
 
 @end
