@@ -40,7 +40,6 @@
 @import <iTunesTabView/iTunesTabView.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <StropheCappuccino/StropheCappuccino.j>
-@import <TNKit/TNAnimation.j>
 @import <TNKit/TNCategories.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNToolTip.j>
@@ -142,8 +141,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPImageView             ledIn;
     @outlet CPImageView             ledOut;
     @outlet CPProgressIndicator     progressIndicatorModulesLoading;
-    @outlet CPSplitView             leftSplitView;
-    @outlet CPSplitView             mainHorizontalSplitView;
+    @outlet CPSplitView             splitViewHorizontalRoster;
+    @outlet CPSplitView             splitViewMain;
     @outlet CPSplitView             splitViewTagsContents;
     @outlet CPTextField             labelCurrentUser;
     @outlet CPTextField             labelModulesLoadingName;
@@ -232,11 +231,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
     /* main split views */
-    [mainHorizontalSplitView setIsPaneSplitter:NO];
+    [splitViewMain setIsPaneSplitter:NO];
 
     /* tags split views */
     [splitViewTagsContents setIsPaneSplitter:NO];
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
+    [splitViewTagsContents setDelegate:self];
 
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
@@ -247,13 +247,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
         CPLog.trace("recovering with of main vertical CPSplitView from last state");
-        [mainHorizontalSplitView setPosition:posx ofDividerAtIndex:0];
+        [splitViewMain setPosition:posx ofDividerAtIndex:0];
 
         var bounds = [leftView bounds];
         bounds.size.width = posx;
         [leftView setFrame:bounds];
     }
-    [mainHorizontalSplitView setDelegate:self];
+    [splitViewMain setDelegate:self];
 
     /* hide main window */
     [theWindow orderOut:nil];
@@ -268,12 +268,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [self makeAvatarChooser];
 
     /* properties controller */
-    CPLog.trace(@"initializing the leftSplitView");
-    [leftSplitView setIsPaneSplitter:NO];
-    [leftSplitView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [[leftSplitView subviews][1] removeFromSuperview];
-    [leftSplitView addSubview:[propertiesController mainView]];
-    [leftSplitView setPosition:[leftSplitView bounds].size.height ofDividerAtIndex:0];
+    CPLog.trace(@"initializing the splitViewHorizontalRoster");
+    [splitViewHorizontalRoster setIsPaneSplitter:NO];
+    [splitViewHorizontalRoster setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [[splitViewHorizontalRoster subviews][1] removeFromSuperview];
+    [splitViewHorizontalRoster addSubview:[propertiesController mainView]];
+    [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
+    [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
     [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
@@ -371,7 +372,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* buttonBar */
     CPLog.trace(@"Initializing the roster button bar");
-    [mainHorizontalSplitView setButtonBar:buttonBarLeft forDividerAtIndex:0];
+    [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
     var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
         leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)],
@@ -1228,22 +1229,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)toolbarItemTagsClick:(id)sender
 {
-    var defaults = [CPUserDefaults standardUserDefaults];
-
     _tagsVisible = !_tagsVisible;
-
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
-    {
-        var anim = [[TNAnimation alloc] initWithDuration:0.3 animationCurve:CPAnimationEaseInOut];
-
-        [anim setDelegate:self];
-        [anim setFrameRate:0.0];
-        [anim startAnimation];
-    }
-    else
-    {
-        [self animation:nil valueForProgress:1.0];
-    }
+    [splitViewTagsContents setPosition:(_tagsVisible ? TNArchipelTagViewHeight : 0) ofDividerAtIndex:0];
+    [[CPUserDefaults standardUserDefaults] setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
 }
 
 /*! Action of toolbar imutables toolbar items.
@@ -1313,18 +1301,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         _helpWindow = nil;
     }
-}
-
-/*! delegate of CPAnimation
-*/
-- (void)animation:(CPAnimation)anAnimation valueForProgress:(float)aValue
-{
-    var dividerPosition = _tagsVisible ?  (aValue * TNArchipelTagViewHeight) : TNArchipelTagViewHeight - (aValue * TNArchipelTagViewHeight),
-        defaults        = [CPUserDefaults standardUserDefaults];
-
-    [splitViewTagsContents setPosition:dividerPosition ofDividerAtIndex:0];
-
-    [defaults setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
 }
 
 /*! Delegate of TNOutlineView
@@ -1448,16 +1424,42 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelNotificationRosterSelectionChanged object:item];
 }
 
-/*! Delegate of mainSplitView. This will save the positionning of splitview in CPUserDefaults
+/*! Delegate of splitViewMain. This will save the positionning of splitview in CPUserDefaults
 */
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
+    if ([aNotification object] !== splitViewMain)
+        return;
+
     var defaults    = [CPUserDefaults standardUserDefaults],
         splitView   = [aNotification object],
         newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
     [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
+}
+
+/*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults
+*/
+- (void)splitView:(CPSlipView)aSplitView constrainMaxCoordinate:(int)position ofSubviewAt:(int)index
+{
+    if ((aSplitView === splitViewTagsContents) && (index == 0))
+        return (_tagsVisible) ? 33 : 0;
+
+    return position;
+}
+
+/*! Delegate of splitViewTagsContents and splitViewMain. This will save the positionning of splitview in CPUserDefaults
+*/
+- (void)splitView:(CPSlipView)aSplitView constrainMinCoordinate:(int)position ofSubviewAt:(int)index
+{
+    if ((aSplitView === splitViewTagsContents) && (index == 0))
+        return (_tagsVisible) ? 33 : 0;
+
+    if ((aSplitView === splitViewMain) && (index == 0))
+        return 200;
+
+    return 0;
 }
 
 /*! called when module controller has loaded a module
