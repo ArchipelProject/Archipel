@@ -1291,7 +1291,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [alert setUserInfo:destinationHypervisor]
     [alert runModal];
-
 }
 
 /*! send migrate command
