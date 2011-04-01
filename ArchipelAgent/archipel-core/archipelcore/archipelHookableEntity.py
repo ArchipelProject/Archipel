@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelHookableEntity.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,12 +22,12 @@
 
 class TNHookableEntity (object):
     """
-    this class make a TNArchipelEntity hooking capable
+    This class make a TNArchipelEntity hooking capable.
     """
 
     def __init__(self, log):
         """
-        initialize the TNHookableEntity
+        Initialize the TNHookableEntity.
         @type log: TNArchipelLog
         @param log: the logger of the entity
         """
@@ -35,7 +39,7 @@ class TNHookableEntity (object):
 
     def create_hook(self, hookname):
         """
-        create a new hook
+        Create a new hook.
         @type hookname: string
         @param hookname: the name of the new hook
         """
@@ -45,8 +49,8 @@ class TNHookableEntity (object):
 
     def remove_hook(self, hookname):
         """
-        remove an existing hook. All registered method in the hook
-        will be removed
+        Remove an existing hook. All registered method in the hook
+        will be removed.
         @type hookname: string
         @param hookname: the name of the hook to remove
         @rtype: boolean
@@ -62,8 +66,8 @@ class TNHookableEntity (object):
 
     def register_hook(self, hookname, method, user_info=None, oneshot=False):
         """
-        register a method that will be triggered by a hook. The methood must use
-        the following prototype: method(origin, user_info, arguments)
+        Register a method that will be triggered by a hook. The methood must use
+        the following prototype: method(origin, user_info, arguments).
         @type hookname: string
         @param hookname: the name of the hook
         @type method: function
@@ -73,7 +77,7 @@ class TNHookableEntity (object):
         @type oneshot: boolean
         @param oneshot: if True, the method will be unregistered after first performing
         """
-        # if the hook is not existing, we create it
+        # If the hook is not existing, we create it.
         if not hookname in self.hooks:
             self.create_hook(hookname)
         self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
@@ -81,7 +85,7 @@ class TNHookableEntity (object):
 
     def unregister_hook(self, hookname, m):
         """
-        unregister a method from a hook.
+        Unregister a method from a hook.
         @type hookname: string
         @param hookname: the name of the hook
         @type method: function
@@ -100,7 +104,7 @@ class TNHookableEntity (object):
 
     def perform_hooks(self, hookname, arguments=None):
         """
-        perform all registered methods for the given hook
+        Perform all registered methods for the given hook.
         @type hookname: string
         @param hookname: the name of the hook
         @type arguments: object
@@ -116,7 +120,7 @@ class TNHookableEntity (object):
                 self.log.debug("HOOK: performing method %s registered in hook with name %s and user_info: %s (oneshot: %s)" % (m.__name__, hookname, str(user_info), str(oneshot)))
                 m(self, user_info, arguments)
                 if oneshot:
-                    self.log.info("HOOK: this hook was oneshot. registering for deletion")
+                    self.log.info("HOOK: this hook was oneshot. registering for deletion.")
                     hook_to_remove.append(m)
             except Exception as ex:
                 self.log.error("HOOK: error during performing method %s for hookname %s: %s" % (m.__name__, hookname, str(ex)))
@@ -124,5 +128,3 @@ class TNHookableEntity (object):
             for hook_method in hook_to_remove:
                 self.log.info("HOOK: removing registred hook for deletion %s" % (hook_method.__name__))
                 self.unregister_hook(hookname, hook_method)
-
-

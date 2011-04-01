@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelPermissionCenter.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -29,7 +33,8 @@ users_have_permissions = Table('users_have_permissions', Base.metadata,
     Column('permission', String, ForeignKey('permissions.name'))
 )
 
-class TNArchipelUser (Base):
+
+class TNArchipelUser(Base):
     __tablename__ = 'users'
 
     name = Column(String, primary_key=True)
@@ -41,7 +46,7 @@ class TNArchipelUser (Base):
     def __repr__(self):
         return "<TNArchipelUser('%s')>" % (self.name)
 
-class TNArchipelPermission (Base):
+class TNArchipelPermission(Base):
     __tablename__ = 'permissions'
 
     name = Column(String, primary_key=True)
@@ -57,12 +62,11 @@ class TNArchipelPermission (Base):
         return "<TNArchipelPermission('%s', '%s', '%s')>" % (self.name, self.description, self.defaultValue)
 
 
-
 class TNArchipelPermissionCenter:
 
     def __init__(self, database_file, root_admins):
         """
-        initialize the permission center
+        Initialize the permission center.
         @type database_file: string
         @param database_file: the path to the db file
         @type root_admins: array
@@ -77,7 +81,7 @@ class TNArchipelPermissionCenter:
 
     def create_session(self):
         """
-        create a new SQL session
+        Create a new SQL session
         @rtype: Session
         @return: the new session
         """
@@ -88,7 +92,7 @@ class TNArchipelPermissionCenter:
 
     def create_permission(self, name, description="", default_permission=False, currentsession=None):
         """
-        create a new permission
+        Create a new permission.
         @type name: string
         @param name: the name of the permission
         @type description: string
@@ -111,7 +115,7 @@ class TNArchipelPermissionCenter:
 
     def get_permission(self, name, currentsession=None):
         """
-        get the permission by name
+        Get the permission by name.
         @type name: string
         @param name: the name of the permission
         @rtype: L{TNArchipelPermission}
@@ -128,7 +132,7 @@ class TNArchipelPermissionCenter:
 
     def delete_permission(self, name, currentsession=None):
         """
-        delete the permission by name
+        Delete the permission by name.
         @type name: string
         @param name: the name of the permission
         @rtype: Boolean
@@ -148,7 +152,7 @@ class TNArchipelPermissionCenter:
 
     def get_permissions(self, currentsession=None):
         """
-        return all permissions
+        Return all permissions.
         """
         if currentsession: session = currentsession
         else: session = self.create_session()
@@ -161,7 +165,7 @@ class TNArchipelPermissionCenter:
 
     def create_user(self, name, currentsession=None):
         """
-        create a new user
+        Create a new user.
         @type name: string
         @param name: the name of the user
         @rtype: Boolean
@@ -180,7 +184,7 @@ class TNArchipelPermissionCenter:
 
     def get_user(self, name, currentsession=None):
         """
-        get the user by name
+        Get the user by name.
         @type name: string
         @param name: the name of the user
         @rtype: L{TNArchipelUser}
@@ -197,7 +201,7 @@ class TNArchipelPermissionCenter:
 
     def delete_user(self, name, currentsession=None):
         """
-        delete the user by name
+        Delete the user by name.
         @type name: string
         @param name: the name of the user
         @rtype: Boolean
@@ -216,7 +220,7 @@ class TNArchipelPermissionCenter:
 
     def grant_permission_to_user(self, permission_name, user_name, currentsession=None):
         """
-        grant given permission to given user
+        Grant given permission to given user.
         @type permission_name: string
         @param permission_name: the name of the permission
         @type user_name: string
@@ -238,7 +242,7 @@ class TNArchipelPermissionCenter:
 
     def revoke_permission_to_user(self, permission_name, user_name, currentsession=None):
         """
-        revoke given permission to given user
+        Revoke given permission to given user.
         @type permission_name: string
         @param permission_name: the name of the permission
         @type user_name: string
@@ -261,7 +265,7 @@ class TNArchipelPermissionCenter:
 
     def user_has_permission(self, user_name, permission_name, currentsession=None):
         """
-        check if user has permission
+        Check if user has permission.
         @type user_name: string
         @param user_name: the name of the user
         @type permission_name: string
@@ -282,7 +286,7 @@ class TNArchipelPermissionCenter:
 
     def get_user_permissions(self, user_name, currentsession=None):
         """
-        get permissions of user
+        Get permissions of user.
         @type user_name: string
         @param user_name: the name of the user
         @rtype: list of L{TNArchipelPermission}
@@ -303,7 +307,7 @@ class TNArchipelPermissionCenter:
 
     def check_permission(self, user_name, permission_name):
         """
-        check if given user has given permission
+        Check if given user has given permission.
         @type user_name: string
         @param user_name: the name of the user
         @type permission_name: string
@@ -329,7 +333,7 @@ class TNArchipelPermissionCenter:
 
     def check_permissions(self, user_name, permissions):
         """
-        check if all permissions on array are granted
+        Check if all permissions on array are granted.
         @type user_name: string
         @param user_name: the name of the user
         @type permission_name: array of string
@@ -344,7 +348,7 @@ class TNArchipelPermissionCenter:
 
     def close_database(self):
         """
-        close the db connection
+        Close the db connection.
         """
         self.session.close_all()
         self.engine.dispose()

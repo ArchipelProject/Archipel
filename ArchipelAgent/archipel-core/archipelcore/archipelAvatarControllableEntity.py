@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelAvatarControllableEntity.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -31,13 +35,13 @@ ARCHIPEL_NS_AVATAR                              = "archipel:avatar"
 
 class TNAvatarControllableEntity (object):
     """
-    this class makes TNArchipelEntity avatar controllable
-    it allows to get and set avatars of the entity
+    This class makes TNArchipelEntity avatar controllable.
+    It allows to get and set avatars of the entity.
     """
 
     def __init__(self, configuration, permission_center, xmppclient, log):
         """
-        initialize the TNAvatarControllableEntity
+        Initialize the TNAvatarControllableEntity.
         @type configuration: configuration object
         @param configuration: the configuration
         @type permission_center: TNPermissionCenter
@@ -59,18 +63,18 @@ class TNAvatarControllableEntity (object):
 
     def check_acp(conn, iq):
         """
-        function that verify if the ACP is valid
+        Function that verify if the ACP is valid.
         @type conn: xmpp.Dispatcher
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
+        raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp.")
 
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         """
-        function that verify if the permissions are granted
+        Function that verify if the permissions are granted.
         @type conn: xmpp.Dispatcher
         @param conn: the connection
         @type stanza: xmpp.Node
@@ -83,27 +87,27 @@ class TNAvatarControllableEntity (object):
         @param prefix: the prefix of the action
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
+        raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm.")
 
     def set_vcard(self, params={}):
         """
-        set the vcard of the entity
+        Set the vcard of the entity.
         @type params: dict
         @param params: the parameters of the vCard
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement set_vcard")
+        raise Exception("Subclass of TNAvatarControllableEntity must implement set_vcard.")
 
     def init_permissions(self):
         """
-        intialize the Avatar permissions
+        Initialize the Avatar permissions.
         """
         self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
         self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
 
     def register_handler(self):
         """
-        initialize the avatar handlers
+        Initialize the avatar handlers.
         """
         self.xmppclient.RegisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
 
@@ -112,8 +116,8 @@ class TNAvatarControllableEntity (object):
 
     def get_available_avatars(self, supported_file_extensions=["png", "jpg", "jpeg", "gif"]):
         """
-        return a stanza with a list of availables avatars
-        encoded in base64
+        Return a stanza with a list of availables avatars
+        base64 encoded.
         """
         path = self.configuration.get("GLOBAL", "machine_avatar_directory")
         resp = xmpp.Node("avatars")
@@ -128,7 +132,7 @@ class TNAvatarControllableEntity (object):
 
     def set_avatar(self, name):
         """
-        change the current avatar of the entity.
+        Change the current avatar of the entity.
         @type name string
         @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
         """
@@ -138,7 +142,7 @@ class TNAvatarControllableEntity (object):
 
     def b64avatar_from_filename(self, image):
         """
-        create a base64 encoded avatr from filename
+        Create a base64 encoded avatar from filename.
         @type image: string
         @param image: relative file path of the image from conf token 'machine_avatar_directory'
         @rtype: string
@@ -153,8 +157,8 @@ class TNAvatarControllableEntity (object):
 
     def process_avatar_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_AVATAR IQ is received.
+        It understands IQ of type:
             - alloc
             - free
         @type conn: xmpp.Dispatcher
@@ -175,7 +179,7 @@ class TNAvatarControllableEntity (object):
 
     def iq_get_available_avatars(self, iq):
         """
-        return a list of availables avatars
+        Return a list of availables avatars.
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ containing the request
         """
@@ -188,7 +192,7 @@ class TNAvatarControllableEntity (object):
 
     def iq_set_available_avatars(self, iq):
         """
-        set the current avatars of the virtual machine
+        Set the current avatar of the virtual machine.
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ containing the request
         """

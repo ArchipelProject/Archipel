@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelTriggers.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -30,12 +34,15 @@ ARCHIPEL_TRIGGER_STATE_ON       = 1
 ARCHIPEL_WATCHER_STATE_OFF      = 0
 ARCHIPEL_WATCHER_STATE_ON       = 1
 
+
 class TNArchipelTrigger:
-    """this is the representation of a basic trigger"""
+    """
+    This is the representation of a basic trigger
+    """
 
     def __init__(self, entity, name, description=None, mode=ARCHIPEL_TRIGGER_MODE_MANUAL, check_method=None, check_interval=-1):
         """
-        the contructor
+        The contructor.
         @type entity TNArchipelEntity
         @param entity the entity that owns the trigger
         @type name string
@@ -60,10 +67,9 @@ class TNArchipelTrigger:
 
         self.init_pubsub_node()
 
-
     def init_pubsub_node(self):
         """
-        intialize the pubsubnode. if it doesn't exists, it will be created and configured
+        Initialize the pubsubnode. If it doesn't exists, it will be created and configured.
         """
         if not self.pubSubNode.recover(wait=True):
             self.pubSubNode.create(wait=True)
@@ -75,17 +81,15 @@ class TNArchipelTrigger:
             archipelcore.pubsub.XMPP_PUBSUB_VAR_DELIVER_PAYLOADS: 1
         }, wait=True)
 
-
     def delete_pubsub_node(self):
         """
-        remove the pubsub node
+        Remove the pubsub node.
         """
         self.pubSubNode.delete(wait=True)
 
-
     def set_state(self, state):
         """
-        manual set if the trigger is on or off
+        Manual set if the trigger is on or off.
         @type state int
         @param state ARCHIPEL_TRIGGER_STATE_OFF or ARCHIPEL_TRIGGER_STATE_ON
         """
@@ -101,12 +105,8 @@ class TNArchipelTrigger:
         self.pubSubNode.add_item(triggerNode)
 
 
-
-
-
 class TNArchipelTriggerWatcher:
     """this is the basic class for using a trigger watcher"""
-
 
     def __init__(self, entity, name, targetjid, triggername, triggeronaction=None, triggeroffaction=None):
         self.name               = name
@@ -118,7 +118,6 @@ class TNArchipelTriggerWatcher:
         self.nodename           = "/archipel/trigger/%s/%s" % (targetjid.getStripped(), self.triggername)
         self.pubsubNode         = archipelcore.pubsub.TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, self.nodename)
 
-
     def watch(self):
         self.pubsubNode.subscribe(self.entity.jid, self.on_event)
         self.state = ARCHIPEL_WATCHER_STATE_ON
@@ -126,7 +125,6 @@ class TNArchipelTriggerWatcher:
     def unwatch(self):
         self.pubsubNode.unsubscribe(self.entity.jid.getStripped())
         self.state = ARCHIPEL_WATCHER_STATE_OFF
-
 
     def on_event(self, event):
         try:
@@ -137,5 +135,3 @@ class TNArchipelTriggerWatcher:
                 if self.triggeroffaction: self.triggeroffaction()
         except Exception as ex:
             self.entity.log.error("Error in on_event: %s" % str(ex))
-
-

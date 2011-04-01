@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # hypervisorrepomanager.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -45,12 +49,12 @@ ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED        = -6008
 
 class TNApplianceDownloader(Thread):
     """
-    implementation of a downloader. This run in a separate thread.
+    Implementation of a downloader. This run in a separate thread.
     """
 
     def __init__(self, url, save_folder, uuid, name, logger, finish_callback):
         """
-        initialization of the class
+        Initialization of the class.
         @type url: string
         @param url: the url to download
         @type save_folder: string
@@ -75,7 +79,7 @@ class TNApplianceDownloader(Thread):
 
     def run(self):
         """
-        main loop of the thread. will start to download
+        Main loop of the thread. Will start to download.
         """
         self.logger.info("TNApplianceDownloader: starting to download appliance %s into %s" % (self.url, self.save_path))
         urllib.urlretrieve(self.url, self.save_path, self.downloading_callback)
@@ -110,14 +114,14 @@ class TNApplianceDownloader(Thread):
 
     def stop(self):
         """
-        stop the download. NOT IMPLEMENTED
+        Stop the download. NOT IMPLEMENTED
         """
         raise NotImplemented
 
     def downloading_callback(self, blocks_count, block_size, total_size):
         """
-        internal callback of the download status called by urlretrieve.
-        If percentage reach 100, it will call the finish_callback with uuid as parameter
+        Internal callback of the download status called by urlretrieve.
+        If percentage reach 100, it will call the finish_callback with uuid as parameter.
         @type blocks_count: integer
         @param blocks_count: the downloaded number of blocks
         @type block_size: integer
@@ -131,15 +135,14 @@ class TNApplianceDownloader(Thread):
         self.progress = percentage
 
 
-
-class TNHypervisorRepoManager (TNArchipelPlugin):
+class TNHypervisorRepoManager(TNArchipelPlugin):
     """
-    Implementation of the module
+    Implementation of the plugin.
     """
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the class
+        Initialize the class.
         @type database_path: string
         @param database_path: the path of the sqlite3 database to use
         @type repository_path: string
@@ -185,15 +188,15 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_VMCASTING)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -220,7 +223,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def parse_own_repo(self, loop=True):
         """
-        periodically parse the repository to build the RSS
+        Periodically parse the repository to build the RSS.
         @type loop: boolean
         @param loop: if True will do it periodically
         """
@@ -235,7 +238,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def on_download_complete(self, uuid, path):
         """
-        callback triggered by a TNApplianceDownloader when download is over
+        Callback triggered by a TNApplianceDownloader when download is over.
         @type uuid: string
         @param uuid: the uuid of the download
         @type path: string
@@ -250,7 +253,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def getFeed(self, data):
         """
-        get the feed
+        Get the feed.
         @type data: string
         @param data: RSS data
         @rtype: tupple
@@ -263,10 +266,9 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         items               = feed_content.getTag("channel").getTags("item")
         return (feed_content, feed_uuid, feed_description, feed_name, items)
 
-
     def parseRSS(self):
         """
-        parse the content of the database, update the feed, create the answer node.
+        Parse the content of the database, update the feed, create the answer node.
         """
         sources = self.cursor.execute("SELECT * FROM vmcastsources")
         nodes = []
@@ -290,7 +292,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             except:
                 tmp_cursor.execute("DELETE FROM vmcastsources WHERE url='%s'" % url)
                 self.database_connection.commit()
-                raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed")
+                raise Exception('Bad format', "URL doesn't seem to contain valid VMCasts. Removed.")
             try:
                 self.database_connection.execute("UPDATE vmcastsources SET uuid='%s', name='%s', description='%s' WHERE url='%s'" % (feed_uuid, feed_name, feed_description, url))
                 self.database_connection.commit()
@@ -325,8 +327,8 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
-        it understands IQ of type:
+        Process incoming IQ of type ARCHIPEL_NS_HYPERVISOR_VMCASTING.
+        It understands IQ of type:
             - get
             - register
             - unregister
@@ -362,10 +364,9 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
 
-
     def iq_get(self, iq):
         """
-        get the sources and appliances. Replay parseRSS at each time to be up to date
+        Get the sources and appliances. Replay parseRSS at each time to be up to date.
 
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
@@ -379,10 +380,9 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_GET)
         return reply
 
-
     def iq_register(self, iq):
         """
-        register to a new VMCast
+        Register to a new VMCast.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -396,11 +396,11 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
             try:
                 f = urllib.urlopen(url)
             except:
-                raise Exception("The given url doesn't exist. Can't register")
+                raise Exception("The given url doesn't exist. Can't register.")
             try:
                 self.getFeed(f.read())
             except:
-                raise Exception("The given url doesn't contains a valid VMCast feed. Can't register")
+                raise Exception("The given url doesn't contains a valid VMCast feed. Can't register.")
             self.cursor.execute("INSERT INTO vmcastsources (url) VALUES ('%s')" % url)
             self.database_connection.commit()
             self.parseRSS()
@@ -412,7 +412,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_unregister(self, iq):
         """
-        unregister from a VMCasts and remove all its appliances (not the files)
+        Unregister from a VMCasts and remove all its appliances (not the files).
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -432,7 +432,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_download(self, iq):
         """
-        start a download of appliance according to its uuid
+        Start a download of appliance according to its uuid.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -459,7 +459,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_get_download_queue(self, iq):
         """
-        get the state of the download queue.
+        Get the state of the download queue.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -478,7 +478,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_stop_download(self, iq):
         """
-        stop a download according to its uuid
+        Stop a download according to its uuid.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -491,7 +491,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_get_appliance(self, iq):
         """
-        get the info about an appliances according to its uuid
+        Get the info about an appliances according to its uuid.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -513,7 +513,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_get_installed_appliances(self, iq):
         """
-        get all installed appliances
+        Get all installed appliances.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -536,7 +536,7 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
 
     def iq_delete_appliance(self, iq):
         """
-        delete an appliance according to its uuid
+        Delete an appliance according to its uuid.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -556,4 +556,3 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE)
         return reply
-

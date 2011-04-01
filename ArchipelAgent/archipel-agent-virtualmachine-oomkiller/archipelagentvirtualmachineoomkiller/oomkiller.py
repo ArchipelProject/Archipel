@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # oomkiller.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -30,7 +34,7 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -55,15 +59,15 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_OOM_KILLER)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -81,7 +85,7 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def vm_create(self, origin, user_info, parameters):
         """
-        handle create HOOK_VM_CREATE
+        Handle create HOOK_VM_CREATE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -92,11 +96,11 @@ class TNOOMKiller (TNArchipelPlugin):
         oom_info = self.get_oom_info()
         self.entity.log.info("OOM value retrieved %s" % str(oom_info))
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        self.entity.log.info("oom valuee for vm with uuid %s have been restored" % self.entity.uuid)
+        self.entity.log.info("OOM value for vm with uuid %s have been restored." % self.entity.uuid)
 
     def vm_terminate(self, origin, user_info, parameters):
         """
-        handle create HOOK_VM_TERMINATE
+        Handle create HOOK_VM_TERMINATE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -108,11 +112,11 @@ class TNOOMKiller (TNArchipelPlugin):
         self.database.commit()
         self.cursor.close()
         self.database.close()
-        self.entity.log.info("oom information for vm with uuid %s has been removed" % self.entity.uuid)
+        self.entity.log.info("OOM information for vm with uuid %s has been removed." % self.entity.uuid)
 
     def vm_initialized(self, origin, user_info, parameters):
         """
-        handle create HOOK_VM_INITIALIZE
+        Handle create HOOK_VM_INITIALIZE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -122,14 +126,14 @@ class TNOOMKiller (TNArchipelPlugin):
         """
         oom_info = self.get_oom_info()
         self.set_oom_info(oom_info["adjust"], oom_info["score"])
-        self.entity.log.info("oom information for vm with uuid %s have been removed" % self.entity.uuid)
+        self.entity.log.info("OOM information for vm with uuid %s have been removed." % self.entity.uuid)
 
 
     ### OOM information management
 
     def get_oom_info(self):
         """
-        get the OOM info from database
+        Get the OOM info from database.
         @rtype: dict
         @return: dict contaning OOM status
         """
@@ -143,7 +147,7 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def set_oom_info(self, adjust, score):
         """
-        set the OOM info both on file if exists and on database
+        Set the OOM info both on file if exists and on database.
         @type adjust: int
         @param adjust: the value of adjust
         @type score: int
@@ -167,8 +171,8 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_OOM_KILLER IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_OOM_KILLER IQ is received.
+        It understands IQ of type:
             - do-something
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -188,7 +192,7 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def iq_oom_get_adjust(self, iq):
         """
-        return the value of the oom_adjust of the virtual machine
+        Return the value of the oom_adjust of the virtual machine.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -206,8 +210,8 @@ class TNOOMKiller (TNArchipelPlugin):
 
     def iq_oom_set_adjust(self, iq):
         """
-        set the adjust value of oom killer from -16:15 plus special -17 value that disable oom killer for the process
-        the lower the value his the higher the likelihood of killing the process
+        Set the adjust value of oom killer from -16:15 plus special -17 value that disable oom killer for the process
+        the lower the value his the higher the likelihood of killing the process.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -221,4 +225,3 @@ class TNOOMKiller (TNArchipelPlugin):
         except Exception as ex:
             reply = build_error_iq(self, ex, iq)
         return reply
-

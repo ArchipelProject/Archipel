@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # __init__.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,9 +24,9 @@ import computingunit
 
 def make_computing_unit():
     """
-    this function is the plugin factory. It will be called by the object you want
-    want to be plugged in. It must return a dictionary containing
-    a key for the the plugin informations, and a key for the plugin object
+    This function is the plugin factory. It will be called by the object you want
+    to be plugged in. It must return a dictionary containing
+    a key for the the plugin informations, and a key for the plugin object.
     @type configuration: Config Object
     @param configuration: the general configuration object
     @type entity: L{TNArchipelEntity}
@@ -35,15 +39,12 @@ def make_computing_unit():
     return {"info": computingunit.TNDefaultComputingUnit.plugin_info(),
             "plugin": computingunit.TNDefaultComputingUnit()}
 
-
 def version():
     """
-    this function can be called runarchipel -v in order to get the version of the
-    installed plugin. You only should have to change the egg name
+    This function can be called runarchipel -v in order to get the version of the
+    installed plugin. You only should have to change the egg name.
     @rtype: tupple
     @return: tupple containing the package name and the version
     """
     import pkg_resources
     return (__name__, pkg_resources.get_distribution("archipel-platformrequest-defaultcomputingunit").version, [computingunit.TNDefaultComputingUnit.plugin_info()])
-
-
