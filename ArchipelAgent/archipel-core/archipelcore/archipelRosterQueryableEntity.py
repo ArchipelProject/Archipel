@@ -94,8 +94,6 @@ class TNRosterQueryableEntity (object):
         """
         intialize the Avatar permissions
         """
-        self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
-        self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
         self.permission_center.create_permission("roster", "Authorizes users to get the content of my roster", False)
 
     def register_handler(self):
