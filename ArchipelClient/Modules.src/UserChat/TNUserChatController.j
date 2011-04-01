@@ -331,7 +331,7 @@
 
     CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
 
-    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
+    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
 }
 
 /*! restore the chat
@@ -339,7 +339,7 @@
 - (void)restore
 {
     var defaults = [CPUserDefaults standardUserDefaults],
-        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
+        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
 
     if (lastConversation)
         _messages = lastConversation;
@@ -435,7 +435,7 @@
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults removeObjectForKey:"communicationWith" + [_entity JID]];
+    [defaults removeObjectForKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
 
     [_messages removeAllObjects];
     [_messageBoard removeAllMessages:nil];

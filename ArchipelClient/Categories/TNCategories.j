@@ -30,6 +30,7 @@
 @import "CPString+UUIDRFC4122.j"
 @import "CPTableView+SelectAll.j"
 @import "CPTabView+Border.j"
+@import "CPUserDefault+customDomain.j"
 @import "CPView+Border.j"
 @import "TNStropheClient+Singleton.j"
 @import "TNStropheGroup+Capitalized.j"

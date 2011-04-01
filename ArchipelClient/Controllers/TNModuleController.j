@@ -230,11 +230,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         identifier              = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid                   = @"selectedTabIndexFor" + identifier;
 
-    if (currentSelectedIndex == [defaults integerForKey:memid])
+    if (currentSelectedIndex == [defaults integerForKey:memid inDomain:CPGlobalDomain])
         return;
 
     CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
-    [defaults setInteger:currentSelectedIndex forKey:memid];
+    [defaults setInteger:currentSelectedIndex forKey:memid inDomain:CPGlobalDomain];
 }
 
 /*! Reselect the last remembered tab index for entity
@@ -244,7 +244,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var defaults            = [CPUserDefaults standardUserDefaults],
         identifier          = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid               = @"selectedTabIndexFor" + identifier,
-        oldSelectedIndex    = [defaults integerForKey:memid],
+        oldSelectedIndex    = [defaults integerForKey:memid inDomain:CPGlobalDomain],
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
     if (!(_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1)))

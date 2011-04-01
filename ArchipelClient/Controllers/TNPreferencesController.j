@@ -245,7 +245,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     var defaultsRegistration = [[CPUserDefaults standardUserDefaults]._domains objectForKey:CPRegistrationDomain];
 
-    [CPUserDefaults resetStandardUserDefaults];
+    // [CPUserDefaults resetStandardUserDefaults];
     [[CPUserDefaults standardUserDefaults] registerDefaults:defaultsRegistration];
     [[CPUserDefaults standardUserDefaults]._domains setObject:[CPDictionary dictionary] forKey:CPApplicationDomain];
     [[CPUserDefaults standardUserDefaults] synchronize];
@@ -261,7 +261,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)saveToFromXMPPServer
 {
-    [_xmppStorage setObject:[CPUserDefaults standardUserDefaults]._domains forKey:TNArchipelXMPPPrivateStoragePrefsKey];
+    [_xmppStorage setObject:[[CPUserDefaults standardUserDefaults]._domains objectForKey:CPApplicationDomain] forKey:TNArchipelXMPPPrivateStoragePrefsKey];
 }
 
 - (void)cleanXMPPStorage
@@ -284,21 +284,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     if (anObject)
     {
-        // get the credentials;
-        var jid = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHJID"],
-            password = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHPassword"],
-            service = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHService"],
-            remember = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNArchipelBOSHRememberCredentials"];
-
-        [CPUserDefaults resetStandardUserDefaults];
-        [CPUserDefaults standardUserDefaults]._domains = anObject;
+        [[CPUserDefaults standardUserDefaults]._domains setObject:anObject forKey:CPApplicationDomain];
+        [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
         [[CPUserDefaults standardUserDefaults] synchronize];
-
-        // reinject creds
-        [[CPUserDefaults standardUserDefaults] setObject:jid forKey:@"TNArchipelBOSHJID"];
-        [[CPUserDefaults standardUserDefaults] setObject:password forKey:@"TNArchipelBOSHPassword"];
-        [[CPUserDefaults standardUserDefaults] setObject:service forKey:@"TNArchipelBOSHService"];
-        [[CPUserDefaults standardUserDefaults] setObject:remember forKey:@"TNArchipelBOSHRememberCredentials"];
     }
 
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];

@@ -114,10 +114,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)initCredentials
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
-        lastBoshService     = [defaults stringForKey:@"TNArchipelBOSHService"],
-        lastJID             = [defaults stringForKey:@"TNArchipelBOSHJID"],
-        lastPassword        = [defaults stringForKey:@"TNArchipelBOSHPassword"],
-        lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials"];
+        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService" inDomain:CPGlobalDomain] || [defaults stringForKey:@"TNArchipelBOSHService"],
+        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain],
+        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain],
+        lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
 
     if (lastBoshService)
         [boshService setStringValue:lastBoshService];
@@ -168,17 +168,17 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     if ([credentialRemember state] == CPOnState)
     {
-        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
-        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
-        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
+        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
+        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
+        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService" inDomain:CPGlobalDomain];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
         _credentialRecovered = YES;
         CPLog.info("logging information saved");
     }
     else
     {
         _credentialRecovered = NO;
-        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
+        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials" inDomain:CPGlobalDomain];
     }
 
     var connectionJID   = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
@@ -190,7 +190,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         return;
     }
 
-    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
+    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource" inDomain:CPGlobalDomain]];
 
     var stropheClient = [TNStropheIMClient IMClientWithService:[[boshService stringValue] lowercaseString] JID:connectionJID password:[password stringValue] rosterClass:TNDatasourceRoster];
 
@@ -207,9 +207,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([sender state] == CPOnState)
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
     else
-        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
+        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
 
     CPLog.debug("credential remember set");
 }
@@ -335,7 +335,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheDisconnected:(TNStropheIMClient)aStropheClient
 {
-    [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
+    [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
