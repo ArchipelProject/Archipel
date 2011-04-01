@@ -3,6 +3,7 @@
 # snapshoting.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -70,7 +71,7 @@ class TNSnapshoting (TNArchipelPlugin):
     @staticmethod
     def plugin_info():
         """
-        Return inforations about the plugin.
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """

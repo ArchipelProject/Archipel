@@ -3,6 +3,7 @@
 # appnotificator.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -188,7 +189,7 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been defined." % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been defined." % origin.name, subtitle="Virtual machine event")
 
     def hypervisor_alloc(self, origin, user_info, parameters):
         """
@@ -200,7 +201,7 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been allocated." % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "Virtual machine %s has been allocated." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_free(self, origin, user_info, parameters):
         """
@@ -212,7 +213,7 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been removed." % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "Virtual machine %s has been removed." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_clone(self, origin, user_info, parameters):
         """
@@ -224,7 +225,7 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been cloned." % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "Virtual machine %s has been cloned." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_migrate_leave(self, origin, user_info, parameters):
         """

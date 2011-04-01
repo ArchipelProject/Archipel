@@ -3,6 +3,7 @@
 # appliancecompresser.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -27,7 +28,7 @@ import tempfile
 from threading import Thread
 
 
-class TNApplianceCompresser(Thread):
+class TNApplianceCompresser (Thread):
 
     def __init__(self, name, paths, xml_definition, xml_snapshots, working_dir, vm_dir, hypervisor_repo_path, callback, entity):
         """

@@ -3,6 +3,7 @@
 # storage.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -151,9 +152,9 @@ class TNStorageManagement (TNArchipelPlugin):
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             disk_path   = self.entity.folder + "/" + disk_name + "." + format
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
-                raise Exception("too big",  "You may be able to do it manually, but I won't try.")
+                raise Exception("too big", "You may be able to do it manually, but I won't try.")
             elif disk_unit == "G" and (int(disk_size) >= 10000):
-                raise Exception("too big", "You may be able to do this manually, but I won't try.")
+                raise Exception("too big", "You may be able to do it manually, but I won't try.")
             if os.path.exists(disk_path):
                 raise Exception("The disk with name %s already exists." % disk_name)
 

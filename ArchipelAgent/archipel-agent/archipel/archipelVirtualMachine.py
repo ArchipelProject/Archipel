@@ -90,7 +90,7 @@ ARCHIPEL_XMPP_SHOW_NOT_DEFINED                  = "Not defined"
 ARCHIPEL_XMPP_SHOW_CRASHED                      = "Crashed"
 
 
-class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
+class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity, TNRosterQueryableEntity):
     """
     This class represents an Virtual Machine, XMPP Capable.
     This class needs to already have .... end of story ? TODO fix the details
@@ -1226,7 +1226,7 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
                 cpuorth = "CPU"
             else:
                 cpuorth = "CPUs"
-            return "I'm in state %s, I use %d Mo of memory. I've got %d %s and I've consumed %d second(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, time, i["hypervisor"])
+            return "I'm in state %s, I use %d MB of memory. I've got %d %s and I've consumed %d second(s) of my hypervisor (%s)." % (state, mem, i["nrVirtCpu"], cpuorth, time, i["hypervisor"])
         except Exception as ex:
             return build_error_message(self, ex)
 

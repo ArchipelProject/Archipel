@@ -3,6 +3,7 @@
 # archipelPermissionCenter.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -34,7 +35,7 @@ users_have_permissions = Table('users_have_permissions', Base.metadata,
 )
 
 
-class TNArchipelUser(Base):
+class TNArchipelUser (Base):
     __tablename__ = 'users'
 
     name = Column(String, primary_key=True)
@@ -46,7 +47,7 @@ class TNArchipelUser(Base):
     def __repr__(self):
         return "<TNArchipelUser('%s')>" % (self.name)
 
-class TNArchipelPermission(Base):
+class TNArchipelPermission (Base):
     __tablename__ = 'permissions'
 
     name = Column(String, primary_key=True)

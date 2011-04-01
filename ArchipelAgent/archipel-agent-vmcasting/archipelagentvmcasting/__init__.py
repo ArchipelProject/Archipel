@@ -3,6 +3,7 @@
 # __init__.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -38,11 +39,11 @@ def make_archipel_plugin(configuration, entity, group):
     @return: array of dictionary containing the plugins informations and objects
     """
     if group == "archipel.plugin.virtualmachine":
-        return [{"info":  vmappliancemanager.TNVMApplianceManager.plugin_info(),
-                "plugin": vmappliancemanager.TNVMApplianceManager(configuration, entity, group)}]
+        return [{"info": vmappliancemanager.TNVMApplianceManager.plugin_info(),
+                 "plugin": vmappliancemanager.TNVMApplianceManager(configuration, entity, group)}]
     elif group == "archipel.plugin.hypervisor":
-        return [{"info":  hypervisorrepomanager.TNHypervisorRepoManager.plugin_info(),
-                "plugin": hypervisorrepomanager.TNHypervisorRepoManager(configuration, entity, group)}]
+        return [{"info": hypervisorrepomanager.TNHypervisorRepoManager.plugin_info(),
+                 "plugin": hypervisorrepomanager.TNHypervisorRepoManager(configuration, entity, group)}]
 
 def version():
     """

@@ -3,6 +3,7 @@
 # network.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -175,7 +176,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @param definition: the XML definition to use
         """
         self.entity.libvirt_connection.networkDefineXML(str(definition))
-        self.entity.log.info("virtual network XML is defined")
+        self.entity.log.info("Virtual network XML is defined.")
         self.entity.push_change("network", "defined")
 
     def undefine(self, identifier):
@@ -355,7 +356,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             network_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             self.destroy(network_uuid)
             reply = iq.buildReply("result")
-            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
+            self.entity.shout("network", "Network %s has been shutdowned by %s." % (network_uuid, iq.getFrom()))
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:

@@ -3,6 +3,7 @@
 # appliancedecompresser.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -29,7 +30,7 @@ from gzip import GzipFile as gz
 from threading import Thread
 
 
-class TNApplianceDecompresser(Thread):
+class TNApplianceDecompresser (Thread):
 
     def __init__(self, working_dir, disk_exts, xvm2_package_path, entity, finish_callback, error_callback, package_uuid, requester):
         """

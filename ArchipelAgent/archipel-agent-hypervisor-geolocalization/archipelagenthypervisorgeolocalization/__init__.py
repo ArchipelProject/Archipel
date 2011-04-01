@@ -37,8 +37,8 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
-    return [{"info":  geoloc.TNHypervisorGeolocalization.plugin_info(),
-             "plugin":geoloc.TNHypervisorGeolocalization(configuration, entity, group)}]
+    return [{"info": geoloc.TNHypervisorGeolocalization.plugin_info(),
+             "plugin": geoloc.TNHypervisorGeolocalization(configuration, entity, group)}]
 
 def version():
     """

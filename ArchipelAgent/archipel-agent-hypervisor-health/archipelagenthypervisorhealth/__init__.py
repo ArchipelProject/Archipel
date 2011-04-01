@@ -37,8 +37,8 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
-    return [{"info":  health.TNHypervisorHealth.plugin_info(),
-            "plugin": health.TNHypervisorHealth(configuration, entity, group)}]
+    return [{"info": health.TNHypervisorHealth.plugin_info(),
+             "plugin": health.TNHypervisorHealth(configuration, entity, group)}]
 
 def version():
     """

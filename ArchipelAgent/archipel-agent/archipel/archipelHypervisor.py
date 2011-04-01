@@ -70,7 +70,7 @@ ARCHIPEL_XMPP_GROUP_HYPERVISOR                  = "hypervisors"
 ARCHIPEL_XMPP_GROUP_CONTROLLER                  = "controllers"
 
 
-class TNThreadedVirtualMachine(Thread):
+class TNThreadedVirtualMachine (Thread):
     """
     This class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
@@ -78,7 +78,7 @@ class TNThreadedVirtualMachine(Thread):
 
     def __init__(self, jid, password, hypervisor, configuration, name):
         """
-        The contructor of the class
+        The contructor of the class.
         @type jid: string
         @param jid: the jid of the L{TNArchipelVirtualMachine}
         @type password: string
@@ -103,13 +103,13 @@ class TNThreadedVirtualMachine(Thread):
 
     def run(self):
         """
-        Overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
+        Overiddes sur super class method. Do the L{TNArchipelVirtualMachine} main loop.
         """
         self.xmppvm.connect()
         self.xmppvm.loop()
 
 
-class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
+class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
     This class represents an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
