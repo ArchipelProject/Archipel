@@ -3,6 +3,7 @@
 # __init__.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -36,8 +37,8 @@ def make_archipel_plugin(configuration, entity, group):
     @rtype: array
     @return: array of dictionary containing the plugins informations and objects
     """
-    return [{"info":  platformrequests.TNPlatformRequests.plugin_info(),
-            "plugin": platformrequests.TNPlatformRequests(configuration, entity, group)}]
+    return [{"info": platformrequests.TNPlatformRequests.plugin_info(),
+             "plugin": platformrequests.TNPlatformRequests(configuration, entity, group)}]
 
 
 def version():

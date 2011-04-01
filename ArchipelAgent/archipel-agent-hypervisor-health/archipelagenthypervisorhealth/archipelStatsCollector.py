@@ -29,7 +29,7 @@ from threading import Thread
 from archipelcore.utils import log
 
 
-class TNThreadedHealthCollector(Thread):
+class TNThreadedHealthCollector (Thread):
     """
     This class collects hypervisor stats regularly.
     """
@@ -96,24 +96,24 @@ class TNThreadedHealthCollector(Thread):
             uptime = self.get_uptime()
             uptime_stats    = {"up": "%dd %dh" % (uptime[0], uptime[1])} #TODO: it's obvious it would be better to not do this
         except Exception as ex:
-            raise Exception("Unable to get uptime:", ex)
+            raise Exception("Unable to get uptime.", ex)
         try:
             acpu = self.stats_CPU[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get CPU stats:", ex)
+            raise Exception("Unable to get CPU stats.", ex)
         try:
             amem = self.stats_memory[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get memory:", ex)
+            raise Exception("Unable to get memory.", ex)
         try:
             adisk = sorted(self.get_disk_stats(), cmp=lambda x, y: cmp(x["mount"], y["mount"]))
             totalDisk = self.get_disk_total()
         except Exception as ex:
-            raise Exception("Unable to get disks information:", ex)
+            raise Exception("Unable to get disks information.", ex)
         try:
             aload = self.stats_load[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get disks information:", ex)
+            raise Exception("Unable to get disks information.", ex)
         acpu.reverse()
         amem.reverse()
         aload.reverse()
@@ -127,7 +127,7 @@ class TNThreadedHealthCollector(Thread):
         @rtype: tupple
         @return: days, hours, minutes, seconds
         """
-        f = open("/proc/uptime")
+        f = open('/proc/uptime')
         contents = f.read().split()
         f.close()
         total_seconds = float(contents[0])
@@ -146,7 +146,7 @@ class TNThreadedHealthCollector(Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        file_meminfo = open("/proc/meminfo")
+        file_meminfo = open('/proc/meminfo')
         meminfo = file_meminfo.read()
         file_meminfo.close()
         meminfolines = meminfo.split("\n")
@@ -172,7 +172,7 @@ class TNThreadedHealthCollector(Thread):
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        f = open("/proc/loadavg")
+        f = open('/proc/loadavg')
         contents = f.read().split()
         f.close()
         load1min = float(contents[0])
@@ -212,7 +212,7 @@ class TNThreadedHealthCollector(Thread):
         """
         ignore
         """
-        statFile = file("/proc/stat")
+        statFile = file('/proc/stat')
         timeList = statFile.readline().split(" ")[2:6]
         statFile.close()
         for i in range(len(timeList)):
@@ -259,7 +259,7 @@ class TNThreadedHealthCollector(Thread):
                         self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        log.debug("old stored stats have been purged from memory")
+                        log.debug("Old stored stats have been purged from memory.")
 
                     self.database_thread_connection.commit()
 

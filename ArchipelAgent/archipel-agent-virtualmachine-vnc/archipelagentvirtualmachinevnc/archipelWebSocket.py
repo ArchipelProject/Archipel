@@ -3,6 +3,7 @@
 # archipelWebSocket.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -39,7 +40,7 @@ Connection: Upgrade\r
 
 
 
-class TNArchipelWebSocket(threading.Thread):
+class TNArchipelWebSocket (threading.Thread):
     """
     Python WebSocket library with support for "wss://" encryption.
 

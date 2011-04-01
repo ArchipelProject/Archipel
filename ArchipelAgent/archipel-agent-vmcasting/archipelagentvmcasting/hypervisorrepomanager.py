@@ -3,6 +3,7 @@
 # hypervisorrepomanager.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
 # This file is part of ArchipelProject
 # http://archipelproject.org
 #
@@ -47,7 +48,7 @@ ARCHIPEL_ERROR_CODE_VMCASTS_DELETEAPPLIANCE     = -6007
 ARCHIPEL_ERROR_CODE_VMCASTS_GETINSTALLED        = -6008
 
 
-class TNApplianceDownloader(Thread):
+class TNApplianceDownloader (Thread):
     """
     Implementation of a downloader. This run in a separate thread.
     """
@@ -135,7 +136,7 @@ class TNApplianceDownloader(Thread):
         self.progress = percentage
 
 
-class TNHypervisorRepoManager(TNArchipelPlugin):
+class TNHypervisorRepoManager (TNArchipelPlugin):
     """
     Implementation of the plugin.
     """

@@ -87,7 +87,7 @@ class TNArchipelLogger:
         self.__log(ARCHIPEL_LOG_ERROR, msg)
 
 
-class ColorFormatter(logging.Formatter):
+class ColorFormatter (logging.Formatter):
     """
     Archipel log formatter
     """

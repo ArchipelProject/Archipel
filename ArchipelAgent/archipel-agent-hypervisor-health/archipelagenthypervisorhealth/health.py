@@ -171,30 +171,30 @@ class TNHypervisorHealth (TNArchipelPlugin):
             nodes = []
             stats = self.collector.get_collected_stats(1)
             if not stats:
-                reply = build_error_iq(self, "Unable to get stats. See hypervisor log", iq)
+                reply = build_error_iq(self, "Unable to get stats. See hypervisor log.", iq)
             else:
                 try:
                     mem_free_node = xmpp.Node("memory", attrs=stats["memory"][0])
                     nodes.append(mem_free_node)
                 except Exception as ex:
-                    raise Exception("Unable to append memory stats node:", ex)
+                    raise Exception("Unable to append memory stats node.", ex)
                 try:
                     cpu_node = xmpp.Node("cpu", attrs=stats["cpu"][0])
                     nodes.append(cpu_node)
                 except Exception as ex:
-                    raise Exception("Unable to append cpu stats node:", ex)
+                    raise Exception("Unable to append cpu stats node.", ex)
                 try:
                     disk_free_node = xmpp.Node("disk", attrs=stats["totaldisk"])
                     for s in stats["disk"]:
                         disk_free_node.addChild("partition", attrs=s)
                     nodes.append(disk_free_node)
                 except Exception as ex:
-                    raise Exception("Unable to append disk stats node:", ex)
+                    raise Exception("Unable to append disk stats node.", ex)
                 try:
                     load_node = xmpp.Node("load", attrs=stats["load"][0])
                     nodes.append(load_node)
                 except Exception as ex:
-                    raise Exception("Unable to append load avergae stats node:", ex)
+                    raise Exception("Unable to append load avergae stats node.", ex)
                 try:
                     uptime_node = xmpp.Node("uptime", attrs=stats["uptime"])
                     nodes.append(uptime_node)
@@ -204,7 +204,7 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     uname_node = xmpp.Node("uname", attrs=stats["uname"])
                     nodes.append(uname_node)
                 except Exception as ex:
-                    raise Exception("Unable to append uname node:", ex)
+                    raise Exception("Unable to append uname node.", ex)
                 reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HEALTH_INFO)
