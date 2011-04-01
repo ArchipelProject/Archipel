@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # vmcastmaker.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -63,12 +67,10 @@ class VMCastMaker:
         self.feed += "    </channel>\n</rss>"
         return self.feed
 
-
     def writeFeed(self, path="./rss.xml"):
         f = open(path, "w")
         f.write(self.makeVMCast())
         f.close()
-
 
     def parseDirectory(self, path="."):
         self.init_feed()

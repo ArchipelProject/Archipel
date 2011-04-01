@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # scorecomputing.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -18,16 +22,16 @@
 
 class TNBasicPlatformScoreComputing (object):
     """
-    this class is a basic score computing. If you want to provide
+    This class is a basic score computing. If you want to provide
     your own score computing unit, you can subclass this and implement
-    your own computing system
+    your own computing system.
     """
 
     ### Initialization
 
     def __init__(self):
         """
-        put custom initialization here
+        Put custom initialization here.
         """
         pass
 
@@ -36,7 +40,7 @@ class TNBasicPlatformScoreComputing (object):
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -53,10 +57,10 @@ class TNBasicPlatformScoreComputing (object):
 
     def score(self, action=None):
         """
-        perform the score. The highest the score, the highest the
-        you got chance to perform the action. If you want to decline
+        Perform the score. The highest score is, the highest chance
+        you got to perform the action. If you want to decline
         the performing of the action, return 0.0 or None. the max score
-        you can return is 1.0 (so basically see it as a percentage)
+        you can return is 1.0 (so basically see it as a percentage).
         @type action: string
         @param action: the name of the action if you want to use it to compute the score (optionnal)
         @rtype: float
@@ -65,4 +69,3 @@ class TNBasicPlatformScoreComputing (object):
         ## awesome computing goes here
         import random
         return random.random() # yeah! that's a big computing!
-

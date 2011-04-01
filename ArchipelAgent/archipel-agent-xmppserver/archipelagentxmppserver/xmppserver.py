@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # xmppserver.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -39,7 +43,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -71,8 +75,8 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
         self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
@@ -80,7 +84,7 @@ class TNXMPPServerController (TNArchipelPlugin):
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -100,8 +104,8 @@ class TNXMPPServerController (TNArchipelPlugin):
     ### XMPP Processing for shared groups
     def process_groups_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_XMPPSERVER_GROUPS IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_XMPPSERVER_GROUPS IQ is received.
+        It understands IQ of type:
             - create
             - delete
             - list
@@ -131,7 +135,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_group_create(self, iq):
         """
-        create a new shared roster
+        Create a new shared roster.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -145,8 +149,8 @@ class TNXMPPServerController (TNArchipelPlugin):
             server      = self.entity.jid.getDomain()
             answer      = self.xmlrpc_server.srg_create({"host": server, "display": groupID, "name": groupName, "description": groupDesc, "group": groupID})
             if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group")
-            self.entity.log.info("creating a new shared group %s" % groupID)
+                raise Exception("Cannot create shared roster group.")
+            self.entity.log.info("Creating a new shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "created")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_CREATE)
@@ -154,7 +158,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_group_delete(self, iq):
         """
-        delete a shared group
+        Delete a shared group.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -166,8 +170,8 @@ class TNXMPPServerController (TNArchipelPlugin):
             server      = self.entity.jid.getDomain()
             answer      = self.xmlrpc_server.srg_delete({"host": server, "group": groupID})
             if not answer['res'] == 0:
-                raise Exception("Cannot create shared roster group")
-            self.entity.log.info("removing a shared group %s" % groupID)
+                raise Exception("Cannot create shared roster group.")
+            self.entity.log.info("Removing a shared group %s" % groupID)
             self.entity.push_change("xmppserver:groups", "deleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETE)
@@ -175,7 +179,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_group_list(self, iq):
         """
-        list shared groups
+        List shared groups.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -210,7 +214,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_group_add_users(self, iq):
         """
-        add a user into a shared group
+        Add a user into a shared group.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -225,8 +229,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 userJID = xmpp.JID(user.getAttr("jid"))
                 answer  = self.xmlrpc_server.srg_user_add({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot create shared roster group")
-                self.entity.log.info("adding user %s into shared group %s" % (userJID, groupID))
+                    raise Exception("Cannot add user to shared roster group.")
+                self.entity.log.info("Adding user %s into shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersadded")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_ADDUSERS)
@@ -249,8 +253,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 userJID = xmpp.JID(user.getAttr("jid"))
                 answer  = self.xmlrpc_server.srg_user_del({"user": userJID.getNode(), "host": userJID.getDomain(), "group": groupID, "grouphost": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot create shared roster group")
-                self.entity.log.info("removing user %s from shared group %s" % (userJID, groupID))
+                    raise Exception("Cannot remove user from shared roster group.")
+                self.entity.log.info("Removing user %s from shared group %s" % (userJID, groupID))
             self.entity.push_change("xmppserver:groups", "usersdeleted")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_GROUP_DELETEUSERS)
@@ -261,8 +265,8 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def process_users_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_EJABBERDCTL_USERS IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_EJABBERDCTL_USERS IQ is received.
+        It understands IQ of type:
             - register
             - unregister
             - list
@@ -286,7 +290,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_users_register(self, iq):
         """
-        register some new users
+        Register some new users.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -301,8 +305,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 password    = user.getAttr("password")
                 answer      = self.xmlrpc_server.register({"user": username, "password": password, "host": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot create shared roster group")
-                self.entity.log.info("registred a new user user %s@%s" % (username, server))
+                    raise Exception("Cannot register new user.")
+                self.entity.log.info("Registred a new user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "registered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_REGISTER)
@@ -310,7 +314,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_users_unregister(self, iq):
         """
-        unregister somes users
+        Unregister somes users.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -324,8 +328,8 @@ class TNXMPPServerController (TNArchipelPlugin):
                 username    = user.getAttr("username")
                 answer      = self.xmlrpc_server.unregister({"user": username,"host": server})
                 if not answer['res'] == 0:
-                    raise Exception("Cannot create shared roster group")
-                self.entity.log.info("unregistred user %s@%s" % (username, server))
+                    raise Exception("Cannot unregister user.")
+                self.entity.log.info("Unregistred user %s@%s" % (username, server))
             self.entity.push_change("xmppserver:users", "unregistered")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_XMPPSERVER_USERS_UNREGISTER)
@@ -333,7 +337,7 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     def iq_users_list(self, iq):
         """
-        list all registered users
+        List all registered users.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -342,15 +346,15 @@ class TNXMPPServerController (TNArchipelPlugin):
         try:
             reply       = iq.buildReply("result")
             server      = self.entity.jid.getDomain()
-            anwser      = self.xmlrpc_server.registered_users({"host": server})
+            answer      = self.xmlrpc_server.registered_users({"host": server})
             nodes       = []
-            users       = anwser["users"]
+            users       = answer["users"]
             for user in users:
                 entity_type = "human"
                 try:
-                    anwser = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
-                    if anwser["content"] in ("hypervisor", "virtualmachine"):
-                        entity_type = anwser["content"]
+                    answer = self.xmlrpc_server.get_vcard({"host": server, "user": user["username"], "name" : "ROLE"})
+                    if answer["content"] in ("hypervisor", "virtualmachine"):
+                        entity_type = answer["content"]
                 except:
                     pass
                 nodes.append(xmpp.Node("user", attrs={"jid": "%s@%s" % (user["username"], server), "type": entity_type}))

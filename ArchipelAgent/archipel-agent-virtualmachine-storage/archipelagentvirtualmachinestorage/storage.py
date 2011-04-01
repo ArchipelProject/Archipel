@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # storage.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -35,12 +39,12 @@ ARCHIPEL_ERROR_CODE_DRIVES_RENAME       = -3006
 
 class TNStorageManagement (TNArchipelPlugin):
     """
-    plugin that manages the storage volumes for virtual machines
+    Plugin that manages the storage volumes for virtual machines.
     """
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -69,15 +73,15 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VM_DISK)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -97,7 +101,7 @@ class TNStorageManagement (TNArchipelPlugin):
     def process_iq(self, conn, iq):
         """
         Invoked when new ARCHIPEL_NS_VM_DISK IQ is received.
-        it understands IQ of type:
+        It understands IQ of type:
         - create
         - delete
         - get
@@ -113,7 +117,7 @@ class TNStorageManagement (TNArchipelPlugin):
         action = self.entity.check_acp(conn, iq)
         self.entity.check_perm(conn, iq, action, -1, prefix="drives_")
         if self.entity.is_migrating and (not action in ("get", "getiso")):
-            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any drives operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
+            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform any drives operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
         elif action == "create":
             reply = self.iq_create(iq)
         elif action == "delete":
@@ -132,7 +136,7 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def iq_create(self, iq):
         """
-        Create a disk in given format
+        Create a disk in given format.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -147,14 +151,14 @@ class TNStorageManagement (TNArchipelPlugin):
             prealloc    = query_node.getTag("archipel").getAttr("preallocation")
             disk_path   = self.entity.folder + "/" + disk_name + "." + format
             if disk_unit == "M" and (int(disk_size) >= 1000000000):
-                raise Exception("too big",  "You may be able to do it manually, but I won't try")
+                raise Exception("too big",  "You may be able to do it manually, but I won't try.")
             elif disk_unit == "G" and (int(disk_size) >= 10000):
-                raise Exception("too big", "You may be able to do this manually, but I won't try")
+                raise Exception("too big", "You may be able to do this manually, but I won't try.")
             if os.path.exists(disk_path):
                 raise Exception("The disk with name %s already exists." % disk_name)
 
             if prealloc and prealloc == "metadata" and format == "qcow2" and self.entity.configuration.getboolean("STORAGE", "use_metadata_preallocation"):
-                self.entity.log.info("creating a QCOW2 file with preallocated metadata")
+                self.entity.log.info("Creating a QCOW2 file with preallocated metadata.")
                 ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, "-o", "preallocation=metadata", disk_path, "%s%s" % (disk_size, disk_unit)])
             else:
                 ret = subprocess.call([self.qemu_img_bin, "create", "-f", format, disk_path, "%s%s" % (disk_size, disk_unit)])
@@ -170,7 +174,7 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def iq_convert(self, iq):
         """
-        Convert a disk from a format to another
+        Convert a disk from a format to another.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -201,7 +205,7 @@ class TNStorageManagement (TNArchipelPlugin):
                         break
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
             reply = iq.buildReply("result")
-            self.entity.log.info("disk as been converted from %s to %s" % (path, disk_path))
+            self.entity.log.info("Disk as been converted from %s to %s" % (path, disk_path))
             self.entity.shout("disk", "I've just converted hard drive %s into format %s." % (path, format))
             self.entity.push_change("disk", "converted")
         except Exception as ex:
@@ -211,7 +215,7 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def iq_rename(self, iq):
         """
-        Rename a disk
+        Rename a disk.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -227,7 +231,7 @@ class TNStorageManagement (TNArchipelPlugin):
                 raise Exception("The disk with name %s already exists." % newname)
             os.rename(path, newpath)
             reply = iq.buildReply("result")
-            self.entity.log.info("renamed hard drive %s into  %s" % (path, newname))
+            self.entity.log.info("Renamed hard drive %s into  %s" % (path, newname))
             self.entity.shout("disk", "I've just renamed hard drive %s into  %s." % (path, newname))
             self.entity.push_change("disk", "renamed")
         except Exception as ex:
@@ -236,7 +240,7 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def iq_delete(self, iq):
         """
-        delete a virtual hard drive
+        Delete a virtual hard drive.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -277,7 +281,7 @@ class TNStorageManagement (TNArchipelPlugin):
 
     def iq_get(self, iq):
         """
-        Get the virtual hatd drives of the virtual machine
+        Get the virtual hard drives of the virtual machine.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -307,14 +311,14 @@ class TNStorageManagement (TNArchipelPlugin):
                     nodes.append(node)
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            self.entity.log.info("info about disks sent")
+            self.entity.log.info("Info about disks sent.")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GET)
         return reply
 
     def iq_getiso(self, iq):
         """
-        Get the virtual cdrom ISO of the virtual machine
+        Get the virtual cdrom ISO of the virtual machine.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -334,7 +338,7 @@ class TNStorageManagement (TNArchipelPlugin):
                     nodes.append(node)
             reply = iq.buildReply("result")
             reply.setQueryPayload(nodes)
-            self.entity.log.info("info about iso sent")
+            self.entity.log.info("Info about iso sent.")
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_DRIVES_GETISO)
         return reply

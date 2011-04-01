@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelPlugin.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -20,7 +24,7 @@ class TNArchipelPlugin:
 
     def __init__(self, configuration=None, entity=None, entry_point_group=None):
         """
-        initialize the plugin
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -34,15 +38,15 @@ class TNArchipelPlugin:
 
     def register_for_stanza(self):
         """
-        this method will be called to when entiyt will register
-        handlers for stanzas. Place plugin handlers registration here
+        This method will be called to when entiyt will register
+        handlers for stanzas. Place plugin handlers registration here.
         """
         pass
 
     @classmethod
     def plugin_info(self, group):
         """
-        return plugin information. it must return a dict like:
+        Return plugin information. it must return a dict like:
         plugin_friendly_name           = "User friendly name of plugin"
         plugin_identifier              = "plugin_identifier"
         plugin_configuration_section   = "required [SECTION] in configuration"

@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # appnotificator.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -24,7 +28,7 @@ class AppNotificator (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        intialize the plugin
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -59,7 +63,7 @@ class AppNotificator (TNArchipelPlugin):
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -73,11 +77,11 @@ class AppNotificator (TNArchipelPlugin):
                     "configuration-tokens"      : plugin_configuration_tokens }
 
 
-    ### Module implementation
+    ### Plugin implementation
 
     def send(self, title, message, subtitle=None):
         """
-        send the notification
+        Send the notification.
         @type title: string
         @param title: the title of the notification
         @type message: string
@@ -88,11 +92,11 @@ class AppNotificator (TNArchipelPlugin):
             for cred in self.credentials:
                 notifications.send_async(cred, message, title=title, subtitle=subtitle, icon_url="http://antoinemercadal.fr/logo_archipel.png", long_message_preview=long_message_preview)
         except Exception as ex:
-            self.entity.log.warning("cannot send iPhone notification: %s" % ex)
+            self.entity.log.warning("Cannot send iPhone notification: %s" % ex)
 
     def vm_create(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_CREATE
+        Handle hook HOOK_VM_CREATE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -100,11 +104,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been started" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been started." % origin.name, subtitle="Virtual machine event")
 
     def vm_shutoff(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_SHUTOFF
+        Handle hook HOOK_VM_SHUTOFF.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -112,11 +116,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been shut off" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been shut off." % origin.name, subtitle="Virtual machine event")
 
     def vm_stop(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_STOP
+        Handle hook HOOK_VM_STOP.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -124,11 +128,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been stopped" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been stopped." % origin.name, subtitle="Virtual machine event")
 
     def vm_destroy(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_DESTROY
+        Handle hook HOOK_VM_DESTROY.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -136,11 +140,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been destroyed" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been destroyed." % origin.name, subtitle="Virtual machine event")
 
     def vm_suspend(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_SUSPEND
+        Handle hook HOOK_VM_SUSPEND.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -148,11 +152,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been suspended" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been suspended." % origin.name, subtitle="Virtual machine event")
 
     def vm_resume(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_RESUME
+        Handle hook HOOK_VM_RESUME.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -160,11 +164,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been resumed" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been resumed." % origin.name, subtitle="Virtual machine event")
 
     def vm_undefine(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_UNDEFINE
+        Handle hook HOOK_VM_UNDEFINE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -172,11 +176,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been undefined" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "Virtual machine %s has been undefined." % origin.name, subtitle="Virtual machine event")
 
     def vm_define(self, origin, user_info, parameters):
         """
-        handle hook HOOK_VM_DEFINE
+        Handle hook HOOK_VM_DEFINE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -184,11 +188,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been defined" % origin.name, subtitle="Virtual machine event")
+        self.send("Archipel", "virtual machine %s has been defined." % origin.name, subtitle="Virtual machine event")
 
     def hypervisor_alloc(self, origin, user_info, parameters):
         """
-        handle hook HOOK_HYPERVISOR_ALLOC
+        Handle hook HOOK_HYPERVISOR_ALLOC.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -196,11 +200,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been allocated" % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "virtual machine %s has been allocated." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_free(self, origin, user_info, parameters):
         """
-        handle hook HOOK_HYPERVISOR_FREE
+        Handle hook HOOK_HYPERVISOR_FREE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -208,11 +212,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been removed" % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "virtual machine %s has been removed." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_clone(self, origin, user_info, parameters):
         """
-        handle hook HOOK_HYPERVISOR_CLONE
+        Handle hook HOOK_HYPERVISOR_CLONE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -220,11 +224,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has been cloned" % parameters.name, subtitle="Hypervisor event")
+        self.send("Archipel", "virtual machine %s has been cloned." % parameters.name, subtitle="Hypervisor event")
 
     def hypervisor_migrate_leave(self, origin, user_info, parameters):
         """
-        handle hook HOOK_HYPERVISOR_MIGRATEDVM_LEAVE
+        Handle hook HOOK_HYPERVISOR_MIGRATEDVM_LEAVE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -232,11 +236,11 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has migrate to another hypervisor" % parameters, subtitle="Hypervisor event")
+        self.send("Archipel", "Virtual machine %s has migrate to another hypervisor." % parameters, subtitle="Hypervisor event")
 
     def hypervisor_migrate_arrive(self, origin, user_info, parameters):
         """
-        handle hook HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE
+        Handle hook HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -244,5 +248,4 @@ class AppNotificator (TNArchipelPlugin):
         @type parameters: object
         @param parameters: runtim argument
         """
-        self.send("Archipel", "virtual machine %s has juste arrived from another hypervisor" % parameters, subtitle="Hypervisor event")
-
+        self.send("Archipel", "Virtual machine %s has juste arrived from another hypervisor." % parameters, subtitle="Hypervisor event")
