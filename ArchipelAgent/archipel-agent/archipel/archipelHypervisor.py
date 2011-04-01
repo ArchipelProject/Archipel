@@ -135,8 +135,8 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
         # permissions
         permission_db_file              = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
-        permission_admin_name           = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = TNArchipelPermissionCenter(permission_db_file, permission_admin_name)
+        permission_admin_names          = self.configuration.get("GLOBAL", "archipel_root_admins").split()
+        self.permission_center          = TNArchipelPermissionCenter(permission_db_file, permission_admin_names)
         self.init_permissions()
 
         names_file = open(self.configuration.get("HYPERVISOR", "name_generation_file"), 'r')

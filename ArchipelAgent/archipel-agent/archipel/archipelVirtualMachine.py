@@ -128,9 +128,9 @@ class TNArchipelVirtualMachine(TNArchipelEntity, archipelLibvirtEntity.TNArchipe
         self.trigger_database = sqlite3.connect(self.triggers_db_file, check_same_thread=False)
 
         # permissions
-        self.permission_db_file         = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
-        self.permission_admin_name      = self.configuration.get("GLOBAL", "archipel_root_admin")
-        self.permission_center          = TNArchipelPermissionCenter(self.permission_db_file, self.permission_admin_name)
+        self.permission_db_file = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
+        permission_admin_names  = self.configuration.get("GLOBAL", "archipel_root_admins").split()
+        self.permission_center  = TNArchipelPermissionCenter(self.permission_db_file, permission_admin_names)
         self.init_permissions()
 
         # hooks

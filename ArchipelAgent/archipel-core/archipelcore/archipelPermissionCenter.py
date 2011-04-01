@@ -60,15 +60,15 @@ class TNArchipelPermission (Base):
 
 class TNArchipelPermissionCenter:
 
-    def __init__(self, database_file, root_admin):
+    def __init__(self, database_file, root_admins):
         """
         initialize the permission center
         @type database_file: string
         @param database_file: the path to the db file
-        @type root_admin: string
-        @param root_admin: the root user
+        @type root_admins: array
+        @param root_admins: the root users JID
         """
-        self.root_admin = root_admin
+        self.root_admins = root_admins
         connection_string = 'sqlite:///%s' % database_file
         self.engine = create_engine(connection_string)
         self.metadata = Base.metadata
@@ -312,7 +312,7 @@ class TNArchipelPermissionCenter:
         @return: True in case of success
         """
         permObject = self.get_permission(permission_name)
-        if user_name == self.root_admin:
+        if user_name in self.root_admins:
             return True
         if self.user_has_permission(user_name, "all"):
             return True
