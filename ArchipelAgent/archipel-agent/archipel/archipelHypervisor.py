@@ -435,17 +435,23 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @rtype: L{TNArchipelVirtualMachine} or L{TNThreadedVirtualMachine}
         @return: L{TNArchipelVirtualMachine} if start==True or L{TNThreadedVirtualMachine} if start==False
         """
-        vmuuid      = str(moduuid.uuid1())
+        vmuuid = str(moduuid.uuid1())
         vm_password = ''.join([random.choice(string.letters + string.digits) for i in range(self.configuration.getint("VIRTUALMACHINE", "xmpp_password_size"))])
-        vm_jid      = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
+        vm_jid = xmpp.JID(node=vmuuid.lower(), domain=self.xmppserveraddr.lower(), resource=self.jid.getNode().lower())
+        disallow_spaces_in_name = (self.configuration.has_option("VIRTUALMACHINE", "allow_blank_space_in_vm_name") and not self.configuration.getboolean("VIRTUALMACHINE", "allow_blank_space_in_vm_name"))
 
         if not requested_name:
             name = self.generate_name()
         else:
+            if disallow_spaces_in_name:
+                requested_name = requested_name.replace(" ", "-")
             if not self.get_vm_by_name(requested_name):
                 name = requested_name
             else:
                 raise Exception("This hypervisor already has virtual machine named %s. Please, choose another one." % requested_name)
+
+        if disallow_spaces_in_name:
+            name = name.replace(" ", "-")
 
         self.log.info("Starting xmpp threaded virtual machine.")
         vm_thread = self.create_threaded_vm(vm_jid, vm_password, name)
