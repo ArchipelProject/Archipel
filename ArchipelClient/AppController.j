@@ -238,7 +238,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
     [splitViewTagsContents setDelegate:self];
 
-    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
+    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible" inDomain:CPGlobalDomain];
 
     [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
