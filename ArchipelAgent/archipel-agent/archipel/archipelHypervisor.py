@@ -38,7 +38,6 @@ from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEn
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
-from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 

@@ -20,7 +20,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, create_engine
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, create_engine
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship, backref
@@ -142,7 +142,7 @@ class TNArchipelPermissionCenter:
         try:
             if currentsession: session = currentsession
             else: session = self.create_session()
-            self.get_permission(name, currentsession=session)
+            p = self.get_permission(name, currentsession=session)
             session.delete(p)
             session.commit()
             if not currentsession: session.close()
