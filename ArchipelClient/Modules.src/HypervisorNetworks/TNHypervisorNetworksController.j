@@ -91,7 +91,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [scrollViewNetworks setAutohidesScrollers:YES];
     [scrollViewNetworks setDocumentView:_tableViewNetworks];
 
-
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [_tableViewNetworks setAllowsColumnResizing:YES];
@@ -359,8 +358,11 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [stanza addTextNode:[networkObject UUID]];
     [stanza up];
 
-    [stanza addChildWithName:@"forward" andAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
-    [stanza up];
+    if ([networkObject bridgeForwardMode])
+    {
+        [stanza addChildWithName:@"forward" andAttributes:{"mode": [networkObject bridgeForwardMode], "dev": [networkObject bridgeForwardDevice]}];
+        [stanza up];
+    }
 
     [stanza addChildWithName:@"bridge" andAttributes:{"name": [networkObject bridgeName], "stp": ([networkObject isSTPEnabled]) ? "on" :"off", "delay": [networkObject bridgeDelay]}];
     [stanza up];

@@ -110,8 +110,10 @@
     [viewTableHostsContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     [buttonForwardMode removeAllItems];
-    [buttonForwardMode addItemsWithTitles:["route", "nat"]];
+    [buttonForwardMode addItemsWithTitles:[@"isolated", @"route", @"nat"]];
     [buttonForwardMode setToolTip:@"Choose the forward mode for this virtual network"];
+    [buttonForwardMode setTarget:self];
+    [buttonForwardMode setAction:@selector(forwardModeChanged:)];
 
     [buttonForwardDevice removeAllItems];
     [buttonForwardDevice setToolTip:@"Select the hypervisor network card you want to use for this virtual network"];
@@ -229,15 +231,24 @@
 - (void)update
 {
     [buttonForwardDevice removeAllItems];
-    [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
     [fieldNetworkName setStringValue:[_network networkName]];
     [fieldBridgeName setStringValue:[_network bridgeName]];
     [fieldBridgeDelay setStringValue:([_network bridgeDelay] == @"") ? [_network bridgeDelay] : @"0"];
     [fieldBridgeIP setStringValue:[_network bridgeIP]];
     [fieldBridgeNetmask setStringValue:[_network bridgeNetmask]];
 
-    [buttonForwardMode selectItemWithTitle:[_network bridgeForwardMode]];
-    [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
+    if (![_network bridgeForwardMode])
+    {
+        [buttonForwardDevice setEnabled:NO];
+        [buttonForwardMode selectItemWithTitle:@"isolated"];
+    }
+    else
+    {
+        [buttonForwardDevice setEnabled:YES];
+        [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
+        [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
+    }
+
 
     [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
@@ -261,8 +272,17 @@
     [_network setNetworkName:[fieldNetworkName stringValue]];
     [_network setBridgeName:[fieldBridgeName stringValue]];
     [_network setBridgeDelay:[fieldBridgeDelay stringValue]];
-    [_network setBridgeForwardMode:[buttonForwardMode title]];
-    [_network setBridgeForwardDevice:[buttonForwardDevice title]];
+    if ([buttonForwardMode title] != @"isolated")
+    {
+        [_network setBridgeForwardMode:[buttonForwardMode title]];
+        [_network setBridgeForwardDevice:[buttonForwardDevice title]];
+    }
+    else
+    {
+        [_network setBridgeForwardMode:nil];
+        [_network setBridgeForwardDevice:nil];
+    }
+
     [_network setBridgeIP:[fieldBridgeIP stringValue]];
     [_network setBridgeNetmask:[fieldBridgeNetmask stringValue]];
     [_network setDHCPEntriesRanges:[_datasourceDHCPRanges content]];
@@ -345,6 +365,23 @@
 - (IBAction)hideWindow:(id)sender
 {
     [mainWindow close];
+}
+
+/*! called when changing the forward mode
+    @param aSender the sender of the action
+*/
+- (IBAction)forwardModeChanged:(id)sender
+{
+    if ([buttonForwardMode title] == @"isolated")
+    {
+        [buttonForwardDevice removeAllItems];
+        [buttonForwardDevice setEnabled:NO];
+    }
+    else
+    {
+        [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
+        [buttonForwardDevice setEnabled:YES];
+    }
 }
 
 @end
