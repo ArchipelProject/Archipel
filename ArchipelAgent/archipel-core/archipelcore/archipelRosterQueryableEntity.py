@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelRosterQueryableEntity.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -26,13 +30,12 @@ ARCHIPEL_NS_ROSTER                      = "archipel:roster"
 
 class TNRosterQueryableEntity (object):
     """
-    this class makes TNArchipelEntity avatar controllable
-    it allows to get and set avatars of the entity
+    TODO ADD description here
     """
 
     def __init__(self, configuration, permission_center, xmppclient, log):
         """
-        initialize the TNAvatarControllableEntity
+        Initialize the TNRosterQueryableEntity.
         @type configuration: configuration object
         @param configuration: the configuration
         @type permission_center: TNPermissionCenter
@@ -52,14 +55,14 @@ class TNRosterQueryableEntity (object):
 
     def check_acp(conn, iq):
         """
-        function that verify if the ACP is valid
+        Function that verify if the ACP is valid.
         @type conn: xmpp.Dispatcher
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
+        raise Exception("Subclass of TNRosterQueryableEntity must implement check_acp.")
 
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         """
@@ -76,11 +79,11 @@ class TNRosterQueryableEntity (object):
         @param prefix: the prefix of the action
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
+        raise Exception("Subclass of TNRosterQueryableEntity must implement check_perm")
 
     def init_vocabulary(self):
         """
-        initialize the vocabulary
+        Initialize the vocabulary.
         """
         item = {"commands" : ["roster", "users"],
                 "parameters": [],
@@ -92,7 +95,7 @@ class TNRosterQueryableEntity (object):
 
     def init_permissions(self):
         """
-        intialize the Avatar permissions
+        Initialize the permissions.
         """
         self.permission_center.create_permission("roster", "Authorizes users to get the content of my roster", False)
 
@@ -105,8 +108,8 @@ class TNRosterQueryableEntity (object):
 
     def process_roster_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_ROSTER IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_ROSTER IQ is received.
+        It understands IQ of type:
             - getroster
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -124,7 +127,7 @@ class TNRosterQueryableEntity (object):
 
     def iq_get_roster(self, iq):
         """
-        return the content of the roster
+        Return the content of the roster.
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ containing the request
         """
@@ -137,7 +140,7 @@ class TNRosterQueryableEntity (object):
 
     def message_roster(self, msg):
         """
-        handle roster asking message
+        Handle roster asking message.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message

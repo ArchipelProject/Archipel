@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # appliancecompresser.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -23,11 +28,11 @@ import tempfile
 from threading import Thread
 
 
-class TNApplianceCompresser(Thread):
+class TNApplianceCompresser (Thread):
 
     def __init__(self, name, paths, xml_definition, xml_snapshots, working_dir, vm_dir, hypervisor_repo_path, callback, entity):
         """
-        initialize a TNApplianceCompresser
+        Initialize a TNApplianceCompresser.
         @type name: string
         @param name: the name of the package
         @type paths: array
@@ -102,7 +107,7 @@ class TNApplianceCompresser(Thread):
 
     def compress_disk(self, path):
         """
-        perform compression of disk
+        Perform compression of disk.
         @type path: string
         @param path: the relative disk path
         @rtype: string

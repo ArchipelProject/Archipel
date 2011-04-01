@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # network.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -40,7 +45,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -88,12 +93,12 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.entity.add_message_registrar_items(registrar_items)
 
 
-    ### Module implementation
+    ### Plugin implementation
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_virtualmachine, ns=ARCHIPEL_NS_HYPERVISOR_NETWORK)
@@ -103,7 +108,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -121,7 +126,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def get(self, active=True, inactive=True):
         """
-        get the list of the networks
+        Get the list of networks.
         @type active bool
         @param active: if True, will return active network
         @type inactive bool
@@ -138,7 +143,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def create(self, identifier):
         """
-        create (start) the network with given identifier
+        Create (start) the network with given identifier.
         @type identifier string
         @param identifier: the identifer of the network to create. It can be its name or UUID
         """
@@ -147,7 +152,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         except:
             libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
         libvirt_network.create()
-        self.entity.log.info("virtual network %s created" % identifier)
+        self.entity.log.info("Virtual network %s created." % identifier)
         self.entity.push_change("network", "created")
 
     def destroy(self, identifier):
@@ -171,12 +176,12 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @param definition: the XML definition to use
         """
         self.entity.libvirt_connection.networkDefineXML(str(definition))
-        self.entity.log.info("virtual network XML is defined")
+        self.entity.log.info("Virtual network XML is defined.")
         self.entity.push_change("network", "defined")
 
     def undefine(self, identifier):
         """
-        undefine the network with given identifier
+        Undefine the network with given identifier.
         @type identifier string
         @param identifier: the identifer of the network to destroy. It can be its name or UUID
         """
@@ -185,18 +190,16 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         except:
             libvirt_network = self.entity.libvirt_connection.networkLookupByName(identifier)
         libvirt_network.undefine()
-        self.entity.log.info("virtual network %s is undefined" % identifier)
+        self.entity.log.info("Virtual network %s is undefined." % identifier)
         self.entity.push_change("network", "undefined")
-
-
 
     def getnics(self):
         """
-        return the list of all network interfaces
+        Return the list of all network interfaces.
         @rtype: list
         @return: list containing network cards names
         """
-        f = open("/proc/net/dev", 'r')
+        f = open('/proc/net/dev', 'r')
         content = f.read()
         f.close()
         splitted = content.split('\n')[2:-1]
@@ -207,8 +210,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def process_iq_for_hypervisor(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
+        It understands IQ of type:
             - define
             - undefine
             - create
@@ -247,8 +250,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def process_iq_for_virtualmachine(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_NETWORK IQ is received.
+        It understands IQ of type:
             - bridges
             - getnames
         @type conn: xmpp.Dispatcher
@@ -270,7 +273,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def iq_define(self, iq):
         """
         Define a virtual network in the libvirt according to the XML data
-        network passed in argument
+        network passed in argument.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -288,7 +291,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_undefine(self, iq):
         """
-        undefine a virtual network in the libvirt according to name passed in argument
+        Undefine a virtual network in the libvirt according to name passed in argument.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -306,7 +309,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_create(self, iq):
         """
-        Create a network using libvirt connection
+        Create a network using libvirt connection.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -325,7 +328,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def message_create(self, msg):
         """
-        handle the creation request message
+        Handle the creation request message.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -334,7 +337,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         try:
             tokens = msg.getBody().split()
             if not len(tokens) == 3:
-                return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
             identifier = tokens[-1:][0]
             self.create(identifier)
             return "Starting network %s" % identifier
@@ -343,7 +346,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_destroy(self, iq):
         """
-        Destroy a network using libvirt connection
+        Destroy a network using libvirt connection.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -353,7 +356,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             network_uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             self.destroy(network_uuid)
             reply = iq.buildReply("result")
-            self.entity.shout("network", "Network %s has been shutdwned by %s." % (network_uuid, iq.getFrom()))
+            self.entity.shout("network", "Network %s has been shutdowned by %s." % (network_uuid, iq.getFrom()))
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
@@ -362,7 +365,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def message_destroy(self, msg):
         """
-        handle the destroying request message
+        Handle the destroying request message.
         @type msg: xmpp.Protocol.Message
         @param msg: the message containing the request
         @rtype: string
@@ -371,7 +374,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         try:
             tokens = msg.getBody().split()
             if not len(tokens) == 3:
-                return "I'm sorry, you use a wrong format. You can type 'help' to get help"
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
             identifier = tokens[-1:][0]
             self.destroy(identifier)
             return "Destroying network %s" % identifier
@@ -380,7 +383,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_get(self, iq):
         """
-        list all virtual networks
+        List all virtual networks.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -412,7 +415,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def message_get(self, msg):
         """
-        create the message response to list network
+        Create the message response to list network.
         @type msg: xmpp.Protocol.Message
         @param msg: the message containing the request
         @rtype: string
@@ -432,7 +435,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_get_names(self, iq):
         """
-        list all virtual networks name
+        List all virtual network names.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -454,7 +457,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_bridges(self, iq):
         """
-        list all virtual networks name
+        List all bridge names.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -476,7 +479,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def iq_get_nics(self, iq):
         """
-        list all existing networks cards on the hypervisor
+        List all existing networks cards on the hypervisor.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -494,7 +497,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     def message_getnics(self, msg):
         """
-        get all the nics of the hypervisor
+        Get all the nics of the hypervisor.
         @type msg: xmpp.Protocol.Message
         @param msg: the message containing the request
         @rtype: string

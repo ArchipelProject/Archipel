@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # snapshoting.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -38,7 +43,7 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -58,15 +63,15 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_SNAPSHOTING)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -84,8 +89,8 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_SNAPSHOTING IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_SNAPSHOTING IQ is received.
+        It understands IQ of type:
             - take
             - delete
             - get
@@ -102,7 +107,7 @@ class TNSnapshoting (TNArchipelPlugin):
         if not self.entity.domain:
             raise xmpp.protocol.NodeProcessed
         if self.entity.is_migrating and (not action in ("current", "get")):
-            reply = build_error_iq(self, "virtual machine is migrating. Can't perform any snapshoting operation", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
+            reply = build_error_iq(self, "Virtual machine is migrating. Can't perform any snapshoting operation.", iq, ARCHIPEL_ERROR_CODE_VM_MIGRATING)
         elif action == "take":
             reply = self.iq_take(iq)
         elif action == "delete":
@@ -119,7 +124,7 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def iq_take(self, iq):
         """
-        creating a snapshot
+        Creating a snapshot.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -137,12 +142,12 @@ class TNSnapshoting (TNArchipelPlugin):
                 if not disk_nodes:
                     raise
             except:
-                return build_error_iq(self, Exception("Virtual machine hasn't any drive to snapshot"), iq, code=ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE)
-            self.entity.log.info("creating snapshot with name %s desc :%s" % (name, xmlDesc))
+                return build_error_iq(self, Exception("Virtual machine hasn't any drive to snapshot."), iq, code=ARCHIPEL_ERROR_CODE_SNAPSHOT_NO_DRIVE)
+            self.entity.log.info("Creating snapshot with name %s desc :%s" % (name, xmlDesc))
             self.entity.change_presence(presence_show="dnd", presence_status="Snapshoting...")
             self.entity.domain.snapshotCreateXML(str(xmlDesc), 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-            self.entity.log.info("snapshot with name %s created" % name)
+            self.entity.log.info("Snapshot with name %s created" % name)
             self.entity.push_change("snapshoting", "taken")
             self.entity.shout("Snapshot", "I've created a snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
@@ -165,7 +170,7 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def iq_get(self, iq):
         """
-        list all a snapshot
+        List all snapshots.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -190,7 +195,7 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def iq_getcurrent(self, iq):
         """
-        return current snapshot
+        Return current snapshot.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -214,7 +219,7 @@ class TNSnapshoting (TNArchipelPlugin):
 
     def iq_delete(self, iq):
         """
-        return current snapshot
+        Delete snapshot.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -226,25 +231,25 @@ class TNSnapshoting (TNArchipelPlugin):
             name = iq.getTag('query').getTag("archipel").getAttr('name')
             old_status  = self.entity.xmppstatus
             old_show    = self.entity.xmppstatusshow
-            self.entity.log.info("deleting snapshot with name %s" % name)
+            self.entity.log.info("Deleting snapshot with name %s" % name)
             self.entity.change_presence(presence_show="dnd", presence_status="Removing snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             snapshotObject.delete(libvirt.VIR_DOMAIN_SNAPSHOT_DELETE_CHILDREN)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-            self.entity.log.info("snapshot with name %s deleted" % name)
+            self.entity.log.info("Snapshot with name %s deleted." % name)
             self.entity.push_change("snapshoting", "deleted")
             self.entity.shout("Snapshot", "I've deleted the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
-            self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot.")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot")
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while deleting snapshot.")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_DELETE)
         return reply
 
     def iq_revert(self, iq):
         """
-        return current snapshot
+        Restore from a snapshot.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -256,19 +261,18 @@ class TNSnapshoting (TNArchipelPlugin):
             name = iq.getTag('query').getTag("archipel").getAttr('name')
             old_show = self.entity.xmppstatusshow
             old_status = self.entity.xmppstatus
-            self.entity.log.info("restoring snapshot with name %s" % name)
+            self.entity.log.info("Restoring snapshot with name %s" % name)
             self.entity.change_presence(presence_show="dnd", presence_status="Restoring snapshot...")
             snapshotObject = self.entity.domain.snapshotLookupByName(name, 0)
             self.entity.domain.revertToSnapshot(snapshotObject, 0)
             self.entity.change_presence(presence_show=old_show, presence_status=old_status)
-            self.entity.log.info("reverted to snapshot with name %s " % name)
+            self.entity.log.info("Reverted to snapshot with name %s " % name)
             self.entity.push_change("snapshoting", "restored")
             self.entity.shout("Snapshot", "I've been reverted to the snapshot named %s as asked by %s" % (name, iq.getFrom()))
         except libvirt.libvirtError as ex:
-            self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting.")
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
         except Exception as ex:
-            self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting")
+            self.entity.change_presence(presence_show=old_show, presence_status="Error while reverting.")
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_SNAPSHOT_REVERT)
         return reply
-

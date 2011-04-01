@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # archipelHypervisor.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -33,7 +38,6 @@ from archipelcore.archipelAvatarControllableEntity import TNAvatarControllableEn
 from archipelcore.archipelEntity import TNArchipelEntity
 from archipelcore.archipelHookableEntity import TNHookableEntity
 from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
-from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 
@@ -65,15 +69,15 @@ ARCHIPEL_XMPP_GROUP_HYPERVISOR                  = "hypervisors"
 ARCHIPEL_XMPP_GROUP_CONTROLLER                  = "controllers"
 
 
-class TNThreadedVirtualMachine(Thread):
+class TNThreadedVirtualMachine (Thread):
     """
-    this class is used to run L{ArchipelVirtualMachine} main loop
+    This class is used to run L{ArchipelVirtualMachine} main loop
     in a thread.
     """
 
     def __init__(self, jid, password, hypervisor, configuration, name):
         """
-        the contructor of the class
+        The contructor of the class.
         @type jid: string
         @param jid: the jid of the L{TNArchipelVirtualMachine}
         @type password: string
@@ -90,7 +94,7 @@ class TNThreadedVirtualMachine(Thread):
 
     def get_instance(self):
         """
-        this method return the current L{TNArchipelVirtualMachine} instance
+        This method returns the current L{TNArchipelVirtualMachine} instance.
         @rtype: ArchipelVirtualMachine
         @return: the L{ArchipelVirtualMachine} instance
         """
@@ -98,22 +102,22 @@ class TNThreadedVirtualMachine(Thread):
 
     def run(self):
         """
-        overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
+        Overiddes sur super class method. Do the L{TNArchipelVirtualMachine} main loop.
         """
         self.xmppvm.connect()
         self.xmppvm.loop()
 
 
-class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
+class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLibvirtEntity, TNHookableEntity, TNAvatarControllableEntity, TNTaggableEntity):
     """
-    this class represent an Hypervisor XMPP Capable. This is an XMPP client
+    This class represents an Hypervisor XMPP Capable. This is an XMPP client
     that allows to alloc threaded instance of XMPP Virtual Machine, destroy already
     active XMPP VM, and remember which have been created.
     """
 
     def __init__(self, jid, password, configuration, name, database_file="./database.sqlite3"):
         """
-        this is the constructor of the class.
+        This is the constructor of the class.
         @type jid: string
         @param jid: the jid of the hypervisor
         @type password: string
@@ -144,7 +148,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         names_file.close()
         self.number_of_names = len(self.generated_names) - 1
 
-        self.log.info("server address defined as %s" % self.xmppserveraddr)
+        self.log.info("Server address defined as %s" % self.xmppserveraddr)
 
         # hooks
         self.create_hook("HOOK_HYPERVISOR_ALLOC")
@@ -167,9 +171,9 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
             try:
                 self.libvirt_event_callback_id = self.libvirt_connection.domainEventRegisterAny(None, libvirt.VIR_DOMAIN_EVENT_ID_LIFECYCLE, self.hypervisor_on_domain_event, None)
             except libvirt.libvirtError:
-                self.log.error("we are sorry. but your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
+                self.log.error("We are sorry. But your hypervisor doesn't support libvirt virConnectDomainEventRegisterAny. And this really bad. I'm sooo sorry")
         else:
-            self.log.warning("your hypervisor doesn't support libvirt eventing. using fake event loop.")
+            self.log.warning("Your hypervisor doesn't support libvirt eventing. Using fake event loop.")
         self.capabilities = self.get_capabilities()
 
         # persistance
@@ -181,7 +185,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def update_presence(self, origin=None, user_info=None, arguments=None):
         """
-        set the presence of the hypervisor
+        Set the presence of the hypervisor.
         @type origin: L{TNArchipelEntity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -195,14 +199,14 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def register_handler(self):
         """
-        this method overrides the defaut register_handler of the super class.
+        This method overrides the defaut register_handler of the super class.
         """
         TNArchipelEntity.register_handler(self)
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
 
     def init_vocabulary(self):
         """
-        initialize the base vocabulary
+        Initialize the base vocabulary.
         """
         TNArchipelEntity.init_vocabulary(self)
         registrar_items = [
@@ -227,7 +231,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
                                 "permissions": ["rostervm"],
                                 "description": "Get the content of my roster" },
                             {   "commands" : ["alloc"],
-                                "parameters": [{"name": "name", "description": "The name of the vm. if not given, it will be generated"}],
+                                "parameters": [{"name": "name", "description": "The name of the vm. If not given, it will be generated"}],
                                 "method": self.message_alloc,
                                 "permissions": ["alloc"],
                                 "description": "Allocate a new virtual machine" },
@@ -247,7 +251,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def init_permissions(self):
         """
-        initialize the permssions
+        Initialize the permissions.
         """
         TNArchipelEntity.init_permissions(self)
         self.permission_center.create_permission("alloc", "Authorizes users to allocate new virtual machines", False)
@@ -260,13 +264,13 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def manage_persistance(self):
         """
-        if the database_file parameter contain a valid populated sqlite3 database,
-        this method will recreate all the old L{TNArchipelVirtualMachine}. if not, it will create a
+        If the database_file parameter contains a valid populated sqlite3 database,
+        this method will recreate all the old L{TNArchipelVirtualMachine}. If not, it will create a
         blank database file.
         """
         self.log.info("opening database file %s" % self.database_file)
         self.database = sqlite3.connect(self.database_file, check_same_thread=False)
-        self.log.info("populating database if not exists")
+        self.log.info("Populating database if not exists.")
         self.database.execute("create table if not exists virtualmachines (jid text, password text, creation_date date, comment text, name text)")
         c = self.database.cursor()
         c.execute("select * from virtualmachines")
@@ -280,7 +284,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def create_threaded_vm(self, jid, password, name):
         """
-        this method creates a threaded L{TNArchipelVirtualMachine}, start it and return the Thread instance
+        This method creates a threaded L{TNArchipelVirtualMachine}, starts it and returns the Thread instance.
         @type jid: string
         @param jid: the JID of the L{TNArchipelVirtualMachine}
         @type password: string
@@ -292,7 +296,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def generate_name(self):
         """
-        Get a random name from the names file
+        Get a random name from the names file.
         @rtype: string
         @return: a generated name
         """
@@ -301,13 +305,13 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         while search:
             currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
             if not self.get_vm_by_name(currentName):
-                self.log.info("trying to use generate name %s but it's already taken. Generating another one" % currentName)
+                self.log.info("Trying to use generate name %s but it's already taken. Generating another one." % currentName)
                 search = False
         return currentName
 
     def get_vm_by_name(self, name):
         """
-        return the vm object by name
+        Return the vm object by name.
         @type name : string
         @param name: the name of the vm
         @rtype: L{TNArchipelVirtualMachine}
@@ -320,7 +324,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def get_vm_by_uuid(self, uuid):
         """
-        return the vm object by uuid
+        Return the vm object by uuid.
         @type uuid : string
         @param uuid: the uuid of the vm
         @rtype: L{TNArchipelVirtualMachine}
@@ -332,7 +336,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def get_vm_by_identifer(self, identifier):
         """
-        return the vm object by identifier. Identifier can be the UUID of the name
+        Return the vm object by identifier. Identifier can be the UUID of the name.
         @type identifier : string
         @param identifier: the identifier of the vm
         @rtype: L{TNArchipelVirtualMachine}
@@ -348,18 +352,18 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def hypervisor_on_domain_event(self, conn, dom, event, detail, opaque):
         """
-        trigger when a domain trigger vbent. We care only about RESUMED and SHUTDOWNED from MIGRATED
+        Trigger when a domain trigger vbent. We care only about RESUMED and SHUTDOWNED from MIGRATED.
         """
         if event == libvirt.VIR_DOMAIN_EVENT_STOPPED and detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
             try:
                 strdesc = dom.XMLDesc(0)
                 desc    = xmpp.simplexml.NodeBuilder(data=strdesc).getDom()
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
-                self.log.info("MIGRATION: virtual machine %s stopped because of live migration. Freeing softly" % vmjid)
+                self.log.info("MIGRATION: Virtual machine %s stopped because of live migration. Freeing softly." % vmjid)
                 self.free_for_migration(xmpp.JID(vmjid))
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_LEAVE", vmjid)
             except Exception as ex:
-                self.log.error("MIGRATION: can't free softly this virtual machine: %s" % str(ex))
+                self.log.error("MIGRATION: Can't free softly this virtual machine: %s" % str(ex))
 
         elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
             try:
@@ -368,19 +372,19 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
                 vmjid   = desc.getTag(name="description").getCDATA().split("::::")[0]
                 vmpass  = desc.getTag(name="description").getCDATA().split("::::")[1]
                 vmname  = desc.getTag(name="name").getCDATA()
-                self.log.info("MIGRATION: virtual machine %s resumed from live migration. Allocating softly" % vmjid)
+                self.log.info("MIGRATION: Virtual machine %s resumed from live migration. Allocating softly." % vmjid)
                 self.alloc_for_migration(xmpp.JID(vmjid), vmname, vmpass)
                 self.perform_hooks("HOOK_HYPERVISOR_MIGRATEDVM_ARRIVE", vmjid)
             except Exception as ex:
-                self.log.warning("MIGRATION: can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
+                self.log.warning("MIGRATION: Can't alloc softly this virtual machine. Maybe it is not an archipel VM: %s" % str(ex))
 
 
     ### XMPP Processing
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_CONTROL IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_CONTROL IQ is received.
+        It understands IQ of type:
             - alloc
             - free
         @type conn: xmpp.Dispatcher
@@ -421,7 +425,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def alloc(self, requester=None, requested_name=None, start=True):
         """
-        Alloc a new XMPP entity
+        Alloc a new XMPP entity.
         @type requester: xmpp.JID
         @param requester: the JID of the migrated VM to alloc
         @type requested_name: string
@@ -441,24 +445,24 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
             if not self.get_vm_by_name(requested_name):
                 name = requested_name
             else:
-                raise Exception("this hypervisor already have virtual machine named %s. please choose another one." % requested_name)
+                raise Exception("This hypervisor already has virtual machine named %s. Please, choose another one." % requested_name)
 
-        self.log.info("starting xmpp threaded virtual machine")
+        self.log.info("Starting xmpp threaded virtual machine.")
         vm_thread = self.create_threaded_vm(vm_jid, vm_password, name)
         vm = vm_thread.get_instance()
 
         if requester:
-            self.log.info("adding the requesting controller %s to the VM's roster" % (str(requester)))
+            self.log.info("Adding the requesting controller %s to the VM's roster." % (str(requester)))
             vm.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=vm.add_jid_hook, user_info=xmpp.JID(requester), oneshot=True)
             vm.permission_center.grant_permission_to_user("all", requester.getStripped())
 
-        self.log.info("registering the new VM in hypervisor's memory")
+        self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(vm_jid.getStripped()), vm_password, datetime.datetime.now(), '', name))
         self.database.commit()
         self.virtualmachines[vmuuid] = vm
 
         self.update_presence()
-        self.log.info("XMPP Virtual Machine instance sucessfully initialized")
+        self.log.info("XMPP Virtual Machine instance sucessfully initialized.")
         self.perform_hooks("HOOK_HYPERVISOR_ALLOC", vm)
         self.push_change("hypervisor", "alloc")
         if start:
@@ -469,7 +473,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def alloc_for_migration(self, jid, name, password):
         """
-        perform light allocation (no registration, no subscription)
+        Perform light allocation (no registration, no subscription).
         @type jid: xmpp.JID
         @param jid: the JID of the migrated VM to alloc
         @type name: string
@@ -480,22 +484,22 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         uuid = jid.getNode()
 
         jid.setResource(self.jid.getNode())
-        self.log.info("starting xmpp threaded virtual machine with incoming jid : %s" % jid)
+        self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm_thread = self.create_threaded_vm(jid, password, name)
         vm = vm_thread.get_instance()
         vm_thread.start()
-        self.log.info("registering the new VM in hypervisor's memory")
+        self.log.info("Registering the new VM in hypervisor's database.")
         self.database.execute("insert into virtualmachines values(?,?,?,?,?)", (str(jid.getStripped()), password, datetime.datetime.now(), '', name))
         self.database.commit()
         self.virtualmachines[uuid] = vm
 
         self.update_presence()
-        self.log.info("Migrated XMPP VM is ready")
+        self.log.info("Migrated XMPP VM is ready.")
         return vm
 
     def free(self, jid):
         """
-        remove the XMPP container of VM with given jid
+        Remove the XMPP container of VM with given jid.
         @type jid: xmpp.JID
         @param jid: the JID of the VM to free
         """
@@ -503,31 +507,31 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         vm      = self.virtualmachines[uuid]
 
         if vm.is_migrating:
-            raise Exception("virtual machine is migrating. Can't free")
+            raise Exception("Virtual machine is migrating. Can't free.")
         if vm.domain and (vm.domain.info()[0] == 1 or vm.domain.info()[0] == 2 or vm.domain.info()[0] == 3):
             vm.domain.destroy()
         if vm.domain:
             vm.domain.undefine()
 
-        self.log.info("launch %s's terminate method" % jid)
+        self.log.info("Launch %s's terminate method." % jid)
         vm.terminate()
 
-        self.log.info("unregistering the VM from hypervisor's database")
+        self.log.info("Unregistering the VM from hypervisor's database.")
         self.database.execute("delete from virtualmachines where jid=?", (jid.getStripped(),))
         self.database.commit()
 
         del self.virtualmachines[uuid]
 
-        self.log.info("starting the vm removing procedure")
+        self.log.info("Starting the vm removing procedure.")
         vm.inband_unregistration()
         self.perform_hooks("HOOK_HYPERVISOR_FREE", vm)
-        self.log.info("XMPP Virtual Machine %s sucessfully destroyed" % jid)
+        self.log.info("XMPP Virtual Machine %s sucessfully destroyed." % jid)
         self.push_change("hypervisor", "free")
         self.update_presence()
 
     def free_for_migration(self, jid):
         """
-        perform light free (no removing of account, no unsubscription)
+        Perform light free (no removing of account, no unsubscription).
         @type jid: xmpp.JID
         @param jid: the JID of the migrated VM to free
         """
@@ -536,7 +540,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
         vm.undefine_and_disconnect()
 
-        self.log.info("unregistering the VM from hypervisor's database")
+        self.log.info("Unregistering the VM from hypervisor's database.")
         self.database.execute("delete from virtualmachines where jid='%s'" % jid.getStripped())
         self.database.commit()
         del self.virtualmachines[uuid]
@@ -544,7 +548,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def clone(self, uuid, requester):
         """
-        clone a existing virtual machine
+        Clone a existing virtual machine.
         @type uuid: string
         @param uuid: the uuid of the VM to clone
         @type requester: xmpp.JID
@@ -554,11 +558,11 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         xmldesc = xmppvm.definition
 
         if not xmldesc:
-            raise Exception('The mother vm has to be defined to be cloned')
+            raise Exception('The mother vm has to be defined to be cloned.')
 
         dominfo = xmppvm.domain.info()
         if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
-            raise Exception('The mother vm has to be stopped to be cloned')
+            raise Exception('The mother vm has to be stopped to be cloned.')
 
         name = "%s (clone of %s)" % (self.generate_name(), xmppvm.name)
         newvm_thread = self.alloc(requester, requested_name=name, start=False)
@@ -572,7 +576,9 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
         self.push_change("hypervisor", "clone")
 
     def get_capabilities(self):
-        """return hypervisor's capabilities"""
+        """
+        Return hypervisor's capabilities.
+        """
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp
 
@@ -581,9 +587,9 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_alloc(self, iq):
         """
-        this method creates a threaded L{TNArchipelVirtualMachine} with UUID given
-        as paylood in IQ and register the hypervisor and the iq sender in
-        the VM's roster
+        This method creates a threaded L{TNArchipelVirtualMachine} with UUID given
+        as payload in IQ and register the hypervisor and the iq sender in
+        the VM's roster.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -607,7 +613,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_alloc(self, msg):
         """
-        handle the allocation request message
+        Handle the allocation request message.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -627,7 +633,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_alloc_for_migration(self, iq):
         """
-        Perform light allocation for handler migrating vm
+        Perform light allocation for handler migrating vm.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -649,8 +655,8 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_free(self, iq):
         """
-        this method destroy a threaded L{TNArchipelVirtualMachine} with UUID given
-        as paylood in IQ and remove it from the hypervisor roster
+        This method destroy a threaded L{TNArchipelVirtualMachine} with UUID given
+        as payload in IQ and remove it from the hypervisor roster.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -671,7 +677,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_free(self, msg):
         """
-        handle the free request message
+        Handle the free request message.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -684,13 +690,13 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
             vm = self.get_vm_by_identifer(identifier)
             if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
             self.free(vm.jid)
-            return "Archipel VM with JID %s has been freed" % (vm.jid)
+            return "Archipel VM with JID %s has been freed." % (vm.jid)
         except Exception as ex:
             return build_error_message(self, ex)
 
     def iq_free_for_migration(self, iq):
         """
-        perform light free for virtual machine migration
+        Perform light free for virtual machine migration.
         """
         try:
             reply = iq.buildReply("result")
@@ -702,7 +708,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_clone(self, iq):
         """
-        alloc a virtual as a clone of another
+        Alloc a virtual as a clone of another.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -720,7 +726,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_clone(self, msg):
         """
-        handle the clone request message
+        Handle the clone request message.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -733,13 +739,13 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
             vm = self.get_vm_by_identifer(identifier)
             if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
             self.clone(vm.uuid, msg.getFrom())
-            return "Cloning of virtual machine %s has started" % (vm.jid)
+            return "Cloning of virtual machine %s has started." % (vm.jid)
         except Exception as ex:
             return build_error_message(self, ex)
 
     def iq_roster(self, iq):
         """
-        send the hypervisor roster content
+        Send the hypervisor roster content.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -759,7 +765,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_roster(self, msq):
         """
-        process the roster message request
+        Process the roster message request.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -775,7 +781,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_ip(self, iq):
         """
-        send the hypervisor IP address
+        Send the hypervisor IP address.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -790,7 +796,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_ip(self, msg):
         """
-        process the IP message request
+        Process the IP message request.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -803,7 +809,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_libvirt_uri(self, iq):
         """
-        send the hypervisor IP address
+        Send the hypervisor IP address.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -819,7 +825,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_libvirt_uri(self, msg):
         """
-        process the libvirt URI message request
+        Process the libvirt URI message request.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message
@@ -832,7 +838,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def iq_capabilities(self, iq):
         """
-        send the hypervisor capabilities
+        Send the hypervisor capabilities.
         @type iq: xmpp.Protocol.Iq
         @param iq: the sender request IQ
         @rtype: xmpp.Protocol.Iq
@@ -847,7 +853,7 @@ class TNArchipelHypervisor(TNArchipelEntity, archipelLibvirtEntity.TNArchipelLib
 
     def message_capabilities(self, msg):
         """
-        process the capabilities message request
+        Process the capabilities message request.
         @type msg: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: xmpp.Protocol.Message

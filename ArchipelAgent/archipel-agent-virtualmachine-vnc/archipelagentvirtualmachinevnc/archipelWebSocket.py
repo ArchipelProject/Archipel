@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # archipelWebSocket.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -35,8 +40,8 @@ Connection: Upgrade\r
 
 
 
-class TNArchipelWebSocket(threading.Thread):
-    """"
+class TNArchipelWebSocket (threading.Thread):
+    """
     Python WebSocket library with support for "wss://" encryption.
 
     You can make a cert/key with openssl using:
@@ -44,12 +49,12 @@ class TNArchipelWebSocket(threading.Thread):
     as taken from http://docs.python.org/dev/library/ssl.html#certificates
 
     Original code from Kanaka (Joel Martin).
-    this code has been rewrited by antoine mercadal in order to make a usable class with Archipel
+    This code has been rewrited by antoine mercadal in order to make a usable class with Archipel.
     """
 
     def __init__(self, target_host, target_port, listen_host, listen_port, certfile=None, onlySSL=False, base64encode=True):
         """
-        intialize the WebSocket listener
+        Intialize the WebSocket listener.
 
         @type target_host string
         @param target_host the target VNC host to proxy out
@@ -78,10 +83,9 @@ class TNArchipelWebSocket(threading.Thread):
         self.lsock              = None
         self.on                 = True
 
-
     def __encode(self, buf):
         """
-        encode given buffer to base 64
+        Encode given buffer to base64.
 
         @type buf string
         @param buf the buffer to encode
@@ -94,10 +98,9 @@ class TNArchipelWebSocket(threading.Thread):
 
         return "\x00%s\xff" % buf
 
-
     def __decode(self, buf):
         """
-        decode given buffer from base 64
+        Decode given buffer from base64.
 
         @type buf string
         @param buf the buffer to dencode
@@ -113,10 +116,9 @@ class TNArchipelWebSocket(threading.Thread):
             else:
                 return [buf[1:-1].replace("\xc4\x80", "\x00").decode('utf-8').encode('latin-1')]
 
-
     def __parse_handshake(self, handshake):
         """
-        Parse the connection handshake
+        Parse the connection handshake.
 
         @type handshake string
         @param handshake the handshake content
@@ -124,7 +126,7 @@ class TNArchipelWebSocket(threading.Thread):
         ret = {}
         req_lines = handshake.split("\r\n")
         if not req_lines[0].startswith("GET "):
-            raise Exception("Invalid handshake: no GET request line")
+            raise Exception("Invalid handshake: no GET request line.")
         ret['path'] = req_lines[0].split(" ")[1]
         for line in req_lines[1:]:
             if line == "": break
@@ -135,7 +137,6 @@ class TNArchipelWebSocket(threading.Thread):
             ret['key3'] = req_lines[-1]
 
         return ret
-
 
     def __gen_md5(self, keys):
         """generate a md5 from keys"""
@@ -149,9 +150,10 @@ class TNArchipelWebSocket(threading.Thread):
 
         return md5(struct.pack('>II8s', num1, num2, key3)).digest()
 
-
     def __do_handshake(self, sock):
-        """peform the handshage"""
+        """
+        Perform the handshake
+        """
         self.base64encode = True
 
         # Peek, but don't read the data
@@ -170,21 +172,20 @@ class TNArchipelWebSocket(threading.Thread):
                     server_side=True,
                     certfile=self.cert)
             scheme = "wss"
-            log.info("WEBSOCKETPROXY: using SSL/TLS")
+            log.info("WEBSOCKETPROXY: using SSL/TLS.")
         elif self.ssl_only:
-            log.info("WEBSOCKETPROXY: Non-SSL connection disallowed")
+            log.info("WEBSOCKETPROXY: Non-SSL connection disallowed.")
             sock.close()
             return False
         else:
             retsock = sock
             scheme = "ws"
-            log.info("WEBSOCKETPROXY: using plain (non SSL) socket")
+            log.info("WEBSOCKETPROXY: using plain (non SSL) socket.")
 
         handshake = retsock.recv(4096)
         if len(handshake) == 0:
-            raise Exception("WEBSOCKETPROXY: client closed during handshake")
+            raise Exception("WEBSOCKETPROXY: client closed during handshake.")
         h = self.__parse_handshake(handshake)
-
 
         # Parse client settings from the GET path
         cvars = h['path'].partition('?')[2].partition('#')[0].split('&')
@@ -193,7 +194,6 @@ class TNArchipelWebSocket(threading.Thread):
             if name not in ['b64encode']: continue
             value = val and val or True
             self.base64encode = value
-
 
         if h.get('key3'):
             trailer = self.__gen_md5(h)
@@ -206,9 +206,7 @@ class TNArchipelWebSocket(threading.Thread):
                 h['Host'], h['path'], pre, trailer)
 
         retsock.send(response)
-
         return retsock
-
 
     def __do_proxy(self, client, target, addr):
         """ Proxy WebSocket to normal socket. """
@@ -223,7 +221,7 @@ class TNArchipelWebSocket(threading.Thread):
                 if tqueue: wlist.append(target)
                 if cqueue: wlist.append(client)
                 ins, outs, excepts = select(rlist, wlist, [], 1)
-                if excepts: raise Exception("Socket exception")
+                if excepts: raise Exception("Socket exception.")
 
                 if target in outs:
                     dat = tqueue.pop(0)
@@ -241,14 +239,14 @@ class TNArchipelWebSocket(threading.Thread):
 
                 if target in ins:
                     buf = target.recv(self.buffer_size)
-                    if len(buf) == 0: raise Exception("Target closed")
+                    if len(buf) == 0: raise Exception("Target closed.")
                     cqueue.append(self.__encode(buf))
 
                 if client in ins:
                     buf = client.recv(self.buffer_size)
-                    if len(buf) == 0: raise Exception("Client closed")
+                    if len(buf) == 0: raise Exception("Client closed.")
                     if buf == '\xff\x00':
-                        raise Exception("WEBSOCKETPROXY: Client sent orderly close frame")
+                        raise Exception("WEBSOCKETPROXY: client sent orderly close frame.")
                     elif buf[-1] == '\xff':
                         if cpartial:
                             tqueue.extend(self.__decode(cpartial + buf))
@@ -258,11 +256,9 @@ class TNArchipelWebSocket(threading.Thread):
                     else:
                         cpartial = cpartial + buf
         except:
-            log.info("WEBSOCKETPROXY: client %s disconnected" % str(addr))
+            log.info("WEBSOCKETPROXY: client %s disconnected." % str(addr))
             if client: client.close()
             if target: target.close()
-
-
 
     def __proxy_handler(self, client, addr):
         tsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -270,11 +266,10 @@ class TNArchipelWebSocket(threading.Thread):
 
         thread.start_new_thread(self.__do_proxy, (client, tsock, addr))
 
-
     def run(self):
         """
         Start the thread and start to listen for connections.
-        All connections will be then threaded again
+        All connections will be then threaded again.
         """
         try:
             self.lsock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -299,16 +294,14 @@ class TNArchipelWebSocket(threading.Thread):
                 except Exception as ex:
                     log.error("WEBSOCKETPROXY: connection interrupted: %s" % str(ex))
         except Exception as ex:
-            log.error("WEBSOCKETPROXY: Can't start listener: %s" % str(ex))
+            log.error("WEBSOCKETPROXY: can't start listener: %s" % str(ex))
             for c in self.clientSockets:
                 if c[0]: c[0].close()
                 if c[1] and c[1] != c[0]: c[1].close()
             self.lsock.close()
             self.on = False
 
-        log.info("WEBSOCKETPROXY: Thread exited")
-
-
+        log.info("WEBSOCKETPROXY: Thread exited.")
 
     def stop(self):
         """
@@ -320,5 +313,4 @@ class TNArchipelWebSocket(threading.Thread):
             if c[1] and c[1] != c[0]: c[1].close()
         socket.create_connection(((self.listen_host, self.listen_port)))
         self.lsock.close()
-        log.info("WEBSOCKETPROXY: thread stopped")
-
+        log.info("WEBSOCKETPROXY: thread stopped.")

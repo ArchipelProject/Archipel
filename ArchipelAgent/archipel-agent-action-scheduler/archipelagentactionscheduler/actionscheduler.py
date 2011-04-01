@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # actionscheduler.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -30,12 +35,12 @@ ARCHIPEL_SCHED_HYPERVISOR_UID   = "schedule-hypervisor-uid"
 
 class TNActionScheduler (TNArchipelPlugin):
     """
-    this plugin allows to create shceduled actions
+    This plugin allows to create shceduled actions.
     """
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -66,15 +71,15 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_ENTITY_SCHEDULER)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -92,7 +97,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def delete_job(self, uid):
         """
-        remove a job from the database
+        Remove a job from the database.
         @type uid string
         @param uid the uid of the job to remove
         """
@@ -101,7 +106,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def save_jobs(self, uid, action, year, month, day, hour, minute, second, comment, params=None):
         """
-        save a job in the database
+        Save a job in the database.
         @type uid string
         @param uid the uid of the job
         @type action string
@@ -133,7 +138,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def restore_jobs(self):
         """
-        restore the jobs from the database
+        Restore the jobs from the database.
         """
         entityClass = self.entity.__class__.__name__
         if entityClass == "TNArchipelVirtualMachine":
@@ -148,7 +153,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def vm_terminate(self, origin, user_info, arguments):
         """
-        close the database connection
+        Close the database connection.
         @type origin: L{TNArchipelEnity}
         @param origin: the origin of the hook
         @type user_info: object
@@ -162,7 +167,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def get_jod_with_uid(self, uid):
         """
-        get a job with given uid
+        Get a job with given uid.
         @type uid string
         @param uid the uid of the job
         """
@@ -173,7 +178,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def do_job_for_vm(self, action, uid, str_date, comment, param):
         """
-        perform the job
+        Perform the job.
         @type action string
         @param action the action to execute
         @type uid string
@@ -209,7 +214,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def do_job_for_hypervisor(self, action, uid, str_date, comment, param):
         """
-        perform the job
+        Perform the job.
         @type action string
         @param action the action to execute
         @type uid string
@@ -235,8 +240,8 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_VM_SCHEDULER IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_VM_SCHEDULER IQ is received.
+        It understands IQ of type:
             - jobs
             - schedule
             - unschedule
@@ -302,7 +307,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def iq_jobs(self, iq):
         """
-        gets jobs
+        Get jobs.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -321,7 +326,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def iq_unschedule(self, iq):
         """
-        gets jobs
+        Unschedule a job.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq
@@ -342,7 +347,7 @@ class TNActionScheduler (TNArchipelPlugin):
 
     def iq_actions(self, iq):
         """
-        get available actions
+        Get available actions.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq

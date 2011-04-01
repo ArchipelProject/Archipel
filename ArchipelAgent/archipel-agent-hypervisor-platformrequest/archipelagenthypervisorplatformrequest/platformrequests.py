@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # platformrequests.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -32,7 +36,7 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the plugin.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -56,15 +60,15 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_PLATFORM)
 
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -82,7 +86,7 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def load_computing_unit(self):
         """
-        loads the external computing unit
+        Loads the external computing unit.
         """
         for factory_method in iter_entry_points(group="archipel.plugin.platform.computingunit", name="factory"):
             method              = factory_method.load()
@@ -92,14 +96,14 @@ class TNPlatformRequests (TNArchipelPlugin):
             break
         if not self.computing_unit:
             self.computing_unit = TNBasicPlatformScoreComputing()
-            self.entity.log.info("PLATFORMREQ: using default computing unit")
+            self.entity.log.info("PLATFORMREQ: using default computing unit.")
 
 
     ### Performs platform actions
 
     def perform_score_computing(self, request):
         """
-        compute the score for the given request
+        Compute the score for the given request.
         @type request: string
         @param request: the requested action name
         @rtype: float
@@ -112,7 +116,7 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def manage_platform_vm_request(self, origin, user_info, arguments):
         """
-        register to pubsub event node /archipel/platform/requests/in
+        Register to pubsub event node /archipel/platform/requests/in
         and /archipel/platform/requests/out
         @type origin: L{TNArchipelEnity}
         @param origin: the origin of the hook
@@ -125,18 +129,18 @@ class TNPlatformRequests (TNArchipelPlugin):
         self.entity.log.info("PLATFORMREQ: getting the pubsub node %s" % nodeVMRequestsInName)
         self.pubsub_request_in_node = TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, nodeVMRequestsInName)
         self.pubsub_request_in_node.recover()
-        self.entity.log.info("PLATFORMREQ: node %s recovered" % nodeVMRequestsInName)
+        self.entity.log.info("PLATFORMREQ: node %s recovered." % nodeVMRequestsInName)
         self.pubsub_request_in_node.subscribe(self.entity.jid.getStripped(), self._handle_request_event)
         self.entity.log.info("PLATFORMREQ: entity %s is now subscribed to events from node %s" % (self.entity.jid, nodeVMRequestsInName))
         nodeVMRequestsOutName = "/archipel/platform/requests/out"
         self.entity.log.info("PLATFORMREQ: getting the pubsub node %s" % nodeVMRequestsOutName)
         self.pubsub_request_out_node = TNPubSubNode(self.entity.xmppclient, self.entity.pubsubserver, nodeVMRequestsOutName)
         self.pubsub_request_out_node.recover()
-        self.entity.log.info("PLATFORMREQ: node %s recovered" % nodeVMRequestsOutName)
+        self.entity.log.info("PLATFORMREQ: node %s recovered." % nodeVMRequestsOutName)
 
     def _handle_request_event(self, event):
         """
-        triggered when a platform wide virtual machine request is received
+        Triggered when a platform wide virtual machine request is received.
         @type event: xmpp.Node
         @param event: the push event
         """
@@ -149,7 +153,7 @@ class TNPlatformRequests (TNArchipelPlugin):
                     request_uuid    = item.getTag("archipel").getAttr("uuid")
                     request_action  = item.getTag("archipel").getAttr("action")
                     if not self.entity.permission_center.check_permission(item_publisher.getStripped(), "platform_%s" % request_action):
-                        self.entity.log.warning("user %s have no permission to perform platform action %s" % (item_publisher, request_action))
+                        self.entity.log.warning("User %s have no permission to perform platform action %s" % (item_publisher, request_action))
                         return
                     score = self.perform_score_computing(item)
                     if score:
@@ -163,8 +167,8 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_PLATFORM IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_PLATFORM IQ is received.
+        It understands IQ of type:
             - allocvm
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -182,7 +186,7 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     def iq_allocvm(self, iq):
         """
-        alloc a new VM on the hypervisor
+        Alloc a new VM on the hypervisor.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         @rtype: xmpp.Protocol.Iq

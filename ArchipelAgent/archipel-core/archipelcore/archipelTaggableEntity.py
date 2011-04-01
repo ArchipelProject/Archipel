@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
 #
 # archipelTaggableEntity.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -27,12 +31,12 @@ ARCHIPEL_NS_TAGS                                = "archipel:tags"
 
 class TNTaggableEntity (object):
     """
-    this class allow ArchipelEntity to be taggable
+    This class allow ArchipelEntity to be taggable.
     """
 
     def __init__(self, pubsubserver, jid, xmppclient, permission_center, log):
         """
-        initialize the TNTaggableEntity
+        Initialize the TNTaggableEntity.
         @type pubsubserver: string
         @param pubsubserver: the JID of the pubsub server
         @type jid: string
@@ -55,14 +59,14 @@ class TNTaggableEntity (object):
 
     def check_acp(conn, iq):
         """
-        function that verify if the ACP is valid
+        Function that verify if the ACP is valid.
         @type conn: xmpp.Dispatcher
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp")
+        raise Exception("Subclass of TNTaggableEntity must implement check_acp.")
 
     def check_perm(self, conn, stanza, action_name, error_code=-1, prefix=""):
         """
@@ -79,31 +83,31 @@ class TNTaggableEntity (object):
         @param prefix: the prefix of the action
         @raise: Exception if not implemented
         """
-        raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm")
+        raise Exception("Subclass of TNTaggableEntity must implement check_perm.")
 
 
     ### Pubsub
 
     def recover_pubsubs(self, origin, user_info, arguments):
         """
-        get the global tag pubsub node
-        arguments here are used to be HOOK compliant see register_hook of L{TNHookableEntity}
+        Get the global tag pubsub node.
+        Arguments here are used to be HOOK compliant see register_hook of L{TNHookableEntity}
         """
         # getting the tags pubsub node
         tagsNodeName = "/archipel/tags"
         self.pubSubNodeTags = TNPubSubNode(self.xmppclient, self.pubsubserver, tagsNodeName)
         if not self.pubSubNodeTags.recover(wait=True):
-            Exception("the pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")
+            Exception("The pubsub node /archipel/tags must have been created. You can use archipel-tagnode tool to create it.")
 
     def init_permissions(self):
         """
-        initializes the tag permissions
+        Initialize the tag permissions.
         """
         self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
 
     def register_handler(self):
         """
-        initializes the handlers for tags
+        Initialize the handlers for tags.
         """
         self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
 
@@ -112,8 +116,8 @@ class TNTaggableEntity (object):
 
     def process_tags_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_TAGS IQ is received.
+        It understands IQ of type:
             - settags
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -129,7 +133,7 @@ class TNTaggableEntity (object):
 
     def set_tags(self, tags):
         """
-        set the tags of the current entity
+        Set the tags of the current entity.
         @type tags String
         @param tags the string containing tags separated by ';;'
         """
@@ -145,7 +149,7 @@ class TNTaggableEntity (object):
 
     def did_clean_old_tags(self, resp, user_info):
         """
-        callback called when old tags has been removed if any
+        Callback called when old tags has been removed if any.
         @raise: Exception is unable to clean old tags
         """
         if resp.getType() == "result":
@@ -156,7 +160,7 @@ class TNTaggableEntity (object):
 
     def iq_set_tags(self, iq):
         """
-        set the current tags
+        Set the current tag.
         @type iq: xmpp.Protocol.IQ
         @param iq: the IQ containing the request
         @rtype: xmpp.Protocol.IQ

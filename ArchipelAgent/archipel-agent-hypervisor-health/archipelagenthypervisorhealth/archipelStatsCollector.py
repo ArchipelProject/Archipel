@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # archipelStatsCollector.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -24,14 +29,14 @@ from threading import Thread
 from archipelcore.utils import log
 
 
-class TNThreadedHealthCollector(Thread):
+class TNThreadedHealthCollector (Thread):
     """
-    this class collects hypervisor stats regularly
+    This class collects hypervisor stats regularly.
     """
 
     def __init__(self, database_file, collection_interval, max_rows_before_purge, max_cached_rows):
         """
-        the contructor of the class
+        The contructor of the class.
         @type database_file: string
         @param database_file: the path of the database
         @type collection_interval: integer
@@ -61,9 +66,9 @@ class TNThreadedHealthCollector(Thread):
 
     def recover_stored_stats(self):
         """
-        recover info from database
+        Recover info from database.
         """
-        log.info("recovering stored statistics. It may take a while...")
+        log.info("Recovering stored statistics. It may take a while...")
         self.cursor.execute("select * from cpu order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
             date, idle = values
@@ -76,39 +81,39 @@ class TNThreadedHealthCollector(Thread):
         for values in self.cursor:
             date, one, five, fifteen = values
             self.stats_load.insert(0, {"date": date, "one": one, "five": five, "fifteen": fifteen})
-        log.info("statistics recovered")
+        log.info("Statistics recovered.")
 
     def get_collected_stats(self, limit=1):
         """
-        this method return the current L{TNArchipelVirtualMachine} instance
+        This method returns the current L{TNArchipelVirtualMachine} instance.
         @type limit: integer
         @param limit: the max number of row to get
         @rtype: TNArchipelVirtualMachine
         @return: the L{TNArchipelVirtualMachine} instance
         """
-        log.debug("STATCOLLECTOR: Retrieving last "+ str(limit) + " recorded stats data for sending")
+        log.debug("STATCOLLECTOR: Retrieving last "+ str(limit) + " recorded stats data for sending.")
         try:
             uptime = self.get_uptime()
             uptime_stats    = {"up": "%dd %dh" % (uptime[0], uptime[1])} #TODO: it's obvious it would be better to not do this
         except Exception as ex:
-            raise Exception("Unable to get uptime", ex)
+            raise Exception("Unable to get uptime.", ex)
         try:
             acpu = self.stats_CPU[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get CPU stats", ex)
+            raise Exception("Unable to get CPU stats.", ex)
         try:
             amem = self.stats_memory[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get memory", ex)
+            raise Exception("Unable to get memory.", ex)
         try:
             adisk = sorted(self.get_disk_stats(), cmp=lambda x, y: cmp(x["mount"], y["mount"]))
             totalDisk = self.get_disk_total()
         except Exception as ex:
-            raise Exception("Unable to get disks information", ex)
+            raise Exception("Unable to get disks information.", ex)
         try:
             aload = self.stats_load[-limit:]
         except Exception as ex:
-            raise Exception("Unable to get disks information", ex)
+            raise Exception("Unable to get disks information.", ex)
         acpu.reverse()
         amem.reverse()
         aload.reverse()
@@ -117,12 +122,12 @@ class TNThreadedHealthCollector(Thread):
 
     def get_uptime(self):
         """
-        get the uptime from /proc/uptime.
+        Get the uptime from /proc/uptime.
         code taken from http://thesmithfam.org/blog/2005/11/19/python-uptime-script/
         @rtype: tupple
         @return: days, hours, minutes, seconds
         """
-        f = open( "/proc/uptime" )
+        f = open('/proc/uptime')
         contents = f.read().split()
         f.close()
         total_seconds = float(contents[0])
@@ -137,7 +142,7 @@ class TNThreadedHealthCollector(Thread):
 
     def get_memory_stats(self):
         """
-        get memory stats
+        Get memory stats.
         @rtype: dict
         @return: dictionnary containing the informations
         """
@@ -153,7 +158,7 @@ class TNThreadedHealthCollector(Thread):
 
     def get_cpu_stats(self):
         """
-        get CPU stats
+        Get CPU stats.
         @rtype: dict
         @return: dictionnary containing the informations
         """
@@ -163,11 +168,11 @@ class TNThreadedHealthCollector(Thread):
 
     def get_load_stats(self):
         """
-        get loads stats
+        Get load stats.
         @rtype: dict
         @return: dictionnary containing the informations
         """
-        f = open("/proc/loadavg")
+        f = open('/proc/loadavg')
         contents = f.read().split()
         f.close()
         load1min = float(contents[0])
@@ -177,7 +182,7 @@ class TNThreadedHealthCollector(Thread):
 
     def get_disk_stats(self):
         """
-        get drive usage stats
+        Get drive usage stats.
         @rtype: dict
         @return: dictionnary containing the informations
         """
@@ -191,7 +196,7 @@ class TNThreadedHealthCollector(Thread):
 
     def get_disk_total(self):
         """
-        get total size of drive used stats
+        Get total size of drive used stats.
         @rtype: dict
         @return: dictionnary containing the informations
         """
@@ -207,7 +212,7 @@ class TNThreadedHealthCollector(Thread):
         """
         ignore
         """
-        statFile = file("/proc/stat")
+        statFile = file('/proc/stat')
         timeList = statFile.readline().split(" ")[2:6]
         statFile.close()
         for i in range(len(timeList)):
@@ -227,7 +232,7 @@ class TNThreadedHealthCollector(Thread):
 
     def run(self):
         """
-        overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop
+        Overiddes sur super class method. do the L{TNArchipelVirtualMachine} main loop.
         """
         self.database_thread_connection = sqlite3.connect(self.database_file)
         while(1):
@@ -242,22 +247,22 @@ class TNThreadedHealthCollector(Thread):
                     self.database_thread_connection.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
                     self.database_thread_connection.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
                     self.database_thread_connection.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
-                    log.info("stats saved in database file")
+                    log.info("Stats saved in database file.")
 
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
                     del self.stats_load[0:middle]
 
-                    log.info("cached stats have been purged from memory")
+                    log.info("Cached stats have been purged from memory.")
 
                     if int(self.database_thread_connection.execute("select count(*) from memory").fetchone()[0]) >= self.max_rows_before_purge * 2:
                         self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        log.debug("old stored stats have been purged from memory")
+                        log.debug("Old stored stats have been purged from memory.")
 
                     self.database_thread_connection.commit()
 
                 time.sleep(self.collection_interval)
             except Exception as ex:
-                log.error("stat collection fails. Exception %s" % str(ex))
+                log.error("Stat collection fails. Exception %s" % str(ex))

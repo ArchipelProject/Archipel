@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # appliancedecompresser.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -25,11 +30,11 @@ from gzip import GzipFile as gz
 from threading import Thread
 
 
-class TNApplianceDecompresser(Thread):
+class TNApplianceDecompresser (Thread):
 
     def __init__(self, working_dir, disk_exts, xvm2_package_path, entity, finish_callback, error_callback, package_uuid, requester):
         """
-        initialize a TNApplianceDecompresser
+        Initialize a TNApplianceDecompresser.
         @type working_dir: string
         @param working_dir: the base dir where TNApplianceDecompresser will works
         @type disk_exts: array
@@ -63,7 +68,7 @@ class TNApplianceDecompresser(Thread):
 
     def run(self):
         """
-        run the thread
+        Run the thread.
         """
         try:
             self.entity.log.info("TNApplianceDecompresser: unpacking to %s" % self.working_dir)
@@ -99,7 +104,7 @@ class TNApplianceDecompresser(Thread):
 
     def unpack(self):
         """
-        unpack the given xvm2 package
+        Unpack the given xvm2 package.
         @rtype: boolean
         @return: True in case of success
         """
@@ -112,19 +117,19 @@ class TNApplianceDecompresser(Thread):
             full_path = os.path.join(self.extract_path, aFile)
             self.entity.log.debug("TNApplianceDecompresser: parsing file %s" % full_path)
             if os.path.splitext(full_path)[-1] == ".gz":
-                self.entity.log.info("found one gziped disk : %s" % full_path)
+                self.entity.log.info("Found one gziped disk: %s" % full_path)
                 i = open(full_path, 'rb')
                 o = open(full_path.replace(".gz", ""), 'w')
                 self._gunzip(i, o)
                 i.close()
                 o.close()
-                self.entity.log.info("file unziped at : %s" % full_path.replace(".gz", ""))
+                self.entity.log.info("File unziped at: %s" % full_path.replace(".gz", ""))
                 self.disk_files[aFile.replace(".gz", "")] = full_path.replace(".gz", "")
             if os.path.splitext(full_path)[-1] in self.disk_extensions:
-                self.entity.log.debug("found one disk : %s" % full_path)
+                self.entity.log.debug("Found one disk: %s" % full_path)
                 self.disk_files[aFile] = full_path
             if aFile == "description.xml":
-                self.entity.log.debug("found description.xml file : %s" % full_path)
+                self.entity.log.debug("Found description.xml file: %s" % full_path)
                 o = open(full_path, 'r')
                 self.description_file = o.read()
                 o.close()
@@ -138,12 +143,12 @@ class TNApplianceDecompresser(Thread):
 
     def update_description(self):
         """
-        define the uuid to write in the description file
+        Define the uuid to write in the description file.
         @raise: Exception if description is invalid
         @return: True in case of success
         """
         if not self.description_file:
-            raise Exception("description file is empty")
+            raise Exception("Description file is empty.")
         desc_string = self.description_file
         xml_desc = xmpp.simplexml.NodeBuilder(data=desc_string).getDom()
         name_node = xml_desc.getTag("name")
@@ -153,7 +158,6 @@ class TNApplianceDecompresser(Thread):
             source = disk.getTag("source")
             source_file = os.path.basename(source.getAttr("file")).replace(".gz", "")
             source.setAttr("file", os.path.join(self.entity.folder, source_file))
-            #source.setAttr("file", source_file.replace(".gz", "").replace(uuid_node.getCDATA(), self.entity.uuid))
         nics_nodes = xml_desc.getTag("devices").getTags("interface")
         for nic in nics_nodes:
             mac = nic.getTag("mac")
@@ -168,7 +172,7 @@ class TNApplianceDecompresser(Thread):
 
     def recover_snapshots(self):
         """
-        recover any snapshots
+        Recover any snapshots.
         """
         for snap in self.snapshots_desc:
             try:
@@ -182,7 +186,7 @@ class TNApplianceDecompresser(Thread):
 
     def install(self):
         """
-        install a untared and uuid defined package
+        Install a untared and uuid defined package.
         @return: True in case of success
         """
         if not self.description_file:
@@ -201,7 +205,7 @@ class TNApplianceDecompresser(Thread):
 
     def _gunzip(self, fileobjin, fileobjout):
         """
-        Returns NamedTemporaryFile with unzipped content of fileobj
+        Returns NamedTemporaryFile with unzipped content of fileobj.
         @type fileobjin: File
         @param fileobjin: file containing the archive
         @type fileobjout: File
@@ -225,13 +229,13 @@ class TNApplianceDecompresser(Thread):
 
     def clean(self):
         """
-        clean the tempory path
+        Clean the tempory path.
         """
         shutil.rmtree(self.temp_path)
 
     def generate_new_mac(self):
         """
-        generate a new mac address
+        Generate a new mac address.
         @rtype: string
         @return: generated MAC address
         """

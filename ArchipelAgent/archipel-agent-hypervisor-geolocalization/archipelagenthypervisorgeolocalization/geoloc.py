@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
 #
 # geoloc.py
 #
 # Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
+# Copyright, 2011 - Franck Villaume <franck.villaume@trivialdev.com>
+# This file is part of ArchipelProject
+# http://archipelproject.org
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as
 # published by the Free Software Foundation, either version 3 of the
@@ -28,12 +33,12 @@ ARCHIPEL_ERROR_CODE_LOCALIZATION_GET    = -9001
 
 class TNHypervisorGeolocalization (TNArchipelPlugin):
     """
-    this plugin allow to geolocalize the hypervisor
+    This plugin allow to geolocalize the hypervisor.
     """
 
     def __init__(self, configuration, entity, entry_point_group):
         """
-        initialize the module
+        Initialize the module.
         @type configuration: Configuration object
         @param configuration: the configuration
         @type entity: L{TNArchipelEntity}
@@ -71,14 +76,14 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
             self.entity.permission_center.create_permission("geolocalization_get", "Authorizes user to get the entity location coordinates", False)
         except Exception as ex:
             self.plugin_deactivated = True;
-            self.entity.log.error("cannot initialize geolocalization. plugin deactivated. Exception: %s" % str(ex))
+            self.entity.log.error("Cannot initialize geolocalization. plugin deactivated. Exception: %s" % str(ex))
 
     ### Plugin interface
 
     def register_for_stanza(self):
         """
-        this method will be called by the plugin user when it will be
-        necessary to register module for listening to stanza
+        This method will be called by the plugin user when it will be
+        necessary to register module for listening to stanza.
         """
         if self.plugin_deactivated:
             return
@@ -87,7 +92,7 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
     @staticmethod
     def plugin_info():
         """
-        return inforations about the plugin
+        Return informations about the plugin.
         @rtype: dict
         @return: dictionary contaning plugin informations
         """
@@ -111,8 +116,8 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
 
     def process_iq(self, conn, iq):
         """
-        this method is invoked when a ARCHIPEL_NS_HYPERVISOR_GEOLOC IQ is received.
-        it understands IQ of type:
+        This method is invoked when a ARCHIPEL_NS_HYPERVISOR_GEOLOC IQ is received.
+        It understands IQ of type:
             - get
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
@@ -130,7 +135,7 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
 
     def iq_get(self, iq):
         """
-        return the geolocalization information
+        Return the geolocalization information.
         @type iq: xmpp.Protocol.Iq
         @param iq: the received IQ
         """
@@ -143,7 +148,7 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
 
     def message_get(self, msg):
         """
-        return the geolocalization information asked by message
+        Return the geolocalization information asked by message.
         @type iq: xmpp.Protocol.Message
         @param iq: the received message
         @rtype: string
