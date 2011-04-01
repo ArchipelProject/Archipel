@@ -64,6 +64,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     var frame = [mainView frame],
         bundle = [CPBundle bundleForClass:[self class]],
         gradBG = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-tags.png"]],
+        imageTag = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtons/tag-set.png"] size:CPSizeMake(16, 16)],
         tokenFrame;
 
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:gradBG]];
@@ -72,7 +73,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     _currentRosterItem  = nil;
     _alreadyReady       = NO;
 
-    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 45, 30)];
+    _tokenFieldTags = [[CPTokenField alloc] initWithFrame:CPRectMake(0.0, 1.0, CPRectGetWidth(frame) - 33, 30)];
     [_tokenFieldTags setAutoresizingMask:CPViewWidthSizable];
     [_tokenFieldTags setDelegate:self];
     [_tokenFieldTags setEditable:YES];
@@ -83,10 +84,11 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     [mainView addSubview:_tokenFieldTags];
 
-    _buttonSave = [CPButton buttonWithTitle:@" Tag "];
-    [_buttonSave setBezelStyle:CPRoundedBezelStyle];
+    _buttonSave = [CPButton buttonWithTitle:@"     "];
+    [_buttonSave setAlphaValue:0.8];
+    [_buttonSave setImage:imageTag];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
-    [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 3, 3)];
+    [_buttonSave setFrameOrigin:CPPointMake(CPRectGetWidth(frame) - CPRectGetWidth([_buttonSave frame]) - 4, 4)];
     [_buttonSave setTarget:self];
     [_buttonSave setAction:@selector(performSetTags:)];
     [_buttonSave setEnabled:NO];
