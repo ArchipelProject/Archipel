@@ -989,6 +989,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     if (XMPPShow != TNStropheContactStatusBusy)
     {
         [self displayMaskingView:YES];
+        if (_definitionEdited)
+            [TNAlert showAlertWithMessage:@"Definition edited" informative:@"You started the virtual machine, but you haven't save the current changes."];
     }
     else
     {
