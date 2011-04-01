@@ -116,7 +116,7 @@ def main():
     # append any chosen modules to the build path
     opt_build_paths.extend(opt_modules_paths);
 
-    if not opt_export_sdk_path and not opt_export_archipel_path:
+    if not opt_export_sdk_path and not opt_export_archipel_path and not opt_build_native:
         if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules
                 and not opt_should_copy_modules and not opt_should_build and not opt_should_clean):
             print "Error: no targets specified. Use --help for usage"
