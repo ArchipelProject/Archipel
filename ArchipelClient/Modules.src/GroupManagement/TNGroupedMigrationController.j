@@ -110,6 +110,7 @@
 - (IBAction)showMainWindow:(id)aSender
 {
     [self populateHypervisors];
+    [mainWindow center];
     [mainWindow makeKeyAndOrderFront:aSender];
 }
 
