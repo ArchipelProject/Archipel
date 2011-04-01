@@ -244,7 +244,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
 
 
-    if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
+    if (posx = [defaults integerForKey:@"mainSplitViewPosition" inDomain:CPGlobalDomain])
     {
         CPLog.trace("recovering with of main vertical CPSplitView from last state");
         [splitViewMain setPosition:posx ofDividerAtIndex:0];
@@ -276,7 +276,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
-    [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
+    [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain]];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -408,7 +408,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
 
     [_hideButton setTarget:self];
-    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
+    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
     [_hideButton setToolTip:@"Display or hide the properties view"];
 
@@ -895,13 +895,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         [propertiesController setEnabled:NO];
         [_hideButton setImage:_hideButtonImageEnable];
-        [defaults setBool:NO forKey:@"TNArchipelPropertyControllerEnabled"];
+        [defaults setBool:NO forKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain];
     }
     else
     {
         [propertiesController setEnabled:YES];
         [_hideButton setImage:_hideButtonImageDisable];
-        [defaults setBool:YES forKey:@"TNArchipelPropertyControllerEnabled"];
+        [defaults setBool:YES forKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain];
     }
 
     [propertiesController reload];
@@ -914,9 +914,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
-    [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
-    [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
+    [defaults removeObjectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
+    [defaults removeObjectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
+    [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
 
     CPLog.info(@"starting to disconnect");
     [[TNStropheIMClient defaultClient] disconnect];
@@ -1231,7 +1231,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     _tagsVisible = !_tagsVisible;
     [splitViewTagsContents setPosition:(_tagsVisible ? TNArchipelTagViewHeight : 0) ofDividerAtIndex:0];
-    [[CPUserDefaults standardUserDefaults] setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
+    [[CPUserDefaults standardUserDefaults] setBool:_tagsVisible forKey:@"TNArchipelTagsVisible" inDomain:CPGlobalDomain];
 }
 
 /*! Action of toolbar imutables toolbar items.
@@ -1314,7 +1314,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:"expanded" forKey:key];
+    [defaults setObject:"expanded" forKey:key inDomain:CPGlobalDomain];
 }
 
 /*! Delegate of TNOutlineView
@@ -1328,7 +1328,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:"collapsed" forKey:key];
+    [defaults setObject:"collapsed" forKey:key inDomain:CPGlobalDomain];
 
     return YES;
 }
@@ -1399,8 +1399,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
     else
     {
-        var item        = [aTimer valueForKey:@"userInfo"],
-            defaults    = [CPUserDefaults standardUserDefaults];
+        var item = [aTimer valueForKey:@"userInfo"];
 
         [self hideHelpView];
 
@@ -1436,7 +1435,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
+    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition" inDomain:CPGlobalDomain];
 }
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults
@@ -1449,7 +1448,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     return position;
 }
 
-/*! Delegate of splitViewTagsContents and splitViewMain. This will save the positionning of splitview in CPUserDefaults
+/*! Delegate of splitViewTagsContents and splitViewMain.
 */
 - (void)splitView:(CPSlipView)aSplitView constrainMinCoordinate:(int)position ofSubviewAt:(int)index
 {
