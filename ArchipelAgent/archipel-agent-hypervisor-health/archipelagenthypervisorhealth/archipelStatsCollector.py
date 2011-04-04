@@ -89,9 +89,6 @@ class TNThreadedHealthCollector (Thread):
         for values in self.cursor:
             date, records = values
             self.stats_network.insert(0, {"date": date, "records": records})
-        if len(self.stats_network) > 0:
-            self.current_record = json.loads(self.stats_network[-1:]["records"])
-
         log.info("Statistics recovered.")
 
     def get_collected_stats(self, limit=1):
