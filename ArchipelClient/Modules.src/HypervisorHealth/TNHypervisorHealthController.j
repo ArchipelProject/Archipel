@@ -81,6 +81,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPView              viewGraphLoadContainer;
     @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphMemoryContainer;
+    @outlet CPView              viewGraphNetwork;
+    @outlet CPView              viewGraphNetworkContainer;
     @outlet CPView              viewLogs;
     @outlet CPView              viewLogsTableContainer;
     @outlet CPView              viewPartitionTableContainer;
@@ -95,9 +97,11 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     LPChartView                 _chartViewCPU;
     LPChartView                 _chartViewLoad;
     LPChartView                 _chartViewMemory;
+    LPChartView                 _chartViewNetwork;
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
     TNDatasourceChartView       _memoryDatasource;
+    TNDatasourceChartView       _networkDatasource;
     TNTableViewDataSource       _datasourceLogs;
     TNTableViewDataSource       _datasourcePartitions;
 }
@@ -140,18 +144,20 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [viewGraphMemoryContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
     [viewGraphLoadContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
     [viewGraphDiskContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    [viewGraphNetworkContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
 
     [viewGraphCPUContainer setBorderRadius:4];
     [viewGraphMemoryContainer setBorderRadius:4];
     [viewGraphLoadContainer setBorderRadius:4];
     [viewGraphDiskContainer setBorderRadius:4];
+    [viewGraphNetworkContainer setBorderRadius:4];
 
-    var cpuViewFrame    = [viewGraphCPU bounds],
-        memoryViewFrame = [viewGraphMemory bounds],
-        loadViewFrame   = [viewGraphLoad bounds];
-        // diskViewFrame   = [viewGraphDisk bounds];
+    var cpuViewFrame        = [viewGraphCPU bounds],
+        memoryViewFrame     = [viewGraphMemory bounds],
+        loadViewFrame       = [viewGraphLoad bounds],
+        networkViewFrame    = [viewGraphNetwork bounds];
 
-    _chartViewCPU   = [[LPChartView alloc] initWithFrame:cpuViewFrame];
+    _chartViewCPU = [[LPChartView alloc] initWithFrame:cpuViewFrame];
     [_chartViewCPU setDrawViewPadding:1.0];
     [_chartViewCPU setLabelViewHeight:0.0];
     [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
@@ -160,7 +166,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [[_chartViewCPU gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphCPU addSubview:_chartViewCPU];
 
-    _chartViewMemory   = [[LPChartView alloc] initWithFrame:memoryViewFrame];
+    _chartViewMemory = [[LPChartView alloc] initWithFrame:memoryViewFrame];
     [_chartViewMemory setDrawViewPadding:1.0];
     [_chartViewMemory setLabelViewHeight:0.0];
     [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
@@ -168,7 +174,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [[_chartViewMemory gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphMemory addSubview:_chartViewMemory];
 
-    _chartViewLoad   = [[LPChartView alloc] initWithFrame:loadViewFrame];
+    _chartViewLoad = [[LPChartView alloc] initWithFrame:loadViewFrame];
     [_chartViewLoad setDrawViewPadding:1.0];
     [_chartViewLoad setLabelViewHeight:0.0];
     [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
@@ -177,16 +183,31 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
     [viewGraphLoad addSubview:_chartViewLoad];
 
+    _chartViewNetwork = [[LPChartView alloc] initWithFrame:networkViewFrame];
+    [_chartViewNetwork setDrawViewPadding:1.0];
+    [_chartViewNetwork setLabelViewHeight:0.0];
+    [_chartViewNetwork setDrawView:[[TNChartDrawView alloc] init]];
+    [_chartViewNetwork setDisplayLabels:NO];
+    [[_chartViewNetwork gridView] setBackgroundColor:[CPColor whiteColor]];
+    [viewGraphNetwork addSubview:_chartViewNetwork];
 
     // tabview
     [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
-        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"];
+        tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
+        scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:@"Charts"];
-    [tabViewItemCharts setView:viewCharts];
+    [tabViewItemCharts setView:scrollViewChart];
     [tabViewInfos addTabViewItem:tabViewItemCharts];
+
+    [viewCharts setAutoresizingMask:CPViewWidthSizable];
+    var newFrameSize = [viewCharts frameSize];
+    newFrameSize.width = [scrollViewChart contentSize].width;
+    [viewCharts setFrameSize:newFrameSize];
+    [scrollViewChart setAutohidesScrollers:YES];
+    [scrollViewChart setDocumentView:viewCharts];
 
     [tabViewItemLogs setLabel:@"Logs"];
     [tabViewItemLogs setView:viewLogs];
@@ -305,6 +326,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _cpuDatasource      = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
     _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
+    _networkDatasource  = nil; // dynamically allocated according to the number of nics
 
     [_chartViewMemory setDataSource:_memoryDatasource];
     [_chartViewCPU setDataSource:_cpuDatasource];
@@ -342,6 +364,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         [_memoryDatasource removeAllObjects];
     if (_loadDatasource)
         [_loadDatasource removeAllObjects];
+    if (_networkDatasource)
+        [_networkDatasource removeAllObjects];
     if (_datasourcePartitions)
         [_datasourcePartitions removeAllObjects];
     if (_datasourceLogs)
@@ -462,6 +486,26 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     return ret;
 }
 
+/*! populate the network chart dataview
+    @param networkNodes CPArray of TNXMLNode containing the network information
+*/
+- (void)popupateNetworkDatasource:(CPArray)networkNodes
+{
+    if (!_networkDatasource)
+    {
+        _networkDatasource = [[TNDatasourceChartView alloc] initWithNumberOfSets:[networkNodes count]];
+        [_chartViewNetwork setDataSource:_networkDatasource];
+    }
+
+    for (var i = 0 ; i < [networkNodes count]; i++)
+    {
+        var node = [networkNodes objectAtIndex:i],
+            value = parseInt([node valueForAttribute:@"delta"]);
+        [_networkDatasource pushData:value inSet:i];
+    }
+
+}
+
 
 #pragma mark -
 #pragma mark Actions
@@ -538,22 +582,23 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     {
         try
         {
-            var memNode     = [aStanza firstChildWithName:@"memory"],
-                freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-                swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-                memUsed     = [[memNode valueForAttribute:@"used"] intValue],
-                diskNode    = [aStanza firstChildWithName:@"disk"],
-                loadNode    = [aStanza firstChildWithName:@"load"],
-                loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
-                loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
-                loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue],
-                uptimeNode  = [aStanza firstChildWithName:@"uptime"],
-                cpuNode     = [aStanza firstChildWithName:@"cpu"],
-                cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-                infoNode    = [aStanza firstChildWithName:@"uname"];
+            var memNode         = [aStanza firstChildWithName:@"memory"],
+                freeMem         = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
+                swapped         = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
+                memUsed         = [[memNode valueForAttribute:@"used"] intValue],
+                diskNode        = [aStanza firstChildWithName:@"disk"],
+                loadNode        = [aStanza firstChildWithName:@"load"],
+                loadOne         = [[loadNode valueForAttribute:@"one"] floatValue],
+                loadFive        = [[loadNode valueForAttribute:@"five"] floatValue],
+                loadFifteen     = [[loadNode valueForAttribute:@"fifteen"] floatValue],
+                uptimeNode      = [aStanza firstChildWithName:@"uptime"],
+                cpuNode         = [aStanza firstChildWithName:@"cpu"],
+                cpuFree         = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
+                infoNode        = [aStanza firstChildWithName:@"uname"],
+                networkNodes    = [aStanza childrenWithName:@"network"];
 
-            [healthMemUsage setStringValue:freeMem + " Mo"];
-            [healthMemSwapped setStringValue:swapped + " Mo"];
+            [healthMemUsage setStringValue:freeMem + " MB"];
+            [healthMemSwapped setStringValue:swapped + " MB"];
 
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
@@ -571,6 +616,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_loadDatasource pushData:loadFive inSet:1];
             [_loadDatasource pushData:loadFifteen inSet:2];
 
+            [self popupateNetworkDatasource:networkNodes];
+
             [_datasourcePartitions removeAllObjects];
             [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
 
@@ -578,6 +625,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_chartViewMemory reloadData];
             [_chartViewCPU reloadData];
             [_chartViewLoad reloadData];
+            [_chartViewNetwork reloadData];
             [_tablePartitions reloadData];
 
             CPLog.debug("current stats recovered");
@@ -636,17 +684,18 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
             for (var i = 0; i < [stats count]; i++)
             {
-                var currentNode = [stats objectAtIndex:i],
-                    memNode     = [currentNode firstChildWithName:@"memory"],
-                    freeMem     = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
-                    memUsed     = [[memNode valueForAttribute:@"used"] intValue],
-                    swapped     = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
-                    cpuNode     = [currentNode firstChildWithName:@"cpu"],
-                    cpuFree     = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
-                    loadNode    = [currentNode firstChildWithName:@"load"],
-                    loadOne     = [[loadNode valueForAttribute:@"one"] floatValue],
-                    loadFive    = [[loadNode valueForAttribute:@"five"] floatValue],
-                    loadFifteen = [[loadNode valueForAttribute:@"fifteen"] floatValue];
+                var currentNode     = [stats objectAtIndex:i],
+                    memNode         = [currentNode firstChildWithName:@"memory"],
+                    freeMem         = Math.round([[memNode valueForAttribute:@"free"] intValue] / 1024),
+                    memUsed         = [[memNode valueForAttribute:@"used"] intValue],
+                    swapped         = Math.round([[memNode valueForAttribute:@"swapped"] intValue] / 1024),
+                    cpuNode         = [currentNode firstChildWithName:@"cpu"],
+                    cpuFree         = 100 - [[cpuNode valueForAttribute:@"id"] intValue],
+                    loadNode        = [currentNode firstChildWithName:@"load"],
+                    loadOne         = [[loadNode valueForAttribute:@"one"] floatValue],
+                    loadFive        = [[loadNode valueForAttribute:@"five"] floatValue],
+                    loadFifteen     = [[loadNode valueForAttribute:@"fifteen"] floatValue],
+                    networkNodes    = [currentNode childrenWithName:@"network"];
 
                 [healthMemUsage setStringValue:freeMem + " Mo"];
                 [healthMemSwapped setStringValue:swapped + " Mo"];
@@ -658,6 +707,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                 [_loadDatasource pushData:loadOne inSet:0];
                 [_loadDatasource pushData:loadFive inSet:1];
                 [_loadDatasource pushData:loadFifteen inSet:2];
+
+                [self popupateNetworkDatasource:networkNodes];
             }
 
             var maxMem      = Math.round([[memNode valueForAttribute:@"total"] floatValue] / 1024 / 1024),
@@ -676,6 +727,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_chartViewMemory reloadData];
             [_chartViewCPU reloadData];
             [_chartViewLoad reloadData];
+            [_chartViewNetwork reloadData];
 
             [_tablePartitions reloadData];
 

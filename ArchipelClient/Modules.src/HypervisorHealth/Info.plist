@@ -26,6 +26,8 @@
         </array>
         <key>UseModuleMenu</key>
         <integer>0</integer>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
         <key>CibName</key>
         <string>HypervisorHealth</string>
 
