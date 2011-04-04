@@ -22,6 +22,7 @@
 
 import commands
 import xmpp
+import json
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
@@ -153,8 +154,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
                 statNode.addChild("disk")
                 statNode.addChild("load", attrs=stats["load"][i])
                 network_node = statNode.addChild("networks")
-                for s in stats["network"][i]["content"]:
-                    network_node.addChild("network", attrs=s)
+                for nic, delta in json.loads(stats["network"][i]["records"]).items():
+                    network_node.addChild("network", attrs={"name": nic, "delta": delta})
                 nodes.append(statNode)
             reply.setQueryPayload(nodes)
         except Exception as ex:
@@ -195,8 +196,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     raise Exception("Unable to append disk stats node.", ex)
                 try:
                     network_node = xmpp.Node("networks")
-                    for s in stats["network"][0]["content"]:
-                        network_node.addChild("network", attrs=s)
+                    for nic, delta in json.loads(stats["network"][0]["records"]).items():
+                        network_node.addChild("network", attrs={"name": nic, "delta": delta})
                     nodes.append(network_node)
                 except Exception as ex:
                     raise Exception("Unable to append network stats node.", ex)

@@ -24,7 +24,7 @@ import datetime
 import sqlite3
 import subprocess
 import time
-import uuid
+import json
 from threading import Thread
 
 from archipelcore.utils import log
@@ -55,6 +55,7 @@ class TNThreadedHealthCollector (Thread):
         self.stats_memory           = []
         self.stats_load             = []
         self.stats_network          = []
+        self.current_record         = {}
         uname = subprocess.Popen(["uname", "-rsmo"], stdout=subprocess.PIPE).communicate()[0].split()
         self.uname_stats = {"krelease": uname[0], "kname": uname[1], "machine": uname[2], "os": uname[3]}
         self.database_query_connection = sqlite3.connect(self.database_file)
@@ -62,8 +63,7 @@ class TNThreadedHealthCollector (Thread):
         self.cursor.execute("create table if not exists cpu (collection_date date, idle int)")
         self.cursor.execute("create table if not exists memory (collection_date date, free integer, used integer, total integer, swapped integer)")
         self.cursor.execute("create table if not exists load (collection_date date, one float, five float, fifteen float)")
-        self.cursor.execute("create table if not exists network (collection_date date, uuid text)")
-        self.cursor.execute("create table if not exists network_info (uuid text, dev text, r_bytes int, r_packets int, r_errs int, r_drop int, r_fifo int, r_frame int, r_compressed int, r_multicast int, t_bytes int, t_packets int, t_errs int, t_drop int, t_fifo int, t_frame int, t_compressed int, t_multicast int)")
+        self.cursor.execute("create table if not exists network (collection_date date, records text)")
         log.info("Database ready.")
         self.recover_stored_stats()
         Thread.__init__(self)
@@ -85,16 +85,12 @@ class TNThreadedHealthCollector (Thread):
         for values in self.cursor:
             date, one, five, fifteen = values
             self.stats_load.insert(0, {"date": date, "one": one, "five": five, "fifteen": fifteen})
-
         self.cursor.execute("select * from network order by collection_date desc limit %d" % self.max_cached_rows)
         for values in self.cursor:
-            date, uuid = values
-            self.stats_network.insert(0, {"date": date, "uuid": uuid, "content": []})
-        for record in self.stats_network:
-            self.cursor.execute("select * from network_info where uuid=?", (record["uuid"], ))
-            for values in self.cursor:
-                uuid, dev, r_bytes, r_packets, r_errs, r_drop, r_fifo, r_frame, r_compressed, r_multicast, t_bytes, t_packets, t_errs, t_drop, t_fifo, t_frame, t_compressed, t_multicast = values
-                record["content"].append({"uuid": record["uuid"], "dev": dev, "r_bytes": r_bytes, "r_packets": r_packets, "r_errs": r_errs, "r_drop": r_drop, "r_fifo": r_fifo, "r_frame": r_frame, "r_compressed": r_compressed, "r_multicast": r_multicast, "t_bytes": t_bytes, "t_packets": t_packets, "t_errs": t_errs, "t_drop": t_drop, "t_fifo": t_fifo, "t_frame": t_frame, "t_compressed": t_compressed, "t_multicast": t_multicast})
+            date, records = values
+            self.stats_network.insert(0, {"date": date, "records": records})
+        if len(self.stats_network) > 0:
+            self.current_record = json.loads(self.stats_network[-1:]["records"])
 
         log.info("Statistics recovered.")
 
@@ -223,33 +219,23 @@ class TNThreadedHealthCollector (Thread):
         f = open('/proc/net/dev')
         contents = f.read().split('\n')[2:-1]
         f.close()
-        record_uuid = str(uuid.uuid1())
-        ret = []
+        records = {}
+        ret = {}
         for line in contents:
             dev = line.split(":")[0].replace(" ", "")
+            if dev == "lo":
+                continue
             info = line.split(":")[1].split()
-            r_bytes = int(info[0])
-            r_packets = int(info[1])
-            r_errs = int(info[2])
-            r_drop = int(info[3])
-            r_fifo = int(info[4])
-            r_frame = int(info[5])
-            r_compressed = int(info[6])
-            r_multicast = int(info[7])
-            t_bytes = int(info[8])
-            t_packets = int(info[9])
-            t_errs = int(info[10])
-            t_drop = int(info[11])
-            t_fifo = int(info[12])
-            t_frame = int(info[13])
-            t_compressed = int(info[14])
-            t_multicast = int(info[15])
-            ret.append({"uuid": record_uuid, "dev": dev,
-                "r_bytes": r_bytes, "r_packets": r_packets, "r_errs": r_errs, "r_drop": r_drop,
-                "r_fifo": r_fifo, "r_frame": r_frame, "r_compressed": r_compressed, "r_multicast": r_multicast,
-                "t_bytes": t_bytes, "t_packets": t_packets, "t_errs": t_errs, "t_drop": t_drop, "t_fifo": t_fifo, "t_frame": t_frame,
-                "t_compressed": t_compressed, "t_multicast": t_multicast})
-        return {"date": datetime.datetime.now(), "uuid": record_uuid, "content": ret}
+            rx = int(info[0])
+            tx = int(info[8])
+            records[dev] = {"rx": rx, "tx": tx}
+            if self.current_record:
+                delta_usage = (rx - self.current_record[dev]["rx"]) + (tx - self.current_record[dev]["tx"])
+            else:
+                delta_usage = 0;
+            ret[dev] = delta_usage
+        self.current_record = records;
+        return {"date": datetime.datetime.now(), "records": json.dumps(ret)}
 
     def get_disk_total(self):
         """
@@ -305,9 +291,7 @@ class TNThreadedHealthCollector (Thread):
                     self.database_thread_connection.executemany("insert into memory values(:date, :free, :used, :total, :swapped)", self.stats_memory[0:middle])
                     self.database_thread_connection.executemany("insert into cpu values(:date, :id)", self.stats_CPU[0:middle])
                     self.database_thread_connection.executemany("insert into load values(:date, :one , :five, :fifteen)", self.stats_load[0:middle])
-                    self.database_thread_connection.executemany("insert into network values(:date, :uuid)", self.stats_network[0:middle])
-                    for record in self.stats_network[0:middle]:
-                        self.database_thread_connection.executemany("insert into network_info values(:uuid, :dev, :r_bytes, :r_packets, :r_errs, :r_drop, :r_fifo, :r_frame, :r_compressed, :r_multicast, :t_bytes, :t_packets, :t_errs, :t_drop, :t_fifo, :t_frame, :t_compressed, :t_multicast)", record["content"])
+                    self.database_thread_connection.executemany("insert into network values(:date, :records)", self.stats_network[0:middle])
 
                     log.info("Stats saved in database file.")
 
@@ -315,15 +299,13 @@ class TNThreadedHealthCollector (Thread):
                         self.database_thread_connection.execute("delete from cpu where collection_date=(select collection_date from cpu order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from memory where collection_date=(select collection_date from memory order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         self.database_thread_connection.execute("delete from load where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
-                        for record in self.stats_network[0:middle]:
-                            self.database_thread_connection.execute("delete from network_info where uuid=?", (record["uuid"],))
                         self.database_thread_connection.execute("delete from network where collection_date=(select collection_date from load order by collection_date asc limit "+ str(self.max_rows_before_purge) +")")
                         log.debug("Old stored stats have been purged from memory.")
 
                     del self.stats_CPU[0:middle]
                     del self.stats_memory[0:middle]
                     del self.stats_load[0:middle]
-                    # del self.stats_network[0:middle]
+                    del self.stats_network[0:middle]
                     log.info("Cached stats have been purged from memory.")
 
                     self.database_thread_connection.commit()
