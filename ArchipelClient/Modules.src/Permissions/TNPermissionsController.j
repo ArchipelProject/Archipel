@@ -559,7 +559,9 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 */
 - (void)_didChangePermissionsState:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"error")
+    if ([aStanza type] == @"result")
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Permissions saved" message:@"Permission for selected user has been saved."];
+    else
         [self handleIqErrorFromStanza:aStanza];
 }
 

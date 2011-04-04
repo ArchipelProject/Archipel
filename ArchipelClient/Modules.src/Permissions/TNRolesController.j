@@ -105,6 +105,50 @@
 
 
 #pragma mark -
+#pragma mark Notification handlers
+
+/*! called when a new role has been published
+    @param aNotification the notification
+*/
+- (void)_didPublishRole:(CPNotification)aNotification
+{
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role saved" message:@"Your role has been sucessfully saved."];
+}
+
+/*! called when a new role has been published
+    @param aNotification the notification
+*/
+- (void)_didPublishRoleFail:(CPNotification)aNotification
+{
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role save error" message:@"Your role cannot be saved." icon:TNGrowlIconError];
+}
+
+/*! called when a new role has been retracted
+    @param aNotification the notification
+*/
+- (void)_didRectractRole:(CPNotificationCenter)aNotification
+{
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role deleted" message:@"Your role has been sucessfully deleted."];
+}
+
+/*! called when a new role has been retracted
+    @param aNotification the notification
+*/
+- (void)_didRectractRoleFail:(CPNotificationCenter)aNotification
+{
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role delete error" message:@"Your role cannot be deleted." icon:TNGrowlIconError];
+}
+
+
+#pragma mark -
 #pragma mark Actions
 
 /*! show the controller's main window
@@ -136,7 +180,6 @@
 */
 - (IBAction)applyRoles:(id)aSender
 {
-
     [_delegate applyPermissions:[self buildPermissionsArray]];
 }
 
@@ -192,6 +235,8 @@
             [template up];
         }
     }
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRole:) name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRoleFail:) name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates publishItem:template];
 
     [windowNewTemplate close];
@@ -205,6 +250,8 @@
     var index = [[_tableRoles selectedRowIndexes] firstIndex],
         role = [[_datasourceRoles objectAtIndex:index] valueForKey:@"role"];
 
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRectractRole:) name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didRectractRoleFail:) name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates retractItem:role];
 }
 
