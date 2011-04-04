@@ -141,7 +141,7 @@
     [_toolbarItem setImage:_toolbarItemImages[0]];
     [_toolbar _reloadToolbarItems];
     [self reload:nil];
-    [_messageBoard reload];
+    [_messageBoard reloadData];
     [self scrollToBottom];
 
     return YES;

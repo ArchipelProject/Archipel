@@ -139,7 +139,7 @@
 
     var frame = [[messagesScrollView documentView] bounds];
 
-    [_messageBoard removeAllMessages:nil];
+    [_messageBoard removeAllViews:nil];
 
     _messages = [CPArray array];
 
@@ -161,7 +161,7 @@
 
     [self save];
     [_messages removeAllObjects];
-    [_messageBoard removeAllMessages:nil];
+    [_messageBoard removeAllViews:nil];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 }
@@ -438,7 +438,7 @@
     [defaults removeObjectForKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
 
     [_messages removeAllObjects];
-    [_messageBoard removeAllMessages:nil];
+    [_messageBoard removeAllViews:nil];
 }
 
 

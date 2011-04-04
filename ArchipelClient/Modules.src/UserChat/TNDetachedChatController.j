@@ -172,7 +172,7 @@ else
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didUpdateNickname:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:CPWindowWillCloseNotification object:_window];
 
-    [_messageBoard removeAllMessages:nil];
+    [_messageBoard removeAllViews:nil];
     if (_messageHistory)
     {
         for (var i = 0; i < [_messageHistory count]; i++)
