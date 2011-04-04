@@ -238,7 +238,6 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRole:) name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPublishRoleFail:) name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
     [_nodeRolesTemplates publishItem:template];
-
     [windowNewTemplate close];
 }
 
@@ -284,13 +283,6 @@
 */
 - (void)reload
 {
-    if (!_nodeRolesTemplates)
-    {
-        _nodeRolesTemplates = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/roles" connection:[[TNStropheIMClient defaultClient] connection] pubSubServer:nil];
-        [_nodeRolesTemplates setDelegate:self];
-        [_nodeRolesTemplates retrieveItems];
-    }
-
     [_datasourceRoles removeAllObjects];
 
     for (var i = 0; i < [[_nodeRolesTemplates content] count]; i++)
@@ -304,6 +296,18 @@
     }
 
     [_tableRoles reloadData];
+}
+
+/*! fetch the role node if needed
+*/
+- (void)fetchPubSubNodeIfNeeded
+{
+    if (!_nodeRolesTemplates)
+    {
+        _nodeRolesTemplates = [TNPubSubNode pubSubNodeWithNodeName:@"/archipel/roles" connection:[[TNStropheIMClient defaultClient] connection] pubSubServer:nil];
+        [_nodeRolesTemplates setDelegate:self];
+        [_nodeRolesTemplates retrieveItems];
+    }
 }
 
 

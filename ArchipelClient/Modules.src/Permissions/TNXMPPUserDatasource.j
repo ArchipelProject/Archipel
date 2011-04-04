@@ -53,12 +53,14 @@ TNXMPPUserDatasourceServerUsers = @"SERVER USERS";
 
 - (void)addRosterUser:(TNStropheContact)aContact
 {
-    [_rosterUsers addObject:aContact];
+    if (![_rosterUsers containsObject:aContact])
+        [_rosterUsers addObject:aContact];
 }
 
 - (void)addXMPPUser:(TNStropheContact)aContact
 {
-    [_serverUsers addObject:aContact];
+    if (![_serverUsers containsObject:aContact])
+        [_serverUsers addObject:aContact];
 }
 
 - (void)removeAllObjects

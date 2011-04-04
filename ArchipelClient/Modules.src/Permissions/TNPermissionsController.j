@@ -199,6 +199,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 - (BOOL)willLoad
 {
     [super willLoad];
+    [rolesController fetchPubSubNodeIfNeeded];
     [_datasourceUsers removeAllObjects];
     [_outlineViewUsers setDelegate:nil];
     [_outlineViewUsers setDelegate:self];
