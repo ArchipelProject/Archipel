@@ -152,6 +152,9 @@ class TNHypervisorHealth (TNArchipelPlugin):
                 statNode.addChild("cpu", attrs=stats["cpu"][i])
                 statNode.addChild("disk")
                 statNode.addChild("load", attrs=stats["load"][i])
+                network_node = statNode.addChild("networks")
+                for s in stats["network"][i]["content"]:
+                    network_node.addChild("network", attrs=s)
                 nodes.append(statNode)
             reply.setQueryPayload(nodes)
         except Exception as ex:
@@ -190,6 +193,13 @@ class TNHypervisorHealth (TNArchipelPlugin):
                     nodes.append(disk_free_node)
                 except Exception as ex:
                     raise Exception("Unable to append disk stats node.", ex)
+                try:
+                    network_node = xmpp.Node("networks")
+                    for s in stats["network"][0]["content"]:
+                        network_node.addChild("network", attrs=s)
+                    nodes.append(network_node)
+                except Exception as ex:
+                    raise Exception("Unable to append network stats node.", ex)
                 try:
                     load_node = xmpp.Node("load", attrs=stats["load"][0])
                     nodes.append(load_node)
