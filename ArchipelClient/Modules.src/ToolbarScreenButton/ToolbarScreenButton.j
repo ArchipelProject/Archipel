@@ -23,7 +23,8 @@
     @desc This module displays a toolbar item that can send destroy action to the current entity
 */
 
-var TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowNotification";
+var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRecoveredNotification",
+    TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWindowNotification";
 
 /*! @ingroup toolbardestroybutton
     The module main controller
@@ -89,11 +90,8 @@ var TNArchipelVNCShowExternalWindowNotification = @"TNArchipelVNCShowExternalWin
     }
     [self setGUIAccordingToStatus:nil];
 
-    if (typeof(TNArchipelVNCInformationRecoveredNotification) != "undefined")
-    {
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
-        [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    }
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:nil];
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(setGUIAccordingToStatus:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 }
 
 
