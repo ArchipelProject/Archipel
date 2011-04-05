@@ -379,6 +379,7 @@
     }
     else
     {
+        [buttonForwardDevice removeAllItems];
         [buttonForwardDevice addItemsWithTitles:_currentNetworkInterfaces];
         [buttonForwardDevice setEnabled:YES];
     }
