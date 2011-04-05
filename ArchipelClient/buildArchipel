@@ -368,6 +368,7 @@ def export_archipel(path, config):
     os.system("find %s -name 'CommonJS.environment' -type dir -exec rm -rf {} \; > /dev/null 2>&1" % final_path)
     print "# Restore not shrinked images"
     os.system("cp ./Resources/Backgrounds/background-icon.png %s/Resources/Backgrounds" % final_path)
+    os.system("cp ./Resources/lock.png %s/Resources/" % final_path)
     print "# Cleaning temp files"
     os.system("rm -rf %s" % temp_path)
 
