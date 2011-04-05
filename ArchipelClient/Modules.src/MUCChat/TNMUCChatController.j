@@ -171,12 +171,11 @@
                                         onService:[defaults objectForKey:@"TNArchipelMUCDefaultService"]
                                   usingConnection:[[TNStropheIMClient defaultClient] connection]
                                          withNick:[[TNStropheIMClient defaultClient] JID]];
-            [_session join];
             [_session setDelegate:self];
-
             [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactJoinedNotification object:[_session roster]];
             [center addObserver:self selector:@selector(reload:) name:TNStropheMUCContactLeftNotification object:[_session roster]];
 
+            [_session join];
             [self reload:nil];
         }
 }
@@ -293,11 +292,13 @@
 */
 - (void)performAddToRoster:(id)someUserInfo
 {
-    var member  = someUserInfo;
+    var member  = someUserInfo,
+        JID     = [member JID];
 
-    [[[TNStropheIMClient defaultClient] roster] addContact:[member nickname] withName:[member nickname] inGroupWithPath:nil];
-    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[member nickname]];
-    [[[TNStropheIMClient defaultClient] roster] authorizeJID:[member nickname]];
+    [JID setDomain:[JID domain].replace("conference.", "")];
+    [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:[member nickname] inGroupWithPath:nil];
+    [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:JID];
+    [[[TNStropheIMClient defaultClient] roster] authorizeJID:JID];
 }
 
 
@@ -310,15 +311,15 @@
 */
 - (void)mucRoom:(TNStropheMUCRoom)aRoom receivedMessage:(CPDictionary)aMessage
 {
-    var color = ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage valueForKey:@"from"] JID] resource]) ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
-        isNotice = ([aMessage valueForKey:"body"].indexOf([[[TNStropheIMClient defaultClient] JID] node]) != -1),
+    var color = ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage objectForKey:@"from"] JID] resource]) ? TNMessageViewBubbleColorNormal : TNMessageViewBubbleColorAlt,
+        isNotice = ([aMessage objectForKey:"body"].indexOf([[[TNStropheIMClient defaultClient] JID] node]) != -1),
         avatar,
         position;
 
     if (isNotice)
         color = TNMessageViewBubbleColorNotice;
 
-    if ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage valueForKey:@"from"] JID] resource])
+    if ([[[TNStropheIMClient defaultClient] JID] node] == [[[aMessage objectForKey:@"from"] JID] resource])
     {
         avatar = [[TNStropheIMClient defaultClient] avatar];
         position= TNMessageViewAvatarPositionLeft;
@@ -328,10 +329,9 @@
         position= TNMessageViewAvatarPositionRight;
     }
 
-
-    [_messageBoard addMessage:[aMessage valueForKey:"body"]
-                         from:[[aMessage valueForKey:"from"] nickname]
-                         date:[aMessage valueForKey:"time"]
+    [_messageBoard addMessage:[aMessage objectForKey:"body"]
+                         from:[[aMessage objectForKey:"from"] nickname]
+                         date:[aMessage objectForKey:"time"]
                         color:color
                         avatar:avatar
                         position:position];
