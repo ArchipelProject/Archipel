@@ -98,7 +98,10 @@ class TNApplianceDecompresser (Thread):
             # self.recover_snapshots()
             self.finish_callback()
         except Exception as ex:
-            self.clean()
+            try:
+                self.clean()
+            except:
+                pass
             self.error_callback(ex)
             self.entity.log.error(str(ex))
 
