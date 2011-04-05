@@ -230,7 +230,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         identifier              = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid                   = @"selectedTabIndexFor" + identifier;
 
-    if (currentSelectedIndex == [defaults integerForKey:memid inDomain:CPGlobalDomain])
+    if (currentSelectedIndex == [defaults integerForKey:memid])
         return;
 
     CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);

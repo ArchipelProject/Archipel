@@ -64,7 +64,7 @@
         {
             var key =  aBaseKey + [item valueForKey:aKeyPath];
 
-            if (([defaults objectForKey:key] == "expanded") || ([defaults objectForKey:key] == nil))
+            if (([defaults objectForKey:key] == @"expanded") || ([defaults objectForKey:key] == nil))
                 [self expandItem:item];
         }
     }

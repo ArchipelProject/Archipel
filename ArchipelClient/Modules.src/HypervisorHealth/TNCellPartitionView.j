@@ -34,9 +34,9 @@
 
 /*! initialize the view
 */
-- (id)init
+- (id)initWithFrame:(CPRect)aFrame
 {
-    if (self = [super initWithFrame:CPRectMake(0.0, 0.0, 420.0, 60.0)])
+    if (self = [super initWithFrame:aFrame])
     {
         [self setAutoresizingMask: CPViewWidthSizable];
 
@@ -80,16 +80,16 @@
 */
 - (CPString)formatSize:(int)aSize
 {
-    var usedKind = @"Gb";
+    var usedKind = @"GB";
 
     if (Math.round(aSize / 1024 / 1024) == 0)
     {
         aSize = Math.round(aSize / 1024);
-        usedKind = @"Mb";
+        usedKind = @"MB";
         if (aSize == 0)
         {
             aSize = Math.round(aSize / 1024);
-            usedKind = @"Kb";
+            usedKind = @"KB";
         }
     }
     else
@@ -111,7 +111,6 @@
 
     [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
     [_nameLabel sizeToFit];
-
 
     [_usedLabel setStringValue:@"Used: " + [self formatSize:[[aContent objectForKey:@"used"] intValue]]];
     [_usedLabel sizeToFit];

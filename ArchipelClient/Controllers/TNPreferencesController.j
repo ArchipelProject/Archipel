@@ -194,7 +194,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
-    [checkBoxUpdate setState:([defaults integerForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
+    [checkBoxUpdate setState:([defaults boolForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
 
     for (var i = 0; i < [_modules count]; i++)
     {
@@ -221,7 +221,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
-    [defaults setInteger:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
+    [defaults setBool:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
 
     CPLogUnregister(CPLogConsole);
     CPLogRegister(CPLogConsole, [buttonDebugLevel title]);
@@ -245,7 +245,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     var defaultsRegistration = [[CPUserDefaults standardUserDefaults]._domains objectForKey:CPRegistrationDomain];
 
-    // [CPUserDefaults resetStandardUserDefaults];
     [[CPUserDefaults standardUserDefaults] registerDefaults:defaultsRegistration];
     [[CPUserDefaults standardUserDefaults]._domains setObject:[CPDictionary dictionary] forKey:CPApplicationDomain];
     [[CPUserDefaults standardUserDefaults] synchronize];

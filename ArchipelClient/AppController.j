@@ -226,6 +226,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate"
     ]];
+    [defaults _reloadSearchList];
 
     /* register logs */
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
@@ -238,13 +239,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
     [splitViewTagsContents setDelegate:self];
 
-    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible" inDomain:CPGlobalDomain];
+    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
     [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
 
 
-    if (posx = [defaults integerForKey:@"mainSplitViewPosition" inDomain:CPGlobalDomain])
+    if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
         CPLog.trace("recovering with of main vertical CPSplitView from last state");
         [splitViewMain setPosition:posx ofDividerAtIndex:0];
@@ -276,7 +277,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
-    [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain]];
+    [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -408,7 +409,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
 
     [_hideButton setTarget:self];
-    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain]) ? _hideButtonImageDisable : _hideButtonImageEnable];
+    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
     [_hideButton setToolTip:@"Display or hide the properties view"];
 
@@ -1314,7 +1315,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:"expanded" forKey:key inDomain:CPGlobalDomain];
+    [defaults setObject:@"expanded" forKey:key inDomain:CPGlobalDomain];
 }
 
 /*! Delegate of TNOutlineView
@@ -1328,7 +1329,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:"collapsed" forKey:key inDomain:CPGlobalDomain];
+    [defaults setObject:@"collapsed" forKey:key inDomain:CPGlobalDomain];
 
     return YES;
 }
@@ -1368,7 +1369,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var defaults    = [CPUserDefaults standardUserDefaults],
         index       = [[_rosterOutlineView selectedRowIndexes] firstIndex],
         item        = [_rosterOutlineView itemAtRow:index],
-        loadDelay   = [defaults objectForKey:@"TNArchipelModuleLoadingDelay"];
+        loadDelay   = [defaults floatForKey:@"TNArchipelModuleLoadingDelay"];
 
     if (_moduleLoadingDelay)
     {

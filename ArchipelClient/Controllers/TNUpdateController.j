@@ -79,7 +79,7 @@
 */
 - (void)check
 {
-    if (!_forceCheck && ![[CPUserDefaults standardUserDefaults] integerForKey:@"TNArchipelAutoCheckUpdate"])
+    if (!_forceCheck && ![[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelAutoCheckUpdate"])
         return;
 
     var request     = [CPURLRequest requestWithURL:_URL],

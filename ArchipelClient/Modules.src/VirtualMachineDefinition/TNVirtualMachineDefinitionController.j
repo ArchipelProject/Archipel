@@ -943,7 +943,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 {
     var defaults    = [CPUserDefaults standardUserDefaults],
         cpu         = [defaults integerForKey:@"TNDescDefaultNumberCPU"],
-        mem         = [defaults objectForKey:@"TNDescDefaultMemory"],
+        mem         = [defaults integerForKey:@"TNDescDefaultMemory"],
         vnck        = [defaults objectForKey:@"TNDescDefaultVNCKeymap"],
         opo         = [defaults objectForKey:@"TNDescDefaultOnPowerOff"],
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],

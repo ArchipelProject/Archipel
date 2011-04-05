@@ -234,8 +234,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setObject:[fieldPreferencesFBURefreshRate stringValue] forKey:@"NOVNCFBURate"];
-    [defaults setObject:[fieldPreferencesCheckRate stringValue] forKey:@"NOVNCheckRate"];
+    [defaults setInteger:[fieldPreferencesFBURefreshRate intValue] forKey:@"NOVNCFBURate"];
+    [defaults setInteger:[fieldPreferencesCheckRate intValue] forKey:@"NOVNCheckRate"];
     [defaults setBool:[switchPreferencesPreferSSL isOn] forKey:@"NOVNCPreferSSL"];
 }
 
@@ -245,8 +245,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [fieldPreferencesFBURefreshRate setStringValue:[defaults objectForKey:@"NOVNCFBURate"]];
-    [fieldPreferencesCheckRate setStringValue:[defaults objectForKey:@"NOVNCheckRate"]];
+    [fieldPreferencesFBURefreshRate setIntValue:[defaults integerForKey:@"NOVNCFBURate"]];
+    [fieldPreferencesCheckRate setIntValue:[defaults integerForKey:@"NOVNCheckRate"]];
     [switchPreferencesPreferSSL setOn:[defaults boolForKey:@"NOVNCPreferSSL"] animated:YES sendAction:NO];
 }
 
@@ -398,8 +398,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     var defaults    = [CPUserDefaults standardUserDefaults],
         scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
         passwordKey = "TNArchipelNOVNCPasswordRememberFor" + [_entity JID],
-        lastScale   = [defaults objectForKey:scaleKey],
-        defaults    = [CPUserDefaults standardUserDefaults],
+        lastScale   = [defaults floatForKey:scaleKey],
         preferSSL   = [defaults boolForKey:@"NOVNCPreferSSL"];
 
     if ((_vncOnlySSL) || (preferSSL && _vncSupportSSL))
@@ -480,7 +479,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         zoom        = [aSender intValue],
         key         = TNArchipelVNCScaleFactor + [[self entity] JID];
 
-    [defaults setObject:zoom forKey:key];
+    [defaults setFloat:zoom forKey:key];
 
     [_vncView setZoom:(zoom / 100)];
     [fieldZoomValue setStringValue:parseInt(zoom)];
@@ -627,8 +626,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        var defaults    = [CPUserDefaults standardUserDefaults],
-            displayNode = [aStanza firstChildWithName:@"display"];
+        var displayNode = [aStanza firstChildWithName:@"display"];
 
         _VMHost         = [displayNode valueForAttribute:@"host"];
         _vncProxyPort   = [displayNode valueForAttribute:@"proxy"];

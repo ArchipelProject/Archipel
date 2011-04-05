@@ -114,10 +114,10 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)initCredentials
 {
     var defaults            = [CPUserDefaults standardUserDefaults],
-        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService" inDomain:CPGlobalDomain] || [defaults stringForKey:@"TNArchipelBOSHService"],
-        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain],
-        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain],
-        lastRememberCred    = [defaults boolForKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService"],
+        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID"],
+        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword"],
+        lastRememberCred    = [defaults objectForKey:@"TNArchipelBOSHRememberCredentials"];
 
     if (lastBoshService)
         [boshService setStringValue:lastBoshService];
@@ -190,7 +190,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         return;
     }
 
-    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource" inDomain:CPGlobalDomain]];
+    [connectionJID setResource:[defaults objectForKey:@"TNArchipelBOSHResource"]];
 
     var stropheClient = [TNStropheIMClient IMClientWithService:[[boshService stringValue] lowercaseString] JID:connectionJID password:[password stringValue] rosterClass:TNDatasourceRoster];
 

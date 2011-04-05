@@ -205,7 +205,7 @@
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setInteger:[fieldPreferencesMaxChatMessage stringValue] forKey:@"TNUserChatMaxMessageStore"];
+    [defaults setInteger:[fieldPreferencesMaxChatMessage intValue] forKey:@"TNUserChatMaxMessageStore"];
 }
 
 /*! called when user gets preferences
@@ -214,7 +214,7 @@
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [fieldPreferencesMaxChatMessage setStringValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
+    [fieldPreferencesMaxChatMessage setIntValue:[defaults integerForKey:@"TNUserChatMaxMessageStore"]];
 }
 
 /*! called when MainMenu is ready
@@ -339,7 +339,7 @@
 - (void)restore
 {
     var defaults = [CPUserDefaults standardUserDefaults],
-        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
+        lastConversation = [defaults objectForKey:"communicationWith" + [_entity JID]];
 
     if (lastConversation)
         _messages = lastConversation;

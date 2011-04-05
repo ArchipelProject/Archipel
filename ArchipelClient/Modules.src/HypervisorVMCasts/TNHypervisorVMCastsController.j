@@ -713,7 +713,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelVMCastsOpenedVMCasts + [item name];
 
-    [defaults setObject:"expanded" forKey:key];
+    [defaults setObject:@"expanded" forKey:key];
 }
 
 - (void)outlineViewItemWillCollapse:(CPNotification)aNotification
@@ -722,7 +722,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelVMCastsOpenedVMCasts + [item name];
 
-    [defaults setObject:"collapsed" forKey:key];
+    [defaults setObject:@"collapsed" forKey:key];
 }
 
 @end

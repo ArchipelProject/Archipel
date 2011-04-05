@@ -84,7 +84,7 @@ var TNLogLevelFatal = @"fatal",
     [mainScrollView setAutohidesScrollers:YES];
 
     var defaults = [CPUserDefaults standardUserDefaults];
-    _logLevel       = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
+    _logLevel = [defaults objectForKey:@"TNArchipelLogStoredMaximumLevel"];
 
     if (!_logLevel)
         _logLevel = [[CPBundle bundleForClass:[self class]] objectForInfoDictionaryKey:@"TNDefaultLogLevel"];

@@ -369,7 +369,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults setInteger:[fieldPreferencesMaxCPUs stringValue] forKey:@"TNArchipelControlsMaxVCPUs"];
+    [defaults setInteger:[fieldPreferencesMaxCPUs intValue] forKey:@"TNArchipelControlsMaxVCPUs"];
 }
 
 /*! called when user gets preferences
@@ -378,7 +378,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [fieldPreferencesMaxCPUs setStringValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
+    [fieldPreferencesMaxCPUs setIntValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
 }
 
 /*! called when permissions changes

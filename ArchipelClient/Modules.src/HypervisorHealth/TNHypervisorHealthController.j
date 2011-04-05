@@ -120,7 +120,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
         defaults    = [CPUserDefaults standardUserDefaults];
 
-    // register defaults defaults
+    // register defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthRefreshStatsInterval"], @"TNArchipelHealthRefreshStatsInterval",
             [bundle objectForInfoDictionaryKey:@"TNArchipelHealthStatsHistoryCollectionSize"], @"TNArchipelHealthStatsHistoryCollectionSize",
@@ -233,9 +233,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [_tablePartitions setCornerView:nil];
 
     var columnPartitionCell = [[CPTableColumn alloc] initWithIdentifier:@"partition"],
-        partitionViewPrototype = [[TNCellPartitionView alloc] init];
+        partitionViewPrototype = [[TNCellPartitionView alloc] initWithFrame:CPRectMake(0, 0, 420, 60)];
 
-    [columnPartitionCell setWidth:400];
+    [columnPartitionCell setWidth:[_tablePartitions frameSize].width];
     [columnPartitionCell setDataView:partitionViewPrototype];
     [_tablePartitions addTableColumn:columnPartitionCell];
     [_datasourcePartitions setTable:_tablePartitions];
@@ -535,8 +535,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     }
     else
     {
-        var defaults = [CPUserDefaults standardUserDefaults],
-            interval = MAX([defaults floatForKey:@"TNArchipelHealthRefreshStatsInterval"], 5.0);
+        var interval = MAX([defaults integerForKey:@"TNArchipelHealthRefreshStatsInterval"], 5.0);
+
         if (!_timerStats)
         {
             _timerStats = [CPTimer scheduledTimerWithTimeInterval:interval target:self selector:@selector(getHypervisorHealth:) userInfo:nil repeats:YES];
@@ -767,7 +767,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [stanza addChildWithName:@"archipel" andAttributes:{
         "xmlns": TNArchipelTypeHypervisorHealth,
         "action": TNArchipelTypeHypervisorHealthLog,
-        "limit": [defaults integerForKey:@"TNArchipelHealthMaxLogEntry"]}];
+        "limit": MAX([defaults integerForKey:@"TNArchipelHealthMaxLogEntry"], 10)}];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorLog:)];
 }
