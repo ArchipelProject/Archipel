@@ -15,7 +15,7 @@
 
 
     <key>TNArchipelBOSHService</key>
-    <string>http://archipelproject.org:5280/http-bind</string>
+    <string>http://jabber.archipelproject.org:5280/http-bind</string>
 
     <key>TNArchipelBOSHResource</key>
     <string>ArchipelController</string>
