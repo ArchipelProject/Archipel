@@ -1354,8 +1354,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (BOOL)outlineView:(CPOutlineView)anOutlineView shouldSelectItem:(id)anItem
 {
     for (var i = 0; i < [[moduleController loadedTabModules] count]; i++)
-        if (![[[moduleController loadedTabModules] objectAtIndex:i] shouldHideAndSelectItem:anItem ofObject:anOutlineView])
+    {
+        var module = [[moduleController loadedTabModules] objectAtIndex:i];
+        if (module && ![module shouldHideAndSelectItem:anItem ofObject:anOutlineView])
             return NO;
+    }
 
     return YES;
 }

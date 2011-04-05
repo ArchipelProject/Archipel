@@ -27,6 +27,9 @@
 
 @import "TNMediaObject.j"
 
+var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
+    TNArchipelTypeVirtualMachineDiskConvert = @"convert",
+    TNArchipelTypeVirtualMachineDiskRename  = @"rename";
 
 
 @implementation TNEditDriveController : CPObject
