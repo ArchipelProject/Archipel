@@ -17,7 +17,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION             = '1.0.9'
+VERSION             = '0.2.0'
 AUTHOR              = 'Antoine Mercadal'
 MAIL                = 'antoine.mercadal@archipelproject.org'
 URL                 = 'http://archipelproject.org'
