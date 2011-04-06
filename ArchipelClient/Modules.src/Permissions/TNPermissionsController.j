@@ -217,7 +217,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         var contact = [[[[TNStropheIMClient defaultClient] roster] contacts] objectAtIndex:i];
 
         if ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[contact vCard]] == TNArchipelEntityTypeUser)
-            [_datasourceUsers addRosterUser:[contact JID]];
+            [_datasourceUsers addRosterUser:[TNStropheJID stropheJIDWithString:[[contact JID] bare]]];
     }
 
     [self getXMPPUsers];
