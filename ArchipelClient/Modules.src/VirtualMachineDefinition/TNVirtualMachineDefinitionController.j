@@ -647,7 +647,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         var alert = [TNAlert alertWithMessage:@"Unsaved changes"
                                     informative:@"You have made some changes in the virtual machine definition. Would you like save these changes?"
                                      target:self
-                                     actions:[["Define", @selector(saveChanges:)], ["Discard", @selector(discardChanges:)]]];
+                                     actions:[["Validate", @selector(saveChanges:)], ["Discard", @selector(discardChanges:)]]];
 
         [alert setUserInfo:[CPArray arrayWithObjects:nextItem, anObject]];
         [alert runModal];
