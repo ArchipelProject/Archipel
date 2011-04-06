@@ -453,7 +453,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     var vm = someUserInfo;
 
-    [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[vm nickname] inGroupWithPath:nil];
+    [[[TNStropheIMClient defaultClient] roster] addContact:[vm JID] withName:[[vm JID] bare] inGroupWithPath:nil];
     [[[TNStropheIMClient defaultClient] roster] askAuthorizationTo:[vm JID]];
     [[[TNStropheIMClient defaultClient] roster] authorizeJID:[vm JID]];
 }
