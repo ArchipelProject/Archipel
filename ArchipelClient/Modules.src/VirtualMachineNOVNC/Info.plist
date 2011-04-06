@@ -50,7 +50,7 @@
         
         <key>MandatoryPermissions</key>
         <array>
-            <string>vncdisplay</string>
+            <string>vnc_display</string>
         </array>
 		
     </dict>
