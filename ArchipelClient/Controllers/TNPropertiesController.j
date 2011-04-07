@@ -27,6 +27,7 @@
 
 @import <StropheCappuccino/PubSub/TNPubSubController.j>
 @import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNFlipView.j>
 
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
@@ -38,11 +39,14 @@
 */
 @implementation TNPropertiesController: CPObject
 {
-    @outlet CPView                  mainView            @accessors(readonly);
+    @outlet CPView                  frontView;
+    @outlet CPView                  backView;
     @outlet TNEditableLabel         entryName           @accessors(readonly);
     @outlet CPButton                entryAvatar;
     @outlet CPImageView             entryStatusIcon;
     @outlet CPButton                buttonEventSubscription;
+    @outlet CPButton                buttonFrontViewFlip;
+    @outlet CPButton                buttonBackViewFlip;
     @outlet CPTextField             entryType;
     @outlet CPTextField             labelType;
     @outlet CPTextField             entryDomain;
@@ -52,8 +56,16 @@
     @outlet CPTextField             labelResource;
     @outlet CPTextField             labelStatus;
     @outlet CPTextField             newNickName;
+    @outlet CPTextField             labelVCardFN;
+    @outlet CPTextField             labelVCardLocality;
+    @outlet CPTextField             labelVCardCompany;
+    @outlet CPTextField             labelVCardRole;
+    @outlet CPTextField             labelVCardEmail;
+    @outlet CPTextField             labelVCardWebiste;
+    @outlet CPImageView             imageViewVCardPhoto;
     @outlet TNContactsController    contactsController;
 
+    TNFlipView                      _mainView           @accessors(getter=mainView);
     BOOL                            _enabled            @accessors(getter=isEnabled);
     TNAvatarController              _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController              _pubSubController   @accessors(property=pubSubController);
@@ -84,7 +96,17 @@
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
     _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
-    [mainView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    _mainView = [[TNFlipView alloc] initWithFrame:[frontView bounds]];
+    [_mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/property-bg.png"]]]];
+    [frontView setFrameOrigin:CPPointMakeZero()];
+    [backView setFrameOrigin:CPPointMakeZero()];
+    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/vcard-bg.png"]]]];
+    [_mainView setFrontView:frontView];
+    [_mainView setBackView:backView];
+    // [_mainView setBackgroundColor:[CPColor blueColor]];
+
+    [frontView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"515151"]];
@@ -108,7 +130,20 @@
     [entryStatus setToolTip:@"The current status of the contact"];
     [entryType setToolTip:@"The type of contact (hypervisor, virtual machine or user)"];
 
+    [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
+
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
+
+    [buttonFrontViewFlip setTarget:_mainView];
+    [buttonFrontViewFlip setBordered:NO];
+    [buttonFrontViewFlip setAction:@selector(flip:)];
+    [buttonFrontViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"]]];
+    [buttonFrontViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"]]];
+    [buttonBackViewFlip setTarget:_mainView];
+    [buttonBackViewFlip setBordered:NO];
+    [buttonBackViewFlip setAction:@selector(flip:)];
+    [buttonBackViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"]]];
+    [buttonBackViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"]]];
 }
 
 
@@ -194,7 +229,7 @@
 
     _isCollapsed = YES;
 
-    [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
+    [[_mainView superview] setPosition:[[_mainView superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 /*! show the panel
@@ -206,7 +241,7 @@
 
     _isCollapsed = NO;
 
-    [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[_mainView superview] setPosition:([[_mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelPropertiesViewDidShowNotification object:self];
 
 }
@@ -271,6 +306,27 @@
             [buttonEventSubscription setToolTip:@"You are not registred to the entity events."];
         }
 
+        [labelVCardFN setStringValue:nil];
+        [labelVCardLocality setStringValue:nil];
+        [labelVCardCompany setStringValue:nil];
+        [labelVCardRole setStringValue:nil];
+        [labelVCardEmail setStringValue:nil]
+        [labelVCardWebiste setStringValue:nil];
+        [imageViewVCardPhoto setImage:nil];
+
+        if ([_entity vCard])
+        {
+            var vCard = [_entity vCard];
+
+            [labelVCardFN setStringValue:[[vCard firstChildWithName:@"FN"] text]];
+            [labelVCardLocality setStringValue:[[vCard firstChildWithName:@"LOCALITY"] text]];
+            [labelVCardCompany setStringValue:[[vCard firstChildWithName:@"ORGNAME"] text]];
+            [labelVCardRole setStringValue:[[vCard firstChildWithName:@"TITLE"] text]];
+            [labelVCardEmail setStringValue:[[vCard firstChildWithName:@"USERID"] text]]
+            [labelVCardWebiste setStringValue:[[vCard firstChildWithName:@"URL"] text]];
+            [imageViewVCardPhoto setImage:[_entity avatar] || _unknownUserImage];
+        }
+
     }
     else if ([_entity isKindOfClass:TNStropheGroup])
     {
@@ -313,7 +369,7 @@
 */
 - (IBAction)changeNickName:(id)sender
 {
-    [[mainView window] makeFirstResponder:[entryName previousResponder]];
+    [[_mainView window] makeFirstResponder:[entryName previousResponder]];
 }
 
 /*! subscribe (unsubscribe) to (from) the entity pubsub if any

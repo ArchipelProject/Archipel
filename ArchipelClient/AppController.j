@@ -274,6 +274,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewHorizontalRoster setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[splitViewHorizontalRoster subviews][1] removeFromSuperview];
     [splitViewHorizontalRoster addSubview:[propertiesController mainView]];
+    [[propertiesController mainView] setFrameSize:CPSizeMake([leftView frameSize].width, [[propertiesController mainView] frameSize].height)];
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
