@@ -699,6 +699,7 @@ class TNArchipelEntity (object):
             payload     = []
             type_node   = xmpp.Node(tag="ROLE")
             type_node.setData(self.entity_type)
+            payload.append(type_node)
 
             if hasattr(self, "vcard_infos"):
                 for key, value in self.vcard_infos.items():
