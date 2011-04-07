@@ -219,6 +219,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                                 "description": "I'll give info about me" },
                             {  "commands" : ["desc", "xml"],
                                 "parameters": [],
+                                "permissions": ["xmldesc"],
                                 "method": self.message_xmldesc,
                                 "description": "I'll show my description" },
                             {  "commands" : ["net", "stat"],
