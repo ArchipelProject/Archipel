@@ -149,8 +149,8 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
     def message_get(self, msg):
         """
         Return the geolocalization information asked by message.
-        @type iq: xmpp.Protocol.Message
-        @param iq: the received message
+        @type msg: xmpp.Protocol.Message
+        @param msg: the received message
         @rtype: string
         @return: string containing the answer to send
         """

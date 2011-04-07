@@ -68,7 +68,7 @@ class TNAvatarControllableEntity (object):
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_acp.")
 
@@ -85,7 +85,7 @@ class TNAvatarControllableEntity (object):
         @param error_code: the error code to return
         @type prefix: string
         @param prefix: the prefix of the action
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNAvatarControllableEntity must implement check_perm.")
 
@@ -94,7 +94,7 @@ class TNAvatarControllableEntity (object):
         Set the vcard of the entity.
         @type params: dict
         @param params: the parameters of the vCard
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNAvatarControllableEntity must implement set_vcard.")
 
@@ -133,8 +133,8 @@ class TNAvatarControllableEntity (object):
     def set_avatar(self, name):
         """
         Change the current avatar of the entity.
-        @type name string
-        @param name the file name of avatar. base path is the configuration key "machine_avatar_directory"
+        @type name: string
+        @param name: the file name of avatar. base path is the configuration key "machine_avatar_directory"
         """
         name = name.replace("..", "").replace("/", "").replace("\\", "").replace(" ", "_")
         self.b64Avatar = None

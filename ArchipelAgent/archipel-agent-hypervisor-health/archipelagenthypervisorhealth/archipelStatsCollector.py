@@ -44,8 +44,8 @@ class TNThreadedHealthCollector (Thread):
         @param collection_interval: the intervale between two collection
         @type max_rows_before_purge: integer
         @param max_rows_before_purge: max number of rows that can be stored in database
-        @type max_rows_before_purge: integer
-        @param max_rows_before_purge: max number of rows that are cached into memory
+        @type max_cached_rows: integer
+        @param max_cached_rows: max number of rows that are cached into memory
         """
         self.database_file          = database_file
         self.collection_interval    = collection_interval

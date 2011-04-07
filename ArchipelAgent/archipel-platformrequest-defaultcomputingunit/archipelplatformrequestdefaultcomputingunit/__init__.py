@@ -28,12 +28,6 @@ def make_computing_unit():
     This function is the plugin factory. It will be called by the object you want
     to be plugged in. It must return a dictionary containing
     a key for the the plugin informations, and a key for the plugin object.
-    @type configuration: Config Object
-    @param configuration: the general configuration object
-    @type entity: L{TNArchipelEntity}
-    @param entity: the entity that has load the plugin
-    @type group: string
-    @param group: the entry point group name in which the plugin has been loaded
     @rtype: dict
     @return: dictionary containing the plugins informations and objects
     """

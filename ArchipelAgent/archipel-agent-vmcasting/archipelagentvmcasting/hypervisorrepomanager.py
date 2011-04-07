@@ -144,12 +144,12 @@ class TNHypervisorRepoManager (TNArchipelPlugin):
     def __init__(self, configuration, entity, entry_point_group):
         """
         Initialize the class.
-        @type database_path: string
-        @param database_path: the path of the sqlite3 database to use
-        @type repository_path: string
-        @param repository_path: the path of the repository to download and store appliances
+        @type configuration: string
+        @param configuration: the configuration object
         @type entity: TNArchipelHypervisor
         @param entity: the instance of the TNArchipelHypervisor. Will be used for push.
+        @type entry_point_group: string
+        @param entry_point_group: the entry point group name
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
         self.database_path          = self.configuration.get("VMCASTING", "vmcasting_database_path")

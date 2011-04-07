@@ -56,6 +56,6 @@ class TNArchipelPlugin:
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
                     "configuration-tokens"      : plugin_configuration_tokens }
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("plugins objects must implement 'plugin_info'")

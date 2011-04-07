@@ -64,7 +64,7 @@ class TNTaggableEntity (object):
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNTaggableEntity must implement check_acp.")
 
@@ -81,7 +81,7 @@ class TNTaggableEntity (object):
         @param error_code: the error code to return
         @type prefix: string
         @param prefix: the prefix of the action
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNTaggableEntity must implement check_perm.")
 
@@ -134,8 +134,8 @@ class TNTaggableEntity (object):
     def set_tags(self, tags):
         """
         Set the tags of the current entity.
-        @type tags String
-        @param tags the string containing tags separated by ';;'
+        @type tags: string
+        @param tags: the string containing tags separated by ';;'
         """
         current_id = None
         for item in self.pubSubNodeTags.get_items():
@@ -150,7 +150,7 @@ class TNTaggableEntity (object):
     def did_clean_old_tags(self, resp, user_info):
         """
         Callback called when old tags has been removed if any.
-        @raise: Exception is unable to clean old tags
+        @raise Exception: Exception if not implemented
         """
         if resp.getType() == "result":
             tagNode = xmpp.Node(tag="tag", attrs={"jid": self.jid.getStripped(), "tags": user_info})

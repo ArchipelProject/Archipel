@@ -183,7 +183,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.update_presence)
 
-    def update_presence(self, origin=None, user_info=None, arguments=None):
+    def update_presence(self, origin=None, user_info=None, parameters=None):
         """
         Set the presence of the hypervisor.
         @type origin: L{TNArchipelEntity}
@@ -621,7 +621,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Handle the allocation request message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -685,7 +685,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Handle the free request message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -734,7 +734,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Handle the clone request message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -769,11 +769,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_ROSTER)
         return reply
 
-    def message_roster(self, msq):
+    def message_roster(self, msg):
         """
         Process the roster message request.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -804,7 +804,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Process the IP message request.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -833,7 +833,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Process the libvirt URI message request.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -861,7 +861,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         Process the capabilities message request.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """

@@ -83,7 +83,7 @@ class TNHookableEntity (object):
         self.hooks[hookname].append({"method": method, "oneshot": oneshot, "user_info": user_info})
         self.log.info("HOOK: registering hook method %s for hook name %s (oneshot: %s)" % (method.__name__, hookname, str(oneshot)))
 
-    def unregister_hook(self, hookname, m):
+    def unregister_hook(self, hookname, method):
         """
         Unregister a method from a hook.
         @type hookname: string
@@ -95,10 +95,10 @@ class TNHookableEntity (object):
         """
         if hookname in self.hooks:
             for hook in self.hooks[hookname]:
-                if hook["method"] == m:
+                if hook["method"] == method:
                     self.hooks[hookname].remove(hook)
                     break
-            self.log.info("HOOK: unregistering hook method %s for hook name %s" % (m.__name__, hookname))
+            self.log.info("HOOK: unregistering hook method %s for hook name %s" % (method.__name__, hookname))
             return True
         return False
 

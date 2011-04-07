@@ -43,17 +43,16 @@ class TNArchipelTrigger:
     def __init__(self, entity, name, description=None, mode=ARCHIPEL_TRIGGER_MODE_MANUAL, check_method=None, check_interval=-1):
         """
         The contructor.
-        @type entity TNArchipelEntity
-        @param entity the entity that owns the trigger
-        @type name string
-        @param name the name of the trigger
-        @type mode int
-        @param mode mode of the trigger. if ARCHIPEL_TRIGGER_MODE_MANUAL, state must be change by entity.
-        if ARCHIPEL_TRIGGER_MODE_AUTO, then the check_method param will be played to determine if the trigger is on or off
-        @type check_method function
-        @param check_method the method to use to determine an auto trigger is on or off. This method must return a boolean
-        @type check_interval int
-        @param check_interval the time interval between to run check_method if trigger is auto. if -1, it will be run once.
+        @type entity: TNArchipelEntity
+        @param entity: the entity that owns the trigger
+        @type name: string
+        @param name: the name of the trigger
+        @type mode: int
+        @param mode: mode of the trigger. if ARCHIPEL_TRIGGER_MODE_MANUAL, state must be change by entity. if ARCHIPEL_TRIGGER_MODE_AUTO, then the check_method param will be played to determine if the trigger is on or off
+        @type check_method: function
+        @param check_method: the method to use to determine an auto trigger is on or off. This method must return a boolean
+        @type check_interval: int
+        @param check_interval: the time interval between to run check_method if trigger is auto. if -1, it will be run once.
         """
         self.entity         = entity
         self.name           = name
@@ -90,8 +89,8 @@ class TNArchipelTrigger:
     def set_state(self, state):
         """
         Manual set if the trigger is on or off.
-        @type state int
-        @param state ARCHIPEL_TRIGGER_STATE_OFF or ARCHIPEL_TRIGGER_STATE_ON
+        @type state: int
+        @param state: ARCHIPEL_TRIGGER_STATE_OFF or ARCHIPEL_TRIGGER_STATE_ON
         """
         triggerNode = xmpp.Node(tag="trigger", attrs={"date": datetime.datetime.now()})
 

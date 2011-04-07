@@ -127,12 +127,12 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def get(self, active=True, inactive=True):
         """
         Get the list of networks.
-        @type active bool
+        @type active: bool
         @param active: if True, will return active network
-        @type inactive bool
+        @type inactive: bool
         @param inactive: if True, will return not active network
         @rtype: dict
-        @return a list containing networtks
+        @return: a list containing networtks
         """
         ret = {}
         if active:
@@ -144,7 +144,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def create(self, identifier):
         """
         Create (start) the network with given identifier.
-        @type identifier string
+        @type identifier: string
         @param identifier: the identifer of the network to create. It can be its name or UUID
         """
         try:
@@ -158,7 +158,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def destroy(self, identifier):
         """
         destroy (stop) the network with given identifier
-        @type identifier string
+        @type identifier: string
         @param identifier: the identifer of the network to destroy. It can be its name or UUID
         """
         try:
@@ -172,7 +172,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def define(self, definition):
         """
         define the network
-        @type definition string
+        @type definition: string
         @param definition: the XML definition to use
         """
         self.entity.libvirt_connection.networkDefineXML(str(definition))
@@ -182,7 +182,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
     def undefine(self, identifier):
         """
         Undefine the network with given identifier.
-        @type identifier string
+        @type identifier: string
         @param identifier: the identifer of the network to destroy. It can be its name or UUID
         """
         try:
@@ -330,7 +330,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         """
         Handle the creation request message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """

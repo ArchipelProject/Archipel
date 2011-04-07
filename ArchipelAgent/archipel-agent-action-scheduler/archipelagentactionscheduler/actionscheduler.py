@@ -98,8 +98,8 @@ class TNActionScheduler (TNArchipelPlugin):
     def delete_job(self, uid):
         """
         Remove a job from the database.
-        @type uid string
-        @param uid the uid of the job to remove
+        @type uid: string
+        @param uid: the uid of the job to remove
         """
         self.cursor.execute("DELETE FROM scheduler WHERE job_uuid=?", (uid, ))
         self.database.commit()
@@ -107,26 +107,26 @@ class TNActionScheduler (TNArchipelPlugin):
     def save_jobs(self, uid, action, year, month, day, hour, minute, second, comment, params=None):
         """
         Save a job in the database.
-        @type uid string
-        @param uid the uid of the job
-        @type action string
-        @param action the action
-        @type year string
-        @param year year of execution
-        @type month string
-        @param month month of execution
-        @type day string
-        @param day day of execution
-        @type hour string
-        @param hour hour of execution
-        @type minute string
-        @param minute minute of execution
-        @type second string
-        @param second second of execution
-        @type comment string
-        @param comment comment about the job
-        @type params string
-        @param params random parameter of the job
+        @type uid: string
+        @param uid: the uid of the job
+        @type action: string
+        @param action: the action
+        @type year: string
+        @param year: year of execution
+        @type month: string
+        @param month: month of execution
+        @type day: string
+        @param day: day of execution
+        @type hour: string
+        @param hour: hour of execution
+        @type minute: string
+        @param minute: minute of execution
+        @type second: string
+        @param second: second of execution
+        @type comment: string
+        @param comment: comment about the job
+        @type params: string
+        @param params: random parameter of the job
         """
         entityClass = self.entity.__class__.__name__
         if entityClass == "TNArchipelVirtualMachine":
@@ -154,7 +154,7 @@ class TNActionScheduler (TNArchipelPlugin):
     def vm_terminate(self, origin, user_info, arguments):
         """
         Close the database connection.
-        @type origin: L{TNArchipelEnity}
+        @type origin: TNArchipelEntity
         @param origin: the origin of the hook
         @type user_info: object
         @param user_info: random user information
@@ -168,8 +168,8 @@ class TNActionScheduler (TNArchipelPlugin):
     def get_jod_with_uid(self, uid):
         """
         Get a job with given uid.
-        @type uid string
-        @param uid the uid of the job
+        @type uid: string
+        @param uid: the uid of the job
         """
         for job in self.scheduler.jobs:
             if str(job.args[1]) == uid:
@@ -179,16 +179,16 @@ class TNActionScheduler (TNArchipelPlugin):
     def do_job_for_vm(self, action, uid, str_date, comment, param):
         """
         Perform the job.
-        @type action string
-        @param action the action to execute
-        @type uid string
-        @param uid the uid of the job
-        @type str_date string
-        @param str_date the date of the job
-        @type comment string
-        @param commt comment about the job
-        @type param string
-        @param param a random parameter to give to job
+        @type action: string
+        @param action: the action to execute
+        @type uid: string
+        @param uid: the uid of the job
+        @type str_date: string
+        @param str_date: the date of the job
+        @type comment: string
+        @param comment: comment about the job
+        @type param: string
+        @param param: a random parameter to give to job
         """
         if action == "create":
             self.entity.create()
@@ -215,16 +215,16 @@ class TNActionScheduler (TNArchipelPlugin):
     def do_job_for_hypervisor(self, action, uid, str_date, comment, param):
         """
         Perform the job.
-        @type action string
-        @param action the action to execute
-        @type uid string
-        @param uid the uid of the job
-        @type str_date string
-        @param str_date the date of the job
-        @type comment string
-        @param commt comment about the job
-        @type param string
-        @param param a random parameter to give to job
+        @type action: string
+        @param action: the action to execute
+        @type uid: string
+        @param uid: the uid of the job
+        @type str_date: string
+        @param str_date: the date of the job
+        @type comment: string
+        @param comment: comment about the job
+        @type param: string
+        @param param: a random parameter to give to job
         """
         if action == "alloc":
             self.entity.alloc()

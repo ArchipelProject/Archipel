@@ -60,7 +60,7 @@ class TNRosterQueryableEntity (object):
         @param conn: the connection
         @type iq: xmpp.Protocol.Iq
         @param iq: the IQ to check
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNRosterQueryableEntity must implement check_acp.")
 
@@ -77,7 +77,7 @@ class TNRosterQueryableEntity (object):
         @param error_code: the error code to return
         @type prefix: string
         @param prefix: the prefix of the action
-        @raise: Exception if not implemented
+        @raise Exception: Exception if not implemented
         """
         raise Exception("Subclass of TNRosterQueryableEntity must implement check_perm")
 
@@ -142,7 +142,7 @@ class TNRosterQueryableEntity (object):
         """
         Handle roster asking message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """

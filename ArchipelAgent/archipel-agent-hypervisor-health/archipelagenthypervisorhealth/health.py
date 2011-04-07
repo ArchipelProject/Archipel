@@ -265,8 +265,8 @@ class TNHypervisorHealth (TNArchipelPlugin):
     def message_get_logs(self, msg):
         """
         Handle the log info request message.
-        @type iq: xmpp.Protocol.Iq
-        @param iq: the sender request IQ
+        @type msg: xmpp.Protocol.Iq
+        @param msg: the sender request IQ
         @rtype: xmpp.Protocol.Iq
         @return: a ready-to-send IQ containing the results
         """

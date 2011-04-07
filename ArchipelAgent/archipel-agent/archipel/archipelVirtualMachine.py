@@ -793,7 +793,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             - definition : the xml object containing the libvirt definition
             - path : the vm path to clone (will clone * in it)
             - baseuuid : the base uuid of cloned vm, in order to replace it
-            @type origin: L{TNArchipelEntity}
+        @type origin: TNArchipelEntity
         @param origin: the origin of the hook
         @type user_info: object
         @param user_info: random user info
@@ -999,7 +999,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message creation order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1035,7 +1035,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message shutdown order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1071,7 +1071,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message destroy order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1107,7 +1107,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message reboot order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1143,7 +1143,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message suspend order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1179,7 +1179,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message resume order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1218,7 +1218,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message info order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1260,7 +1260,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle message xmldesc order.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1402,7 +1402,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle the message that asks for network information.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1434,7 +1434,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle insulting message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """
@@ -1444,7 +1444,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Handle the hello message.
         @type msg: xmpp.Protocol.Message
-        @param iq: the received message
+        @param msg: the received message
         @rtype: xmpp.Protocol.Message
         @return: a ready to send Message containing the result of the action
         """

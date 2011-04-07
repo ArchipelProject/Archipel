@@ -147,7 +147,7 @@ class TNApplianceDecompresser (Thread):
     def update_description(self):
         """
         Define the uuid to write in the description file.
-        @raise: Exception if description is invalid
+        @raise Exception: Exception if description file is empty
         @return: True in case of success
         """
         if not self.description_file:

@@ -95,7 +95,7 @@ class TNArchipelVNC (TNArchipelPlugin):
 
     ### Utilities
 
-    def awake_from_initialization(self, origin, user_info, arguments):
+    def awake_from_initialization(self, origin, user_info, parameters):
         """
         Will create or not the proxy according to the recovered status of the vm.
         @type origin: L{TNArchipelEntity}
@@ -103,14 +103,14 @@ class TNArchipelVNC (TNArchipelPlugin):
         @type user_info: object
         @param user_info: random user info
         @type parameters: object
-        @param parameters: runtim argument
+        @param parameters: runtime argument
         """
         if self.entity.domain:
             dominfo = self.entity.domain.info()
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.create_novnc_proxy()
 
-    def create_novnc_proxy(self, origin=None, user_info=None, arguments=None):
+    def create_novnc_proxy(self, origin=None, user_info=None, parameters=None):
         """
         Create a noVNC proxy on port vmpport + 1000 (so noVNC proxy is 6900 for VNC port 5900 etc).
         @type origin: L{TNArchipelEntity}
@@ -144,7 +144,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         @type user_info: object
         @param user_info: random user info
         @type parameters: object
-        @param parameters: runtim argument
+        @param parameters: runtime argument
         """
         if self.novnc_proxy:
             self.entity.log.info("Stopping novnc proxy.")

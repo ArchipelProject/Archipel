@@ -337,8 +337,8 @@ class TNArchipelPermissionCenter:
         Check if all permissions on array are granted.
         @type user_name: string
         @param user_name: the name of the user
-        @type permission_name: array of string
-        @param permission_name: list permissions names
+        @type permissions: array of string
+        @param permissions: list permissions names
         @rtype: Boolean
         @return: True in case of success
         """

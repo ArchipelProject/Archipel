@@ -56,16 +56,16 @@ class TNArchipelWebSocket (threading.Thread):
         """
         Intialize the WebSocket listener.
 
-        @type target_host string
-        @param target_host the target VNC host to proxy out
-        @type target_port string
-        @param target_port the target VNC port to proxy out
-        @type listen_host string
-        @param listen_host local IP address to listen (0.0.0.0 for all)
-        @type certfile string
-        @param certfile the path to a valid certificate file for SSL connections
-        @type onlySSL boolean
-        @param onlySSL if set to true, the socket will *only* accept secure connections
+        @type target_host: string
+        @param target_host: the target VNC host to proxy out
+        @type target_port: string
+        @param target_port: the target VNC port to proxy out
+        @type listen_host: string
+        @param listen_host: local IP address to listen (0.0.0.0 for all)
+        @type certfile: string
+        @param certfile: the path to a valid certificate file for SSL connections
+        @type onlySSL: boolean
+        @param onlySSL: if set to true, the socket will *only* accept secure connections
         """
         threading.Thread.__init__(self)
 
@@ -87,8 +87,8 @@ class TNArchipelWebSocket (threading.Thread):
         """
         Encode given buffer to base64.
 
-        @type buf string
-        @param buf the buffer to encode
+        @type buf: string
+        @param buf: the buffer to encode
         """
         if self.base64encode:
             buf = b64encode(buf)
@@ -102,8 +102,8 @@ class TNArchipelWebSocket (threading.Thread):
         """
         Decode given buffer from base64.
 
-        @type buf string
-        @param buf the buffer to dencode
+        @type buf: string
+        @param buf: the buffer to dencode
         """
         if buf.count('\xff') > 1:
             if self.base64encode:
@@ -120,8 +120,8 @@ class TNArchipelWebSocket (threading.Thread):
         """
         Parse the connection handshake.
 
-        @type handshake string
-        @param handshake the handshake content
+        @type handshake: string
+        @param handshake: the handshake content
         """
         ret = {}
         req_lines = handshake.split("\r\n")
@@ -139,7 +139,11 @@ class TNArchipelWebSocket (threading.Thread):
         return ret
 
     def __gen_md5(self, keys):
-        """generate a md5 from keys"""
+        """
+        generate a md5 from keys
+        @type keys: list
+        @param keys: list of keys
+        """
         key1 = keys['Sec-WebSocket-Key1']
         key2 = keys['Sec-WebSocket-Key2']
         key3 = keys['key3']
@@ -153,6 +157,8 @@ class TNArchipelWebSocket (threading.Thread):
     def __do_handshake(self, sock):
         """
         Perform the handshake
+        @type sock: socket
+        @param sock: the socket
         """
         self.base64encode = True
 
@@ -209,7 +215,9 @@ class TNArchipelWebSocket (threading.Thread):
         return retsock
 
     def __do_proxy(self, client, target, addr):
-        """ Proxy WebSocket to normal socket. """
+        """
+        Proxy WebSocket to normal socket.
+        """
         cqueue = []
         cpartial = ""
         tqueue = []

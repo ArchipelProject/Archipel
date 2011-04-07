@@ -103,12 +103,12 @@ class TNStorageManagement (TNArchipelPlugin):
         """
         Invoked when new ARCHIPEL_NS_VM_DISK IQ is received.
         It understands IQ of type:
-        - create
-        - delete
-        - get
-        - getiso
-        - convert
-        - rename
+            - create
+            - delete
+            - get
+            - getiso
+            - convert
+            - rename
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
         @type iq: xmpp.Protocol.Iq

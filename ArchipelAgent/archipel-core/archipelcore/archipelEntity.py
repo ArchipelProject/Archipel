@@ -460,8 +460,8 @@ class TNArchipelEntity (object):
             - remove
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the message
-        @type presence: xmpp.Protocol.Iq
-        @param presence: the received IQ
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
         """
         reply = None
         action = self.check_acp(conn, iq)
@@ -822,15 +822,13 @@ class TNArchipelEntity (object):
         """
         Register a method described in item.
         The item use the following form:
-        {  "commands" :     ["command trigger 1", "command trigger 2"],
-            "parameters":   [
-                                {"name": "param1", "description": "the description of the first param"},
-                                {"name": "param2", "description": "the description of the second param"}
-                            ],
-            "method":       self.a_method_to_launch,
-            "permissions":   "the permissions in a array you need to process the command",
-            "description":  "A general description of the command"
-        }
+            {   "commands" :     ["command trigger 1", "command trigger 2"],
+                "parameters":   [
+                                    {"name": "param1", "description": "the description of the first param"},
+                                    {"name": "param2", "description": "the description of the second param"}],
+                "method":       self.a_method_to_launch,
+                "permissions":   "the permissions in a array you need to process the command",
+                "description":  "A general description of the command"}
         The "method" key take any method with type (string)aMethod(raw_command_message). The return string
         will be sent to the requester.
         @type item: dictionnary
@@ -842,8 +840,8 @@ class TNArchipelEntity (object):
     def add_message_registrar_items(self, items):
         """
         Register an array of item see @add_message_registrar_item
-        @type item: array
-        @param item: an array of messages_registrar items
+        @type items: array
+        @param items: an array of messages_registrar items
         """
         for item in items:
             self.add_message_registrar_item(item)
@@ -851,8 +849,6 @@ class TNArchipelEntity (object):
     def filter_message(self, msg):
         """
         This method filter archipel push messages and archipel service messages.
-        @type conn: xmpp.Dispatcher
-        @param conn: ths instance of the current connection that send the message
         @type msg: xmpp.Protocol.Message
         @param msg: the received message
         """

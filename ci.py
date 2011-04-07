@@ -170,8 +170,8 @@ def generateAPI(api_dir):
     
     os.system("echo \* Generating doc for ArchipelAgent")
     os.system("mkdir -p %s/archipel-agent" % api_dir)
-    os.system("cd ArchipelAgent/archipel; epydoc .")
-    os.system("cp -a ArchipelAgent/archipel/html/* %s/archipel-agent/" % api_dir)
+    os.system("cd ArchipelAgent; epydoc --config=epydoc.conf")
+    os.system("cp -a ArchipelAgent/html/* %s/archipel-agent/" % api_dir)
     os.system("chown -R cruise:www-data %s/archipel-agent/" % api_dir)
     
     
