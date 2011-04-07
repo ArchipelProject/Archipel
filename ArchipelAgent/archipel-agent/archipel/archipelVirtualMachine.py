@@ -51,7 +51,7 @@ from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
 import archipelcore.archipelTriggers
 
-from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
+from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR, generate_mac_adress
 import archipelLibvirtEntity
 
 
@@ -808,6 +808,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         xmlstring = xmlstring.replace(parentuuid, self.uuid)
         xmlstring = xmlstring.replace(parentname, self.name)
         newxml = xmpp.simplexml.NodeBuilder(data=xmlstring).getDom()
+
+        nics_nodes = newxml.getTag("devices").getTags("interface")
+        for nic in nics_nodes:
+            mac = nic.getTag("mac")
+            if mac:
+                mac.setAttr("address", generate_mac_adress())
 
         self.log.debug("New XML description is now %s" % str(newxml))
         self.log.info("Starting to clone virtual machine %s from %s" % (self.uuid, parentuuid))
