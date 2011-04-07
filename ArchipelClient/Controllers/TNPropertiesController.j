@@ -318,7 +318,7 @@
         {
             var vCard = [_entity vCard];
 
-            [buttonFrontViewFlip setEnabled:YES];
+            [buttonFrontViewFlip setHidden:NO];
 
             [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
             [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
@@ -352,7 +352,7 @@
         if ([_mainView isFlipped])
         {
             [_mainView flip:nil];
-            [buttonFrontViewFlip setEnabled:NO];
+            [buttonFrontViewFlip setHidden:YES];
         }
     }
 
