@@ -41,22 +41,24 @@
 */
 @implementation TNUserChatController : TNModule
 {
-    @outlet CPImageView                 imageSpinnerWriting;
-    @outlet CPScrollView                messagesScrollView;
-    @outlet CPTextField                 fieldJID;
-    @outlet CPTextField                 fieldMessage;
-    @outlet CPTextField                 fieldName;
-    @outlet CPTextField                 fieldPreferencesMaxChatMessage;
-    @outlet CPTextField                 fieldUserJID;
-    @outlet CPView                      viewControls;
-    @outlet CPButton                    buttonClear;
-    @outlet CPButton                    buttonDetach;
+    @outlet CPButton        buttonClear;
+    @outlet CPButton        buttonDetach;
+    @outlet CPImageView     imageSpinnerWriting;
+    @outlet CPScrollView    messagesScrollView;
+    @outlet CPTextField     fieldJID;
+    @outlet CPTextField     fieldMessage;
+    @outlet CPTextField     fieldName;
+    @outlet CPTextField     fieldPreferencesMaxChatMessage;
+    @outlet CPTextField     fieldUserJID;
+    @outlet CPView          viewControls;
 
     CPArray                 _messages;
+    CPDictionary            _detachedChats;
+    CPSound                 _soundMessage;
+    CPSound                 _soundReceived;
+    CPSound                 _soundSent;
     CPTimer                 _composingMessageTimer;
     TNMessageBoard          _messageBoard;
-    CPSound                 _soundMessage;
-    CPDictionary            _detachedChats;
 }
 
 
@@ -112,7 +114,9 @@
 
     [fieldMessage addObserver:self forKeyPath:@"stringValue" options:CPKeyValueObservingOptionNew context:nil];
 
-    _soundMessage = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.wav"] byReference:NO];
+    _soundMessage   = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"Receive.wav"] byReference:NO];
+    _soundReceived  = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"received.wav"] byReference:NO];
+    _soundSent      = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"sent.wav"] byReference:NO];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 
@@ -248,12 +252,6 @@
 */
 - (void)_didReceiveMessage:(CPNotification)aNotification
 {
-    if (![self isVisible])
-    {
-        [_soundMessage play];
-        return;
-    }
-
     if ([[aNotification object] JID] == [_entity JID])
     {
         var stanza =  [_entity popMessagesQueue];
@@ -265,9 +263,11 @@
             [imageSpinnerWriting setHidden:YES];
             [self appendMessageToBoard:messageBody from:[_entity nickname]];
             CPLog.info(@"message received : " + messageBody);
+            if (![_detachedChats containsKey:[[aNotification object] JID]])
+                [_soundReceived play];
         }
     }
-    else
+    else if (![_detachedChats containsKey:[[aNotification object] JID]])
     {
         [_soundMessage play];
     }
@@ -426,6 +426,7 @@
     [_entity sendMessage:[fieldMessage stringValue]];
     [self appendMessageToBoard:[fieldMessage stringValue] from:@"me"];
     [fieldMessage setStringValue:@""];
+    [_soundSent play];
 }
 
 /*! Clear all localstorage  of the old messages
@@ -450,5 +451,19 @@
     [detachedChatController setDelegate:self];
     [detachedChatController setMessageHistory:_messages];
     [detachedChatController showWindow];
+    [_detachedChats setObject:detachedChatController forKey:[_entity JID]];
+}
+
+
+#pragma mark -
+#pragma mark Delegate
+
+/*! will be sent by TNDetachedChatController when a chat window is closed.
+    it will clean up the _detachedChats dictionary
+    @param aJID the closed chat window target
+*/
+- (void)detachedChatClosedForJID:(TNStropheJID)aJID
+{
+    [_detachedChats removeObjectForKey:aJID];
 }
 @end

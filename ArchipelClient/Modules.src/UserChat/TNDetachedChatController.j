@@ -22,6 +22,7 @@
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPPlatformWindow.j>
 @import <AppKit/CPScrollView.j>
+@import <AppKit/CPSound.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
@@ -46,6 +47,8 @@ else
     CPImageView         _viewAvatar;
     CPPlatformWindow    _platformWindow;
     CPScrollView        _scrollView;
+    CPSound             _soundReceived;
+    CPSound             _soundSent;
     CPTextField         _fieldMessage;
     CPWindow            _window;
     TNMessageBoard      _messageBoard;
@@ -69,6 +72,7 @@ else
         [_window setTitle:@"Archipel - Chat with " + [_entity nickname] || [[_entity JID] bare]];
         [[_window contentView] setBackgroundColor:[CPColor colorWithHexString:@"f4f4f4"]];
         [[_window contentView] setAutoresizingMask:nil];
+        [_window setDelegate:self];
 
         _scrollView = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
         [_scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
@@ -102,7 +106,16 @@ else
             [_window setPlatformWindow:_platformWindow];
             [_platformWindow orderFront:nil];
             [_platformWindow setTitle:[_window title]];
+            _platformWindow._DOMWindow.onbeforeunload = function(){
+                [self clearChar];
+                [_delegate detachedChatClosedForJID:[_entity JID]]
+            };
         }
+
+        var bundle      = [CPBundle bundleForClass:[self class]];
+        _soundReceived  = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"received.wav"] byReference:NO];
+        _soundSent      = [[CPSound alloc] initWithContentsOfFile:[bundle pathForResource:@"sent.wav"] byReference:NO];
+
     }
 
     return self;
@@ -129,6 +142,8 @@ else
         }
     }
 
+    [_soundReceived play];
+
     if (_delegate && [_delegate respondsToSelector:@selector(_didReceiveMessage:)] && [_delegate isVisible])
         [_delegate _didReceiveMessage:aNotification];
 }
@@ -150,15 +165,6 @@ else
         [_platformWindow setTitle:[_window title]];
 }
 
-/*! called when the window is closed
-    it will remove observers
-    @param aNotification the notification that triggers the message
-*/
-- (void)_windowWillClose:(CPNotification)aNotification
-{
-    [[CPNotificationCenter defaultCenter] removeObserver:self];
-}
-
 
 #pragma mark -
 #pragma mark Utilities
@@ -170,7 +176,6 @@ else
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:_entity];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didUpdateVCard:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didUpdateNickname:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillClose:) name:CPWindowWillCloseNotification object:_window];
 
     [_messageBoard removeAllViews:nil];
     if (_messageHistory)
@@ -205,6 +210,13 @@ else
     [[_window contentView] setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 }
 
+/*! will remove all notifier
+*/
+- (void)clearChar
+{
+    [[CPNotificationCenter defaultCenter] removeObserver:self];
+}
+
 /*! append message to the board
     @param aMessage the message
     @param aSender the sender of the message
@@ -229,7 +241,6 @@ else
         avatar = [[TNStropheIMClient defaultClient] avatar];
     }
 
-
     [_messageBoard addMessage:aMessage from:aSender date:date color:color avatar:avatar position:position];
 
     // scroll to bottom;
@@ -249,10 +260,22 @@ else
     [self appendMessageToBoard:[aSender stringValue] from:@"me"];
     [_entity sendMessage:[aSender stringValue]];
 
+    [_soundSent play];
+
     if (_delegate && ([_delegate entity] == _entity) && [_delegate respondsToSelector:@selector(appendMessageToBoard:from:)] && [_delegate isVisible])
         [_delegate appendMessageToBoard:[aSender stringValue] from:@"me"];
 
     [aSender setStringValue:@""];
+}
+
+#pragma mark -
+#pragma mark Delegate
+
+- (void)windowShouldClose:(CPNotification)shouldClose
+{
+    [self clearChar];
+    [_delegate detachedChatClosedForJID:[_entity JID]];
+    return YES;
 }
 
 
