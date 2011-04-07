@@ -318,10 +318,10 @@
         {
             var vCard = [_entity vCard];
 
-            [labelVCardFN setStringValue:[[vCard firstChildWithName:@"FN"] text]];
-            [labelVCardLocality setStringValue:[[vCard firstChildWithName:@"LOCALITY"] text]];
-            [labelVCardCompany setStringValue:[[vCard firstChildWithName:@"ORGNAME"] text]];
-            [labelVCardRole setStringValue:[[vCard firstChildWithName:@"TITLE"] text]];
+            [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
+            [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
+            [labelVCardCompany setStringValue:[[[vCard firstChildWithName:@"ORGNAME"] text] capitalizedString]];
+            [labelVCardRole setStringValue:[[[vCard firstChildWithName:@"TITLE"] text] capitalizedString]];
             [labelVCardEmail setStringValue:[[vCard firstChildWithName:@"USERID"] text]]
             [labelVCardWebiste setStringValue:[[vCard firstChildWithName:@"URL"] text]];
             [imageViewVCardPhoto setImage:[_entity avatar] || _unknownUserImage];
