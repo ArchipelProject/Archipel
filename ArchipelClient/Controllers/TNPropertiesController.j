@@ -318,6 +318,8 @@
         {
             var vCard = [_entity vCard];
 
+            [buttonFrontViewFlip setEnabled:YES];
+
             [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
             [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
             [labelVCardCompany setStringValue:[[[vCard firstChildWithName:@"ORGNAME"] text] capitalizedString]];
@@ -346,6 +348,12 @@
         [entryDomain setStringValue:@""];
         [entryResource setStringValue:population];
         [entryStatus setStringValue:@""];
+
+        if ([_mainView isFlipped])
+        {
+            [_mainView flip:nil];
+            [buttonFrontViewFlip setEnabled:NO];
+        }
     }
 
     [self showView];
