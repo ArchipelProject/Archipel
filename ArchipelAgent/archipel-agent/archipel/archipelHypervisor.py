@@ -137,6 +137,15 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         self.default_avatar             = self.configuration.get("HYPERVISOR", "hypervisor_default_avatar")
         self.libvirt_event_callback_id  = None
 
+        # libvirt connection
+        self.connect_libvirt()
+
+        self.vcard_infos                = {}
+        if (self.configuration.has_section("VCARD")):
+            for key in self.configuration.options("VCARD"):
+                self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key);
+        self.vcard_infos["TITLE"] = "Hypervisor (%s)" % self.current_hypervisor()
+
         # permissions
         permission_db_file              = self.configuration.get("HYPERVISOR", "hypervisor_permissions_database_path")
         permission_admin_names          = self.configuration.get("GLOBAL", "archipel_root_admins").split()
@@ -163,9 +172,6 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         # module inits
         self.initialize_modules('archipel.plugin.core')
         self.initialize_modules('archipel.plugin.hypervisor')
-
-        # # libvirt connection
-        self.connect_libvirt()
 
         if self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU, archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_XEN)):
             try:

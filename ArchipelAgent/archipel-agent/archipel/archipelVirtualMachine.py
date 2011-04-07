@@ -120,8 +120,13 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
 
-
         self.connect_libvirt()
+
+        self.vcard_infos                = {}
+        if (self.configuration.has_section("VCARD")):
+            for key in self.configuration.options("VCARD"):
+                self.vcard_infos[key.upper()] = self.configuration.get("VCARD", key);
+        self.vcard_infos["TITLE"] = "Virtual machine (%s)" % self.current_hypervisor()
 
         # create VM folders if not exists
         if not os.path.isdir(self.folder):

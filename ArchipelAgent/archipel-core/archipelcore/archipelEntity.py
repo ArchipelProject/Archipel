@@ -696,10 +696,16 @@ class TNArchipelEntity (object):
         try:
             self.log.info("vCard making started.")
             node_iq     = xmpp.Iq(typ='set', xmlns=None)
-            type_node   = xmpp.Node(tag="ROLE")
             payload     = []
+            type_node   = xmpp.Node(tag="ROLE")
             type_node.setData(self.entity_type)
-            payload.append(type_node)
+
+            if hasattr(self, "vcard_infos"):
+                for key, value in self.vcard_infos.items():
+                    node = xmpp.Node(tag=key.upper())
+                    node.setData(value)
+                    payload.append(node)
+
             if self.name:
                 name_node = xmpp.Node(tag="FN")
                 name_node.setData(self.name)
