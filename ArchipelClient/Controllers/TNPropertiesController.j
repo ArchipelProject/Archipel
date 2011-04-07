@@ -304,12 +304,8 @@
 */
 - (IBAction)openAvatarManager:(id)sender
 {
-    if (_avatarManager)
-    {
+    if (_avatarManager && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]] != TNArchipelEntityTypeUser)
         [_avatarManager showWindow:sender];
-    }
-    else
-        CPLog.warn("no avatar manager set.");
 }
 
 /*! action sent by the TNEditableLabel when ok. Will blur it
