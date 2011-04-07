@@ -21,8 +21,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import libvirt
+import random
 import sys
-
 
 ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR = "libvirt:error:generic"
 
@@ -31,6 +31,23 @@ ARCHIPEL_HYPERVISOR_TYPE_QEMU       = "QEMU"
 ARCHIPEL_HYPERVISOR_TYPE_XEN        = "XEN"
 ARCHIPEL_HYPERVISOR_TYPE_OPENVZ     = "OPENVZ"
 ARCHIPEL_HYPERVISOR_TYPE_LXC        = "LXC"
+
+
+def generate_mac_adress():
+    """
+    Generate a new mac address.
+    @rtype: string
+    @return: generated MAC address
+    """
+    dico = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
+    digit1 = "DE"
+    digit2 = "AD"
+    digit3 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+    digit4 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+    digit5 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+    digit6 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
+    return "%s:%s:%s:%s:%s:%s" % (digit1, digit2, digit3, digit4, digit5, digit6)
+
 
 
 class TNArchipelLibvirtEntity (object):

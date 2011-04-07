@@ -21,7 +21,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-import random
 import shutil
 import tarfile
 import tempfile
@@ -29,6 +28,7 @@ import xmpp
 from gzip import GzipFile as gz
 from threading import Thread
 
+from archipel.archipelLibvirtEntity import generate_mac_adress
 
 class TNApplianceDecompresser (Thread):
 
@@ -165,9 +165,9 @@ class TNApplianceDecompresser (Thread):
         for nic in nics_nodes:
             mac = nic.getTag("mac")
             if mac:
-                mac.setAttr("address", self.generate_new_mac())
+                mac.setAttr("address", generate_mac_adress())
             else:
-                nic.addChild(name="mac", attrs={"address" : self.generate_new_mac()})
+                nic.addChild(name="mac", attrs={"address" : generate_mac_adress()})
         name_node.setData(self.entity.uuid)
         uuid_node.setData(self.entity.uuid)
         self.description_node = xml_desc
@@ -235,18 +235,3 @@ class TNApplianceDecompresser (Thread):
         Clean the tempory path.
         """
         shutil.rmtree(self.temp_path)
-
-    def generate_new_mac(self):
-        """
-        Generate a new mac address.
-        @rtype: string
-        @return: generated MAC address
-        """
-        dico = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A", "B", "C", "D", "E", "F"]
-        digit1 = "DE"
-        digit2 = "AD"
-        digit3 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
-        digit4 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
-        digit5 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
-        digit6 = "%s%s" % (dico[random.randint(0, 15)], dico[random.randint(0, 15)])
-        return "%s:%s:%s:%s:%s:%s" % (digit1, digit2, digit3, digit4, digit5, digit6)
