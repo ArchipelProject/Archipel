@@ -148,6 +148,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPTextField             labelModulesLoadingName;
     @outlet CPTextField             textFieldAboutVersion;
     @outlet CPView                  filterView;
+    @outlet CPView                  hintView;
     @outlet CPView                  leftView;
     @outlet CPView                  rightView;
     @outlet CPView                  statusBar;
@@ -186,6 +187,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                         _moduleLoadingDelay;
     CPView                          _viewRosterMask;
     CPWindow                        _helpWindow;
+    CPWindow                        _hintWindow;
     int                             _tempNumberOfReadyModules;
     TNiTunesTabView                 _moduleTabView;
     TNOutlineViewRoster             _rosterOutlineView;
@@ -212,6 +214,35 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         growl       = [TNGrowlCenter defaultCenter],
         center      = [CPNotificationCenter defaultCenter],
         posx;
+
+    /* notifications */
+    CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
+    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
+
+    CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
+    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
+
+    CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
+    [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
+    [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didRetrieveRoster:) name:TNStropheRosterRetrievedNotification object:nil];
+
+    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
+    [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
+
+    CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
+    [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
+
+    CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
+    [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
+
 
     /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
@@ -447,34 +478,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
     _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
 
-    /* notifications */
-    CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
-    [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
-
-    CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
-
-    CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
-    [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
-
-    CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
-    [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
-
-    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
-    [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
-
-    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
-    [center addObserver:self selector:@selector(didRetrieveRoster:) name:TNStropheRosterRetrievedNotification object:nil];
-
-    CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
-    [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
-
-    CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
-    [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
-
-    CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
-    [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
-
     /* Placing the connection window */
     _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
@@ -502,6 +505,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.info(@"current version is " + currentVersion);
     [updateController setCurrentVersion:currentVersion]
     [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
+
+    /* hint window */
+    _hintWindow = [[CPWindow alloc] initWithContentRect:[hintView frame] styleMask:CPHUDBackgroundWindowMask | CPTitledWindowMask | CPClosableWindowMask];
+    [[_hintWindow contentView] addSubview:hintView];
+    [[hintView viewWithTag:@"welcome"] setLineBreakMode:CPLineBreakByWordWrapping];
+    [[hintView viewWithTag:@"welcome"] setAlignment:CPJustifiedTextAlignment];
 
     CPLog.info(@"Initialization of AppController OK");
 }
@@ -772,13 +781,21 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var servers = [CPArray array],
         roster  = [aNotification object];
 
-    for (var i = 0; i < [[roster content] count]; i++)
+    if ([[roster content] count] == 0)
     {
-        if ([[[roster content] objectAtIndex:i] isKindOfClass:TNStropheContact])
+        [_hintWindow center];
+        [_hintWindow makeKeyAndOrderFront:nil];
+    }
+    else
+    {
+        for (var i = 0; i < [[roster content] count]; i++)
         {
-            var contact = [[roster content] objectAtIndex:i];
-            if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
-                [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
+            if ([[[roster content] objectAtIndex:i] isKindOfClass:TNStropheContact])
+            {
+                var contact = [[roster content] objectAtIndex:i];
+                if (![_pubSubController containsServerJID:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]])
+                    [[_pubSubController servers] addObject:[TNStropheJID stropheJIDWithString:"pubsub." + [[contact JID] domain]]];
+            }
         }
     }
 
