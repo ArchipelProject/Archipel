@@ -18,7 +18,7 @@
 import os
 from setuptools import setup, find_packages
 
-VERSION             = '0.2.0'
+VERSION             = '0.2.1'
 DESCRIPTION="""\
 ** Archipel Agent **
 
@@ -92,9 +92,9 @@ setup(name='archipel-agent',
         'install/bin/runarchipel'
         ],
       data_files=[
-        ('system/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
-        ('system/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
-        ('system/etc/init.d'              , ['install/etc/init.d/archipel']),
-        ('system/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
+        ('install/var/lib/archipel/avatars', create_avatar_list("install/var/lib/archipel/avatars/")),
+        ('install/var/lib/archipel/'       , ['install/var/lib/archipel/names.txt']),
+        ('install/etc/init.d'              , ['install/etc/init.d/archipel']),
+        ('install/etc/archipel/'           , ['install/etc/archipel/archipel.conf', 'install/etc/archipel/vnc.pem'])
         ]
       )

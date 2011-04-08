@@ -118,10 +118,10 @@ if __name__ == "__main__":
                         dest="prefix",
                         help="all installation folders and files will be prefixed with given value",
                         metavar="PREFIX",
-                        default="/")
+                        default="")
     parser.add_option("-f", "--force",
                         dest="clean",
-                        help="before installing, clean all existing folder and files.",
+                        help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, VM DRIVES etc. Be warned!",
                         metavar="SERVER",
                         default=False)
 
