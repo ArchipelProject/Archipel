@@ -104,7 +104,6 @@
     [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/vcard-bg.png"]]]];
     [_mainView setFrontView:frontView];
     [_mainView setBackView:backView];
-    // [_mainView setBackgroundColor:[CPColor blueColor]];
 
     [frontView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
 
