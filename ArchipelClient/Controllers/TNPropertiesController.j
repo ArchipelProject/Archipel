@@ -277,14 +277,17 @@
         {
             case TNArchipelEntityTypeVirtualMachine:
                 [entryType setStringValue:@"Virtual machine"];
+                [buttonEventSubscription setHidden:NO];
                 break;
 
             case TNArchipelEntityTypeHypervisor:
                 [entryType setStringValue:@"Hypervisor"];
+                [buttonEventSubscription setHidden:NO];
                 break;
 
             default:
                 [entryType setStringValue:@"User"];
+                [buttonEventSubscription setHidden:YES];
         }
 
         if ([_entity avatar])
@@ -350,10 +353,8 @@
         [entryStatus setStringValue:@""];
 
         if ([_mainView isFlipped])
-        {
             [_mainView flip:nil];
-            [buttonFrontViewFlip setHidden:YES];
-        }
+        [buttonFrontViewFlip setHidden:YES];
     }
 
     [self showView];
