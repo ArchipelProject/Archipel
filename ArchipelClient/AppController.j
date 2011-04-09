@@ -145,11 +145,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPSplitView             splitViewMain;
     @outlet CPSplitView             splitViewTagsContents;
     @outlet CPTextField             labelCurrentUser;
-    @outlet CPTextField             labelModulesLoadingName;
     @outlet CPTextField             textFieldAboutVersion;
     @outlet CPView                  filterView;
     @outlet CPView                  hintView;
-    @outlet CPView                  leftView;
     @outlet CPView                  rightView;
     @outlet CPView                  statusBar;
     @outlet CPWebView               helpView;
@@ -159,6 +157,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNAvatarController      avatarController;
     @outlet TNConnectionController  connectionController;
     @outlet TNContactsController    contactsController;
+    @outlet TNFlipView              leftView;
     @outlet TNGroupsController      groupsController;
     @outlet TNModuleController      moduleController;
     @outlet TNPreferencesController preferencesController;
@@ -167,6 +166,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNTagsController        tagsController;
     @outlet TNUpdateController      updateController;
     @outlet TNUserAvatarController  userAvatarController;
+    @outlet CPView                  viewRosterMask;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -185,7 +185,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                         _ledInTimer;
     CPTimer                         _ledOutTimer;
     CPTimer                         _moduleLoadingDelay;
-    CPView                          _viewRosterMask;
     CPWindow                        _helpWindow;
     CPWindow                        _hintWindow;
     int                             _tempNumberOfReadyModules;
@@ -207,39 +206,36 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)awakeFromCib
 {
-    [[connectionController mainWindow] orderOut:nil];
-
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
-        growl       = [TNGrowlCenter defaultCenter],
-        center      = [CPNotificationCenter defaultCenter],
-        posx;
+        center      = [CPNotificationCenter defaultCenter];
+
+
+    /* register logs */
+    CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
+
+
+    /* hide main window */
+    [theWindow orderOut:nil];
+
 
     /* notifications */
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
-
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
-
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
-
     CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
     [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
-
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
-
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didRetrieveRoster:) name:TNStropheRosterRetrievedNotification object:nil];
-
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didRetreiveUserVCard:) name:TNConnectionControllerCurrentUserVCardRetreived object:nil];
-
     CPLog.trace(@"registering for notification TNConnectionControllerConnectionStarted");
     [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
-
     CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
 
@@ -257,52 +253,35 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate"
     ]];
-    [defaults _reloadSearchList];
 
-    /* register logs */
-    CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
 
     /* main split views */
-    [splitViewMain setIsPaneSplitter:NO];
-
-    /* tags split views */
-    [splitViewTagsContents setIsPaneSplitter:NO];
-    [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
-    [splitViewTagsContents setDelegate:self];
-
-    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
-
-    [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
-    [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
-
-
+    var posx;
     if (posx = [defaults integerForKey:@"mainSplitViewPosition"])
     {
         CPLog.trace("recovering with of main vertical CPSplitView from last state");
         [splitViewMain setPosition:posx ofDividerAtIndex:0];
-
         var bounds = [leftView bounds];
         bounds.size.width = posx;
         [leftView setFrame:bounds];
     }
+    [splitViewMain setIsPaneSplitter:NO];
     [splitViewMain setDelegate:self];
 
-    /* hide main window */
-    [theWindow orderOut:nil];
 
-    /* toolbar */
-    CPLog.trace("initializing mianToolbar");
-    _mainToolbar = [[TNToolbar alloc] init];
-    [theWindow setToolbar:_mainToolbar];
-    [self makeToolbar];
+    /* tags split views */
+    _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
-    /* avatar chooser */
-    [self makeAvatarChooser];
+    [splitViewTagsContents setIsPaneSplitter:NO];
+    [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
+    [splitViewTagsContents setDelegate:self];
+    [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
+    [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
+
 
     /* properties controller */
     CPLog.trace(@"initializing the splitViewHorizontalRoster");
     [splitViewHorizontalRoster setIsPaneSplitter:NO];
-    [splitViewHorizontalRoster setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
     [[splitViewHorizontalRoster subviews][1] removeFromSuperview];
     [splitViewHorizontalRoster addSubview:[propertiesController mainView]];
     [[propertiesController mainView] setFrameSize:CPSizeMake([leftView frameSize].width, [[propertiesController mainView] frameSize].height)];
@@ -310,6 +289,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
     [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
+
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -322,25 +302,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [filterField setMaximumRecents:10];
     [filterField setToolTip:@"Filter contacts by name or tags"];
 
-    /* init scroll view of the outline view */
-    CPLog.trace(@"initializing _outlineScrollView");
-    _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
-    [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
-    [_outlineScrollView setDocumentView:_rosterOutlineView];
-
-    CPLog.trace(@"adding _outlineScrollView as subview of leftView");
-    [leftView addSubview:_outlineScrollView];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
+
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
     [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
+
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
@@ -349,10 +321,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
     [rightView addSubview:_moduleTabView];
 
+
     /* message in _moduleTabView */
-    _rightViewTextField = [CPTextField labelWithTitle:@""];
     var bounds  = [_moduleTabView bounds];
 
+    _rightViewTextField = [CPTextField labelWithTitle:@""];
     [_rightViewTextField setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
     [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
@@ -360,10 +333,71 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rightViewTextField setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:_rightViewTextField];
 
-    /* main menu */
+
+    /* init scroll view of the outline view */
+    CPLog.trace(@"initializing _outlineScrollView");
+    _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
+    [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_outlineScrollView setAutohidesScrollers:YES];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [_outlineScrollView setDocumentView:_rosterOutlineView];
+
+
+    /* left view */
+    var leftViewBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
+        maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
+
+    [viewRosterMask setFrame:[leftView bounds]];
+    [viewRosterMask setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
+    [viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+
+    [leftView setBackView:_outlineScrollView];
+    [leftView setFrontView:viewRosterMask];
+    [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
+
+    [[viewRosterMask viewWithTag:@"name"] setAlignment:CPCenterTextAlignment];
+    [[viewRosterMask viewWithTag:@"name"] setTextColor:[CPColor colorWithHexString:@"595959"]];
+    [[viewRosterMask viewWithTag:@"name"] setFont:[CPFont boldSystemFontOfSize:12]];
+    [[viewRosterMask viewWithTag:@"title"] setAlignment:CPCenterTextAlignment];
+    [[viewRosterMask viewWithTag:@"title"] setTextColor:[CPColor whiteColor]];
+    [[viewRosterMask viewWithTag:@"title"] setFont:[CPFont boldSystemFontOfSize:16]];
+    [[viewRosterMask viewWithTag:@"title"] setStringValue:@"Loading Modules"];
+
+    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
+    [progressIndicatorModulesLoading setMinValue:0.0];
+    [progressIndicatorModulesLoading setMaxValue:1.0];
+    [progressIndicatorModulesLoading setDoubleValue:0.0];
+
+
+    /* help window */
+    CPLog.trace(@"Display _helpWindow");
+    _shouldShowHelpView = YES;
+    [helpView setScrollMode:CPWebViewScrollNative];
+
+
+    /* Growl */
+    CPLog.trace(@"initializing Growl");
+    [[TNGrowlCenter defaultCenter] setView:rightView];
+
+
+    /* traffic LEDs */
+    CPLog.trace(@"Initializing the traffic status LED");
+    _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
+    _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
+    _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
+    [ledOut setToolTip:@"This LED is ON when XMPP data are sent"];
+    [ledIn setToolTip:@"This LED is ON when XMPP data are received"];
+
+
+    /* makers */
+    [self makeToolbar];
+    [self makeAvatarChooser];
     [self makeMainMenu];
+    [self makeButtonBar];
+    [self makeCopyright];
 
 
+    /* module controller */
     CPLog.trace(@"initializing moduleController");
     _tempNumberOfReadyModules = -1;
 
@@ -374,90 +408,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [moduleController setModulesPath:@"Modules/"]
     [moduleController setMainModuleView:rightView];
     [moduleController setModulesMenu:_modulesMenu];
-
     [_moduleTabView setDelegate:moduleController];
     [_rosterOutlineView setModulesTabView:_moduleTabView];
 
-    var progressBarSize = CPSizeMake(CGRectGetWidth([leftView frame]) - 15, 16.0);
-    CPLog.trace(@"Starting loading all modules");
-    [CPProgressIndicator initialize];
-    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorBarStyle];
-    [progressIndicatorModulesLoading setMinValue:0.0];
-    [progressIndicatorModulesLoading setMaxValue:1.0];
-    [progressIndicatorModulesLoading setDoubleValue:0.0];
-    [progressIndicatorModulesLoading setFrameSize:progressBarSize];
-    [labelModulesLoadingName setFrameSize:progressBarSize];
-    [progressIndicatorModulesLoading setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"ProgressBarBezel.png"]]]];
-    [labelModulesLoadingName setAlignment:CPCenterTextAlignment];
-
-    CPLog.trace(@"Display _helpWindow");
-    _shouldShowHelpView = YES;
-    [helpView setScrollMode:CPWebViewScrollNative];
-
-    CPLog.trace(@"initializing Growl");
-    [growl setView:rightView];
-
-    CPLog.trace(@"Initializing the traffic status LED");
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-statusbar.png"]]]];
-    _imageLedInData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
-    _imageLedOutData    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
-    _imageLedNoData     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
-
-    /* buttonBar */
-    CPLog.trace(@"Initializing the roster button bar");
-    [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
-
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
-        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
-        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)],
-        buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
-        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
-        buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
-        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
-        plusMenu                = [[CPMenu alloc] init],
-        minusButton             = [CPButtonBar minusButton];
-
-    _hideButton             = [CPButtonBar minusButton];
-    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(16, 16)];
-    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(16, 16)];
-
-    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
-    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
-    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
-
-    [plusButton setTarget:self];
-    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
-    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
-    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
-    [plusButton setMenu:plusMenu];
-    [plusButton setToolTip:@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user."];
-
-    [minusButton setTarget:self];
-    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
-    [minusButton setAction:@selector(toogleRemoveEntity:)];
-    [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
-
-    [_hideButton setTarget:self];
-    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
-    [_hideButton setAction:@selector(toggleShowPropertiesView:)];
-    [_hideButton setToolTip:@"Display or hide the properties view"];
-
-    var buttons = [CPArray array];
-
-    if ([bundle objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
-    {
-        [buttons addObject:plusButton]
-        [buttons addObject:minusButton]
-    }
-
-    [buttons addObject:_hideButton];
-    [buttonBarLeft setButtons:buttons];
-
-    /* copyright */
-    [self copyright];
 
     /* connection label */
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
@@ -468,32 +421,24 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [labelCurrentUser setToolTip:@"The current logged account"];
 
+
     /* about window */
     [webViewAboutCredits setScrollMode:CPWebViewScrollNative];
     [webViewAboutCredits setMainFrameURL:[bundle pathForResource:@"credits.html"]];
     [webViewAboutCredits setBorderedWithHexColor:@"#C0C7D2"];
     [textFieldAboutVersion setStringValue:[defaults objectForKey:@"TNArchipelVersionHuman"]];
 
+
     /* dataviews for roster */
     _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
     _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
+
 
     /* Placing the connection window */
     _moduleLoadingStarted = NO;
     [[connectionController mainWindow] center];
     [[connectionController mainWindow] makeKeyAndOrderFront:nil];
     [connectionController initCredentials];
-
-    /* roster view mask */
-    var maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-stripes.png"]];
-    _viewRosterMask = [[CPView alloc] initWithFrame:[leftView bounds]];
-    [_viewRosterMask setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
-    [_viewRosterMask setAlphaValue:0.5];
-    [_viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [leftView addSubview:_viewRosterMask];
-
-    [ledOut setToolTip:@"This LED is ON when XMPP data are sent"];
-    [ledIn setToolTip:@"This LED is ON when XMPP data are received"];
 
 
     /* Version checking */
@@ -505,6 +450,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.info(@"current version is " + currentVersion);
     [updateController setCurrentVersion:currentVersion]
     [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
+
 
     /* hint window */
     _hintWindow = [[CPWindow alloc] initWithContentRect:[hintView frame] styleMask:CPHUDBackgroundWindowMask | CPTitledWindowMask | CPClosableWindowMask];
@@ -628,6 +574,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     var bundle = [CPBundle bundleForClass:self];
 
+    CPLog.trace("initializing mianToolbar");
+
+    _mainToolbar = [[TNToolbar alloc] init];
+
+    [theWindow setToolbar:_mainToolbar];
+
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
@@ -672,6 +624,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_mainToolbar setPosition:904 forToolbarItemIdentifier:TNToolBarItemLogout];
 
     [_mainToolbar reloadToolbarItems];
+
 }
 
 /*! initialize the avatar button
@@ -698,6 +651,89 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_mainToolbar reloadToolbarItems];
 }
 
+/*! initializ the button bar
+*/
+- (void)makeButtonBar
+{
+    var bundle = [CPBundle mainBundle],
+        defaults  = [CPUserDefaults standardUserDefaults];
+
+    CPLog.trace(@"Initializing the roster button bar");
+    [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
+
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
+        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)],
+        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
+        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)],
+        buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
+        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)],
+        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
+        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
+        buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
+        plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
+        plusMenu                = [[CPMenu alloc] init],
+        minusButton             = [CPButtonBar minusButton];
+
+    _hideButton             = [CPButtonBar minusButton];
+    _hideButtonImageEnable  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/show.png"] size:CPSizeMake(16, 16)];
+    _hideButtonImageDisable = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/hide.png"] size:CPSizeMake(16, 16)];
+
+    [buttonBarLeft setValue:bezelColor forThemeAttribute:"bezel-color"];
+    [buttonBarLeft setValue:buttonBezel forThemeAttribute:"button-bezel-color"];
+    [buttonBarLeft setValue:buttonBezelHighlighted forThemeAttribute:"button-bezel-color" inState:CPThemeStateHighlighted];
+
+    [plusButton setTarget:self];
+    [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
+    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
+    [plusButton setMenu:plusMenu];
+    [plusButton setToolTip:@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user."];
+
+    [minusButton setTarget:self];
+    [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
+    [minusButton setAction:@selector(toogleRemoveEntity:)];
+    [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
+
+    [_hideButton setTarget:self];
+    [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
+    [_hideButton setAction:@selector(toggleShowPropertiesView:)];
+    [_hideButton setToolTip:@"Display or hide the properties view"];
+
+    var buttons = [CPArray array];
+
+    if ([bundle objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
+    {
+        [buttons addObject:plusButton]
+        [buttons addObject:minusButton]
+    }
+
+    [buttons addObject:_hideButton];
+    [buttonBarLeft setButtons:buttons];
+}
+
+/*! initialize the copyrigth part
+*/
+- (void)makeCopyright
+{
+    var defaults = [CPUserDefaults standardUserDefaults],
+        bundle  = [CPBundle mainBundle],
+        copy = document.createElement("div");
+
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-statusbar.png"]]]];
+
+    copy.id = "copyright_label";
+    copy.style.position = "absolute";
+    copy.style.fontSize = "9px";
+    copy.style.color = "#6C707F";
+    copy.style.width = "700px";
+    copy.style.bottom = "8px";
+    copy.style.left = "50%";
+    copy.style.textAlign = "center";
+    copy.style.marginLeft = "-350px";
+    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersionHuman"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
+    document.body.appendChild(copy);
+}
+
 
 #pragma mark -
 #pragma mark Notifications handlers
@@ -709,7 +745,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didConnectionStart:(CPNotification)aNotification
 {
     if (![moduleController isModuleLoadingStarted])
+    {
+        CPLog.trace(@"Starting loading all modules");
         [moduleController load];
+    }
 }
 
 /*! Notification responder of TNStropheConnection
@@ -718,6 +757,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)loginStrophe:(CPNotification)aNotification
 {
+    _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
+
     [preferencesController initXMPPStorage];
     [preferencesController recoverFromXMPPServer];
 }
@@ -730,11 +771,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [CPMenu setMenuBarVisible:YES];
     [[connectionController mainWindow] orderOut:nil];
     [theWindow makeKeyAndOrderFront:nil];
-
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Configuration retrieved" message:@"Your client configuration has been retrieved from the XMPP server"];
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
-
-    _pubSubController = [TNPubSubController pubSubControllerWithConnection:[[TNStropheIMClient defaultClient] connection]];
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
     [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
@@ -750,7 +787,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
     [[TNPermissionsCenter defaultCenter] startWatching];
-
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];
@@ -861,28 +897,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)hideHelpView
 {
     [helpView removeFromSuperview];
-}
-
-/*! display the copyright notice
-*/
-- (void)copyright
-{
-    var defaults    = [CPUserDefaults standardUserDefaults],
-        copy = document.createElement("div");
-
-    copy.id = "copyright_label";
-    copy.style.position = "absolute";
-    copy.style.fontSize = "9px";
-    copy.style.color = "#6C707F";
-    copy.style.width = "700px";
-    copy.style.bottom = "8px";
-    copy.style.left = "50%";
-    copy.style.textAlign = "center";
-    copy.style.marginLeft = "-350px";
-    // copy.style.textShadow = "0px 1px 0px #C6CAD9";
-    copy.innerHTML =  [defaults objectForKey:@"TNArchipelVersionHuman"] + @" - " + [defaults objectForKey:@"TNArchipelCopyright"];
-    document.body.appendChild(copy);
-
 }
 
 
@@ -1031,12 +1045,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)expandGroup:(id)sender
 {
-    var index       = [_rosterOutlineView selectedRowIndexes];
+    var index = [_rosterOutlineView selectedRowIndexes];
 
     if ([index firstIndex] == -1)
         return;
 
-    var item        = [_rosterOutlineView itemAtRow:[index firstIndex]];
+    var item = [_rosterOutlineView itemAtRow:[index firstIndex]];
 
     [_rosterOutlineView expandItem:item];
 }
@@ -1377,7 +1391,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         if (module && ![module shouldHideAndSelectItem:anItem ofObject:anOutlineView])
             return NO;
     }
-
     return YES;
 }
 
@@ -1488,7 +1501,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoader:(TNModuleController)aLoader loadedBundle:(CPBundle)aBundle progress:(float)percent
 {
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [labelModulesLoadingName setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [[viewRosterMask viewWithTag:@"name"] setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
@@ -1498,11 +1511,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.info(@"All modules have been loaded");
     CPLog.trace(@"Positionning the connection window");
 
-    [progressIndicatorModulesLoading setHidden:YES];
-    [labelModulesLoadingName setHidden:YES];
-    [_mainToolbar reloadToolbarItems];
-    [_viewRosterMask removeFromSuperview];
-
+    [_mainToolbar reloadToolbarItems]
+    [leftView flip:nil];
     [updateController check];
 }
 
