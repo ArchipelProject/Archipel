@@ -98,10 +98,10 @@
 
     _mainView = [[TNFlipView alloc] initWithFrame:[frontView bounds]];
     [_mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/property-bg.png"]]]];
+    [_mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
     [frontView setFrameOrigin:CPPointMakeZero()];
     [backView setFrameOrigin:CPPointMakeZero()];
-    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/vcard-bg.png"]]]];
+    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
     [_mainView setFrontView:frontView];
     [_mainView setBackView:backView];
 
