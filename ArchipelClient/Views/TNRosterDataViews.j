@@ -23,6 +23,7 @@
 @import <AppKit/CPTextField.j>
 
 @import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNAttachedWindow.j>
 
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
@@ -188,6 +189,20 @@
     [_name unsetThemeState:aState];
     [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
+}
+
+
+#pragma mark -
+#pragma mark Actions
+
+/*! open the quick action view
+    @param aSender the sender of the actiob
+*/
+- (void)openQuickActionWindow:(id)aSender
+{
+    var quickBar = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+
+    [quickBar positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
 }
 
 
