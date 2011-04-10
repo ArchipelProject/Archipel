@@ -105,13 +105,18 @@
     [_mainView setFrontView:frontView];
     [_mainView setBackView:backView];
 
-    [frontView setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [frontView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
-    [entryName setTextColor:[CPColor colorWithHexString:@"515151"]];
+    [entryName setTextColor:[CPColor blackColor]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
     [entryName setToolTip:@"Click here to change the displayed named of the current contact or group"];
+
+    [labelResource setTextColor:[CPColor blackColor]];
+    [labelStatus setTextColor:[CPColor blackColor]];
+    [labelType setTextColor:[CPColor blackColor]];
+    [labelDomain setTextColor:[CPColor blackColor]];
 
     [entryAvatar setBordered:NO];
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
@@ -133,16 +138,22 @@
 
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
 
+    var snapImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"] size:CPSizeMake(14.0, 14.0)],
+        snapImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"] size:CPSizeMake(14.0, 14.0)];
+
     [buttonFrontViewFlip setTarget:_mainView];
     [buttonFrontViewFlip setBordered:NO];
     [buttonFrontViewFlip setAction:@selector(flip:)];
-    [buttonFrontViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"]]];
-    [buttonFrontViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"]]];
+    [buttonFrontViewFlip setImage:snapImage]; // this avoid the blinking..
+    [buttonFrontViewFlip setValue:snapImage forThemeAttribute:@"image"];
+    [buttonFrontViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+
     [buttonBackViewFlip setTarget:_mainView];
     [buttonBackViewFlip setBordered:NO];
     [buttonBackViewFlip setAction:@selector(flip:)];
-    [buttonBackViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"]]];
-    [buttonBackViewFlip setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"]]];
+    [buttonBackViewFlip setImage:snapImage]; // this avoid the blinking..
+    [buttonBackViewFlip setValue:snapImage forThemeAttribute:@"image"];
+    [buttonBackViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 }
 
 
