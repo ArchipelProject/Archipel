@@ -65,7 +65,7 @@
         Displayed version of Archipel Client
     -->
     <key>TNArchipelVersionHuman</key>
-    <string>Archipel Beta 1 (Saturn)</string>
+    <string>Archipel Beta 2 (Jupiter)</string>
 
     <!--
         Computing version of the client
