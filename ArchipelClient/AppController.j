@@ -356,7 +356,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
 
     [[viewRosterMask viewWithTag:@"name"] setAlignment:CPCenterTextAlignment];
-    [[viewRosterMask viewWithTag:@"name"] setTextColor:[CPColor colorWithHexString:@"595959"]];
+    [[viewRosterMask viewWithTag:@"name"] setTextColor:[CPColor whiteColor]];
     [[viewRosterMask viewWithTag:@"name"] setFont:[CPFont boldSystemFontOfSize:12]];
     [[viewRosterMask viewWithTag:@"title"] setAlignment:CPCenterTextAlignment];
     [[viewRosterMask viewWithTag:@"title"] setTextColor:[CPColor whiteColor]];
