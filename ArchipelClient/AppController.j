@@ -431,7 +431,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 
     /* dataviews for roster */
-    _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] init];
+    _rosterDataViewForContacts  = [[TNRosterDataViewContact alloc] initWithFrame:CPRectMake(0, 0, 100, 50)];
     _rosterDataViewForGroups    = [[TNRosterDataViewGroup alloc] init];
 
 

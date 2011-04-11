@@ -30,18 +30,20 @@
 */
 @implementation TNRosterDataViewContact : CPView
 {
-    CPImageView         _avatar      @accessors(property=avatar);
-    CPImageView         _statusIcon  @accessors(property=statusIcon);
-    CPTextField         _events      @accessors(property=events);
-    CPTextField         _name        @accessors(property=name);
-    CPTextField         _status      @accessors(property=status);
+    CPImageView         _avatar         @accessors(property=avatar);
+    CPImageView         _statusIcon     @accessors(property=statusIcon);
+    CPTextField         _events         @accessors(property=events);
+    CPTextField         _name           @accessors(property=name);
+    CPTextField         _status         @accessors(property=status);
 
+    CPButton            _buttonAction;
     CPImage             _unknownUserImage;
     CPImage             _normalStateCartoucheColor;
     CPImage             _selectedStateCartoucheColor;
     CPString            _entityType;
     BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
+    TNAttachedWindow    _quickActionWindow;
 }
 
 
@@ -51,9 +53,9 @@
 /*! initialize the class
     @return a initialized instance of TNRosterDataViewContact
 */
-- (id)init
+- (id)initWithFrame:(CPRect)aFrame
 {
-    if (self = [super init])
+    if (self = [super initWithFrame:aFrame])
     {
         var bundle                  = [CPBundle mainBundle],
             rosterLayout            = [bundle objectForInfoDictionaryKey:@"TNArchipelRosterLayout"],
@@ -69,7 +71,7 @@
         _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 1, 16, 16)];
         _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 2, 170, 100)];
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 18, 170, 100)];
-        _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(170, 10, 23, 14)];
+        _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         _normalStateCartoucheColor      = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor    = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
@@ -80,6 +82,7 @@
 
         [_events setBackgroundColor:_normalStateCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
+        [_events setAutoresizingMask:CPViewMinXMargin];
         [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
         [_events setFont:[CPFont boldSystemFontOfSize:11]];
         [_events setTextColor:[CPColor whiteColor]];
@@ -101,10 +104,25 @@
         [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         [_status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
 
+        var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
+            actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
+
+        _buttonAction = [[CPButton alloc] initWithFrame:CPRectMake(CPRectGetMaxX(aFrame) - 24, CPRectGetMidY(aFrame) - 18, 16, 16)];
+        [_buttonAction setAutoresizingMask:CPViewMinXMargin];
+        [_buttonAction setBordered:NO];
+        [_buttonAction setImage:actionImage];
+        [_buttonAction setValue:actionImage forThemeAttribute:@"image"];
+        [_buttonAction setValue:actionImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+        [_buttonAction setHidden:YES];
+        [_buttonAction setTarget:self];
+        [_buttonAction setAction:@selector(openQuickActionWindow:)];
+
         [self addSubview:_statusIcon];
         [self addSubview:_name];
         [self addSubview:_events];
         [self addSubview:_status];
+        [self addSubview:_buttonAction];
+
         if (_shouldDisplayAvatar)
             [self addSubview:_avatar];
     }
@@ -125,26 +143,10 @@
 
     _contact = aContact;
 
-    var mainBounds          = [self bounds],
-        boundsEvents        = [_events frame];
-
-    boundsEvents.origin.x   = mainBounds.size.width - 25;
-    [_events setFrame:boundsEvents];
-    [_events setAutoresizingMask:CPViewMinXMargin];
-
     [_name setStringValue:[aContact nickname]];
     [_name sizeToFit];
-
     [_status setStringValue:[aContact XMPPStatus]];
     [_status sizeToFit];
-
-    [_statusIcon setImage:[aContact statusIcon]];
-
-    if (_shouldDisplayAvatar)
-        if ([aContact avatar])
-            [_avatar setImage:[aContact avatar]];
-        else
-            [_avatar setImage:_unknownUserImage];
 
     var boundsName = [_name frame];
     boundsName.size.width += 10;
@@ -153,6 +155,17 @@
     var boundsShow = [_status frame];
     boundsShow.size.width += 10;
     [_status setFrame:boundsShow];
+
+
+    [_statusIcon setImage:[aContact statusIcon]];
+
+    if (_shouldDisplayAvatar)
+    {
+        if ([aContact avatar])
+            [_avatar setImage:[aContact avatar]];
+        else
+            [_avatar setImage:_unknownUserImage];
+    }
 
     if ([aContact numberOfEvents] > 0)
     {
@@ -178,6 +191,9 @@
     [_name setThemeState:aState];
     [_status setThemeState:aState];
     [_events setThemeState:aState];
+
+    if (aState == CPThemeStateSelectedDataView)
+        [_buttonAction setHidden:NO];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -189,6 +205,9 @@
     [_name unsetThemeState:aState];
     [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
+
+    if (aState == CPThemeStateSelectedDataView)
+        [_buttonAction setHidden:YES];
 }
 
 
@@ -200,9 +219,20 @@
 */
 - (void)openQuickActionWindow:(id)aSender
 {
-    var quickBar = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+    if (!_quickActionWindow)
+    {
+        _quickActionWindow  = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+        var label = [CPTextField labelWithTitle:@"I'm sure you wanna know\nwhat's this, right?"];
 
-    [quickBar positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
+        [label setFont:[CPFont boldSystemFontOfSize:11.0]];
+        [label sizeToFit];
+        [label setFrameOrigin:CPPointMake(60, 60)];
+        [label setTextColor:[CPColor whiteColor]];
+        [[_quickActionWindow contentView] addSubview:label];
+        [_quickActionWindow setAlphaValue:0.95];
+    }
+
+    [_quickActionWindow positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
 }
 
 
@@ -228,6 +258,7 @@
         _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
         _events                 = [aCoder decodeObjectForKey:@"_events"];
         _avatar                 = [aCoder decodeObjectForKey:@"_avatar"];
+        _buttonAction           = [aCoder decodeObjectForKey:@"_buttonAction"];
     }
 
     return self;
@@ -249,6 +280,7 @@
     [aCoder encodeObject:_avatar forKey:@"_avatar"];
     [aCoder encodeObject:_normalStateCartoucheColor forKey:@"_normalStateCartoucheColor"];
     [aCoder encodeObject:_selectedStateCartoucheColor forKey:@"_selectedStateCartoucheColor"];
+    [aCoder encodeObject:_buttonAction forKey:@"_buttonAction"];
 }
 
 @end
