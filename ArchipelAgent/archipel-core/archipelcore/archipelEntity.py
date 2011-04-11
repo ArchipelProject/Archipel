@@ -302,7 +302,7 @@ class TNArchipelEntity (object):
             else:
                 sys.exit(-1)
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        self.log.info("Sucessfully connected.")
+        self.log.info("Sucessfully connected to XMPP with JID %s" % str(self.jid))
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_CONNECTED")
         return True
 
