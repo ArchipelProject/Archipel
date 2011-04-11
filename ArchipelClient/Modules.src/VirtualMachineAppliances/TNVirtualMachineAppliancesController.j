@@ -21,7 +21,6 @@
 
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -30,6 +29,7 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNInstalledAppliancesObject.j";
 
@@ -52,14 +52,12 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 @implementation TNVirtualMachineAppliancesController : TNModule
 {
     @outlet CPButtonBar                 buttonBarControl;
-    @outlet CPScrollView                mainScrollView;
     @outlet CPSearchField               fieldFilterAppliance;
-    @outlet CPTextField                 fieldJID;
-    @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldNewApplianceName;
     @outlet CPView                      maskingView;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
+    @outlet TNUIKitScrollView           mainScrollView;
 
     CPButton                            _detachButton;
     CPButton                            _attachButton;
@@ -77,7 +75,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [fieldJID setSelectable:YES];
 
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -167,7 +164,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
@@ -195,9 +191,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if (![super willShow])
         return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
 
@@ -238,17 +231,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's nickname changes
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called if entity changes it presence and call checkIfRunning
     @param aNotification the notification

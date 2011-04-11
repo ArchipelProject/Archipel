@@ -21,11 +21,11 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPImageView.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
 @import <LPKit/LPMultiLineTextField.j>
+@import <TNKit/TNUIKitScrollView.j>
 @import <VNCCappuccino/TNVNCView.j>
 
 @import "TNExternalVNCWindow.j";
@@ -54,10 +54,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPButton                buttonZoomReset;
     @outlet CPCheckBox              checkboxPasswordRemember;
     @outlet CPImageView             imageViewSecureConnection;
-    @outlet CPScrollView            mainScrollView;
     @outlet CPSlider                sliderScaling;
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
@@ -68,6 +65,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPWindow                windowPasteBoard;
     @outlet LPMultiLineTextField    fieldPasteBoard;
     @outlet TNSwitch                switchPreferencesPreferSSL;
+    @outlet TNUIKitScrollView       mainScrollView;
 
     BOOL                            _useSSL;
     BOOL                            _vncOnlySSL;
@@ -87,7 +85,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
@@ -162,7 +159,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCShowExternalWindowNotification object:nil];
     [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
@@ -199,8 +195,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [maskingView setFrame:[[self view] bounds]];
 
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
     [self checkIfRunning];
 
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
@@ -292,17 +286,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     }
 
     return YES;
-}
-
-/*! called when contact nickname has been updated
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
 }
 
 /*! called when contact presence has changed

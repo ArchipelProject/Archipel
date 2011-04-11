@@ -20,7 +20,6 @@
 
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPTextField.j>
@@ -28,6 +27,7 @@
 
 @import <LPKit/LPMultiLineTextField.j>
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNSnapshot.j";
 @import "TNSnapshotsDatasource.j";
@@ -53,15 +53,13 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
     @outlet CPButtonBar                 buttonBarControl;
-    @outlet CPScrollView                scrollViewSnapshots;
     @outlet CPSearchField               fieldFilter;
     @outlet CPTextField                 fieldInfo;
-    @outlet CPTextField                 fieldJID;
-    @outlet CPTextField                 fieldName;
     @outlet CPTextField                 fieldNewSnapshotName;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewSnapshot;
     @outlet LPMultiLineTextField        fieldNewSnapshotDescription;
+    @outlet TNUIKitScrollView           scrollViewSnapshots;
 
     CPButton                            _minusButton;
     CPButton                            _plusButton;
@@ -78,7 +76,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
@@ -179,17 +176,10 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
 /*! called when module is loaded
 */
-- (void)willLoad
+- (BOOL)willLoad
 {
-    [super willLoad];
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
-    var center = [CPNotificationCenter defaultCenter];
-
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
+    if (![super willLoad])
+        return NO;
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationSnapshoting];
 
@@ -199,6 +189,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_outlineViewSnapshots setDelegate:self];
 
     [self getSnapshots];
+
+    return YES;
 }
 
 /*! called when module is unloaded
@@ -255,17 +247,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
 #pragma mark -
 #pragma mark Notification
-
-/*! called when entity's nickname changes
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called when an Archipel push is received
     @param somePushInfo CPDictionary containing the push information

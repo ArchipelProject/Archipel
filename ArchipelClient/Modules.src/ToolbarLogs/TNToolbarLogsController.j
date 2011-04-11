@@ -19,11 +19,11 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNArchipelClientLog.j";
 @import "TNCellLogLevel.j";
@@ -48,9 +48,9 @@ var TNLogLevelFatal = @"fatal",
 */
 @implementation TNToolbarLogsController: TNModule
 {
-    @outlet CPPopUpButton   buttonLogLevel;
-    @outlet CPScrollView    mainScrollView;
-    @outlet CPSearchField   fieldFilter;
+    @outlet CPPopUpButton       buttonLogLevel;
+    @outlet CPSearchField       fieldFilter;
+    @outlet TNUIKitScrollView   mainScrollView;
 
     CPString                _filter;
     CPTableView             _tableViewLogging;

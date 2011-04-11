@@ -22,7 +22,6 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPImageView.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSegmentedControl.j>
 @import <AppKit/CPSlider.j>
@@ -33,6 +32,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNExtendedContactObject.j"
 
@@ -90,7 +90,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPButton                buttonKill;
     @outlet CPButtonBar             buttonBarMigration;
     @outlet CPImageView             imageState;
-    @outlet CPScrollView            scrollViewTableHypervisors;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
     @outlet CPSlider                sliderMemory;
@@ -98,8 +97,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPTextField             fieldInfoCPUs;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoState;
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldOOMAdjust;
     @outlet CPTextField             fieldOOMScore;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
@@ -108,6 +105,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet TNSwitch                switchAutoStart;
     @outlet TNSwitch                switchPreventOOMKiller;
     @outlet TNTextFieldStepper      stepperCPU;
+    @outlet TNUIKitScrollView       scrollViewTableHypervisors;
 
     CPButton                        _migrateButton;
     CPImage                         _imageDestroy;
@@ -146,7 +144,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
            [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs"
     ]];
 
-    [fieldJID setSelectable:YES];
     [sliderMemory setContinuous:YES];
     [sliderMemory setToolTip:@"Adjust the maximum amout of memory of the VM (only when running)"];
     [stepperCPU setTarget:self];
@@ -176,8 +173,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [maskingView setBackgroundColor:[CPColor whiteColor]];
     [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [maskingView setAlphaValue:0.9];
-
-    [fieldJID setSelectable:YES];
 
     [buttonBarTransport setToolTip:@"Control the virtual machine"];
     [buttonBarTransport setSegmentCount:5];
@@ -285,7 +280,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveControlNotification:) name:TNArchipelControlNotification object:nil];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 
@@ -297,8 +291,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [self disableAllButtons];
 
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
     [imageState setImage:[_entity statusIcon]];
 }
 
@@ -409,14 +401,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's nickname changes
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    [fieldName setStringValue:[_entity nickname]]
-}
 
 /*! called if entity changes it presence and call checkIfRunning
     @param aNotification the notification

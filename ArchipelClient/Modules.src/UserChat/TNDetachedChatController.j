@@ -21,12 +21,12 @@
 
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPPlatformWindow.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPWindow.j>
 
 @import <MessageBoard/TNMessageBoard.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 
 if ([CPPlatform isBrowser])
@@ -46,12 +46,12 @@ else
 
     CPImageView         _viewAvatar;
     CPPlatformWindow    _platformWindow;
-    CPScrollView        _scrollView;
     CPSound             _soundReceived;
     CPSound             _soundSent;
     CPTextField         _fieldMessage;
     CPWindow            _window;
     TNMessageBoard      _messageBoard;
+    TNUIKitScrollView   _scrollView;
 }
 
 #pragma mark -
@@ -74,9 +74,8 @@ else
         [[_window contentView] setAutoresizingMask:nil];
         [_window setDelegate:self];
 
-        _scrollView = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
+        _scrollView = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0, 0, 400, 322)];
         [_scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-        [_scrollView setBorderedWithHexColor:@"#C0C7D2"];
         [_scrollView setBackgroundColor:[CPColor whiteColor]];
         [_scrollView setAutohidesScrollers:YES];
         [[_window contentView] addSubview:_scrollView];

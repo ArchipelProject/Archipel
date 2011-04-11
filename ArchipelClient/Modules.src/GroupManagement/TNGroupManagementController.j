@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButtonBar.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -58,10 +57,8 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 @implementation TNGroupManagementController : TNModule
 {
     @outlet CPButtonBar                     buttonBarControl;
-    @outlet CPScrollView                    VMScrollView;
+    @outlet TNUIKitScrollView               VMScrollView;
     @outlet CPSearchField                   filterField;
-    @outlet CPTextField                     fieldJID;
-    @outlet CPTextField                     fieldName;
     @outlet CPView                          viewTableContainer;
     @outlet TNGroupedMigrationController    groupedMigrationController;
 
@@ -235,8 +232,6 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (void)reload:(CPNotification)aNotification
 {
-    [fieldName setStringValue:[_entity name]];
-
     [_datasourceGroupVM removeAllObjects];
 
     var contacts = [[[TNStropheIMClient defaultClient] roster] getAllContactsTreeFromGroup:_entity];

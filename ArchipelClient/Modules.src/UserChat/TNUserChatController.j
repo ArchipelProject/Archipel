@@ -21,12 +21,12 @@
 
 @import <AppKit/CPButton.j>
 @import <AppKit/CPImageView.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 
 @import <MessageBoard/TNMessageBoard.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDetachedChatController.j"
 
@@ -41,24 +41,22 @@
 */
 @implementation TNUserChatController : TNModule
 {
-    @outlet CPButton        buttonClear;
-    @outlet CPButton        buttonDetach;
-    @outlet CPImageView     imageSpinnerWriting;
-    @outlet CPScrollView    messagesScrollView;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldMessage;
-    @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldPreferencesMaxChatMessage;
-    @outlet CPTextField     fieldUserJID;
-    @outlet CPView          viewControls;
+    @outlet CPButton            buttonClear;
+    @outlet CPButton            buttonDetach;
+    @outlet CPImageView         imageSpinnerWriting;
+    @outlet CPTextField         fieldMessage;
+    @outlet CPTextField         fieldPreferencesMaxChatMessage;
+    @outlet CPTextField         fieldUserJID;
+    @outlet CPView              viewControls;
+    @outlet TNUIKitScrollView   messagesScrollView;
 
-    CPArray                 _messages;
-    CPDictionary            _detachedChats;
-    CPSound                 _soundMessage;
-    CPSound                 _soundReceived;
-    CPSound                 _soundSent;
-    CPTimer                 _composingMessageTimer;
-    TNMessageBoard          _messageBoard;
+    CPArray                     _messages;
+    CPDictionary                _detachedChats;
+    CPSound                     _soundMessage;
+    CPSound                     _soundReceived;
+    CPSound                     _soundSent;
+    CPTimer                     _composingMessageTimer;
+    TNMessageBoard              _messageBoard;
 }
 
 
@@ -93,12 +91,9 @@
             [bundle objectForInfoDictionaryKey:@"TNUserChatMaxMessageStore"], @"TNUserChatMaxMessageStore"
     ]];
 
-    [fieldJID setSelectable:YES];
-
     _detachedChats = [CPDictionary dictionary];
     _messages = [CPArray array];
 
-    [messagesScrollView setBorderedWithHexColor:@"#C0C7D2"];
     [messagesScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [messagesScrollView setAutohidesScrollers:YES];
 
@@ -139,7 +134,6 @@
     var center = [CPNotificationCenter defaultCenter];
     [center addObserver:self selector:@selector(_didReceiveMessageComposing:) name:TNStropheContactMessageComposing object:_entity];
     [center addObserver:self selector:@selector(_didReceiveMessagePause:) name:TNStropheContactMessagePaused object:_entity];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
     var frame = [[messagesScrollView documentView] bounds];
 
@@ -194,9 +188,6 @@
 
     [_entity freeMessagesQueue];
 
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self view] setFrame:[[[self view] superview] bounds]];
 
@@ -235,17 +226,6 @@
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! triggered when entity's nickname changed
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! performed when TNStropheContactMessageReceivedNotification is received from current entity.
     @param aNotification the notification containing the contact that send the notification

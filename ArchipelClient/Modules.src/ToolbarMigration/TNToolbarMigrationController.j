@@ -19,13 +19,12 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
-
+@import <TNKit/TNUIKitScrollView.j>
 
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
@@ -45,22 +44,21 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNToolbarMigrationController : TNModule
 {
-    @outlet     CPView          documentView;
-    @outlet     CPScrollView    scrollViewTableHypervisorOrigin;
-    @outlet     CPScrollView    scrollViewTableHypervisorDestination;
-    @outlet     CPScrollView    scrollViewTableVirtualMachines;
-    @outlet     CPButton        buttonMigrate;
-    @outlet     CPSearchField   searchHypervisorOrigin;
-    @outlet     CPSearchField   searchHypervisorDestination;
-    @outlet     CPSearchField   searchVirtualMachine;
+    @outlet     CPButton            buttonMigrate;
+    @outlet     CPSearchField       searchHypervisorDestination;
+    @outlet     CPSearchField       searchHypervisorOrigin;
+    @outlet     CPSearchField       searchVirtualMachine;
+    @outlet     CPView              documentView;
+    @outlet     TNUIKitScrollView   scrollViewTableHypervisorDestination;
+    @outlet     TNUIKitScrollView   scrollViewTableHypervisorOrigin;
+    @outlet     TNUIKitScrollView   scrollViewTableVirtualMachines;
 
-    CPTableView             _tableHypervisorOrigin;
-    CPTableView             _tableHypervisorVirtualMachines;
-    CPTableView             _tableHypervisorDestination;
-
-    TNTableViewDataSource   _hypervisorOriginDatasource;
-    TNTableViewDataSource   _hypervisorDestinationDatasource;
-    TNTableViewDataSource   _virtualMachinesDatasource;
+    CPTableView                     _tableHypervisorDestination;
+    CPTableView                     _tableHypervisorOrigin;
+    CPTableView                     _tableHypervisorVirtualMachines;
+    TNTableViewDataSource           _hypervisorDestinationDatasource;
+    TNTableViewDataSource           _hypervisorOriginDatasource;
+    TNTableViewDataSource           _virtualMachinesDatasource;
 }
 
 

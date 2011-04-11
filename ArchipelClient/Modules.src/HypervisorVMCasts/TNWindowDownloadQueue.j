@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPWindow.j>
 
@@ -37,7 +36,7 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 */
 @implementation TNWindowDownloadQueue : CPWindow
 {
-    @outlet CPScrollView            mainScrollView;
+    @outlet TNUIKitScrollView       mainScrollView;
 
     TNStropheContact                entity  @accessors;
 

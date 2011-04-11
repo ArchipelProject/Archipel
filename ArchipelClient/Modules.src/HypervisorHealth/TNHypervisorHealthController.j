@@ -58,8 +58,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPSearchField       filterLogField;
     @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
-    @outlet CPTextField         fieldJID;
-    @outlet CPTextField         fieldName;
     @outlet CPTextField         fieldPreferencesAutoRefresh;
     @outlet CPTextField         fieldPreferencesMaxItems;
     @outlet CPTextField         fieldPreferencesMaxLogEntries;
@@ -114,8 +112,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     var bundle      = [CPBundle bundleForClass:[self class]],
         spinner     = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"loading.gif"]],
         defaults    = [CPUserDefaults standardUserDefaults];
@@ -216,7 +212,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     // tables partition
     _datasourcePartitions = [[TNTableViewDataSource alloc] init];
-    _tablePartitions     = [[CPTableView alloc] initWithFrame:[scrollViewPartitionTable bounds]];
+    _tablePartitions     = [[CPTableView alloc] initWithFrame:CPRectMakeZero()];
+
+    [_tablePartitions setFrameSize:[scrollViewPartitionTable contentSize]];
 
     [viewPartitionTableContainer setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewPartitionTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -235,7 +233,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     var columnPartitionCell = [[CPTableColumn alloc] initWithIdentifier:@"partition"],
         partitionViewPrototype = [[TNCellPartitionView alloc] initWithFrame:CPRectMake(0, 0, 420, 60)];
 
-    [columnPartitionCell setWidth:[_tablePartitions frameSize].width];
+    [columnPartitionCell setWidth:[scrollViewPartitionTable contentSize].width - 3]; // yeah -3...
     [columnPartitionCell setDataView:partitionViewPrototype];
     [_tablePartitions addTableColumn:columnPartitionCell];
     [_datasourcePartitions setTable:_tablePartitions];
@@ -320,7 +318,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         key         = TNArchipelHealthRefreshBaseKey + [_entity JID],
         shouldBeOn  = ([defaults boolForKey:key] === nil) ? YES : [defaults boolForKey:key];
 
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
 
     _memoryDatasource   = [[TNDatasourceChartView alloc] initWithNumberOfSets:1];
@@ -381,9 +378,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     if (![super willShow])
         return NO;
 
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
     return YES;
 }
 
@@ -420,17 +414,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when contact nickname has been updated
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called when presence of user changed and evenutally stops the timers
     @param aNotification the notification

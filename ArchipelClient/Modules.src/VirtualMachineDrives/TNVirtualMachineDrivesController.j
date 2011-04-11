@@ -20,7 +20,6 @@
 
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -53,14 +52,12 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 @implementation TNVirtualMachineDrivesController : TNModule
 {
     @outlet CPButtonBar             buttonBarControl;
-    @outlet CPScrollView            scrollViewDisks;
     @outlet CPSearchField           fieldFilter;
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
     @outlet CPView                  maskingView;
     @outlet CPView                  viewTableContainer;
     @outlet TNEditDriveController   editDriveController;
     @outlet TNNewDriveController    newDriveController;
+    @outlet TNUIKitScrollView       scrollViewDisks;
 
     BOOL                            _isActive               @accessors(getters=isActive);
 
@@ -80,8 +77,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var bundle = [CPBundle mainBundle];
@@ -193,7 +188,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDisk]
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationAppliance]
 
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
@@ -209,9 +203,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if (![super willShow])
         return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
     [self getDisksInfo];
@@ -245,17 +236,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's nickname changes
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called if entity changes it presence and call checkIfRunning
     @param aNotification the notification

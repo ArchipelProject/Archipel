@@ -18,24 +18,24 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPWindow.j>
 @import <AppKit/CPTableView.j>
 
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 
 @implementation TNGroupedMigrationController : CPObject
 {
-    @outlet CPScrollView    scrollViewTableHypervisors;
-    @outlet CPSearchField   searchFieldHypervisors;
-    @outlet CPWindow        mainWindow;
+    @outlet TNUIKitScrollView   scrollViewTableHypervisors;
+    @outlet CPSearchField       searchFieldHypervisors;
+    @outlet CPWindow            mainWindow;
 
-    id                      _delegate @accessors(property=delegate);
+    id                          _delegate @accessors(property=delegate);
 
-    CPTableView             _tableHypervisors;
-    TNTableViewDataSource   _datasourceHypervisors;
+    CPTableView                 _tableHypervisors;
+    TNTableViewDataSource       _datasourceHypervisors;
 }
 
 

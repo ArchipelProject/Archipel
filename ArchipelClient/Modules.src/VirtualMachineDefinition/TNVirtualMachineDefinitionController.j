@@ -135,9 +135,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
     @outlet CPTabView               tabViewDevices;
-    @outlet CPTextField             fieldJID;
     @outlet CPTextField             fieldMemory;
-    @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldPreferencesDomainType;
     @outlet CPTextField             fieldPreferencesGuest;
     @outlet CPTextField             fieldPreferencesMachine;
@@ -234,7 +232,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultDriveCacheMode"], @"TNDescDefaultDriveCacheMode"
     ]];
 
-    [fieldJID setSelectable:YES];
     [fieldStringXMLDesc setFont:[CPFont fontWithName:@"Andale Mono, Courier New" size:12]];
 
     _stringXMLDesc = @"";
@@ -581,7 +578,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldMemory];
     [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
@@ -629,9 +625,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 {
     if (![super willShow])
         return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
 
     [self checkIfRunning];
 
@@ -760,17 +753,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's nickname changes
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called if entity changes it presence
     @param aNotification the notification

@@ -22,7 +22,6 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -31,7 +30,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
-
+@import <TNKit/TNUIKitScrollView.j>
 
 
 /*! @defgroup virtualmachinescheduler Module VirtualMachineShceduler
@@ -58,11 +57,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     @outlet CPCheckBox              checkBoxEverySecond;
     @outlet CPCheckBox              checkBoxEveryYear;
     @outlet CPPopUpButton           buttonNewJobAction;
-    @outlet CPScrollView            scrollViewTableJobs;
     @outlet CPSearchField           filterFieldJobs;
     @outlet CPTabView               tabViewJobSchedule;
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
     @outlet CPTextField             fieldNewJobComment;
     @outlet CPView                  viewNewJobOneShot;
     @outlet CPView                  viewNewJobRecurent;
@@ -78,6 +74,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     @outlet TNTextFieldStepper      stepperNewRecurrentJobSecond;
     @outlet TNTextFieldStepper      stepperNewRecurrentJobYear;
     @outlet TNTextFieldStepper      stepperSecond;
+    @outlet TNUIKitScrollView       scrollViewTableJobs;
 
     CPButton                        _buttonSchedule;
     CPButton                        _buttonUnschedule;
@@ -92,8 +89,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];
@@ -189,26 +184,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [super willLoad];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationScheduler];
 
     [self getJobs];
     [self getActions];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
-    return YES;
 }
 
 /*! called when module becomes unvisible
@@ -242,17 +223,6 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity' nickname changed
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called when an Archipel push is received
     @param somePushInfo CPDictionary containing the push information

@@ -58,8 +58,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     @outlet CPButtonBar             buttonBarControl;
     @outlet CPSearchField           filterField;
     @outlet CPSplitView             splitView;
-    @outlet CPTextField             fieldJID;
-    @outlet CPTextField             fieldName;
     @outlet CPTextField             labelNoUserSelected;
     @outlet CPView                  viewTableContainer;
     @outlet CPView                  viewUsersLeft;
@@ -87,8 +85,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     _currentUserPermissions = [CPArray array];
     _defaultAvatar          = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
@@ -207,7 +203,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     [_tablePermissions setDelegate:self];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationPermissions];
@@ -221,19 +216,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     }
 
     [self getXMPPUsers];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
-    return YES;
 }
 
 /*! called when module is unloaded
@@ -273,17 +255,6 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity' nickname changed
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == _entity)
-    {
-       [fieldName setStringValue:[_entity nickname]]
-    }
-}
 
 /*! called when an Archipel push is received
     @param somePushInfo CPDictionary containing the push information

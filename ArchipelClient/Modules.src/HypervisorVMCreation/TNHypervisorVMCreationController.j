@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
@@ -29,7 +28,7 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
-
+@import <TNKit/TNUIKitScrollView.j>
 
 var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control",
     TNArchipelTypeHypervisorControlAlloc        = @"alloc",
@@ -50,28 +49,26 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNHypervisorVMCreationController : TNModule
 {
-    @outlet CPButton        buttonAlloc;
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPPopUpButton   popupDeleteMachine;
-    @outlet CPScrollView    scrollViewListVM;
-    @outlet CPSearchField   fieldFilterVM;
-    @outlet CPTextField     fieldJID;
-    @outlet CPTextField     fieldName;
-    @outlet CPTextField     fieldNewSubscriptionTarget;
-    @outlet CPTextField     fieldNewVMRequestedName;
-    @outlet CPTextField     fieldRemoveSubscriptionTarget;
-    @outlet CPView          viewTableContainer;
-    @outlet CPWindow        windowNewSubscription;
-    @outlet CPWindow        windowNewVirtualMachine;
-    @outlet CPWindow        windowRemoveSubscription;
+    @outlet CPButton            buttonAlloc;
+    @outlet CPButtonBar         buttonBarControl;
+    @outlet CPPopUpButton       popupDeleteMachine;
+    @outlet TNUIKitScrollView   scrollViewListVM;
+    @outlet CPSearchField       fieldFilterVM;
+    @outlet CPTextField         fieldNewSubscriptionTarget;
+    @outlet CPTextField         fieldNewVMRequestedName;
+    @outlet CPTextField         fieldRemoveSubscriptionTarget;
+    @outlet CPView              viewTableContainer;
+    @outlet CPWindow            windowNewSubscription;
+    @outlet CPWindow            windowNewVirtualMachine;
+    @outlet CPWindow            windowRemoveSubscription;
 
-    CPButton                _cloneButton;
-    CPButton                _minusButton;
-    CPButton                _plusButton;
-    CPButton                _addSubscriptionButton;
-    CPButton                _removeSubscriptionButton;
-    CPTableView             _tableVirtualMachines;
-    TNTableViewDataSource   _virtualMachinesDatasource;
+    CPButton                    _cloneButton;
+    CPButton                    _minusButton;
+    CPButton                    _plusButton;
+    CPButton                    _addSubscriptionButton;
+    CPButton                    _removeSubscriptionButton;
+    CPTableView                 _tableVirtualMachines;
+    TNTableViewDataSource       _virtualMachinesDatasource;
 }
 
 
@@ -82,7 +79,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // VM table view
@@ -188,7 +184,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationHypervisor];
 
     var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheRosterAddedContactNotification object:nil];
     [center addObserver:self selector:@selector(_reload:) name:TNStropheContactPresenceUpdatedNotification object:nil];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
@@ -207,19 +202,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_tableVirtualMachines reloadData];
 
     [super willUnload];
-}
-
-/*! called when module become visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
-    return YES;
 }
 
 /*! called when MainMenu is ready
@@ -258,14 +240,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's nickname changed
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    [fieldName setStringValue:[_entity nickname]]
-}
 
 /*! called when an Archipel push is recieved
     @param somePushInfo CPDictionary containing the push information

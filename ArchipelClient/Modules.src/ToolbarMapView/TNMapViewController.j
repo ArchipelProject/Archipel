@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPSplitView.j>
 @import <AppKit/CPTableView.j>
@@ -26,6 +25,7 @@
 @import <AppKit/CPView.j>
 
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "MapKit/MKMapView.j";
 @import "TNDragDropTableViewDataSource.j";
@@ -52,8 +52,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNMapViewController : TNModule
 {
-    @outlet CPScrollView            scrollViewDestination;
-    @outlet CPScrollView            scrollViewOrigin;
     @outlet CPSearchField           filterFieldDestination;
     @outlet CPSearchField           filterFieldOrigin;
     @outlet CPSplitView             splitViewHorizontal;
@@ -65,6 +63,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPView                  mapViewContainer;
     @outlet CPView                  viewDestination;
     @outlet CPView                  viewOrigin;
+    @outlet TNUIKitScrollView       scrollViewDestination;
+    @outlet TNUIKitScrollView       scrollViewOrigin;
 
     CPTableView                     _tableVMDestination;
     CPTableView                     _tableVMOrigin;

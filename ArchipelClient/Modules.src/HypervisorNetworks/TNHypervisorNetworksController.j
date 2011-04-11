@@ -21,7 +21,6 @@
 @import <AppKit/CPButton.j>
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCollectionView.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -29,6 +28,7 @@
 
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDHCPEntryObject.j"
 @import "TNHypervisorNetworkObject.j"
@@ -56,11 +56,9 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 @implementation TNHypervisorNetworksController : TNModule
 {
     @outlet CPButtonBar                 buttonBarControl;
-    @outlet CPScrollView                scrollViewNetworks;
     @outlet CPSearchField               fieldFilterNetworks;
-    @outlet CPTextField                 fieldJID;
-    @outlet CPTextField                 fieldName;
     @outlet CPView                      viewTableContainer;
+    @outlet TNUIKitScrollView           scrollViewNetworks;
     @outlet TNWindowNetworkController   networkController;
 
     CPButton                            _activateButton;
@@ -79,8 +77,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     /* VM table view */
@@ -218,7 +214,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     var center = [CPNotificationCenter defaultCenter];
 
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:[self entity]];
     [center addObserver:self selector:@selector(_didTableSelectionChange:) name:CPTableViewSelectionDidChangeNotification object:_tableViewNetworks];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
@@ -228,16 +223,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationNetworks];
     [self getHypervisorNetworks];
     [self getHypervisorNICS];
-}
-
-/*! called when module becomes visible
-*/
-- (void)willShow
-{
-    [super willShow];
-
-    [fieldName setStringValue:[[self entity] nickname]];
-    [fieldJID setStringValue:[[self entity] JID]];
 }
 
 /*! called when MainMenu is ready
@@ -268,17 +253,6 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity's name has change
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    if ([aNotification object] == [self entity])
-    {
-       [fieldName setStringValue:[[self entity] nickname]]
-    }
-}
 
 /*! called when an Archipel push is recieved
     @param somePushInfo CPDictionary containing push information

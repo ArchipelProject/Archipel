@@ -18,7 +18,6 @@
 
 @import <Foundation/Foundation.j>
 
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSound.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTextField.j>
@@ -41,8 +40,8 @@
 */
 @implementation TNMUCChatController : TNModule
 {
-    @outlet CPScrollView        scrollViewMessageContainer;
-    @outlet CPScrollView        scrollViewPeople;
+    @outlet TNUIKitScrollView   scrollViewMessageContainer;
+    @outlet TNUIKitScrollView   scrollViewPeople;
     @outlet CPTextField         fieldPreferencesDefaultRoom;
     @outlet CPTextField         fieldPreferencesDefaultService;
     @outlet CPTextField         textFieldMessage;

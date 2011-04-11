@@ -23,13 +23,13 @@
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPOutlineView.j>
 @import <AppKit/CPProgressIndicator.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
 @import <TNKit/TNAlert.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNCellApplianceStatus.j";
 @import "TNDownoadObject.j";
@@ -60,10 +60,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPCheckBox          checkBoxOnlyInstalled;
     @outlet CPProgressIndicator downloadIndicator;
-    @outlet CPScrollView        mainScrollView;
+    @outlet TNUIKitScrollView   mainScrollView;
     @outlet CPSearchField       fieldFilter;
-    @outlet CPTextField         fieldJID;
-    @outlet CPTextField         fieldName;
     @outlet CPTextField         fieldNewURL;
     @outlet CPView              viewTableContainer;
     @outlet CPWindow            windowDownloadQueue;
@@ -84,8 +82,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)awakeFromCib
 {
-    [fieldJID setSelectable:YES];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
@@ -194,7 +190,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [_mainOutlineView setDelegate:self];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVMCasting];
-    [center addObserver:self selector:@selector(_didUpdateNickName:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [self getVMCasts];
@@ -213,21 +208,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     [_mainOutlineView reloadData];
 
     [super willUnload];
-}
-
-/*! called when module becomes visible
-*/
-- (BOOL)willShow
-{
-    if (![super willShow])
-        return NO;
-
-    [fieldName setStringValue:[_entity nickname]];
-    [fieldJID setStringValue:[_entity JID]];
-
-    CPLog.trace([_mainOutlineView cornerView]);
-
-    return YES;
 }
 
 /*! called when module becomes unvisible
@@ -280,14 +260,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
 #pragma mark -
 #pragma mark Notification handlers
-
-/*! called when entity nickname's changed
-    @param aNotification the notification
-*/
-- (void)_didUpdateNickName:(CPNotification)aNotification
-{
-    [fieldName setStringValue:[_entity nickname]]
-}
 
 /*! called when an Archipel push is received
     @param aNotification CPDictionary containing the push information

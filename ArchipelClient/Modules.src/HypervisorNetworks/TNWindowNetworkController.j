@@ -22,7 +22,6 @@
 @import <AppKit/CPButtonBar.j>
 @import <AppKit/CPCheckBox.j>
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTabView.j>
 @import <AppKit/CPTextField.j>
@@ -41,39 +40,39 @@
 */
 @implementation TNWindowNetworkController : CPObject
 {
-    @outlet CPButtonBar     buttonBarControlDHCPHosts;
-    @outlet CPButtonBar     buttonBarControlDHCPRanges;
-    @outlet CPCheckBox      checkBoxDHCPEnabled;
-    @outlet CPCheckBox      checkBoxSTPEnabled;
-    @outlet CPPopUpButton   buttonForwardDevice;
-    @outlet CPPopUpButton   buttonForwardMode;
-    @outlet CPScrollView    scrollViewDHCPHosts;
-    @outlet CPScrollView    scrollViewDHCPRanges;
-    @outlet CPTabView       tabViewDHCP;
-    @outlet CPTextField     fieldBridgeDelay;
-    @outlet CPTextField     fieldBridgeIP;
-    @outlet CPTextField     fieldBridgeName;
-    @outlet CPTextField     fieldBridgeNetmask;
-    @outlet CPTextField     fieldNetworkName;
-    @outlet CPView          viewHostsConf;
-    @outlet CPView          viewRangesConf;
-    @outlet CPView          viewTableHostsContainer;
-    @outlet CPView          viewTableRangesContainer;
-    @outlet CPWindow        mainWindow;
+    @outlet CPButtonBar         buttonBarControlDHCPHosts;
+    @outlet CPButtonBar         buttonBarControlDHCPRanges;
+    @outlet CPCheckBox          checkBoxDHCPEnabled;
+    @outlet CPCheckBox          checkBoxSTPEnabled;
+    @outlet CPPopUpButton       buttonForwardDevice;
+    @outlet CPPopUpButton       buttonForwardMode;
+    @outlet CPTabView           tabViewDHCP;
+    @outlet CPTextField         fieldBridgeDelay;
+    @outlet CPTextField         fieldBridgeIP;
+    @outlet CPTextField         fieldBridgeName;
+    @outlet CPTextField         fieldBridgeNetmask;
+    @outlet CPTextField         fieldNetworkName;
+    @outlet CPView              viewHostsConf;
+    @outlet CPView              viewRangesConf;
+    @outlet CPView              viewTableHostsContainer;
+    @outlet CPView              viewTableRangesContainer;
+    @outlet CPWindow            mainWindow;
+    @outlet TNUIKitScrollView   scrollViewDHCPHosts;
+    @outlet TNUIKitScrollView   scrollViewDHCPRanges;
 
-    CPArray                 _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
-    CPTableView             _externalTable              @accessors(property=tableNetwork);
-    id                      _delegate                   @accessors(property=delegate);
-    TNHypervisorNetwork     _network                    @accessors(property=network);
+    CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
+    CPTableView                 _externalTable              @accessors(property=tableNetwork);
+    id                          _delegate                   @accessors(property=delegate);
+    TNHypervisorNetwork         _network                    @accessors(property=network);
 
-    CPButton                _minusButtonDHCPHosts;
-    CPButton                _minusButtonDHCPRanges;
-    CPButton                _plusButtonDHCPHosts;
-    CPButton                _plusButtonDHCPRanges;
-    CPTableView             _tableViewHosts;
-    CPTableView             _tableViewRanges;
-    TNTableViewDataSource   _datasourceDHCPHosts;
-    TNTableViewDataSource   _datasourceDHCPRanges;
+    CPButton                    _minusButtonDHCPHosts;
+    CPButton                    _minusButtonDHCPRanges;
+    CPButton                    _plusButtonDHCPHosts;
+    CPButton                    _plusButtonDHCPRanges;
+    CPTableView                 _tableViewHosts;
+    CPTableView                 _tableViewRanges;
+    TNTableViewDataSource       _datasourceDHCPHosts;
+    TNTableViewDataSource       _datasourceDHCPRanges;
 }
 
 #pragma mark -
