@@ -43,6 +43,7 @@
 @import <TNKit/TNCategories.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNToolTip.j>
+@import <TNKit/TNUIKitScrollView.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
@@ -180,7 +181,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPMenu                          _mainMenu;
     CPMenu                          _modulesMenu;
     CPPlatformWindow                _platformHelpWindow;
-    CPScrollView                    _outlineScrollView;
+    TNUIKitScrollView              _outlineScrollView;
     CPTextField                     _rightViewTextField;
     CPTimer                         _ledInTimer;
     CPTimer                         _ledOutTimer;
@@ -336,7 +337,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
-    _outlineScrollView = [[CPScrollView alloc] initWithFrame:[leftView bounds]];
+    _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
     [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
