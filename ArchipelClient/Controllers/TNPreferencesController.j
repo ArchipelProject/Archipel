@@ -71,7 +71,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (void)awakeFromCib
 {
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
-        scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
+        scrollViewContainer = [[TNUIKitScrollView alloc] initWithFrame:[tabViewMain bounds]],
         moduleViewFrame = [viewPreferencesGeneral frame];
 
     moduleViewFrame.size.width = [scrollViewContainer contentSize].width;
@@ -135,7 +135,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
         if ([module viewPreferences] !== nil)
         {
             var tabViewModuleItem = [[CPTabViewItem alloc] initWithIdentifier:[module name]],
-                scrollViewContainer = [[CPScrollView alloc] initWithFrame:[tabViewMain bounds]],
+                scrollViewContainer = [[TNUIKitScrollView alloc] initWithFrame:[tabViewMain bounds]],
                 moduleViewFrame = [[module viewPreferences] frame];
 
             moduleViewFrame.size.width = [scrollViewContainer contentSize].width;

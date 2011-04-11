@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPMenu.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPTextField.j>
 @import <AppKit/CPToolbarItem.j>
 @import <AppKit/CPView.j>
@@ -27,6 +26,7 @@
 @import <iTunesTabView/TNiTunesTabView.j>
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 /*! @global
     @group TNArchipelModuleType
@@ -345,15 +345,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 }
 
 /*! insert a TNModules embeded in a scroll view to the mainToolbarView CPView
-    @param aLabel CPString containing the displayed label
-    @param aModuleScrollView CPScrollView containing the TNModule
-    @param anIndex CPNumber representing the insertion index
+    @param aModule the module
 */
 - (void)_addItemToModulesTabView:(TNModule)aModule
 {
     var frame           = [_mainModuleView bounds],
         newViewItem     = [[TNModuleTabViewItem alloc] initWithIdentifier:[aModule name]],
-        scrollView      = [[CPScrollView alloc] initWithFrame:frame];
+        scrollView      = [[TNUIKitScrollView alloc] initWithFrame:frame];
 
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [scrollView setAutohidesScrollers:YES];

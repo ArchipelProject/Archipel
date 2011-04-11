@@ -19,7 +19,6 @@
 @import <Foundation/Foundation.j>
 
 @import <AppKit/CPImageView.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTabView.j>
@@ -28,6 +27,7 @@
 
 @import <LPKit/LPChartView.j>
 @import <TNKit/TNTableViewDataSource.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNCellPartitionView.j"
 @import "TNDatasourceChartView.j"
@@ -55,8 +55,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPImageView         imageDiskLoading;
     @outlet CPImageView         imageLoadLoading;
     @outlet CPImageView         imageMemoryLoading;
-    @outlet CPScrollView        scrollViewLogsTable;
-    @outlet CPScrollView        scrollViewPartitionTable;
     @outlet CPSearchField       filterLogField;
     @outlet CPTabView           tabViewInfos;
     @outlet CPTextField         fieldHalfMemory;
@@ -74,9 +72,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPTextField         healthMemUsage;
     @outlet CPTextField         healthUptime;
     @outlet CPView              viewCharts;
-    @outlet CPView              viewGraphDiskContainer;
     @outlet CPView              viewGraphCPU;
     @outlet CPView              viewGraphCPUContainer;
+    @outlet CPView              viewGraphDiskContainer;
     @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphLoadContainer;
     @outlet CPView              viewGraphMemory;
@@ -86,9 +84,11 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPView              viewLogs;
     @outlet CPView              viewLogsTableContainer;
     @outlet CPView              viewPartitionTableContainer;
+    @outlet TNSwitch            switchPreferencesAutoRefresh;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
-    @outlet TNSwitch            switchPreferencesAutoRefresh;
+    @outlet TNUIKitScrollView   scrollViewLogsTable;
+    @outlet TNUIKitScrollView   scrollViewPartitionTable;
 
     CPTableView                 _tableLogs;
     CPTableView                 _tablePartitions;
@@ -196,7 +196,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     var tabViewItemCharts = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
-        scrollViewChart = [[CPScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
+        scrollViewChart = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
     [tabViewItemCharts setLabel:@"Charts"];
     [tabViewItemCharts setView:scrollViewChart];

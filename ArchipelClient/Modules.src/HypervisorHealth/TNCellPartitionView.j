@@ -57,7 +57,7 @@
         [_availableLabel setAutoresizingMask:CPViewMinXMargin];
         [_availableLabel sizeToFit];
 
-        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, 415.0, 16.0)];
+        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, 410.0, 16.0)];
         [_progressBar setAutoresizingMask:CPViewWidthSizable];
         [_progressBar setMaxValue:100];
         [_progressBar setMinValue:0];

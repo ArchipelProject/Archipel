@@ -23,7 +23,6 @@
 @import <AppKit/CPColor.j>
 @import <AppKit/CPImage.j>
 @import <AppKit/CPPopUpButton.j>
-@import <AppKit/CPScrollView.j>
 @import <AppKit/CPSearchField.j>
 @import <AppKit/CPTableView.j>
 @import <AppKit/CPTabView.j>
@@ -35,6 +34,7 @@
 @import <TNKit/TNAlert.j>
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
+@import <TNKit/TNUIKitScrollView.j>
 
 @import "TNDriveObject.j"
 @import "TNNetworkInterfaceObject.j"
@@ -124,16 +124,14 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet CPPopUpButton           buttonMachines;
     @outlet CPPopUpButton           buttonPreferencesBoot;
     @outlet CPPopUpButton           buttonPreferencesClockOffset;
+    @outlet CPPopUpButton           buttonPreferencesDriveCache;
     @outlet CPPopUpButton           buttonPreferencesInput;
     @outlet CPPopUpButton           buttonPreferencesNumberOfCPUs;
     @outlet CPPopUpButton           buttonPreferencesOnCrash;
     @outlet CPPopUpButton           buttonPreferencesOnPowerOff;
     @outlet CPPopUpButton           buttonPreferencesOnReboot;
     @outlet CPPopUpButton           buttonPreferencesVNCKeyMap;
-    @outlet CPPopUpButton           buttonPreferencesDriveCache;
     @outlet CPPopUpButton           buttonVNCKeymap;
-    @outlet CPScrollView            scrollViewForDrives;
-    @outlet CPScrollView            scrollViewForNics;
     @outlet CPSearchField           fieldFilterDrives;
     @outlet CPSearchField           fieldFilterNics;
     @outlet CPTabView               tabViewDevices;
@@ -146,9 +144,11 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet CPTextField             fieldPreferencesMemory;
     @outlet CPTextField             fieldVNCPassword;
     @outlet CPView                  maskingView;
+    @outlet CPView                  viewBottomControl;
     @outlet CPView                  viewDeviceVirtualDrives;
     @outlet CPView                  viewDeviceVirtualNics;
     @outlet CPView                  viewDrivesContainer;
+    @outlet CPView                  viewMainContent;
     @outlet CPView                  viewNicsContainer;
     @outlet CPWindow                windowXMLEditor;
     @outlet LPMultiLineTextField    fieldStringXMLDesc;
@@ -160,9 +160,9 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet TNSwitch                switchPAE;
     @outlet TNSwitch                switchPreferencesHugePages;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
-    @outlet CPScrollView            scrollViewContentView;
-    @outlet CPView                  viewBottomControl;
-    @outlet CPView                  viewMainContent;
+    @outlet TNUIKitScrollView       scrollViewContentView;
+    @outlet TNUIKitScrollView       scrollViewForDrives;
+    @outlet TNUIKitScrollView       scrollViewForNics;
 
     BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                            _definitionRecovered;
