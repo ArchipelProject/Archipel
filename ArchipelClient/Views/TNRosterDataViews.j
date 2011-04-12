@@ -192,7 +192,7 @@
     [_status setThemeState:aState];
     [_events setThemeState:aState];
 
-    if (aState == CPThemeStateSelectedDataView)
+    if ((aState == CPThemeStateSelectedDataView) && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_contact vCard]] != TNArchipelEntityTypeUser)
         [_buttonAction setHidden:NO];
 }
 
@@ -207,7 +207,10 @@
     [_events unsetThemeState:aState];
 
     if (aState == CPThemeStateSelectedDataView)
+    {
         [_buttonAction setHidden:YES];
+        [_quickActionWindow close:nil];
+    }
 }
 
 
