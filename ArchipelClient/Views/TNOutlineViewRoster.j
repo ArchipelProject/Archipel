@@ -62,7 +62,7 @@ TNArchipelRosterOutlineViewDeselectAll      = @"TNArchipelRosterOutlineDeselectA
         [self setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
         [self setHeaderView:nil];
         [self setCornerView:nil];
-        [self setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+        [self setBackgroundColor:nil];
         [self setRowHeight:rowHeight];
         [self setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
         [self addTableColumn:columnLabel];
