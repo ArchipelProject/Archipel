@@ -343,7 +343,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"D8DFE8"]];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"DADFE5"]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
 
