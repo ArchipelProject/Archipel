@@ -57,6 +57,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPView          viewPreferencesGeneral;
     @outlet CPWindow        mainWindow @accessors(readonly);
     @outlet TNSwitch        switchUseAnimations;
+    @outlet TNSwitch        switchUseXMPPMonitoring;
+
+    id                      _appController  @accessors(property=appController);
 
     CPArray                 _modules;
     TNStrophePrivateStorage _xmppStorage;
@@ -98,6 +101,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [fieldModuleLoadingDelay setToolTip:@"Delay before loading a module. This avoid to load server with stanzas"];
     [fieldWelcomePageUrl setToolTip:@"The URL of the welcome page"];
     [switchUseAnimations setToolTip:@"Turn this ON to activate eye candy animation. Turn it off to gain performances"];
+    [switchUseXMPPMonitoring setToolTip:@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances"];
     [buttonDebugLevel setToolTip:@"Set the log level of the client. The more verbose, the less performance."]
 }
 
@@ -194,6 +198,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
+    [switchUseXMPPMonitoring setOn:[defaults boolForKey:@"TNArchipelMonitorStanza"] animated:YES sendAction:NO];
     [checkBoxUpdate setState:([defaults boolForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
 
     for (var i = 0; i < [_modules count]; i++)
@@ -222,9 +227,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
     [defaults setBool:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
+    [defaults setBool:[switchUseXMPPMonitoring isOn] forKey:@"TNArchipelMonitorStanza"];
 
     CPLogUnregister(CPLogConsole);
     CPLogRegister(CPLogConsole, [buttonDebugLevel title]);
+
+    [_appController monitorXMPP:[switchUseXMPPMonitoring isOn]];
 
     for (var i = 0; i < [_modules count]; i++)
     {

@@ -89,6 +89,15 @@
     <integer>1</integer>
 
     <!--
+        if set to 1, will activate the XMPP I/O monitoring
+        BEWARE: this will decrease drastically performances.
+        - 1: enabled
+        - 0: disabled
+    -->
+    <key>TNArchipelMonitorStanza</key>
+    <integer>0</integer>
+
+    <!--
         URL of the update server (default is http://updates.archipelproject.org)
     -->
     <key>TNArchipelUpdateServerURL</key>

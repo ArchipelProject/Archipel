@@ -252,7 +252,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelBOSHResource"], @"TNArchipelBOSHResource",
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza"
     ]];
 
 
@@ -291,6 +292,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [propertiesController setAvatarManager:avatarController];
     [propertiesController setEnabled:[defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]];
 
+    /* preferences controller */
+    [preferencesController setAppController:self];
 
     /* outlineview */
     CPLog.trace(@"initializing _rosterOutlineView");
@@ -417,7 +420,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
-    [labelCurrentUser setAlignment:CPRightTextAlignment];
     [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [labelCurrentUser setToolTip:@"The current logged account"];
@@ -777,8 +779,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
     [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
 
-    [[[TNStropheIMClient defaultClient] connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
-    [[[TNStropheIMClient defaultClient] connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+    if ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelMonitorStanza"])
+        [self monitorXMPP:YES];
 
     [tagsController setPubSubController:_pubSubController];
     [propertiesController setPubSubController:_pubSubController];
@@ -898,6 +900,31 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)hideHelpView
 {
     [helpView removeFromSuperview];
+}
+
+/*! Enable or disable the XMPP monitoring
+    @param shouldMonitor YES or NO
+*/
+- (void)monitorXMPP:(BOOL)shouldMonitor
+{
+    if (shouldMonitor)
+    {
+        [[[TNStropheIMClient defaultClient] connection] rawInputRegisterSelector:@selector(stropheConnectionRawIn:) ofObject:self];
+        [[[TNStropheIMClient defaultClient] connection] rawOutputRegisterSelector:@selector(stropheConnectionRawOut:) ofObject:self];
+        [ledIn setHidden:NO];
+        [ledOut setHidden:NO];
+    }
+    else
+    {
+        [[[TNStropheIMClient defaultClient] connection] removeRawInputSelector];
+        [[[TNStropheIMClient defaultClient] connection] removeRawOutputSelector];
+        [ledIn setHidden:YES];
+        [ledOut setHidden:YES];
+        if (_ledInTimer)
+            [_ledInTimer invalidate];
+        if (_ledOutTimer)
+            [_ledInTimer invalidate];
+    }
 }
 
 
