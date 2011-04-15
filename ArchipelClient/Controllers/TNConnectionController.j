@@ -132,13 +132,13 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     {
         [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"]];
         [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"]];
-        [credentialRemember setState:CPOnState];
+        [credentialRemember setOn:YES animated:YES sendAction:NO];
     }
     else
     {
         [password setStringValue:nil];
         [boshService setStringValue:nil];
-        [credentialRemember setState:CPOffState];
+        [credentialRemember setOn:NO animated:YES sendAction:NO];
     }
 }
 
@@ -201,10 +201,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)userLogout
 {
-    [self clearCredentialFromHistory];
-    [credentialRemember setOn:NO];
-    [jid setStringValue:nil];
+    [JID setStringValue:nil];
     [password setStringValue:nil];
+    [credentialRemember setOn:YES animated:YES sendAction:YES];
 }
 
 
@@ -225,7 +224,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    if ([credentialRemember state] == CPOnState)
+    if ([credentialRemember isOn])
     {
         [self saveCredentialsInHistory];
 
@@ -267,7 +266,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    if ([sender state] == CPOnState)
+    if ([credentialRemember isOn])
     {
         [self saveCredentialsInHistory];
 
