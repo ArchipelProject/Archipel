@@ -789,7 +789,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView setDataSource:[[TNStropheIMClient defaultClient] roster]];
     [_rosterOutlineView recoverExpandedWithBaseKey:TNArchipelRememberOpenedGroup itemKeyPath:@"name"];
 
-    [[TNPermissionsCenter defaultCenter] startWatching];
+    [[TNPermissionsCenter defaultCenter] watchPubSub];
 
     if (_tagsVisible)
         [splitViewTagsContents setPosition:TNArchipelTagViewHeight ofDividerAtIndex:0];
@@ -1474,6 +1474,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             case TNStropheContact:
                 var vCard       = [item vCard],
                     entityType  = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
+                [[TNPermissionsCenter defaultCenter] cachePermissionsForEntityIfNeeded:item];
                 [moduleController setEntity:item ofType:entityType];
                 [moduleController setCurrentEntityForToolbarModules:item];
                 break;

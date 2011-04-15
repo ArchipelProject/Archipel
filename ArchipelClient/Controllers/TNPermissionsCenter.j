@@ -90,13 +90,29 @@ var __defaultPermissionCenter;
     [_delegates removeObject:anObject];
 }
 
-/*! start to listen permissions event
+/*! start to listen permissions pubsub
 */
-- (void)startWatching
+- (void)watchPubSub
 {
     [TNPubSubNode registerSelector:@selector(_onPermissionsPubSubEvents:) ofObject:self forPubSubEventWithConnection:[[TNStropheIMClient defaultClient] connection]];
+}
 
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityReady:) name:TNStropheContactVCardReceivedNotification object:nil];
+/*! start to listen change for user
+    @param anEntity TNStropheContact the contact to watch
+*/
+- (void)cachePermissionsForEntityIfNeeded:(TNStropheContact)aContact
+{
+    if (![_cachedPermissions containsKey:aContact])
+        [self getPermissionForEntity:aContact];
+}
+
+/*! start to listen change for user
+    @param anEntity TNStropheContact the contact to unwatch
+*/
+- (void)uncachePermissionsForEntity:(TNStropheContact)aContact
+{
+    if ([_cachedPermissions containsKey:aContact])
+        [_cachedPermissions removeObject:aContact];
 }
 
 /*! check if user has given permissions against entity
@@ -115,10 +131,10 @@ var __defaultPermissionCenter;
             || ((_adminAccountValidationMode === 0) && ([[[TNStropheIMClient defaultClient] JID] bare] === _adminAccountName)))
             return YES;
 
-        if ([[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:@"all"])
+        if ([[_cachedPermissions objectForKey:anEntity] containsObject:@"all"])
             return YES;
 
-        if (![[_cachedPermissions objectForKey:[[anEntity JID] bare]] containsObject:[somePermissions objectAtIndex:i]])
+        if (![[_cachedPermissions objectForKey:anEntity] containsObject:[somePermissions objectAtIndex:i]])
             return NO;
     }
 
@@ -132,6 +148,14 @@ var __defaultPermissionCenter;
 - (BOOL)hasPermission:(CPString)aPermission forEntity:(TNStropheContact)anEntity
 {
     return [self hasPermissions:[aPermission] forEntity:anEntity];
+}
+
+/*! check if we already have a permission cache for the given entity
+    @param anEntity TNStropheContact representing the entity
+*/
+- (BOOL)containsCachedPermissionsForEntity:(TNStropheContact)anEntity
+{
+    return [_cachedPermissions containsKey:anEntity];
 }
 
 
@@ -169,11 +193,11 @@ var __defaultPermissionCenter;
     if (![[[TNStropheIMClient defaultClient] JID] bareEquals:user])
         return YES;
 
-    if ([_cachedPermissions containsKey:sender])
-    {
-        var anEntity = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
+    var anEntity = [[[TNStropheIMClient defaultClient] roster] contactWithBareJID:[TNStropheJID stropheJIDWithString:sender]];
 
-        [_cachedPermissions removeObjectForKey:sender];
+    if ([_cachedPermissions containsKey:anEntity])
+    {
+        [_cachedPermissions removeObjectForKey:anEntity];
         CPLog.info("cache for entity " + anEntity + " has been invalidated");
     }
 
@@ -236,7 +260,6 @@ var __defaultPermissionCenter;
 
     [_disableBadgesRegistry setObject:badge forKey:aKey];
 }
-
 
 /*! remove the badge with given key
     @param aKey the key of the badge (you may use generateBadgeKeyForControl:)
@@ -303,7 +326,6 @@ var __defaultPermissionCenter;
 }
 
 
-
 #pragma mark -
 #pragma mark XMPP management
 
@@ -344,14 +366,14 @@ var __defaultPermissionCenter;
         var permissions         = [aStanza childrenWithName:@"permission"],
             defaultAdminAccount = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
 
-        [_cachedPermissions setObject:[CPArray array] forKey:[[anEntity JID] bare]];
+        [_cachedPermissions setObject:[CPArray array] forKey:anEntity];
 
         for (var i = 0; i < [permissions count]; i++)
         {
             var permission      = [permissions objectAtIndex:i],
                 name            = [permission valueForAttribute:@"name"];
 
-            [[_cachedPermissions objectForKey:[[anEntity JID] bare]] addObject:name];
+            [[_cachedPermissions objectForKey:anEntity] addObject:name];
         }
 
         CPLog.info("Permissions for entity " + anEntity + " sucessfully cached");
