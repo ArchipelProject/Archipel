@@ -57,6 +57,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     TNStropheStanza         _userVCard              @accessors(property=userVCard);
 
     BOOL                    _isConnecting;
+    CPDictionary            _credentialsHistory;
 }
 
 #pragma mark -
@@ -67,6 +68,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)awakeFromCib
 {
     _credentialRecovered = NO;
+    _isConnecting = NO;
+
     [mainWindow setShowsResizeIndicator:NO];
     [mainWindow setDefaultButton:connectButton];
 
@@ -102,41 +105,15 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [JID setToolTip:@"The JID to use to connect. It is always formatted like user@domain.com"];
     [password setToolTip:@"The password associated to your XMPP account"];
     [boshService setToolTip:@"The service BOSH (XMPP over HTTP) to use"];
-    [credentialRemember setToolTip:@"Turn this ON to remember your credential and connect automatically"];
+    [credentialRemember setToolTip:@"Turn this ON to remember your credential and connect automatically. Note that "
+        + @"all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to "
+        + @"at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials "
+        + @"from the history, just be sure to have entered your JID and switch down the button.                \n"];
 
     [connectButton setBezelStyle:CPRoundedBezelStyle];
     [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
-    _isConnecting = NO;
-}
 
-/*! Initialize credentials informations according to the Application Defaults
-*/
-- (void)initCredentials
-{
-    var defaults            = [CPUserDefaults standardUserDefaults],
-        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService"],
-        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID"],
-        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword"],
-        lastRememberCred    = [defaults objectForKey:@"TNArchipelBOSHRememberCredentials"];
-
-    if (lastBoshService)
-        [boshService setStringValue:lastBoshService];
-
-    if (lastRememberCred)
-    {
-        if (lastJID && lastJID != @"")
-            [JID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]];
-        [password setStringValue:lastPassword];
-        [credentialRemember setState:CPOnState];
-    }
-    else
-        [credentialRemember setState:CPOffState];
-
-    if (lastRememberCred)
-    {
-        _credentialRecovered = YES;
-        [self connect:nil];
-    }
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didJIDChange:) name:CPControlTextDidChangeNotification object:JID];
 }
 
 
@@ -148,6 +125,88 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     _userVCard = [[aNotification userInfo] firstChildWithName:@"vCard"];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNConnectionControllerCurrentUserVCardRetreived object:self];
 }
+
+- (void)_didJIDChange:(CPNotification)aNotification
+{
+    if ([_credentialsHistory containsKey:[JID stringValue]])
+    {
+        [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"]];
+        [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"]];
+        [credentialRemember setState:CPOnState];
+    }
+    else
+    {
+        [password setStringValue:nil];
+        [boshService setStringValue:nil];
+        [credentialRemember setState:CPOffState];
+    }
+}
+
+
+#pragma mark -
+#pragma mark Utils
+
+/*! Initialize credentials informations according to the Application Defaults
+*/
+- (void)initCredentials
+{
+
+    var defaults            = [CPUserDefaults standardUserDefaults],
+        lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService"],
+        lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID"],
+        lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword"],
+        lastRememberCred    = [defaults objectForKey:@"TNArchipelBOSHRememberCredentials"];
+
+    _credentialsHistory = [defaults objectForKey:@"TNArchipelBOSHCredentialHistory"] || [CPDictionary dictionary];
+
+    if (lastBoshService)
+        [boshService setStringValue:lastBoshService];
+
+    if (lastJID && lastJID != @"")
+        [JID setStringValue:[[TNStropheJID stropheJIDWithString:lastJID] bare]];
+
+    [self _didJIDChange:nil];
+
+    if ([credentialRemember isOn])
+    {
+        _credentialRecovered = YES;
+        [password setStringValue:lastPassword];
+        [self connect:nil];
+    }
+}
+
+/*! add History token
+*/
+- (void)saveCredentialsInHistory
+{
+    if ([_credentialsHistory containsKey:[JID stringValue]])
+        return;
+
+    var historyToken = [CPDictionary dictionaryWithObjectsAndKeys:[password stringValue], @"password",
+                                                                  [boshService stringValue], @"service"];
+
+    [_credentialsHistory setObject:historyToken forKey:[JID stringValue]];
+    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory" inDomain:CPGlobalDomain];
+}
+
+/*! add History token
+*/
+- (void)clearCredentialFromHistory
+{
+    [_credentialsHistory removeObjectForKey:[JID stringValue]];
+    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory" inDomain:CPGlobalDomain];
+}
+
+/*! will handle the clear after user logout
+*/
+- (void)userLogout
+{
+    [self clearCredentialFromHistory];
+    [credentialRemember setOn:NO];
+    [jid setStringValue:nil];
+    [password setStringValue:nil];
+}
+
 
 #pragma mark -
 #pragma mark Actions
@@ -168,6 +227,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     if ([credentialRemember state] == CPOnState)
     {
+        [self saveCredentialsInHistory];
+
         [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
         [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
         [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService" inDomain:CPGlobalDomain];
@@ -207,12 +268,24 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([sender state] == CPOnState)
+    {
+        [self saveCredentialsInHistory];
+
         [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+    }
     else
+    {
+        [self clearCredentialFromHistory];
+
         [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+        [defaults removeObjectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
+        [defaults removeObjectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
+    }
+
 
     CPLog.debug("credential remember set");
 }
+
 
 
 /*! delegate of TNStropheIMClient

@@ -975,9 +975,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults removeObjectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
-    [defaults removeObjectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
-    [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+    [connectionController userLogout];
 
     CPLog.info(@"starting to disconnect");
     [[TNStropheIMClient defaultClient] disconnect];
