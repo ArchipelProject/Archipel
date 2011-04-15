@@ -173,7 +173,7 @@
     var contact = userInfo;
 
     [self unsubscribeToPubSubNodeOfContactWithJID:[contact JID]];
-    [[TNPermissionsCenter defaultCenter] uncachePermissionsForEntity:item];
+    [[TNPermissionsCenter defaultCenter] uncachePermissionsForEntity:contact];
 
     [[[TNStropheIMClient defaultClient] roster] removeContact:contact];
 

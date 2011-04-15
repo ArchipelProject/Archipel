@@ -123,7 +123,6 @@ var __defaultPermissionCenter;
 {
     for (var i = 0; i < [somePermissions count]; i++)
     {
-
         if (![anEntity isKindOfClass:TNStropheContact])
             return NO;
 
