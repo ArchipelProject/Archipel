@@ -227,8 +227,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
-    CPLog.trace(@"registering for notification TNArchipelModulesAllReadyNotification");
-    [center addObserver:self selector:@selector(allModuleReady:) name:TNArchipelModulesAllReadyNotification object:nil];
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
     [center addObserver:self selector:@selector(didReceiveUserMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
@@ -797,8 +795,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
     [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
-
-    [self showHelpView];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -814,6 +810,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 }
 
 /*! Notification responder for TNStropheRosterRetrievedNotification
+    @param aNotification the notification
 */
 - (void)didRetrieveRoster:(CPNotification)aNotification
 {
@@ -845,19 +842,17 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         CPLog.trace(@"Starting loading all modules");
         [moduleController load];
     }
+
+    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didInitialHelpViewLoad:) name:CPWebViewProgressFinishedNotification object:nil];
+    [self showHelpView];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
+    @param aNotification the notification
 */
 - (void)onApplicationTerminate:(CPNotification)aNotification
 {
     [[TNStropheIMClient defaultClient] disconnect];
-}
-
-/*! Triggered when TNModuleController send TNArchipelModulesAllReadyNotification.
-*/
-- (void)allModuleReady:(CPNotification)aNotification
-{
 }
 
 - (void)didReceiveUserMessage:(CPNotification)aNotification
@@ -868,18 +863,21 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         customIcon      = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"message-icon.png"]],
         currentContact  = [aNotification object];
 
-    // if ([_rosterOutlineView selectedRow] != [_rosterOutlineView rowForItem:currentContact])
-    //     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:user
-    //                                                      message:message
-    //                                                   customIcon:customIcon
-    //                                                       target:self
-    //                                                       action:@selector(growlNotification:clickedWithUser:)
-    //                                             actionParameters:currentContact];
-
     [_rosterOutlineView reloadData];
 }
 
-
+/*! called the first time the helpView is loaded. the start module loading
+    @param aNotification the notification
+*/
+- (void)didInitialHelpViewLoad:(CPNotification)aNotification
+{
+    if (![moduleController isModuleLoadingStarted])
+    {
+        CPLog.trace(@"Starting loading all modules");
+        [moduleController load];
+    }
+        [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWebViewProgressFinishedNotification object:nil];
+}
 #pragma mark -
 #pragma mark Utilities
 
