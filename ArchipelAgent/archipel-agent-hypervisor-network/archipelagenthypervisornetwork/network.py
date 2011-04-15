@@ -95,7 +95,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
 
     ### Plugin implementation
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
@@ -104,6 +104,15 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_virtualmachine, ns=ARCHIPEL_NS_HYPERVISOR_NETWORK)
         elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
             self.entity.xmppclient.RegisterHandler('iq', self.process_iq_for_hypervisor, ns=ARCHIPEL_NS_HYPERVISOR_NETWORK)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_virtualmachine, ns=ARCHIPEL_NS_HYPERVISOR_NETWORK)
+        elif self.entity.__class__.__name__ == "TNArchipelHypervisor":
+            self.entity.xmppclient.UnregisterHandler('iq', self.process_iq_for_hypervisor, ns=ARCHIPEL_NS_HYPERVISOR_NETWORK)
 
     @staticmethod
     def plugin_info():

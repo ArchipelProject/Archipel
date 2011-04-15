@@ -268,14 +268,22 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.permission_center.create_permission("capabilities", "Authorizes users to access virtual machine's hypervisor capabilities", False)
         self.permission_center.create_permission("free", "Authorizes users completly destroy the virtual machine", False)
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         This method registers the events handlers.
         It is invoked by super class xmpp_connect() method.
         """
-        TNArchipelEntity.register_handler(self)
+        TNArchipelEntity.register_handlers(self)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_CONTROL)
         self.xmppclient.RegisterHandler('iq', self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        TNArchipelEntity.unregister_handlers(self)
+        self.xmppclient.UnregisterHandler('iq', self.__process_iq_archipel_control, ns=ARCHIPEL_NS_VM_CONTROL)
+        self.xmppclient.UnregisterHandler('iq', self.__process_iq_archipel_definition, ns=ARCHIPEL_NS_VM_DEFINITION)
 
     def remove_folder(self):
         """

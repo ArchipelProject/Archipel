@@ -73,13 +73,20 @@ class TNXMPPServerController (TNArchipelPlugin):
 
     ### Plugin interface
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
         self.entity.xmppclient.RegisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_groups_iq, ns=ARCHIPEL_NS_XMPPSERVER_GROUPS)
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_users_iq, ns=ARCHIPEL_NS_XMPPSERVER_USERS)
 
     @staticmethod
     def plugin_info():

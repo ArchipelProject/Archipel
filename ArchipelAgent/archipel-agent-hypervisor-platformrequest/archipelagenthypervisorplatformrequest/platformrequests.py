@@ -58,12 +58,18 @@ class TNPlatformRequests (TNArchipelPlugin):
 
     ### Plugin interface
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_PLATFORM)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_PLATFORM)
 
     @staticmethod
     def plugin_info():

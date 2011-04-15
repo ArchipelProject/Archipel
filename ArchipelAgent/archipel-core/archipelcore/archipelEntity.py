@@ -123,6 +123,7 @@ class TNArchipelEntity (object):
         self.entity_type            = "not-defined"
         self.permission_center      = None
         self.plugins                = [];
+        self.is_unregistering       = False
 
         if isinstance(self, TNHookableEntity):
             TNHookableEntity.__init__(self, self.log)
@@ -322,7 +323,7 @@ class TNArchipelEntity (object):
         self.log.info("Sucessfully authenticated.")
         self.isAuth = True
         self.loop_status = ARCHIPEL_XMPP_LOOP_ON
-        self.register_handler()
+        self.register_handlers()
         self.roster = self.xmppclient.getRoster()
         self.perform_hooks("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED")
 
@@ -395,23 +396,44 @@ class TNArchipelEntity (object):
 
     ### Basic handlers
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         This method have to be overloaded in order to register handler for
         XMPP events.
         """
         if isinstance(self, TNTaggableEntity):
-            TNTaggableEntity.register_handler(self)
+            TNTaggableEntity.register_handlers(self)
         if isinstance(self, TNAvatarControllableEntity):
-            TNAvatarControllableEntity.register_handler(self)
+            TNAvatarControllableEntity.register_handlers(self)
+        if isinstance(self, TNRosterQueryableEntity):
+            TNRosterQueryableEntity.register_handlers(self)
         self.xmppclient.RegisterHandler('presence', self.process_presence)
         self.xmppclient.RegisterHandler('message', self.process_message, typ="chat")
         self.xmppclient.RegisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
         self.xmppclient.RegisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
         for plugin in self.plugins:
             self.log.info("PLUGIN: registering stanza handler for plugin %s" % plugin["info"]["identifier"])
-            plugin["plugin"].register_for_stanza()
+            plugin["plugin"].register_handlers()
         self.log.info("handlers registred")
+
+    def unregister_handlers(self):
+        """
+        Unregister all XMPP handlers.
+        """
+        if isinstance(self, TNTaggableEntity):
+            TNTaggableEntity.unregister_handlers(self)
+        if isinstance(self, TNAvatarControllableEntity):
+            TNAvatarControllableEntity.unregister_handlers(self)
+        if isinstance(self, TNRosterQueryableEntity):
+            TNRosterQueryableEntity.unregister_handlers(self)
+        self.xmppclient.UnregisterHandler('presence', self.process_presence)
+        self.xmppclient.UnregisterHandler('message', self.process_message, typ="chat")
+        self.xmppclient.UnregisterHandler('iq', self.process_permission_iq, ns=ARCHIPEL_NS_PERMISSIONS)
+        self.xmppclient.UnregisterHandler('iq', self.process_subscription_iq, ns=ARCHIPEL_NS_SUBSCRIPTION)
+        for plugin in self.plugins:
+            self.log.info("PLUGIN: unregistering stanza handler for plugin %s" % plugin["info"]["identifier"])
+            plugin["plugin"].unregister_handlers()
+        self.log.info("handlers unregistered")
 
 
     ### Presence Management
@@ -786,7 +808,9 @@ class TNArchipelEntity (object):
         Perform the inband unregistration. The account will be removed
         from the server, and so, the loop will be interrupted.
         """
+        self.is_unregistering = True
         self.remove_pubsubs()
+        self.unregister_handlers()
         self.log.info("Trying to unregister.")
         iq = (xmpp.Iq(typ='set', to=self.jid.getDomain()))
         iq.setQueryNS("jabber:iq:register")

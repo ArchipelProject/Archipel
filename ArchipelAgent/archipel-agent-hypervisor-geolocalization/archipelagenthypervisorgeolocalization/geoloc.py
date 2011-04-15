@@ -80,7 +80,7 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
 
     ### Plugin interface
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
@@ -88,6 +88,15 @@ class TNHypervisorGeolocalization (TNArchipelPlugin):
         if self.plugin_deactivated:
             return
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_GEOLOC)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        if self.plugin_deactivated:
+            return
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_GEOLOC)
+
 
     @staticmethod
     def plugin_info():

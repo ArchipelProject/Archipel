@@ -203,12 +203,20 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         status  = ARCHIPEL_XMPP_SHOW_ONLINE + " (" + str(count) + ")"
         self.change_presence(self.xmppstatusshow, status)
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         This method overrides the defaut register_handler of the super class.
         """
-        TNArchipelEntity.register_handler(self)
+        TNArchipelEntity.register_handlers(self)
         self.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        TNArchipelEntity.unregister_handlers(self)
+        self.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_HYPERVISOR_CONTROL)
+
 
     def init_vocabulary(self):
         """

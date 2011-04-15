@@ -99,11 +99,17 @@ class TNRosterQueryableEntity (object):
         """
         self.permission_center.create_permission("roster", "Authorizes users to get the content of my roster", False)
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         initialize the avatar handlers
         """
         self.xmppclient.RegisterHandler('iq', self.process_roster_iq, ns=ARCHIPEL_NS_ROSTER)
+
+    def unregister_handlers(self):
+        """
+        initialize the avatar handlers
+        """
+        self.xmppclient.UnregisterHandler('iq', self.process_roster_iq, ns=ARCHIPEL_NS_ROSTER)
 
 
     def process_roster_iq(self, conn, iq):

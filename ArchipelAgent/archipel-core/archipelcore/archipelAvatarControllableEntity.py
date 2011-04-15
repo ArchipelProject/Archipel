@@ -105,11 +105,17 @@ class TNAvatarControllableEntity (object):
         self.permission_center.create_permission("getavatars", "Authorizes users to get entity avatars list", False)
         self.permission_center.create_permission("setavatar", "Authorizes users to set entity's avatar", False)
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         Initialize the avatar handlers.
         """
         self.xmppclient.RegisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        self.xmppclient.UnregisterHandler('iq', self.process_avatar_iq, ns=ARCHIPEL_NS_AVATAR)
 
 
     ### Avatars

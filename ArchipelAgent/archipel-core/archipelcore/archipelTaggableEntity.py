@@ -105,12 +105,17 @@ class TNTaggableEntity (object):
         """
         self.permission_center.create_permission("settags", "Authorizes users to modify entity's tags", False)
 
-    def register_handler(self):
+    def register_handlers(self):
         """
         Initialize the handlers for tags.
         """
         self.xmppclient.RegisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
 
+    def unregister_handlers(self):
+        """
+        Unregister the handlers for tags.
+        """
+        self.xmppclient.UnregisterHandler('iq', self.process_tags_iq, ns=ARCHIPEL_NS_TAGS)
 
     ### Tags
 

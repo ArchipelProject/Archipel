@@ -36,10 +36,17 @@ class TNArchipelPlugin:
         self.entity                     = entity
         self.plugin_entry_point_group   = entry_point_group
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called to when entiyt will register
         handlers for stanzas. Place plugin handlers registration here.
+        """
+        pass
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers. This method must be implemented if register_handlers
+        is implemented.
         """
         pass
 

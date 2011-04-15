@@ -68,12 +68,18 @@ class TNArchipelVNC (TNArchipelPlugin):
 
     ### Plugin interface
 
-    def register_for_stanza(self):
+    def register_handlers(self):
         """
         This method will be called by the plugin user when it will be
         necessary to register module for listening to stanza.
         """
         self.entity.xmppclient.RegisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VNC)
+
+    def unregister_handlers(self):
+        """
+        Unregister the handlers.
+        """
+        self.entity.xmppclient.UnregisterHandler('iq', self.process_iq, ns=ARCHIPEL_NS_VNC)
 
     @staticmethod
     def plugin_info():
@@ -149,6 +155,7 @@ class TNArchipelVNC (TNArchipelPlugin):
         if self.novnc_proxy:
             self.entity.log.info("Stopping novnc proxy.")
             self.novnc_proxy.stop()
+            self.novnc_proxy = None
             self.entity.push_change("virtualmachine:vnc", "websocketvncstop")
 
 
