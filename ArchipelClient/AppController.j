@@ -1489,7 +1489,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)splitViewDidResizeSubviews:(CPNotification)aNotification
 {
-    if ([aNotification object] !== splitViewMain)
+    if (([aNotification object] !== splitViewMain) || ([[CPApp currentEvent] type] != CPLeftMouseUp))
         return;
 
     var defaults    = [CPUserDefaults standardUserDefaults],
