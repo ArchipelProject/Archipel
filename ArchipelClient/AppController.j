@@ -747,11 +747,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)didConnectionStart:(CPNotification)aNotification
 {
-    if (![moduleController isModuleLoadingStarted])
-    {
-        CPLog.trace(@"Starting loading all modules");
-        [moduleController load];
-    }
+    // if (![moduleController isModuleLoadingStarted])
+    // {
+    //     CPLog.trace(@"Starting loading all modules");
+    //     [moduleController load];
+    // }
 }
 
 /*! Notification responder of TNStropheConnection
@@ -839,6 +839,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
 
     [_pubSubController retrieveSubscriptions];
+
+    if (![moduleController isModuleLoadingStarted])
+    {
+        CPLog.trace(@"Starting loading all modules");
+        [moduleController load];
+    }
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
