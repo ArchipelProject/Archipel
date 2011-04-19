@@ -61,7 +61,6 @@
     @outlet TNUIKitScrollView   scrollViewDHCPRanges;
 
     CPArray                     _currentNetworkInterfaces   @accessors(property=currentNetworkInterfaces);
-    CPTableView                 _externalTable              @accessors(property=tableNetwork);
     id                          _delegate                   @accessors(property=delegate);
     TNHypervisorNetwork         _network                    @accessors(property=network);
 
@@ -248,7 +247,6 @@
         [buttonForwardDevice selectItemWithTitle:[_network bridgeForwardDevice]];
     }
 
-
     [checkBoxSTPEnabled setState:([_network isSTPEnabled]) ? CPOnState : CPOffState];
     [checkBoxDHCPEnabled setState:([_network isDHCPEnabled]) ? CPOnState : CPOffState];
 
@@ -289,9 +287,7 @@
     [_network setSTPEnabled:([checkBoxSTPEnabled state] == CPOnState) ? YES : NO];
     [_network setDHCPEnabled:([checkBoxDHCPEnabled state] == CPOnState) ? YES : NO];
 
-    [_externalTable reloadData];
-
-    [_delegate defineNetworkXML:nil];
+    [_delegate defineNetwork:_network];
     [mainWindow close];
 }
 
