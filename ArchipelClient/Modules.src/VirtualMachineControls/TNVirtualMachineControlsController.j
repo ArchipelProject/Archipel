@@ -94,7 +94,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPSegmentedControl      buttonBarTransport;
     @outlet CPSlider                sliderMemory;
     @outlet CPTextField             fieldInfoConsumedCPU;
-    @outlet CPTextField             fieldInfoCPUs;
     @outlet CPTextField             fieldInfoMem;
     @outlet CPTextField             fieldInfoState;
     @outlet CPTextField             fieldOOMAdjust;
@@ -299,7 +298,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 - (void)willUnload
 {
     [fieldInfoMem setStringValue:@"..."];
-    [fieldInfoCPUs setStringValue:@"..."];
     [fieldInfoConsumedCPU setStringValue:@"..."];
     [fieldInfoState setStringValue:@"..."];
     [imageState setImage:nil];
@@ -805,7 +803,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         [fieldInfoMem setTextColor:[CPColor blackColor]];
         [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
-        [fieldInfoCPUs setStringValue:nvCPUs];
         [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
 
         [stepperCPU setDoubleValue:[nvCPUs intValue]];

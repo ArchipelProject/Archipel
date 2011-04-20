@@ -1,0 +1,7 @@
+
+@interface TNInstalledAppliance : NSObject
+{
+
+}
+
+@end

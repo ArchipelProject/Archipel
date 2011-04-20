@@ -75,6 +75,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [maskingView setBackgroundColor:[CPColor whiteColor]];
+    [maskingView setAlphaValue:0.8];
 
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -292,6 +294,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (IBAction)openNewApplianceWindow:(id)aSender
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
+    [windowNewAppliance center];
     [windowNewAppliance makeFirstResponder:fieldNewApplianceName];
     [windowNewAppliance makeKeyAndOrderFront:nil];
 }
