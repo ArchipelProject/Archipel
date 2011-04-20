@@ -1,0 +1,7 @@
+
+@interface TNHypervisorNetwork : NSObject
+{
+
+}
+
+@end

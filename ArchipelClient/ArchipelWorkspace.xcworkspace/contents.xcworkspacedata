@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Modules.src/MUCChat/.xCodeSupport/MUCChat.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Modules.src/HypervisorHealth/.xCodeSupport/HypervisorHealth.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Modules.src/HypervisorVMCreation/.xCodeSupport/HypervisorVMCreation.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Modules.src/HypervisorVMCasts/.xCodeSupport/HypervisorVMCasts.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Modules.src/HypervisorNetworks/.xCodeSupport/HypervisorNetworks.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "container:Modules.src/GroupManagement/.xCodeSupport/GroupManagement.xcodeproj">
+   </FileRef>
+</Workspace>

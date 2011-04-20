@@ -1,0 +1,7 @@
+
+@interface TNSearchField : NSSearchField
+{
+
+}
+
+@end

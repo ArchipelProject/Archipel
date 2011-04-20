@@ -1,0 +1,7 @@
+
+@interface TNXMPPUserDatasource : NSObject
+{
+
+}
+
+@end

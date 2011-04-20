@@ -25,7 +25,7 @@
 @implementation TNRolesController : CPObject
 {
     @outlet CPButtonBar             buttonBar;
-    @outlet CPScrollView            scrollViewTableRoles;
+    @outlet TNUIKitScrollView       scrollViewTableRoles;
     @outlet CPSearchField           filterField;
     @outlet CPTextField             fieldNewTemplateDescription;
     @outlet CPTextField             fieldNewTemplateName;

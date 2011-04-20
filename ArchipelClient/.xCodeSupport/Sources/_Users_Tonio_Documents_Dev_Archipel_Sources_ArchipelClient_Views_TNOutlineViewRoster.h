@@ -1,0 +1,7 @@
+
+@interface TNOutlineViewRoster : NSOutlineView
+{
+
+}
+
+@end

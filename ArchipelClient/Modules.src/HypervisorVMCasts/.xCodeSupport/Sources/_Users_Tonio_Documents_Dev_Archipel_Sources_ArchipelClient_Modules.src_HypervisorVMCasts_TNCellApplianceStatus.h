@@ -1,0 +1,7 @@
+
+@interface TNCellApplianceStatus : NSView
+{
+
+}
+
+@end

@@ -1,0 +1,7 @@
+
+@interface TNPermissionsCenter : NSObject
+{
+
+}
+
+@end

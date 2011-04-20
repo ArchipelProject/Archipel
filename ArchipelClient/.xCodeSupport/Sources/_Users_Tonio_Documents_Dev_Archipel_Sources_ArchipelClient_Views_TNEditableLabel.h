@@ -1,0 +1,7 @@
+
+@interface TNEditableLabel : NSTextField
+{
+
+}
+
+@end

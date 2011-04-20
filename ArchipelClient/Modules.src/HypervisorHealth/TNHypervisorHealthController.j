@@ -80,8 +80,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPView              viewGraphNetwork;
     @outlet CPView              viewGraphNetworkContainer;
     @outlet CPView              viewLogs;
-    @outlet CPView              viewLogsTableContainer;
-    @outlet CPView              viewPartitionTableContainer;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
     @outlet TNSwitch            switchPreferencesShowColunmMethod;
@@ -216,7 +214,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     [_tablePartitions setFrameSize:[scrollViewPartitionTable contentSize]];
 
-    [viewPartitionTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewPartitionTable setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewPartitionTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewPartitionTable setAutohidesScrollers:YES];
     [scrollViewPartitionTable setDocumentView:_tablePartitions];
@@ -242,7 +240,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     _datasourceLogs = [[TNTableViewDataSource alloc] init];
     _tableLogs      = [[CPTableView alloc] initWithFrame:[scrollViewLogsTable bounds]];
 
-    [viewLogsTableContainer setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewLogsTable setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewLogsTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewLogsTable setAutohidesScrollers:NO];
     [scrollViewLogsTable setDocumentView:_tableLogs];

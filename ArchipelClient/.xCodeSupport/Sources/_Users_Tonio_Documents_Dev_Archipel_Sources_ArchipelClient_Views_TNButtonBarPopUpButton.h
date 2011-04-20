@@ -1,0 +1,7 @@
+
+@interface TNButtonBarPopUpButton : NSButton
+{
+
+}
+
+@end

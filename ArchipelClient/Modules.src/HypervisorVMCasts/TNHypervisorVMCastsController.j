@@ -59,7 +59,6 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPCheckBox          checkBoxOnlyInstalled;
-    @outlet CPProgressIndicator downloadIndicator;
     @outlet TNUIKitScrollView   mainScrollView;
     @outlet CPSearchField       fieldFilter;
     @outlet CPTextField         fieldNewURL;

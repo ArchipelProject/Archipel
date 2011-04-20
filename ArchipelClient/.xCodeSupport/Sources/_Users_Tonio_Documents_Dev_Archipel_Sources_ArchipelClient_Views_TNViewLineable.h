@@ -1,0 +1,7 @@
+
+@interface TNViewLineable : NSView
+{
+
+}
+
+@end

@@ -1,0 +1,7 @@
+
+@interface TNLogEntry : NSObject
+{
+
+}
+
+@end

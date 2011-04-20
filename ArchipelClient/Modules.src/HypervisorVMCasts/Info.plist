@@ -44,7 +44,7 @@
         <integer>1</integer>
 
         <key>CibName</key>
-        <string>HypervisorVMCasts</string>
+        <string>HypervisorVMCastsNIBx</string>
 
         <key>MandatoryPermissions</key>
         <array>

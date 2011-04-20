@@ -227,6 +227,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     [_datasourceUsers removeAllObjects];
     [_outlineViewUsers reloadData];
     [viewTableContainer setHidden:YES];
+    [labelNoUserSelected setHidden:NO];
     [_outlineViewUsers deselectAll];
     [super willUnload];
 }
@@ -361,11 +362,13 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         if ([object isKindOfClass:TNStropheJID])
         {
             [viewTableContainer setHidden:NO];
+            [labelNoUserSelected setHidden:YES];
             [self getUserPermissions:[object bare]];
         }
         else if (object == TNXMPPUserDatasourceMe)
         {
             [viewTableContainer setHidden:NO];
+            [labelNoUserSelected setHidden:YES];
             [self getUserPermissions:[[[TNStropheIMClient defaultClient] JID] bare]];
         }
         else
@@ -373,6 +376,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
             [_datasourcePermissions removeAllObjects];
             [_tablePermissions reloadData];
             [viewTableContainer setHidden:YES];
+            [labelNoUserSelected setHidden:NO];
         }
     }
     else
@@ -380,6 +384,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         [_datasourcePermissions removeAllObjects];
         [_tablePermissions reloadData];
         [viewTableContainer setHidden:YES];
+        [labelNoUserSelected setHidden:NO];
     }
 }
 

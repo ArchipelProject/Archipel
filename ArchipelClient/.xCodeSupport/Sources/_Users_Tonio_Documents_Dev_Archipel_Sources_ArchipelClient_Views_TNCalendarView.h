@@ -1,0 +1,7 @@
+
+@interface TNCalendarView : LPCalendarView
+{
+
+}
+
+@end
