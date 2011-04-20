@@ -1655,7 +1655,7 @@
 		<string>DVTIdentifier</string>
 		<string>DVTViewMagnitude</string>
 		<string></string>
-		<real>724</real>
+		<real>667</real>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -1802,7 +1802,7 @@
 		<string>IDESCMStatusFilteringEnabled</string>
 		<string>IDESelectedObjects</string>
 		<string>IDEExpandedItemsSet</string>
-		<string>{{0, 0}, {259, 904}}</string>
+		<string>{{0, 0}, {259, 847}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2855,7 +2855,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {760, 948}}</string>
+		<string>{{0, 0}, {760, 891}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -3280,7 +3280,7 @@
 			<key>NS.objects</key>
 			<array/>
 		</dict>
-		<string>{{1680, 222}, {1280, 1024}}</string>
+		<string>{{400, 61}, {1280, 967}}</string>
 	</array>
 	<key>$top</key>
 	<dict>

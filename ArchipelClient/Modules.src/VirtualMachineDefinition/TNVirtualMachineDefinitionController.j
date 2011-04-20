@@ -104,12 +104,10 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 /*! @ingroup virtualmachinedefinition
     main class of the module
 */
-@implementation VirtualMachineDefinitionController : TNModule
+@implementation TNVirtualMachineDefinitionController : TNModule
 {
-    @outlet CPButton                buttonAddNic;
     @outlet CPButton                buttonClocks;
     @outlet CPButton                buttonDefine;
-    @outlet CPButton                buttonDelNic;
     @outlet CPButton                buttonDomainType;
     @outlet CPButton                buttonOnCrash;
     @outlet CPButton                buttonOnPowerOff;

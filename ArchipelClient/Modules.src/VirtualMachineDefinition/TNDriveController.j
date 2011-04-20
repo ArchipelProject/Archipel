@@ -24,6 +24,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     TNXMLDescDriveTypeFile                  = @"file",
     TNXMLDescDriveTypeBlock                 = @"block",
     TNXMLDescDriveTypes                     = [TNXMLDescDriveTypeFile, TNXMLDescDriveTypeBlock],
+    TNXMLDescDriveKindDVD                   = @"CD/DVD",
+    TNXMLDescDriveKindHardDrive             = @"Hard drive",
+    TNXMLDescDriveKinds                      = [TNXMLDescDriveKindHardDrive, TNXMLDescDriveKindDVD],
     TNXMLDescDiskTargetHda                  = @"hda",
     TNXMLDescDiskTargetHdb                  = @"hdb",
     TNXMLDescDiskTargetHdc                  = @"hdc",
@@ -63,7 +66,7 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
     @outlet CPPopUpButton   buttonTarget;
     @outlet CPPopUpButton   buttonType;
     @outlet CPPopUpButton   buttonCache;
-    @outlet CPRadioGroup    radioDriveType;
+    @outlet CPPopUpButton   buttonDeviceType;
     @outlet CPTextField     fieldDevicePath;
 
     id                      _delegate       @accessors(property=delegate);
@@ -80,12 +83,14 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 */
 - (void)awakeFromCib
 {
+    [buttonDeviceType removeAllItems];
     [buttonType removeAllItems];
     [buttonTarget removeAllItems];
     [buttonBus removeAllItems];
     [buttonSource removeAllItems];
     [buttonCache removeAllItems];
 
+    [buttonDeviceType addItemsWithTitles:TNXMLDescDriveKinds];
     [buttonType addItemsWithTitles:TNXMLDescDriveTypes];
     [buttonTarget addItemsWithTitles:TNXMLDescDiskTargetsIDE];
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
@@ -106,42 +111,14 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 */
 - (void)updateAfterPermissionChanged
 {
-    for (var i = 0; i < [[radioDriveType radios] count]; i++)
-    {
-        var radio = [[radioDriveType radios] objectAtIndex:i];
-
-        switch ([[radio title] lowercaseString])
-        {
-            case @"hard drive":
-                    [_delegate setControl:radio enabledAccordingToPermission:@"drives_get"];
-                    if (![radio toolTip])
-                        [radio setToolTip:@"Define the drive as a disk"];
-                    break;
-            case @"cd/dvd":
-                    [_delegate setControl:radio enabledAccordingToPermission:@"drives_getiso"];
-                    if (![radio toolTip])
-                        [radio setToolTip:@"Define the drive as a CD/DVD"];
-                    break;
-        }
-    }
+    [_delegate setControl:buttonDeviceType enabledAccordingToPermission:[@"drives_getiso", @"drives_get"]];
 }
 
 /*! update the editor according to the current drive to edit
 */
 - (void)update
 {
-    [radioDriveType setTarget:nil];
-    for (var i = 0; i < [[radioDriveType radios] count]; i++)
-    {
-        var radio = [[radioDriveType radios] objectAtIndex:i];
-        if ((([radio title] == @"Hard drive") && ([_drive device] == @"disk"))
-            ||  (([radio title] == @"CD/DVD") && ([_drive device] == @"cdrom")) )
-        {
-            [radio setState:CPOnState];
-            break;
-        }
-    }
-    [radioDriveType setTarget:self];
+    [buttonDeviceType selectItemWithTitle:([_drive device] == @"disk") ? TNXMLDescDriveKindHardDrive : TNXMLDescDriveKindDVD];
 
     [self updateAfterPermissionChanged];
 
@@ -150,7 +127,6 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
     else if (([_drive device] == @"cdrom")  && [_delegate currentEntityHasPermission:@"drives_getiso"])
         [self getISOsInfo];
 
-
     [buttonCache selectItemWithTitle:[_drive cache]];
     [buttonType selectItemWithTitle:[_drive type]];
     [buttonType selectItemWithTitle:[_drive type]]
@@ -158,9 +134,6 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 
     [buttonTarget selectItemWithTitle:[_drive target]];
     [buttonBus selectItemWithTitle:[_drive bus]];
-
-    [buttonBus setTarget:self];
-    [buttonBus setAction:@selector(populateTargetButton:)];
 
     [self populateTargetButton:nil];
 }
@@ -175,25 +148,19 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 - (IBAction)save:(id)aSender
 {
     if ([buttonSource isEnabled] && [buttonSource selectedItem])
-    {
         [_drive setSource:[[buttonSource selectedItem] stringValue]];
-    }
     else if ([buttonType title] == TNXMLDescDriveTypeBlock)
-    {
         [_drive setSource:[fieldDevicePath stringValue]];
-    }
     else if ([buttonType title] == TNXMLDescDriveTypeFile)
-    {
         [_drive setSource:([_drive device] == @"cdrom") ? @"" : @"/tmp/nodisk"];
-    }
 
     [_drive setType:[buttonType title]];
     [_drive setCache:[buttonCache title]];
     [_drive setFormat:[[buttonSource selectedItem] objectValue]];
 
-    var driveType = [[radioDriveType selectedRadio] title];
+    var driveType = [buttonDeviceType title];
 
-    if (driveType == @"Hard drive")
+    if (driveType == TNXMLDescDriveKindHardDrive)
         [_drive setDevice:@"disk"];
     else
         [_drive setDevice:@"cdrom"];
@@ -239,11 +206,11 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 /*! change the type of the drive
     @param aSender the sender of the action
 */
-- (IBAction)performRadioDriveTypeChanged:(id)aSender
+- (IBAction)performDeviceTypeChanged:(id)aSender
 {
-    var driveType = [[radioDriveType selectedRadio] title];
+    var driveType = [buttonDeviceType title];
 
-    if (driveType == @"Hard drive")
+    if (driveType == TNXMLDescDriveKindHardDrive)
     {
         switch ([buttonBus title])
         {

@@ -1,0 +1,7 @@
+
+@interface TNMedia : NSObject
+{
+
+}
+
+@end

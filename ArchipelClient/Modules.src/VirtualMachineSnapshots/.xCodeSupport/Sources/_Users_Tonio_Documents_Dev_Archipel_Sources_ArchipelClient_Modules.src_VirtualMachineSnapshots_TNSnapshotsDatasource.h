@@ -1,0 +1,7 @@
+
+@interface TNSnapshotsDatasource : NSObject
+{
+
+}
+
+@end

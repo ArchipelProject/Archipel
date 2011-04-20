@@ -46,7 +46,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 @implementation TNVirtualMachineNOVNCController : TNModule
 {
-    @outlet CPButton                buttonDirectURL;
+    @outlet CPButton                buttonExternalWindow;
     @outlet CPButton                buttonGetPasteBoard;
     @outlet CPButton                buttonSendCtrlAtlDel;
     @outlet CPButton                buttonSendPasteBoard;
@@ -58,7 +58,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
-    @outlet CPTextField             fieldZoomValue;
     @outlet CPView                  maskingView;
     @outlet CPView                  viewControls;
     @outlet CPWindow                windowPassword;
@@ -85,6 +84,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)awakeFromCib
 {
+    [maskingView setBackgroundColor:[CPColor whiteColor]];
+    [maskingView setAlphaValue:0.8];
+
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
@@ -108,7 +110,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [viewControls setBackgroundColor:[CPColor colorWithPatternImage:imageBg]];
     [buttonZoomFitToWindow setImage:imageZoomFit];
     [buttonZoomReset setImage:imageZoomReset];
-    [buttonDirectURL setImage:imageDirectAccess];
+    [buttonExternalWindow setImage:imageDirectAccess];
     [buttonSendCtrlAtlDel setImage:imageCtrlAltDel];
     [buttonSendPasteBoard setImage:imageSendPasteBoard];
     [buttonGetPasteBoard setImage:imageGetPasteBoard];
@@ -117,7 +119,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     [buttonZoomFitToWindow setValue:inset forThemeAttribute:@"content-inset"];
     [buttonZoomReset setValue:inset forThemeAttribute:@"content-inset"];
-    [buttonDirectURL setValue:inset forThemeAttribute:@"content-inset"];
+    [buttonExternalWindow setValue:inset forThemeAttribute:@"content-inset"];
     [buttonSendCtrlAtlDel setValue:inset forThemeAttribute:@"content-inset"];
     [buttonSendPasteBoard setValue:inset forThemeAttribute:@"content-inset"];
     [buttonGetPasteBoard setValue:inset forThemeAttribute:@"content-inset"];
@@ -138,7 +140,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [buttonGetPasteBoard setToolTip:@"Get the distant pasteboard (not implemented)"];
     [buttonSendPasteBoard setToolTip:@"Send local pasteboard to the distant one (not implemented)"];
     [buttonSendCtrlAtlDel setToolTip:@"Send the CTRL+ALT+DEL key combinaison"];
-    [buttonDirectURL setToolTip:@"Open the virtual screen in a new window"];
+    [buttonExternalWindow setToolTip:@"Open the virtual screen in a new window"];
     [buttonZoomFitToWindow setToolTip:@"Make the screen fit the current window"];
     [buttonZoomReset setToolTip:@"Reset the zoom"];
     [sliderScaling setToolTip:@"Adjust zoom"];
@@ -251,7 +253,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [[_menu addItemWithTitle:@"Fit screen to window" action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
     [[_menu addItemWithTitle:@"Reset zoom" action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Open external VNC program" action:@selector(openDirectURI:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:@"Open external VNC program" action:@selector(openExternalWindow:) keyEquivalent:@""] setTarget:self];
 }
 
 
@@ -301,7 +303,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)_showExternalScreen:(CPNotification)aNotification
 {
-    [self openVNCInNewWindow:nil];
+    [self openVNCInNewWindow];
 }
 
 /*! called when TNArchipelVNCInformationRecoveredNotification is received
@@ -403,15 +405,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     }
 
     if (lastScale)
-    {
         [sliderScaling setDoubleValue:lastScale];
-        [fieldZoomValue setStringValue:lastScale];
-    }
     else
-    {
         [sliderScaling setDoubleValue:100];
-        [fieldZoomValue setStringValue:@"100"];
-    }
 
     if ([defaults stringForKey:passwordKey])
     {
@@ -441,6 +437,38 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [_vncView connect:nil];
 }
 
+/*! Open the VNCView in a new physical window
+*/
+- (void)openVNCInNewWindow
+{
+    var winFrame    = CGRectMake(100, 100, 800, 600),
+        pfWinFrame  = CGRectMake(100, 100, 800, 600),
+        defaults    = [CPUserDefaults standardUserDefaults],
+        VNCWindow,
+        platformVNCWindow;
+
+    if ([CPPlatform isBrowser])
+    {
+        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
+
+        [VNCWindow setPlatformWindow:platformVNCWindow];
+        [platformVNCWindow orderFront:nil];
+    }
+    else
+    {
+        winFrame.origin.x = 20;
+        winFrame.origin.y = 50;
+        winFrame.size.height += 25;
+
+        VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
+    }
+
+    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:[defaults integerForKey:@"NOVNCheckRate"] FBURate:[defaults integerForKey:@"NOVNCFBURate"] entity:_entity];
+    [VNCWindow makeKeyAndOrderFront:nil];
+}
+
+
 
 #pragma mark -
 #pragma mark Actions
@@ -448,9 +476,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 /*! Open the direct VNC URI using vnc://
     @param sender the sender of the action
 */
-- (IBAction)openDirectURI:(id)aSender
+- (IBAction)openExternalWindow:(id)aSender
 {
-    [self openVNCInNewWindow:aSender];
+    [self openVNCInNewWindow];
 }
 
 /*! set the zoom factor
@@ -465,7 +493,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [defaults setFloat:zoom forKey:key];
 
     [_vncView setZoom:(zoom / 100)];
-    [fieldZoomValue setStringValue:parseInt(zoom)];
 }
 
 /*! Make the VNCView fitting the maximum amount of space
@@ -552,39 +579,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     }
 }
 
-/*! Open the VNCView in a new physical window
-    @param sender the sender of the action
-*/
-- (IBAction)openVNCInNewWindow:(id)aSender
-{
-
-    var winFrame    = CGRectMake(100, 100, 800, 600),
-        pfWinFrame  = CGRectMake(100, 100, 800, 600),
-        defaults    = [CPUserDefaults standardUserDefaults],
-        VNCWindow,
-        platformVNCWindow;
-
-    if ([CPPlatform isBrowser])
-    {
-        VNCWindow           = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
-        platformVNCWindow   = [[CPPlatformWindow alloc] initWithContentRect:pfWinFrame];
-
-        [VNCWindow setPlatformWindow:platformVNCWindow];
-        [platformVNCWindow orderFront:nil];
-    }
-    else
-    {
-        winFrame.origin.x = 20;
-        winFrame.origin.y = 50;
-        winFrame.size.height += 25;
-
-        VNCWindow = [[TNExternalVNCWindow alloc] initWithContentRect:winFrame styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
-    }
-
-    [VNCWindow loadVNCViewWithHost:_VMHost port:_vncProxyPort password:[fieldPassword stringValue] encrypt:_useSSL trueColor:YES checkRate:[defaults integerForKey:@"NOVNCheckRate"] FBURate:[defaults integerForKey:@"NOVNCFBURate"] entity:_entity];
-    [VNCWindow makeKeyAndOrderFront:nil];
-}
-
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -638,7 +632,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [sliderScaling setDoubleValue:[animation currentZoom]];
 
     [_vncView setZoom:([animation currentZoom] / 100)];
-    [fieldZoomValue setStringValue:parseInt([animation currentZoom])];
 }
 
 /*! TNZoomAnimation delegate

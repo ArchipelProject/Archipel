@@ -1,0 +1,7 @@
+
+@interface TNZoomAnimation : NSAnimation
+{
+
+}
+
+@end

@@ -77,6 +77,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
+    [maskingView setBackgroundColor:[CPColor whiteColor]];
+    [maskingView setAlphaValue:0.8];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var bundle = [CPBundle mainBundle];

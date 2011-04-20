@@ -1,0 +1,7 @@
+
+@interface TNNetworkInterface : NSObject
+{
+
+}
+
+@end

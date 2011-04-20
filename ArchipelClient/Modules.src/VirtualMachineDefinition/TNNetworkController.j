@@ -34,7 +34,6 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonType;
-    @outlet CPRadioGroup    radioNetworkType;
     @outlet CPTextField     fieldMac;
 
     id                      _delegate   @accessors(property=delegate);
@@ -70,24 +69,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 - (void)updateAfterPermissionChanged
 {
-    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
-    {
-        var radio = [[radioNetworkType radios] objectAtIndex:i];
-
-        switch ([[radio title] lowercaseString])
-        {
-            case @"network":
-                    [_delegate setControl:radio enabledAccordingToPermission:@"network_getnames"];
-                    if (![radio toolTip])
-                        [radio setToolTip:@"Use a activated hypervisor's network"];
-                    break;
-            case @"bridge":
-                    [_delegate setControl:radio enabledAccordingToPermission:@"network_bridges"];
-                    if (![radio toolTip])
-                        [radio setToolTip:@"Use a hypervisor's bridge"];
-                    break;
-        }
-    }
+    [_delegate setControl:buttonType enabledAccordingToPermissions:[@"network_getnames", @"network_bridges"]]
 }
 
 /*! update the editor according to the current nic to edit
@@ -101,31 +83,17 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     [buttonSource removeAllItems];
 
-    [radioNetworkType setTarget:nil];
-    for (var i = 0; i < [[radioNetworkType radios] count]; i++)
-    {
-        var radio = [[radioNetworkType radios] objectAtIndex:i];
-
-        if ([[radio title] lowercaseString] == [_nic type])
-        {
-            [radio setState:CPOnState];
-            [self performRadioNicTypeChanged:radioNetworkType];
-            break;
-        }
-    }
-
+    [buttonType selectItemWithTitle:[_nic type]];
+    [self performNicTypeChanged:nil];
     [self updateAfterPermissionChanged];
 
-    [radioNetworkType setTarget:self];
-
-    [buttonType selectItemWithTitle:[_nic type]];
     [buttonModel selectItemWithTitle:[_nic model]];
     [buttonSource selectItemWithTitle:[_nic source]];
 }
 
 
-// #pragma mark -
-// #pragma mark Actions
+#pragma mark -
+#pragma mark Actions
 
 /*! saves the change
     @param sender the sender of the action
@@ -144,13 +112,12 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 /*! change the type of the network
     @param sender the sender of the action
 */
-- (IBAction)performRadioNicTypeChanged:(id)aSender
+- (IBAction)performNicTypeChanged:(id)aSender
 {
-    var nicType = [[aSender selectedRadio] title];
-
+    var nicType = [buttonType title];
     switch (nicType)
     {
-        case @"Network":
+        case @"network":
             if ([_delegate currentEntityHasPermission:@"network_getnames"])
             {
                 [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_getnames"];
@@ -162,7 +129,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
                 [buttonSource setEnabled:NO];
             break;
 
-        case @"Bridge":
+        case @"bridge":
             if ([_delegate currentEntityHasPermission:@"network_bridges"])
             {
                 [_delegate setControl:buttonSource enabledAccordingToPermission:@"network_bridges"];
@@ -174,7 +141,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
                 [buttonSource setEnabled:NO]
             break;
 
-        case @"User":
+        case @"user":
             [_nic setType:@"user"];
             [buttonSource removeAllItems];
             [buttonSource setEnabled:NO];
