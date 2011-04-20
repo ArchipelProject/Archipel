@@ -47,40 +47,39 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 @implementation TNXMPPSharedGroupsController : CPObject
 {
-    @outlet CPButtonBar     buttonBarGroups;
-    @outlet CPButtonBar     buttonBarUsersInGroups;
-    @outlet CPPopUpButton   buttonGroups;
-    @outlet CPScrollView    scrollViewGroups;
-    @outlet CPScrollView    scrollViewUsers;
-    @outlet CPScrollView    scrollViewUsersInGroup;
-    @outlet CPSearchField   filterFieldGroups;
-    @outlet CPSearchField   filterFieldUsers;
-    @outlet CPSearchField   filterFieldUsersInGroup;
-    @outlet CPSplitView     splitViewVertical;
-    @outlet CPTextField     fieldNewGroupDescription;
-    @outlet CPTextField     fieldNewGroupName;
-    @outlet CPView          mainView                    @accessors(getter=mainView);
-    @outlet CPView          viewTableGroupsContainer;
-    @outlet CPView          viewTableUsersInGroupContainer;
-    @outlet CPWindow        windowAddUserInGroup;
-    @outlet CPWindow        windowNewGroup;
+    @outlet CPButtonBar         buttonBarGroups;
+    @outlet CPButtonBar         buttonBarUsersInGroups;
+    @outlet TNUIKitScrollView   scrollViewGroups;
+    @outlet TNUIKitScrollView   scrollViewUsers;
+    @outlet TNUIKitScrollView   scrollViewUsersInGroup;
+    @outlet CPSearchField       filterFieldGroups;
+    @outlet CPSearchField       filterFieldUsers;
+    @outlet CPSearchField       filterFieldUsersInGroup;
+    @outlet CPSplitView         splitViewVertical;
+    @outlet CPTextField         fieldNewGroupDescription;
+    @outlet CPTextField         fieldNewGroupName;
+    @outlet CPView              mainView                    @accessors(getter=mainView);
+    @outlet CPView              viewTableGroupsContainer;
+    @outlet CPView              viewTableUsersInGroupContainer;
+    @outlet CPWindow            windowAddUserInGroup;
+    @outlet CPWindow            windowNewGroup;
 
-    id                      _delegate           @accessors(property=delegate);
-    TNStropheContact        _entity             @accessors(setter=setEntity:);
-    TNXMPPUsersController   _usersController    @accessors(setter=setUsersController:);
+    id                          _delegate           @accessors(property=delegate);
+    TNStropheContact            _entity             @accessors(setter=setEntity:);
+    TNXMPPUsersController       _usersController    @accessors(setter=setUsersController:);
 
-    CPButton                _addGroupButton;
-    CPButton                _addUserInGroupButton;
-    CPButton                _deleteGroupButton;
-    CPButton                _deleteUserFromGroupButton;
-    CPTableView             _tableGroups;
-    CPTableView             _tableUsers;
-    CPTableView             _tableUsersInGroup;
-    id                      _currentSelectedGroup;
-    int                     _oldSelectedIndexesForGroupTable;
-    TNTableViewDataSource   _datasourceGroups;
-    TNTableViewDataSource   _datasourceUsers;
-    TNTableViewDataSource   _datasourceUsersInGroup;
+    CPButton                    _addGroupButton;
+    CPButton                    _addUserInGroupButton;
+    CPButton                    _deleteGroupButton;
+    CPButton                    _deleteUserFromGroupButton;
+    CPTableView                 _tableGroups;
+    CPTableView                 _tableUsers;
+    CPTableView                 _tableUsersInGroup;
+    id                          _currentSelectedGroup;
+    int                         _oldSelectedIndexesForGroupTable;
+    TNTableViewDataSource       _datasourceGroups;
+    TNTableViewDataSource       _datasourceUsers;
+    TNTableViewDataSource       _datasourceUsersInGroup;
 }
 
 #pragma mark -

@@ -46,7 +46,6 @@
     @outlet CPImageView         imageSpinnerWriting;
     @outlet CPTextField         fieldMessage;
     @outlet CPTextField         fieldPreferencesMaxChatMessage;
-    @outlet CPTextField         fieldUserJID;
     @outlet CPView              viewControls;
     @outlet TNUIKitScrollView   messagesScrollView;
 

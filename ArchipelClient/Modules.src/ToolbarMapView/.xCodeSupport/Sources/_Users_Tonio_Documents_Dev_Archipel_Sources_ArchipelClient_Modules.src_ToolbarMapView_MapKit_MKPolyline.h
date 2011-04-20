@@ -1,0 +1,7 @@
+
+@interface MKPolyline : MKMapItem
+{
+
+}
+
+@end

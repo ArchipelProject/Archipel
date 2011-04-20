@@ -1,0 +1,7 @@
+
+@interface MKMarker : MKMapItem
+{
+
+}
+
+@end

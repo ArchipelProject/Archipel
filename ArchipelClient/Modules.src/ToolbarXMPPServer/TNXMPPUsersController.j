@@ -43,27 +43,27 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 @implementation TNXMPPUsersController : CPObject
 {
-    @outlet CPButtonBar     buttonBarControl;
-    @outlet CPScrollView    scrollViewUsers;
-    @outlet CPSearchField   filterField;
-    @outlet CPTextField     fieldNewUserPassword;
-    @outlet CPTextField     fieldNewUserPasswordConfirm;
-    @outlet CPTextField     fieldNewUserUsername;
-    @outlet CPView          mainView                        @accessors(getter=mainView);
-    @outlet CPView          viewTableContainer;
-    @outlet CPWindow        windowNewUser;
+    @outlet CPButtonBar         buttonBarControl;
+    @outlet TNUIKitScrollView   scrollViewUsers;
+    @outlet CPSearchField       filterField;
+    @outlet CPTextField            fieldNewUserPassword;
+    @outlet CPTextField         fieldNewUserPasswordConfirm;
+    @outlet CPTextField         fieldNewUserUsername;
+    @outlet CPView              mainView                        @accessors(getter=mainView);
+    @outlet CPView              viewTableContainer;
+    @outlet CPWindow            windowNewUser;
 
-    CPArray                 _users                          @accessors(getter=users);
-    id                      _delegate                       @accessors(property=delegate);
-    TNStropheContact        _entity                         @accessors(setter=setEntity:);
-    TNTableViewDataSource   _datasourceUsers                @accessors(getter=datasource);
+    CPArray                     _users                          @accessors(getter=users);
+    id                          _delegate                       @accessors(property=delegate);
+    TNStropheContact            _entity                         @accessors(setter=setEntity:);
+    TNTableViewDataSource       _datasourceUsers                @accessors(getter=datasource);
 
-    CPButton                _addButton;
-    CPButton                _deleteButton;
-    CPImage                 _iconEntityTypeHuman;
-    CPImage                 _iconEntityTypeHypervisor;
-    CPImage                 _iconEntityTypeVM;
-    CPTableView             _tableUsers;
+    CPButton                    _addButton;
+    CPButton                    _deleteButton;
+    CPImage                     _iconEntityTypeHuman;
+    CPImage                     _iconEntityTypeHypervisor;
+    CPImage                     _iconEntityTypeVM;
+    CPTableView                 _tableUsers;
 }
 
 #pragma mark -

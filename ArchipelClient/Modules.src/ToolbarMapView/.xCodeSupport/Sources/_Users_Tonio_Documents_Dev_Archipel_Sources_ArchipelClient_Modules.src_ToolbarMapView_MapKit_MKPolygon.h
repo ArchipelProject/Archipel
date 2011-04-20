@@ -1,0 +1,7 @@
+
+@interface MKPolygon : MKMapItem
+{
+
+}
+
+@end

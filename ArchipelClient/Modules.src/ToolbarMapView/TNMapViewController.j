@@ -110,7 +110,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 
     [mapViewContainer setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [splitViewVertical setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [splitViewVertical setIsPaneSplitter:YES];
 
     // VM origin table view
     _dataSourceVMOrigin     = [[TNDragDropTableViewDataSource alloc] init];

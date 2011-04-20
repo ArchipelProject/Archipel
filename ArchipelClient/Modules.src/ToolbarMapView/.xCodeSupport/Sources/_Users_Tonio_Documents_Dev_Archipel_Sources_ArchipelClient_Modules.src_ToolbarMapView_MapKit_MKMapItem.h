@@ -1,0 +1,7 @@
+
+@interface MKMapItem : NSObject
+{
+
+}
+
+@end

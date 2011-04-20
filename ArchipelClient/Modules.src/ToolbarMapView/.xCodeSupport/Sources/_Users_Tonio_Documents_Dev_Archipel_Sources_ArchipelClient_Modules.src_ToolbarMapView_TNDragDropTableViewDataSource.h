@@ -1,0 +1,7 @@
+
+@interface TNDragDropTableViewDataSource : TNTableViewDataSource
+{
+
+}
+
+@end

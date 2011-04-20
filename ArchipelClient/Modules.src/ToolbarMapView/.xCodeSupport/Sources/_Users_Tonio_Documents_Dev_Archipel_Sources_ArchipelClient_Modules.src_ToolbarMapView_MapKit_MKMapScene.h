@@ -1,0 +1,7 @@
+
+@interface MKMapScene : NSObject
+{
+
+}
+
+@end

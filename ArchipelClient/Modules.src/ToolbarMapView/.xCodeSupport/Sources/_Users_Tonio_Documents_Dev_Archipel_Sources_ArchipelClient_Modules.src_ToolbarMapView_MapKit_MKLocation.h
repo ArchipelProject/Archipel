@@ -1,0 +1,7 @@
+
+@interface MKLocation : NSObject
+{
+
+}
+
+@end

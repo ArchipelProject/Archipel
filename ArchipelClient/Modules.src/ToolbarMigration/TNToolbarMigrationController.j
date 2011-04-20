@@ -48,7 +48,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet     CPSearchField       searchHypervisorDestination;
     @outlet     CPSearchField       searchHypervisorOrigin;
     @outlet     CPSearchField       searchVirtualMachine;
-    @outlet     CPView              documentView;
     @outlet     TNUIKitScrollView   scrollViewTableHypervisorDestination;
     @outlet     TNUIKitScrollView   scrollViewTableHypervisorOrigin;
     @outlet     TNUIKitScrollView   scrollViewTableVirtualMachines;
@@ -69,15 +68,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
+    [[self view] setBackgroundColor:[CPColor whiteColor]];
     [scrollViewTableHypervisorOrigin setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewTableHypervisorDestination setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewTableVirtualMachines setBorderedWithHexColor:@"#C0C7D2"];
-
-    // [[self view] setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-
-    [documentView setAutoresizingMask:CPViewWidthSizable];
-    [[self view] setBackgroundColor:[CPColor whiteColor]];
-    [[self view] setDocumentView:documentView];
 
     // table hypervisor origin
     _hypervisorOriginDatasource  = [[TNTableViewDataSource alloc] init];
@@ -221,10 +215,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if (![super willShow])
         return NO;
-
-    var bounds = [[[self view] contentView] bounds];
-    bounds.size.height = [documentView bounds].size.height;
-    [documentView setFrame:bounds];
 
     var center = [CPNotificationCenter defaultCenter];
 
