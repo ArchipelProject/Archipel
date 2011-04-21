@@ -68,7 +68,6 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
-    [[self view] setBackgroundColor:[CPColor whiteColor]];
     [scrollViewTableHypervisorOrigin setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewTableHypervisorDestination setBorderedWithHexColor:@"#C0C7D2"];
     [scrollViewTableVirtualMachines setBorderedWithHexColor:@"#C0C7D2"];

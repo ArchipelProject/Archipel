@@ -71,6 +71,7 @@
     TNStropheContact                _entity             @accessors(getter=entity);
 
     BOOL                            _isCollapsed;
+    CPImage                         _groupUserImage;
     CPImage                         _pubsubDisabledImage;
     CPImage                         _pubsubImage;
     CPImage                         _unknownUserImage;

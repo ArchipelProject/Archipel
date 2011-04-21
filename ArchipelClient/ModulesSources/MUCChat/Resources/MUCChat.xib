@@ -67,10 +67,9 @@
 									<object class="NSTextField" id="1062020542">
 										<reference key="NSNextResponder" ref="772899369"/>
 										<int key="NSvFlags">290</int>
-										<string key="NSFrame">{{6, 9}, {555, 22}}</string>
+										<string key="NSFrame">{{6, 7}, {555, 22}}</string>
 										<reference key="NSSuperview" ref="772899369"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTextFieldCell" key="NSCell" id="203325930">
 											<int key="NSCellFlags">-1804468671</int>
@@ -160,7 +159,7 @@
 					<object class="NSTextField" id="1072718201">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{69, 23}, {97, 19}}</string>
+						<string key="NSFrame">{{69, 22}, {97, 20}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="497849494"/>
@@ -169,8 +168,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Room name:</string>
-							<object class="NSFont" key="NSSupport" id="508416534">
-								<string key="NSName">Arial-BoldMT</string>
+							<object class="NSFont" key="NSSupport" id="399685276">
+								<string key="NSName">LucidaSans-Demi</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -213,7 +212,7 @@
 					<object class="NSTextField" id="281096482">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{63, 50}, {103, 19}}</string>
+						<string key="NSFrame">{{63, 49}, {103, 20}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="467356407"/>
@@ -222,7 +221,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Server name:</string>
-							<reference key="NSSupport" ref="508416534"/>
+							<reference key="NSSupport" ref="399685276"/>
 							<reference key="NSControlView" ref="281096482"/>
 							<reference key="NSBackgroundColor" ref="166029867"/>
 							<reference key="NSTextColor" ref="330205186"/>
@@ -231,7 +230,7 @@
 					<object class="NSTextField" id="1068033063">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 87}, {342, 19}}</string>
+						<string key="NSFrame">{{17, 82}, {342, 20}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="281096482"/>
@@ -241,7 +240,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can configure preferences for the health module.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">ArialMT</string>
+								<string key="NSName">LucidaSans</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -253,7 +252,7 @@
 					<object class="NSTextField" id="410264265">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 115}, {201, 21}}</string>
+						<string key="NSFrame">{{17, 110}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1068033063"/>
@@ -263,7 +262,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Conference preference</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">Arial-BoldMT</string>
+								<string key="NSName">LucidaSans-Demi</string>
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>

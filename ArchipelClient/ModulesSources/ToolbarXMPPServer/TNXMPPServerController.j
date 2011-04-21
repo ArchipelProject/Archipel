@@ -56,7 +56,6 @@ var TNArchipelPushNotificationXMPPServerUsers   = @"archipel:push:xmppserver:use
 */
 - (void)awakeFromCib
 {
-    [[self view] setBackgroundColor:[CPColor whiteColor]];
     _defaultAvatar  = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"user-unknown.png"]];
 
     var itemViewUsers   = [[CPTabViewItem alloc] init],

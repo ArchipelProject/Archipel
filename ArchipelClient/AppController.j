@@ -303,7 +303,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-
+    [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
@@ -314,7 +314,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_moduleTabView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
     [rightView addSubview:_moduleTabView];
 
 

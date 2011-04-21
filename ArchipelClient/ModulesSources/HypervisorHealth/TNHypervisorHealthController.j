@@ -152,6 +152,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         networkViewFrame    = [viewGraphNetwork bounds];
 
     _chartViewCPU = [[LPChartView alloc] initWithFrame:cpuViewFrame];
+    [_chartViewCPU setAutoresizingMask:CPViewWidthSizable];
     [_chartViewCPU setDrawViewPadding:1.0];
     [_chartViewCPU setLabelViewHeight:0.0];
     [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
@@ -161,6 +162,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [viewGraphCPU addSubview:_chartViewCPU];
 
     _chartViewMemory = [[LPChartView alloc] initWithFrame:memoryViewFrame];
+    [_chartViewMemory setAutoresizingMask:CPViewWidthSizable];
     [_chartViewMemory setDrawViewPadding:1.0];
     [_chartViewMemory setLabelViewHeight:0.0];
     [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
@@ -169,6 +171,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [viewGraphMemory addSubview:_chartViewMemory];
 
     _chartViewLoad = [[LPChartView alloc] initWithFrame:loadViewFrame];
+    [_chartViewLoad setAutoresizingMask:CPViewWidthSizable];
     [_chartViewLoad setDrawViewPadding:1.0];
     [_chartViewLoad setLabelViewHeight:0.0];
     [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
@@ -178,6 +181,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [viewGraphLoad addSubview:_chartViewLoad];
 
     _chartViewNetwork = [[LPChartView alloc] initWithFrame:networkViewFrame];
+    [_chartViewNetwork setAutoresizingMask:CPViewWidthSizable];
     [_chartViewNetwork setDrawViewPadding:1.0];
     [_chartViewNetwork setLabelViewHeight:0.0];
     [_chartViewNetwork setDrawView:[[TNChartDrawView alloc] init]];

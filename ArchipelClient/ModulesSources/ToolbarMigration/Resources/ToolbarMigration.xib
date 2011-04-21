@@ -54,7 +54,6 @@
 						<string key="NSFrame">{{576, 6}, {118, 25}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="1007431344">
 							<int key="NSCellFlags">-2080244224</int>
@@ -77,7 +76,7 @@
 					<object class="NSSearchField" id="585346853">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{569, 259}, {126, 22}}</string>
+						<string key="NSFrame">{{569, 254}, {126, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="830932824"/>
@@ -156,7 +155,7 @@
 					<object class="NSSearchField" id="713966591">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{227, 478}, {126, 22}}</string>
+						<string key="NSFrame">{{227, 473}, {126, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="39801803"/>
@@ -219,7 +218,7 @@
 					<object class="NSSearchField" id="124974073">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">265</int>
-						<string key="NSFrame">{{569, 475}, {126, 22}}</string>
+						<string key="NSFrame">{{569, 470}, {126, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="623082135"/>
@@ -282,7 +281,7 @@
 					<object class="NSTextField" id="39801803">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{359, 478}, {167, 19}}</string>
+						<string key="NSFrame">{{359, 472}, {175, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="124974073"/>
@@ -291,8 +290,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Choose a virtual machine</string>
-							<object class="NSFont" key="NSSupport" id="341972472">
-								<string key="NSName">Arial-BoldMT</string>
+							<object class="NSFont" key="NSSupport" id="73852823">
+								<string key="NSName">LucidaSans-Demi</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -312,7 +311,7 @@
 					<object class="NSTextField" id="16152508">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 262}, {205, 19}}</string>
+						<string key="NSFrame">{{18, 256}, {222, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="585346853"/>
@@ -321,7 +320,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Choose a destination hypervisor</string>
-							<reference key="NSSupport" ref="341972472"/>
+							<reference key="NSSupport" ref="73852823"/>
 							<reference key="NSControlView" ref="16152508"/>
 							<reference key="NSBackgroundColor" ref="273030989"/>
 							<reference key="NSTextColor" ref="886646148"/>
@@ -330,7 +329,7 @@
 					<object class="NSTextField" id="482229529">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{18, 478}, {162, 19}}</string>
+						<string key="NSFrame">{{18, 472}, {174, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="713966591"/>
@@ -339,7 +338,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Choose origin hypervisor</string>
-							<reference key="NSSupport" ref="341972472"/>
+							<reference key="NSSupport" ref="73852823"/>
 							<reference key="NSControlView" ref="482229529"/>
 							<reference key="NSBackgroundColor" ref="273030989"/>
 							<reference key="NSTextColor" ref="886646148"/>
@@ -348,7 +347,7 @@
 					<object class="NSCustomView" id="830932824">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">274</int>
-						<string key="NSFrame">{{21, 43}, {674, 213}}</string>
+						<string key="NSFrame">{{21, 38}, {674, 213}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="767331730"/>
@@ -357,7 +356,7 @@
 					<object class="NSCustomView" id="71740591">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">267</int>
-						<string key="NSFrame">{{362, 328}, {333, 141}}</string>
+						<string key="NSFrame">{{362, 323}, {333, 141}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="639320242"/>
@@ -366,7 +365,7 @@
 					<object class="NSCustomView" id="623082135">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">270</int>
-						<string key="NSFrame">{{20, 328}, {333, 141}}</string>
+						<string key="NSFrame">{{20, 323}, {333, 141}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="71740591"/>
@@ -375,7 +374,7 @@
 					<object class="NSTextField" id="639320242">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 289}, {214, 21}}</string>
+						<string key="NSFrame">{{17, 284}, {217, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="16152508"/>
@@ -384,8 +383,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Destination hypervisor</string>
-							<object class="NSFont" key="NSSupport" id="322225061">
-								<string key="NSName">Arial-BoldMT</string>
+							<object class="NSFont" key="NSSupport" id="55685752">
+								<string key="NSName">LucidaSans-Demi</string>
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -400,7 +399,7 @@
 					<object class="NSTextField" id="278703006">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{17, 508}, {214, 21}}</string>
+						<string key="NSFrame">{{17, 503}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="482229529"/>
@@ -409,7 +408,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Origin hypervisor</string>
-							<reference key="NSSupport" ref="322225061"/>
+							<reference key="NSSupport" ref="55685752"/>
 							<reference key="NSControlView" ref="278703006"/>
 							<reference key="NSBackgroundColor" ref="273030989"/>
 							<object class="NSColor" key="NSTextColor">
@@ -542,18 +541,18 @@
 						<reference key="object" ref="1005"/>
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="278703006"/>
-							<reference ref="623082135"/>
-							<reference ref="71740591"/>
-							<reference ref="830932824"/>
-							<reference ref="482229529"/>
-							<reference ref="16152508"/>
-							<reference ref="124974073"/>
-							<reference ref="713966591"/>
-							<reference ref="585346853"/>
-							<reference ref="39801803"/>
 							<reference ref="767331730"/>
 							<reference ref="639320242"/>
+							<reference ref="278703006"/>
+							<reference ref="623082135"/>
+							<reference ref="482229529"/>
+							<reference ref="713966591"/>
+							<reference ref="71740591"/>
+							<reference ref="39801803"/>
+							<reference ref="124974073"/>
+							<reference ref="830932824"/>
+							<reference ref="16152508"/>
+							<reference ref="585346853"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>

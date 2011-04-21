@@ -84,7 +84,8 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
 
     [mainView addSubview:_tokenFieldTags];
 
-    _buttonSave = [CPButton buttonWithTitle:@"     "];
+    _buttonSave = [CPButton buttonWithTitle:@""];
+    [_buttonSave setFrameSize:CPSizeMake(30.0, 24.0)];
     [_buttonSave setAlphaValue:0.8];
     [_buttonSave setImage:imageTag];
     [_buttonSave setAutoresizingMask:CPViewMinXMargin];
