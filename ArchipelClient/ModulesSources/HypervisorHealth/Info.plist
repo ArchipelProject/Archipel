@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>CPBundleIdentifier</key>
+        <string>org.archipelproject.hypervisorhealth</string>
+        <key>CPBundleInfoDictionaryVersion</key>
+        <string>1.0</string>
+        <key>CPBundleName</key>
+        <string>HypervisorSummary</string>
+        <key>CPBundlePackageType</key>
+        <string>280N</string>
+        <key>CPBundleVersion</key>
+        <string>1.0</string>
+        <key>CPPrincipalClass</key>
+        <string>TNHypervisorHealthController</string>
+        <key>PluginDisplayName</key>
+        <string>Health</string>
+        <key>InsertionType</key>
+        <string>tab</string>
+        <key>TabIndex</key>
+        <integer>0</integer>
+        <key>SupportedEntityTypes</key>
+        <array>
+            <string>hypervisor</string>
+        </array>
+        <key>UseModuleMenu</key>
+        <integer>0</integer>
+        <key>FullscreenModule</key>
+        <integer>1</integer>
+        <key>CibName</key>
+        <string>HypervisorHealthNIB</string>
+
+        <key>TNArchipelHealthRefreshStatsInterval</key>
+        <real>5.0</real>
+        <key>TNArchipelHealthAutoRefreshStats</key>
+        <integer>1</integer>
+        <key>TNArchipelHealthStatsHistoryCollectionSize</key>
+        <integer>100</integer>
+        <key>TNArchipelHealthMaxLogEntry</key>
+        <integer>50</integer>
+        <key>TNArchipelHealthTableLogDisplayMethodColumn</key>
+        <integer>0</integer>
+        <key>TNArchipelHealthTableLogDisplayFileColumn</key>
+        <integer>0</integer>
+        
+        <key>MandatoryPermissions</key>
+        <array>
+            <string>health_info</string>
+            <string>health_history</string>
+            <string>health_logs</string>
+        </array>
+    </dict>
+</plist>

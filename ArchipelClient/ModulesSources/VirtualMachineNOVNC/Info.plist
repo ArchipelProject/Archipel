@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CibName</key>
+	<string>VirtualMachineNOVNCNIB</string>
+	<key>CPBundleIdentifier</key>
+	<string>org.archipelproject.virtualmachinenovnc</string>
+	<key>CPBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CPBundleName</key>
+	<string>VirtualMachineNOVNC</string>
+	<key>CPBundlePackageType</key>
+	<string>280N</string>
+	<key>CPBundleVersion</key>
+	<string>1.0</string>
+	<key>CPPrincipalClass</key>
+	<string>TNVirtualMachineNOVNCController</string>
+	<key>InsertionType</key>
+	<string>tab</string>
+	<key>MandatoryPermissions</key>
+	<array>
+		<string>vnc_display</string>
+	</array>
+	<key>NOVNCFBURate</key>
+	<integer>1413</integer>
+	<key>NOVNCheckRate</key>
+	<integer>217</integer>
+	<key>NOVNCPreferSSL</key>
+	<integer>1</integer>
+	<key>PluginDisplayName</key>
+	<string>VNC Console</string>
+	<key>SupportedEntityTypes</key>
+	<array>
+		<string>virtualmachine</string>
+	</array>
+	<key>TabIndex</key>
+	<integer>6</integer>
+	<key>UseModuleMenu</key>
+	<integer>0</integer>
+</dict>
+</plist>
