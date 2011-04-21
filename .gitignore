@@ -11,4 +11,4 @@
 *ArchipelAgent/**/dist
 *ArchipelAgent/**/*.egg-info/**
 *ArchipelClient/.xCodeSupport
-**/*.cib
+*.cib
