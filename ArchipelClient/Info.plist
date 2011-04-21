@@ -17,7 +17,7 @@
 	<key>LPCrashReporterLoggingURL</key>
 	<string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
 	<key>Main cib file base name</key>
-	<string>MainMenuNIB.cib</string>
+	<string>MainMenu.cib</string>
 	<key>TNArchipelAnimationsDuration</key>
 	<real>0.3</real>
 	<key>TNArchipelAutoCheckUpdate</key>
