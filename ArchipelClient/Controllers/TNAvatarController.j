@@ -19,62 +19,22 @@
 
 @import <Foundation/Foundation.j>
 
+@import <AppKit/CPGeometry.j>
 @import <AppKit/CPButton.j>
 @import <AppKit/CPCollectionView.j>
 @import <AppKit/CPImageView.j>
 @import <AppKit/CPView.j>
 @import <AppKit/CPWindow.j>
 
+@import "../Views/TNAvatarImage.j"
+@import "../Views/TNAvatarView.j"
 
-@import <StropheCappuccino/TNBase64Image.j>
+
 
 var TNArchipelTypeAvatar                = @"archipel:avatar",
     TNArchipelTypeAvatarGetAvatars      = @"getavatars",
     TNArchipelTypeAvatarSetAvatar       = @"setavatar",
-    TNArchipelAvatarManagerThumbSize    = CGSizeMake(48, 48);
-
-/*! @ingroup archipelcore
-    Simple TNBase64Image subclass that add a string to get the avatar filename
-*/
-@implementation TNAvatarImage: TNBase64Image
-{
-    CPString _avatarFilename @accessors(property=avatarFilename);
-}
-@end
-
-
-/*! @ingroup archipelcore
-    Prototype of the CPCollectionView that represent an Avatar
-*/
-@implementation TNAvatarView : CPView
-{
-    CPImageView         _imageView;
-    id                  _representedObject @accessors(getter=representedObject);
-}
-
-- (void)setRepresentedObject:(id)anObject
-{
-    if (!_imageView)
-    {
-        var frame = CGRectInset([self bounds], 5.0, 5.0);
-
-        _imageView = [[CPImageView alloc] initWithFrame:frame];
-
-        [_imageView setImageScaling:CPScaleProportionally];
-        [_imageView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-
-        [self addSubview:_imageView];
-    }
-    _representedObject = anObject;
-    [_imageView setImage:anObject];
-}
-
-- (void)setSelected:(BOOL)isSelected
-{
-    [self setBackgroundColor:isSelected ? [CPColor colorWithHexString:@"5595D1"] : nil];
-}
-
-@end
+    TNArchipelAvatarManagerThumbSize    = CPSizeMake(48, 48);
 
 
 /*! @ingroup archipelcore
@@ -101,7 +61,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 - (void)awakeFromCib
 {
     var itemPrototype   = [[CPCollectionViewItem alloc] init],
-        avatarView      = [[TNAvatarView alloc] initWithFrame:CGRectMakeZero()];
+        avatarView      = [[TNAvatarView alloc] initWithFrame:CPRectMakeZero()];
 
     [collectionViewAvatars setMinItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setMaxItemSize:TNArchipelAvatarManagerThumbSize];

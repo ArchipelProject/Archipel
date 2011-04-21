@@ -1,31 +1,31 @@
 
 @interface TNPropertiesController : NSObject
 {
-    IBOutlet NSView* frontView;
-    IBOutlet NSView* backView;
-    IBOutlet TNEditableLabel* entryName;
-    IBOutlet NSButton* entryAvatar;
-    IBOutlet NSImageView* entryStatusIcon;
+    IBOutlet NSButton* buttonBackViewFlip;
     IBOutlet NSButton* buttonEventSubscription;
     IBOutlet NSButton* buttonFrontViewFlip;
-    IBOutlet NSButton* buttonBackViewFlip;
-    IBOutlet NSTextField* entryType;
-    IBOutlet NSTextField* labelType;
+    IBOutlet NSButton* entryAvatar;
+    IBOutlet NSImageView* entryStatusIcon;
+    IBOutlet NSImageView* imageViewVCardPhoto;
     IBOutlet NSTextField* entryDomain;
     IBOutlet NSTextField* entryResource;
     IBOutlet NSTextField* entryStatus;
+    IBOutlet NSTextField* entryType;
     IBOutlet NSTextField* labelDomain;
     IBOutlet NSTextField* labelResource;
     IBOutlet NSTextField* labelStatus;
-    IBOutlet NSTextField* newNickName;
+    IBOutlet NSTextField* labelType;
+    IBOutlet NSTextField* labelVCardCompany;
+    IBOutlet NSTextField* labelVCardEmail;
     IBOutlet NSTextField* labelVCardFN;
     IBOutlet NSTextField* labelVCardLocality;
-    IBOutlet NSTextField* labelVCardCompany;
     IBOutlet NSTextField* labelVCardRole;
-    IBOutlet NSTextField* labelVCardEmail;
     IBOutlet NSTextField* labelVCardWebiste;
-    IBOutlet NSImageView* imageViewVCardPhoto;
+    IBOutlet NSView* backView;
+    IBOutlet NSView* frontView;
     IBOutlet TNContactsController* contactsController;
+    IBOutlet TNEditableLabel* entryName;
+    IBOutlet TNFlipView* mainView;
 }
 - (IBAction)openAvatarManager:(id)aSender;
 - (IBAction)changeNickName:(id)aSender;

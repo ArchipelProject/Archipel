@@ -39,33 +39,32 @@
 */
 @implementation TNPropertiesController: CPObject
 {
-    @outlet CPView                  frontView;
-    @outlet CPView                  backView;
-    @outlet TNEditableLabel         entryName           @accessors(readonly);
-    @outlet CPButton                entryAvatar;
-    @outlet CPImageView             entryStatusIcon;
+    @outlet CPButton                buttonBackViewFlip;
     @outlet CPButton                buttonEventSubscription;
     @outlet CPButton                buttonFrontViewFlip;
-    @outlet CPButton                buttonBackViewFlip;
-    @outlet CPTextField             entryType;
-    @outlet CPTextField             labelType;
+    @outlet CPButton                entryAvatar;
+    @outlet CPImageView             entryStatusIcon;
+    @outlet CPImageView             imageViewVCardPhoto;
     @outlet CPTextField             entryDomain;
     @outlet CPTextField             entryResource;
     @outlet CPTextField             entryStatus;
+    @outlet CPTextField             entryType;
     @outlet CPTextField             labelDomain;
     @outlet CPTextField             labelResource;
     @outlet CPTextField             labelStatus;
-    @outlet CPTextField             newNickName;
+    @outlet CPTextField             labelType;
+    @outlet CPTextField             labelVCardCompany;
+    @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardFN;
     @outlet CPTextField             labelVCardLocality;
-    @outlet CPTextField             labelVCardCompany;
     @outlet CPTextField             labelVCardRole;
-    @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardWebiste;
-    @outlet CPImageView             imageViewVCardPhoto;
+    @outlet CPView                  backView;
+    @outlet CPView                  frontView;
     @outlet TNContactsController    contactsController;
+    @outlet TNEditableLabel         entryName           @accessors(readonly);
+    @outlet TNFlipView              mainView            @accessors(readonly);
 
-    TNFlipView                      _mainView           @accessors(getter=mainView);
     BOOL                            _enabled            @accessors(getter=isEnabled);
     TNAvatarController              _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController              _pubSubController   @accessors(property=pubSubController);
@@ -92,18 +91,17 @@
     _height                 = 180;
     _isCollapsed            = YES;
     _unknownUserImage       = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
-    _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CGSizeMake(16,16)];
+    _groupUserImage         = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"groups.png"] size:CPSizeMake(16,16)];
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
     _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
-    _mainView = [[TNFlipView alloc] initWithFrame:[frontView bounds]];
-    [_mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
+    // [mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
+    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
+    [mainView setFrontView:frontView];
+    [mainView setBackView:backView];
     [frontView setFrameOrigin:CPPointMakeZero()];
     [backView setFrameOrigin:CPPointMakeZero()];
-    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
-    [_mainView setFrontView:frontView];
-    [_mainView setBackView:backView];
 
     [frontView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
@@ -141,14 +139,14 @@
     var snapImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"] size:CPSizeMake(14.0, 14.0)],
         snapImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"] size:CPSizeMake(14.0, 14.0)];
 
-    [buttonFrontViewFlip setTarget:_mainView];
+    [buttonFrontViewFlip setTarget:mainView];
     [buttonFrontViewFlip setBordered:NO];
     [buttonFrontViewFlip setAction:@selector(flip:)];
     [buttonFrontViewFlip setImage:snapImage]; // this avoid the blinking..
     [buttonFrontViewFlip setValue:snapImage forThemeAttribute:@"image"];
     [buttonFrontViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
-    [buttonBackViewFlip setTarget:_mainView];
+    [buttonBackViewFlip setTarget:mainView];
     [buttonBackViewFlip setBordered:NO];
     [buttonBackViewFlip setAction:@selector(flip:)];
     [buttonBackViewFlip setImage:snapImage]; // this avoid the blinking..
@@ -239,7 +237,7 @@
 
     _isCollapsed = YES;
 
-    [[_mainView superview] setPosition:[[_mainView superview] bounds].size.height ofDividerAtIndex:0];
+    [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 /*! show the panel
@@ -251,7 +249,7 @@
 
     _isCollapsed = NO;
 
-    [[_mainView superview] setPosition:([[_mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelPropertiesViewDidShowNotification object:self];
 
 }
@@ -362,8 +360,8 @@
         [entryResource setStringValue:population];
         [entryStatus setStringValue:@""];
 
-        if ([_mainView isFlipped])
-            [_mainView flip:nil];
+        if ([mainView isFlipped])
+            [mainView flip:nil];
         [buttonFrontViewFlip setHidden:YES];
     }
 
@@ -388,7 +386,7 @@
 */
 - (IBAction)changeNickName:(id)sender
 {
-    [[_mainView window] makeFirstResponder:[entryName previousResponder]];
+    [[mainView window] makeFirstResponder:[entryName previousResponder]];
 }
 
 /*! subscribe (unsubscribe) to (from) the entity pubsub if any

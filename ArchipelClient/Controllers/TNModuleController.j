@@ -355,7 +355,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [scrollView setAutohidesScrollers:YES];
-    [scrollView setBackgroundColor:[CPColor whiteColor]];
+    // [scrollView setBackgroundColor:[CPColor whiteColor]];
 
     if ([[aModule bundle] objectForInfoDictionaryKey:@"FullscreenModule"])
     {

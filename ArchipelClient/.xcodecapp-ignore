@@ -1,0 +1,4 @@
+./Build/**/*
+./Libraries/**/*
+./Categories/**/*
+./ModulesSources/**/Build/**/*

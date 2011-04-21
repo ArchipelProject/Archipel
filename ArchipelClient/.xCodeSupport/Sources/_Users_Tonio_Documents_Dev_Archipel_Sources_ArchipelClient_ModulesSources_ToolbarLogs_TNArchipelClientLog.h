@@ -1,0 +1,7 @@
+
+@interface TNArchipelClientLog : NSObject
+{
+
+}
+
+@end

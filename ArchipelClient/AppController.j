@@ -113,7 +113,9 @@ TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificati
 TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
 
 
-TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
+// this doesn't work with xcodecapp for some mysterious reasons
+// TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
+TNUserAvatarSize            = nil;
 
 var TNArchipelStatusAvailableLabel  = @"Available",
     TNArchipelStatusAwayLabel       = @"Away",
@@ -207,6 +209,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)awakeFromCib
 {
+    [theWindow setFullPlatformWindow:YES];
+
+    TNUserAvatarSize = CPSizeMake(50.0, 50.0);
+
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
         center      = [CPNotificationCenter defaultCenter];
@@ -214,11 +220,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* register logs */
     CPLogRegister(CPLogConsole, [defaults objectForKey:@"TNArchipelConsoleDebugLevel"]);
-
-
-    /* hide main window */
-    [theWindow orderOut:nil];
-
 
     /* notifications */
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
@@ -272,19 +273,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* tags split views */
     _tagsVisible = [defaults boolForKey:@"TNArchipelTagsVisible"];
 
-    [splitViewTagsContents setIsPaneSplitter:NO];
     [splitViewTagsContents setValue:0.0 forThemeAttribute:@"divider-thickness"]
     [splitViewTagsContents setDelegate:self];
     [[tagsController mainView] setFrame:[[[splitViewTagsContents subviews] objectAtIndex:0] frame]];
     [[[splitViewTagsContents subviews] objectAtIndex:0] addSubview:[tagsController mainView]];
 
-
     /* properties controller */
     CPLog.trace(@"initializing the splitViewHorizontalRoster");
-    [splitViewHorizontalRoster setIsPaneSplitter:NO];
-    [[splitViewHorizontalRoster subviews][1] removeFromSuperview];
-    [splitViewHorizontalRoster addSubview:[propertiesController mainView]];
-    [[propertiesController mainView] setFrameSize:CPSizeMake([leftView frameSize].width, [[propertiesController mainView] frameSize].height)];
     [splitViewHorizontalRoster setPosition:[splitViewHorizontalRoster bounds].size.height ofDividerAtIndex:0];
     [splitViewHorizontalRoster setDelegate:self];
     [propertiesController setAvatarManager:avatarController];
@@ -307,7 +302,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* right view */
     CPLog.trace(@"initializing rightView");
-    [rightView setBackgroundColor:[CPColor colorWithHexString:@"EEEEEE"]];
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
 
 
@@ -320,7 +314,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_moduleTabView setBackgroundColor:[CPColor whiteColor]];
+    [_moduleTabView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
     [rightView addSubview:_moduleTabView];
 
 
@@ -328,7 +322,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var bounds  = [_moduleTabView bounds];
 
     _rightViewTextField = [CPTextField labelWithTitle:@""];
-    [_rightViewTextField setFrame:CGRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
+    [_rightViewTextField setFrame:CPRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
     [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
     [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:18]];
@@ -356,14 +350,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [leftView setBackView:_outlineScrollView];
     [leftView setFrontView:viewRosterMask];
     [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
-
-    [[viewRosterMask viewWithTag:@"name"] setAlignment:CPCenterTextAlignment];
-    [[viewRosterMask viewWithTag:@"name"] setTextColor:[CPColor whiteColor]];
-    [[viewRosterMask viewWithTag:@"name"] setFont:[CPFont boldSystemFontOfSize:12]];
-    [[viewRosterMask viewWithTag:@"title"] setAlignment:CPCenterTextAlignment];
-    [[viewRosterMask viewWithTag:@"title"] setTextColor:[CPColor whiteColor]];
-    [[viewRosterMask viewWithTag:@"title"] setFont:[CPFont boldSystemFontOfSize:16]];
-    [[viewRosterMask viewWithTag:@"title"] setStringValue:@"Loading Modules"];
 
     [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
     [progressIndicatorModulesLoading setMinValue:0.0];
@@ -418,7 +404,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
-    [labelCurrentUser setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [labelCurrentUser setToolTip:@"The current logged account"];
 
@@ -587,7 +573,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CGRectMake(0.0, 0.0, 120.0, 24.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 120.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
@@ -612,8 +598,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/dnd.png"]]];
     [statusSelector addItem:DNDItem];
 
-    [statusItem setMinSize:CGSizeMake(120.0, 24.0)];
-    [statusItem setMaxSize:CGSizeMake(120.0, 24.0)];
+    [statusItem setMinSize:CPSizeMake(120.0, 24.0)];
+    [statusItem setMaxSize:CPSizeMake(120.0, 24.0)];
 
     [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];
@@ -662,14 +648,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"Initializing the roster button bar");
     [splitViewMain setButtonBar:buttonBarLeft forDividerAtIndex:0];
 
-    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CGSizeMake(1, 27)]],
-        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CGSizeMake(2, 26)],
-        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CGSizeMake(1, 26)],
-        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CGSizeMake(2, 26)],
+    var bezelColor              = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarBackground.png"] size:CPSizeMake(1, 27)]],
+        leftBezel               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezel.png"] size:CPSizeMake(2, 26)],
+        centerBezel             = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezel.png"] size:CPSizeMake(1, 26)],
+        rightBezel              = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezel.png"] size:CPSizeMake(2, 26)],
         buttonBezel             = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezel, centerBezel, rightBezel] isVertical:NO]],
-        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CGSizeMake(2, 26)],
-        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CGSizeMake(1, 26)],
-        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CGSizeMake(2, 26)],
+        leftBezelHighlighted    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarLeftBezelHighlighted.png"] size:CPSizeMake(2, 26)],
+        centerBezelHighlighted  = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarCenterBezelHighlighted.png"] size:CPSizeMake(1, 26)],
+        rightBezelHighlighted   = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:"TNButtonBar/buttonBarRightBezelHighlighted.png"] size:CPSizeMake(2, 26)],
         buttonBezelHighlighted  = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:[leftBezelHighlighted, centerBezelHighlighted, rightBezelHighlighted] isVertical:NO]],
         plusButton              = [[TNButtonBarPopUpButton alloc] initWithFrame:CPRectMake(0, 0, 35, 25)],
         plusMenu                = [[CPMenu alloc] init],
@@ -1204,12 +1190,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
 
     if ([CPPlatform isBrowser])
-        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CGRectMake(0,0,950,600)];
+        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CPRectMake(0,0,950,600)];
 
     if ([CPPlatform isBrowser])
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CPRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
     else
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CGRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
+        _helpWindow     = [[CPWindow alloc] initWithContentRect:CPRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
 
     var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
 
@@ -1532,7 +1518,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoader:(TNModuleController)aLoader loadedBundle:(CPBundle)aBundle progress:(float)percent
 {
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewRosterMask viewWithTag:@"name"] setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [[viewRosterMask viewWithTag:1] setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded

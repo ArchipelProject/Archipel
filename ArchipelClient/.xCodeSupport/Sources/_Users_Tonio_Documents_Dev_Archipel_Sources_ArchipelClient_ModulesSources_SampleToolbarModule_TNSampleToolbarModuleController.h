@@ -1,0 +1,7 @@
+
+@interface TNSampleToolbarModuleController : TNModule
+{
+
+}
+
+@end

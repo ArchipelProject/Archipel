@@ -1,0 +1,7 @@
+
+@interface TNAvatarView : NSView
+{
+
+}
+
+@end
