@@ -1,7 +1,0 @@
-
-@interface TNSnapshotsDatasource : NSObject
-{
-
-}
-
-@end

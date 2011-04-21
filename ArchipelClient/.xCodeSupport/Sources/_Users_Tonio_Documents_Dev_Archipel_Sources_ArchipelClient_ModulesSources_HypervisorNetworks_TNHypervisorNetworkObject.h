@@ -1,7 +1,0 @@
-
-@interface TNHypervisorNetwork : NSObject
-{
-
-}
-
-@end

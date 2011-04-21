@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CibName</key>
-	<string>UserChatNIB</string>
+	<string>UserChat</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.userchat</string>
 	<key>CPBundleInfoDictionaryVersion</key>

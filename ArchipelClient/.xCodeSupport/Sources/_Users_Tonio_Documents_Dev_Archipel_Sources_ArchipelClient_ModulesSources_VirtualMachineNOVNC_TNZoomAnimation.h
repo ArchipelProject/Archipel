@@ -1,7 +1,0 @@
-
-@interface TNZoomAnimation : NSAnimation
-{
-
-}
-
-@end

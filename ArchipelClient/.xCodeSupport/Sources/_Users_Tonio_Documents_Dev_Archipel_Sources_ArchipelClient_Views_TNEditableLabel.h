@@ -1,7 +1,0 @@
-
-@interface TNEditableLabel : NSTextField
-{
-
-}
-
-@end

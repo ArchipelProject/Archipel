@@ -7,7 +7,7 @@
 	<key>AlternativeToolbarIcon</key>
 	<string>icon-alt.png</string>
 	<key>CibName</key>
-	<string>ToolbarXMPPServerNIB</string>
+	<string>ToolbarXMPPServer</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.toolbarxmppserver</string>
 	<key>CPBundleInfoDictionaryVersion</key>

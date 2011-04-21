@@ -1,7 +1,0 @@
-
-@interface MKPolygon : MKMapItem
-{
-
-}
-
-@end

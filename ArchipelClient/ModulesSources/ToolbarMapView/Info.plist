@@ -7,7 +7,7 @@
 	<key>AlternativeToolbarIcon</key>
 	<string>icon-alt.png</string>
 	<key>CibName</key>
-	<string>ToolbarMapViewNIB</string>
+	<string>ToolbarMapView</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.toolbarmapview</string>
 	<key>CPBundleInfoDictionaryVersion</key>

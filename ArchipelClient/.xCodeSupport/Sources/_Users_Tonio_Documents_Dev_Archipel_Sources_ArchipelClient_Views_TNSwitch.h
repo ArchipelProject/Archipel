@@ -1,7 +1,0 @@
-
-@interface TNSwitch : LPSwitch
-{
-
-}
-
-@end

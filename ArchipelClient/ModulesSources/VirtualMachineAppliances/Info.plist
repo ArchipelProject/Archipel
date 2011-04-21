@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CibName</key>
-	<string>VirtualMachineAppliancesNIB</string>
+	<string>VirtualMachineAppliances</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.virtualmachineappliances</string>
 	<key>CPBundleInfoDictionaryVersion</key>

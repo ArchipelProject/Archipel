@@ -1,7 +1,0 @@
-
-@interface MKMapView : CPWebView
-{
-
-}
-
-@end

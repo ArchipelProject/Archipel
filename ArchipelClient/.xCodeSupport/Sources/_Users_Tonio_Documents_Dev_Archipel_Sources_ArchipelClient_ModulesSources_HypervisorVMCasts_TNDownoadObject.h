@@ -1,7 +1,0 @@
-
-@interface TNDownload : NSObject
-{
-
-}
-
-@end

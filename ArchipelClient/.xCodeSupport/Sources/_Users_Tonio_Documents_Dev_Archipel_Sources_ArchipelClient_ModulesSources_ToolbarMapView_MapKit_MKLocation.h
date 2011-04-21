@@ -1,7 +1,0 @@
-
-@interface MKLocation : NSObject
-{
-
-}
-
-@end

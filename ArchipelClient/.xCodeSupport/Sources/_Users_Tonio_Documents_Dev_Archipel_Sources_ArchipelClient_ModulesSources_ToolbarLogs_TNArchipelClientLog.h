@@ -1,7 +1,0 @@
-
-@interface TNArchipelClientLog : NSObject
-{
-
-}
-
-@end

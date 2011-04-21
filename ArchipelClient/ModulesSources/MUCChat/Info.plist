@@ -7,7 +7,7 @@
 	<key>AlternativeToolbarIcon</key>
 	<string>icon-alt.png</string>
 	<key>CibName</key>
-	<string>MUCChatNIB</string>
+	<string>MUCChat</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.mucchat</string>
 	<key>CPBundleInfoDictionaryVersion</key>

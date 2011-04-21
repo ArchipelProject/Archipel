@@ -1,7 +1,0 @@
-
-@interface TNModalWindow : NSWindow
-{
-
-}
-
-@end

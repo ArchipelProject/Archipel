@@ -29,7 +29,7 @@
         <key>FullscreenModule</key>
         <integer>1</integer>
         <key>CibName</key>
-        <string>HypervisorHealthNIB</string>
+        <string>HypervisorHealth</string>
 
         <key>TNArchipelHealthRefreshStatsInterval</key>
         <real>5.0</real>

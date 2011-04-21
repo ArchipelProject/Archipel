@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CibName</key>
-	<string>HypervisorNetworksNIB</string>
+	<string>HypervisorNetworks</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.hypervisornetworks</string>
 	<key>CPBundleInfoDictionaryVersion</key>

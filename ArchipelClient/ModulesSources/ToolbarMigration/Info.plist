@@ -7,7 +7,7 @@
 	<key>AlternativeToolbarIcon</key>
 	<string>icon-alt.png</string>
 	<key>CibName</key>
-	<string>ToolbarMigrationNIB</string>
+	<string>ToolbarMigration</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.toolbarmigration</string>
 	<key>CPBundleInfoDictionaryVersion</key>

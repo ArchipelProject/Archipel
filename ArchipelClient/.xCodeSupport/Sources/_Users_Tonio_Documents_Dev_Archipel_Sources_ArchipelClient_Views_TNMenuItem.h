@@ -1,7 +1,0 @@
-
-@interface TNMenuItem : NSMenuItem
-{
-
-}
-
-@end

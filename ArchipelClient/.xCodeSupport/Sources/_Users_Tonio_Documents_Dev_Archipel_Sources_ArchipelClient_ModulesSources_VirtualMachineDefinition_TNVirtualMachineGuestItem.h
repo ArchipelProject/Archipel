@@ -1,7 +1,0 @@
-
-@interface TNVirtualMachineGuestItem : NSMenuItem
-{
-
-}
-
-@end

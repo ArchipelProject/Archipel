@@ -1,7 +1,0 @@
-
-@interface TNOutlineViewRoster : NSOutlineView
-{
-
-}
-
-@end

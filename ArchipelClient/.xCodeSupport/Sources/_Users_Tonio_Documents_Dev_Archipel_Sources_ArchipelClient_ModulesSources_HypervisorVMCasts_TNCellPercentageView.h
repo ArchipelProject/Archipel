@@ -1,7 +1,0 @@
-
-@interface TNCellPercentageView : NSView
-{
-
-}
-
-@end

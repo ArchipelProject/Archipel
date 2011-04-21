@@ -1,7 +1,0 @@
-
-@interface TNVersion : NSObject
-{
-
-}
-
-@end

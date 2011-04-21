@@ -1,7 +1,0 @@
-
-@interface TNCellPartitionView : NSView
-{
-
-}
-
-@end

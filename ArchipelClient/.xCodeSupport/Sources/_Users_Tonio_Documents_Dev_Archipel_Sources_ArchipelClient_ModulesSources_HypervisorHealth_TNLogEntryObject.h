@@ -1,7 +1,0 @@
-
-@interface TNLogEntry : NSObject
-{
-
-}
-
-@end

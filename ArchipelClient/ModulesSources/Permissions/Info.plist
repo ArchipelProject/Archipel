@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CibName</key>
-	<string>PermissionsNIB</string>
+	<string>Permissions</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.permissions</string>
 	<key>CPBundleInfoDictionaryVersion</key>

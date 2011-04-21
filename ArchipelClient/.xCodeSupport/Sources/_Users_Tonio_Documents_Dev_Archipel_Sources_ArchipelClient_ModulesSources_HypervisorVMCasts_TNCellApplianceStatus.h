@@ -1,7 +1,0 @@
-
-@interface TNCellApplianceStatus : NSView
-{
-
-}
-
-@end

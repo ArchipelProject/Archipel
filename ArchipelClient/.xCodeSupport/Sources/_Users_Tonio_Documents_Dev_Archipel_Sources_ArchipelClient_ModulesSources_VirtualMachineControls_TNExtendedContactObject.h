@@ -1,7 +1,0 @@
-
-@interface TNExtendedContact : NSObject
-{
-
-}
-
-@end

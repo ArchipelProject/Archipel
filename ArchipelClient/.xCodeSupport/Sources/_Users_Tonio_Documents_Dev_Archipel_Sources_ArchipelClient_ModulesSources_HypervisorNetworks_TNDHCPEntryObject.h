@@ -1,7 +1,0 @@
-
-@interface TNDHCPEntry : NSObject
-{
-
-}
-
-@end

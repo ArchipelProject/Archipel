@@ -1,7 +1,0 @@
-
-@interface TNCellLogLevel : NSView
-{
-
-}
-
-@end

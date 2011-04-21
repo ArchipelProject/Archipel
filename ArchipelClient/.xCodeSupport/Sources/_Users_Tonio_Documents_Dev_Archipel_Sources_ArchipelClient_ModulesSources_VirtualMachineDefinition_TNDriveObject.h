@@ -1,7 +1,0 @@
-
-@interface TNDrive : NSObject
-{
-
-}
-
-@end
