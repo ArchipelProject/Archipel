@@ -10,3 +10,4 @@
 *ArchipelAgent/**/build
 *ArchipelAgent/**/dist
 *ArchipelAgent/**/*.egg-info/**
+*ArchipelClient/.xCodeSupport
