@@ -53,7 +53,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     @outlet CPButtonBar             buttonBarControl;
     @outlet CPSearchField           fieldFilter;
-    @outlet CPView                  maskingView;
     @outlet CPView                  viewTableContainer;
     @outlet TNEditDriveController   editDriveController;
     @outlet TNNewDriveController    newDriveController;
@@ -77,9 +76,6 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
-    [maskingView setBackgroundColor:[CPColor whiteColor]];
-    [maskingView setAlphaValue:0.8];
-
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     var bundle = [CPBundle mainBundle];
@@ -289,14 +285,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     _isActive = ((XMPPShow == TNStropheContactStatusOnline) || (XMPPShow == TNStropheContactStatusAway));
 
     if (XMPPShow == TNStropheContactStatusBusy)
-    {
-        [maskingView removeFromSuperview];
-    }
+        [self showMaskView:YES];
     else
-    {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
-    }
+        [self showMaskView:NO];
 }
 
 

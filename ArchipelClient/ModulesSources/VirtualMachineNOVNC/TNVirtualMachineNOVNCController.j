@@ -58,7 +58,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     @outlet CPTextField             fieldPassword;
     @outlet CPTextField             fieldPreferencesCheckRate;
     @outlet CPTextField             fieldPreferencesFBURefreshRate;
-    @outlet CPView                  maskingView;
     @outlet CPView                  viewControls;
     @outlet CPWindow                windowPassword;
     @outlet CPWindow                windowPasteBoard;
@@ -84,9 +83,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)awakeFromCib
 {
-    [maskingView setBackgroundColor:[CPColor whiteColor]];
-    [maskingView setAlphaValue:0.8];
-
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],
@@ -194,8 +190,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     if (![super willShow])
         return NO;
-
-    [maskingView setFrame:[[self view] bounds]];
 
     [self checkIfRunning];
 
@@ -325,8 +319,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     if ([_entity XMPPShow] == TNStropheContactStatusOnline)
     {
-        [maskingView removeFromSuperview];
-
+        [self showMaskView:NO];
         [self getVirtualMachineVNCDisplay];
     }
     else
@@ -343,9 +336,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
             _vncSupportSSL  = nil;
             _vncOnlySSL     = nil;
         }
-
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
+        [self showMaskView:YES];
     }
 }
 

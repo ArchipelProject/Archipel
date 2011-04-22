@@ -54,7 +54,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTextField                 fieldNewApplianceName;
-    @outlet CPView                      maskingView;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
     @outlet TNUIKitScrollView           mainScrollView;
@@ -75,8 +74,6 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)awakeFromCib
 {
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [maskingView setBackgroundColor:[CPColor whiteColor]];
-    [maskingView setAlphaValue:0.8];
 
     // Media table view
     _appliancesDatasource    = [[TNTableViewDataSource alloc] init];
@@ -274,14 +271,9 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (void)checkIfRunning
 {
     if ([_entity XMPPShow] == TNStropheContactStatusBusy)
-    {
-        [maskingView removeFromSuperview];
-    }
+        [self showMaskView:NO];
     else
-    {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
-    }
+        [self showMaskView:YES];
 }
 
 

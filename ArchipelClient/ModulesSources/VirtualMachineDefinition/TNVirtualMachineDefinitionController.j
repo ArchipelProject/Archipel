@@ -139,7 +139,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet CPTextField             fieldPreferencesMachine;
     @outlet CPTextField             fieldPreferencesMemory;
     @outlet CPTextField             fieldVNCPassword;
-    @outlet CPView                  maskingView;
     @outlet CPView                  viewBottomControl;
     @outlet CPView                  viewDeviceVirtualDrives;
     @outlet CPView                  viewDeviceVirtualNics;
@@ -968,31 +967,14 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
     if (XMPPShow != TNStropheContactStatusBusy)
     {
-        [self displayMaskingView:YES];
+        [self showMaskView:YES];
         if (_definitionEdited)
             [TNAlert showAlertWithMessage:@"Definition edited" informative:@"You started the virtual machine, but you haven't save the current changes."];
     }
     else
     {
-        [self displayMaskingView:NO];
+        [self showMaskView:NO];
     }
-}
-
-/*! display or hide the masking view
-    @param shouldDisplay displays if YES, hide if NO
-*/
-- (void)displayMaskingView:(BOOL)shouldDisplay
-{
-    if (shouldDisplay)
-    {
-        if (![maskingView superview])
-        {
-            [maskingView setFrame:[[self view] bounds]];
-            [[self view] addSubview:maskingView];
-        }
-    }
-    else
-        [maskingView removeFromSuperview];
 }
 
 /*! check if given hypervisor is in given list (hum I think this will be throw away...)
@@ -1394,7 +1376,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         if ([guests count] == 0)
         {
             [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Capabilities" message:@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry." icon:TNGrowlIconError];
-            [self displayMaskingView:YES];
+            [self showMaskView:YES];
         }
 
         [supportedCapabilities setObject:host forKey:@"host"];

@@ -70,15 +70,15 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     @outlet CPTextField         healthMemUsage;
     @outlet CPTextField         healthUptime;
     @outlet CPView              viewCharts;
-    @outlet CPView              viewGraphCPU;
     @outlet CPView              viewGraphCPUContainer;
     @outlet CPView              viewGraphDiskContainer;
-    @outlet CPView              viewGraphLoad;
     @outlet CPView              viewGraphLoadContainer;
-    @outlet CPView              viewGraphMemory;
     @outlet CPView              viewGraphMemoryContainer;
-    @outlet CPView              viewGraphNetwork;
     @outlet CPView              viewGraphNetworkContainer;
+    @outlet LPChartView         chartViewCPU;
+    @outlet LPChartView         chartViewLoad;
+    @outlet LPChartView         chartViewMemory;
+    @outlet LPChartView         chartViewNetwork;
     @outlet CPView              viewLogs;
     @outlet TNSwitch            switchPreferencesAutoRefresh;
     @outlet TNSwitch            switchPreferencesShowColunmFile;
@@ -90,10 +90,6 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     CPTableView                 _tablePartitions;
     CPTimer                     _timerLogs;
     CPTimer                     _timerStats;
-    LPChartView                 _chartViewCPU;
-    LPChartView                 _chartViewLoad;
-    LPChartView                 _chartViewMemory;
-    LPChartView                 _chartViewNetwork;
     TNDatasourceChartView       _cpuDatasource;
     TNDatasourceChartView       _loadDatasource;
     TNDatasourceChartView       _memoryDatasource;
@@ -134,11 +130,12 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
 
-    [viewGraphCPUContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
-    [viewGraphMemoryContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
-    [viewGraphLoadContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
-    [viewGraphDiskContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
-    [viewGraphNetworkContainer setBackgroundColor:[CPColor colorWithHexString:@"F5F6F7"]];
+    var colorGraphsContainer = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/dark-bg-soft.png"]]];
+    [viewGraphCPUContainer setBackgroundColor:colorGraphsContainer];
+    [viewGraphMemoryContainer setBackgroundColor:colorGraphsContainer];
+    [viewGraphLoadContainer setBackgroundColor:colorGraphsContainer];
+    [viewGraphDiskContainer setBackgroundColor:colorGraphsContainer];
+    [viewGraphNetworkContainer setBackgroundColor:colorGraphsContainer];
 
     [viewGraphCPUContainer setBorderRadius:4];
     [viewGraphMemoryContainer setBorderRadius:4];
@@ -146,48 +143,33 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [viewGraphDiskContainer setBorderRadius:4];
     [viewGraphNetworkContainer setBorderRadius:4];
 
-    var cpuViewFrame        = [viewGraphCPU bounds],
-        memoryViewFrame     = [viewGraphMemory bounds],
-        loadViewFrame       = [viewGraphLoad bounds],
-        networkViewFrame    = [viewGraphNetwork bounds];
+    [chartViewCPU setDrawViewPadding:1.0];
+    [chartViewCPU setLabelViewHeight:0.0];
+    [chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
+    [chartViewCPU setFixedMaxValue:100];
+    [chartViewCPU setDisplayLabels:NO];
+    [[chartViewCPU gridView] setBackgroundColor:[CPColor whiteColor]];
 
-    _chartViewCPU = [[LPChartView alloc] initWithFrame:cpuViewFrame];
-    [_chartViewCPU setAutoresizingMask:CPViewWidthSizable];
-    [_chartViewCPU setDrawViewPadding:1.0];
-    [_chartViewCPU setLabelViewHeight:0.0];
-    [_chartViewCPU setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewCPU setFixedMaxValue:100];
-    [_chartViewCPU setDisplayLabels:NO];
-    [[_chartViewCPU gridView] setBackgroundColor:[CPColor whiteColor]];
-    [viewGraphCPU addSubview:_chartViewCPU];
+    [chartViewMemory setDrawViewPadding:1.0];
+    [chartViewMemory setLabelViewHeight:0.0];
+    [chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
+    [chartViewMemory setDisplayLabels:NO];
+    [[chartViewMemory gridView] setBackgroundColor:[CPColor whiteColor]];
 
-    _chartViewMemory = [[LPChartView alloc] initWithFrame:memoryViewFrame];
-    [_chartViewMemory setAutoresizingMask:CPViewWidthSizable];
-    [_chartViewMemory setDrawViewPadding:1.0];
-    [_chartViewMemory setLabelViewHeight:0.0];
-    [_chartViewMemory setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewMemory setDisplayLabels:NO];
-    [[_chartViewMemory gridView] setBackgroundColor:[CPColor whiteColor]];
-    [viewGraphMemory addSubview:_chartViewMemory];
+    [chartViewLoad setAutoresizingMask:CPViewWidthSizable];
+    [chartViewLoad setDrawViewPadding:1.0];
+    [chartViewLoad setLabelViewHeight:0.0];
+    [chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
+    [chartViewLoad setFixedMaxValue:10];
+    [chartViewLoad setDisplayLabels:YES];
+    [[chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
 
-    _chartViewLoad = [[LPChartView alloc] initWithFrame:loadViewFrame];
-    [_chartViewLoad setAutoresizingMask:CPViewWidthSizable];
-    [_chartViewLoad setDrawViewPadding:1.0];
-    [_chartViewLoad setLabelViewHeight:0.0];
-    [_chartViewLoad setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewLoad setFixedMaxValue:10];
-    [_chartViewLoad setDisplayLabels:YES];
-    [[_chartViewLoad gridView] setBackgroundColor:[CPColor whiteColor]];
-    [viewGraphLoad addSubview:_chartViewLoad];
-
-    _chartViewNetwork = [[LPChartView alloc] initWithFrame:networkViewFrame];
-    [_chartViewNetwork setAutoresizingMask:CPViewWidthSizable];
-    [_chartViewNetwork setDrawViewPadding:1.0];
-    [_chartViewNetwork setLabelViewHeight:0.0];
-    [_chartViewNetwork setDrawView:[[TNChartDrawView alloc] init]];
-    [_chartViewNetwork setDisplayLabels:NO];
-    [[_chartViewNetwork gridView] setBackgroundColor:[CPColor whiteColor]];
-    [viewGraphNetwork addSubview:_chartViewNetwork];
+    [chartViewNetwork setAutoresizingMask:CPViewWidthSizable];
+    [chartViewNetwork setDrawViewPadding:1.0];
+    [chartViewNetwork setLabelViewHeight:0.0];
+    [chartViewNetwork setDrawView:[[TNChartDrawView alloc] init]];
+    [chartViewNetwork setDisplayLabels:NO];
+    [[chartViewNetwork gridView] setBackgroundColor:[CPColor whiteColor]];
 
     // tabview
     [tabViewInfos setBorderColor:[CPColor colorWithHexString:@"789EB3"]]
@@ -327,9 +309,9 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     _loadDatasource     = [[TNDatasourceChartView alloc] initWithNumberOfSets:3];
     _networkDatasource  = nil; // dynamically allocated according to the number of nics
 
-    [_chartViewMemory setDataSource:_memoryDatasource];
-    [_chartViewCPU setDataSource:_cpuDatasource];
-    [_chartViewLoad setDataSource:_loadDatasource];
+    [chartViewMemory setDataSource:_memoryDatasource];
+    [chartViewCPU setDataSource:_cpuDatasource];
+    [chartViewLoad setDataSource:_loadDatasource];
     [_tablePartitions setDataSource:_datasourcePartitions];
     [_tableLogs setDataSource:_datasourceLogs];
 
@@ -479,7 +461,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     if (!_networkDatasource)
     {
         _networkDatasource = [[TNDatasourceChartView alloc] initWithNumberOfSets:[networkNodes count]];
-        [_chartViewNetwork setDataSource:_networkDatasource];
+        [chartViewNetwork setDataSource:_networkDatasource];
     }
 
     for (var i = 0 ; i < [networkNodes count]; i++)
@@ -607,10 +589,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
 
             /* reload the charts view */
-            [_chartViewMemory reloadData];
-            [_chartViewCPU reloadData];
-            [_chartViewLoad reloadData];
-            [_chartViewNetwork reloadData];
+            [chartViewMemory reloadData];
+            [chartViewCPU reloadData];
+            [chartViewLoad reloadData];
+            [chartViewNetwork reloadData];
             [_tablePartitions reloadData];
 
             CPLog.debug("current stats recovered");
@@ -700,8 +682,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                 diskNode    = [aStanza firstChildWithName:@"disk"];
 
             [fieldTotalMemory setStringValue:maxMem + "G"];
-            [fieldHalfMemory setStringValue:Math.round(maxMem / 2) + "G"];
-            [_chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
+            [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + "G"];
+            [chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
 
             [_datasourcePartitions removeAllObjects];
             [_datasourcePartitions setContent:[self parseDiskNodes:diskNode]];
@@ -709,10 +691,10 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             [healthDiskUsage setStringValue:[diskNode valueForAttribute:@"capacity"]];
 
             /* reload the charts view */
-            [_chartViewMemory reloadData];
-            [_chartViewCPU reloadData];
-            [_chartViewLoad reloadData];
-            [_chartViewNetwork reloadData];
+            [chartViewMemory reloadData];
+            [chartViewCPU reloadData];
+            [chartViewLoad reloadData];
+            [chartViewNetwork reloadData];
 
             [_tablePartitions reloadData];
 

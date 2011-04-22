@@ -99,7 +99,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPTextField             fieldOOMAdjust;
     @outlet CPTextField             fieldOOMScore;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
-    @outlet CPView                  maskingView;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet TNSwitch                switchAutoStart;
     @outlet TNSwitch                switchPreventOOMKiller;
@@ -143,6 +142,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
            [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs"
     ]];
 
+    [buttonKill setTitle:@"Kill"];
+
     [sliderMemory setContinuous:YES];
     [sliderMemory setToolTip:@"Adjust the maximum amout of memory of the VM (only when running)"];
     [stepperCPU setTarget:self];
@@ -168,10 +169,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imagePlaySelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play-selected.png"] size:CGSizeMake(16, 16)];
     _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
     _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
-
-    [maskingView setBackgroundColor:[CPColor whiteColor]];
-    [maskingView setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [maskingView setAlphaValue:0.9];
 
     [buttonBarTransport setToolTip:@"Control the virtual machine"];
     [buttonBarTransport setSegmentCount:5];
@@ -314,8 +311,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if (![super willShow])
         return NO;
-
-    [maskingView setFrame:[[self view] bounds]];
 
     [self checkIfRunning];
 
@@ -473,12 +468,9 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 
     if ((XMPPShow == TNStropheContactStatusDND))
-    {
-        [maskingView setFrame:[[self view] bounds]];
-        [[self view] addSubview:maskingView];
-    }
+        [self showMaskView:YES];
     else
-        [maskingView removeFromSuperview];
+        [self showMaskView:NO];
 }
 
 /*! populate the migration table with all hypervisors in roster
