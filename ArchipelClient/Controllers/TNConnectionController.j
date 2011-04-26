@@ -74,6 +74,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [mainWindow setDefaultButton:connectButton];
 
     [password setSecure:YES];
+    [password setNeedsLayout]; // for some reasons, with XCode 4, setSecure doesn't work every time. this force it to relayout
+
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
 
@@ -210,6 +212,25 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 #pragma mark -
 #pragma mark Actions
 
+/*! show the window
+    @param sender the sender
+*/
+- (IBAction)showWindow:(id)sender
+{
+    [mainWindow center];
+    [mainWindow makeKeyWindow];
+    [mainWindow orderFontWithAnimation:nil];
+}
+
+/*! hide the window
+    @param sender the sender
+*/
+- (IBAction)hideWindow:(id)sender
+{
+    [mainWindow orderOutWithAnimation:nil];
+    [mainWindow close];
+}
+
 /*! connection action
     @param sender the sender
 */
@@ -314,9 +335,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
     _isConnecting = YES;
-
     [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"connecting"]];
     [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"cancel"]];
+    [connectButton setNeedsLayout];
     [spinning setHidden:NO];
 }
 
@@ -357,7 +378,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheAuthenticating:(TNStropheIMClient)aStropheClient
 {
     [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"authenticating"]];
-
     CPLog.info(@"XMPP authenticating...");
 }
 

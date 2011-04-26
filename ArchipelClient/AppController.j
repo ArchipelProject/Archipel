@@ -114,7 +114,6 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 
 
 // this doesn't work with xcodecapp for some mysterious reasons
-// TNUserAvatarSize            = CPSizeMake(50.0, 50.0);
 TNUserAvatarSize            = nil;
 
 var TNArchipelStatusAvailableLabel  = @"Available",
@@ -387,7 +386,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* module controller */
     CPLog.trace(@"initializing moduleController");
     _tempNumberOfReadyModules = -1;
-
+    _moduleLoadingStarted = NO;
     [moduleController setDelegate:self];
     [moduleController setMainToolbar:_mainToolbar];
     [moduleController setMainTabView:_moduleTabView];
@@ -421,11 +420,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
 
     /* Placing the connection window */
-    _moduleLoadingStarted = NO;
-    [[connectionController mainWindow] center];
-    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
+    [connectionController showWindow:nil];
     [connectionController initCredentials];
-
 
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
@@ -755,8 +751,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)didRetrieveConfiguration:(CPNotification)aNotification
 {
     [CPMenu setMenuBarVisible:YES];
-    [[connectionController mainWindow] orderOut:nil];
-    [theWindow makeKeyAndOrderFront:nil];
+    [connectionController hideWindow:nil];
+    [theWindow orderFontWithAnimation:nil];
+    [theWindow makeKeyWindow];
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
@@ -788,8 +785,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)logoutStrophe:(CPNotification)aNotification
 {
-    [theWindow orderOut:nil];
-    [[connectionController mainWindow] makeKeyAndOrderFront:nil];
+    [theWindow orderOutWithAnimation:nil];
+    [connectionController showWindow:nil];
     [labelCurrentUser setStringValue:@""];
     [CPMenu setMenuBarVisible:NO];
 }

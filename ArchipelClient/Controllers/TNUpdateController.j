@@ -89,9 +89,14 @@
     [connection start];
 }
 
+
+#pragma mark -
+#pragma mark Actions
+
 /*! dislay the new version dialog
+    @param aSender the sender of the action
 */
-- (void)showMainWindow
+- (IBAction)showWindow:(id)aSender
 {
     [fieldCurrentVersion setStringValue:[_currentVersion description]];
     [fieldServerVersion setStringValue:[_version description]];
@@ -99,12 +104,9 @@
     [fieldChanges setStringValue:_changes];
 
     [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:nil];
+    [mainWindow orderFontWithAnimation:aSender];
+    [mainWindow makeKeyWindow];
 }
-
-
-#pragma mark -
-#pragma mark Actions
 
 /*! force manual update check
     @param aSender the sender of the action
@@ -183,7 +185,7 @@
         else
             _forceCheck = NO;
 
-        [self showMainWindow];
+        [self showWindow:nil];
     }
     else if (_forceCheck)
     {

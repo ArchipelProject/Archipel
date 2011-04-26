@@ -34,7 +34,7 @@
 var TNArchipelTypeAvatar                = @"archipel:avatar",
     TNArchipelTypeAvatarGetAvatars      = @"getavatars",
     TNArchipelTypeAvatarSetAvatar       = @"setavatar",
-    TNArchipelAvatarManagerThumbSize    = CPSizeMake(48, 48);
+    TNArchipelAvatarManagerThumbSize    = nil;
 
 
 /*! @ingroup archipelcore
@@ -60,9 +60,13 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 
 - (void)awakeFromCib
 {
+    TNArchipelAvatarManagerThumbSize = CPSizeMake(48, 48);
+
     var itemPrototype   = [[CPCollectionViewItem alloc] init],
         avatarView      = [[TNAvatarView alloc] initWithFrame:CPRectMakeZero()];
 
+    // fix
+    collectionViewAvatars._minItemSize = TNArchipelAvatarManagerThumbSize;
     [collectionViewAvatars setMinItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setMaxItemSize:TNArchipelAvatarManagerThumbSize];
     [collectionViewAvatars setSelectable:YES];
@@ -169,7 +173,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 /*! overide the super makeKeyAndOrderFront in order to getAvailableAvatars on display
     @param sender the sender of the action
 */
-- (IBAction)showWindow:(id)sender
+- (IBAction)showWindow:(id)aSender
 {
     [[TNPermissionsCenter defaultCenter] setControl:buttonChange segment:nil enabledAccordingToPermissions:[@"setavatars"] forEntity:_entity specialCondition:YES];
 
@@ -177,7 +181,8 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     {
         [self getAvailableAvatars];
         [mainWindow center];
-        [mainWindow makeKeyAndOrderFront:sender];
+        [mainWindow orderFontWithAnimation:aSender];
+        [mainWindow makeKeyWindow];
     }
 }
 

@@ -189,7 +189,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     and send message loadPreferences to all modules
     @param aSender
 */
-- (IBAction)showWindow:(id)sender
+- (IBAction)showWindow:(id)aSender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
@@ -210,7 +210,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     }
 
     [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:sender];
+    [mainWindow orderFontWithAnimation:aSender];
+    [mainWindow makeKeyWindow];
 }
 
 /*! When save button is pressed, saves all general preferences
