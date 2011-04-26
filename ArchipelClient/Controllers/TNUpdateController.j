@@ -104,8 +104,7 @@
     [fieldChanges setStringValue:_changes];
 
     [mainWindow center];
-    [mainWindow orderFontWithAnimation:aSender];
-    [mainWindow makeKeyWindow];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! force manual update check

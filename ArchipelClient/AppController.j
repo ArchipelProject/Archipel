@@ -752,8 +752,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     [CPMenu setMenuBarVisible:YES];
     [connectionController hideWindow:nil];
-    [theWindow orderFontWithAnimation:nil];
-    [theWindow makeKeyWindow];
+    [theWindow makeKeyAndOrderFront:nil];
     document.getElementById("copyright_label").style.textShadow = "0px 1px 0px #C6CAD9";
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
@@ -785,7 +784,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)logoutStrophe:(CPNotification)aNotification
 {
-    [theWindow orderOutWithAnimation:nil];
+    [theWindow close];
     [connectionController showWindow:nil];
     [labelCurrentUser setStringValue:@""];
     [CPMenu setMenuBarVisible:NO];

@@ -181,8 +181,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
     {
         [self getAvailableAvatars];
         [mainWindow center];
-        [mainWindow orderFontWithAnimation:aSender];
-        [mainWindow makeKeyWindow];
+        [mainWindow makeKeyAndOrderFront:aSender];
     }
 }
 

@@ -210,8 +210,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     }
 
     [mainWindow center];
-    [mainWindow orderFontWithAnimation:aSender];
-    [mainWindow makeKeyWindow];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! When save button is pressed, saves all general preferences

@@ -112,8 +112,7 @@
     [newGroupName setStringValue:@""];
 
     [mainWindow center];
-    [mainWindow orderFontWithAnimation:aSender];
-    [mainWindow makeKeyWindow];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! add a group according to the outlets

@@ -30,6 +30,5 @@
 @import "CPString+UUIDRFC4122.j"
 @import "CPTabView+Border.j"
 @import "CPView+Border.j"
-@import "CPWindow+Animations.j"
 @import "TNStropheClient+Singleton.j"
 @import "TNStropheGroup+Capitalized.j"

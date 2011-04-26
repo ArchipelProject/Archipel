@@ -218,8 +218,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (IBAction)showWindow:(id)sender
 {
     [mainWindow center];
-    [mainWindow makeKeyWindow];
-    [mainWindow orderFontWithAnimation:nil];
+    [mainWindow makeKeyAndOrderFront:nil];
 }
 
 /*! hide the window
@@ -227,7 +226,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (IBAction)hideWindow:(id)sender
 {
-    [mainWindow orderOutWithAnimation:nil];
     [mainWindow close];
 }
 
