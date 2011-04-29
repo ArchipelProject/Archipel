@@ -2,172 +2,87 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CPBundleIdentifier</key>
-    <string>org.archipelproject.archipel</string>
-    <key>Main cib file base name</key>
-    <string>MainMenu.cib</string>
-    <key>CPBundleName</key>
-    <string>Archipel</string>
-    <key>CPPrincipalClass</key>
-    <string>CPApplication</string>
-    <key>CFBundleIconFile</key>
-    <string>icon.icns</string>
-
-
-    <key>TNArchipelBOSHService</key>
-    <string>http://jabber.archipelproject.org:5280/http-bind</string>
-
-    <key>TNArchipelBOSHResource</key>
-    <string>ArchipelController</string>
-
-
-    <!--
-        URL of crash reporting.
-        See LPCrashReporter from LPKit to see how it works if you want to
-        use your own crash reporter
-    -->
-    <key>LPCrashReporterLoggingURL</key>
-    <string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
-
-    <!--
-        Url of the welcome page. It can be any URL (online) or "local" to
-        display the defaut welcome page (offline)
-    -->
-    <key>TNArchipelHelpWindowURL</key>
-    <string>http://welcome.archipelproject.org/</string>
-
-    <!--
-        Time in second before starting to load modules when roster selection changes
-        this avoid to spam XMPP server
-    -->
-    <key>TNArchipelModuleLoadingDelay</key>
-    <real>0.15</real>
-
-    <!--
-        Use animations
-    -->
-    <key>TNArchipelUseAnimations</key>
-    <integer>1</integer>
-
-    <!--
-        if TNArchipelUseAnimations is 1, set the animation duration
-    -->
-    <key>TNArchipelAnimationsDuration</key>
-    <real>0.3</real>
-
-    <!--
-        Copyright message
-    -->
-    <key>TNArchipelCopyright</key>
-    <string>Copyright 2011 Antoine Mercadal</string>
-
-    <!--
-        Displayed version of Archipel Client
-    -->
-    <key>TNArchipelVersionHuman</key>
-    <string>Archipel Beta 2 (Jupiter)</string>
-
-    <!--
-        Computing version of the client
-    -->
-    <key>TNArchipelVersion</key>
-    <dict>
-        <key>major</key>
-        <integer>0</integer>
-        <key>minor</key>
-        <integer>2</integer>
-        <key>revision</key>
-        <integer>0</integer>
-    </dict>
-
-    <!--
-        enable auto version check by default
-            - 1: enabled
-            - 0: disabled
-    -->
-    <key>TNArchipelAutoCheckUpdate</key>
-    <integer>1</integer>
-
-    <!--
-        if set to 1, will activate the XMPP I/O monitoring
-        BEWARE: this will decrease drastically performances.
-        - 1: enabled
-        - 0: disabled
-    -->
-    <key>TNArchipelMonitorStanza</key>
-    <integer>0</integer>
-
-    <!--
-        URL of the update server (default is http://updates.archipelproject.org)
-    -->
-    <key>TNArchipelUpdateServerURL</key>
-    <string>http://updates.archipelproject.org</string>
-
-    <!--
-        Default log level. Using trace or debug can slow down the application
-         - trace
-         - debug
-         - info
-         - warn
-         - error
-         - fatal
-    -->
-    <key>TNArchipelConsoleDebugLevel</key>
-    <string>warn</string>
-
-    <!--
-        This account is considered as the admin account of the platform.
-        Note that it is easily hackable and users can eventually make them admin and will be
-        able to display the reserved GUI parts. but it doesn't matter as in the server side
-        all of them commands will be rejected.
-    -->
-    <key>ArchipelDefaultAdminAccount</key>
-    <string>admin</string>
-
-    <!--
-        if set to 1, the ArchipelDefaultAdminAccount will only be validated against the JID's node part
-    -->
-    <key>ArchipelCheckNodeAdminAccount</key>
-    <integer>1</integer>
-
-    <!--
-        if set to 0, the add and remove contact button is not displayed. this is just a GUI thing
-    -->
-    <key>TNArchipelDisplayXMPPManageContactsButton</key>
-    <integer>1</integer>
-
-    <!--
-        this allow to configure the layout of the roster view, like size of items,
-        displaying avatar, and positionning.
-    -->
-    <key>TNArchipelRosterLayout</key>
-    <dict>
-        <key>TNOutlineViewRosterDisplayAvatar</key>
-        <integer>1</integer>
-        <key>TNOutlineViewRosterRowHeight</key>
-        <real>30.0</real>
-        <key>TNRosterDataViewContactFontSizeGroup</key>
-        <real>11.0</real>
-        <key>TNRosterDataViewContactFontSizeName</key>
-        <real>11.0</real>
-        <key>TNRosterDataViewContactFontSizeStatus</key>
-        <real>-10.0</real>
-        <key>TNRosterDataViewContactPlacementOffset</key>
-        <real>-10.0</real>
-        <key>TNRosterDataViewContactImageSizeAvatar</key>
-            <dict>
-                <key>width</key>
-                <real>22.0</real>
-                <key>height</key>
-                <real>22.0</real>
-            </dict>
-        <key>TNRosterDataViewContactImageSizeStatus</key>
-        <dict>
-            <key>width</key>
-            <real>16.0</real>
-            <key>height</key>
-            <real>16.0</real>
-        </dict>
-    </dict>
+	<key>ArchipelCheckNodeAdminAccount</key>
+	<integer>1</integer>
+	<key>ArchipelDefaultAdminAccounts</key>
+	<array>
+	    <string>admin</string>
+	</array>
+	<key>CFBundleIconFile</key>
+	<string>icon.icns</string>
+	<key>CPBundleIdentifier</key>
+	<string>org.archipelproject.archipel</string>
+	<key>CPBundleName</key>
+	<string>Archipel</string>
+	<key>CPPrincipalClass</key>
+	<string>CPApplication</string>
+	<key>LPCrashReporterLoggingURL</key>
+	<string>http://antoinemercadal.fr/archipelCrashReporting/reports.php</string>
+	<key>Main cib file base name</key>
+	<string>MainMenu.cib</string>
+	<key>TNArchipelAnimationsDuration</key>
+	<real>0.3</real>
+	<key>TNArchipelAutoCheckUpdate</key>
+	<integer>1</integer>
+	<key>TNArchipelBOSHResource</key>
+	<string>ArchipelController</string>
+	<key>TNArchipelBOSHService</key>
+	<string>http://jabber.archipelproject.org:5280/http-bind</string>
+	<key>TNArchipelConsoleDebugLevel</key>
+	<string>warn</string>
+	<key>TNArchipelCopyright</key>
+	<string>Copyright 2011 Antoine Mercadal</string>
+	<key>TNArchipelDisplayXMPPManageContactsButton</key>
+	<integer>1</integer>
+	<key>TNArchipelHelpWindowURL</key>
+	<string>http://welcome.archipelproject.org/</string>
+	<key>TNArchipelModuleLoadingDelay</key>
+	<real>0.15</real>
+	<key>TNArchipelMonitorStanza</key>
+	<integer>0</integer>
+	<key>TNArchipelRosterLayout</key>
+	<dict>
+		<key>TNOutlineViewRosterDisplayAvatar</key>
+		<integer>1</integer>
+		<key>TNOutlineViewRosterRowHeight</key>
+		<real>30</real>
+		<key>TNRosterDataViewContactFontSizeGroup</key>
+		<real>11</real>
+		<key>TNRosterDataViewContactFontSizeName</key>
+		<real>11</real>
+		<key>TNRosterDataViewContactFontSizeStatus</key>
+		<real>-10</real>
+		<key>TNRosterDataViewContactImageSizeAvatar</key>
+		<dict>
+			<key>height</key>
+			<real>22</real>
+			<key>width</key>
+			<real>22</real>
+		</dict>
+		<key>TNRosterDataViewContactImageSizeStatus</key>
+		<dict>
+			<key>height</key>
+			<real>16</real>
+			<key>width</key>
+			<real>16</real>
+		</dict>
+		<key>TNRosterDataViewContactPlacementOffset</key>
+		<real>-10</real>
+	</dict>
+	<key>TNArchipelUpdateServerURL</key>
+	<string>http://updates.archipelproject.org</string>
+	<key>TNArchipelUseAnimations</key>
+	<integer>1</integer>
+	<key>TNArchipelVersion</key>
+	<dict>
+		<key>major</key>
+		<integer>0</integer>
+		<key>minor</key>
+		<integer>2</integer>
+		<key>revision</key>
+		<integer>0</integer>
+	</dict>
+	<key>TNArchipelVersionHuman</key>
+	<string>Archipel Beta 2 (Jupiter)</string>
 </dict>
 </plist>
