@@ -51,6 +51,7 @@
 @import "Controllers/TNConnectionController.j"
 @import "Controllers/TNContactsController.j"
 @import "Controllers/TNGroupsController.j"
+@import "Controllers/TNHintController.j"
 @import "Controllers/TNModuleController.j"
 @import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
@@ -140,6 +141,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 @implementation AppController : CPObject
 {
     @outlet CPButtonBar             buttonBarLeft;
+    @outlet CPImageView             imageViewLogoAbout;
+    @outlet CPImageView             imageViewLogoHint;
     @outlet CPImageView             ledIn;
     @outlet CPImageView             ledOut;
     @outlet CPProgressIndicator     progressIndicatorModulesLoading;
@@ -149,9 +152,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPTextField             labelCurrentUser;
     @outlet CPTextField             textFieldAboutVersion;
     @outlet CPView                  filterView;
-    @outlet CPView                  hintView;
     @outlet CPView                  rightView;
     @outlet CPView                  statusBar;
+    @outlet CPView                  viewAboutWindowLogoContainer;
+    @outlet CPView                  viewRosterMask;
     @outlet CPWebView               helpView;
     @outlet CPWebView               webViewAboutCredits;
     @outlet CPWindow                theWindow;
@@ -161,6 +165,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNContactsController    contactsController;
     @outlet TNFlipView              leftView;
     @outlet TNGroupsController      groupsController;
+    @outlet TNHintController        hintController;
     @outlet TNModuleController      moduleController;
     @outlet TNPreferencesController preferencesController;
     @outlet TNPropertiesController  propertiesController;
@@ -168,7 +173,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNTagsController        tagsController;
     @outlet TNUpdateController      updateController;
     @outlet TNUserAvatarController  userAvatarController;
-    @outlet CPView                  viewRosterMask;
 
     BOOL                            _shouldShowHelpView;
     BOOL                            _tagsVisible;
@@ -188,7 +192,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPTimer                         _ledOutTimer;
     CPTimer                         _moduleLoadingDelay;
     CPWindow                        _helpWindow;
-    CPWindow                        _hintWindow;
     int                             _tempNumberOfReadyModules;
     TNiTunesTabView                 _moduleTabView;
     TNOutlineViewRoster             _rosterOutlineView;
@@ -254,6 +257,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza"
     ]];
 
+    /* images */
+    [imageViewLogoAbout setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-icon.png"]]];
+    [viewAboutWindowLogoContainer setBackgroundColor:[CPColor blackColor]];
 
     /* main split views */
     var posx;
@@ -333,7 +339,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"DADFE5"]];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"DDE4EA"]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
 
@@ -423,6 +429,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [connectionController showWindow:nil];
     [connectionController initCredentials];
 
+
     /* Version checking */
     var major = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"major"],
         minor = [[bundle objectForInfoDictionaryKey:@"TNArchipelVersion"] objectForKey:@"minor"],
@@ -432,15 +439,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.info(@"current version is " + currentVersion);
     [updateController setCurrentVersion:currentVersion]
     [updateController setURL:[CPURL URLWithString:[bundle objectForInfoDictionaryKey:@"TNArchipelUpdateServerURL"]]];
-
-
-    /* hint window */
-    _hintWindow = [[CPWindow alloc] initWithContentRect:[hintView frame] styleMask:CPHUDBackgroundWindowMask | CPTitledWindowMask | CPClosableWindowMask];
-    [[_hintWindow contentView] addSubview:hintView];
-    [[hintView viewWithTag:@"welcome"] setLineBreakMode:CPLineBreakByWordWrapping];
-    [[hintView viewWithTag:@"welcome"] setAlignment:CPJustifiedTextAlignment];
-
-    CPLog.info(@"Initialization of AppController OK");
 }
 
 /*! Creates the mainmenu. it called by awakeFromCib
@@ -800,8 +798,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     if ([[roster content] count] == 0)
     {
-        [_hintWindow center];
-        [_hintWindow makeKeyAndOrderFront:nil];
+        [self displayFirstConnectionInterface];
     }
     else
     {
@@ -910,6 +907,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         if (_ledOutTimer)
             [_ledInTimer invalidate];
     }
+}
+
+- (void)displayFirstConnectionInterface
+{
+    [hintController showWindow:nil];
 }
 
 
@@ -1153,6 +1155,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)showAboutWindow:(id)sender
 {
+    [windowAboutArchipel center];
     [windowAboutArchipel makeKeyAndOrderFront:sender];
 }
 
@@ -1342,9 +1345,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)windowWillClose:(CPWindow)aWindow
 {
     if (aWindow === _helpWindow)
-    {
         _helpWindow = nil;
-    }
 }
 
 /*! Delegate of TNOutlineView
