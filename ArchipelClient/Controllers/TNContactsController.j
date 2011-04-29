@@ -118,8 +118,7 @@
     [newContactJID setStringValue:@""];
     [newContactName setStringValue:@""];
     [mainWindow center];
-    [mainWindow orderFontWithAnimation:aSender];
-    [mainWindow makeKeyWindow];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! add a contact according to the values of the outlets
