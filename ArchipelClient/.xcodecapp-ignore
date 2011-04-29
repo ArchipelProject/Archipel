@@ -1,4 +1,4 @@
-./Build/**/*
-./Libraries/**/*
-./Categories/**/*
-./ModulesSources/**/Build/**/*
+*Build*
+*Libraries*
+*Categories*
+*.xCodeSupport*
