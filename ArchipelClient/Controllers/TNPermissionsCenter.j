@@ -36,7 +36,7 @@ var __defaultPermissionCenter;
     CPArray                 _delegates;
     CPDictionary            _disableBadgesRegistry;
     CPImageView             _imageViewControlDisabledPrototype;
-    CPString                _adminAccountName;
+    CPString                _adminAccounts;
     int                     _adminAccountValidationMode;
 }
 
@@ -62,7 +62,7 @@ var __defaultPermissionCenter;
         _disableBadgesRegistry              = [CPDictionary dictionary];
         _imageViewControlDisabledPrototype  = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 0.0, 16.0, 16.0)];
         _adminAccountValidationMode         = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelCheckNodeAdminAccount"];
-        _adminAccountName                   = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccount"];
+        _adminAccounts                      = [[CPBundle mainBundle] objectForInfoDictionaryKey:@"ArchipelDefaultAdminAccounts"];
 
         [_imageViewControlDisabledPrototype setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"denied.png"] size:CPSizeMake(16.0, 16.0)]];
     }
@@ -126,8 +126,8 @@ var __defaultPermissionCenter;
         if (![anEntity isKindOfClass:TNStropheContact])
             return NO;
 
-        if (((_adminAccountValidationMode === 1) && ([[[TNStropheIMClient defaultClient] JID] node] === _adminAccountName))
-            || ((_adminAccountValidationMode === 0) && ([[[TNStropheIMClient defaultClient] JID] bare] === _adminAccountName)))
+        if (((_adminAccountValidationMode === 1) && ([_adminAccounts containsObject:[[[TNStropheIMClient defaultClient] JID] node]]))
+            || ((_adminAccountValidationMode === 0) && ([_adminAccounts containsObject:[[[TNStropheIMClient defaultClient] JID] bare]])))
             return YES;
 
         if ([[_cachedPermissions objectForKey:anEntity] containsObject:@"all"])

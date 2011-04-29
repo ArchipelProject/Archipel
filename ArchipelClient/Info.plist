@@ -4,8 +4,10 @@
 <dict>
 	<key>ArchipelCheckNodeAdminAccount</key>
 	<integer>1</integer>
-	<key>ArchipelDefaultAdminAccount</key>
-	<string>admin</string>
+	<key>ArchipelDefaultAdminAccounts</key>
+	<array>
+	    <string>admin</string>
+	</array>
 	<key>CFBundleIconFile</key>
 	<string>icon.icns</string>
 	<key>CPBundleIdentifier</key>
