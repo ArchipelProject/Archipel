@@ -32,7 +32,7 @@ framework (NAME, function(task)
 {
     task.setBuildIntermediatesPath(FILE.join("Build", NAME + ".build", configuration));
     task.setBuildPath(FILE.join("Build", configuration));
-    task.setIncludesNibsAndXibs(false);
+    task.setPreventsNib2Cib(true);
     task.setProductName(NAME);
     task.setIdentifier( COMPANY + "." + NAME);
     task.setVersion(VERSION);
