@@ -2,7 +2,7 @@
 
 Archipel Client is a pure javascript interface written in Cappuccino that allows
 to control your several Archipel Agent. It gives you a neat interface to perform
-all the tasks you need to manage your virtual platform. Not that it just needs to 
+all the tasks you need to manage your virtual platform. Not that it just needs to
 be placed in a HTTP served directory. It doesn't need php, java, mysql or anything
 else than a decent HTML5 capable web browser.
 
@@ -40,6 +40,11 @@ at <http://app.archipelproject.org>
 * David Weber                       : contributor
 * Anonymous (npmap)                 : contributor
 
+
+# Thanks
+
+* Crashtext: main website hosting
+*
 
 # License
 

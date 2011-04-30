@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CibName</key>
+	<string>VirtualMachineDefinition</string>
+	<key>CPBundleIdentifier</key>
+	<string>org.archipelproject.virtualmachinedefinition</string>
+	<key>CPBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CPBundleName</key>
+	<string>VirtualMachineDefinition</string>
+	<key>CPBundlePackageType</key>
+	<string>280N</string>
+	<key>CPBundleVersion</key>
+	<string>1.0</string>
+	<key>CPPrincipalClass</key>
+	<string>TNVirtualMachineDefinitionController</string>
+	<key>FullscreenModule</key>
+	<integer>1</integer>
+	<key>InsertionType</key>
+	<string>tab</string>
+	<key>MandatoryPermissions</key>
+	<array>
+		<string>xmldesc</string>
+		<string>capabilities</string>
+	</array>
+	<key>PluginDisplayName</key>
+	<string>Definition</string>
+	<key>SupportedEntityTypes</key>
+	<array>
+		<string>virtualmachine</string>
+	</array>
+	<key>TabIndex</key>
+	<integer>1</integer>
+	<key>TNDescDefaultArchitecture</key>
+	<string>x86_64</string>
+	<key>TNDescDefaultBoot</key>
+	<string>hd</string>
+	<key>TNDescDefaultClockOffset</key>
+	<string>utc</string>
+	<key>TNDescDefaultDomainType</key>
+	<string>kvm</string>
+	<key>TNDescDefaultDriveCacheMode</key>
+	<string>none</string>
+	<key>TNDescDefaultGuest</key>
+	<string>hvm (x86_64)</string>
+	<key>TNDescDefaultHugePages</key>
+	<integer>0</integer>
+	<key>TNDescDefaultHypervisor</key>
+	<string>kvm</string>
+	<key>TNDescDefaultInputType</key>
+	<string>tablet</string>
+	<key>TNDescDefaultMachine</key>
+	<string>pc-0.13</string>
+	<key>TNDescDefaultMemory</key>
+	<string></string>
+	<key>TNDescDefaultNumberCPU</key>
+	<string>1</string>
+	<key>TNDescDefaultOnCrash</key>
+	<string>restart</string>
+	<key>TNDescDefaultOnPowerOff</key>
+	<string>destroy</string>
+	<key>TNDescDefaultOnReboot</key>
+	<string>restart</string>
+	<key>TNDescDefaultVNCKeymap</key>
+	<string>en-us</string>
+	<key>UseModuleMenu</key>
+	<integer>1</integer>
+</dict>
+</plist>

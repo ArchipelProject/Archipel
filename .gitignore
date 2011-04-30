@@ -4,9 +4,12 @@
 */Documentation
 *debug.txt
 *Frameworks
-*ArchipelClient/Modules.src/**/Build
+*ArchipelClient/ModulesSources/**/Build
 *ArchipelClient/Modules/**
 *.submodules_initialized
 *ArchipelAgent/**/build
 *ArchipelAgent/**/dist
 *ArchipelAgent/**/*.egg-info/**
+*ArchipelClient/.xCodeSupport
+#*ArchipelClient/Resources/*.cib
+#*ArchipelClient/ModulesSources/**/Resources/*.cib

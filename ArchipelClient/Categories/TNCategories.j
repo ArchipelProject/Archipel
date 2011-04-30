@@ -28,7 +28,6 @@
 @import "CPSearchField+CancelButton.j"
 @import "CPSegmentedControl+SegmentView.j"
 @import "CPString+UUIDRFC4122.j"
-@import "CPTableView+SelectAll.j"
 @import "CPTabView+Border.j"
 @import "CPView+Border.j"
 @import "TNStropheClient+Singleton.j"

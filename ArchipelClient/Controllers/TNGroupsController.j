@@ -107,12 +107,12 @@
 /*! overide of the orderFront
     @param sender the sender
 */
-- (IBAction)showWindow:(id)sender
+- (IBAction)showWindow:(id)aSender
 {
     [newGroupName setStringValue:@""];
 
     [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:sender];
+    [mainWindow makeKeyAndOrderFront:aSender];
 }
 
 /*! add a group according to the outlets

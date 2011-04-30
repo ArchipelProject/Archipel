@@ -20,7 +20,7 @@ import os, sys, commands, shutil, getopt
 
 GLOBAL_LAUNCH_PATH          = commands.getoutput("pwd");
 GLOBAL_BASE_PATH            = sys.path[0]
-GLOBAL_MODULES_SRC_PATH     = GLOBAL_BASE_PATH + "/Modules.src/"
+GLOBAL_MODULES_SRC_PATH     = GLOBAL_BASE_PATH + "/ModulesSources/"
 GLOBAL_MODULES_BUILD_PATH   = GLOBAL_BASE_PATH + "/Modules"
 GLOBAL_MODULES_PLIST_PATH   = GLOBAL_MODULES_BUILD_PATH + "/modules.plist";
 GLOBAL_BUILD_PATH           = GLOBAL_BASE_PATH + "/Build/$CONFIG$/Archipel/*"
@@ -337,7 +337,7 @@ def export_sdk(path):
 
 def getAllCibs():
     print "# get all cibs"
-    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e 'Modules.src/'")
+    out = commands.getoutput("find . -name \"*.cib\" | grep -v -e Build -e Libraries -e label_palette.cib -e 'ModulesSources/'")
     cibs = ""
     path = []
     for o in out.split('\n'):

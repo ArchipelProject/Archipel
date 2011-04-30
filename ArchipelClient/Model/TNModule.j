@@ -77,6 +77,7 @@ TNArchipelModuleStatusWaiting           = 2;
 {
     @outlet CPImageView             imageViewModuleReady;
     @outlet CPView                  viewPreferences             @accessors;
+    @outlet CPView                  viewMask                    @accessors;
 
     BOOL                            _isActive                   @accessors(property=isActive, readonly);
     BOOL                            _isCurrentSelectedIndex     @accessors(getter=isCurrentSelectedIndex, setter=setCurrentSelectedIndex:);
@@ -127,7 +128,6 @@ TNArchipelModuleStatusWaiting           = 2;
     _imageModuleReady = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/ready.png"] size:CPSizeMake(16.0, 16.0)];
     _imageModuleWaiting = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/waiting.png"] size:CPSizeMake(16.0, 16.0)];
     _imageModuleError = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"moduleStatus/error.png"] size:CPSizeMake(16.0, 16.0)];
-
 }
 
 
@@ -665,6 +665,32 @@ TNArchipelModuleStatusWaiting           = 2;
         CPLog.info("permissions for current entity has changed. updating")
         [self _beforeWillLoad];
     }
+}
+
+
+#pragma mark -
+#pragma mark Masking view utilities
+
+/*! show the masking view if any
+    @param aSender the sender of the object
+*/
+- (void)showMaskView:(BOOL)shouldShow
+{
+    if (shouldShow)
+    {
+        if (![viewMask superview])
+        {
+            if (![viewMask backgroundColor])
+            {
+                [viewMask setBackgroundColor:[CPColor whiteColor]];
+                [viewMask setAlphaValue:0.8];
+            }
+            [viewMask setFrame:[[self view] bounds]];
+            [[self view] addSubview:viewMask];
+        }
+    }
+    else
+        [viewMask removeFromSuperview];
 }
 
 @end

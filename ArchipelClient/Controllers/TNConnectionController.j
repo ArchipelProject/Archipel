@@ -74,30 +74,32 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [mainWindow setDefaultButton:connectButton];
 
     [password setSecure:YES];
+    [password setNeedsLayout]; // for some reasons, with XCode 4, setSecure doesn't work every time. this force it to relayout
+
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
 
     [labelTitle setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"logon"]];
-    [labelTitle setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelTitle setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
-    [labelJID setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelJID setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelJID setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"jid"]];
 
-    [labelPassword setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelPassword setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelPassword setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"password"]];
 
-    [labelBoshService setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelBoshService setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelBoshService setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"bosh-service"]];
 
-    [labelRemember setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [labelRemember setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelRemember setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
     [labelRemember setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"remember"]];
 
-    [message setTextShadowOffset:CGSizeMake(0.0, 1.0)];
+    [message setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
@@ -210,6 +212,23 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 #pragma mark -
 #pragma mark Actions
 
+/*! show the window
+    @param sender the sender
+*/
+- (IBAction)showWindow:(id)sender
+{
+    [mainWindow center];
+    [mainWindow makeKeyAndOrderFront:nil];
+}
+
+/*! hide the window
+    @param sender the sender
+*/
+- (IBAction)hideWindow:(id)sender
+{
+    [mainWindow close];
+}
+
 /*! connection action
     @param sender the sender
 */
@@ -314,9 +333,9 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
     _isConnecting = YES;
-
     [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"connecting"]];
     [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"cancel"]];
+    [connectButton setNeedsLayout];
     [spinning setHidden:NO];
 }
 
@@ -357,7 +376,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheAuthenticating:(TNStropheIMClient)aStropheClient
 {
     [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"authenticating"]];
-
     CPLog.info(@"XMPP authenticating...");
 }
 

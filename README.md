@@ -51,6 +51,12 @@ If you find some errors, please feel free to correct them.
 * Anonymous (npmap)                 : contributor
 
 
+# Thanks
+
+* Alexandre Fernadez (crashtext)    : main website hosting
+* 
+
+
 # License
 
 Archipel is distributed under AGPL v3. See the LICENSE file

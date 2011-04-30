@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AlternativePluginDisplayName</key>
+	<string>Hide Sample</string>
+	<key>AlternativeToolbarIcon</key>
+	<string>icon-alt.png</string>
+	<key>CibName</key>
+	<string>ToolbarMigration</string>
+	<key>CPBundleIdentifier</key>
+	<string>org.archipelproject.toolbarmigration</string>
+	<key>CPBundleInfoDictionaryVersion</key>
+	<string>1.0</string>
+	<key>CPBundleName</key>
+	<string>ToolbarMigration</string>
+	<key>CPBundlePackageType</key>
+	<string>280N</string>
+	<key>CPBundleVersion</key>
+	<string>1.0</string>
+	<key>CPPrincipalClass</key>
+	<string>TNToolbarMigrationController</string>
+	<key>InsertionType</key>
+	<string>toolbar</string>
+	<key>PluginDisplayName</key>
+	<string>Migration</string>
+	<key>ToolbarIcon</key>
+	<string>icon.png</string>
+	<key>ToolbarIndex</key>
+	<string>502</string>
+	<key>ToolbarItemOnly</key>
+	<integer>0</integer>
+	<key>ToolTip</key>
+	<string>Show a general live migration interface</string>
+</dict>
+</plist>
