@@ -285,9 +285,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     _isActive = ((XMPPShow == TNStropheContactStatusOnline) || (XMPPShow == TNStropheContactStatusAway));
 
     if (XMPPShow == TNStropheContactStatusBusy)
-        [self showMaskView:YES];
-    else
         [self showMaskView:NO];
+    else
+        [self showMaskView:YES];
 }
 
 
