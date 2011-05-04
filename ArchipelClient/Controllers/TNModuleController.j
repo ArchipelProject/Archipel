@@ -152,6 +152,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var center = [CPNotificationCenter defaultCenter];
 
     [self _removeAllTabsFromModulesTabView];
+    [_infoTextField setStringValue:@""];
 
     _numberOfActiveModules  = 0;
     _numberOfReadyModules   = 0;
@@ -185,7 +186,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
                 [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
             }
-
             [center postNotificationName:TNArchipelModulesReadyNotification object:self];
         }
     }

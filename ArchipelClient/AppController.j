@@ -329,7 +329,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rightViewTextField setFrame:CPRectMake(bounds.size.width / 2 - 300, 153, 600, 200)];
     [_rightViewTextField setAutoresizingMask: CPViewMaxXMargin | CPViewMinXMargin];
     [_rightViewTextField setAlignment:CPCenterTextAlignment]
-    [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:18]];
+    [_rightViewTextField setFont:[CPFont boldSystemFontOfSize:26]];
     [_rightViewTextField setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:_rightViewTextField];
 

@@ -83,7 +83,7 @@
         [_events setAlignment:CPCenterTextAlignment];
         [_events setAutoresizingMask:CPViewMinXMargin];
         [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
-        [_events setFont:[CPFont boldSystemFontOfSize:11]];
+        [_events setFont:[CPFont boldFontWithName:@"Arial" size:11]];
         [_events setTextColor:[CPColor whiteColor]];
         [_events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [_events setValue:_normalStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
@@ -154,7 +154,6 @@
     var boundsShow = [_status frame];
     boundsShow.size.width += 10;
     [_status setFrame:boundsShow];
-
 
     [_statusIcon setImage:[aContact statusIcon]];
 
