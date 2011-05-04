@@ -49,7 +49,6 @@ from archipelcore.archipelPermissionCenter import TNArchipelPermissionCenter
 from archipelcore.archipelRosterQueryableEntity import TNRosterQueryableEntity
 from archipelcore.archipelTaggableEntity import TNTaggableEntity
 from archipelcore.utils import build_error_iq, build_error_message
-import archipelcore.archipelTriggers
 
 from archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR, generate_mac_adress
 import archipelLibvirtEntity
@@ -115,8 +114,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
         self.is_migrating               = False
         self.libvirt_event_callback_id  = None
-        self.triggers                   = {}
-        self.watchers                   = {}
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
 
@@ -131,11 +128,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         # create VM folders if not exists
         if not os.path.isdir(self.folder):
             os.makedirs(self.folder)
-
-        # triggers
-        self.triggers_db_file = self.folder + "/triggers.sqlite3"
-        self.log.info("Creating/opening the trigger database file %s" % self.triggers_db_file)
-        self.trigger_database = sqlite3.connect(self.triggers_db_file, check_same_thread=False)
 
         # permissions
         self.permission_db_file = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
@@ -160,7 +152,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.create_hook("HOOK_XMPP_DISCONNECT")
 
         # actions on auth
-        self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_trigger_persistance)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.connect_domain)
         self.register_hook("HOOK_ARCHIPELENTITY_XMPP_AUTHENTICATED", method=self.manage_vcard_hook)
 
@@ -318,10 +309,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.log.info("Virtual machine state is %d" % dominfo[0])
             if dominfo[0] == libvirt.VIR_DOMAIN_RUNNING or dominfo[0] == libvirt.VIR_DOMAIN_BLOCKED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_ON)
             elif dominfo[0] == libvirt.VIR_DOMAIN_PAUSED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
             elif dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN:
@@ -332,7 +321,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
                 self.log.info("Exception raised %s : %s" % (ex.get_error_code(), ex))
                 self.domain = None
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
             else:
                 self.log.error("Exception raised %s : %s" % (ex.get_error_code(), ex))
 
@@ -382,37 +370,30 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             if event == libvirt.VIR_DOMAIN_EVENT_STARTED  and not detail == libvirt.VIR_DOMAIN_EVENT_STARTED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "created")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_ON)
                 self.perform_hooks("HOOK_VM_CREATE")
             elif event == libvirt.VIR_DOMAIN_EVENT_SUSPENDED and not detail == libvirt.VIR_DOMAIN_EVENT_SUSPENDED_MIGRATED:
                 self.change_presence("away", ARCHIPEL_XMPP_SHOW_PAUSED)
                 self.push_change("virtualmachine:control", "suspended")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_SUSPEND")
             elif event == libvirt.VIR_DOMAIN_EVENT_RESUMED and not detail == libvirt.VIR_DOMAIN_EVENT_RESUMED_MIGRATED:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_RUNNING)
                 self.push_change("virtualmachine:control", "resumed")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_RESUME")
             elif event == libvirt.VIR_DOMAIN_EVENT_STOPPED and not detail == libvirt.VIR_DOMAIN_EVENT_STOPPED_MIGRATED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:control", "shutdowned")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_STOP")
             elif event == libvirt.VIR_DOMAIN_CRASHED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_CRASHED)
                 self.push_change("virtualmachine:control", "crashed")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_CRASH")
             elif event == libvirt.VIR_DOMAIN_SHUTOFF:
                 self.change_presence("", ARCHIPEL_XMPP_SHOW_SHUTOFF)
                 self.push_change("virtualmachine:control", "shutoff")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_SHUTOFF")
             elif event == libvirt.VIR_DOMAIN_EVENT_UNDEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_NOT_DEFINED)
                 self.push_change("virtualmachine:definition", "undefined")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_UNDEFINE")
                 self.domain = None
                 self.description = None
@@ -420,7 +401,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             elif event == libvirt.VIR_DOMAIN_EVENT_DEFINED:
                 self.change_presence("xa", ARCHIPEL_XMPP_SHOW_SHUTDOWNED)
                 self.push_change("virtualmachine:definition", "defined")
-                self.triggers["libvirt_run"].set_state(archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_STATE_OFF)
                 self.perform_hooks("HOOK_VM_DEFINE")
         except Exception as ex:
             self.log.error("%s: Unable to change state %d:%d : %s" % (self.jid.getStripped(), event, detail, str(ex)))
@@ -453,32 +433,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.perform_hooks("HOOK_XMPP_DISCONNECT")
         TNArchipelEntity.disconnect(self)
 
-    def manage_trigger_persistance(self, origin=None, user_info=None, arguments=None):
-        """
-        Create or read the trigger database.
-        """
-        self.log.info("Populating trigger database if not exists.")
-        self.trigger_database.execute("create table if not exists triggers (name text, description text, mode integer, check_method text, check_interval integer)")
-        self.trigger_database.execute("create table if not exists watchers (name text, targetjid text, triggername text, triggeronaction text, triggeroffaction text, state integer)")
-        c = self.trigger_database.cursor()
-
-        c.execute("select * from triggers")
-        for trigger in c:
-            name, description, mode, check_method, check_interval = trigger
-            self.log.info("Recovering trigger %s" % name)
-            self.triggers[name] = archipelcore.archipelTriggers.TNArchipelTrigger(self, name, description) #FIXME : get the rest of the implementation
-
-        c.execute("select * from watchers")
-        for watcher in c:
-            name, targetjid, triggername, triggeronaction, triggeroffaction, state = watcher
-            self.log.info("Recovering watcher from trigger %s" % triggername)
-            try:
-                self.watchers[name] = archipelcore.archipelTriggers.TNArchipelTriggerWatcher(self, name, xmpp.JID(targetjid), triggername, getattr(self, triggeronaction), getattr(self, triggeroffaction))
-                if state == archipelcore.archipelTriggers.ARCHIPEL_WATCHER_STATE_ON:
-                    self.watchers[name].watch()
-            except Exception as ex:
-                self.log.error("Can't recover watcher %s: %s" % (name, str(ex)))
-        self.add_trigger("libvirt_run", "basic trigger based on libvirt RUNNING state")
 
     def add_jid_hook(self, origin=None, user_info=None, arguments=None):
         """
@@ -908,50 +862,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             shutil.copy("%s/%s" % (src_path, token), self.folder)
         self.define(newxml)
 
-    def add_trigger(self, name, description):
-        """
-        do not use
-        """
-        if name in self.triggers:
-            return
-        self.triggers[name] = archipelcore.archipelTriggers.TNArchipelTrigger(self, name, description)
-        self.trigger_database.execute("insert into triggers values(?,?,?,?,?)", (name, description, archipelcore.archipelTriggers.ARCHIPEL_TRIGGER_MODE_MANUAL, "", -1))
-        self.trigger_database.commit()
-
-    def remove_trigger(self, name):
-        """
-        do not use
-        """
-        if not name in self.triggers:
-            return
-        self.trigger_database.execute("delete from triggers where name='%s'" % (name))
-        self.trigger_database.commit()
-        self.triggers[name].delete_pubsub_node()
-        del self.triggers[name]
-
-    def add_watcher(self, name, targetjid, triggername, onaction, offaction, state=archipelcore.archipelTriggers.ARCHIPEL_WATCHER_STATE_ON):
-        """
-        do not use
-        """
-        if name in self.watchers:
-            return
-        self.watchers[name] = archipelcore.archipelTriggers.TNArchipelTriggerWatcher(self, name, targetjid, triggername, onaction, offaction)
-        self.trigger_database.execute("insert into watchers values(?,?,?,?,?,?)", (name, str(targetjid), triggername, onaction.__name__, offaction.__name__, state))
-        self.trigger_database.commit()
-        if state == archipelcore.archipelTriggers.ARCHIPEL_WATCHER_STATE_ON:
-            self.watchers[name].watch()
-
-    def remove_watcher(self, name, force=False):
-        """
-        do not use
-        """
-        if not force and not name in self.watchers:
-            return
-        self.trigger_database.execute("delete from watchers where triggername='%s'" % (name))
-        self.trigger_database.commit()
-        self.watchers[name].unwatch()
-        del self.watchers[name]
-
     def terminate(self):
         """
         This method is called by hypervisor when VM is freed.
@@ -960,9 +870,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         self.perform_hooks("HOOK_VM_TERMINATE")
         self.permission_center.close_database()
-        self.trigger_database.close()
         os.unlink(self.permission_db_file)
-        os.unlink(self.triggers_db_file)
         self.remove_folder()
 
 
