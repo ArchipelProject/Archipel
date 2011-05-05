@@ -294,7 +294,10 @@ class TNArchipelEntity (object):
         @rtype: Boolean
         @return: True in case of success
         """
-        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=[]) #debug=['dispatcher', 'nodebuilder', 'protocol'])
+        debug_mode = []
+        if self.configuration.has_option("LOGGING", "xmpppy_debug") and self.configuration.getboolean("LOGGING", "xmpppy_debug"):
+            debug_mode = ['always', 'nodebuilder']
+        self.xmppclient = xmpp.Client(self.jid.getDomain(), debug=debug_mode) #debug=['dispatcher', 'nodebuilder', 'protocol'])
         if self.xmppclient.connect() == "":
             self.log.error("Unable to connect to XMPP server.")
             if self.auto_reconnect:
