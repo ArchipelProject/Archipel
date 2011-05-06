@@ -117,10 +117,10 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 // this doesn't work with xcodecapp for some mysterious reasons
 TNUserAvatarSize            = nil;
 
-var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Available"),
-    TNArchipelStatusAwayLabel       = CPLocalizedString(@"Away", @"Away"),
-    TNArchipelStatusBusyLabel       = CPLocalizedString(@"Busy", @"Busy"),
-    TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
+var TNArchipelStatusAvailableLabel  = @"Available",
+    TNArchipelStatusAwayLabel       = @"Away",
+    TNArchipelStatusBusyLabel       = @"Busy",
+    TNArchipelStatusDNDLabel        = @"Do not disturb",
     TNToolBarItemLogout             = @"TNToolBarItemLogout",
     TNToolBarItemTags               = @"TNToolBarItemTags",
     TNToolBarItemHelp               = @"TNToolBarItemHelp",
@@ -239,8 +239,6 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
     [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
     CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
-    CPLog.trace(@"registering for notification TNPreferencesControllerLocaleChangeNotification");
-    [center addObserver:self selector:@selector(didLocalChange:) name:TNPreferencesControllerLocaleChangeNotification object:preferencesController];
 
 
     /* register defaults defaults */
@@ -568,13 +566,19 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
     [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:CPLocalizedString(@"Help", @"Help") icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
 
-    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 120.0, 24.0)],
+    var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
         DNDItem         = [[CPMenuItem alloc] init],
         statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:CPLocalizedString(@"Status", @"Status") view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
+
+    // localize the status label
+    TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Available"),
+    TNArchipelStatusAwayLabel       = CPLocalizedString(@"Away", @"Away"),
+    TNArchipelStatusBusyLabel       = CPLocalizedString(@"Busy", @"Busy"),
+    TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
 
     [statusSelector setToolTip:CPLocalizedString(@"Update your current XMPP status", @"Update your current XMPP status")];
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
@@ -593,8 +597,8 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
     [DNDItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/dnd.png"]]];
     [statusSelector addItem:DNDItem];
 
-    [statusItem setMinSize:CPSizeMake(120.0, 24.0)];
-    [statusItem setMaxSize:CPSizeMake(120.0, 24.0)];
+    [statusItem setMinSize:CPSizeMake(123.0, 24.0)];
+    [statusItem setMaxSize:CPSizeMake(123.0, 24.0)];
 
     [_mainToolbar setPosition:0 forToolbarItemIdentifier:@"CUSTOMSPACE"];
     [_mainToolbar setPosition:1 forToolbarItemIdentifier:TNToolBarItemStatus];
@@ -860,35 +864,6 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
 }
 
 
-/*! Called when the locale change.
-    This message will update all GUI objects
-    @param aNotification the notification
-*/
-- (void)didLocalChange:(CPNotification)aNotification
-{
-    alert([[CPUserDefaults standardUserDefaults] objectForKey:@"CPBundleLocale"]);
-    // tooltips
-    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
-    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
-    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
-    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
-    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
-    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
-    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
-    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
-    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
-    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
-    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
-    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
-    [statusSelector setToolTip:CPLocalizedString(@"Update your current XMPP status", @"Update your current XMPP status")];
-    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
-    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
-    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
-    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
-    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
-}
-
-
 #pragma mark -
 #pragma mark Utilities
 
@@ -899,12 +874,13 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
     var bundle      = [CPBundle mainBundle],
         defaults    = [CPUserDefaults standardUserDefaults],
         url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
+        locale      = [defaults objectForKey:@"CPBundleLocale"],
         version     = [defaults objectForKey:@"TNArchipelVersionHuman"];
 
     if (!url || (url == @"local"))
         url = @"help/index.html";
 
-    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
+    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version + "&lang=" + locale];
 
     [helpView setFrame:[rightView bounds]];
     [rightView addSubview:helpView];
@@ -1547,7 +1523,7 @@ var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Availabl
 - (void)moduleLoader:(TNModuleController)aLoader loadedBundle:(CPBundle)aBundle progress:(float)percent
 {
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewRosterMask viewWithTag:1] setStringValue:@"Loaded " + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [[viewRosterMask viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded

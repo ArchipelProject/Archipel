@@ -31,7 +31,6 @@
 @import "../Views/TNSwitch.j"
 
 TNPreferencesControllerSavePreferencesRequestNotification = @"TNPreferencesControllerSavePreferencesRequestNotification";
-TNPreferencesControllerLocaleChangeNotification           = @"TNPreferencesControllerLocaleChangeNotification";
 
 var TNArchipelXMPPPrivateStoragePrefsNamespace  = "archipel:preferences",
     TNArchipelXMPPPrivateStoragePrefsKey        = @"archipel";
@@ -256,7 +255,10 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [mainWindow close];
 
     if (oldLocale != [defaults objectForKey:@"CPBundleLocale"])
-        [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerLocaleChangeNotification object:self];
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
+                          informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")];
+    }
 }
 
 /*! clean the content of the XMPP storage

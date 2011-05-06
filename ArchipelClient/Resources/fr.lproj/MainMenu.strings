@@ -45,10 +45,10 @@
 "893.title" = "Annuler";
 
 /* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
-"894.title" = "JID:";
+"894.title" = "JID";
 
 /* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "898"; */
-"898.title" = "Surnom:";
+"898.title" = "Surnom";
 
 /* Class = "NSTextFieldCell"; placeholderString = "John Doe"; ObjectID = "899"; */
 "899.placeholderString" = "John Doe";
@@ -198,19 +198,19 @@
 "1055.placeholderString" = "Bureau";
 
 /* Class = "NSTextFieldCell"; title = "Welcome page URL:"; ObjectID = "1056"; */
-"1056.title" = "URL de la page d'accueil:";
+"1056.title" = "URL de la page d'accueil";
 
 /* Class = "NSTextFieldCell"; title = "Module loading delay:"; ObjectID = "1057"; */
-"1057.title" = "Delai de chargement des modules:";
+"1057.title" = "Delai chargement des modules";
 
 /* Class = "NSTextFieldCell"; title = "BOSH resource:"; ObjectID = "1058"; */
-"1058.title" = "Ressource BOSH:";
+"1058.title" = "Ressource BOSH";
 
 /* Class = "NSTextFieldCell"; title = "Debug level:"; ObjectID = "1059"; */
-"1059.title" = "Niveau de log:";
+"1059.title" = "Niveau de log";
 
 /* Class = "NSTextFieldCell"; title = "Use animation:"; ObjectID = "1060"; */
-"1060.title" = "Utiliser les animations:";
+"1060.title" = "Utiliser les animations";
 
 /* Class = "NSTextFieldCell"; title = "This change need to reconnect to be considered by XMPP server."; ObjectID = "1063"; */
 "1063.title" = "Ce parametre nécessite de redemarrer.";
@@ -222,10 +222,10 @@
 "1074.title" = "Utiliser la surveillance XMPP peut impacter les performances.";
 
 /* Class = "NSTextFieldCell"; title = "XMPP monitoring:"; ObjectID = "1075"; */
-"1075.title" = "Surveillance XMPP:";
+"1075.title" = "Surveillance XMPP";
 
 /* Class = "NSTextFieldCell"; title = "Updates:"; ObjectID = "1077"; */
-"1077.title" = "Mise à jour:";
+"1077.title" = "Mise à jour";
 
 /* Class = "NSButtonCell"; title = "Check now"; ObjectID = "1079"; */
 "1079.title" = "Vérifier";
@@ -324,8 +324,8 @@
 "1333.title" = "Affichage";
 
 /* Class = "NSTextFieldCell"; title = "Display welcome message:"; ObjectID = "1334"; */
-"1334.title" = "Afficher le message de bienvenue:";
+"1334.title" = "Afficher le message d'accueil";
 
 /* Class = "NSTextFieldCell"; title = "Language:"; ObjectID = "1339"; */
-"1339.title" = "Langue:";
+"1339.title" = "Langue";
 

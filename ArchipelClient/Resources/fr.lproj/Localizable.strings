@@ -179,6 +179,12 @@
 /* JID is not valid */
 "JID is not valid" = "le JID n'est pas valide";
 
+/* Loaded  */
+"Loaded " = "Chargé ";
+
+/* Locale change */
+"Locale change" = "Changement de langue";
+
 /* Log out */
 "Log out" = "Déconnexion";
 
@@ -237,22 +243,22 @@
 "Select previous entity" = "Séléctionner l'entité précédente";
 
 /* Set custom status */
-"Set custom status" = "Définir le status personalisé";
+"Set custom status" = "Définir le statut personalisé";
 
 /* Set status available */
-"Set status available" = "Définir le status 'Disponible'";
+"Set status available" = "Définir le statut 'Disponible'";
 
 /* Set status away */
-"Set status away" = "Définir le status 'Parti(e)'";
+"Set status away" = "Définir le statut 'Parti(e)'";
 
 /* Set status busy */
-"Set status busy" = "Définir le status 'Occupé'";
+"Set status busy" = "Définir le statut 'Occupé'";
 
 /* Set the log level of the client. The more verbose, the less performance. */
 "Set the log level of the client. The more verbose, the less performance." = "Configure le niveau de log du client. Un niveau de log trop élevé entraine une baisse des performances";
 
 /* Status */
-"Status" = "Status";
+"Status" = "Statut";
 
 /* Subscription request */
 "Subscription request" = "Demande de souscription";
@@ -312,7 +318,7 @@
 "unknown-error" = "Erreur inconnue";
 
 /* Update your current XMPP status */
-"Update your current XMPP status" = "Mettre à jour le status XMPP";
+"Update your current XMPP status" = "Mettre à jour le statut XMPP";
 
 /* User supression */
 "User supression" = "Supprimer un utilisateur";
@@ -332,6 +338,9 @@
 /* You must enter a JID using the form user@domain. */
 "You must enter a JID using the form user@domain." = "Vous devez entrer un JID de la forme utilisateur@domaine.com.";
 
+/* You need to reload the application to complete the locale change. */
+"You need to reload the application to complete the locale change." = "Vous devez recharger l'application pour que le changement de langue prenne effet.";
+
 /* Your status is now  */
-"Your status is now " = "Votre status est maintenant ";
+"Your status is now " = "Votre statut est maintenant ";
 

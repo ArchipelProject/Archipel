@@ -1361,7 +1361,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="787818801">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Afficher le message de bienvenue:</string>
+							<string key="NSContents">Afficher le message d'accueil</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="568715122"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1431,7 +1431,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="188574559">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Mise à jour:</string>
+							<string key="NSContents">Mise à jour</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="919373100"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1448,7 +1448,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="400262654">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Surveillance XMPP:</string>
+							<string key="NSContents">Surveillance XMPP</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="986017202"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1520,7 +1520,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="42779113">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Langue:</string>
+							<string key="NSContents">Langue</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="625572724"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1602,7 +1602,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="749840904">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Utiliser les animations:</string>
+							<string key="NSContents">Utiliser les animations</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="707169002"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1619,7 +1619,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="925595354">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Niveau de log:</string>
+							<string key="NSContents">Niveau de log</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="682986045"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1636,7 +1636,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="807174824">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Ressource BOSH:</string>
+							<string key="NSContents">Ressource BOSH</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="786815752"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1653,7 +1653,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="79630836">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Delai de chargement des modules:</string>
+							<string key="NSContents">Delai chargement des modules</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="874345940"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1670,7 +1670,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="556691110">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">URL de la page d'accueil:</string>
+							<string key="NSContents">URL de la page d'accueil</string>
 							<reference key="NSSupport" ref="244038108"/>
 							<reference key="NSControlView" ref="120102838"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1845,7 +1845,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="593729450">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">JID:</string>
+								<string key="NSContents">JID</string>
 								<reference key="NSSupport" ref="244038108"/>
 								<reference key="NSControlView" ref="934311828"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1881,7 +1881,7 @@
 							<object class="NSTextFieldCell" key="NSCell" id="560856099">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">71304192</int>
-								<string key="NSContents">Surnom:</string>
+								<string key="NSContents">Surnom</string>
 								<reference key="NSSupport" ref="244038108"/>
 								<reference key="NSControlView" ref="804420603"/>
 								<reference key="NSBackgroundColor" ref="970791577"/>

@@ -102,6 +102,10 @@
 	<string>Chacher le menu principal</string>
 	<key>JID is not valid</key>
 	<string>le JID n'est pas valide</string>
+	<key>Loaded </key>
+	<string>Chargé </string>
+	<key>Locale change</key>
+	<string>Locale change</string>
 	<key>Log out</key>
 	<string>Déconnexion</string>
 	<key>Logon</key>
@@ -141,17 +145,17 @@
 	<key>Select previous entity</key>
 	<string>Séléctionner l'entité précédente</string>
 	<key>Set custom status</key>
-	<string>Définir le status personalisé</string>
+	<string>Définir le statut personalisé</string>
 	<key>Set status available</key>
-	<string>Définir le status 'Disponible'</string>
+	<string>Définir le statut 'Disponible'</string>
 	<key>Set status away</key>
-	<string>Définir le status 'Parti(e)'</string>
+	<string>Définir le statut 'Parti(e)'</string>
 	<key>Set status busy</key>
-	<string>Définir le status 'Occupé'</string>
+	<string>Définir le statut 'Occupé'</string>
 	<key>Set the log level of the client. The more verbose, the less performance.</key>
 	<string>Configure le niveau de log du client. Un niveau de log trop élevé entraine une baisse des performances</string>
 	<key>Status</key>
-	<string>Status</string>
+	<string>Statut</string>
 	<key>Subscription request</key>
 	<string>Demande de souscription</string>
 	<key>Tags</key>
@@ -189,7 +193,7 @@
 	<key>Undo</key>
 	<string>Defaire</string>
 	<key>Update your current XMPP status</key>
-	<string>Mettre à jour le status XMPP</string>
+	<string>Mettre à jour le statut XMPP</string>
 	<key>User supression</key>
 	<string>Supprimer un utilisateur</string>
 	<key>You can't assign tags here</key>
@@ -202,8 +206,10 @@
 	<string>Vous devez choisir un groupe</string>
 	<key>You must enter a JID using the form user@domain.</key>
 	<string>Vous devez entrer un JID de la forme utilisateur@domaine.com.</string>
+	<key>You need to reload the application to complete the locale change.</key>
+	<string>Vous devez recharger l'application pour que le changement de langue prenne effet.</string>
 	<key>Your status is now </key>
-	<string>Votre status est maintenant </string>
+	<string>Votre statut est maintenant </string>
 	<key>authenticating</key>
 	<string>Authentification</string>
 	<key>authentification-failed</key>

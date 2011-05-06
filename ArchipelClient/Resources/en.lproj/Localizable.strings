@@ -179,6 +179,12 @@
 /* JID is not valid */
 "JID is not valid" = "JID is not valid";
 
+/* Loaded  */
+"Loaded " = "Loaded ";
+
+/* Locale change */
+"Locale change" = "Locale change";
+
 /* Log out */
 "Log out" = "Log out";
 
@@ -331,6 +337,9 @@
 
 /* You must enter a JID using the form user@domain. */
 "You must enter a JID using the form user@domain." = "You must enter a JID using the form user@domain.";
+
+/* You need to reload the application to complete the locale change. */
+"You need to reload the application to complete the locale change." = "You need to reload the application to complete the locale change.";
 
 /* Your status is now  */
 "Your status is now " = "Your status is now ";

@@ -102,6 +102,10 @@
 	<string>Hide main menu</string>
 	<key>JID is not valid</key>
 	<string>JID is not valid</string>
+	<key>Loaded </key>
+	<string>Loaded </string>
+	<key>Locale change</key>
+	<string>Locale change</string>
 	<key>Log out</key>
 	<string>Log out</string>
 	<key>Logon</key>
@@ -202,6 +206,8 @@
 	<string>You must choose a group</string>
 	<key>You must enter a JID using the form user@domain.</key>
 	<string>You must enter a JID using the form user@domain.</string>
+	<key>You need to reload the application to complete the locale change.</key>
+	<string>You need to reload the application to complete the locale change.</string>
 	<key>Your status is now </key>
 	<string>Your status is now </string>
 	<key>authenticating</key>
