@@ -84,19 +84,15 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [labelJID setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelJID setStringValue:CPLocalizedString(@"JID:", @"JID:")];
 
     [labelPassword setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelPassword setStringValue:CPLocalizedString(@"Password:", @"Password:")];
 
     [labelBoshService setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelBoshService setStringValue:CPLocalizedString(@"BOSH Service:", @"BOSH Service:")];
 
     [labelRemember setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelRemember setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelRemember setStringValue:CPLocalizedString(@"Remember:", @"Remember:")];
 
     [message setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
@@ -112,7 +108,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
         + @"from the history, just be sure to have entered your JID and switch down the button.                \n")];
 
     [connectButton setBezelStyle:CPRoundedBezelStyle];
-    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didJIDChange:) name:CPControlTextDidChangeNotification object:JID];
 }
