@@ -23,7 +23,6 @@
 @import <AppKit/CPTextField.j>
 
 @import <StropheCappuccino/TNStropheStanza.j>
-@import <TNKit/TNLocalizationCenter.j>
 
 @import "../Model/TNDatasourceRoster.j"
 @import "../Views/TNModalWindow.j"
@@ -79,41 +78,41 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [credentialRemember setTarget:self];
     [credentialRemember setAction:@selector(rememberCredentials:)];
 
-    [labelTitle setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"logon"]];
+    [labelTitle setStringValue:CPLocalizedString(@"Logon", @"Logon")];
     [labelTitle setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelTitle setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
     [labelJID setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelJID setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelJID setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"jid"]];
+    [labelJID setStringValue:CPLocalizedString(@"JID:", @"JID:")];
 
     [labelPassword setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelPassword setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelPassword setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"password"]];
+    [labelPassword setStringValue:CPLocalizedString(@"Password:", @"Password:")];
 
     [labelBoshService setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelBoshService setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelBoshService setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"bosh-service"]];
+    [labelBoshService setStringValue:CPLocalizedString(@"BOSH Service:", @"BOSH Service:")];
 
     [labelRemember setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelRemember setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
-    [labelRemember setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"remember"]];
+    [labelRemember setStringValue:CPLocalizedString(@"Remember:", @"Remember:")];
 
     [message setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [message setValue:[CPColor whiteColor] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
 
     [labelTitle setTextColor:[CPColor colorWithHexString:@"000000"]];
 
-    [JID setToolTip:@"The JID to use to connect. It is always formatted like user@domain.com"];
-    [password setToolTip:@"The password associated to your XMPP account"];
-    [boshService setToolTip:@"The service BOSH (XMPP over HTTP) to use"];
-    [credentialRemember setToolTip:@"Turn this ON to remember your credential and connect automatically. Note that "
+    [JID setToolTip:CPLocalizedString(@"The JID to use to connect. It is always formatted like user@domain.com", @"The JID to use to connect. It is always formatted like user@domain.com")];
+    [password setToolTip:CPLocalizedString(@"The password associated to your XMPP account", @"The password associated to your XMPP account")];
+    [boshService setToolTip:CPLocalizedString(@"The service BOSH (XMPP over HTTP) to use", @"The service BOSH (XMPP over HTTP) to use")];
+    [credentialRemember setToolTip:CPLocalizedString(@"CREDENTIAL_REMEMBER_TOOLTIP", @"Turn this ON to remember your credential and connect automatically. Note that "
         + @"all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to "
         + @"at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials "
-        + @"from the history, just be sure to have entered your JID and switch down the button.                \n"];
+        + @"from the history, just be sure to have entered your JID and switch down the button.                \n")];
 
     [connectButton setBezelStyle:CPRoundedBezelStyle];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didJIDChange:) name:CPControlTextDidChangeNotification object:JID];
 }
@@ -317,13 +316,13 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     switch (anError)
     {
         case "host-unknown":
-            [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"host-unreachable"]];
+            [message setStringValue:CPLocalizedString(@"host-unreachable", @"host-unreachable")];
             break;
         default:
             [message setStringValue:anError];
     }
     [connectButton setEnabled:YES];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
     [spinning setHidden:YES];
 }
 
@@ -333,8 +332,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheConnecting:(TNStropheIMClient)aStropheClient
 {
     _isConnecting = YES;
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"connecting"]];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"cancel"]];
+    [message setStringValue:CPLocalizedString(@"connecting", @"connecting")];
+    [connectButton setTitle:CPLocalizedString(@"cancel", @"cancel")];
     [connectButton setNeedsLayout];
     [spinning setHidden:NO];
 }
@@ -346,7 +345,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 {
     _isConnecting = NO;
 
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"connected"]];
+    [message setStringValue:CPLocalizedString(@"connected", @"connected")];
     [spinning setHidden:YES];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveUserVCard:) name:TNStropheClientVCardReceived object:aStropheClient];
@@ -364,8 +363,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"connection-failed"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
+    [message setStringValue:CPLocalizedString(@"connection-failed", @"connection-failed")];
 
     CPLog.info(@"XMPP connection failed");
 }
@@ -375,7 +374,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheAuthenticating:(TNStropheIMClient)aStropheClient
 {
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"authenticating"]];
+    [message setStringValue:CPLocalizedString(@"authenticating", @"authenticating")];
     CPLog.info(@"XMPP authenticating...");
 }
 
@@ -388,8 +387,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"authentification-failed"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
+    [message setStringValue:CPLocalizedString(@"authentification-failed", @"authentification-failed")];
 
     CPLog.info(@"XMPP auth failed");
 }
@@ -403,8 +402,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"unknown-error"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
+    [message setStringValue:CPLocalizedString(@"unknown-error", @"unknown-error")];
 
     CPLog.info(@"XMPP unknown error");
 }
@@ -415,7 +414,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)onStropheDisconnecting:(TNStropheIMClient)aStropheClient
 {
     [spinning setHidden:NO];
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"disconnecting"]];
+    [message setStringValue:CPLocalizedString(@"disconnecting", @"disconnecting")];
 
     CPLog.info(@"XMPP is disconnecting");
 }
@@ -428,8 +427,8 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
-    [connectButton setTitle:[[TNLocalizationCenter defaultCenter] localize:@"connect"]];
-    [message setStringValue:[[TNLocalizationCenter defaultCenter] localize:@"disconnected"]];
+    [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];
+    [message setStringValue:CPLocalizedString(@"disconnected", @"disconnected")];
 
     CPLog.info(@"XMPP connection is now disconnected");
 }

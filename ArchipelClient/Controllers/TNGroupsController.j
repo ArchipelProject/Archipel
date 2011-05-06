@@ -47,7 +47,7 @@
 */
 - (void)awakeFromCib
 {
-    [newGroupName setToolTip:@"The name of the new group"];
+    [newGroupName setToolTip:CPLocalizedString(@"The name of the new group", @"The name of the new group")];
 
     [mainWindow setDefaultButton:buttonAdd];
 }
@@ -66,20 +66,23 @@
 
     if (![aGroup isKindOfClass:TNStropheGroup])
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"You must choose a group" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
+                                                         message:CPLocalizedString(@"You must choose a group", @"You must choose a group")
+                                                            icon:TNGrowlIconError];
         return;
     }
 
     if ([[aGroup content] count] != 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group must be empty" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
+                                                         message:CPLocalizedString(@"The group must be empty", @"The group must be empty") icon:TNGrowlIconError];
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Delete group"
-                                informative:@"Are you sure you want to delete this group?"
-                                 target:self
-                                 actions:[["Delete", @selector(performDeleteGroup:)], ["Cancel", nil]]];
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete group", @"Delete group")
+                              informative:CPLocalizedString(@"Are you sure you want to delete this group?", @"Are you sure you want to delete this group?")
+                                   target:self
+                                  actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteGroup:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
     [alert setUserInfo:aGroup];
     [alert runModal];
 }
@@ -97,7 +100,8 @@
     [[[TNStropheIMClient defaultClient] roster] removeGroup:group];
     [defaults removeObjectForKey:key];
 
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Group supression" message:@"The group has been removed"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Group supression", @"Group supression")
+                                                     message:CPLocalizedString(@"The group has been removed", @"The group has been removed")];
 }
 
 
@@ -122,7 +126,9 @@
 {
     if ([newGroupName stringValue] == "")
     {
-        [TNAlert showAlertWithMessage:@"Group addition error" informative:@"You have to enter a valid group name." style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Group addition error", @"Group addition error")
+                          informative:CPLocalizedString(@"You have to enter a valid group name.", @"You have to enter a valid group name.")
+                                style:CPCriticalAlertStyle];
     }
     else
     {
@@ -133,7 +139,8 @@
         CPLog.info(@"new group " + groupName + " added.");
 
         var growl = [TNGrowlCenter defaultCenter];
-        [growl pushNotificationWithTitle:@"Group" message:@"Group " + groupName + @" has been created"];
+        [growl pushNotificationWithTitle:CPLocalizedString(@"Group", @"Group")
+                                 message:CPLocalizedString(@"Group ", @"Group ") + groupName + CPLocalizedString(@" has been created", @" has been created")];
 
         [mainWindow performClose:nil];
     }

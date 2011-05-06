@@ -117,16 +117,15 @@ TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOp
 // this doesn't work with xcodecapp for some mysterious reasons
 TNUserAvatarSize            = nil;
 
-var TNArchipelStatusAvailableLabel  = @"Available",
-    TNArchipelStatusAwayLabel       = @"Away",
-    TNArchipelStatusBusyLabel       = @"Busy",
-    TNArchipelStatusDNDLabel        = @"Do not disturb",
+var TNArchipelStatusAvailableLabel  = CPLocalizedString(@"Available", @"Available"),
+    TNArchipelStatusAwayLabel       = CPLocalizedString(@"Away", @"Away"),
+    TNArchipelStatusBusyLabel       = CPLocalizedString(@"Busy", @"Busy"),
+    TNArchipelStatusDNDLabel        = CPLocalizedString(@"Do not disturb", @"Do not disturb"),
     TNToolBarItemLogout             = @"TNToolBarItemLogout",
     TNToolBarItemTags               = @"TNToolBarItemTags",
     TNToolBarItemHelp               = @"TNToolBarItemHelp",
     TNToolBarItemStatus             = @"TNToolBarItemStatus",
     TNArchipelTagViewHeight         = 33.0;
-
 
 /*! @defgroup  archipelcore Archipel Core
     @desc Core contains all basic and low level Archipel classes
@@ -240,6 +239,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [center addObserver:self selector:@selector(didConnectionStart:) name:TNConnectionControllerConnectionStarted object:connectionController];
     CPLog.trace(@"registering for notification TNPreferencesControllerRestoredNotification");
     [center addObserver:self selector:@selector(didRetrieveConfiguration:) name:TNPreferencesControllerRestoredNotification object:preferencesController];
+    CPLog.trace(@"registering for notification TNPreferencesControllerLocaleChangeNotification");
+    [center addObserver:self selector:@selector(didLocalChange:) name:TNPreferencesControllerLocaleChangeNotification object:preferencesController];
 
 
     /* register defaults defaults */
@@ -254,7 +255,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelCopyright"], @"TNArchipelCopyright",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
-            [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza"
+            [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
+            [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale"
     ]];
 
     /* images */
@@ -302,7 +304,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
     [filterField setOutlineView:_rosterOutlineView];
     [filterField setMaximumRecents:10];
-    [filterField setToolTip:@"Filter contacts by name or tags"];
+    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
 
 
     /* right view */
@@ -377,8 +379,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     _imageLedInData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-in.png"]];
     _imageLedOutData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-out.png"]];
     _imageLedNoData = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsDataLEDs/data-no.png"]];
-    [ledOut setToolTip:@"This LED is ON when XMPP data are sent"];
-    [ledIn setToolTip:@"This LED is ON when XMPP data are received"];
+    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
+    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
 
 
     /* makers */
@@ -410,7 +412,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
     [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
-    [labelCurrentUser setToolTip:@"The current logged account"];
+    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
 
 
     /* about window */
@@ -449,14 +451,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     _mainMenu = [[CPMenu alloc] init];
 
-    var archipelItem    = [_mainMenu addItemWithTitle:@"Archipel" action:nil keyEquivalent:@""],
-        editMenu        = [_mainMenu addItemWithTitle:@"Edit" action:nil keyEquivalent:@""],
-        contactsItem    = [_mainMenu addItemWithTitle:@"Contacts" action:nil keyEquivalent:@""],
-        groupsItem      = [_mainMenu addItemWithTitle:@"Groups" action:nil keyEquivalent:@""],
-        statusItem      = [_mainMenu addItemWithTitle:@"Status" action:nil keyEquivalent:@""],
-        navigationItem  = [_mainMenu addItemWithTitle:@"Navigation" action:nil keyEquivalent:@""],
-        moduleItem      = [_mainMenu addItemWithTitle:@"Modules" action:nil keyEquivalent:@""],
-        helpItem        = [_mainMenu addItemWithTitle:@"Help" action:nil keyEquivalent:@""],
+    var archipelItem    = [_mainMenu addItemWithTitle:CPLocalizedString(@"Archipel", @"Archipel") action:nil keyEquivalent:@""],
+        editMenu        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Edit", @"Edit")  action:nil keyEquivalent:@""],
+        contactsItem    = [_mainMenu addItemWithTitle:CPLocalizedString(@"Contacts", @"Contact") action:nil keyEquivalent:@""],
+        groupsItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Groups", @"Groups") action:nil keyEquivalent:@""],
+        statusItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Status", @"Status") action:nil keyEquivalent:@""],
+        navigationItem  = [_mainMenu addItemWithTitle:CPLocalizedString(@"Navigation", @"Navigation") action:nil keyEquivalent:@""],
+        moduleItem      = [_mainMenu addItemWithTitle:CPLocalizedString(@"Modules", @"Modules") action:nil keyEquivalent:@""],
+        helpItem        = [_mainMenu addItemWithTitle:CPLocalizedString(@"Help", @"Help") action:nil keyEquivalent:@""],
         archipelMenu    = [[CPMenu alloc] init],
         editMenuItem    = [[CPMenu alloc] init],
         groupsMenu      = [[CPMenu alloc] init],
@@ -466,66 +468,66 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         helpMenu        = [[CPMenu alloc] init];
 
     // Archipel
-    [archipelMenu addItemWithTitle:@"About Archipel" action:@selector(showAboutWindow:) keyEquivalent:@""];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:@"Preferences" action:@selector(showPreferencesWindow:) keyEquivalent:@","];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"Preferences", @"Preferences") action:@selector(showPreferencesWindow:) keyEquivalent:@","];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
-    [archipelMenu addItemWithTitle:@"Log out" action:@selector(logout:) keyEquivalent:@"Q"];
-    [archipelMenu addItemWithTitle:@"Quit" action:nil keyEquivalent:@""];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"Log out", @"Log out") action:@selector(logout:) keyEquivalent:@"Q"];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"Quit", @"Quit") action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:archipelMenu forItem:archipelItem];
 
     //Edit
-    [editMenuItem addItemWithTitle:@"Undo" action:@selector(undo:) keyEquivalent:@"z"];
-    [editMenuItem addItemWithTitle:@"Redo" action:@selector(redo:) keyEquivalent:@"Z"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Undo", @"Undo") action:@selector(undo:) keyEquivalent:@"z"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Redo", @"Undo") action:@selector(redo:) keyEquivalent:@"Z"];
     [editMenuItem addItem:[CPMenuItem separatorItem]];
-    [editMenuItem addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@"c"];
-    [editMenuItem addItemWithTitle:@"Cut" action:@selector(cut:) keyEquivalent:@"x"];
-    [editMenuItem addItemWithTitle:@"Paste" action:@selector(paste:) keyEquivalent:@"v"];
-    [editMenuItem addItemWithTitle:@"Select all" action:@selector(selectAll:) keyEquivalent:@"a"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Copy", @"Copy") action:@selector(copy:) keyEquivalent:@"c"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Cut", @"Cut") action:@selector(cut:) keyEquivalent:@"x"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Paste", @"Paste") action:@selector(paste:) keyEquivalent:@"v"];
+    [editMenuItem addItemWithTitle:CPLocalizedString(@"Select all", @"Select all") action:@selector(selectAll:) keyEquivalent:@"a"];
     [_mainMenu setSubmenu:editMenuItem forItem:editMenu];
 
     // Groups
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [groupsMenu addItemWithTitle:@"Add group" action:@selector(addGroup:) keyEquivalent:@"G"];
-        [groupsMenu addItemWithTitle:@"Delete group" action:@selector(deleteGroup:) keyEquivalent:@"D"];
+        [groupsMenu addItemWithTitle:CPLocalizedString(@"Add group", @"Add group") action:@selector(addGroup:) keyEquivalent:@"G"];
+        [groupsMenu addItemWithTitle:CPLocalizedString(@"Delete group", @"Delete group") action:@selector(deleteGroup:) keyEquivalent:@"D"];
         [groupsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [groupsMenu addItemWithTitle:@"Rename group" action:@selector(renameGroup:) keyEquivalent:@""];
+    [groupsMenu addItemWithTitle:CPLocalizedString(@"Rename group", @"Rename group") action:@selector(renameGroup:) keyEquivalent:@""];
     [_mainMenu setSubmenu:groupsMenu forItem:groupsItem];
 
     // Contacts
     if ([[CPBundle mainBundle] objectForInfoDictionaryKey:@"TNArchipelDisplayXMPPManageContactsButton"] == 1)
     {
-        [contactsMenu addItemWithTitle:@"Add contact" action:@selector(addContact:) keyEquivalent:@""];
-        [contactsMenu addItemWithTitle:@"Delete contact" action:@selector(deleteContact:) keyEquivalent:@""];
+        [contactsMenu addItemWithTitle:CPLocalizedString(@"Add contact", @"Add contact") action:@selector(addContact:) keyEquivalent:@""];
+        [contactsMenu addItemWithTitle:CPLocalizedString(@"Delete contact", @"Delete contacts") action:@selector(deleteContact:) keyEquivalent:@""];
         [contactsMenu addItem:[CPMenuItem separatorItem]];
     }
 
-    [contactsMenu addItemWithTitle:@"Rename contact" action:@selector(renameContact:) keyEquivalent:@"R"];
+    [contactsMenu addItemWithTitle:CPLocalizedString(@"Rename contact", @"Rename contact") action:@selector(renameContact:) keyEquivalent:@"R"];
     [_mainMenu setSubmenu:contactsMenu forItem:contactsItem];
 
     // Status
-    [statusMenu addItemWithTitle:@"Set status available" action:nil keyEquivalent:@"1"];
-    [statusMenu addItemWithTitle:@"Set status away" action:nil keyEquivalent:@"2"];
-    [statusMenu addItemWithTitle:@"Set status busy" action:nil keyEquivalent:@"3"];
+    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status available", @"Set status available") action:nil keyEquivalent:@"1"];
+    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status away", @"Set status away") action:nil keyEquivalent:@"2"];
+    [statusMenu addItemWithTitle:CPLocalizedString(@"Set status busy", @"Set status busy") action:nil keyEquivalent:@"3"];
     [statusMenu addItem:[CPMenuItem separatorItem]];
-    [statusMenu addItemWithTitle:@"Set custom status" action:nil keyEquivalent:@""];
+    [statusMenu addItemWithTitle:CPLocalizedString(@"Set custom status", @"Set custom status") action:nil keyEquivalent:@""];
     [_mainMenu setSubmenu:statusMenu forItem:statusItem];
 
     // navigation
-    [navigationMenu addItemWithTitle:@"Hide main menu" action:@selector(switchMainMenu:) keyEquivalent:@"U"];
-    [navigationMenu addItemWithTitle:@"Search entity" action:@selector(focusFilter:) keyEquivalent:@"F"];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Hide main menu", @"Hide main menu") action:@selector(switchMainMenu:) keyEquivalent:@"U"];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Search entity", @"Search entity") action:@selector(focusFilter:) keyEquivalent:@"F"];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:@"Select next entity" action:@selector(selectNextEntity:) keyEquivalent:nil];
-    [navigationMenu addItemWithTitle:@"Select previous entity" action:@selector(selectPreviousEntity:) keyEquivalent:nil];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select next entity", @"Select next entity") action:@selector(selectNextEntity:) keyEquivalent:nil];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Select previous entity", @"Select previous entity") action:@selector(selectPreviousEntity:) keyEquivalent:nil];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:@"Expand group" action:@selector(expandGroup:) keyEquivalent:@""];
-    [navigationMenu addItemWithTitle:@"Collapse group" action:@selector(collapseGroup:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand group", @"Expand group") action:@selector(expandGroup:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse group", @"Expand group") action:@selector(collapseGroup:) keyEquivalent:@""];
     [navigationMenu addItem:[CPMenuItem separatorItem]];
-    [navigationMenu addItemWithTitle:@"Expand all groups" action:@selector(expandAllGroups:) keyEquivalent:@""];
-    [navigationMenu addItemWithTitle:@"Collapse all groups" action:@selector(collapseAllGroups:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand all groups", @"Expand all groups") action:@selector(expandAllGroups:) keyEquivalent:@""];
+    [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse all groups", @"Collapse all groups") action:@selector(collapseAllGroups:) keyEquivalent:@""];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
 
     // Modules
@@ -533,13 +535,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_mainMenu setSubmenu:_modulesMenu forItem:moduleItem];
 
     // help
-    [helpMenu addItemWithTitle:@"Archipel Help" action:@selector(openWiki:) keyEquivalent:@""];
-    [helpMenu addItemWithTitle:@"Release note" action:@selector(openReleaseNotes:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:CPLocalizedString(@"Archipel Help", @"Archipel Help") action:@selector(openWiki:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:CPLocalizedString(@"Release note", @"Release note") action:@selector(openReleaseNotes:) keyEquivalent:@""];
     [helpMenu addItem:[CPMenuItem separatorItem]];
-    [helpMenu addItemWithTitle:@"Go to website" action:@selector(openWebsite:) keyEquivalent:@""];
-    [helpMenu addItemWithTitle:@"Report a bug" action:@selector(openBugTracker:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:CPLocalizedString(@"Go to website", @"Go to website") action:@selector(openWebsite:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:CPLocalizedString(@"Report a bug", @"Report a bug") action:@selector(openBugTracker:) keyEquivalent:@""];
     [helpMenu addItem:[CPMenuItem separatorItem]];
-    [helpMenu addItemWithTitle:@"Make a donation" action:@selector(openDonationPage:) keyEquivalent:@""];
+    [helpMenu addItemWithTitle:CPLocalizedString(@"Make a donation", @"Make a donation") action:@selector(openDonationPage:) keyEquivalent:@""];
     [_mainMenu setSubmenu:helpMenu forItem:helpItem];
 
     [CPApp setMainMenu:_mainMenu];
@@ -562,19 +564,19 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:@"Log out" icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:@"Help" icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:@"Tags" icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:CPLocalizedString(@"Log out", @"Log out") icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:CPLocalizedString(@"Help", @"Help") icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
+    [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 120.0, 24.0)],
         availableItem   = [[CPMenuItem alloc] init],
         awayItem        = [[CPMenuItem alloc] init],
         busyItem        = [[CPMenuItem alloc] init],
         DNDItem         = [[CPMenuItem alloc] init],
-        statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:@"Status" view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
+        statusItem      = [_mainToolbar addItemWithIdentifier:TNToolBarItemStatus label:CPLocalizedString(@"Status", @"Status") view:statusSelector target:self action:@selector(toolbarItemPresenceStatusClick:)];
 
 
-    [statusSelector setToolTip:@"Update your current XMPP status"];
+    [statusSelector setToolTip:CPLocalizedString(@"Update your current XMPP status", @"Update your current XMPP status")];
     [availableItem setTitle:TNArchipelStatusAvailableLabel];
     [availableItem setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsStatus/available.png"]]];
     [statusSelector addItem:availableItem];
@@ -617,7 +619,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     _userAvatarButton = [[CPButton alloc] initWithFrame:CPRectMake(7.0, 4.0, TNUserAvatarSize.width, TNUserAvatarSize.height)],
 
-    [_userAvatarButton setToolTip:@"Change your current avatar. This picture will be visible by all your contacts"];
+    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
     [_userAvatarButton setBordered:NO];
     [_userAvatarButton setBorderedWithHexColor:@"#a8a8a8"];
     [_userAvatarButton setBackgroundColor:[CPColor blackColor]];
@@ -664,20 +666,20 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [plusButton setTarget:self];
     [plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/plus.png"] size:CPSizeMake(16, 16)]];
-    [plusMenu addItemWithTitle:@"Add a contact" action:@selector(addContact:) keyEquivalent:@""];
-    [plusMenu addItemWithTitle:@"Add a group" action:@selector(addGroup:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:CPLocalizedString(@"Add a contact", @"Add a contact") action:@selector(addContact:) keyEquivalent:@""];
+    [plusMenu addItemWithTitle:CPLocalizedString(@"Add a group", @"Add a group") action:@selector(addGroup:) keyEquivalent:@""];
     [plusButton setMenu:plusMenu];
-    [plusButton setToolTip:@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user."];
+    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
 
     [minusButton setTarget:self];
     [minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"IconsButtonBar/minus.png"] size:CPSizeMake(16, 16)]];
     [minusButton setAction:@selector(toogleRemoveEntity:)];
-    [minusButton setToolTip:@"Remove the selected contact. It will only remove it from your roster."];
+    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
 
     [_hideButton setTarget:self];
     [_hideButton setImage:([defaults boolForKey:@"TNArchipelPropertyControllerEnabled"]) ? _hideButtonImageDisable : _hideButtonImageEnable];
     [_hideButton setAction:@selector(toggleShowPropertiesView:)];
-    [_hideButton setToolTip:@"Display or hide the properties view"];
+    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
 
     var buttons = [CPArray array];
 
@@ -773,7 +775,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     else
         [splitViewTagsContents setPosition:0.0 ofDividerAtIndex:0];
 
-    [labelCurrentUser setStringValue:@"Connected as " + [[[TNStropheIMClient defaultClient] JID] bare]];
+    [labelCurrentUser setStringValue:CPLocalizedString(@"Connected as ", @"Connected as ") + [[[TNStropheIMClient defaultClient] JID] bare]];
 }
 
 /*! Notification responder of TNStropheConnection
@@ -856,6 +858,37 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     }
         [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWebViewProgressFinishedNotification object:nil];
 }
+
+
+/*! Called when the locale change.
+    This message will update all GUI objects
+    @param aNotification the notification
+*/
+- (void)didLocalChange:(CPNotification)aNotification
+{
+    alert([[CPUserDefaults standardUserDefaults] objectForKey:@"CPBundleLocale"]);
+    // tooltips
+    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
+    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
+    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
+    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
+    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
+    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
+    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
+    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
+    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
+    [ledOut setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are sent", @"This LED is ON when XMPP data are sent")];
+    [ledIn setToolTip:CPLocalizedString(@"This LED is ON when XMPP data are received", @"This LED is ON when XMPP data are received")];
+    [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
+    [statusSelector setToolTip:CPLocalizedString(@"Update your current XMPP status", @"Update your current XMPP status")];
+    [_userAvatarButton setToolTip:CPLocalizedString(@"Change your current avatar. This picture will be visible by all your contacts", @"Change your current avatar. This picture will be visible by all your contacts")];
+    [plusButton setToolTip:CPLocalizedString(@"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.", @"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.")];
+    [minusButton setToolTip:CPLocalizedString(@"Remove the selected contact. It will only remove it from your roster.", @"Remove the selected contact. It will only remove it from your roster.")];
+    [_hideButton setToolTip:CPLocalizedString(@"Display or hide the properties view", @"Display or hide the properties view")];
+    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
+}
+
+
 #pragma mark -
 #pragma mark Utilities
 
@@ -1256,7 +1289,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [[TNStropheIMClient defaultClient] setPresenceShow:XMPPShow status:nil];
 
-    [growl pushNotificationWithTitle:@"Status" message:@"Your status is now " + statusLabel];
+    [growl pushNotificationWithTitle:CPLocalizedString(@"Status", @"Status") message:CPLocalizedString(@"Your status is now ", @"Your status is now ") + statusLabel];
 }
 
 /*! Action of toolbar imutables toolbar items.
