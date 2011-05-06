@@ -11,5 +11,5 @@
 *ArchipelAgent/**/dist
 *ArchipelAgent/**/*.egg-info/**
 *ArchipelClient/.xCodeSupport
-#*ArchipelClient/Resources/*.cib
-#*ArchipelClient/ModulesSources/**/Resources/*.cib
+*ArchipelClient/Resources/*.lproj/*.old
+*ArchipelClient/Resources/*.lproj/*.new
