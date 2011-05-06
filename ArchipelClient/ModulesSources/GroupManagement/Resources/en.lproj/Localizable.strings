@@ -1,0 +1,63 @@
+/*  is migrating */
+" is migrating" = " is migrating";
+
+/*  state modified */
+" state modified" = " state modified";
+
+/*  to the selected hypervisor */
+" to the selected hypervisor" = " to the selected hypervisor";
+
+/* Cannot migrate virtual machine  */
+"Cannot migrate virtual machine " = "Cannot migrate virtual machine ";
+
+/* Destroy all selected virtual machines */
+"Destroy all selected virtual machines" = "Destroy all selected virtual machines";
+
+/* Destroy selected virtual machines */
+"Destroy selected virtual machines" = "Destroy selected virtual machines";
+
+/* Jabber ID */
+"Jabber ID" = "Jabber ID";
+
+/* Migrate all selected virtual machines */
+"Migrate all selected virtual machines" = "Migrate all selected virtual machines";
+
+/* Name */
+"Name" = "Name";
+
+/* Pause all selected virtual machines */
+"Pause all selected virtual machines" = "Pause all selected virtual machines";
+
+/* Pause selected virtual machines */
+"Pause selected virtual machines" = "Pause selected virtual machines";
+
+/* Reboot all selected virtual machines (not supported by all hypervisors) */
+"Reboot all selected virtual machines (not supported by all hypervisors)" = "Reboot all selected virtual machines (not supported by all hypervisors)";
+
+/* Reboot selected virtual machines */
+"Reboot selected virtual machines" = "Reboot selected virtual machines";
+
+/* Resume all selected virtual machines */
+"Resume all selected virtual machines" = "Resume all selected virtual machines";
+
+/* Resume selected virtual machines */
+"Resume selected virtual machines" = "Resume selected virtual machines";
+
+/* Shutdown all selected virtual machines */
+"Shutdown all selected virtual machines" = "Shutdown all selected virtual machines";
+
+/* Shutdown selected virtual machines */
+"Shutdown selected virtual machines" = "Shutdown selected virtual machines";
+
+/* Start all selected virtual machines */
+"Start all selected virtual machines" = "Start all selected virtual machines";
+
+/* Start selected virtual machines */
+"Start selected virtual machines" = "Start selected virtual machines";
+
+/* Virtual Machine */
+"Virtual Machine" = "Virtual Machine";
+
+/* Virtual machine  */
+"Virtual machine " = "Virtual machine ";
+

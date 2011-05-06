@@ -63,10 +63,10 @@
         columnJID      = [[CPTableColumn alloc] initWithIdentifier:@"JID"];
 
     [columnNickname setWidth:150];
-    [[columnNickname headerView] setStringValue:@"Name"];
+    [[columnNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
     [columnJID setWidth:450];
-    [[columnJID headerView] setStringValue:@"Jabber ID"];
+    [[columnJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
 
     [_tableHypervisors addTableColumn:columnNickname];
     [_tableHypervisors addTableColumn:columnJID];
@@ -134,3 +134,12 @@
 }
 
 @end
+
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNGroupedMigrationController], comment);
+}

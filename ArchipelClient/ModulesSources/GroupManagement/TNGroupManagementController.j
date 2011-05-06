@@ -100,10 +100,10 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
         imgView             = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [vmColumNickname setWidth:250];
-    [[vmColumNickname headerView] setStringValue:@"Name"];
+    [[vmColumNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
     [vmColumJID setWidth:450];
-    [[vmColumJID headerView] setStringValue:@"Jabber ID"];
+    [[vmColumJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
 
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
@@ -130,37 +130,37 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     [createButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CPSizeMake(16, 16)]];
     [createButton setTarget:self];
     [createButton setAction:@selector(create:)];
-    [createButton setToolTip:@"Start all selected virtual machines"];
+    [createButton setToolTip:CPBundleLocalizedString(@"Start all selected virtual machines", @"Start all selected virtual machines")];
 
     [shutdownButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CPSizeMake(16, 16)]];
     [shutdownButton setTarget:self];
     [shutdownButton setAction:@selector(shutdown:)];
-    [shutdownButton setToolTip:@"Shutdown all selected virtual machines"];
+    [shutdownButton setToolTip:CPBundleLocalizedString(@"Shutdown all selected virtual machines", @"Shutdown all selected virtual machines")];
 
     [destroyButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unplug.png"] size:CPSizeMake(16, 16)]];
     [destroyButton setTarget:self];
     [destroyButton setAction:@selector(destroy:)];
-    [destroyButton setToolTip:@"Destroy all selected virtual machines"];
+    [destroyButton setToolTip:CPBundleLocalizedString(@"Destroy all selected virtual machines", @"Destroy all selected virtual machines")];
 
     [suspendButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause.png"] size:CPSizeMake(16, 16)]];
     [suspendButton setTarget:self];
     [suspendButton setAction:@selector(suspend:)];
-    [suspendButton setToolTip:@"Pause all selected virtual machines"];
+    [suspendButton setToolTip:CPBundleLocalizedString(@"Pause all selected virtual machines", @"Pause all selected virtual machines")];
 
     [resumeButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/resume.png"] size:CPSizeMake(16, 16)]];
     [resumeButton setTarget:self];
     [resumeButton setAction:@selector(resume:)];
-    [resumeButton setToolTip:@"Resume all selected virtual machines"];
+    [resumeButton setToolTip:CPBundleLocalizedString(@"Resume all selected virtual machines", @"Resume all selected virtual machines")];
 
     [rebootButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/restart.png"] size:CPSizeMake(16, 16)]];
     [rebootButton setTarget:self];
     [rebootButton setAction:@selector(reboot:)];
-    [rebootButton setToolTip:@"Reboot all selected virtual machines (not supported by all hypervisors)"];
+    [rebootButton setToolTip:CPBundleLocalizedString(@"Reboot all selected virtual machines (not supported by all hypervisors)", @"Reboot all selected virtual machines (not supported by all hypervisors)")];
 
     [migrateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/migrate.png"] size:CPSizeMake(16, 16)]];
     [migrateButton setTarget:self];
     [migrateButton setAction:@selector(migrate:)];
-    [migrateButton setToolTip:@"Migrate all selected virtual machines"];
+    [migrateButton setToolTip:CPBundleLocalizedString(@"Migrate all selected virtual machines", @"Migrate all selected virtual machines")];
 
 
     [buttonBarControl setButtons:[createButton, suspendButton, resumeButton, shutdownButton, destroyButton, rebootButton, migrateButton]];
@@ -216,12 +216,12 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Start selected virtual machines" action:@selector(create:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Shutdown selected virtual machines" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Pause selected virtual machines" action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Resume selected virtual machines" action:@selector(resume:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Reboot selected virtual machines" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Destroy selected virtual machines" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Start selected virtual machines", @"Start selected virtual machines") action:@selector(create:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shutdown selected virtual machines", @"Shutdown selected virtual machines") action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause selected virtual machines", @"Pause selected virtual machines") action:@selector(suspend:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Resume selected virtual machines", @"Resume selected virtual machines") action:@selector(resume:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot selected virtual machines", @"Reboot selected virtual machines") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy selected virtual machines", @"Destroy selected virtual machines") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
 
 
@@ -392,7 +392,8 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" state modified"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" state modified", " state modified")];
 
         [_tableVirtualMachines reloadData];
     }
@@ -430,9 +431,11 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
     var sender = [aStanza fromUser];
 
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine "+sender+" is migrating"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine ", @"Virtual machine ") + sender + CPBundleLocalizedString(" is migrating", " is migrating")];
     else
-         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Cannot migrate virtual machine "+sender+ " to the selected hypervisor"];
+         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                          message:CPBundleLocalizedString(@"Cannot migrate virtual machine ", @"Cannot migrate virtual machine ") + sender + CPBundleLocalizedString(" to the selected hypervisor", " to the selected hypervisor")];
 
     [_tableVirtualMachines reloadData];
     return NO;
@@ -440,3 +443,12 @@ var TNArchipelTypeVirtualMachineControl             = @"archipel:vm:control",
 
 
 @end
+
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNGroupManagementController], comment);
+}
