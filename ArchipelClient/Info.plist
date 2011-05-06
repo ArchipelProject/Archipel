@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <key>CPBundleLocale</key>
-	<string>fr</string>
+	<string>en</string>
 	<key>ArchipelCheckNodeAdminAccount</key>
 	<integer>1</integer>
 	<key>ArchipelDefaultAdminAccounts</key>
