@@ -16,6 +16,7 @@
 # Modified by Antoine Mercadal
 # Changes
 # - Support for Cappuccino
+# - Support for xib string generation /  injection
 
 from sys import argv
 from codecs import open
@@ -37,8 +38,9 @@ class LocalizedString():
         return u'%s%s\n' % (u''.join(self.comments), self.translation)
 
 class LocalizedFile():
-    def __init__(self, fname=None, auto_read=False):
+    def __init__(self, fname=None, auto_read=False, encoding='utf_8'):
         self.fname = fname
+        self.encoding = encoding
         self.strings = []
         self.strings_d = {}
 
@@ -48,7 +50,7 @@ class LocalizedFile():
     def read_from_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-            f = open(fname, encoding='utf_8', mode='r')
+            f = open(fname, encoding=self.encoding, mode='r')
         except:
             print 'File %s does not exist.' % fname
             exit(-1)
@@ -81,7 +83,7 @@ class LocalizedFile():
     def save_to_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-            f = open(fname, encoding='utf_8', mode='w')
+            f = open(fname, encoding=self.encoding, mode='w')
         except:
             print 'Couldn\'t open file %s.' % fname
             exit(-1)
@@ -105,14 +107,14 @@ class LocalizedFile():
 
         return merged
 
-def merge(merged_fname, old_fname, new_fname):
+def merge(merged_fname, old_fname, new_fname, encoding='utf_8'):
     try:
-        old = LocalizedFile(old_fname, auto_read=True)
-        new = LocalizedFile(new_fname, auto_read=True)
+        old = LocalizedFile(old_fname, auto_read=True, encoding=encoding)
+        new = LocalizedFile(new_fname, auto_read=True, encoding=encoding)
         merged = old.merge_with(new)
         merged.save_to_file(merged_fname)
-    except:
-        print 'Error: input files have invalid format.'
+    except Exception as ex:
+        print 'Error: input files have invalid format. %s' % ex
 
 STRINGS_FILE = 'Localizable.strings'
 
@@ -135,6 +137,33 @@ def localize(path):
             os.rename(original, old)
             os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
         os.system("plutil -convert xml1 %s/Localizable.strings -o %s/Localizable.xstrings" % (language, language))
+
+        xibs = [name for name in os.listdir(language) if name.endswith('.xib')]
+        xibs = map(lambda x: "%s/%s" % (language, x), xibs)
+        for xib in xibs:
+            bname = os.path.basename(xib);
+            bname_noext = os.path.splitext(bname)[0];
+
+            xib_original = xib_merged = language + os.path.sep + bname_noext + ".strings"
+            xib_old = xib_original + '.old'
+            xib_new = xib_original + '.new'
+
+            if os.path.isfile(xib_original):
+                os.rename(xib_original, xib_old)
+                os.system('ibtool --generate-strings-file %s/%s.strings Resources/%s.xib' % (language, bname_noext, bname_noext))
+                os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_original, xib_new))
+                merge(xib_merged, xib_old, xib_new)
+            else:
+                os.system('ibtool --generate-strings-file %s/%s.strings Resources/%s.xib' % (language, bname_noext, bname_noext))
+                os.rename(xib_original, xib_old)
+                os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_old, xib_original))
+
+            os.system('ibtool --strings-file %s/%s.strings --write %s Resources/%s' % (language, bname_noext, xib, bname))
+            if os.path.isfile(xib_new):
+                os.remove(xib_new)
+            if os.path.isfile(xib_old):
+                os.remove(xib_old)
+
         if os.path.isfile(old):
             os.remove(old)
         if os.path.isfile(new):
