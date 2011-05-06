@@ -44,10 +44,10 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "893"; */
 "893.title" = "Annuler";
 
-/* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "894"; */
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
 "894.title" = "JID:";
 
-/* Class = "NSTextFieldCell"; title = "Nickname:"; ObjectID = "898"; */
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "898"; */
 "898.title" = "Surnom:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "John Doe"; ObjectID = "899"; */
@@ -60,7 +60,7 @@
 "910.title" = "Version XX";
 
 /* Class = "NSTextFieldCell"; title = "Archipel Client"; ObjectID = "911"; */
-"911.title" = "Archipel Client";
+"911.title" = "Client Archipel";
 
 /* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "919"; */
 "919.title" = "Selection de l'avatar";
@@ -143,17 +143,17 @@
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "992"; */
 "992.title" = "Connexion";
 
-/* Class = "NSTextFieldCell"; title = "Jabber ID:"; ObjectID = "994"; */
-"994.title" = "Jabber ID:";
+/* Class = "NSTextFieldCell"; title = "Jabber ID"; ObjectID = "994"; */
+"994.title" = "Jabber ID";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "998"; */
-"998.title" = "Mot de passe:";
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "998"; */
+"998.title" = "Mot de passe";
 
-/* Class = "NSTextFieldCell"; title = "BOSH service:"; ObjectID = "1002"; */
-"1002.title" = "Service BOSH:";
+/* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
+"1002.title" = "Service BOSH";
 
-/* Class = "NSTextFieldCell"; title = "Remember:"; ObjectID = "1005"; */
-"1005.title" = "Enregistrer:";
+/* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
+"1005.title" = "Enregistrer";
 
 /* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "1009"; */
 "1009.title" = "Surnom";
@@ -162,7 +162,7 @@
 "1011.title" = "ressource";
 
 /* Class = "NSTextFieldCell"; title = "Resource:"; ObjectID = "1019"; */
-"1019.title" = "Ressource:";
+"1019.title" = "Ressource";
 
 /* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "1022"; */
 "1022.title" = "Domain:";
@@ -328,3 +328,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Language:"; ObjectID = "1339"; */
 "1339.title" = "Langue:";
+

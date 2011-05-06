@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
 	<key> has been added</key>
-	<string> a été ajouté</string>
+	<string> has been added</string>
 	<key> has been created</key>
-	<string> a été créé</string>
+	<string> has been created</string>
 	<key> has been removed</key>
-	<string> a été supprimé</string>
+	<string> has been removed</string>
 	<key> is asking you subscription. Do you want to authorize it ?</key>
-	<string> vous demande une souscription. Voulez-vous l'autoriser ?</string>
+	<string> is asking you subscription. Do you want to authorize it ?</string>
 	<key>About Archipel</key>
-	<string>A propos d'Archipel</string>
+	<string>About Archipel</string>
 	<key>Accept</key>
 	<string>Accept</string>
 	<key>Add a contact</key>
@@ -21,9 +21,9 @@
 	<key>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</key>
 	<string>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</string>
 	<key>Add contact</key>
-	<string>Ajouter un contact</string>
+	<string>Add contact</string>
 	<key>Add group</key>
-	<string>Ajouter un groupe</string>
+	<string>Add group</string>
 	<key>Archipel</key>
 	<string>Archipel</string>
 	<key>Archipel Help</key>
@@ -36,8 +36,6 @@
 	<string>Available</string>
 	<key>Away</key>
 	<string>Away</string>
-	<key>BOSH Service:</key>
-	<string>BOSH Service:</string>
 	<key>Busy</key>
 	<string>Busy</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
@@ -104,8 +102,6 @@
 	<string>Hide main menu</string>
 	<key>JID is not valid</key>
 	<string>JID is not valid</string>
-	<key>JID:</key>
-	<string>JID:</string>
 	<key>Log out</key>
 	<string>Log out</string>
 	<key>Logon</key>
@@ -116,8 +112,6 @@
 	<string>Modules</string>
 	<key>Navigation</key>
 	<string>Navigation</string>
-	<key>Password:</key>
-	<string>Password:</string>
 	<key>Paste</key>
 	<string>Paste</string>
 	<key>Preferences</key>
@@ -130,8 +124,6 @@
 	<string>Redo</string>
 	<key>Release note</key>
 	<string>Release note</string>
-	<key>Remember:</key>
-	<string>Remember:</string>
 	<key>Remove the selected contact. It will only remove it from your roster.</key>
 	<string>Remove the selected contact. It will only remove it from your roster.</string>
 	<key>Rename contact</key>
@@ -200,6 +192,8 @@
 	<string>Update your current XMPP status</string>
 	<key>User supression</key>
 	<string>User supression</string>
+	<key>You can't assign tags here</key>
+	<string>You can't assign tags here</string>
 	<key>You have to enter a valid group name.</key>
 	<string>You have to enter a valid group name.</string>
 	<key>You must choose a contact</key>
