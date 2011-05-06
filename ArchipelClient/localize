@@ -23,6 +23,7 @@ from codecs import open
 from re import compile
 from copy import copy
 import os
+from optparse import OptionParser
 
 re_translation = compile(r'^"(.+)" = "(.+)";$')
 re_comment_single = compile(r'^/\*.*\*/$')
@@ -118,7 +119,7 @@ def merge(merged_fname, old_fname, new_fname, encoding='utf_8'):
 
 STRINGS_FILE = 'Localizable.strings'
 
-def localize(path):
+def localize(path, routine):
     languages = [name for name in os.listdir(path) if name.endswith('.lproj') and os.path.isdir(path)]
     languages = map(lambda x: "Resources/%s" % x, languages)
     findCommand = 'find . ! -path "*/ModulesSources/*" ! -path "*/Libraries/*" ! -path "*/Build/*" -name "*.j"'
@@ -129,11 +130,11 @@ def localize(path):
 
         if os.path.isfile(original):
             os.rename(original, old)
-            os.system('genstrings -q -s CPLocalizedString -o "%s" `%s`' % (language, findCommand))
+            os.system('genstrings -q -s %s -o "%s" `%s`' % (routine, language, findCommand))
             os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (original, new))
             merge(merged, old, new)
         else:
-            os.system('genstrings -q -s CPLocalizedString -o "%s" `%s`' % (language, findCommand))
+            os.system('genstrings -q -s %s -o "%s" `%s`' % (routine, language, findCommand))
             os.rename(original, old)
             os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
         os.system("plutil -convert xml1 %s/Localizable.strings -o %s/Localizable.xstrings" % (language, language))
@@ -170,8 +171,20 @@ def localize(path):
             os.remove(new)
 
 if __name__ == '__main__':
+    routine = "CPLocalizedString"
+
+    parser = OptionParser()
+    parser.add_option("-s", "--routine",
+                        dest="routine",
+                        help="set the routine to use",
+                        metavar="ROUTINE")
+    options, args = parser.parse_args()
+
+    if options.routine:
+        routine = options.routine
+
     if os.path.isfile("Categories/CPBundle+Localizable.j"):
         os.rename("Categories/CPBundle+Localizable.j", "Categories/CPBundle+Localizable.sj")
-    localize(os.getcwd() + "/Resources/")
+    localize(os.getcwd() + "/Resources/", routine=routine)
     if os.path.isfile("Categories/CPBundle+Localizable.sj"):
         os.rename("Categories/CPBundle+Localizable.sj", "Categories/CPBundle+Localizable.j")
