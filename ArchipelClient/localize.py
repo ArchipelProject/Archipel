@@ -1,15 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# This program is free software. It comes without any warranty, to
-# the extent permitted by applicable law. You can redistribute it
-# and/or modify it under the terms of the Do What The Fuck You Want
-# To Public License, Version 2, as published by Sam Hocevar. See
-# http://sam.zoy.org/wtfpl/COPYING for more details.
-#
 # Localize.py - Incremental localization on XCode projects
 # João Moreno 2009
 # http://joaomoreno.com/
+
+# Modified by Steve Streeting 2010 http://www.stevestreeting.com
+# Changes
+# - Use .strings files encoded as UTF-8
+#   This is useful because Mercurial and Git treat UTF-16 as binary and can't
+#   diff/merge them. For use on iPhone you can run an iconv script during build to
+#   convert back to UTF-16 (Mac OS X will happily use UTF-8 .strings files).
+# - Clean up .old and .new files once we're done
+
+# Modified by Antoine Mercadal
+# Changes
+# - Support for Cappuccino
 
 from sys import argv
 from codecs import open
@@ -21,10 +27,6 @@ re_translation = compile(r'^"(.+)" = "(.+)";$')
 re_comment_single = compile(r'^/\*.*\*/$')
 re_comment_start = compile(r'^/\*.*$')
 re_comment_end = compile(r'^.*\*/$')
-
-def print_help():
-    print u"""Usage: merge.py merged_file old_file new_file
-Xcode localizable strings merger script. João Moreno 2009."""
 
 class LocalizedString():
     def __init__(self, comments, translation):
@@ -46,7 +48,7 @@ class LocalizedFile():
     def read_from_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-            f = open(fname, encoding='utf_16', mode='r')
+            f = open(fname, encoding='utf_8', mode='r')
         except:
             print 'File %s does not exist.' % fname
             exit(-1)
@@ -79,7 +81,7 @@ class LocalizedFile():
     def save_to_file(self, fname=None):
         fname = self.fname if fname == None else fname
         try:
-            f = open(fname, encoding='utf_16', mode='w')
+            f = open(fname, encoding='utf_8', mode='w')
         except:
             print 'Couldn\'t open file %s.' % fname
             exit(-1)
@@ -109,33 +111,38 @@ def merge(merged_fname, old_fname, new_fname):
         new = LocalizedFile(new_fname, auto_read=True)
         merged = old.merge_with(new)
         merged.save_to_file(merged_fname)
-    except Exception as ex:
-        print 'Error: input files have invalid format: %s' % str(ex)
-
+    except:
+        print 'Error: input files have invalid format.'
 
 STRINGS_FILE = 'Localizable.strings'
 
 def localize(path):
     languages = [name for name in os.listdir(path) if name.endswith('.lproj') and os.path.isdir(path)]
     languages = map(lambda x: "Resources/%s" % x, languages)
-    findCommand = 'find . ! -path "*/ModulesSources/*" -name "*.j"'
+    findCommand = 'find . ! -path "*/ModulesSources/*" ! -path "*/Libraries/*" ! -path "*/Build/*" -name "*.j"'
     for language in languages:
         original = merged = language + os.path.sep + STRINGS_FILE
-        old =  original + '.old'
-        new =  original + '.new'
+        old = original + '.old'
+        new = original + '.new'
 
         if os.path.isfile(original):
             os.rename(original, old)
-            os.system('genstrings -u -macRoman  -s CPLocalizedString  -o "%s" `%s`' % (language, findCommand))
-            os.rename(original, new)
+            os.system('genstrings -q -s CPLocalizedString -o "%s" `%s`' % (language, findCommand))
+            os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (original, new))
             merge(merged, old, new)
         else:
-            os.system('genstrings -u -macRoman -s CPLocalizedString  -o "%s" `%s`' % (language, findCommand))
+            os.system('genstrings -q -s CPLocalizedString -o "%s" `%s`' % (language, findCommand))
+            os.rename(original, old)
+            os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
         os.system("plutil -convert xml1 %s/Localizable.strings -o %s/Localizable.xstrings" % (language, language))
+        if os.path.isfile(old):
+            os.remove(old)
+        if os.path.isfile(new):
+            os.remove(new)
 
 if __name__ == '__main__':
-    if os.path.isfile("CPBundle.j"):
-        os.rename("CPBundle.j", "CPBundle.sj")
+    if os.path.isfile("Categories/CPBundle+Localizable.j"):
+        os.rename("Categories/CPBundle+Localizable.j", "Categories/CPBundle+Localizable.sj")
     localize(os.getcwd() + "/Resources/")
-    if os.path.isfile("CPBundle.sj"):
-        os.rename("CPBundle.sj", "CPBundle.j")
+    if os.path.isfile("Categories/CPBundle+Localizable.sj"):
+        os.rename("Categories/CPBundle+Localizable.sj", "Categories/CPBundle+Localizable.j")
