@@ -40,9 +40,7 @@
 @import <iTunesTabView/iTunesTabView.j>
 @import <LPKit/LPMultiLineTextField.j>
 @import <StropheCappuccino/StropheCappuccino.j>
-@import <TNKit/TNCategories.j>
 @import <TNKit/TNToolbar.j>
-@import <TNKit/TNToolTip.j>
 @import <TNKit/TNUIKitScrollView.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 
