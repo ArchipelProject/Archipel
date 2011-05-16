@@ -1,0 +1,60 @@
+/*  MB */
+" MB" = " MB";
+
+/* Activate the statistics auto fetching */
+"Activate the statistics auto fetching" = "Active la récupération dynamique des statistiques";
+
+/* Available:  */
+"Available: " = "Disponible: ";
+
+/* Charts */
+"Charts" = "Grahiques";
+
+/* Date */
+"Date" = "Date";
+
+/* Display the file column in the log table */
+"Display the file column in the log table" = "Affiche la colonne Fichier dans le tableau de log";
+
+/* Display the method column in the log table */
+"Display the method column in the log table" = "Affiche la colonne Method dans le tableau de log";
+
+/* file */
+"file" = "fichier";
+
+/* GB */
+"GB" = "Go";
+
+/* KB */
+"KB" = "Ko";
+
+/* Level */
+"Level" = "Niveau";
+
+/* Logs */
+"Logs" = "Logs";
+
+/* MB */
+"MB" = "Mo";
+
+/* message */
+"message" = "message";
+
+/* method */
+"method" = "methode";
+
+/* Partition name */
+"Partition name" = "Partition";
+
+/* Set the delay between asking hypervisor statistics */
+"Set the delay between asking hypervisor statistics" = "Définit l'interval entre deux collecte de statistiques";
+
+/* Set the max number of log item to fetch */
+"Set the max number of log item to fetch" = "Définit le nombre maximum d'entrées de log à récupérer";
+
+/* Set the max number of statistic entries to fetch */
+"Set the max number of statistic entries to fetch" = "Définit le nombre maximum d'entrées de statistiques à récupérer";
+
+/* Used:  */
+"Used: " = "Utilisé: ";
+

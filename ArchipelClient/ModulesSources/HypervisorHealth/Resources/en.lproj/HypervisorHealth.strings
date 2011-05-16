@@ -1,0 +1,121 @@
+
+/* Class = "NSTextFieldCell"; title = "Health"; ObjectID = "4"; */
+"4.title" = "Health";
+
+/* Class = "NSTextFieldCell"; title = "CPU usage:"; ObjectID = "6"; */
+"6.title" = "CPU usage:";
+
+/* Class = "NSTextFieldCell"; title = "Disk usage:"; ObjectID = "8"; */
+"8.title" = "Disk usage:";
+
+/* Class = "NSTextFieldCell"; title = "Load average:"; ObjectID = "11"; */
+"11.title" = "Load average:";
+
+/* Class = "NSTextFieldCell"; title = "Free memory:"; ObjectID = "12"; */
+"12.title" = "Free memory:";
+
+/* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "15"; */
+"15.title" = "Machine:";
+
+/* Class = "NSTextFieldCell"; title = "Swapped:"; ObjectID = "16"; */
+"16.title" = "Swapped:";
+
+/* Class = "NSTextFieldCell"; title = "Uptime:"; ObjectID = "20"; */
+"20.title" = "Uptime:";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "22"; */
+"22.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "24"; */
+"24.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "27"; */
+"27.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "28"; */
+"28.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "31"; */
+"31.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "32"; */
+"32.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "34"; */
+"34.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "CPU History"; ObjectID = "48"; */
+"48.title" = "CPU History";
+
+/* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "52"; */
+"52.title" = "100%";
+
+/* Class = "NSTextFieldCell"; title = "50%"; ObjectID = "54"; */
+"54.title" = "50%";
+
+/* Class = "NSTextFieldCell"; title = "0%"; ObjectID = "56"; */
+"56.title" = "0%";
+
+/* Class = "NSTextFieldCell"; title = "Memory History"; ObjectID = "64"; */
+"64.title" = "Memory History";
+
+/* Class = "NSTextFieldCell"; title = "20G"; ObjectID = "66"; */
+"66.title" = "20G";
+
+/* Class = "NSTextFieldCell"; title = "10G"; ObjectID = "67"; */
+"67.title" = "10G";
+
+/* Class = "NSTextFieldCell"; title = "0G"; ObjectID = "68"; */
+"68.title" = "0G";
+
+/* Class = "NSTextFieldCell"; title = "Load History"; ObjectID = "76"; */
+"76.title" = "Load History";
+
+/* Class = "NSTextFieldCell"; title = "10"; ObjectID = "78"; */
+"78.title" = "10";
+
+/* Class = "NSTextFieldCell"; title = "5"; ObjectID = "79"; */
+"79.title" = "5";
+
+/* Class = "NSTextFieldCell"; title = "0"; ObjectID = "80"; */
+"80.title" = "0";
+
+/* Class = "NSTextFieldCell"; title = "0"; ObjectID = "88"; */
+"88.title" = "0";
+
+/* Class = "NSTextFieldCell"; title = "Max"; ObjectID = "90"; */
+"90.title" = "Max";
+
+/* Class = "NSTextFieldCell"; title = "Network usage"; ObjectID = "92"; */
+"92.title" = "Network usage";
+
+/* Class = "NSTextFieldCell"; title = "Disk usage"; ObjectID = "104"; */
+"104.title" = "Memory History";
+
+/* Class = "NSTextFieldCell"; title = "This table contains hypervisor's logs."; ObjectID = "126"; */
+"126.title" = "This table contains hypervisor's logs.";
+
+/* Class = "NSTextFieldCell"; title = "Health preferences"; ObjectID = "136"; */
+"136.title" = "Health preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for the health module."; ObjectID = "138"; */
+"138.title" = "You can configure preferences for the health module.";
+
+/* Class = "NSTextFieldCell"; title = "Auto refresh interval:"; ObjectID = "140"; */
+"140.title" = "Auto refresh interval:";
+
+/* Class = "NSTextFieldCell"; title = "Max items in history:"; ObjectID = "142"; */
+"142.title" = "Max items in history:";
+
+/* Class = "NSTextFieldCell"; title = "Max log lines:"; ObjectID = "144"; */
+"144.title" = "Max log lines:";
+
+/* Class = "NSTextFieldCell"; title = "Show \"Method\" column:"; ObjectID = "146"; */
+"146.title" = "Show \"Method\" column:";
+
+/* Class = "NSTextFieldCell"; title = "Show \"File\" column:"; ObjectID = "148"; */
+"148.title" = "Show \"File\" column:";
+
+/* Class = "NSTextFieldCell"; title = "Auto refresh stats:"; ObjectID = "150"; */
+"150.title" = "Auto refresh stats:";
+

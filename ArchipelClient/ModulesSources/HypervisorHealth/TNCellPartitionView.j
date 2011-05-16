@@ -40,18 +40,18 @@
     {
         [self setAutoresizingMask: CPViewWidthSizable];
 
-        _nameLabel = [CPTextField labelWithTitle:@"Partition name"];
+        _nameLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Partition name", @"Partition name")];
         [_nameLabel setFont:[CPFont boldSystemFontOfSize:12.0]];
         [_nameLabel sizeToFit];
         [_nameLabel setFrameOrigin:CPPointMake(3.0, 3.0)]
 
-        _usedLabel = [CPTextField labelWithTitle:@"Used: "];
+        _usedLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Used: ", @"Used: ")];
         [_usedLabel setFont:[CPFont systemFontOfSize:10.0]];
         [_usedLabel setFrameOrigin:CPPointMake(260.0, 3.0)];
         [_usedLabel setAutoresizingMask:CPViewMinXMargin];
         [_usedLabel sizeToFit];
 
-        _availableLabel = [CPTextField labelWithTitle:@"Available: "];
+        _availableLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Available: ", @"Available: ")];
         [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
         [_availableLabel setFrameOrigin:CPPointMake(330.0, 3.0)];
         [_availableLabel setAutoresizingMask:CPViewMinXMargin];
@@ -80,16 +80,16 @@
 */
 - (CPString)formatSize:(int)aSize
 {
-    var usedKind = @"GB";
+    var usedKind = CPBundleLocalizedString(@"GB", @"GB");
 
     if (Math.round(aSize / 1024 / 1024) == 0)
     {
         aSize = Math.round(aSize / 1024);
-        usedKind = @"MB";
+        usedKind = CPBundleLocalizedString(@"MB", @"MB");
         if (aSize == 0)
         {
             aSize = Math.round(aSize / 1024);
-            usedKind = @"KB";
+            usedKind = CPBundleLocalizedString(@"KB", @"KB");
         }
     }
     else
@@ -112,10 +112,10 @@
     [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
     [_nameLabel sizeToFit];
 
-    [_usedLabel setStringValue:@"Used: " + [self formatSize:[[aContent objectForKey:@"used"] intValue]]];
+    [_usedLabel setStringValue:CPBundleLocalizedString(@"Used: ", @"Used: ") + [self formatSize:[[aContent objectForKey:@"used"] intValue]]];
     [_usedLabel sizeToFit];
 
-    [_availableLabel setStringValue:@"Available: " + [self formatSize:[[aContent objectForKey:@"available"] intValue]]];
+    [_availableLabel setStringValue:CPBundleLocalizedString(@"Available: ", @"Available: ") + [self formatSize:[[aContent objectForKey:@"available"] intValue]]];
     [_availableLabel sizeToFit];
 }
 
@@ -147,3 +147,11 @@
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNCellPartitionView], comment);
+}

@@ -178,7 +178,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
         tabViewItemLogs = [[CPTabViewItem alloc] initWithIdentifier:@"id2"],
         scrollViewChart = [[TNUIKitScrollView alloc] initWithFrame:CPRectMake(0, 0, 0, 0)];
 
-    [tabViewItemCharts setLabel:@"Charts"];
+    [tabViewItemCharts setLabel:CPBundleLocalizedString(@"Charts", @"Charts")];
     [tabViewItemCharts setView:scrollViewChart];
     [tabViewInfos addTabViewItem:tabViewItemCharts];
 
@@ -189,7 +189,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [scrollViewChart setAutohidesScrollers:YES];
     [scrollViewChart setDocumentView:viewCharts];
 
-    [tabViewItemLogs setLabel:@"Logs"];
+    [tabViewItemLogs setLabel:CPBundleLocalizedString(@"Logs", @"Logs")];
     [tabViewItemLogs setView:viewLogs];
     [tabViewInfos addTabViewItem:tabViewItemLogs];
 
@@ -200,7 +200,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     [_tablePartitions setFrameSize:[scrollViewPartitionTable contentSize]];
 
-    [scrollViewPartitionTable setBorderedWithHexColor:@"#C0C7D2"];
+    [scrollViewPartitionTable setBorderedWithHexColor:@"C0C7D2"];
     [scrollViewPartitionTable setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewPartitionTable setAutohidesScrollers:YES];
     [scrollViewPartitionTable setDocumentView:_tablePartitions];
@@ -247,20 +247,20 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 
     [columnLogLevel setWidth:50];
     [columnLogLevel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"level" ascending:YES]];
-    [[columnLogLevel headerView] setStringValue:@"Level"];
+    [[columnLogLevel headerView] setStringValue:CPBundleLocalizedString(@"Level", @"Level")];
 
     [columnLogDate setWidth:125];
     [columnLogDate setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"date" ascending:YES]];
-    [[columnLogDate headerView] setStringValue:@"Date"];
+    [[columnLogDate headerView] setStringValue:CPBundleLocalizedString(@"Date", @"Date")];
 
     [columnLogFile setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"file" ascending:YES]];
-    [[columnLogFile headerView] setStringValue:@"file"];
+    [[columnLogFile headerView] setStringValue:CPBundleLocalizedString(@"file", @"file")];
 
     [columnLogMethod setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"method" ascending:YES]];
-    [[columnLogMethod headerView] setStringValue:@"method"];
+    [[columnLogMethod headerView] setStringValue:CPBundleLocalizedString(@"method", @"method")];
 
     [columnLogMessage setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"message" ascending:YES]];
-    [[columnLogMessage headerView] setStringValue:@"message"];
+    [[columnLogMessage headerView] setStringValue:CPBundleLocalizedString(@"message", @"message")];
 
     [_tableLogs addTableColumn:columnLogLevel];
     [_tableLogs addTableColumn:columnLogDate];
@@ -279,12 +279,12 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [filterLogField setTarget:_datasourceLogs];
     [filterLogField setAction:@selector(filterObjects:)];
 
-    [fieldPreferencesAutoRefresh setToolTip:@"Set the delay between asking hypervisor statistics"];
-    [fieldPreferencesMaxItems setToolTip:@"Set the max number of statistic entries to fetch"];
-    [fieldPreferencesMaxLogEntries setToolTip:@"Set the max number of log item to fetch"];
-    [switchPreferencesShowColunmMethod setToolTip:@"Display the method column in the log table"];
-    [switchPreferencesShowColunmFile setToolTip:@"Display the file column in the log table"];
-    [switchPreferencesAutoRefresh setToolTip:@"Activate the statistics auto fetching"];
+    [fieldPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Set the delay between asking hypervisor statistics", @"Set the delay between asking hypervisor statistics")];
+    [fieldPreferencesMaxItems setToolTip:CPBundleLocalizedString(@"Set the max number of statistic entries to fetch", @"Set the max number of statistic entries to fetch")];
+    [fieldPreferencesMaxLogEntries setToolTip:CPBundleLocalizedString(@"Set the max number of log item to fetch", @"Set the max number of log item to fetch")];
+    [switchPreferencesShowColunmMethod setToolTip:CPBundleLocalizedString(@"Display the method column in the log table", @"Display the method column in the log table")];
+    [switchPreferencesShowColunmFile setToolTip:CPBundleLocalizedString(@"Display the file column in the log table", @"Display the file column in the log table")];
+    [switchPreferencesAutoRefresh setToolTip:CPBundleLocalizedString(@"Activate the statistics auto fetching", @"Activate the statistics auto fetching")];
 }
 
 
@@ -664,8 +664,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
                     loadFifteen     = [[loadNode valueForAttribute:@"fifteen"] floatValue],
                     networkNodes    = [currentNode childrenWithName:@"network"];
 
-                [healthMemUsage setStringValue:freeMem + " Mo"];
-                [healthMemSwapped setStringValue:swapped + " Mo"];
+                [healthMemUsage setStringValue:freeMem + CPBundleLocalizedString(" MB", " MB")];
+                [healthMemSwapped setStringValue:swapped + CPBundleLocalizedString(" MB", " MB")];
 
                 [healthCPUUsage setStringValue:cpuFree + @"%"];
 
@@ -681,8 +681,8 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
             var maxMem      = Math.round([[memNode valueForAttribute:@"total"] floatValue] / 1024 / 1024),
                 diskNode    = [aStanza firstChildWithName:@"disk"];
 
-            [fieldTotalMemory setStringValue:maxMem + "G"];
-            [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + "G"];
+            [fieldTotalMemory setStringValue:maxMem + CPBundleLocalizedString("GB", "GB")];
+            [fieldHalfMemory setStringValue:Math.round((maxMem / 2) * 10) / 10 + CPBundleLocalizedString("GB", "GB")];
             [chartViewMemory setFixedMaxValue:[memNode valueForAttribute:@"total"]];
 
             [_datasourcePartitions removeAllObjects];
@@ -777,3 +777,11 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNHypervisorHealthController], comment);
+}

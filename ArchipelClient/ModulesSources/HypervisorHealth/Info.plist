@@ -6,6 +6,8 @@
         <string>org.archipelproject.hypervisorhealth</string>
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
+        <key>CPBundleLocale</key>
+        <string>en</string>
         <key>CPBundleName</key>
         <string>HypervisorSummary</string>
         <key>CPBundlePackageType</key>
