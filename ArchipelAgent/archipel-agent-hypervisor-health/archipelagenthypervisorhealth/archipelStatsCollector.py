@@ -126,10 +126,11 @@ class TNThreadedHealthCollector (Thread):
             aload = self.stats_load[-limit:]
         except Exception as ex:
             raise Exception("Unable to get disks information.", ex)
-        acpu.reverse()
-        amem.reverse()
-        aload.reverse()
-        anetwork.reverse()
+        if limit > 1:
+            acpu.reverse()
+            amem.reverse()
+            aload.reverse()
+            anetwork.reverse()
         return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk,
                 "load": aload, "uptime": uptime_stats, "uname": self.uname_stats, "network": anetwork}
 
