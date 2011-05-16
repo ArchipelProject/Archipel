@@ -167,7 +167,12 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
 - (void)fitWindowToVNCView
 {
-    var vncSize         = [_vncView canvasSize],
+    [self fitWindowToSize:[_vncView displaySize]];
+}
+
+- (void)fitWindowToSize:(CPSize)aSize
+{
+    var vncSize         = aSize,
         newRect         = [[self platformWindow] contentRect],
         widthOffset     = 6,
         heightOffset    = 6 + 59;
@@ -185,6 +190,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     if ([CPPlatform isBrowser] && (navigator.vendor.indexOf("Apple Computer, Inc.") != -1))
         [[self platformWindow] updateNativeContentRect];
 }
+
 
 #pragma mark -
 #pragma mark Actions
@@ -268,7 +274,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 - (void)vncView:(TNVNCView)aVNCView didDesktopSizeChange:(CPSize)aNewSize
 {
-    [self fitWindowToVNCView];
+    [self fitWindowToSize:aNewSize];
 }
 
 /*! VNCView delegate
