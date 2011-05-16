@@ -222,6 +222,8 @@ class TNThreadedHealthCollector (Thread):
             dev = line.split(":")[0].replace(" ", "")
             if dev == "lo":
                 continue
+            if dev.startswith("vnet"):
+                continue
             info = line.split(":")[1].split()
             rx = int(info[0])
             tx = int(info[8])
