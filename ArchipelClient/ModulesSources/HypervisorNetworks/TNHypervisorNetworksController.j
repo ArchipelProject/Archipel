@@ -335,7 +335,8 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [stanza addChildWithName:@"bridge" andAttributes:{"name": [aNetwork bridgeName], "stp": ([aNetwork isSTPEnabled]) ? "on" :"off", "delay": [aNetwork bridgeDelay]}];
     [stanza up];
 
-    [stanza addChildWithName:@"ip" andAttributes:{"address": [aNetwork bridgeIP], "netmask": [aNetwork bridgeNetmask]}];
+    if ([aNetwork bridgeIP] != @"" && [aNetwork bridgeNetmask] != @"")
+        [stanza addChildWithName:@"ip" andAttributes:{"address": [aNetwork bridgeIP], "netmask": [aNetwork bridgeNetmask]}];
 
     var dhcp = [aNetwork isDHCPEnabled];
     if (dhcp)
