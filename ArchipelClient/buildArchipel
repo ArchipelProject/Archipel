@@ -30,10 +30,10 @@ os.environ['PATH'] = os.environ['PATH']+':/usr/local/narwhal/bin'
 
 def main():
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughe", [   "project", "all", "modules=", "allmodules", "native=", "clean",
+        opts, args = getopt.getopt(sys.argv[1:], "pamCbIiughel", [   "project", "all", "modules=", "allmodules", "native=", "clean",
                                                                     "config=", "build", "installmodules", "uninstallmodules",
                                                                     "generateplist", "help", "example", "ignoremodules=",
-                                                                    "sdk=", "export=", ])
+                                                                    "sdk=", "export=", "localize"])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -46,6 +46,7 @@ def main():
     opt_should_generate_plist   = False;
     opt_build_only_modules      = False;
     opt_should_clean            = False;
+    opt_should_localize         = False;
     opt_export_sdk_path         = None;
     opt_export_archipel_path    = None;
     opt_build_native            = None;
@@ -94,6 +95,9 @@ def main():
             for p in a.split(","):
                 opt_ignore_modules_paths.append(GLOBAL_MODULES_SRC_PATH + p)
 
+        if o in ("-l", "--localize"):
+            opt_should_localize = True
+
         if o in ("--sdk"):
             opt_export_sdk_path = a
 
@@ -116,7 +120,7 @@ def main():
     # append any chosen modules to the build path
     opt_build_paths.extend(opt_modules_paths);
 
-    if not opt_export_sdk_path and not opt_export_archipel_path and not opt_build_native:
+    if not opt_export_sdk_path and not opt_export_archipel_path and not opt_build_native and not opt_should_localize:
         if len(opt_build_paths) == 0 or (not opt_should_generate_plist and not opt_should_remove_modules
                 and not opt_should_copy_modules and not opt_should_build and not opt_should_clean):
             print "Error: no targets specified. Use --help for usage"
@@ -125,6 +129,9 @@ def main():
     # clean if asked
     if opt_should_clean:
         clean(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
+
+    if opt_should_localize:
+        localize(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
 
     if opt_should_build:
         build(opt_build_paths, opt_build_config, opt_ignore_modules_paths)
@@ -159,6 +166,31 @@ def clean(paths, config, ignorepaths):
         shutil.rmtree(build_path, ignore_errors=True);
         remove_modules([path], config, ignorepaths)
 
+
+def localize(paths, config, ignorepaths):
+    return_code = 0;
+
+    print "# begining localize"
+
+    for path in paths:
+        if path in ignorepaths:
+            continue
+
+        if path.lower().find("sample") > -1:
+            continue
+
+        print "# moving to " + path
+        os.chdir(path);
+
+        print "# localizing %s..." % path
+        if path == ".":
+            return_code = os.system("./localize -s CPLocalizedString");
+        else:
+            return_code = os.system("../../localize -s CPBundleLocalizedString");
+
+        print "# Localization success."
+        print "# get back to " + GLOBAL_BASE_PATH
+        os.chdir(GLOBAL_BASE_PATH);
 
 def build(paths, config, ignorepaths):
     return_code = 0;
