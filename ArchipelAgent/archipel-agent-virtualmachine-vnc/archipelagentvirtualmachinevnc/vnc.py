@@ -26,7 +26,7 @@ from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipelcore.utils import build_error_iq, build_error_message
 import archipel.archipelLibvirtEntity
 
-from archipelWebSocket import TNArchipelWebSocket
+from archipelWebSocket import WebSocketProxy
 
 
 ARCHIPEL_NS_VNC                 = "archipel:virtualmachine:vnc"
@@ -138,7 +138,9 @@ class TNArchipelVNC (TNArchipelPlugin):
         self.entity.log.info("Virtual machine vnc proxy is using certificate %s" % str(cert))
         onlyssl = self.configuration.getboolean("VNC", "vnc_only_ssl")
         self.entity.log.info("Virtual machine vnc proxy accepts only SSL connection %s" % str(onlyssl))
-        self.novnc_proxy = TNArchipelWebSocket("127.0.0.1", current_vnc_port, "0.0.0.0", novnc_proxy_port, certfile=cert, onlySSL=onlyssl)
+        self.novnc_proxy = WebSocketProxy(target_host="127.0.0.1", target_port=current_vnc_port,
+                                            listen_host="0.0.0.0", listen_port=novnc_proxy_port, cert=cert, ssl_only=onlyssl,
+                                            wrap_cmd=None, wrap_mode="exit")
         self.novnc_proxy.start()
         self.entity.push_change("virtualmachine:vnc", "websocketvncstart")
 
