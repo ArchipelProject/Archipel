@@ -23,6 +23,7 @@
 @import <AppKit/CPTextField.j>
 
 @import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNAttachedWindow.j>
 
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
@@ -42,7 +43,7 @@
     CPString            _entityType;
     BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
-    CPAttachedWindow    _quickActionWindow;
+    TNAttachedWindow    _quickActionWindow;
 }
 
 
@@ -222,7 +223,7 @@
 {
     if (!_quickActionWindow)
     {
-        _quickActionWindow  = [[CPAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+        _quickActionWindow  = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
         var label = [CPTextField labelWithTitle:@"I'm sure you wanna know\nwhat's this, right?"];
 
         [label setFont:[CPFont boldSystemFontOfSize:11.0]];
@@ -233,7 +234,7 @@
         [_quickActionWindow setAlphaValue:0.95];
     }
 
-    [_quickActionWindow positionRelativeToView:self gravity:CPAttachedWindowGravityRight];
+    [_quickActionWindow positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
 }
 
 
