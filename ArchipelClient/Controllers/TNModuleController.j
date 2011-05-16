@@ -180,11 +180,17 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         else
         {
             if (_previousXMPPShow == TNStropheContactStatusOffline)
+            {
                 [_infoTextField setStringValue:@"Entity is offline"];
+            }
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+            }
+            else
+            {
+                [_infoTextField setStringValue:@""];
             }
             [center postNotificationName:TNArchipelModulesReadyNotification object:self];
         }
