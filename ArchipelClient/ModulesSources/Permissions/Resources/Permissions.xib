@@ -143,7 +143,7 @@
 											<int key="NSCellFlags2">138413056</int>
 											<string key="NSContents">Select a user from the list</string>
 											<object class="NSFont" key="NSSupport">
-												<string key="NSName">Arial-BoldMT</string>
+												
 												<double key="NSSize">18</double>
 												<int key="NSfFlags">16</int>
 											</object>
@@ -190,7 +190,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="650279727">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -273,7 +273,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Set the different permissions and roles you give to users for thus entity.</string>
 							<object class="NSFont" key="NSSupport" id="112071667">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -295,7 +295,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Permissions</string>
 							<object class="NSFont" key="NSSupport" id="540909881">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -701,7 +701,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Name:</string>
 								<object class="NSFont" key="NSSupport" id="206994132">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

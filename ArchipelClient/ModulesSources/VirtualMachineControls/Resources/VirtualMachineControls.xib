@@ -67,7 +67,7 @@
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents">Kill</string>
 							<object class="NSFont" key="NSSupport" id="986145391">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -172,7 +172,7 @@
 							<int key="NSCellFlags2">138413056</int>
 							<string key="NSContents">To enable live migration, you must start the virtual machine.</string>
 							<object class="NSFont" key="NSSupport" id="320318266">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -231,7 +231,7 @@
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -272,7 +272,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">100%</string>
 							<object class="NSFont" key="NSSupport" id="971462600">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -398,7 +398,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">...</string>
 							<object class="NSFont" key="NSSupport" id="1044521559">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -690,7 +690,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Kill the virtual machine</string>
 							<object class="NSFont" key="NSSupport" id="852465451">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>

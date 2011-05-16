@@ -100,7 +100,7 @@
 									<int key="NSCellFlags2">272630784</int>
 									<string key="NSContents">100%</string>
 									<object class="NSFont" key="NSSupport" id="347455521">
-										<string key="NSName">LucidaSans</string>
+										
 										<double key="NSSize">9</double>
 										<int key="NSfFlags">16</int>
 									</object>
@@ -192,7 +192,7 @@
 									<int key="NSCellFlags2">134217728</int>
 									<string key="NSContents"/>
 									<object class="NSFont" key="NSSupport" id="820393570">
-										<string key="NSName">LucidaGrande</string>
+										
 										<double key="NSSize">13</double>
 										<int key="NSfFlags">1044</int>
 									</object>
@@ -381,7 +381,7 @@
 							<int key="NSCellFlags2">138412032</int>
 							<string key="NSContents">Virtual machine is shutdowned.</string>
 							<object class="NSFont" key="NSSupport" id="776184401">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -445,7 +445,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">Accessing this virtual machine screen require a valid password.</string>
 								<object class="NSFont" key="NSSupport" id="588635494">
-									<string key="NSName">LucidaSans</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -541,7 +541,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Password:</string>
 								<object class="NSFont" key="NSSupport" id="315719220">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

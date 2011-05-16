@@ -95,7 +95,7 @@
 							<int key="NSCellFlags2">0</int>
 							<string key="NSContents">Display only installed</string>
 							<object class="NSFont" key="NSSupport" id="805034058">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -157,7 +157,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -266,7 +266,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">VMCasts management</string>
 							<object class="NSFont" key="NSSupport" id="25815913">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -347,7 +347,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<object class="NSFont" key="NSSupport" id="701878033">
-									<string key="NSName">LucidaGrande</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">1044</int>
 								</object>
@@ -438,7 +438,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">URL:</string>
 								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

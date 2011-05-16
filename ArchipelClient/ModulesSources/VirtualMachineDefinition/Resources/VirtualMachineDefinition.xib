@@ -79,7 +79,7 @@
 							<int key="NSCellFlags2">0</int>
 							<string key="NSContents">Box</string>
 							<object class="NSFont" key="NSSupport" id="217579653">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -160,7 +160,7 @@
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Clock:</string>
 							<object class="NSFont" key="NSSupport" id="964373389">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -270,7 +270,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Configure advanced features of virtual machine</string>
 							<object class="NSFont" key="NSSupport" id="449903091">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -643,7 +643,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">MB</string>
 							<object class="NSFont" key="NSSupport" id="1040836309">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -959,7 +959,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Virtual machine properties</string>
 							<object class="NSFont" key="NSSupport" id="831573175">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -2564,7 +2564,7 @@
 									<int key="NSCellFlags2">272630784</int>
 									<string key="NSContents">Advanced controls:</string>
 									<object class="NSFont" key="NSSupport">
-										<string key="NSName">LucidaGrande</string>
+										
 										<double key="NSSize">9</double>
 										<int key="NSfFlags">16</int>
 									</object>

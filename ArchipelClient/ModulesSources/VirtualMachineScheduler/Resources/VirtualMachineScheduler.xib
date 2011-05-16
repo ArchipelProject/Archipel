@@ -124,7 +124,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="781857479">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -207,7 +207,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can manage entity's scheduler action.</string>
 							<object class="NSFont" key="NSSupport" id="762953436">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -237,7 +237,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Scheduled actions</string>
 							<object class="NSFont" key="NSSupport" id="397248728">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -308,7 +308,7 @@
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Second:</string>
 							<object class="NSFont" key="NSSupport" id="436836808">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>

@@ -99,7 +99,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="247105171">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -212,7 +212,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can create a new virtual hard drive or edit, delete, convert any existing one.</string>
 							<object class="NSFont" key="NSSupport" id="584395556">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -242,7 +242,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Manage virtual drives</string>
 							<object class="NSFont" key="NSSupport" id="883883335">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -279,7 +279,7 @@
 							<int key="NSCellFlags2">138412032</int>
 							<string key="NSContents">You need to stop the virtual machine to be able to manage its drives.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -496,7 +496,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Name:</string>
 								<object class="NSFont" key="NSSupport" id="589561164">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

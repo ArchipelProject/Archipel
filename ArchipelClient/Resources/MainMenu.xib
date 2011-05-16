@@ -146,7 +146,7 @@
 														<int key="NSCellFlags2">268436544</int>
 														<string key="NSContents"/>
 														<object class="NSFont" key="NSSupport" id="925748631">
-															<string key="NSName">LucidaSans</string>
+															
 															<double key="NSSize">13</double>
 															<int key="NSfFlags">16</int>
 														</object>
@@ -358,7 +358,7 @@
 										<int key="NSCellFlags2">272630784</int>
 										<string key="NSContents">Connected as ...</string>
 										<object class="NSFont" key="NSSupport">
-											<string key="NSName">LucidaSans</string>
+											
 											<double key="NSSize">10</double>
 											<int key="NSfFlags">16</int>
 										</object>
@@ -417,7 +417,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">Archipel Client</string>
 								<object class="NSFont" key="NSSupport" id="483616963">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">18</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -605,7 +605,7 @@
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents">Open documentation</string>
 							<object class="NSFont" key="NSSupport" id="649011811">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -630,7 +630,7 @@
 							<int key="NSCellFlags2">205520896</int>
 							<string key="NSContents">Now your first hypervisor is in your roster, you can start to play with. Select it, then go to the "Virtual Machine" tab and ask for a new virtual machine.</string>
 							<object class="NSFont" key="NSSupport" id="647643796">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">11</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -651,7 +651,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">And then ?</string>
 							<object class="NSFont" key="NSSupport" id="244038108">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -975,7 +975,7 @@
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents"/>
 								<object class="NSFont" key="NSSupport" id="516354061">
-									<string key="NSName">LucidaGrande</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -1192,7 +1192,7 @@
 									<string key="NSResourceName">spinner.gif</string>
 								</object>
 								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaGrande-Bold</string>
+									
 									<double key="NSSize">18</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -1433,7 +1433,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">Using XMPP monitoring can slow down the performances.</string>
 							<object class="NSFont" key="NSSupport" id="451191495">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -2142,7 +2142,7 @@
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">33554432</int>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -2165,7 +2165,7 @@
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Website:</string>
 							<object class="NSFont" key="NSSupport" id="728862931">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -2734,7 +2734,7 @@
 								<int key="NSCellFlags2">272629760</int>
 								<string key="NSContents">Pick up the new avatar of the entity from the following list.</string>
 								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaSans</string>
+									
 									<double key="NSSize">12</double>
 									<int key="NSfFlags">16</int>
 								</object>

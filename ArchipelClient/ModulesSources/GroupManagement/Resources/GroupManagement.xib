@@ -2,7 +2,7 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">10J3250</string>
+		<string key="IBDocument.SystemVersion">10J4138</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
@@ -93,7 +93,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="604623667">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -166,7 +166,7 @@
 					<object class="NSTextField" id="59387253">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{17, 438}, {689, 20}}</string>
+						<string key="NSFrame">{{17, 441}, {689, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="499700828"/>
@@ -176,7 +176,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can send grouped commands to the followed virtual machines in the group.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -196,7 +196,7 @@
 					<object class="NSTextField" id="968439110">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">266</int>
-						<string key="NSFrame">{{17, 466}, {689, 26}}</string>
+						<string key="NSFrame">{{17, 470}, {689, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="59387253"/>
@@ -205,8 +205,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Grouped commands</string>
-							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans-Demi</string>
+							<object class="NSFont" key="NSSupport" id="256438496">
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -243,18 +243,13 @@
 							<int key="NSvFlags">266</int>
 							<string key="NSFrame">{{17, 362}, {546, 22}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="901298923"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="606588087">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">Grouped migration</string>
-								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaGrande-Bold</string>
-									<double key="NSSize">18</double>
-									<int key="NSfFlags">16</int>
-								</object>
+								<reference key="NSSupport" ref="256438496"/>
 								<reference key="NSControlView" ref="588319175"/>
 								<reference key="NSBackgroundColor" ref="778408564"/>
 								<object class="NSColor" key="NSTextColor">
@@ -268,7 +263,6 @@
 							<int key="NSvFlags">266</int>
 							<string key="NSFrame">{{17, 337}, {546, 17}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="1005357264"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="789388762">
@@ -286,7 +280,6 @@
 							<int key="NSvFlags">265</int>
 							<string key="NSFrame">{{353, 307}, {207, 22}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="338407782"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSSearchFieldCell" key="NSCell" id="797023159">
@@ -349,7 +342,6 @@
 							<int key="NSvFlags">274</int>
 							<string key="NSFrame">{{20, 44}, {540, 255}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="238712073"/>
 							<string key="NSClassName">TNUIKitScrollView</string>
 						</object>
@@ -358,7 +350,6 @@
 							<int key="NSvFlags">289</int>
 							<string key="NSFrame">{{442, 3}, {118, 25}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="214148816">
 								<int key="NSCellFlags">-2080244224</int>
@@ -379,7 +370,6 @@
 							<int key="NSvFlags">289</int>
 							<string key="NSFrame">{{316, 3}, {118, 25}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="697876774"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="885026690">
@@ -401,7 +391,6 @@
 							<int key="NSvFlags">34</int>
 							<string key="NSFrame">{{0, 33}, {580, 5}}</string>
 							<reference key="NSSuperview" ref="835236142"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="273089990"/>
 							<string key="NSOffsets">{0, 0}</string>
 							<object class="NSTextFieldCell" key="NSTitleCell">
@@ -423,7 +412,6 @@
 					</object>
 					<string key="NSFrame">{{7, 11}, {580, 404}}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="588319175"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>

@@ -78,7 +78,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can interact directly with XMPP servers using this module. Be warned.</string>
 							<object class="NSFont" key="NSSupport" id="782443273">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -116,7 +116,7 @@
 							<int key="NSCellFlags2">4195328</int>
 							<string key="NSContents">XMPP server administration</string>
 							<object class="NSFont" key="NSSupport" id="684428243">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -144,7 +144,7 @@
 									<int key="NSCellFlags">-2076049856</int>
 									<int key="NSCellFlags2">2048</int>
 									<object class="NSFont" key="NSSupport" id="7455733">
-										<string key="NSName">LucidaGrande</string>
+										
 										<double key="NSSize">13</double>
 										<int key="NSfFlags">1044</int>
 									</object>
@@ -223,7 +223,7 @@
 									<int key="NSCellFlags2">272630784</int>
 									<string key="NSContents">XMPP Server:</string>
 									<object class="NSFont" key="NSSupport" id="412621498">
-										<string key="NSName">LucidaSans-Demi</string>
+										
 										<double key="NSSize">13</double>
 										<int key="NSfFlags">16</int>
 									</object>

@@ -125,7 +125,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="606744346">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -208,7 +208,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Select the installed appliance into hypervisor you want to use for this virtual machine.</string>
 							<object class="NSFont" key="NSSupport" id="630962240">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -238,7 +238,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Available appliances</string>
 							<object class="NSFont" key="NSSupport" id="907244549">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -433,7 +433,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Name:</string>
 								<object class="NSFont" key="NSSupport">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -469,7 +469,7 @@
 							<int key="NSCellFlags2">138412032</int>
 							<string key="NSContents">You need to stop the virtual machine to be able to manage the appliances.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>

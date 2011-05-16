@@ -100,7 +100,7 @@
 							<int key="NSCellFlags2">272629760</int>
 							<string key="NSContents">...</string>
 							<object class="NSFont" key="NSSupport" id="861430677">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -138,7 +138,7 @@
 							<int key="NSCellFlags2">272629760</int>
 							<string key="NSContents">...</string>
 							<object class="NSFont" key="NSSupport" id="75421548">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -250,7 +250,7 @@
 							<int key="NSCellFlags2">71303168</int>
 							<string key="NSContents">Uptime:</string>
 							<object class="NSFont" key="NSSupport" id="379138562">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -380,7 +380,7 @@
 							<int key="NSCellFlags2">272629760</int>
 							<string key="NSContents">Health</string>
 							<object class="NSFont" key="NSSupport" id="841097941">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -488,7 +488,7 @@
 									<int key="NSCellFlags2">71303168</int>
 									<string key="NSContents">0G</string>
 									<object class="NSFont" key="NSSupport" id="636364211">
-										<string key="NSName">LucidaSans</string>
+										
 										<double key="NSSize">9</double>
 										<int key="NSfFlags">16</int>
 									</object>
@@ -1016,7 +1016,7 @@
 							<int key="NSCellFlags2">4194304</int>
 							<string key="NSContents">This table contains hypervisor's logs.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>

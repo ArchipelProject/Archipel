@@ -128,7 +128,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="5247702">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -211,7 +211,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can manage the hypervisor's network.</string>
 							<object class="NSFont" key="NSSupport" id="953858759">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -241,7 +241,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Manage hypervisor networks</string>
 							<object class="NSFont" key="NSSupport" id="548128472">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -285,7 +285,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Name:</string>
 								<object class="NSFont" key="NSSupport" id="179505641">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

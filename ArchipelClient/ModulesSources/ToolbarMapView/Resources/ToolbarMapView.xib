@@ -80,7 +80,7 @@
 															<int key="NSCellFlags2">272630784</int>
 															<string key="NSContents">Select to pin to set origin</string>
 															<object class="NSFont" key="NSSupport" id="741040891">
-																<string key="NSName">ArialMT</string>
+																
 																<double key="NSSize">13</double>
 																<int key="NSfFlags">16</int>
 															</object>
@@ -118,7 +118,7 @@
 															<int key="NSCellFlags2">272630784</int>
 															<string key="NSContents">Origin:</string>
 															<object class="NSFont" key="NSSupport" id="140434770">
-																<string key="NSName">Arial-BoldMT</string>
+																
 																<double key="NSSize">13</double>
 																<int key="NSfFlags">16</int>
 															</object>
@@ -143,7 +143,7 @@
 															<int key="NSCellFlags2">268436544</int>
 															<string key="NSContents"/>
 															<object class="NSFont" key="NSSupport" id="300706185">
-																<string key="NSName">LucidaGrande</string>
+																
 																<double key="NSSize">13</double>
 																<int key="NSfFlags">1044</int>
 															</object>

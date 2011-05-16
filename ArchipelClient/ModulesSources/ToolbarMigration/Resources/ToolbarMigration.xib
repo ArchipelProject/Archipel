@@ -60,7 +60,7 @@
 							<int key="NSCellFlags2">134217728</int>
 							<string key="NSContents">Migrate</string>
 							<object class="NSFont" key="NSSupport" id="872117758">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -291,7 +291,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Choose a virtual machine</string>
 							<object class="NSFont" key="NSSupport" id="73852823">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -384,7 +384,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Destination hypervisor</string>
 							<object class="NSFont" key="NSSupport" id="55685752">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>

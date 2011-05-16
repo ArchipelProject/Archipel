@@ -124,7 +124,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="227545601">
-								<string key="NSName">LucidaGrande</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -207,7 +207,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.</string>
 							<object class="NSFont" key="NSSupport" id="931539978">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -237,7 +237,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Virtual Machines</string>
 							<object class="NSFont" key="NSSupport" id="739828074">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -405,7 +405,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">JID:</string>
 								<object class="NSFont" key="NSSupport" id="940602514">
-									<string key="NSName">LucidaSans-Demi</string>
+									
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>

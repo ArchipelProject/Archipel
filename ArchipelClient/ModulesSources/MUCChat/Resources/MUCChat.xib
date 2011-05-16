@@ -76,7 +76,7 @@
 											<int key="NSCellFlags2">272630784</int>
 											<string key="NSContents"/>
 											<object class="NSFont" key="NSSupport" id="973569437">
-												<string key="NSName">LucidaGrande</string>
+												
 												<double key="NSSize">13</double>
 												<int key="NSfFlags">1044</int>
 											</object>
@@ -169,7 +169,7 @@
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Room name:</string>
 							<object class="NSFont" key="NSSupport" id="399685276">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -240,7 +240,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can configure preferences for the health module.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -262,7 +262,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Conference preference</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans-Demi</string>
+								
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
