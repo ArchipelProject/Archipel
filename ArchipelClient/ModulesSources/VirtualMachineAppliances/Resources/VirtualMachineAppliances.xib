@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">10J3250</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.SystemVersion">10J4138</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1305</string>
+			<string key="NS.object.0">1306</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -93,7 +93,6 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="896725779"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="248363153">
@@ -125,7 +124,7 @@
 							<int key="NSCellFlags2">268436544</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="606744346">
-								
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">1044</int>
 							</object>
@@ -207,8 +206,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Select the installed appliance into hypervisor you want to use for this virtual machine.</string>
-							<object class="NSFont" key="NSSupport" id="630962240">
-								
+							<object class="NSFont" key="NSSupport" id="828693881">
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -238,7 +237,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Available appliances</string>
 							<object class="NSFont" key="NSSupport" id="907244549">
-								
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -260,7 +259,7 @@
 			<object class="NSWindowTemplate" id="476869718">
 				<int key="NSWindowStyleMask">15</int>
 				<int key="NSWindowBacking">2</int>
-				<string key="NSWindowRect">{{646, 430}, {511, 195}}</string>
+				<string key="NSWindowRect">{{646, 430}, {511, 215}}</string>
 				<int key="NSWTFlags">611844096</int>
 				<string key="NSWindowTitle">Create a new appliance</string>
 				<string key="NSWindowClass">NSWindow</string>
@@ -273,7 +272,7 @@
 						<object class="NSTextField" id="860671332">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 149}, {214, 26}}</string>
+							<string key="NSFrame">{{17, 169}, {214, 26}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="202129772"/>
@@ -294,7 +293,7 @@
 						<object class="NSTextField" id="202129772">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 116}, {477, 20}}</string>
+							<string key="NSFrame">{{17, 136}, {477, 20}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="363174958"/>
@@ -303,7 +302,7 @@
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">You can create an appliance from this virtual machine actual configuration.</string>
-								<reference key="NSSupport" ref="630962240"/>
+								<reference key="NSSupport" ref="828693881"/>
 								<reference key="NSControlView" ref="202129772"/>
 								<reference key="NSBackgroundColor" ref="933393400"/>
 								<reference key="NSTextColor" ref="190833698"/>
@@ -312,7 +311,7 @@
 						<object class="NSTextField" id="363174958">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 98}, {476, 20}}</string>
+							<string key="NSFrame">{{17, 118}, {476, 20}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="499130122"/>
@@ -321,7 +320,7 @@
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
 								<string key="NSContents">It will be published to the local VMCast of the virtual machine's hypervisor.</string>
-								<reference key="NSSupport" ref="630962240"/>
+								<reference key="NSSupport" ref="828693881"/>
 								<reference key="NSControlView" ref="363174958"/>
 								<reference key="NSBackgroundColor" ref="933393400"/>
 								<reference key="NSTextColor" ref="190833698"/>
@@ -330,7 +329,7 @@
 						<object class="NSBox" id="329219753">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">34</int>
-							<string key="NSFrame">{{0, 38}, {511, 5}}</string>
+							<string key="NSFrame">{{0, 58}, {511, 5}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="324651244"/>
@@ -350,14 +349,17 @@
 							<int key="NSBoxType">2</int>
 							<int key="NSTitlePosition">0</int>
 							<bool key="NSTransparent">NO</bool>
+							<object class="NSColor" key="NSBorderColor2">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
+							</object>
 						</object>
 						<object class="NSButton" id="321280977">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">289</int>
-							<string key="NSFrame">{{373, 8}, {118, 25}}</string>
+							<string key="NSFrame">{{379, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="899779922">
 								<int key="NSCellFlags">-2080244224</int>
@@ -365,8 +367,9 @@
 								<string key="NSContents">Create</string>
 								<reference key="NSSupport" ref="606744346"/>
 								<reference key="NSControlView" ref="321280977"/>
-								<int key="NSButtonFlags">-2038152961</int>
-								<int key="NSButtonFlags2">163</int>
+								<int key="NSButtonFlags">-2038021889</int>
+								<int key="NSButtonFlags2">129</int>
+								<reference key="NSAlternateImage" ref="606744346"/>
 								<string key="NSAlternateContents"/>
 								<string key="NSKeyEquivalent"/>
 								<int key="NSPeriodicDelay">400</int>
@@ -376,7 +379,7 @@
 						<object class="NSButton" id="324651244">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">289</int>
-							<string key="NSFrame">{{247, 8}, {118, 25}}</string>
+							<string key="NSFrame">{{261, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="321280977"/>
@@ -387,8 +390,9 @@
 								<string key="NSContents">Cancel</string>
 								<reference key="NSSupport" ref="606744346"/>
 								<reference key="NSControlView" ref="324651244"/>
-								<int key="NSButtonFlags">-2038152961</int>
-								<int key="NSButtonFlags2">163</int>
+								<int key="NSButtonFlags">-2038021889</int>
+								<int key="NSButtonFlags2">129</int>
+								<reference key="NSAlternateImage" ref="606744346"/>
 								<string key="NSAlternateContents"/>
 								<string key="NSKeyEquivalent"/>
 								<int key="NSPeriodicDelay">400</int>
@@ -398,7 +402,7 @@
 						<object class="NSTextField" id="527357079">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">266</int>
-							<string key="NSFrame">{{92, 60}, {399, 22}}</string>
+							<string key="NSFrame">{{92, 80}, {399, 22}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="329219753"/>
@@ -423,7 +427,7 @@
 						<object class="NSTextField" id="499130122">
 							<reference key="NSNextResponder" ref="307555981"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 62}, {70, 20}}</string>
+							<string key="NSFrame">{{17, 83}, {70, 17}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="527357079"/>
@@ -433,7 +437,7 @@
 								<int key="NSCellFlags2">71304192</int>
 								<string key="NSContents">Name:</string>
 								<object class="NSFont" key="NSSupport">
-									
+									<string key="NSName">LucidaGrande-Bold</string>
 									<double key="NSSize">13</double>
 									<int key="NSfFlags">16</int>
 								</object>
@@ -443,7 +447,7 @@
 							</object>
 						</object>
 					</object>
-					<string key="NSFrame">{{7, 11}, {511, 195}}</string>
+					<string key="NSFrame">{{7, 11}, {511, 215}}</string>
 					<reference key="NSSuperview"/>
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="860671332"/>
@@ -462,14 +466,13 @@
 						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
 						<reference key="NSSuperview" ref="1070831010"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="254957470">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">138412032</int>
 							<string key="NSContents">You need to stop the virtual machine to be able to manage the appliances.</string>
 							<object class="NSFont" key="NSSupport">
-								
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">9</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -1116,6 +1119,7 @@
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
+							<string>maskingView</string>
 							<string>viewTableContainer</string>
 							<string>windowNewAppliance</string>
 						</object>
@@ -1125,6 +1129,7 @@
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
 							<string>TNUIKitScrollView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -1137,6 +1142,7 @@
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
+							<string>maskingView</string>
 							<string>viewTableContainer</string>
 							<string>windowNewAppliance</string>
 						</object>
@@ -1157,6 +1163,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">mainScrollView</string>
 								<string key="candidateClassName">TNUIKitScrollView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">maskingView</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

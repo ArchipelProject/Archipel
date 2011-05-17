@@ -329,3 +329,27 @@
 /* Class = "NSTextFieldCell"; title = "Language:"; ObjectID = "1339"; */
 "1339.title" = "Langue";
 
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1348"; */
+"1348.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1349"; */
+"1349.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1350"; */
+"1350.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1351"; */
+"1351.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1355"; */
+"1355.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1356"; */
+"1356.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1357"; */
+"1357.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1358"; */
+"1358.title" = "Item 1";
+
