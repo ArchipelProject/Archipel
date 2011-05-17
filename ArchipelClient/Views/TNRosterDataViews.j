@@ -69,7 +69,7 @@
 
         _shouldDisplayAvatar            = !![rosterLayout objectForKey:@"TNOutlineViewRosterDisplayAvatar"],
         _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 1, 16, 16)];
-        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 2, 170, 100)];
+        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 3, 170, 100)];
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 18, 170, 100)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
