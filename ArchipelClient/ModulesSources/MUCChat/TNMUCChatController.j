@@ -86,7 +86,7 @@
     var columnNickname    = [[CPTableColumn alloc] initWithIdentifier:@"nickname"];
 
     [columnNickname setWidth:250];
-    [[columnNickname headerView] setStringValue:@"Nickname"];
+    [[columnNickname headerView] setStringValue:CPBundleLocalizedString(@"Nickname", @"Nickname")];
     [columnNickname setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
     [_tableViewPeople addTableColumn:columnNickname];
 
@@ -121,8 +121,8 @@
         [bundle objectForInfoDictionaryKey:@"TNArchipelMUCDefaultRoom"], @"TNArchipelMUCDefaultRoom"
     ]];
 
-    [fieldPreferencesDefaultService setToolTip:@"set the conference server to use"];
-    [fieldPreferencesDefaultRoom setToolTip:@"set the room to connect to"];
+    [fieldPreferencesDefaultService setToolTip:CPBundleLocalizedString(@"Set the conference server to use", @"Set the conference server to use")];
+    [fieldPreferencesDefaultRoom setToolTip:CPBundleLocalizedString(@"Set the room to connect to", @"Set the room to connect to")];
 }
 
 
@@ -277,10 +277,10 @@
 
     if (![[[TNStropheIMClient defaultClient] roster] containsJID:[member JID]])
     {
-        var alert = [TNAlert alertWithMessage:@"Adding contact"
-                                    informative:@"Would you like to add " + [member nickname] + @" to your roster"
+        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Adding contact", @"Adding contact")
+                                    informative:CPBundleLocalizedString(@"Would you like to add ", @"Would you like to add ") + [member nickname] + CPBundleLocalizedString(@" to your roster", @" to your roster")
                                      target:self
-                                    actions:[["Add contact", @selector(performAddToRoster:)], ["Cancel", nil]]];
+                                    actions:[[CPBundleLocalizedString(@"Add contact", @"Add contact"), @selector(performAddToRoster:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
         [alert setUserInfo:member];
         [alert runModal];
     }
@@ -349,3 +349,11 @@
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNMUCChatController], comment);
+}
