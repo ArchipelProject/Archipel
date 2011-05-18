@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key> contact in group</key>
+	<string> contact in group</string>
+	<key> contacts in group</key>
+	<string> contacts in group</string>
 	<key> has been added</key>
 	<string> has been added</string>
 	<key> has been created</key>
@@ -39,7 +43,7 @@
 	<key>Busy</key>
 	<string>Busy</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>CREDENTIAL_REMEMBER_TOOLTIP</string>
+	<string>Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
@@ -58,6 +62,8 @@
 	<string>Contact </string>
 	<key>Contacts</key>
 	<string>Contacts</string>
+	<key>Contents</key>
+	<string>Contents</string>
 	<key>Copy</key>
 	<string>Copy</string>
 	<key>Cut</key>
@@ -100,6 +106,8 @@
 	<string>Help</string>
 	<key>Hide main menu</key>
 	<string>Hide main menu</string>
+	<key>Hypervisor</key>
+	<string>Hypervisor</string>
 	<key>JID is not valid</key>
 	<string>JID is not valid</string>
 	<key>Loaded </key>
@@ -136,6 +144,8 @@
 	<string>Rename group</string>
 	<key>Report a bug</key>
 	<string>Report a bug</string>
+	<key>Resource</key>
+	<string>Resource</string>
 	<key>Search entity</key>
 	<string>Search entity</string>
 	<key>Select all</key>
@@ -194,8 +204,16 @@
 	<string>Undo</string>
 	<key>Update your current XMPP status</key>
 	<string>Update your current XMPP status</string>
+	<key>User</key>
+	<string>User</string>
 	<key>User supression</key>
 	<string>User supression</string>
+	<key>Virtual machine</key>
+	<string>Virtual machine</string>
+	<key>You are not registred to the entity events.</key>
+	<string>You are not registred to the entity events.</string>
+	<key>You are registred to the entity events.</key>
+	<string>You are registred to the entity events.</string>
 	<key>You can't assign tags here</key>
 	<string>You can't assign tags here</string>
 	<key>You have to enter a valid group name.</key>
@@ -215,15 +233,15 @@
 	<key>authentification-failed</key>
 	<string>authentification-failed</string>
 	<key>cancel</key>
-	<string>cancel</string>
+	<string>Cancel</string>
 	<key>connect</key>
-	<string>connect</string>
+	<string>Connect</string>
 	<key>connected</key>
-	<string>connected</string>
+	<string>Connected</string>
 	<key>connecting</key>
-	<string>connecting</string>
+	<string>Connecting</string>
 	<key>connection-failed</key>
-	<string>connection-failed</string>
+	<string>Connection failed</string>
 	<key>disconnected</key>
 	<string>disconnected</string>
 	<key>disconnecting</key>

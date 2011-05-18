@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key> contact in group</key>
+	<string> contact dans le groupe</string>
+	<key> contacts in group</key>
+	<string> contacts dans le groupe</string>
 	<key> has been added</key>
 	<string> a ete ajouté</string>
 	<key> has been created</key>
@@ -39,7 +43,7 @@
 	<key>Busy</key>
 	<string>Occupé</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>CREDENTIAL_REMEMBER_TOOLTIP</string>
+	<string>Activer ce boutton pour enregistrer vos identifiants. Notez que tous les mots de passes sont stockés en clair dans le stockage local de votre navigateur et qu'ils sont très facile à récupérer. Utilisez cette fonctionnalitée à vos risques et périls. Toutefois, cette fonctionnalité vous facilite la vie. Si vous désirer effacer vos identifiants du stockage local, entrez les, puis placer ce bouton en position Off.</string>
 	<key>Cancel</key>
 	<string>Annuler</string>
 	<key>Cannot save your preferences to the XMPP server</key>
@@ -58,6 +62,8 @@
 	<string>Contact </string>
 	<key>Contacts</key>
 	<string>Contacts</string>
+	<key>Contents</key>
+	<string>Contenu</string>
 	<key>Copy</key>
 	<string>Copier</string>
 	<key>Cut</key>
@@ -77,7 +83,7 @@
 	<key>Do not disturb</key>
 	<string>Ne pas déranger</string>
 	<key>Edit</key>
-	<string>Edit</string>
+	<string>Editer</string>
 	<key>Expand all groups</key>
 	<string>Etendre tous les groupes</string>
 	<key>Expand group</key>
@@ -100,6 +106,8 @@
 	<string>Aide</string>
 	<key>Hide main menu</key>
 	<string>Chacher le menu principal</string>
+	<key>Hypervisor</key>
+	<string>Hyperviseur</string>
 	<key>JID is not valid</key>
 	<string>le JID n'est pas valide</string>
 	<key>Loaded </key>
@@ -136,6 +144,8 @@
 	<string>Renommer le groupe</string>
 	<key>Report a bug</key>
 	<string>Rapporter un bug</string>
+	<key>Resource</key>
+	<string>Resource</string>
 	<key>Search entity</key>
 	<string>Rechercher une entité</string>
 	<key>Select all</key>
@@ -194,8 +204,16 @@
 	<string>Defaire</string>
 	<key>Update your current XMPP status</key>
 	<string>Mettre à jour le statut XMPP</string>
+	<key>User</key>
+	<string>Utilisateur</string>
 	<key>User supression</key>
 	<string>Supprimer un utilisateur</string>
+	<key>Virtual machine</key>
+	<string>Machine virtuelle</string>
+	<key>You are not registred to the entity events.</key>
+	<string>You are not registred to the entity events.</string>
+	<key>You are registred to the entity events.</key>
+	<string>You are registred to the entity events.</string>
 	<key>You can't assign tags here</key>
 	<string>Vous ne pouvez pas assigner d'étiquettes ici.</string>
 	<key>You have to enter a valid group name.</key>
@@ -215,19 +233,19 @@
 	<key>authentification-failed</key>
 	<string>Echec d'Authentification</string>
 	<key>cancel</key>
-	<string>annuler</string>
+	<string>Annuler</string>
 	<key>connect</key>
-	<string>connexion</string>
+	<string>Connexion</string>
 	<key>connected</key>
-	<string>connecté</string>
+	<string>Connecté</string>
 	<key>connecting</key>
 	<string>Connexion...</string>
 	<key>connection-failed</key>
 	<string>Echec de la connexion</string>
 	<key>disconnected</key>
-	<string>deconnecté</string>
+	<string>Deconnecté</string>
 	<key>disconnecting</key>
-	<string>deconnexion...</string>
+	<string>Deconnexion...</string>
 	<key>host-unreachable</key>
 	<string>hôte injoingnable</string>
 	<key>unknown-error</key>

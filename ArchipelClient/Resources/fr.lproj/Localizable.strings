@@ -1,3 +1,9 @@
+/*  contact in group */
+" contact in group" = " contact dans le groupe";
+
+/*  contacts in group */
+" contacts in group" = " contacts dans le groupe";
+
 /*  has been added */
 " has been added" = " a ete ajouté";
 
@@ -58,11 +64,11 @@
 /* Busy */
 "Busy" = "Occupé";
 
-/* cancel */
-"cancel" = "annuler";
-
 /* Cancel */
 "Cancel" = "Annuler";
+
+/* cancel */
+"cancel" = "Annuler";
 
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Impossible de sauvegarder les préférences dans le serveur XMPP.";
@@ -77,10 +83,10 @@
 "Collapse group" = "Reduire le groupe";
 
 /* connect */
-"connect" = "connexion";
+"connect" = "Connexion";
 
 /* connected */
-"connected" = "connecté";
+"connected" = "Connecté";
 
 /* Connected as  */
 "Connected as " = "Connecté en tant que ";
@@ -100,11 +106,14 @@
 /* Contact */
 "Contacts" = "Contacts";
 
+/* Contents */
+"Contents" = "Contenu";
+
 /* Copy */
 "Copy" = "Copier";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "CREDENTIAL_REMEMBER_TOOLTIP";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "Activer ce boutton pour enregistrer vos identifiants. Notez que tous les mots de passes sont stockés en clair dans le stockage local de votre navigateur et qu'ils sont très facile à récupérer. Utilisez cette fonctionnalitée à vos risques et périls. Toutefois, cette fonctionnalité vous facilite la vie. Si vous désirer effacer vos identifiants du stockage local, entrez les, puis placer ce bouton en position Off.";
 
 /* Cut */
 "Cut" = "Couper";
@@ -126,10 +135,10 @@
 "Delete group" = "Supprimer le groupe";
 
 /* disconnected */
-"disconnected" = "deconnecté";
+"disconnected" = "Deconnecté";
 
 /* disconnecting */
-"disconnecting" = "deconnexion...";
+"disconnecting" = "Deconnexion...";
 
 /* Display or hide the properties view */
 "Display or hide the properties view" = "Affiche les proprietés.";
@@ -138,7 +147,7 @@
 "Do not disturb" = "Ne pas déranger";
 
 /* Edit */
-"Edit" = "Edit";
+"Edit" = "Editer";
 
 /* Expand all groups */
 "Expand all groups" = "Etendre tous les groupes";
@@ -175,6 +184,9 @@
 
 /* host-unreachable */
 "host-unreachable" = "hôte injoingnable";
+
+/* Hypervisor */
+"Hypervisor" = "Hyperviseur";
 
 /* JID is not valid */
 "JID is not valid" = "le JID n'est pas valide";
@@ -230,6 +242,9 @@
 /* Report a bug */
 "Report a bug" = "Rapporter un bug";
 
+/* Resource */
+"Resource" = "Resource";
+
 /* Search entity */
 "Search entity" = "Rechercher une entité";
 
@@ -279,7 +294,7 @@
 "The group must be empty" = "Le groupe doit être vide";
 
 /* The JID to use to connect. It is always formatted like user@domain.com */
-"The JID to use to connect. It is always formatted like user@domain.com" = "Le JID å utiliser. Il est toujours formatté de la sorte: utilisateur@domaine.com";
+"The JID to use to connect. It is always formatted like user@domain.com" = "Le JID à utiliser. Il est toujours formaté de la sorte: utilisateur@domaine.com";
 
 /* The name of the new group */
 "The name of the new group" = "Le nom du nouveau groupe";
@@ -320,8 +335,20 @@
 /* Update your current XMPP status */
 "Update your current XMPP status" = "Mettre à jour le statut XMPP";
 
+/* User */
+"User" = "Utilisateur";
+
 /* User supression */
 "User supression" = "Supprimer un utilisateur";
+
+/* Virtual machine */
+"Virtual machine" = "Machine virtuelle";
+
+/* You are not registred to the entity events. */
+"You are not registred to the entity events." = "You are not registred to the entity events.";
+
+/* You are registred to the entity events. */
+"You are registred to the entity events." = "You are registred to the entity events.";
 
 /* You can't assign tags here */
 "You can't assign tags here" = "Vous ne pouvez pas assigner d'étiquettes ici.";

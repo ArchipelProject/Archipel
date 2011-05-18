@@ -1,3 +1,9 @@
+/*  contact in group */
+" contact in group" = " contact in group";
+
+/*  contacts in group */
+" contacts in group" = " contacts in group";
+
 /*  has been added */
 " has been added" = " has been added";
 
@@ -58,11 +64,11 @@
 /* Busy */
 "Busy" = "Busy";
 
-/* cancel */
-"cancel" = "cancel";
-
 /* Cancel */
 "Cancel" = "Cancel";
+
+/* cancel */
+"cancel" = "Cancel";
 
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Cannot save your preferences to the XMPP server";
@@ -77,19 +83,19 @@
 "Collapse group" = "Collapse group";
 
 /* connect */
-"connect" = "connect";
+"connect" = "Connect";
 
 /* connected */
-"connected" = "connected";
+"connected" = "Connected";
 
 /* Connected as  */
 "Connected as " = "Connected as ";
 
 /* connecting */
-"connecting" = "connecting";
+"connecting" = "Connecting";
 
 /* connection-failed */
-"connection-failed" = "connection-failed";
+"connection-failed" = "Connection failed";
 
 /* Contact */
 "Contact" = "Contact";
@@ -100,11 +106,14 @@
 /* Contact */
 "Contacts" = "Contacts";
 
+/* Contents */
+"Contents" = "Contents";
+
 /* Copy */
 "Copy" = "Copy";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "CREDENTIAL_REMEMBER_TOOLTIP";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.";
 
 /* Cut */
 "Cut" = "Cut";
@@ -176,6 +185,9 @@
 /* host-unreachable */
 "host-unreachable" = "host-unreachable";
 
+/* Hypervisor */
+"Hypervisor" = "Hypervisor";
+
 /* JID is not valid */
 "JID is not valid" = "JID is not valid";
 
@@ -229,6 +241,9 @@
 
 /* Report a bug */
 "Report a bug" = "Report a bug";
+
+/* Resource */
+"Resource" = "Resource";
 
 /* Search entity */
 "Search entity" = "Search entity";
@@ -320,8 +335,20 @@
 /* Update your current XMPP status */
 "Update your current XMPP status" = "Update your current XMPP status";
 
+/* User */
+"User" = "User";
+
 /* User supression */
 "User supression" = "User supression";
+
+/* Virtual machine */
+"Virtual machine" = "Virtual machine";
+
+/* You are not registred to the entity events. */
+"You are not registred to the entity events." = "You are not registred to the entity events.";
+
+/* You are registred to the entity events. */
+"You are registred to the entity events." = "You are registred to the entity events.";
 
 /* You can't assign tags here */
 "You can't assign tags here" = "You can't assign tags here";

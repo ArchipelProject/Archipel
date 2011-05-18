@@ -101,14 +101,14 @@
 /* Class = "NSTextFieldCell"; title = "New version available"; ObjectID = "958"; */
 "958.title" = "Une nouvelle version est disponible";
 
-/* Class = "NSTextFieldCell"; title = "Current version:"; ObjectID = "959"; */
-"959.title" = "Version courrant:";
+/* Class = "NSTextFieldCell"; title = "Current version"; ObjectID = "959"; */
+"959.title" = "Version courrant";
 
-/* Class = "NSTextFieldCell"; title = "New version:"; ObjectID = "962"; */
-"962.title" = "Nouvelle version:";
+/* Class = "NSTextFieldCell"; title = "New version"; ObjectID = "962"; */
+"962.title" = "Nouvelle version";
 
-/* Class = "NSTextFieldCell"; title = "Release date:"; ObjectID = "964"; */
-"964.title" = "Notes:";
+/* Class = "NSTextFieldCell"; title = "Release date"; ObjectID = "964"; */
+"964.title" = "Notes";
 
 /* Class = "NSTextFieldCell"; title = "x.x.x"; ObjectID = "966"; */
 "966.title" = "x.x.x";
@@ -161,23 +161,23 @@
 /* Class = "NSTextFieldCell"; title = "resource"; ObjectID = "1011"; */
 "1011.title" = "ressource";
 
-/* Class = "NSTextFieldCell"; title = "Resource:"; ObjectID = "1019"; */
+/* Class = "NSTextFieldCell"; title = "Resource"; ObjectID = "1019"; */
 "1019.title" = "Ressource";
 
-/* Class = "NSTextFieldCell"; title = "Domain:"; ObjectID = "1022"; */
-"1022.title" = "Domain:";
+/* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "1022"; */
+"1022.title" = "Domain";
 
 /* Class = "NSTextFieldCell"; title = "domain"; ObjectID = "1023"; */
 "1023.title" = "domaine";
 
-/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "1028"; */
-"1028.title" = "Type:";
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1028"; */
+"1028.title" = "Type";
 
 /* Class = "NSTextFieldCell"; title = "type"; ObjectID = "1029"; */
 "1029.title" = "type";
 
-/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "1030"; */
-"1030.title" = "Status:";
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "1030"; */
+"1030.title" = "Status";
 
 /* Class = "NSTextFieldCell"; title = "status"; ObjectID = "1031"; */
 "1031.title" = "status";
@@ -197,19 +197,19 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Office"; ObjectID = "1055"; */
 "1055.placeholderString" = "Bureau";
 
-/* Class = "NSTextFieldCell"; title = "Welcome page URL:"; ObjectID = "1056"; */
+/* Class = "NSTextFieldCell"; title = "Welcome page URL"; ObjectID = "1056"; */
 "1056.title" = "URL de la page d'accueil";
 
-/* Class = "NSTextFieldCell"; title = "Module loading delay:"; ObjectID = "1057"; */
+/* Class = "NSTextFieldCell"; title = "Module loading delay"; ObjectID = "1057"; */
 "1057.title" = "Delai chargement des modules";
 
-/* Class = "NSTextFieldCell"; title = "BOSH resource:"; ObjectID = "1058"; */
+/* Class = "NSTextFieldCell"; title = "BOSH resource"; ObjectID = "1058"; */
 "1058.title" = "Ressource BOSH";
 
-/* Class = "NSTextFieldCell"; title = "Debug level:"; ObjectID = "1059"; */
+/* Class = "NSTextFieldCell"; title = "Debug level"; ObjectID = "1059"; */
 "1059.title" = "Niveau de log";
 
-/* Class = "NSTextFieldCell"; title = "Use animation:"; ObjectID = "1060"; */
+/* Class = "NSTextFieldCell"; title = "Use animation"; ObjectID = "1060"; */
 "1060.title" = "Utiliser les animations";
 
 /* Class = "NSTextFieldCell"; title = "This change need to reconnect to be considered by XMPP server."; ObjectID = "1063"; */
@@ -221,10 +221,10 @@
 /* Class = "NSTextFieldCell"; title = "Using XMPP monitoring can slow down the performances."; ObjectID = "1074"; */
 "1074.title" = "Utiliser la surveillance XMPP peut impacter les performances.";
 
-/* Class = "NSTextFieldCell"; title = "XMPP monitoring:"; ObjectID = "1075"; */
+/* Class = "NSTextFieldCell"; title = "XMPP monitoring"; ObjectID = "1075"; */
 "1075.title" = "Surveillance XMPP";
 
-/* Class = "NSTextFieldCell"; title = "Updates:"; ObjectID = "1077"; */
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "1077"; */
 "1077.title" = "Mise à jour";
 
 /* Class = "NSButtonCell"; title = "Check now"; ObjectID = "1079"; */
@@ -248,38 +248,35 @@
 /* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
 "1108.title" = "vCard";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "1111"; */
-"1111.title" = "Nom:";
-
-/* Class = "NSTextFieldCell"; title = "name"; ObjectID = "1112"; */
-"1112.title" = "nom";
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1111"; */
+"1111.title" = "Nom";
 
 /* Class = "NSTextFieldCell"; title = "locality"; ObjectID = "1113"; */
 "1113.title" = "Ville";
 
-/* Class = "NSTextFieldCell"; title = "Locality:"; ObjectID = "1114"; */
-"1114.title" = "Ville:";
+/* Class = "NSTextFieldCell"; title = "Locality"; ObjectID = "1114"; */
+"1114.title" = "Ville";
 
 /* Class = "NSTextFieldCell"; title = "company"; ObjectID = "1115"; */
 "1115.title" = "entreprise";
 
-/* Class = "NSTextFieldCell"; title = "Company:"; ObjectID = "1116"; */
-"1116.title" = "Entreprise:";
+/* Class = "NSTextFieldCell"; title = "Company"; ObjectID = "1116"; */
+"1116.title" = "Entreprise";
 
 /* Class = "NSTextFieldCell"; title = "role"; ObjectID = "1117"; */
 "1117.title" = "role";
 
-/* Class = "NSTextFieldCell"; title = "Role:"; ObjectID = "1118"; */
-"1118.title" = "Role:";
+/* Class = "NSTextFieldCell"; title = "Role"; ObjectID = "1118"; */
+"1118.title" = "Role";
 
-/* Class = "NSTextFieldCell"; title = "Website:"; ObjectID = "1123"; */
-"1123.title" = "Site web:";
+/* Class = "NSTextFieldCell"; title = "Website"; ObjectID = "1123"; */
+"1123.title" = "Site web";
 
 /* Class = "NSTextFieldCell"; title = "website"; ObjectID = "1124"; */
 "1124.title" = "site web";
 
-/* Class = "NSTextFieldCell"; title = "EMail:"; ObjectID = "1125"; */
-"1125.title" = "EMail:";
+/* Class = "NSTextFieldCell"; title = "EMail"; ObjectID = "1125"; */
+"1125.title" = "EMail";
 
 /* Class = "NSTextFieldCell"; title = "email"; ObjectID = "1126"; */
 "1126.title" = "email";
@@ -296,8 +293,8 @@
 /* Class = "NSTextFieldCell"; title = "Loading..."; ObjectID = "1141"; */
 "1141.title" = "Chargement...";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "1292"; */
-"1292.title" = "Nom:";
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1292"; */
+"1292.title" = "Nom";
 
 /* Class = "NSTextFieldCell"; title = "Add a contact"; ObjectID = "1294"; */
 "1294.title" = "Ajouter un contact";
@@ -323,10 +320,10 @@
 /* Class = "NSButtonCell"; title = "Display"; ObjectID = "1333"; */
 "1333.title" = "Affichage";
 
-/* Class = "NSTextFieldCell"; title = "Display welcome message:"; ObjectID = "1334"; */
+/* Class = "NSTextFieldCell"; title = "Display welcome message"; ObjectID = "1334"; */
 "1334.title" = "Afficher le message d'accueil";
 
-/* Class = "NSTextFieldCell"; title = "Language:"; ObjectID = "1339"; */
+/* Class = "NSTextFieldCell"; title = "Language"; ObjectID = "1339"; */
 "1339.title" = "Langue";
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1348"; */
@@ -352,4 +349,7 @@
 
 /* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1358"; */
 "1358.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1372"; */
+"1372.title" = "Label";
 
