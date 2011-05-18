@@ -139,7 +139,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     @outlet CPButtonBar             buttonBarLeft;
     @outlet CPImageView             imageViewLogoAbout;
-    @outlet CPImageView             imageViewLogoHint;
     @outlet CPImageView             ledIn;
     @outlet CPImageView             ledOut;
     @outlet CPProgressIndicator     progressIndicatorModulesLoading;
