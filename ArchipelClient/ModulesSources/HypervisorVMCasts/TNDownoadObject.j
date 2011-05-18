@@ -58,8 +58,14 @@
 */
 - (CPString)totalSize
 {
-    return @"" + Math.round((parseFloat(_totalSize) / 1024 / 1024)) + "Mb";
+    return @"" + Math.round((parseFloat(_totalSize) / 1024 / 1024)) + CPBundleLocalizedString("MB", "MB");
 }
 
-
 @end
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNDownload], comment);
+}

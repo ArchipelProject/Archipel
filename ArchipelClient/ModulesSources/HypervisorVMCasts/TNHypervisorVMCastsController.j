@@ -101,23 +101,23 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
         columnStatus        = [[CPTableColumn alloc] initWithIdentifier:@"status"],
         dataViewPrototype   = [[TNCellApplianceStatus alloc] init];
 
-    [[columnName headerView] setStringValue:@"VMCasts"];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"VMCasts", @"VMCasts")];
     [columnName setWidth:300];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
-    [[columnDescription headerView] setStringValue:@"Comment"];
+    [[columnDescription headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
     [columnDescription setWidth:250];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
 
-    [[columnUrl headerView] setStringValue:@"URL"];
+    [[columnUrl headerView] setStringValue:CPBundleLocalizedString(@"URL", @"URL")];
     [columnUrl setWidth:250];
     [columnUrl setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"URL" ascending:YES]];
 
-    [[columnSize headerView] setStringValue:@"Size"];
+    [[columnSize headerView] setStringValue:CPBundleLocalizedString(@"Size", @"Size")];
     [columnSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"size" ascending:YES]];
 
     [columnStatus setWidth:120];
-    [[columnStatus headerView] setStringValue:@"Status"];
+    [[columnStatus headerView] setStringValue:CPBundleLocalizedString(@"Status", @"Status")];
     [[columnStatus setDataView:dataViewPrototype]];
 
     [_mainOutlineView setOutlineTableColumn:columnName];
@@ -146,31 +146,31 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewVMCastURLWindow:)];
-    [_plusButton setToolTip:@"Register to a new VMCast feed"];
+    [_plusButton setToolTip:CPBundleLocalizedString(@"Register to a new VMCast feed", @"Register to a new VMCast feed")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(remove:)];
-    [_minusButton setToolTip:@"Unregister from a VMCast feed"];
+    [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from a VMCast feed", @"Unregister from a VMCast feed")];
 
     _downloadButton = [CPButtonBar plusButton];
     [_downloadButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/download.png"] size:CPSizeMake(16, 16)]];
     [_downloadButton setTarget:self];
     [_downloadButton setAction:@selector(download:)];
-    [_downloadButton setToolTip:@"Start to download selected appliance"];
+    [_downloadButton setToolTip:CPBundleLocalizedString(@"Start to download selected appliance", @"Start to download selected appliance")];
 
     _downloadQueueButton = [CPButtonBar plusButton];
     [_downloadQueueButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/view.png"] size:CPSizeMake(16, 16)]];
     [_downloadQueueButton setTarget:self];
     [_downloadQueueButton setAction:@selector(showDownloadQueue:)];
-    [_downloadQueueButton setToolTip:@"Show all current downloads"];
+    [_downloadQueueButton setToolTip:CPBundleLocalizedString(@"Show all current downloads", @"Show all current downloads")];
 
     [_minusButton setEnabled:NO];
     [_downloadButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _downloadButton, _downloadQueueButton]];
 
-    [checkBoxOnlyInstalled setToolTip:@"If checked, it will only displayed installed appliances"];
+    [checkBoxOnlyInstalled setToolTip:CPBundleLocalizedString(@"If checked, it will only displayed installed appliances", @"If checked, it will only displayed installed appliances")];
 }
 
 #pragma mark -
@@ -221,13 +221,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Register to a new VMCasts" action:@selector(openNewVMCastURLWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Unregister from selected VMCast" action:@selector(removeVMCast:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Register to a new VMCasts", @"Register to a new VMCasts") action:@selector(openNewVMCastURLWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unregister from selected VMCast", @"Unregister from selected VMCast") action:@selector(removeVMCast:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Download selected appliance" action:@selector(download:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Remove selected appliance" action:@selector(removeAppliance:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Download selected appliance", @"Download selected appliance") action:@selector(download:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Remove selected appliance", @"Remove selected appliance") action:@selector(removeAppliance:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Show activity monitor" action:@selector(showDownloadQueue:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Show activity monitor", @"Show activity monitor") action:@selector(showDownloadQueue:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -276,7 +276,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     if (change == @"download_complete")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Download complete"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Download complete", @"Download complete")];
     }
     return YES;
 }
@@ -364,7 +364,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (IBAction)showDownloadQueue:(id)aSender
 {
-    [windowNewCastURL setTitle:@"Download queue for " + [_entity nickname]];
+    [windowNewCastURL setTitle:CPBundleLocalizedString(@"Download queue for ", @"Download queue for ") + [_entity nickname]];
     [windowDownloadQueue makeKeyAndOrderFront:nil];
 }
 
@@ -483,7 +483,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (BOOL)_didAddNewVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"VMcast has been registred"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") message:CPBundleLocalizedString(@"VMcast has been registred", @"VMcast has been registred")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -496,7 +496,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 {
     if (([_mainOutlineView numberOfRows] == 0) || ([_mainOutlineView numberOfSelectedRows] <= 0))
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"You must select a VMCast or an Appliance" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") message:CPBundleLocalizedString(@"You must select a VMCast or an Appliance", @"You must select a VMCast or an Appliance") icon:TNGrowlIconError];
 
         return;
     }
@@ -515,8 +515,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)removeAppliance
 {
-    var alert = [TNAlert alertWithMessage:@"Delete appliance"
-                                informative:@"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete appliance", @"Delete appliance")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template.", @"Are you sure you want to remove this appliance? This doesn't affect virtual machine that have been instanciated from this template.")
                                  target:self
                                  actions:[["Delete", @selector(performRemoveAppliance:)], ["Cancel", nil]]];
 
@@ -546,7 +546,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (BOOL)_didDeleteAppliance:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been uninstalled"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance") message:CPBundleLocalizedString(@"Appliance has been uninstalled", @"Appliance has been uninstalled")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -558,10 +558,10 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)removeVMCast
 {
-    var alert = [TNAlert alertWithMessage:@"Delete VMCast"
-                                informative:@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete VMCast", @"Delete VMCast")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.", @"Are you sure you want to unregister fro this VMCast? All its appliances will be deleted.")
                                  target:self
-                                 actions:[["Unregister", @selector(performRemoveVMCast:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Unregister", @"Unregister"), @selector(performRemoveVMCast:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
     [alert runModal];
 }
@@ -590,7 +590,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (BOOL)_didRemoveVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"VMcast has been unregistred"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") 
+                                                         message:CPBundleLocalizedString(@"VMcast has been unregistred", @"VMcast has been unregistred")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -606,15 +607,17 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"VMCast" message:@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module." icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") 
+                                                         message:CPBundleLocalizedString(@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.", @"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.")
+                                                            icon:TNGrowlIconError];
 
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Download"
-                                informative:@"Are you sure you want to download this appliance?"
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Download", @"Download")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to download this appliance?", @"Are you sure you want to download this appliance?")
                                  target:self
-                                 actions:[["Download", @selector(performDownload:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Download", @"Download"), @selector(performDownload:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
     [alert runModal];
 }
@@ -667,13 +670,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
             [self setControl:_downloadButton enabledAccordingToPermission:@"vmcasting_downloadappliance" specialCondition:conditionNotInstalled];
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_deleteappliance" specialCondition:conditionInstalled];
-            [_minusButton setToolTip:@"Delete the selected appliance from the hypervisor repository"];
+            [_minusButton setToolTip:CPBundleLocalizedString(@"Delete the selected appliance from the hypervisor repository", @"Delete the selected appliance from the hypervisor repository")];
         }
         else if ([object isKindOfClass:TNVMCastSource])
         {
             [self setControl:_minusButton enabledAccordingToPermission:@"vmcasting_unregister"];
             [_downloadButton setEnabled:NO]
-            [_minusButton setToolTip:@"Unregister from a VMCast feed"];
+            [_minusButton setToolTip:CPBundleLocalizedString(@"Unregister from a VMCast feed", @"Unregister from a VMCast feed")];
         }
     }
 }
@@ -698,5 +701,13 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
 @end
 
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNHypervisorVMCastsController], comment);
+}
 
 

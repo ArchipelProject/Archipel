@@ -1,0 +1,36 @@
+
+/* Class = "NSTextFieldCell"; title = "VMCasts management"; ObjectID = "3"; */
+"3.title" = "VMCasts management";
+
+/* Class = "NSTextFieldCell"; title = "You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines."; ObjectID = "7"; */
+"7.title" = "You can manage the VMCasts of the hypervisor or download appliances that can be used by virtual machines.";
+
+/* Class = "NSButtonCell"; title = "Display only installed"; ObjectID = "14"; */
+"14.title" = "Display only installed";
+
+/* Class = "NSWindow"; title = "New VMCast"; ObjectID = "21"; */
+"21.title" = "New VMCast";
+
+/* Class = "TNWindowDownloadQueue"; title = "Download queue"; ObjectID = "23"; */
+"23.title" = "Download queue";
+
+/* Class = "NSTextFieldCell"; title = "Register to VMCast"; ObjectID = "27"; */
+"27.title" = "Register to VMCast";
+
+/* Class = "NSTextFieldCell"; title = "Enter the URL of the VMCast to add"; ObjectID = "29"; */
+"29.title" = "Enter the URL of the VMCast to add";
+
+/* Class = "NSTextFieldCell"; placeholderString = "http://myvmcastprovider.com"; ObjectID = "31"; */
+"31.placeholderString" = "http://myvmcastprovider.com";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "35"; */
+"35.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Register"; ObjectID = "37"; */
+"37.title" = "Register";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
+"39.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "URL:"; ObjectID = "47"; */
+"47.title" = "URL:";

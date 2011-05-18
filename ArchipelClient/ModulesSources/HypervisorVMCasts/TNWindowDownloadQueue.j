@@ -64,12 +64,12 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
         columnSize = [[CPTableColumn alloc] initWithIdentifier:@"totalSize"],
         columnPercentage = [[CPTableColumn alloc] initWithIdentifier:@"percentage"];
 
-    [[columnIdentifier headerView] setStringValue:@"Name"];
+    [[columnIdentifier headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
-    [[columnSize headerView] setStringValue:@"Size"];
+    [[columnSize headerView] setStringValue:CPBundleLocalizedString(@"Size", @"Size")];
     [columnSize setWidth:70.0];
 
-    [[columnPercentage headerView] setStringValue:@"Progress"];
+    [[columnPercentage headerView] setStringValue:CPBundleLocalizedString(@"Progress", @"Progress")];
     [columnPercentage setWidth:130.0];
     [columnPercentage setDataView:[[TNCellPercentageView alloc] init]];
 
@@ -154,3 +154,11 @@ var TNArchipelTypeHypervisorVMCasting                   = @"archipel:hypervisor:
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNWindowDownloadQueue], comment);
+}
