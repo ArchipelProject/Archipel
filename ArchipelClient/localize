@@ -139,6 +139,15 @@ def localize(path, routine):
             os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (old, original))
         os.system("plutil -convert xml1 %s/Localizable.strings -o %s/Localizable.xstrings" % (language, language))
 
+        base_xib = [name for name in os.listdir("Resources/") if name.endswith('.xib')]
+
+        if len(base_xib) > 0:
+            base_xib = "Resources/%s" % base_xib[0]
+        else:
+            base_xib = [name for name in os.listdir("Resources/en.lproj") if name.endswith('.xib')]
+            if len(base_xib):
+                base_xib = "Resources/en.lproj/%s" % base_xib[0]
+
         xibs = [name for name in os.listdir(language) if name.endswith('.xib')]
         xibs = map(lambda x: "%s/%s" % (language, x), xibs)
         for xib in xibs:
@@ -151,15 +160,15 @@ def localize(path, routine):
 
             if os.path.isfile(xib_original):
                 os.rename(xib_original, xib_old)
-                os.system('ibtool --generate-strings-file %s/%s.strings Resources/%s.xib' % (language, bname_noext, bname_noext))
+                os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_original, xib_new))
                 merge(xib_merged, xib_old, xib_new)
             else:
-                os.system('ibtool --generate-strings-file %s/%s.strings Resources/%s.xib' % (language, bname_noext, bname_noext))
+                os.system('ibtool --generate-strings-file %s/%s.strings %s' % (language, bname_noext, base_xib))
                 os.rename(xib_original, xib_old)
                 os.system('iconv -f UTF-16 -t UTF-8 "%s" > "%s"' % (xib_old, xib_original))
 
-            os.system('ibtool --strings-file %s/%s.strings --write %s Resources/%s' % (language, bname_noext, xib, bname))
+            os.system('ibtool --strings-file %s/%s.strings --write %s %s' % (language, bname_noext, xib, base_xib))
             if os.path.isfile(xib_new):
                 os.remove(xib_new)
             if os.path.isfile(xib_old):
