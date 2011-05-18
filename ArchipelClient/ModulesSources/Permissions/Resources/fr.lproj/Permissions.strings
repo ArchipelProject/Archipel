@@ -1,0 +1,54 @@
+
+/* Class = "NSTextFieldCell"; title = "Set the different permissions and roles you give to users for thus entity."; ObjectID = "6"; */
+"6.title" = "Set the different permissions and roles you give to users for thus entity.";
+
+/* Class = "NSTextFieldCell"; title = "Permissions"; ObjectID = "7"; */
+"7.title" = "Permissions";
+
+/* Class = "NSTextFieldCell"; title = "Select a user from the list"; ObjectID = "22"; */
+"22.title" = "Select a user from the list";
+
+/* Class = "NSWindow"; title = "Permissions templates"; ObjectID = "26"; */
+"26.title" = "Permissions templates";
+
+/* Class = "NSTextFieldCell"; title = "Choose templates you want to apply or retract."; ObjectID = "49"; */
+"49.title" = "Choose templates you want to apply or retract.";
+
+/* Class = "NSTextFieldCell"; title = "Available permissions templates"; ObjectID = "50"; */
+"50.title" = "Available permissions templates";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "56"; */
+"56.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Retract"; ObjectID = "59"; */
+"59.title" = "Retract";
+
+/* Class = "NSButtonCell"; title = "Set"; ObjectID = "60"; */
+"60.title" = "Set";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "62"; */
+"62.title" = "Add";
+
+/* Class = "NSWindow"; title = "New template"; ObjectID = "63"; */
+"63.title" = "New template";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "66"; */
+"66.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "72"; */
+"72.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "73"; */
+"73.title" = "Save";
+
+/* Class = "NSTextFieldCell"; title = "New template"; ObjectID = "74"; */
+"74.title" = "New template";
+
+/* Class = "NSTextFieldCell"; title = "A template is a predefined set of permissions."; ObjectID = "75"; */
+"75.title" = "A template is a predefined set of permissions.";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "77"; */
+"77.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "81"; */
+"81.title" = "Comment:";

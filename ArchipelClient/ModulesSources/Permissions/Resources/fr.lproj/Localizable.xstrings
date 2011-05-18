@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Delete the selected role</key>
+	<string>Delete the selected role</string>
+	<key>Description</key>
+	<string>Description</string>
+	<key>Name</key>
+	<string>Name</string>
+	<key>Permission for selected user has been saved.</key>
+	<string>Permission for selected user has been saved.</string>
+	<key>Permissions saved</key>
+	<string>Permissions saved</string>
+	<key>Role delete error</key>
+	<string>Role delete error</string>
+	<key>Role deleted</key>
+	<string>Role deleted</string>
+	<key>Role save error</key>
+	<string>Role save error</string>
+	<key>Role saved</key>
+	<string>Role saved</string>
+	<key>Save the current set of permissions</key>
+	<string>Save the current set of permissions</string>
+	<key>Save the current set of permissions as a role</key>
+	<string>Save the current set of permissions as a role</string>
+	<key>Select a role as permissions template</key>
+	<string>Select a role as permissions template</string>
+	<key>Users</key>
+	<string>Users</string>
+	<key>Your role cannot be deleted.</key>
+	<string>Your role cannot be deleted.</string>
+	<key>Your role cannot be saved.</key>
+	<string>Your role cannot be saved.</string>
+	<key>Your role has been sucessfully deleted.</key>
+	<string>Your role has been sucessfully deleted.</string>
+	<key>Your role has been sucessfully saved.</key>
+	<string>Your role has been sucessfully saved.</string>
+</dict>
+</plist>

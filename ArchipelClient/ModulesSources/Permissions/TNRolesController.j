@@ -70,10 +70,10 @@
         checkBoxView    = [CPCheckBox checkBoxWithTitle:@""];
 
     [colName setWidth:125];
-    [[colName headerView] setStringValue:@"Name"];
+    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
     [colDescription setWidth:125];
-    [[colDescription headerView] setStringValue:@"Description"];
+    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
 
     [colValue setWidth:30];
     [[colValue headerView] setStringValue:@""];
@@ -95,7 +95,7 @@
     [buttonDelete setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [buttonDelete setTarget:self];
     [buttonDelete setAction:@selector(deleteSelectedRole:)];
-    [buttonDelete setToolTip:@"Delete the selected role"];
+    [buttonDelete setToolTip:CPBundleLocalizedString(@"Delete the selected role", @"Delete the selected role")];
 
     [buttonBar setButtons:[buttonDelete]];
 
@@ -114,7 +114,8 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role saved" message:@"Your role has been sucessfully saved."];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Role saved", @"Role saved")
+                                                     message:CPBundleLocalizedString(@"Your role has been sucessfully saved.", @"Your role has been sucessfully saved.")];
 }
 
 /*! called when a new role has been published
@@ -124,7 +125,9 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemPublishErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role save error" message:@"Your role cannot be saved." icon:TNGrowlIconError];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Role save error", @"Role save error")
+                                                     message:CPBundleLocalizedString(@"Your role cannot be saved.", @"Your role cannot be saved.")
+                                                        icon:TNGrowlIconError];
 }
 
 /*! called when a new role has been retracted
@@ -134,7 +137,8 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role deleted" message:@"Your role has been sucessfully deleted."];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Role deleted", @"Role deleted")
+                                                     message:CPBundleLocalizedString(@"Your role has been sucessfully deleted.", @"Your role has been sucessfully deleted.")];
 }
 
 /*! called when a new role has been retracted
@@ -144,7 +148,9 @@
 {
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractedNotification object:_nodeRolesTemplates];
     [[CPNotificationCenter defaultCenter] removeObserver:self name:TNStrophePubSubItemRetractErrorNotification object:_nodeRolesTemplates];
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Role delete error" message:@"Your role cannot be deleted." icon:TNGrowlIconError];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Role delete error", @"Role delete error")
+                                                     message:CPBundleLocalizedString(@"Your role cannot be deleted.", @"Your role cannot be deleted.")
+                                                        icon:TNGrowlIconError];
 }
 
 
@@ -330,3 +336,11 @@
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNRolesController], comment);
+}

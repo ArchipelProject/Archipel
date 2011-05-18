@@ -113,10 +113,10 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
         checkBoxView    = [CPCheckBox checkBoxWithTitle:@""];
 
     [colName setWidth:125];
-    [[colName headerView] setStringValue:@"Name"];
+    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
     [colDescription setWidth:450];
-    [[colDescription headerView] setStringValue:@"Description"];
+    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
 
     [colValue setWidth:30];
     [[colValue headerView] setStringValue:@""];
@@ -139,19 +139,19 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     [_saveButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/save.png"] size:CPSizeMake(16, 16)]];
     [_saveButton setTarget:self];
     [_saveButton setAction:@selector(changePermissionsState:)];
-    [_saveButton setToolTip:@"Save the current set of permissions"];
+    [_saveButton setToolTip:CPBundleLocalizedString(@"Save the current set of permissions", @"Save the current set of permissions")];
 
     _saveAsTemplateButton = [CPButtonBar plusButton];
     [_saveAsTemplateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/role_add.png"] size:CPSizeMake(16, 16)]];
     [_saveAsTemplateButton setTarget:rolesController];
     [_saveAsTemplateButton setAction:@selector(openNewTemplateWindow:)];
-    [_saveAsTemplateButton setToolTip:@"Save the current set of permissions as a role"];
+    [_saveAsTemplateButton setToolTip:CPBundleLocalizedString(@"Save the current set of permissions as a role", @"Save the current set of permissions as a role")];
 
     _applyRoleButton = [CPButtonBar plusButton];
     [_applyRoleButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/roles.png"] size:CPSizeMake(16, 16)]];
     [_applyRoleButton setTarget:self];
     [_applyRoleButton setAction:@selector(openRolesWindow:)];
-    [_applyRoleButton setToolTip:@"Select a role as permissions template"];
+    [_applyRoleButton setToolTip:CPBundleLocalizedString(@"Select a role as permissions template", @"Select a role as permissions template")];
 
     [buttonBarControl setButtons:[_saveButton, _saveAsTemplateButton, _applyRoleButton]];
 
@@ -180,7 +180,7 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 
     var columnName  = [[CPTableColumn alloc] initWithIdentifier:@"description"];
 
-    [[columnName headerView] setStringValue:@"Users"];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Users", @"Users")];
 
     [_outlineViewUsers setOutlineTableColumn:columnName];
     [_outlineViewUsers addTableColumn:columnName];
@@ -537,7 +537,8 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
 - (void)_didChangePermissionsState:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Permissions saved" message:@"Permission for selected user has been saved."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Permissions saved", @"Permissions saved")
+                                                         message:CPBundleLocalizedString(@"Permission for selected user has been saved.", @"Permission for selected user has been saved.")];
     else
         [self handleIqErrorFromStanza:aStanza];
 }
@@ -639,3 +640,11 @@ var TNArchipelTypePermissions               = @"archipel:permissions",
     return viewProto;
 }
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNPermissionsController], comment);
+}

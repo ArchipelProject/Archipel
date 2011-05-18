@@ -4,6 +4,8 @@
 <dict>
 	<key>CibName</key>
 	<string>Permissions</string>
+	<key>CPBundleLocale</key>
+	<string>en</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.permissions</string>
 	<key>CPBundleInfoDictionaryVersion</key>
