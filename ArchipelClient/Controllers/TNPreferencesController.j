@@ -202,6 +202,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (IBAction)showWindow:(id)aSender
 {
+    if ([_mainWindow isVisible])
+    {
+        [self hideWindow:aSender];
+        return;
+    }
+
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldWelcomePageUrl setStringValue:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
@@ -362,7 +368,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     newFrame.size.width = [_mainWindow frame].size.width;
     newFrame.size.height += 100;
 
-    console.warn("ITEM: "+ [anItem label] + newFrame.origin.x + " " + newFrame.origin.y + " " + newFrame.size.height + " " + newFrame.size.width);
     [_mainWindow setFrame:newFrame display:NO animate:YES];
 }
 
