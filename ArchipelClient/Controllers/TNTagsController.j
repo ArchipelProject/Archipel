@@ -78,7 +78,7 @@ TNTagsControllerNodeReadyNotification = @"TNTagsControllerNodeReadyNotification"
     [_tokenFieldTags setDelegate:self];
     [_tokenFieldTags setEditable:YES];
     [_tokenFieldTags setEnabled:NO];
-    [_tokenFieldTags setPlaceholderString:@"You can't assign tags here"];
+    [_tokenFieldTags setPlaceholderString:CPLocalizedString(@"You can't assign tags here", @"You can't assign tags here")];
     [_tokenFieldTags setTarget:self];
     [_tokenFieldTags setAction:@selector(performSetTags:)];
 

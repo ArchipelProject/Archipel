@@ -1,0 +1,63 @@
+/*  is migrating */
+" is migrating" = " est en cours de migration";
+
+/*  state modified */
+" state modified" = " état modifié";
+
+/*  to the selected hypervisor */
+" to the selected hypervisor" = " vers l'hyperviseur séléctionné.";
+
+/* Cannot migrate virtual machine  */
+"Cannot migrate virtual machine " = "Impossible de migrer la machine virtuelle.";
+
+/* Destroy all selected virtual machines */
+"Destroy all selected virtual machines" = "Destroy toutes les machines virtuelles séléctionnées.";
+
+/* Destroy selected virtual machines */
+"Destroy selected virtual machines" = "Stoppe la machine virtuelle selectionée.";
+
+/* Jabber ID */
+"Jabber ID" = "ID Jabber";
+
+/* Migrate all selected virtual machines */
+"Migrate all selected virtual machines" = "Migre toutes les machines virtuelles séléctionnées.";
+
+/* Name */
+"Name" = "Nom";
+
+/* Pause all selected virtual machines */
+"Pause all selected virtual machines" = "Suspend l'execution de toutes les machines virtuelles séléctionnées.";
+
+/* Pause selected virtual machines */
+"Pause selected virtual machines" = "Suspend l'execution de la machine virtuelle selectionée.";
+
+/* Reboot all selected virtual machines (not supported by all hypervisors) */
+"Reboot all selected virtual machines (not supported by all hypervisors)" = "Redémarre toutes les machines virtuelles séléctionnées.";
+
+/* Reboot selected virtual machines */
+"Reboot selected virtual machines" = "Redémarre la machine virtuelle selectionée.";
+
+/* Resume all selected virtual machines */
+"Resume all selected virtual machines" = "Reprend l'execution de toutes les machines virtuelles séléctionnées suspendues.";
+
+/* Resume selected virtual machines */
+"Resume selected virtual machines" = "Reprend l'execution de la machine virtuelle selectionée.";
+
+/* Shutdown all selected virtual machines */
+"Shutdown all selected virtual machines" = "Arrête toutes les machines virtuelles séléctionnées.";
+
+/* Shutdown selected virtual machines */
+"Shutdown selected virtual machines" = "Arrête la machine virtuelle selectionée.";
+
+/* Start all selected virtual machines */
+"Start all selected virtual machines" = "Démarre toutes les machines virtuelles séléctionnées.";
+
+/* Start selected virtual machines */
+"Start selected virtual machines" = "Démarre la machine virtuelle selectionée.";
+
+/* Virtual Machine */
+"Virtual Machine" = "Machine Virtuelle";
+
+/* Virtual machine  */
+"Virtual machine " = "machine virtuelle ";
+

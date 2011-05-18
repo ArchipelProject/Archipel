@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">10J3250</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.SystemVersion">10J4138</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1305</string>
+			<string key="NS.object.0">1306</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -67,7 +67,7 @@
 									<object class="NSTextField" id="1062020542">
 										<reference key="NSNextResponder" ref="772899369"/>
 										<int key="NSvFlags">290</int>
-										<string key="NSFrame">{{6, 7}, {555, 22}}</string>
+										<string key="NSFrame">{{6, 9}, {555, 22}}</string>
 										<reference key="NSSuperview" ref="772899369"/>
 										<reference key="NSWindow"/>
 										<bool key="NSEnabled">YES</bool>
@@ -159,7 +159,7 @@
 					<object class="NSTextField" id="1072718201">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{69, 22}, {97, 20}}</string>
+						<string key="NSFrame">{{69, 23}, {97, 17}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="497849494"/>
@@ -168,8 +168,8 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Room name:</string>
-							<object class="NSFont" key="NSSupport" id="399685276">
-								<string key="NSName">LucidaSans-Demi</string>
+							<object class="NSFont" key="NSSupport" id="750141632">
+								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -212,7 +212,7 @@
 					<object class="NSTextField" id="281096482">
 						<reference key="NSNextResponder" ref="236646770"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{63, 49}, {103, 20}}</string>
+						<string key="NSFrame">{{63, 50}, {103, 17}}</string>
 						<reference key="NSSuperview" ref="236646770"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="467356407"/>
@@ -221,7 +221,7 @@
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Server name:</string>
-							<reference key="NSSupport" ref="399685276"/>
+							<reference key="NSSupport" ref="750141632"/>
 							<reference key="NSControlView" ref="281096482"/>
 							<reference key="NSBackgroundColor" ref="166029867"/>
 							<reference key="NSTextColor" ref="330205186"/>
@@ -240,7 +240,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can configure preferences for the health module.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -262,7 +262,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Conference preference</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans-Demi</string>
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -717,11 +717,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
 							<string>viewPreferences</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSImageView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 						</object>
 					</object>
@@ -730,6 +732,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
 							<string>viewPreferences</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -737,6 +740,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">imageViewModuleReady</string>
 								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMask</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewPreferences</string>

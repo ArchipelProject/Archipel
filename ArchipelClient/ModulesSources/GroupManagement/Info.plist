@@ -4,6 +4,8 @@
 <dict>
 	<key>CibName</key>
 	<string>GroupManagement</string>
+	<key>CPBundleLocale</key>
+	<string>en</string>
 	<key>CPBundleIdentifier</key>
 	<string>org.archipelproject.groupmanagement</string>
 	<key>CPBundleInfoDictionaryVersion</key>

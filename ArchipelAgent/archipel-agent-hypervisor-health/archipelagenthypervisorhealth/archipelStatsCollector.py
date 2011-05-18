@@ -126,10 +126,11 @@ class TNThreadedHealthCollector (Thread):
             aload = self.stats_load[-limit:]
         except Exception as ex:
             raise Exception("Unable to get disks information.", ex)
-        acpu.reverse()
-        amem.reverse()
-        aload.reverse()
-        anetwork.reverse()
+        if limit > 1:
+            acpu.reverse()
+            amem.reverse()
+            aload.reverse()
+            anetwork.reverse()
         return {"cpu": acpu, "memory": amem, "disk": adisk, "totaldisk": totalDisk,
                 "load": aload, "uptime": uptime_stats, "uname": self.uname_stats, "network": anetwork}
 
@@ -221,6 +222,8 @@ class TNThreadedHealthCollector (Thread):
         for line in contents:
             dev = line.split(":")[0].replace(" ", "")
             if dev == "lo":
+                continue
+            if dev.startswith("vnet"):
                 continue
             info = line.split(":")[1].split()
             rx = int(info[0])

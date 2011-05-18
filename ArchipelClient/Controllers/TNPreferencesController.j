@@ -50,6 +50,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPButton        buttonSave;
     @outlet CPCheckBox      checkBoxUpdate;
     @outlet CPPopUpButton   buttonDebugLevel;
+    @outlet CPPopUpButton   buttonLanguage;
     @outlet CPTabView       tabViewMain;
     @outlet CPTextField     fieldBOSHResource;
     @outlet CPTextField     fieldModuleLoadingDelay;
@@ -91,18 +92,21 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel removeAllItems];
     [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warn", @"error", @"critical"]];
 
+    [buttonLanguage removeAllItems];
+    [buttonLanguage addItemsWithTitles:[@"en", @"fr"]];
+
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(saveToFromXMPPServer:) name:TNPreferencesControllerSavePreferencesRequestNotification object:nil];
     [mainWindow setDefaultButton:buttonSave];
 
-    [fieldBOSHResource setToolTip:@"The resource to use"];
-    [fieldModuleLoadingDelay setToolTip:@"Delay before loading a module. This avoid to load server with stanzas"];
-    [fieldWelcomePageUrl setToolTip:@"The URL of the welcome page"];
-    [switchUseAnimations setToolTip:@"Turn this ON to activate eye candy animation. Turn it off to gain performances"];
-    [switchUseXMPPMonitoring setToolTip:@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances"];
-    [buttonDebugLevel setToolTip:@"Set the log level of the client. The more verbose, the less performance."]
+    [fieldBOSHResource setToolTip:CPLocalizedString(@"The resource to use", @"The resource to use")];
+    [fieldModuleLoadingDelay setToolTip:CPLocalizedString(@"Delay before loading a module. This avoid to load server with stanzas", @"Delay before loading a module. This avoid to load server with stanzas")];
+    [fieldWelcomePageUrl setToolTip:CPLocalizedString(@"The URL of the welcome page", @"The URL of the welcome page")];
+    [switchUseAnimations setToolTip:CPLocalizedString(@"Turn this ON to activate eye candy animation. Turn it off to gain performances", @"Turn this ON to activate eye candy animation. Turn it off to gain performances")];
+    [switchUseXMPPMonitoring setToolTip:CPLocalizedString(@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances", @"Turn this ON to activate XMPP monitoring. Turn it off to gain performances")];
+    [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
 }
 
 /*! initialize the XMPP storage
@@ -169,7 +173,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)_didPreferencesFailToXMPPServer:(CPNotification)aNotification
 {
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Preferences saved" message:@"Cannot save your preferences to the XMPP server" icon:TNGrowlIconError];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Preferences saved", @"Preferences saved")
+                                                     message:CPLocalizedString(@"Cannot save your preferences to the XMPP server", @"Cannot save your preferences to the XMPP server")
+                                                         icon:TNGrowlIconError];
     CPLog.error("Cannot save your preferences to the XMPP server:" + [[aNotification userInfo] stringValue]);
 }
 
@@ -197,6 +203,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
+    [buttonLanguage selectItemWithTitle:[defaults objectForKey:@"CPBundleLocale"]];
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
     [switchUseXMPPMonitoring setOn:[defaults boolForKey:@"TNArchipelMonitorStanza"] animated:YES sendAction:NO];
     [checkBoxUpdate setState:([defaults boolForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
@@ -219,12 +226,14 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (IBAction)savePreferences:(id)sender
 {
-    var defaults = [CPUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults],
+        oldLocale = [defaults objectForKey:@"CPBundleLocale"];
 
     [defaults setObject:[fieldWelcomePageUrl stringValue] forKey:@"TNArchipelHelpWindowURL"];
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];
+    [defaults setObject:[buttonLanguage title] forKey:@"CPBundleLocale"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
     [defaults setBool:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
     [defaults setBool:[switchUseXMPPMonitoring isOn] forKey:@"TNArchipelMonitorStanza"];
@@ -244,6 +253,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     [self saveToFromXMPPServer];
     [mainWindow close];
+
+    if (oldLocale != [defaults objectForKey:@"CPBundleLocale"])
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
+                          informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")];
+    }
 }
 
 /*! clean the content of the XMPP storage
@@ -258,6 +273,14 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPUserDefaults standardUserDefaults] synchronize];
     [self cleanXMPPStorage];
     [mainWindow close];
+}
+
+/*! clean the content of the XMPP storage
+    @param aSender
+*/
+- (IBAction)languageChanged:(id)aSender
+{
+
 }
 
 #pragma mark -

@@ -1,0 +1,60 @@
+/*  MB */
+" MB" = " MB";
+
+/* Activate the statistics auto fetching */
+"Activate the statistics auto fetching" = "Activate the statistics auto fetching";
+
+/* Available:  */
+"Available: " = "Available: ";
+
+/* Charts */
+"Charts" = "Charts";
+
+/* Date */
+"Date" = "Date";
+
+/* Display the file column in the log table */
+"Display the file column in the log table" = "Display the file column in the log table";
+
+/* Display the method column in the log table */
+"Display the method column in the log table" = "Display the method column in the log table";
+
+/* file */
+"file" = "file";
+
+/* GB */
+"GB" = "GB";
+
+/* KB */
+"KB" = "KB";
+
+/* Level */
+"Level" = "Level";
+
+/* Logs */
+"Logs" = "Logs";
+
+/* MB */
+"MB" = "MB";
+
+/* message */
+"message" = "message";
+
+/* method */
+"method" = "method";
+
+/* Partition name */
+"Partition name" = "Partition name";
+
+/* Set the delay between asking hypervisor statistics */
+"Set the delay between asking hypervisor statistics" = "Set the delay between asking hypervisor statistics";
+
+/* Set the max number of log item to fetch */
+"Set the max number of log item to fetch" = "Set the max number of log item to fetch";
+
+/* Set the max number of statistic entries to fetch */
+"Set the max number of statistic entries to fetch" = "Set the max number of statistic entries to fetch";
+
+/* Used:  */
+"Used: " = "Used: ";
+

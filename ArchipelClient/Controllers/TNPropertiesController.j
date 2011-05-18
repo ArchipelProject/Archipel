@@ -267,7 +267,7 @@
 
     if ([_entity isKindOfClass:TNStropheContact])
     {
-        [labelResource setStringValue:@"Resource :"];
+        [labelResource setStringValue:CPLocalizedString(@"Resource", @"Resource")];
         [labelStatus setHidden:NO];
         [labelDomain setHidden:NO];
         [labelType setHidden:NO];
@@ -285,17 +285,17 @@
         switch ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]])
         {
             case TNArchipelEntityTypeVirtualMachine:
-                [entryType setStringValue:@"Virtual machine"];
+                [entryType setStringValue:CPLocalizedString(@"Virtual machine", @"Virtual machine")];
                 [buttonEventSubscription setHidden:NO];
                 break;
 
             case TNArchipelEntityTypeHypervisor:
-                [entryType setStringValue:@"Hypervisor"];
+                [entryType setStringValue:CPLocalizedString(@"Hypervisor", @"Hypervisor")];
                 [buttonEventSubscription setHidden:NO];
                 break;
 
             default:
-                [entryType setStringValue:@"User"];
+                [entryType setStringValue:CPLocalizedString(@"User", @"User")];
                 [buttonEventSubscription setHidden:YES];
         }
 
@@ -310,12 +310,12 @@
         if ([_pubSubController nodeWithName:@"/archipel/" + [[_entity JID] bare] + @"/events"])
         {
             [buttonEventSubscription setImage:_pubsubImage];
-            [buttonEventSubscription setToolTip:@"You are registred to the entity events."];
+            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are registred to the entity events.", @"You are registred to the entity events.")];
         }
         else
         {
             [buttonEventSubscription setImage:_pubsubDisabledImage];
-            [buttonEventSubscription setToolTip:@"You are not registred to the entity events."];
+            [buttonEventSubscription setToolTip:CPLocalizedString(@"You are not registred to the entity events.", @"You are not registred to the entity events.")];
         }
 
         [labelVCardFN setStringValue:nil];
@@ -344,9 +344,9 @@
     }
     else if ([_entity isKindOfClass:TNStropheGroup])
     {
-        var population = ([_entity count] > 1) ? [_entity count] + @" contacts in group" : [_entity count] + @" contact in group";
+        var population = ([_entity count] > 1) ? [_entity count] + CPLocalizedString(@" contacts in group", @" contacts in group") : [_entity count] +CPLocalizedString( @" contact in group",  @" contact in group");
 
-        [labelResource setStringValue:@"Contents :"];
+        [labelResource setStringValue:CPLocalizedString(@"Contents", @"Contents")];
         [labelStatus setHidden:YES];
         [labelDomain setHidden:YES];
         [labelType setHidden:YES];

@@ -180,11 +180,17 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         else
         {
             if (_previousXMPPShow == TNStropheContactStatusOffline)
+            {
                 [_infoTextField setStringValue:@"Entity is offline"];
+            }
             else if (_previousXMPPShow == TNStropheContactStatusDND)
             {
                 [self rememberSelectedIndexOfItem:[_mainTabView selectedTabViewItem]];
                 [_infoTextField setStringValue:@"Entity do not want to be disturbed"];
+            }
+            else
+            {
+                [_infoTextField setStringValue:@""];
             }
             [center postNotificationName:TNArchipelModulesReadyNotification object:self];
         }
@@ -385,7 +391,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (void)manageTabItemLoad:(CPBundle)aBundle
 {
-    var moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
+    var defaults                    = [CPUserDefaults standardUserDefaults],
+        moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
         moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"],
         moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
         moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
@@ -393,10 +400,28 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
         useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"],
         mandatoryPermissions        = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
+        bundleLocale                = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+        localizedCibName            = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName,
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
-        currentModuleController     = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle],
-        frame                       = [_mainModuleView bounds];
+        frame                       = [_mainModuleView bounds],
+        currentModuleController;
+
+    // check if bundle is localized
+    if (bundleLocale)
+    {
+        var request     = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
+            response    = [CPURLConnection sendSynchronousRequest:request returningResponse:response error:nil],
+            plist       = [CPPropertyListSerialization propertyListFromData:response format:nil errorDescription:nil];
+
+        [aBundle setDictionary:plist forTable:@"Localizable"];
+        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
+    }
+    else
+    {
+        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+
+    }
 
     [currentModuleController initializeModule];
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];

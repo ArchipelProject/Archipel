@@ -124,7 +124,6 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     _vncView = [[TNVNCView alloc] initWithFrame:[mainScrollView bounds]];
     [_vncView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
-    [_vncView setBackgroundImage:[bundle pathForResource:@"vncbg.png"]];
 
     [mainScrollView setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [mainScrollView setDocumentView:_vncView];
@@ -492,7 +491,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (IBAction)fitToScreen:(id)aSender
 {
     var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView canvasSize],
+        currentVNCSize  = [_vncView displaySize],
         currentVNCZoom  = [_vncView zoom] * 100,
         diffPerc        = ((visibleRect.size.height - currentVNCSize.height) / currentVNCSize.height),
         newZoom         = (diffPerc < 0) ? 100 - (Math.abs(diffPerc) * 100) : 100 + (Math.abs(diffPerc) * 100);
@@ -506,7 +505,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 - (IBAction)resetZoom:(id)aSender
 {
     var visibleRect     = [_vncView visibleRect],
-        currentVNCSize  = [_vncView canvasSize],
+        currentVNCSize  = [_vncView displaySize],
         currentVNCZoom  = [_vncView zoom] * 100;
 
     [self animateChangeScaleFrom:currentVNCZoom to:100];

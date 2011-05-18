@@ -18,6 +18,8 @@
 @import <Foundation/Foundation.j>
 @import <AppKit/CPSound.j>
 
+@import "Categories/CPBundle+Localizable.j"
+
 @import "AppController.j"
 
 /*! @mainpage

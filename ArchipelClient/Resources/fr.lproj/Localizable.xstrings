@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key> contact in group</key>
+	<string> contact dans le groupe</string>
+	<key> contacts in group</key>
+	<string> contacts dans le groupe</string>
+	<key> has been added</key>
+	<string> a ete ajouté</string>
+	<key> has been created</key>
+	<string> a été créé</string>
+	<key> has been removed</key>
+	<string> a été supprimé</string>
+	<key> is asking you subscription. Do you want to authorize it ?</key>
+	<string> vous demande une souscription. Voulez-vous l'accepter ?</string>
+	<key>About Archipel</key>
+	<string>A propos d'Archipel</string>
+	<key>Accept</key>
+	<string>Accepter</string>
+	<key>Add a contact</key>
+	<string>Ajouter un contact</string>
+	<key>Add a group</key>
+	<string>Ajouter un groupe</string>
+	<key>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</key>
+	<string>Ajouter un nouveau contact ou un groupe. Les contacts peuvent être un hyperviseur, une machine virtuelle ou un utilisateur</string>
+	<key>Add contact</key>
+	<string>Ajouter le contact</string>
+	<key>Add group</key>
+	<string>Ajouter le groupe</string>
+	<key>Archipel</key>
+	<string>Archipel</string>
+	<key>Archipel Help</key>
+	<string>Aide Archipel</string>
+	<key>Are you sure you want to delete this contact?</key>
+	<string>Etes-vous sûr de vouloir supprimer ce contact ?</string>
+	<key>Are you sure you want to delete this group?</key>
+	<string>Etes-vous sûr de vouloir supprimer ce groupe ?</string>
+	<key>Available</key>
+	<string>Disponible</string>
+	<key>Away</key>
+	<string>Parti(e)</string>
+	<key>Busy</key>
+	<string>Occupé</string>
+	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
+	<string>Activer ce boutton pour enregistrer vos identifiants. Notez que tous les mots de passes sont stockés en clair dans le stockage local de votre navigateur et qu'ils sont très facile à récupérer. Utilisez cette fonctionnalitée à vos risques et périls. Toutefois, cette fonctionnalité vous facilite la vie. Si vous désirer effacer vos identifiants du stockage local, entrez les, puis placer ce bouton en position Off.</string>
+	<key>Cancel</key>
+	<string>Annuler</string>
+	<key>Cannot save your preferences to the XMPP server</key>
+	<string>Impossible de sauvegarder les préférences dans le serveur XMPP.</string>
+	<key>Change your current avatar. This picture will be visible by all your contacts</key>
+	<string>Changer votre avatar. Cette image sera visible par tous vos contacts</string>
+	<key>Collapse all groups</key>
+	<string>Reduire tous les groupes</string>
+	<key>Collapse group</key>
+	<string>Reduire le groupe</string>
+	<key>Connected as </key>
+	<string>Connecté en tant que </string>
+	<key>Contact</key>
+	<string>Contact</string>
+	<key>Contact </key>
+	<string>Contact </string>
+	<key>Contacts</key>
+	<string>Contacts</string>
+	<key>Contents</key>
+	<string>Contenu</string>
+	<key>Copy</key>
+	<string>Copier</string>
+	<key>Cut</key>
+	<string>Couper</string>
+	<key>Decline</key>
+	<string>Refuser</string>
+	<key>Delay before loading a module. This avoid to load server with stanzas</key>
+	<string>Delai de chargement des modules. Cela evite de surcharger le serveur XMPP.</string>
+	<key>Delete</key>
+	<string>Supprimer</string>
+	<key>Delete contact</key>
+	<string>Supprimer le contact</string>
+	<key>Delete group</key>
+	<string>Supprimer le groupe</string>
+	<key>Display or hide the properties view</key>
+	<string>Affiche les proprietés.</string>
+	<key>Do not disturb</key>
+	<string>Ne pas déranger</string>
+	<key>Edit</key>
+	<string>Editer</string>
+	<key>Expand all groups</key>
+	<string>Etendre tous les groupes</string>
+	<key>Expand group</key>
+	<string>Etendre le groupe</string>
+	<key>Filter contacts by name or tags</key>
+	<string>Filtrer par nom ou par étiquette</string>
+	<key>Go to website</key>
+	<string>Visiter le site web</string>
+	<key>Group</key>
+	<string>Groupe</string>
+	<key>Group </key>
+	<string>Groupe </string>
+	<key>Group addition error</key>
+	<string>Erreur d'ajout de groupe</string>
+	<key>Group supression</key>
+	<string>Supprimer le groupe</string>
+	<key>Groups</key>
+	<string>Groupes</string>
+	<key>Help</key>
+	<string>Aide</string>
+	<key>Hide main menu</key>
+	<string>Chacher le menu principal</string>
+	<key>Hypervisor</key>
+	<string>Hyperviseur</string>
+	<key>JID is not valid</key>
+	<string>le JID n'est pas valide</string>
+	<key>Loaded </key>
+	<string>Chargé </string>
+	<key>Locale change</key>
+	<string>Changement de langue</string>
+	<key>Log out</key>
+	<string>Déconnexion</string>
+	<key>Logon</key>
+	<string>Connexion</string>
+	<key>Make a donation</key>
+	<string>Faire un don</string>
+	<key>Modules</key>
+	<string>Modules</string>
+	<key>Navigation</key>
+	<string>Navigation</string>
+	<key>Paste</key>
+	<string>Coller</string>
+	<key>Preferences</key>
+	<string>Préférences</string>
+	<key>Preferences saved</key>
+	<string>Préférences sauvegardées</string>
+	<key>Quit</key>
+	<string>Quitter</string>
+	<key>Redo</key>
+	<string>Refaire</string>
+	<key>Release note</key>
+	<string>Note de version</string>
+	<key>Remove the selected contact. It will only remove it from your roster.</key>
+	<string>Supprime le contact de votre roster</string>
+	<key>Rename contact</key>
+	<string>Renommer le contact</string>
+	<key>Rename group</key>
+	<string>Renommer le groupe</string>
+	<key>Report a bug</key>
+	<string>Rapporter un bug</string>
+	<key>Resource</key>
+	<string>Resource</string>
+	<key>Search entity</key>
+	<string>Rechercher une entité</string>
+	<key>Select all</key>
+	<string>Tout séléctionner</string>
+	<key>Select next entity</key>
+	<string>Séléctionner l'entité suivante</string>
+	<key>Select previous entity</key>
+	<string>Séléctionner l'entité précédente</string>
+	<key>Set custom status</key>
+	<string>Définir le statut personalisé</string>
+	<key>Set status available</key>
+	<string>Définir le statut 'Disponible'</string>
+	<key>Set status away</key>
+	<string>Définir le statut 'Parti(e)'</string>
+	<key>Set status busy</key>
+	<string>Définir le statut 'Occupé'</string>
+	<key>Set the log level of the client. The more verbose, the less performance.</key>
+	<string>Configure le niveau de log du client. Un niveau de log trop élevé entraine une baisse des performances</string>
+	<key>Status</key>
+	<string>Statut</string>
+	<key>Subscription request</key>
+	<string>Demande de souscription</string>
+	<key>Tags</key>
+	<string>Etiquettes</string>
+	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
+	<string>Le JID å utiliser. Il est toujours formatté de la sorte: utilisateur@domaine.com</string>
+	<key>The URL of the welcome page</key>
+	<string>L'adresse de la page de bienvenue</string>
+	<key>The XMPP JID of the contact</key>
+	<string>Le JID du contact</string>
+	<key>The current logged account</key>
+	<string>Le compte courrant</string>
+	<key>The display name of the new contact</key>
+	<string>Le nom du contact</string>
+	<key>The group has been removed</key>
+	<string>Le groupe a été supprimé</string>
+	<key>The group must be empty</key>
+	<string>Le groupe doit être vide</string>
+	<key>The name of the new group</key>
+	<string>Le nom du nouveau groupe</string>
+	<key>The password associated to your XMPP account</key>
+	<string>Le mot de passe associé au compte XMPP</string>
+	<key>The resource to use</key>
+	<string>La ressource à utiliser</string>
+	<key>The service BOSH (XMPP over HTTP) to use</key>
+	<string>The service BOSH (XMPP sur HTTP) à utiliser</string>
+	<key>This LED is ON when XMPP data are received</key>
+	<string>Cette LED est allumée lors de la reception de donnnées XMPP</string>
+	<key>This LED is ON when XMPP data are sent</key>
+	<string>Cette LED est allumée lors de l'envoi de donnnées XMPP</string>
+	<key>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</key>
+	<string>Active la surveillance XMPP. La surveillance XMPP réduit les performances</string>
+	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
+	<string>Active les animations. Les animations réduisent les performances</string>
+	<key>Undo</key>
+	<string>Defaire</string>
+	<key>Update your current XMPP status</key>
+	<string>Mettre à jour le statut XMPP</string>
+	<key>User</key>
+	<string>Utilisateur</string>
+	<key>User supression</key>
+	<string>Supprimer un utilisateur</string>
+	<key>Virtual machine</key>
+	<string>Machine virtuelle</string>
+	<key>You are not registred to the entity events.</key>
+	<string>You are not registred to the entity events.</string>
+	<key>You are registred to the entity events.</key>
+	<string>You are registred to the entity events.</string>
+	<key>You can't assign tags here</key>
+	<string>Vous ne pouvez pas assigner d'étiquettes ici.</string>
+	<key>You have to enter a valid group name.</key>
+	<string>Vous devez entrer un nom de groupe valide</string>
+	<key>You must choose a contact</key>
+	<string>Vous devez choisir un contact</string>
+	<key>You must choose a group</key>
+	<string>Vous devez choisir un groupe</string>
+	<key>You must enter a JID using the form user@domain.</key>
+	<string>Vous devez entrer un JID de la forme utilisateur@domaine.com.</string>
+	<key>You need to reload the application to complete the locale change.</key>
+	<string>Vous devez recharger l'application pour que le changement de langue prenne effet.</string>
+	<key>Your status is now </key>
+	<string>Votre statut est maintenant </string>
+	<key>authenticating</key>
+	<string>Authentification</string>
+	<key>authentification-failed</key>
+	<string>Echec d'Authentification</string>
+	<key>cancel</key>
+	<string>Annuler</string>
+	<key>connect</key>
+	<string>Connexion</string>
+	<key>connected</key>
+	<string>Connecté</string>
+	<key>connecting</key>
+	<string>Connexion...</string>
+	<key>connection-failed</key>
+	<string>Echec de la connexion</string>
+	<key>disconnected</key>
+	<string>Deconnecté</string>
+	<key>disconnecting</key>
+	<string>Deconnexion...</string>
+	<key>host-unreachable</key>
+	<string>hôte injoingnable</string>
+	<key>unknown-error</key>
+	<string>Erreur inconnue</string>
+</dict>
+</plist>

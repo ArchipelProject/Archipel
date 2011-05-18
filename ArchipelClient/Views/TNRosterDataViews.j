@@ -23,6 +23,7 @@
 @import <AppKit/CPTextField.j>
 
 @import <StropheCappuccino/TNStropheContact.j>
+@import <TNKit/TNAttachedWindow.j>
 
 /*! @ingroup archipelcore
     Subclass of CPView that represent a entry of level two in TNOutlineViewRoster (TNStropheContact, not groups)
@@ -42,7 +43,7 @@
     CPString            _entityType;
     BOOL                _shouldDisplayAvatar;
     TNStropheContact    _contact;
-    CPAttachedWindow    _quickActionWindow;
+    TNAttachedWindow    _quickActionWindow;
 }
 
 
@@ -68,7 +69,7 @@
 
         _shouldDisplayAvatar            = !![rosterLayout objectForKey:@"TNOutlineViewRosterDisplayAvatar"],
         _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 1, 16, 16)];
-        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 2, 170, 100)];
+        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 3, 170, 100)];
         _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 18, 170, 100)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
@@ -83,7 +84,7 @@
         [_events setAlignment:CPCenterTextAlignment];
         [_events setAutoresizingMask:CPViewMinXMargin];
         [_events setVerticalAlignment:CPCenterVerticalTextAlignment];
-        [_events setFont:[CPFont boldFontWithName:@"Arial" size:11]];
+        [_events setFont:[CPFont systemFontOfSize:11]];
         [_events setTextColor:[CPColor whiteColor]];
         [_events setValue:[CPColor colorWithHexString:@"5184C9"] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [_events setValue:_normalStateCartoucheColor forThemeAttribute:@"bezel-color" inState:CPThemeStateNormal];
@@ -222,7 +223,7 @@
 {
     if (!_quickActionWindow)
     {
-        _quickActionWindow  = [[CPAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+        _quickActionWindow  = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 250, 150) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
         var label = [CPTextField labelWithTitle:@"I'm sure you wanna know\nwhat's this, right?"];
 
         [label setFont:[CPFont boldSystemFontOfSize:11.0]];
@@ -233,7 +234,7 @@
         [_quickActionWindow setAlphaValue:0.95];
     }
 
-    [_quickActionWindow positionRelativeToView:self gravity:CPAttachedWindowGravityRight];
+    [_quickActionWindow positionRelativeToView:self gravity:TNAttachedWindowGravityRight];
 }
 
 

@@ -50,8 +50,8 @@
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterAdded:) name:TNStropheRosterPushAddedContactNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_performPushRosterRemoved:) name:TNStropheRosterPushRemovedContactNotification object:nil];
 
-    [newContactName setToolTip:@"The display name of the new contact"];
-    [newContactJID setToolTip:@"The XMPP JID of the contact"];
+    [newContactName setToolTip:CPLocalizedString(@"The display name of the new contact", @"The display name of the new contact")];
+    [newContactJID setToolTip:CPLocalizedString(@"The XMPP JID of the contact", @"The XMPP JID of the contact")];
 
     [mainWindow setDefaultButton:buttonAdd];
 }
@@ -131,7 +131,9 @@
 
     if (![JID node] || ![JID domain] || [JID resource])
     {
-        [TNAlert showAlertWithMessage:@"JID is not valid" informative:@"You must enter a JID using the form user@domain." style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"JID is not valid", @"JID is not valid")
+                          informative:CPLocalizedString(@"You must enter a JID using the form user@domain.", @"You must enter a JID using the form user@domain.")
+                                style:CPCriticalAlertStyle];
         return;
     }
     [[[TNStropheIMClient defaultClient] roster] addContact:JID withName:name inGroupWithPath:nil];
@@ -140,7 +142,8 @@
 
     CPLog.info(@"added contact " + JID);
 
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + JID + @" has been added"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
+                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + JID + CPLocalizedString(@" has been added",  @" has been added")];
 }
 
 /*! will ask for deleting the selected contact
@@ -150,14 +153,16 @@
 {
     if (![aContact isKindOfClass:TNStropheContact])
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"User supression" message:@"You must choose a contact" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"User supression", @"User supression")
+                                                         message:CPLocalizedString(@"You must choose a contact", @"You must choose a contact")
+                                                            icon:TNGrowlIconError];
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Delete contact"
-                                informative:@"Are you sure you want to delete this contact?"
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Delete contact", @"Delete contact")
+                                informative:CPLocalizedString(@"Are you sure you want to delete this contact?", @"Are you sure you want to delete this contact?")
                                  target:self
-                                 actions:[["Delete", @selector(performDeleteContact:)], ["Cancel", nil]]];
+                                 actions:[[CPLocalizedString("Delete", "Delete"), @selector(performDeleteContact:)], [CPLocalizedString("Cancel", "Cancel"), nil]]];
 
     [alert setHelpTarget:self action:@selector(showHelpForDelete:)];
     [alert setUserInfo:aContact];
@@ -178,7 +183,8 @@
     [[[TNStropheIMClient defaultClient] roster] removeContact:contact];
 
     CPLog.info(@"contact " + [contact JID] + "removed");
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Contact" message:@"Contact " + [contact JID] + @" has been removed"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Contact", @"Contact")
+                                                     message:CPLocalizedString(@"Contact ", @"Contact ") + [contact JID] + CPLocalizedString(@" has been removed", @" has been removed")];
 }
 
 /*! action sent by alert to show help for subscription
@@ -213,11 +219,11 @@
     else
         nick = [requestStanza from];
 
-    var alert = [TNAlert alertWithMessage:@"Subscription request"
-                                informative:nick + @" is asking you subscription. Do you want to authorize it ?"
-                                 target:self
-                                 actions:[["Accept", @selector(performAuthorize:)],
-                                            ["Decline", @selector(performRefuse:)]]];
+    var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Subscription request", @"Subscription request")
+                              informative:nick + CPLocalizedString(@" is asking you subscription. Do you want to authorize it ?", @" is asking you subscription. Do you want to authorize it ?")
+                                   target:self
+                                  actions:[[CPLocalizedString("Accept", "Accept"), @selector(performAuthorize:)],
+                                            [CPLocalizedString("Decline", "Decline"), @selector(performRefuse:)]]];
 
     [alert setHelpTarget:self action:@selector(showHelpForSubscription:)];
     [alert setUserInfo:requestStanza]

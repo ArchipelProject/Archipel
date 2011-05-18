@@ -2,13 +2,13 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1060</int>
-		<string key="IBDocument.SystemVersion">10J3250</string>
-		<string key="IBDocument.InterfaceBuilderVersion">1305</string>
+		<string key="IBDocument.SystemVersion">10J4138</string>
+		<string key="IBDocument.InterfaceBuilderVersion">1306</string>
 		<string key="IBDocument.AppKitVersion">1038.35</string>
 		<string key="IBDocument.HIToolboxVersion">461.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
-			<string key="NS.object.0">1305</string>
+			<string key="NS.object.0">1306</string>
 		</object>
 		<object class="NSArray" key="IBDocument.IntegratedClassDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -54,7 +54,7 @@
 							<object class="NSButton" id="721854551">
 								<reference key="NSNextResponder" ref="930702664"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{543, 0}, {26, 24}}</string>
+								<string key="NSFrame">{{543, 4}, {26, 24}}</string>
 								<reference key="NSSuperview" ref="930702664"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -79,7 +79,7 @@
 							<object class="NSButton" id="741539496">
 								<reference key="NSNextResponder" ref="930702664"/>
 								<int key="NSvFlags">265</int>
-								<string key="NSFrame">{{509, 0}, {26, 24}}</string>
+								<string key="NSFrame">{{509, 4}, {26, 24}}</string>
 								<reference key="NSSuperview" ref="930702664"/>
 								<reference key="NSWindow"/>
 								<bool key="NSEnabled">YES</bool>
@@ -181,7 +181,7 @@
 					<object class="NSTextField" id="97159164">
 						<reference key="NSNextResponder" ref="308778987"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{33, 24}, {147, 20}}</string>
+						<string key="NSFrame">{{33, 23}, {147, 17}}</string>
 						<reference key="NSSuperview" ref="308778987"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="835423941"/>
@@ -191,7 +191,7 @@
 							<int key="NSCellFlags2">71304192</int>
 							<string key="NSContents">Max chat entries:</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans-Demi</string>
+								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -226,7 +226,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">You can configure preferences for chat module.</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans</string>
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -248,7 +248,7 @@
 							<int key="NSCellFlags2">272630784</int>
 							<string key="NSContents">Chat preferences</string>
 							<object class="NSFont" key="NSSupport">
-								<string key="NSName">LucidaSans-Demi</string>
+								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">18</double>
 								<int key="NSfFlags">16</int>
 							</object>
@@ -619,11 +619,13 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
 							<string>viewPreferences</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSImageView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 						</object>
 					</object>
@@ -632,6 +634,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>imageViewModuleReady</string>
+							<string>viewMask</string>
 							<string>viewPreferences</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -639,6 +642,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">imageViewModuleReady</string>
 								<string key="candidateClassName">NSImageView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewMask</string>
+								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewPreferences</string>
@@ -701,6 +708,7 @@
 							<string>buttonDetach</string>
 							<string>fieldMessage</string>
 							<string>fieldPreferencesMaxChatMessage</string>
+							<string>fieldUserJID</string>
 							<string>imageSpinnerWriting</string>
 							<string>messagesScrollView</string>
 							<string>viewControls</string>
@@ -709,6 +717,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSButton</string>
+							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSImageView</string>
@@ -724,6 +733,7 @@
 							<string>buttonDetach</string>
 							<string>fieldMessage</string>
 							<string>fieldPreferencesMaxChatMessage</string>
+							<string>fieldUserJID</string>
 							<string>imageSpinnerWriting</string>
 							<string>messagesScrollView</string>
 							<string>viewControls</string>
@@ -744,6 +754,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldPreferencesMaxChatMessage</string>
+								<string key="candidateClassName">NSTextField</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">fieldUserJID</string>
 								<string key="candidateClassName">NSTextField</string>
 							</object>
 							<object class="IBToOneOutletInfo">
