@@ -83,9 +83,6 @@
 /* Class = "NSWindow"; title = "Preferences"; ObjectID = "936"; */
 "936.title" = "Preferences";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "939"; */
-"939.title" = "Box";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "944"; */
 "944.title" = "Cancel";
 
@@ -352,4 +349,13 @@
 
 /* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1372"; */
 "1372.title" = "Label";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1374"; */
+"1374.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1375"; */
+"1375.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1376"; */
+"1376.title" = "Box";
 

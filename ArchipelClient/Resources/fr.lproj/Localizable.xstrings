@@ -171,7 +171,7 @@
 	<key>Tags</key>
 	<string>Etiquettes</string>
 	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
-	<string>Le JID å utiliser. Il est toujours formatté de la sorte: utilisateur@domaine.com</string>
+	<string>Le JID à utiliser. Il est toujours formaté de la sorte: utilisateur@domaine.com</string>
 	<key>The URL of the welcome page</key>
 	<string>L'adresse de la page de bienvenue</string>
 	<key>The XMPP JID of the contact</key>

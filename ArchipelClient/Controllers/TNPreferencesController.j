@@ -56,11 +56,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPTextField     fieldModuleLoadingDelay;
     @outlet CPTextField     fieldWelcomePageUrl;
     @outlet CPView          viewPreferencesGeneral;
-    @outlet CPWindow        mainWindow @accessors(readonly);
+    @outlet CPView          viewContentWindowPreferences;
     @outlet TNSwitch        switchUseAnimations;
     @outlet TNSwitch        switchUseXMPPMonitoring;
 
-    id                      _appController  @accessors(property=appController);
+    CPWindow                _mainWindow                 @accessors(getter=mainWindow);
+    id                      _appController              @accessors(property=appController);
 
     CPArray                 _modules;
     TNStrophePrivateStorage _xmppStorage;
@@ -74,6 +75,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)awakeFromCib
 {
+    _mainWindow = [[CPWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 631.0, 543.0) styleMask:CPDocModalWindowMask];
+    [_mainWindow setContentView:viewContentWindowPreferences];
+
     var tabViewItemPreferencesGeneral = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         scrollViewContainer = [[TNUIKitScrollView alloc] initWithFrame:[tabViewMain bounds]],
         moduleViewFrame = [viewPreferencesGeneral frame];
@@ -85,6 +89,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [scrollViewContainer setAutohidesScrollers:YES];
     [scrollViewContainer setDocumentView:viewPreferencesGeneral];
 
+    [tabViewMain setDelegate:self];
     [tabViewItemPreferencesGeneral setLabel:@"General"];
     [tabViewItemPreferencesGeneral setView:scrollViewContainer];
     [tabViewMain addTabViewItem:tabViewItemPreferencesGeneral];
@@ -99,7 +104,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesFailToXMPPServer:) name:TNStrophePrivateStorageSetErrorNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(saveToFromXMPPServer:) name:TNPreferencesControllerSavePreferencesRequestNotification object:nil];
-    [mainWindow setDefaultButton:buttonSave];
+    [_mainWindow setDefaultButton:buttonSave];
 
     [fieldBOSHResource setToolTip:CPLocalizedString(@"The resource to use", @"The resource to use")];
     [fieldModuleLoadingDelay setToolTip:CPLocalizedString(@"Delay before loading a module. This avoid to load server with stanzas", @"Delay before loading a module. This avoid to load server with stanzas")];
@@ -193,7 +198,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
 /*! When window is ordering front, refresh all general preferences
     and send message loadPreferences to all modules
-    @param aSender
+    @param aSender the sender of the action
 */
 - (IBAction)showWindow:(id)aSender
 {
@@ -216,16 +221,25 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
             [module loadPreferences];
     }
 
-    [mainWindow center];
-    [mainWindow makeKeyAndOrderFront:aSender];
+    [CPApp beginSheet:_mainWindow modalForWindow:[CPApp mainWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+}
+
+/*! hide the preference window
+    @param aSender the sender of the action
+*/
+- (IBAction)hideWindow:(id)aSender
+{
+    [CPApp endSheet:_mainWindow];
 }
 
 /*! When save button is pressed, saves all general preferences
     and send message savePreferences to all modules
-    @param aSender
+    @param aSender the sender of the action
 */
 - (IBAction)savePreferences:(id)sender
 {
+    [self hideWindow:nil];
+
     var defaults = [CPUserDefaults standardUserDefaults],
         oldLocale = [defaults objectForKey:@"CPBundleLocale"];
 
@@ -252,17 +266,28 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     }
 
     [self saveToFromXMPPServer];
-    [mainWindow close];
 
     if (oldLocale != [defaults objectForKey:@"CPBundleLocale"])
     {
-        [TNAlert showAlertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
-                          informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")];
+         var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
+                                informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")
+                                     target:self
+                                    actions:[[CPBundleLocalizedString(@"OK", @"OK"), @selector(_performApplicationReload:)], [CPBundleLocalizedString(@"Later", @"Later"), nil]]];
+        [alert runModal];
     }
 }
 
+/*! Reload the application
+    @param aSender the sender of the action
+*/
+- (IBAction)_performApplicationReload:(id)aSender
+{
+    if (window)
+        window.location.reload();
+}
+
 /*! clean the content of the XMPP storage
-    @param aSender
+    @param aSender the sender of the action
 */
 - (IBAction)resetPreferences:(id)aSender
 {
@@ -272,10 +297,10 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPUserDefaults standardUserDefaults]._domains setObject:[CPDictionary dictionary] forKey:CPApplicationDomain];
     [[CPUserDefaults standardUserDefaults] synchronize];
     [self cleanXMPPStorage];
-    [mainWindow close];
+    [self hideWindow:nil];
 }
 
-/*! clean the content of the XMPP storage
+/*! message sent when user change the locale
     @param aSender
 */
 - (IBAction)languageChanged:(id)aSender
@@ -322,6 +347,23 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];
 
     return NO;
+}
+
+
+#pragma mark -
+#pragma mark Delegates
+
+/*! CPTabView delegate
+*/
+- (void)tabView:(CPTabView)aTabView didSelectTabViewItem:(CPTabViewItem)anItem
+{
+    var newFrame = [[[anItem view] documentView] frame];
+    newFrame.origin = [_mainWindow frame].origin;
+    newFrame.size.width = [_mainWindow frame].size.width;
+    newFrame.size.height += 100;
+
+    console.warn("ITEM: "+ [anItem label] + newFrame.origin.x + " " + newFrame.origin.y + " " + newFrame.size.height + " " + newFrame.size.width);
+    [_mainWindow setFrame:newFrame display:NO animate:YES];
 }
 
 @end
