@@ -1,0 +1,84 @@
+
+/* Class = "NSTextFieldCell"; title = "You can manage the hypervisor's network."; ObjectID = "9"; */
+"9.title" = "You can manage the hypervisor's network.";
+
+/* Class = "NSTextFieldCell"; title = "Manage hypervisor networks"; ObjectID = "10"; */
+"10.title" = "Manage hypervisor networks";
+
+/* Class = "NSWindow"; title = "Network properties"; ObjectID = "16"; */
+"16.title" = "Network properties";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "19"; */
+"19.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
+"21.title" = "Network basics";
+
+/* Class = "NSTextFieldCell"; title = "Bridge name:"; ObjectID = "27"; */
+"27.title" = "Bridge name:";
+
+/* Class = "NSTextFieldCell"; title = "Bridge delay: "; ObjectID = "31"; */
+"31.title" = "Bridge delay: ";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "34"; */
+"34.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "36"; */
+"36.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "37"; */
+"37.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Forward device:"; ObjectID = "39"; */
+"39.title" = "Forward device:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "43"; */
+"43.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "44"; */
+"44.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "45"; */
+"45.title" = "Item 2";
+
+/* Class = "NSTextFieldCell"; title = "Forward mode:"; ObjectID = "47"; */
+"47.title" = "Forward mode:";
+
+/* Class = "NSTextFieldCell"; title = "Activate STP:"; ObjectID = "55"; */
+"55.title" = "Activate STP:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "58"; */
+"58.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Addressing"; ObjectID = "60"; */
+"60.title" = "Addressing";
+
+/* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
+"62.title" = "Bridge address:";
+
+/* Class = "NSTextFieldCell"; title = "255.255.255.255"; ObjectID = "64"; */
+"64.title" = "255.255.255.255";
+
+/* Class = "NSTextFieldCell"; title = "255.255.255.255"; ObjectID = "67"; */
+"67.title" = "255.255.255.255";
+
+/* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
+"68.title" = "Netmask:";
+
+/* Class = "NSButtonCell"; title = "DHCP enabled"; ObjectID = "70"; */
+"70.title" = "DHCP enabled";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "72"; */
+"72.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "74"; */
+"74.title" = "Save";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "76"; */
+"76.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "You can create auto IP assignation ranges."; ObjectID = "79"; */
+"79.title" = "You can create auto IP assignation ranges.";
+
+/* Class = "NSTextFieldCell"; title = "You can create host address reservation."; ObjectID = "89"; */
+"89.title" = "You can create host address reservation.";

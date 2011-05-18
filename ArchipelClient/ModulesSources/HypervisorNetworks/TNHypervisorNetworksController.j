@@ -113,27 +113,27 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [columNetworkEnabled setWidth:16];
     [[columNetworkEnabled headerView] setStringValue:@""];
 
-    [[columNetworkName headerView] setStringValue:@"Name"];
+    [[columNetworkName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columNetworkName setWidth:250];
     [columNetworkName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkName" ascending:YES]];
 
-    [[columBridgeName headerView] setStringValue:@"Bridge"];
+    [[columBridgeName headerView] setStringValue:CPBundleLocalizedString(@"Bridge", @"Bridge")];
     [columBridgeName setWidth:80];
     [columBridgeName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeName" ascending:YES]];
 
-    [[columForwardMode headerView] setStringValue:@"Forward Mode"];
+    [[columForwardMode headerView] setStringValue:CPBundleLocalizedString(@"Forward Mode", @"Forward Mode")];
     [columForwardMode setWidth:120];
     [columForwardMode setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardMode" ascending:YES]];
 
-    [[columForwardDevice headerView] setStringValue:@"Forward Device"];
+    [[columForwardDevice headerView] setStringValue:CPBundleLocalizedString(@"Forward Device", @"Forward Device")];
     [columForwardDevice setWidth:120];
     [columForwardDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardDevice" ascending:YES]];
 
-    [[columBridgeIP headerView] setStringValue:@"Bridge IP"];
+    [[columBridgeIP headerView] setStringValue:CPBundleLocalizedString(@"Bridge IP", @"Bridge IP")];
     [columBridgeIP setWidth:90];
     [columBridgeIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeIP" ascending:YES]];
 
-    [[columBridgeNetmask headerView] setStringValue:@"Bridge Netmask"];
+    [[columBridgeNetmask headerView] setStringValue:CPBundleLocalizedString(@"Bridge Netmask", @"Bridge Netmask")];
     [columBridgeNetmask setWidth:150];
     [columBridgeNetmask setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeNetmask" ascending:YES]];
 
@@ -157,42 +157,42 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     [networkController setDelegate:self];
 
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""];
     [menu addItem:[CPMenuItem separatorItem]];
-    [menu addItemWithTitle:@"Edit" action:@selector(editNetwork:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Activate" action:@selector(activateNetwork:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Deactivate" action:@selector(deactivateNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Activate", @"Activate") action:@selector(activateNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate", @"Deactivate") action:@selector(deactivateNetwork:) keyEquivalent:@""];
     [menu addItem:[CPMenuItem separatorItem]];
-    [menu addItemWithTitle:@"Delete" action:@selector(delNetwork:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(delNetwork:) keyEquivalent:@""];
     [_tableViewNetworks setMenu:menu];
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(addNetwork:)];
-    [_plusButton setToolTip:@"Create a new network"];
+    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new network", @"Create a new network")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(delNetwork:)];
-    [_minusButton setToolTip:@"Delete selected networks"];
+    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected networks", @"Delete selected networks")];
 
     _activateButton = [CPButtonBar plusButton];
     [_activateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/check.png"] size:CPSizeMake(16, 16)]];
     [_activateButton setTarget:self];
     [_activateButton setAction:@selector(activateNetwork:)];
-    [_activateButton setToolTip:@"Activate selected networks"];
+    [_activateButton setToolTip:CPBundleLocalizedString(@"Activate selected networks", @"Activate selected networks")];
 
     _deactivateButton = [CPButtonBar plusButton];
     [_deactivateButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/cancel.png"] size:CPSizeMake(16, 16)]];
     [_deactivateButton setTarget:self];
     [_deactivateButton setAction:@selector(deactivateNetwork:)];
-    [_deactivateButton setToolTip:@"Deactivate selected networks"];
+    [_deactivateButton setToolTip:CPBundleLocalizedString(@"Deactivate selected networks", @"Deactivate selected networks")];
 
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(editNetwork:)];
-    [_editButton setToolTip:@"Open configuration panel for selected network"];
+    [_editButton setToolTip:CPBundleLocalizedString(@"Open configuration panel for selected network", @"Open configuration panel for selected network")];
 
     [_minusButton setEnabled:NO];
     [_activateButton setEnabled:NO];
@@ -229,12 +229,12 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Create new virtual network" action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Edit selected network" action:@selector(editNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Delete selected network" action:@selector(delNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create new virtual network", @"Create new virtual network") action:@selector(addNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network", @"Edit selected network") action:@selector(editNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected network", @"Delete selected network") action:@selector(delNetwork:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Activate this network" action:@selector(activateNetwork:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Deactivate this network" action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Activate this network", @"Activate this network") action:@selector(activateNetwork:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Deactivate this network", @"Deactivate this network") action:@selector(deactivateNetwork:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -421,10 +421,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
-        alert = [TNAlert alertWithMessage:@"Delete Network"
-                              informative:@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity."
+        alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete Network", @"Delete Network")
+                              informative:CPBundleLocalizedString(@"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.", @"Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.")
                                    target:self
-                                  actions:[["Delete", @selector(_performDelNetwork:)], ["Cancel", nil]]];
+                                  actions:[[CPBundleLocalizedString("Delete", "Delete"), @selector(_performDelNetwork:)], [CPBundleLocalizedString("Cancel", "Cancel"), nil]]];
     [alert setUserInfo:networks];
     [alert runModal];
 }
@@ -452,7 +452,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         if ([networkObject isNetworkEnabled])
         {
-            [TNAlert showAlertWithMessage:@"Error" informative:@"You can't edit a running network"];
+            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error") informative:CPBundleLocalizedString(@"You can't edit a running network", @"You can't edit a running network")];
             return;
         }
 
@@ -494,10 +494,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     var selectedIndexes = [_tableViewNetworks selectedRowIndexes],
         networks = [_datasourceNetworks objectsAtIndexes:selectedIndexes],
-        alert = [TNAlert alertWithMessage:@"Deactivate Network"
-                              informative:@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity."
+        alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Deactivate Network", @"Deactivate Network")
+                              informative:CPBundleLocalizedString(@"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.", @"Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.")
                                    target:self
-                                  actions:[["Deactivate", @selector(_performDeactivateNetwork:)], ["Cancel", nil]]];
+                                  actions:[[CPBundleLocalizedString(@"Deactivate", @"Deactivate"), @selector(_performDeactivateNetwork:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert setUserInfo:networks];
     [alert runModal];
 }
@@ -661,7 +661,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 {
     if ([aNetwork isNetworkEnabled])
     {
-        [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+        [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
         return
     }
 
@@ -700,7 +700,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didDefineNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been defined"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network has been defined", @"Network has been defined")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -762,7 +762,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didNetworkStatusChange:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network status has changed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network status has changed", @"Network status has changed")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -780,7 +780,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
         if ([networkObject isNetworkEnabled])
         {
-            [CPAlert alertWithTitle:@"Error" message:@"You can't update a running network" style:CPCriticalAlertStyle];
+            [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error") message:CPBundleLocalizedString(@"You can't update a running network", @"You can't update a running network") style:CPCriticalAlertStyle];
             return;
         }
 
@@ -803,7 +803,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 - (BOOL)_didDelNetwork:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Network" message:@"Network has been removed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Network", @"Network") message:CPBundleLocalizedString(@"Network has been removed", @"Network has been removed")];
     else
         [self handleIqErrorFromStanza:aStanza];
 
@@ -812,3 +812,10 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
 
 @end
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNHypervisorNetworksController], comment);
+}

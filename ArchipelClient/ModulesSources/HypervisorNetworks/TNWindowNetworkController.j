@@ -82,12 +82,12 @@
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];
-    [_plusButtonDHCPHosts setToolTip:@"Create a new DHCP reservation"];
+    [_plusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Create a new DHCP reservation", @"Create a new DHCP reservation")];
 
     _minusButtonDHCPHosts= [CPButtonBar minusButton];
     [_minusButtonDHCPHosts setTarget:self];
     [_minusButtonDHCPHosts setAction:@selector(removeDHCPHost:)];
-    [_minusButtonDHCPHosts setToolTip:@"Remove selected DHCP reservation"];
+    [_minusButtonDHCPHosts setToolTip:CPBundleLocalizedString(@"Remove selected DHCP reservation", @"Remove selected DHCP reservation")];
 
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
 
@@ -95,12 +95,12 @@
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];
-    [_plusButtonDHCPRanges setToolTip:@"Create a new DHCP range"];
+    [_plusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Create a new DHCP range", @"Create a new DHCP range")];
 
     _minusButtonDHCPRanges = [CPButtonBar minusButton];
     [_minusButtonDHCPRanges setTarget:self];
     [_minusButtonDHCPRanges setAction:@selector(removeDHCPRange:)];
-    [_minusButtonDHCPRanges setToolTip:@"Remove selected DHCP range"];
+    [_minusButtonDHCPRanges setToolTip:CPBundleLocalizedString(@"Remove selected DHCP range", @"Remove selected DHCP range")];
 
     [buttonBarControlDHCPRanges setButtons:[_plusButtonDHCPRanges, _minusButtonDHCPRanges]];
 
@@ -109,12 +109,12 @@
 
     [buttonForwardMode removeAllItems];
     [buttonForwardMode addItemsWithTitles:[@"isolated", @"route", @"nat"]];
-    [buttonForwardMode setToolTip:@"Choose the forward mode for this virtual network"];
+    [buttonForwardMode setToolTip:CPBundleLocalizedString(@"Choose the forward mode for this virtual network", @"Choose the forward mode for this virtual network")];
     [buttonForwardMode setTarget:self];
     [buttonForwardMode setAction:@selector(forwardModeChanged:)];
 
     [buttonForwardDevice removeAllItems];
-    [buttonForwardDevice setToolTip:@"Select the hypervisor network card you want to use for this virtual network"];
+    [buttonForwardDevice setToolTip:CPBundleLocalizedString(@"Select the hypervisor network card you want to use for this virtual network", @"Select the hypervisor network card you want to use for this virtual network")];
 
     // TABLE FOR RANGES
     _datasourceDHCPRanges   = [[TNTableViewDataSource alloc] init];
@@ -132,12 +132,12 @@
     var columRangeStart = [[CPTableColumn alloc] initWithIdentifier:@"start"],
         columRangeEnd = [[CPTableColumn alloc] initWithIdentifier:@"end"];
 
-    [[columRangeStart headerView] setStringValue:@"Start"];
+    [[columRangeStart headerView] setStringValue:CPBundleLocalizedString(@"Start", @"Start")];
     [columRangeStart setWidth:250];
     [columRangeStart setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"start" ascending:YES]];
     [columRangeStart setEditable:YES];
 
-    [[columRangeEnd headerView] setStringValue:@"End"];
+    [[columRangeEnd headerView] setStringValue:CPBundleLocalizedString(@"End", @"End")];
     [columRangeEnd setWidth:250];
     [columRangeEnd setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"end" ascending:YES]];
     [columRangeEnd setEditable:YES];
@@ -152,7 +152,6 @@
     [scrollViewDHCPHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewDHCPHosts setAutohidesScrollers:YES];
     [scrollViewDHCPHosts setDocumentView:_tableViewHosts];
-    // [scrollViewDHCPHosts setBorderedWithHexColor:@"#C0C7D2"];
 
     [_tableViewHosts setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewHosts setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
@@ -164,17 +163,17 @@
         columHostName = [[CPTableColumn alloc] initWithIdentifier:@"name"],
         columHostIP = [[CPTableColumn alloc] initWithIdentifier:@"IP"];
 
-    [[columHostMac headerView] setStringValue:@"MAC Address"];
+    [[columHostMac headerView] setStringValue:CPBundleLocalizedString(@"MAC Address", @"MAC Address")];
     [columHostMac setWidth:150];
     [columHostMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
     [columHostMac setEditable:YES];
 
-    [[columHostName headerView] setStringValue:@"Name"];
+    [[columHostName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columHostName setWidth:150];
     [columHostName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
     [columHostName setEditable:YES];
 
-    [[columHostIP headerView] setStringValue:@"IP"];
+    [[columHostIP headerView] setStringValue:CPBundleLocalizedString(@"IP", @"IP")];
     [columHostIP setWidth:150];
     [columHostIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"IP" ascending:YES]];
     [columHostIP setEditable:YES];
@@ -194,32 +193,32 @@
     var menuRange = [[CPMenu alloc] init],
         menuHost = [[CPMenu alloc] init];
 
-    [menuRange addItemWithTitle:@"Add new range" action:@selector(addDHCPRange:) keyEquivalent:@""];
-    [menuRange addItemWithTitle:@"Remove" action:@selector(removeDHCPRange:) keyEquivalent:@""];
+    [menuRange addItemWithTitle:CPBundleLocalizedString(@"Add new range", @"Add new range") action:@selector(addDHCPRange:) keyEquivalent:@""];
+    [menuRange addItemWithTitle:CPBundleLocalizedString(@"Remove", @"Remove") action:@selector(removeDHCPRange:) keyEquivalent:@""];
     [_tableViewRanges setMenu:menuRange];
 
-    [menuHost addItemWithTitle:@"Add new host reservation" action:@selector(addDHCPHost:) keyEquivalent:@""];
-    [menuHost addItemWithTitle:@"Remove" action:@selector(removeDHCPHost:) keyEquivalent:@""];
+    [menuHost addItemWithTitle:CPBundleLocalizedString(@"Add new host reservation", @"Add new host reservation") action:@selector(addDHCPHost:) keyEquivalent:@""];
+    [menuHost addItemWithTitle:CPBundleLocalizedString(@"Remove", @"Remove") action:@selector(removeDHCPHost:) keyEquivalent:@""];
     [_tableViewHosts setMenu:menuHost];
 
     var tabViewDHCPRangesItem = [[CPTabViewItem alloc] initWithIdentifier:@"id1"],
         tabViewDHCPHostsItem = [[CPTabViewItem alloc] initWithIdentifier:@"id2"];
 
     [tabViewDHCPRangesItem setView:viewRangesConf];
-    [tabViewDHCPRangesItem setLabel:@"DHCP Ranges"];
+    [tabViewDHCPRangesItem setLabel:CPBundleLocalizedString(@"DHCP Ranges", @"DHCP Ranges")];
     [tabViewDHCP addTabViewItem:tabViewDHCPRangesItem];
 
     [tabViewDHCPHostsItem setView:viewHostsConf];
-    [tabViewDHCPHostsItem setLabel:@"DHCP Hosts"];
+    [tabViewDHCPHostsItem setLabel:CPBundleLocalizedString(@"DHCP Hosts", @"DHCP Hosts")];
     [tabViewDHCP addTabViewItem:tabViewDHCPHostsItem];
 
-    [fieldNetworkName setToolTip:@"Enter the name of the virtual network"];
-    [fieldBridgeName setToolTip:@"Enter the name of the bridge to create when this network is activated"];
-    [fieldBridgeDelay setToolTip:@"Enter the value of delay for the bridge"];
-    [fieldBridgeIP setToolTip:@"The IP address to assign to the bridge"];
-    [fieldBridgeNetmask setToolTip:@"The netmask to use for the bridge"];
-    [checkBoxSTPEnabled setToolTip:@"Activate or deactivate Spanning Tree Protocol for the bridge"];
-    [checkBoxDHCPEnabled setToolTip:@"Enable DHCP for this virtual network"];
+    [fieldNetworkName setToolTip:CPBundleLocalizedString(@"Enter the name of the virtual network", @"Enter the name of the virtual network")];
+    [fieldBridgeName setToolTip:CPBundleLocalizedString(@"Enter the name of the bridge to create when this network is activated", @"Enter the name of the bridge to create when this network is activated")];
+    [fieldBridgeDelay setToolTip:CPBundleLocalizedString(@"Enter the value of delay for the bridge", @"Enter the value of delay for the bridge")];
+    [fieldBridgeIP setToolTip:CPBundleLocalizedString(@"The IP address to assign to the bridge", @"The IP address to assign to the bridge")];
+    [fieldBridgeNetmask setToolTip:CPBundleLocalizedString(@"The netmask to use for the bridge", @"The netmask to use for the bridge")];
+    [checkBoxSTPEnabled setToolTip:CPBundleLocalizedString(@"Activate or deactivate Spanning Tree Protocol for the bridge", @"Activate or deactivate Spanning Tree Protocol for the bridge")];
+    [checkBoxDHCPEnabled setToolTip:CPBundleLocalizedString(@"Enable DHCP for this virtual network", @"Enable DHCP for this virtual network")];
 }
 
 
@@ -323,7 +322,7 @@
 */
 - (IBAction)addDHCPHost:(id)sender
 {
-    var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:"domain.com" ip:@"0.0.0.0"];
+    var newHost = [TNDHCPEntry DHCPHostWithMac:@"00:00:00:00:00:00"  name:CPBundleLocalizedString("domain.com", "domain.com") ip:@"0.0.0.0"];
 
     [checkBoxDHCPEnabled setState:CPOnState];
     [_datasourceDHCPHosts addObject:newHost];
@@ -381,3 +380,11 @@
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNWindowNetworkController], comment);
+}
