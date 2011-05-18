@@ -1336,14 +1336,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewGraphCPU</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="314420337"/>
-					</object>
-					<int key="connectionID">107</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">viewGraphCPUContainer</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="1002397129"/>
@@ -1357,14 +1349,6 @@
 						<reference key="destination" ref="911119547"/>
 					</object>
 					<int key="connectionID">109</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewGraphMemory</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="616398643"/>
-					</object>
-					<int key="connectionID">110</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1392,27 +1376,11 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewGraphLoad</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="933300152"/>
-					</object>
-					<int key="connectionID">114</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">viewGraphNetworkContainer</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="1027117197"/>
 					</object>
 					<int key="connectionID">115</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewGraphNetwork</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="470760134"/>
-					</object>
-					<int key="connectionID">116</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
