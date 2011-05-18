@@ -1,0 +1,111 @@
+/*  has been created */
+" has been created" = " has been created";
+
+/*  to your roster */
+" to your roster" = " to your roster";
+
+/* Add contact */
+"Add contact" = "Add contact";
+
+/* Added new subscription to virtual machine */
+"Added new subscription to virtual machine" = "Added new subscription to virtual machine";
+
+/* Adding contact */
+"Adding contact" = "Adding contact";
+
+/* Are you sure you want to clone this virtual machine ? */
+"Are you sure you want to clone this virtual machine ?" = "Are you sure you want to clone this virtual machine ?";
+
+/* Are you sure you want to completely remove theses virtual machines ? */
+"Are you sure you want to completely remove theses virtual machines ?" = "Are you sure you want to completely remove theses virtual machines ?";
+
+/* Are you sure you want to completely remove this virtual machine ? */
+"Are you sure you want to completely remove this virtual machine ?" = "Are you sure you want to completely remove this virtual machine ?";
+
+/* Are you sure you want to remove the subscription for this user ? */
+"Are you sure you want to remove the subscription for this user ?" = "Are you sure you want to remove the subscription for this user ?";
+
+/* Ask hypervisor to completely destroy all selected virtual machine */
+"Ask hypervisor to completely destroy all selected virtual machine" = "Ask hypervisor to completely destroy all selected virtual machine";
+
+/* Ask hypervisor to create a new virtual machine */
+"Ask hypervisor to create a new virtual machine" = "Ask hypervisor to create a new virtual machine";
+
+/* Ask the virtual machine to add in its contact a user */
+"Ask the virtual machine to add in its contact a user" = "Ask the virtual machine to add in its contact a user";
+
+/* Ask the virtual machine to remove a user from its contact */
+"Ask the virtual machine to remove a user from its contact" = "Ask the virtual machine to remove a user from its contact";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Clone */
+"Clone" = "Clone";
+
+/* Clone this virtual machine */
+"Clone this virtual machine" = "Clone this virtual machine";
+
+/* Cloning a Virtual Machine */
+"Cloning a Virtual Machine" = "Cloning a Virtual Machine";
+
+/* Create a clone virtual machine from the selected one */
+"Create a clone virtual machine from the selected one" = "Create a clone virtual machine from the selected one";
+
+/* Create new virtual machine */
+"Create new virtual machine" = "Create new virtual machine";
+
+/* Delete */
+"Delete" = "Delete";
+
+/* Delete virtual machine */
+"Delete virtual machine" = "Delete virtual machine";
+
+/* Destroying a Virtual Machine */
+"Destroying a Virtual Machine" = "Destroying a Virtual Machine";
+
+/* Destroying some Virtual Machines */
+"Destroying some Virtual Machines" = "Destroying some Virtual Machines";
+
+/* Error */
+"Error" = "Error";
+
+/* Jabber ID */
+"Jabber ID" = "Jabber ID";
+
+/* Name */
+"Name" = "Name";
+
+/* Remove */
+"Remove" = "Remove";
+
+/* Removing subscription */
+"Removing subscription" = "Removing subscription";
+
+/* Subscription have been removed */
+"Subscription have been removed" = "Subscription have been removed";
+
+/* Subscription request */
+"Subscription request" = "Subscription request";
+
+/* Virtual Machine */
+"Virtual Machine" = "Virtual Machine";
+
+/* Virtual machine  */
+"Virtual machine " = "Virtual machine ";
+
+/* Virtual machine has been cloned */
+"Virtual machine has been cloned" = "Virtual machine has been cloned";
+
+/* Virtual machine has been removed */
+"Virtual machine has been removed" = "Virtual machine has been removed";
+
+/* Would you like to add  */
+"Would you like to add " = "Would you like to add ";
+
+/* You must select a virtual machine */
+"You must select a virtual machine" = "You must select a virtual machine";
+
+/* You must select one (and only one) virtual machine */
+"You must select one (and only one) virtual machine" = "You must select one (and only one) virtual machine";
+

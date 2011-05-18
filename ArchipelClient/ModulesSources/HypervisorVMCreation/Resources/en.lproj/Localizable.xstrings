@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key> has been created</key>
+	<string> has been created</string>
+	<key> to your roster</key>
+	<string> to your roster</string>
+	<key>Add contact</key>
+	<string>Add contact</string>
+	<key>Added new subscription to virtual machine</key>
+	<string>Added new subscription to virtual machine</string>
+	<key>Adding contact</key>
+	<string>Adding contact</string>
+	<key>Are you sure you want to clone this virtual machine ?</key>
+	<string>Are you sure you want to clone this virtual machine ?</string>
+	<key>Are you sure you want to completely remove theses virtual machines ?</key>
+	<string>Are you sure you want to completely remove theses virtual machines ?</string>
+	<key>Are you sure you want to completely remove this virtual machine ?</key>
+	<string>Are you sure you want to completely remove this virtual machine ?</string>
+	<key>Are you sure you want to remove the subscription for this user ?</key>
+	<string>Are you sure you want to remove the subscription for this user ?</string>
+	<key>Ask hypervisor to completely destroy all selected virtual machine</key>
+	<string>Ask hypervisor to completely destroy all selected virtual machine</string>
+	<key>Ask hypervisor to create a new virtual machine</key>
+	<string>Ask hypervisor to create a new virtual machine</string>
+	<key>Ask the virtual machine to add in its contact a user</key>
+	<string>Ask the virtual machine to add in its contact a user</string>
+	<key>Ask the virtual machine to remove a user from its contact</key>
+	<string>Ask the virtual machine to remove a user from its contact</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Clone</key>
+	<string>Clone</string>
+	<key>Clone this virtual machine</key>
+	<string>Clone this virtual machine</string>
+	<key>Cloning a Virtual Machine</key>
+	<string>Cloning a Virtual Machine</string>
+	<key>Create a clone virtual machine from the selected one</key>
+	<string>Create a clone virtual machine from the selected one</string>
+	<key>Create new virtual machine</key>
+	<string>Create new virtual machine</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete virtual machine</key>
+	<string>Delete virtual machine</string>
+	<key>Destroying a Virtual Machine</key>
+	<string>Destroying a Virtual Machine</string>
+	<key>Destroying some Virtual Machines</key>
+	<string>Destroying some Virtual Machines</string>
+	<key>Error</key>
+	<string>Error</string>
+	<key>Jabber ID</key>
+	<string>Jabber ID</string>
+	<key>Name</key>
+	<string>Name</string>
+	<key>Remove</key>
+	<string>Remove</string>
+	<key>Removing subscription</key>
+	<string>Removing subscription</string>
+	<key>Subscription have been removed</key>
+	<string>Subscription have been removed</string>
+	<key>Subscription request</key>
+	<string>Subscription request</string>
+	<key>Virtual Machine</key>
+	<string>Virtual Machine</string>
+	<key>Virtual machine </key>
+	<string>Virtual machine </string>
+	<key>Virtual machine has been cloned</key>
+	<string>Virtual machine has been cloned</string>
+	<key>Virtual machine has been removed</key>
+	<string>Virtual machine has been removed</string>
+	<key>Would you like to add </key>
+	<string>Would you like to add </string>
+	<key>You must select a virtual machine</key>
+	<string>You must select a virtual machine</string>
+	<key>You must select one (and only one) virtual machine</key>
+	<string>You must select one (and only one) virtual machine</string>
+</dict>
+</plist>

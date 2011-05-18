@@ -1,0 +1,69 @@
+
+/* Class = "NSTextFieldCell"; title = "Virtual Machines"; ObjectID = "3"; */
+"3.title" = "Virtual Machines";
+
+/* Class = "NSTextFieldCell"; title = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container."; ObjectID = "5"; */
+"5.title" = "You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.";
+
+/* Class = "NSWindow"; title = "Add subscription"; ObjectID = "13"; */
+"13.title" = "Add subscription";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "17"; */
+"17.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Add subscription"; ObjectID = "21"; */
+"21.title" = "Add subscription";
+
+/* Class = "NSTextFieldCell"; title = "Enter the JID you want the virtual machine to subscribe to."; ObjectID = "22"; */
+"22.title" = "Enter the JID you want the virtual machine to subscribe to.";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "24"; */
+"24.title" = "Add";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "25"; */
+"25.title" = "Cancel";
+
+/* Class = "NSWindow"; title = "Remove subscription"; ObjectID = "27"; */
+"27.title" = "Remove subscription";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "34"; */
+"34.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Enter the JID you want the virtual machine to unsubscribe from."; ObjectID = "36"; */
+"36.title" = "Enter the JID you want the virtual machine to unsubscribe from.";
+
+/* Class = "NSTextFieldCell"; title = "Remove subscription"; ObjectID = "37"; */
+"37.title" = "Remove subscription";
+
+/* Class = "NSButtonCell"; title = "Remove"; ObjectID = "38"; */
+"38.title" = "Remove";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "39"; */
+"39.title" = "Cancel";
+
+/* Class = "NSWindow"; title = "New virtual machine"; ObjectID = "41"; */
+"41.title" = "New virtual machine";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "43"; */
+"43.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "49"; */
+"49.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "50"; */
+"50.title" = "Create";
+
+/* Class = "NSTextFieldCell"; title = "New virtual machine"; ObjectID = "51"; */
+"51.title" = "New virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "If you leave name blank, the name will be generated."; ObjectID = "52"; */
+"52.title" = "If you leave name blank, the name will be generated.";
+
+/* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "56"; */
+"56.title" = "JID:";
+
+/* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "58"; */
+"58.title" = "JID:";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "60"; */
+"60.title" = "Name:";
