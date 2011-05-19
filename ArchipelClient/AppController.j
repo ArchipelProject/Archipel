@@ -305,7 +305,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
+    [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
 
     /* filter view. */
     CPLog.trace(@"initializing the filterView");
