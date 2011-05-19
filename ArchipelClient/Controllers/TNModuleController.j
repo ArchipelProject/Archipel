@@ -490,8 +490,24 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     }
     else
     {
-        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"];
-        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"],
+            defaults            = [CPUserDefaults standardUserDefaults],
+            bundleLocale        = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+            localizedCibName    = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName;
+
+        if (bundleLocale)
+        {
+            var request     = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
+                response    = [CPURLConnection sendSynchronousRequest:request returningResponse:response error:nil],
+                plist       = [CPPropertyListSerialization propertyListFromData:response format:nil errorDescription:nil];
+
+            [aBundle setDictionary:plist forTable:@"Localizable"];
+            currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
+        }
+        else
+        {
+            currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+        }
 
         [currentModuleController setToolbarItemOnly:NO];
         [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
