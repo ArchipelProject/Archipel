@@ -1,24 +1,24 @@
 /*  to your roster */
-" to your roster" = " to your roster";
+" to your roster" = " à votre roster";
 
 /* Add contact */
-"Add contact" = "Add contact";
+"Add contact" = "Ajouter le contact ";
 
 /* Adding contact */
-"Adding contact" = "Adding contact";
+"Adding contact" = "Ajoute le contact";
 
 /* Cancel */
-"Cancel" = "Cancel";
+"Cancel" = "Annuler";
 
 /* Nickname */
-"Nickname" = "Nickname";
+"Nickname" = "Surnom";
 
 /* Set the conference server to use */
-"Set the conference server to use" = "Set the conference server to use";
+"Set the conference server to use" = "Définit le serveur de conférence à utiliser";
 
 /* Set the room to connect to */
-"Set the room to connect to" = "Set the room to connect to";
+"Set the room to connect to" = "Définit à quelle salle se connecter";
 
 /* Would you like to add  */
-"Would you like to add " = "Would you like to add ";
+"Would you like to add " = "Voulez-vous ajouter ";
 

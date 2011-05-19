@@ -3,20 +3,20 @@
 <plist version="1.0">
 <dict>
 	<key> to your roster</key>
-	<string> to your roster</string>
+	<string> à votre roster</string>
 	<key>Add contact</key>
-	<string>Add contact</string>
+	<string>Ajouter le contact </string>
 	<key>Adding contact</key>
-	<string>Adding contact</string>
+	<string>Ajoute le contact</string>
 	<key>Cancel</key>
-	<string>Cancel</string>
+	<string>Annuler</string>
 	<key>Nickname</key>
-	<string>Nickname</string>
+	<string>Surnom</string>
 	<key>Set the conference server to use</key>
-	<string>Set the conference server to use</string>
+	<string>Définit le serveur de conférence à utiliser</string>
 	<key>Set the room to connect to</key>
-	<string>Set the room to connect to</string>
+	<string>Définit à quelle salle se connecter</string>
 	<key>Would you like to add </key>
-	<string>Would you like to add </string>
+	<string>Voulez-vous ajouter </string>
 </dict>
 </plist>

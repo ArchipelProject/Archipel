@@ -158,7 +158,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="175098584">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Room name:</string>
+							<string key="NSContents">Room name</string>
 							<object class="NSFont" key="NSSupport" id="750141632">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -209,7 +209,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="358602607">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Server name:</string>
+							<string key="NSContents">Server name</string>
 							<reference key="NSSupport" ref="750141632"/>
 							<reference key="NSControlView" ref="281096482"/>
 							<reference key="NSBackgroundColor" ref="166029867"/>

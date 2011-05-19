@@ -1,6 +1,6 @@
 
-/* Class = "NSTextFieldCell"; title = "Server name:"; ObjectID = "22"; */
-"22.title" = "Server name:";
+/* Class = "NSTextFieldCell"; title = "Server name"; ObjectID = "22"; */
+"22.title" = "Server name";
 
 /* Class = "NSTextFieldCell"; title = "You can configure preferences for the health module."; ObjectID = "23"; */
 "23.title" = "You can configure preferences for the health module.";
@@ -8,5 +8,6 @@
 /* Class = "NSTextFieldCell"; title = "Conference preference"; ObjectID = "24"; */
 "24.title" = "Conference preference";
 
-/* Class = "NSTextFieldCell"; title = "Room name:"; ObjectID = "28"; */
-"28.title" = "Room name:";
+/* Class = "NSTextFieldCell"; title = "Room name"; ObjectID = "28"; */
+"28.title" = "Room name";
+
