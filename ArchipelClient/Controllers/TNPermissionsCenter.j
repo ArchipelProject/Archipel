@@ -112,7 +112,7 @@ var __defaultPermissionCenter;
 - (void)uncachePermissionsForEntity:(TNStropheContact)aContact
 {
     if ([_cachedPermissions containsKey:aContact])
-        [_cachedPermissions removeObject:aContact];
+        [_cachedPermissions removeObjectForKey:aContact];
 }
 
 /*! check if user has given permissions against entity
