@@ -89,7 +89,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="505075983">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<object class="NSFont" key="NSSupport" id="882038677">
 								<string key="NSName">LucidaGrande</string>
@@ -226,7 +226,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="944484286">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Here is the list of all snapshots of this virtual machine.</string>
 							<reference key="NSSupport" ref="882038677"/>
 							<reference key="NSControlView" ref="216857673"/>
@@ -243,7 +243,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="808969343">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Snapshots</string>
 							<object class="NSFont" key="NSSupport" id="519709036">
 								<string key="NSName">LucidaGrande</string>
@@ -286,7 +286,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="518214625">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">New snapshot</string>
 								<reference key="NSSupport" ref="519709036"/>
 								<reference key="NSControlView" ref="532529537"/>
@@ -414,7 +414,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="841719244">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">XXX-XXX-XXX-XXXX-XXXX</string>
 								<reference key="NSSupport" ref="882038677"/>
 								<reference key="NSControlView" ref="303253771"/>

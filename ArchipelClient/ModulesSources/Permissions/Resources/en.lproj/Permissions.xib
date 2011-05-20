@@ -71,6 +71,7 @@
 						</object>
 						<string key="NSFrame">{{624, 427}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="260386770"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="954806631">
 							<int key="NSCellFlags">130560</int>
@@ -110,6 +111,7 @@
 												<int key="NSvFlags">290</int>
 												<string key="NSFrameSize">{479, 26}</string>
 												<reference key="NSSuperview" ref="82778366"/>
+												<reference key="NSNextKeyView" ref="315658567"/>
 												<string key="NSClassName">CPButtonBar</string>
 											</object>
 											<object class="NSCustomView" id="204535223">
@@ -160,6 +162,7 @@
 								</object>
 								<string key="NSFrame">{{131, 0}, {479, 321}}</string>
 								<reference key="NSSuperview" ref="1022451958"/>
+								<reference key="NSNextKeyView" ref="82778366"/>
 								<string key="NSClassName">NSView</string>
 							</object>
 						</object>
@@ -260,7 +263,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="868199791">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Set the different permissions and roles you give to users for thus entity.</string>
 							<object class="NSFont" key="NSSupport" id="206994132">
 								<string key="NSName">LucidaGrande</string>
@@ -277,11 +280,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 407}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="260386770"/>
+						<reference key="NSNextKeyView" ref="300146505"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1035331805">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Permissions</string>
 							<reference key="NSSupport" ref="540909881"/>
 							<reference key="NSControlView" ref="363251976"/>
@@ -323,7 +326,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="611867709">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Available permissions templates</string>
 								<reference key="NSSupport" ref="540909881"/>
 								<reference key="NSControlView" ref="852420955"/>
@@ -343,7 +346,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="354085368">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Choose templates you want to apply or retract.</string>
 								<reference key="NSSupport" ref="206994132"/>
 								<reference key="NSControlView" ref="978346883"/>
@@ -563,7 +566,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="207440754">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">New template</string>
 								<reference key="NSSupport" ref="540909881"/>
 								<reference key="NSControlView" ref="231724947"/>
@@ -583,7 +586,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="763280424">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">A template is a predefined set of permissions.</string>
 								<reference key="NSSupport" ref="206994132"/>
 								<reference key="NSControlView" ref="921560638"/>
@@ -600,10 +603,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="341906880">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="650279727"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">Name of role template</string>
 								<reference key="NSControlView" ref="997540605"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="559627402"/>
@@ -715,10 +718,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="427593477">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="650279727"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">A great role for great guys</string>
 								<reference key="NSControlView" ref="924088602"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="559627402"/>
@@ -929,6 +932,86 @@
 						<reference key="destination" ref="300146505"/>
 					</object>
 					<int key="connectionID">105</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="404718952"/>
+						<reference key="destination" ref="904518639"/>
+					</object>
+					<int key="connectionID">107</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="904518639"/>
+						<reference key="destination" ref="717026415"/>
+					</object>
+					<int key="connectionID">108</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="717026415"/>
+						<reference key="destination" ref="1046904586"/>
+					</object>
+					<int key="connectionID">109</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1046904586"/>
+						<reference key="destination" ref="404718952"/>
+					</object>
+					<int key="connectionID">110</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="296399808"/>
+						<reference key="destination" ref="404718952"/>
+					</object>
+					<int key="connectionID">111</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="874973663"/>
+						<reference key="destination" ref="997540605"/>
+					</object>
+					<int key="connectionID">112</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="997540605"/>
+						<reference key="destination" ref="924088602"/>
+					</object>
+					<int key="connectionID">113</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="924088602"/>
+						<reference key="destination" ref="607119627"/>
+					</object>
+					<int key="connectionID">114</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="607119627"/>
+						<reference key="destination" ref="997540605"/>
+					</object>
+					<int key="connectionID">115</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="607119627"/>
+						<reference key="destination" ref="997540605"/>
+					</object>
+					<int key="connectionID">116</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1519,7 +1602,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">105</int>
+			<int key="maxID">116</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1807,7 +1890,7 @@
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSWindow</string>
-							<string>TNUIKitScrollView</string>
+							<string>NSScrollView</string>
 							<string>NSView</string>
 							<string>NSWindow</string>
 						</object>
@@ -1849,7 +1932,7 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">scrollViewTableRoles</string>
-								<string key="candidateClassName">TNUIKitScrollView</string>
+								<string key="candidateClassName">NSScrollView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewTableContainer</string>

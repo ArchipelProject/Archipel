@@ -60,6 +60,7 @@
 						<string key="NSFrame">{{558, 12}, {118, 32}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="473878697">
 							<int key="NSCellFlags">-2080244224</int>
@@ -265,7 +266,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="152692372">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">100%</string>
 							<object class="NSFont" key="NSSupport" id="971462600">
 								<string key="NSName">LucidaGrande</string>
@@ -290,7 +291,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="808002002">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">0%</string>
 							<reference key="NSSupport" ref="971462600"/>
 							<reference key="NSControlView" ref="818389727"/>
@@ -391,7 +392,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="536064131">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="177118566"/>
@@ -467,7 +468,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="335628228">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="793795978"/>
@@ -485,7 +486,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="501840815">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="1017003443"/>
@@ -503,7 +504,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="449018482">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Killing a virtual machine is definitive. It will be completely removed.</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="1020715076"/>
@@ -521,7 +522,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="571330099">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can move virtual machine to another hypervisor.</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="842917504"/>
@@ -539,7 +540,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="690227132">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="189844766"/>
@@ -557,7 +558,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="962012248">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">...</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="291882641"/>
@@ -683,7 +684,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="118943805">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Kill the virtual machine</string>
 							<object class="NSFont" key="NSSupport" id="852465451">
 								<string key="NSName">LucidaGrande</string>
@@ -708,7 +709,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="788143245">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Live migration</string>
 							<reference key="NSSupport" ref="852465451"/>
 							<reference key="NSControlView" ref="56684550"/>
@@ -729,7 +730,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="34089441">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Virtual machine controls</string>
 							<reference key="NSSupport" ref="852465451"/>
 							<reference key="NSControlView" ref="163596273"/>
@@ -757,12 +758,15 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{185, 20}, {257, 22}}</string>
 						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="256083001">
 							<int key="NSCellFlags">-1804468671</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents"/>
 							<reference key="NSSupport" ref="986145391"/>
+							<string key="NSPlaceholderString">Maximum virtual CPUs</string>
 							<reference key="NSControlView" ref="374824368"/>
 							<bool key="NSDrawsBackground">YES</bool>
 							<reference key="NSBackgroundColor" ref="20554231"/>
@@ -779,6 +783,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{32, 23}, {148, 17}}</string>
 						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="374824368"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="543246614">
@@ -796,11 +801,12 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 66}, {429, 20}}</string>
 						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="551941934"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="276652982">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can configure preferences for virtual machine controls module.</string>
 							<reference key="NSSupport" ref="279289462"/>
 							<reference key="NSControlView" ref="116586965"/>
@@ -813,11 +819,12 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 94}, {347, 26}}</string>
 						<reference key="NSSuperview" ref="802415413"/>
+						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="116586965"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="577335055">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Virtual machine controls preferences</string>
 							<reference key="NSSupport" ref="852465451"/>
 							<reference key="NSControlView" ref="310715739"/>
@@ -831,11 +838,12 @@
 				</object>
 				<string key="NSFrameSize">{462, 140}</string>
 				<reference key="NSSuperview"/>
+				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="310715739"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="352266679">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">274</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -877,7 +885,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{388, 297}</string>
-				<reference key="NSSuperview"/>
 				<reference key="NSNextKeyView" ref="596061133"/>
 				<string key="NSClassName">NSView</string>
 			</object>

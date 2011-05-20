@@ -74,6 +74,7 @@
 						</object>
 						<string key="NSFrame">{{697, 486}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="820055898"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="934277876">
 							<int key="NSCellFlags">130560</int>
@@ -202,7 +203,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="282853100">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can manage the hypervisor's network.</string>
 							<object class="NSFont" key="NSSupport" id="179505641">
 								<string key="NSName">LucidaGrande</string>
@@ -227,11 +228,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 466}, {274, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="820055898"/>
+						<reference key="NSNextKeyView" ref="993959355"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="23418014">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Manage hypervisor networks</string>
 							<object class="NSFont" key="NSSupport" id="548128472">
 								<string key="NSName">LucidaGrande</string>
@@ -328,7 +329,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="678622548">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Network basics</string>
 								<reference key="NSSupport" ref="548128472"/>
 								<reference key="NSControlView" ref="44947341"/>
@@ -348,7 +349,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1054732532">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Addressing</string>
 								<reference key="NSSupport" ref="548128472"/>
 								<reference key="NSControlView" ref="169193509"/>
@@ -368,9 +369,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="141277283">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="5247702"/>
+								<string key="NSPlaceholderString">Name of the network</string>
 								<reference key="NSControlView" ref="396097288"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="255320839"/>
@@ -408,9 +410,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="656182545">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="5247702"/>
+								<string key="NSPlaceholderString">Name of the network bridge</string>
 								<reference key="NSControlView" ref="193292368"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="255320839"/>
@@ -443,9 +446,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1011049370">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="5247702"/>
+								<string key="NSPlaceholderString">Fordard delay</string>
 								<reference key="NSControlView" ref="132394055"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="255320839"/>
@@ -461,9 +465,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="181981369">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
-								<string key="NSContents">255.255.255.255</string>
+								<int key="NSCellFlags2">268436480</int>
+								<string key="NSContents"/>
 								<reference key="NSSupport" ref="5247702"/>
+								<string key="NSPlaceholderString">127.0.0.1</string>
 								<reference key="NSControlView" ref="884205983"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="255320839"/>
@@ -496,9 +501,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="962847544">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
-								<string key="NSContents">255.255.255.255</string>
+								<int key="NSCellFlags2">268436480</int>
+								<string key="NSContents"/>
 								<reference key="NSSupport" ref="5247702"/>
+								<string key="NSPlaceholderString">255.255.0.0</string>
 								<reference key="NSControlView" ref="784852908"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="255320839"/>
@@ -882,7 +888,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="281572311">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create auto IP assignation ranges.</string>
 							<reference key="NSSupport" ref="179505641"/>
 							<reference key="NSControlView" ref="166828986"/>
@@ -935,7 +941,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="472678378">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create host address reservation.</string>
 							<reference key="NSSupport" ref="179505641"/>
 							<reference key="NSControlView" ref="1052842031"/>
@@ -1187,6 +1193,70 @@
 					</object>
 					<int key="connectionID">118</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="1070688575"/>
+						<reference key="destination" ref="396097288"/>
+					</object>
+					<int key="connectionID">119</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="396097288"/>
+						<reference key="destination" ref="193292368"/>
+					</object>
+					<int key="connectionID">120</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="193292368"/>
+						<reference key="destination" ref="132394055"/>
+					</object>
+					<int key="connectionID">121</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="132394055"/>
+						<reference key="destination" ref="884205983"/>
+					</object>
+					<int key="connectionID">122</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="884205983"/>
+						<reference key="destination" ref="784852908"/>
+					</object>
+					<int key="connectionID">123</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="784852908"/>
+						<reference key="destination" ref="159830380"/>
+					</object>
+					<int key="connectionID">124</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="159830380"/>
+						<reference key="destination" ref="204776721"/>
+					</object>
+					<int key="connectionID">125</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="204776721"/>
+						<reference key="destination" ref="396097288"/>
+					</object>
+					<int key="connectionID">126</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -1298,6 +1368,7 @@
 							<reference ref="1066190355"/>
 						</object>
 						<reference key="parent" ref="0"/>
+						<string key="objectName">Window - Network properties</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">17</int>
@@ -1990,7 +2061,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">118</int>
+			<int key="maxID">126</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

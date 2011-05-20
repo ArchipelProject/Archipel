@@ -1,4 +1,10 @@
 
+/* Class = "NSTextFieldCell"; placeholderString = "Type your message"; ObjectID = "10"; */
+"10.placeholderString" = "Type your message";
+
+/* Class = "NSTextFieldCell"; placeholderString = "conference.myserver.com"; ObjectID = "21"; */
+"21.placeholderString" = "conference.myserver.com";
+
 /* Class = "NSTextFieldCell"; title = "Server name"; ObjectID = "22"; */
 "22.title" = "Server name";
 
@@ -7,6 +13,9 @@
 
 /* Class = "NSTextFieldCell"; title = "Conference preference"; ObjectID = "24"; */
 "24.title" = "Conference preference";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Name of the room"; ObjectID = "27"; */
+"27.placeholderString" = "Name of the room";
 
 /* Class = "NSTextFieldCell"; title = "Room name"; ObjectID = "28"; */
 "28.title" = "Room name";

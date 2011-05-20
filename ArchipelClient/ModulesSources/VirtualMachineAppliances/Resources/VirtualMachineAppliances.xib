@@ -71,6 +71,7 @@
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="689982466"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="278892624">
 							<int key="NSCellFlags">130560</int>
@@ -93,6 +94,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="896725779"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="248363153">
@@ -204,7 +206,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="305166580">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Select the installed appliance into hypervisor you want to use for this virtual machine.</string>
 							<object class="NSFont" key="NSSupport" id="828693881">
 								<string key="NSName">LucidaGrande</string>
@@ -230,11 +232,11 @@
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="689982466"/>
+						<reference key="NSNextKeyView" ref="43283298"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="833758935">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Available appliances</string>
 							<object class="NSFont" key="NSSupport" id="907244549">
 								<string key="NSName">LucidaGrande</string>
@@ -279,7 +281,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="82864875">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Create an appliance</string>
 								<reference key="NSSupport" ref="907244549"/>
 								<reference key="NSControlView" ref="860671332"/>
@@ -300,7 +302,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="8378265">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">You can create an appliance from this virtual machine actual configuration.</string>
 								<reference key="NSSupport" ref="828693881"/>
 								<reference key="NSControlView" ref="202129772"/>
@@ -318,7 +320,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="273695575">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">It will be published to the local VMCast of the virtual machine's hypervisor.</string>
 								<reference key="NSSupport" ref="828693881"/>
 								<reference key="NSControlView" ref="363174958"/>
@@ -360,6 +362,7 @@
 							<string key="NSFrame">{{379, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="899779922">
 								<int key="NSCellFlags">-2080244224</int>
@@ -409,10 +412,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="305084932">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="606744346"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">Name of appliance</string>
 								<reference key="NSControlView" ref="527357079"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="382033607"/>
@@ -466,6 +469,7 @@
 						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
 						<reference key="NSSuperview" ref="1070831010"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="254957470">
 							<int key="NSCellFlags">67239424</int>
@@ -600,6 +604,46 @@
 						<reference key="destination" ref="43283298"/>
 					</object>
 					<int key="connectionID">56</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="476869718"/>
+						<reference key="destination" ref="527357079"/>
+					</object>
+					<int key="connectionID">57</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="527357079"/>
+						<reference key="destination" ref="321280977"/>
+					</object>
+					<int key="connectionID">60</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="321280977"/>
+						<reference key="destination" ref="324651244"/>
+					</object>
+					<int key="connectionID">61</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="324651244"/>
+						<reference key="destination" ref="527357079"/>
+					</object>
+					<int key="connectionID">62</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="321280977"/>
+						<reference key="destination" ref="527357079"/>
+					</object>
+					<int key="connectionID">63</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -992,7 +1036,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">56</int>
+			<int key="maxID">63</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

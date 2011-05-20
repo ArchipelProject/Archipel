@@ -75,6 +75,7 @@
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="324583958"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="69129986">
 							<int key="NSCellFlags">130560</int>
@@ -97,6 +98,7 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="966007610"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="685615126">
@@ -208,7 +210,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="420619805">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can manage entity's scheduler action.</string>
 							<object class="NSFont" key="NSSupport" id="436836808">
 								<string key="NSName">LucidaGrande</string>
@@ -234,11 +236,11 @@
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="609831124"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="324583958"/>
+						<reference key="NSNextKeyView" ref="783335893"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="339885539">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Scheduled actions</string>
 							<object class="NSFont" key="NSSupport" id="397248728">
 								<string key="NSName">LucidaGrande</string>
@@ -271,6 +273,7 @@
 						<string key="NSFrame">{{194, 59}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="946740024">
 							<int key="NSCellFlags">-2080244224</int>
@@ -589,7 +592,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1023839350">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create recursive scheduled action.</string>
 							<reference key="NSSupport" ref="436836808"/>
 							<reference key="NSControlView" ref="894126289"/>
@@ -642,6 +645,7 @@
 						<string key="NSFrame">{{430, 228}, {22, 20}}</string>
 						<reference key="NSSuperview" ref="80957552"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="981855152">
 							<int key="NSCellFlags">68288064</int>
@@ -708,7 +712,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="484456034">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create a one time scheduled action.</string>
 							<reference key="NSSupport" ref="436836808"/>
 							<reference key="NSControlView" ref="924343280"/>
@@ -746,7 +750,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="477157285">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">New scheduled action</string>
 								<reference key="NSSupport" ref="397248728"/>
 								<reference key="NSControlView" ref="741743513"/>
@@ -763,6 +767,7 @@
 							<string key="NSFrame">{{0, 58}, {494, 5}}</string>
 							<reference key="NSSuperview" ref="1014393156"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView" ref="984056708"/>
 							<string key="NSOffsets">{0, 0}</string>
 							<object class="NSTextFieldCell" key="NSTitleCell">
 								<int key="NSCellFlags">67239424</int>
@@ -790,6 +795,7 @@
 							<string key="NSFrame">{{362, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="1014393156"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="588188350">
 								<int key="NSCellFlags">-2080244224</int>
@@ -835,7 +841,7 @@
 							<string key="NSFrame">{{17, 403}, {70, 17}}</string>
 							<reference key="NSSuperview" ref="1014393156"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
+							<reference key="NSNextKeyView" ref="737269121"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="1059072120">
 								<int key="NSCellFlags">68288064</int>
@@ -857,10 +863,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="677873467">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="781857479"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">My scheduled action</string>
 								<reference key="NSControlView" ref="266563233"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="163898657"/>
@@ -905,6 +911,7 @@
 							<string key="NSFrame">{{89, 396}, {388, 26}}</string>
 							<reference key="NSSuperview" ref="1014393156"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView" ref="416819945"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSPopUpButtonCell" key="NSCell" id="248781335">
 								<int key="NSCellFlags">-2076049856</int>
@@ -1272,6 +1279,22 @@
 						<reference key="destination" ref="737269121"/>
 					</object>
 					<int key="connectionID">203</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="129716059"/>
+						<reference key="destination" ref="266563233"/>
+					</object>
+					<int key="connectionID">204</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="399064852"/>
+						<reference key="destination" ref="266563233"/>
+					</object>
+					<int key="connectionID">205</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2088,7 +2111,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">203</int>
+			<int key="maxID">205</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

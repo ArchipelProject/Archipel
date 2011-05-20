@@ -77,7 +77,7 @@
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="729857079">
 															<int key="NSCellFlags">68288064</int>
-															<int key="NSCellFlags2">272630784</int>
+															<int key="NSCellFlags2">268436480</int>
 															<string key="NSContents">Select to pin to set origin</string>
 															<object class="NSFont" key="NSSupport" id="741040891">
 																
@@ -115,7 +115,7 @@
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="6665961">
 															<int key="NSCellFlags">68288064</int>
-															<int key="NSCellFlags2">272630784</int>
+															<int key="NSCellFlags2">268436480</int>
 															<string key="NSContents">Origin:</string>
 															<object class="NSFont" key="NSSupport" id="140434770">
 																
@@ -236,7 +236,7 @@
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="259444241">
 															<int key="NSCellFlags">68288064</int>
-															<int key="NSCellFlags2">272630784</int>
+															<int key="NSCellFlags2">268436480</int>
 															<string key="NSContents">Select a pin to set destination</string>
 															<reference key="NSSupport" ref="741040891"/>
 															<reference key="NSControlView" ref="789960869"/>
@@ -254,7 +254,7 @@
 														<bool key="NSEnabled">YES</bool>
 														<object class="NSTextFieldCell" key="NSCell" id="556757667">
 															<int key="NSCellFlags">68288064</int>
-															<int key="NSCellFlags2">272630784</int>
+															<int key="NSCellFlags2">268436480</int>
 															<string key="NSContents">Destination:</string>
 															<reference key="NSSupport" ref="140434770"/>
 															<reference key="NSControlView" ref="147060185"/>

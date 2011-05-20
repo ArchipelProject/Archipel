@@ -80,9 +80,6 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "932"; */
 "932.title" = "Annuler";
 
-/* Class = "NSWindow"; title = "Preferences"; ObjectID = "936"; */
-"936.title" = "Preferences";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "944"; */
 "944.title" = "Annuler";
 
@@ -134,6 +131,9 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "988"; */
 "988.title" = "Box";
 
+/* Class = "NSTextFieldCell"; placeholderString = "user@domain.com"; ObjectID = "989"; */
+"989.placeholderString" = "user@domain.com";
+
 /* Class = "NSTextFieldCell"; title = "Logon"; ObjectID = "991"; */
 "991.title" = "Connexion";
 
@@ -146,8 +146,14 @@
 /* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "998"; */
 "998.title" = "Mot de passe";
 
+/* Class = "NSTextFieldCell"; placeholderString = "My password"; ObjectID = "999"; */
+"999.placeholderString" = "My password";
+
 /* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
 "1002.title" = "Service BOSH";
+
+/* Class = "NSTextFieldCell"; placeholderString = "http://domain.com:5280/http-bind"; ObjectID = "1003"; */
+"1003.placeholderString" = "http://domain.com:5280/http-bind";
 
 /* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
 "1005.title" = "Enregistrer";

@@ -14,8 +14,17 @@
 /* Class = "NSTextFieldCell"; title = "Network basics"; ObjectID = "21"; */
 "21.title" = "Network basics";
 
+/* Class = "NSTextFieldCell"; placeholderString = "Name of the network"; ObjectID = "23"; */
+"23.placeholderString" = "Name of the network";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Name of the network bridge"; ObjectID = "26"; */
+"26.placeholderString" = "Name of the network bridge";
+
 /* Class = "NSTextFieldCell"; title = "Bridge name:"; ObjectID = "27"; */
 "27.title" = "Bridge name:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Fordard delay"; ObjectID = "30"; */
+"30.placeholderString" = "Fordard delay";
 
 /* Class = "NSTextFieldCell"; title = "Bridge delay: "; ObjectID = "31"; */
 "31.title" = "Bridge delay: ";
@@ -56,11 +65,11 @@
 /* Class = "NSTextFieldCell"; title = "Bridge address:"; ObjectID = "62"; */
 "62.title" = "Bridge address:";
 
-/* Class = "NSTextFieldCell"; title = "255.255.255.255"; ObjectID = "64"; */
-"64.title" = "255.255.255.255";
+/* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "64"; */
+"64.placeholderString" = "127.0.0.1";
 
-/* Class = "NSTextFieldCell"; title = "255.255.255.255"; ObjectID = "67"; */
-"67.title" = "255.255.255.255";
+/* Class = "NSTextFieldCell"; placeholderString = "255.255.0.0"; ObjectID = "67"; */
+"67.placeholderString" = "255.255.0.0";
 
 /* Class = "NSTextFieldCell"; title = "Netmask:"; ObjectID = "68"; */
 "68.title" = "Netmask:";
@@ -82,3 +91,4 @@
 
 /* Class = "NSTextFieldCell"; title = "You can create host address reservation."; ObjectID = "89"; */
 "89.title" = "You can create host address reservation.";
+

@@ -17,6 +17,9 @@
 /* Class = "NSTextFieldCell"; title = "Enter the JID you want the virtual machine to subscribe to."; ObjectID = "22"; */
 "22.title" = "Enter the JID you want the virtual machine to subscribe to.";
 
+/* Class = "NSTextFieldCell"; placeholderString = "JID of a user"; ObjectID = "23"; */
+"23.placeholderString" = "JID of a user";
+
 /* Class = "NSButtonCell"; title = "Add"; ObjectID = "24"; */
 "24.title" = "Add";
 
@@ -28,6 +31,9 @@
 
 /* Class = "NSBox"; title = "Box"; ObjectID = "34"; */
 "34.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "JID of the user"; ObjectID = "35"; */
+"35.placeholderString" = "JID of the user";
 
 /* Class = "NSTextFieldCell"; title = "Enter the JID you want the virtual machine to unsubscribe from."; ObjectID = "36"; */
 "36.title" = "Enter the JID you want the virtual machine to unsubscribe from.";
@@ -59,6 +65,9 @@
 /* Class = "NSTextFieldCell"; title = "If you leave name blank, the name will be generated."; ObjectID = "52"; */
 "52.title" = "If you leave name blank, the name will be generated.";
 
+/* Class = "NSTextFieldCell"; placeholderString = "Archipel VM"; ObjectID = "53"; */
+"53.placeholderString" = "Archipel VM";
+
 /* Class = "NSTextFieldCell"; title = "JID:"; ObjectID = "56"; */
 "56.title" = "JID:";
 
@@ -67,3 +76,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "60"; */
 "60.title" = "Name:";
+

@@ -75,6 +75,7 @@
 						<string key="NSFrame">{{634, 484}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView" ref="459630171"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="1026920450">
 							<int key="NSCellFlags">130560</int>
@@ -180,6 +181,7 @@
 								<string key="NSFrameSize">{620, 26}</string>
 								<reference key="NSSuperview" ref="363565048"/>
 								<reference key="NSWindow"/>
+								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="84824461">
@@ -208,7 +210,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="602359476">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create a new virtual hard drive or edit, delete, convert any existing one.</string>
 							<object class="NSFont" key="NSSupport" id="589561164">
 								<string key="NSName">LucidaGrande</string>
@@ -234,11 +236,11 @@
 						<string key="NSFrame">{{17, 464}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="459630171"/>
+						<reference key="NSNextKeyView" ref="907867315"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="99426199">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Manage virtual drives</string>
 							<object class="NSFont" key="NSSupport" id="883883335">
 								<string key="NSName">LucidaGrande</string>
@@ -271,6 +273,7 @@
 						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
 						<reference key="NSSuperview" ref="53253902"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="158328889">
 							<int key="NSCellFlags">67239424</int>
@@ -337,7 +340,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="260807464">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Disk edition</string>
 								<reference key="NSSupport" ref="883883335"/>
 								<reference key="NSControlView" ref="435329776"/>
@@ -358,7 +361,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="275610342">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Set the properties of your new hard drive.</string>
 								<reference key="NSSupport" ref="589561164"/>
 								<reference key="NSControlView" ref="916880766"/>
@@ -400,6 +403,7 @@
 							<string key="NSFrame">{{319, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="983160507">
 								<int key="NSCellFlags">-2080244224</int>
@@ -472,10 +476,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="179040338">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="247105171"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">New name</string>
 								<reference key="NSControlView" ref="940346522"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="734451931"/>
@@ -633,7 +637,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="36821401">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">New disk</string>
 								<reference key="NSSupport" ref="883883335"/>
 								<reference key="NSControlView" ref="269623654"/>
@@ -654,7 +658,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="54125071">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Set the properties of your new hard drive.</string>
 								<reference key="NSSupport" ref="589561164"/>
 								<reference key="NSControlView" ref="255515801"/>
@@ -693,6 +697,7 @@
 							<string key="NSFrame">{{319, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="732191811"/>
 							<reference key="NSWindow"/>
+							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="73012921">
 								<int key="NSCellFlags">-2080244224</int>
@@ -742,10 +747,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="187716749">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">4195328</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="247105171"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">My drive </string>
 								<reference key="NSControlView" ref="657339050"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="734451931"/>
@@ -762,10 +767,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="790728450">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="247105171"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">10</string>
 								<reference key="NSControlView" ref="551032222"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="734451931"/>
@@ -1210,6 +1215,62 @@
 						<reference key="destination" ref="907867315"/>
 					</object>
 					<int key="connectionID">112</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="766598035"/>
+						<reference key="destination" ref="940346522"/>
+					</object>
+					<int key="connectionID">113</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="723233098"/>
+						<reference key="destination" ref="940346522"/>
+					</object>
+					<int key="connectionID">114</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="340980878"/>
+						<reference key="destination" ref="657339050"/>
+					</object>
+					<int key="connectionID">115</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="657339050"/>
+						<reference key="destination" ref="551032222"/>
+					</object>
+					<int key="connectionID">116</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="551032222"/>
+						<reference key="destination" ref="657339050"/>
+					</object>
+					<int key="connectionID">117</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="86912642"/>
+						<reference key="destination" ref="657339050"/>
+					</object>
+					<int key="connectionID">118</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="86912642"/>
+						<reference key="destination" ref="551032222"/>
+					</object>
+					<int key="connectionID">119</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2009,7 +2070,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">112</int>
+			<int key="maxID">119</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

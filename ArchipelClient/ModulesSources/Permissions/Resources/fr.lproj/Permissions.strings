@@ -47,8 +47,15 @@
 /* Class = "NSTextFieldCell"; title = "A template is a predefined set of permissions."; ObjectID = "75"; */
 "75.title" = "A template is a predefined set of permissions.";
 
+/* Class = "NSTextFieldCell"; placeholderString = "Name of role template"; ObjectID = "76"; */
+"76.placeholderString" = "Name of role template";
+
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "77"; */
 "77.title" = "Name:";
 
 /* Class = "NSTextFieldCell"; title = "Comment:"; ObjectID = "81"; */
 "81.title" = "Comment:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "A great role for great guys"; ObjectID = "82"; */
+"82.placeholderString" = "A great role for great guys";
+

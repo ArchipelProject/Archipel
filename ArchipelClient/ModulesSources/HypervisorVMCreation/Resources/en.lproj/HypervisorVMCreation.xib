@@ -70,6 +70,7 @@
 						</object>
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="149182491"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="739918226">
 							<int key="NSCellFlags">130560</int>
@@ -198,7 +199,7 @@
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="969419775">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">You can create or remove virtual machine from the hypervisor. Note this only creates the XMPP container.</string>
 							<object class="NSFont" key="NSSupport" id="940602514">
 								<string key="NSName">LucidaGrande</string>
@@ -223,11 +224,11 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="149182491"/>
+						<reference key="NSNextKeyView" ref="481356683"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="976819694">
 							<int key="NSCellFlags">68288064</int>
-							<int key="NSCellFlags2">272630784</int>
+							<int key="NSCellFlags2">268436480</int>
 							<string key="NSContents">Virtual Machines</string>
 							<object class="NSFont" key="NSSupport" id="739828074">
 								<string key="NSName">LucidaGrande</string>
@@ -269,7 +270,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="445137158">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Add subscription</string>
 								<reference key="NSSupport" ref="739828074"/>
 								<reference key="NSControlView" ref="1052651364"/>
@@ -285,11 +286,11 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 105}, {371, 20}}</string>
 							<reference key="NSSuperview" ref="845608932"/>
-							<reference key="NSNextKeyView" ref="514791403"/>
+							<reference key="NSNextKeyView" ref="37452216"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="478740937">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Enter the JID you want the virtual machine to subscribe to.</string>
 								<reference key="NSSupport" ref="940602514"/>
 								<reference key="NSControlView" ref="354586897"/>
@@ -306,10 +307,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="361763926">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="227545601"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">JID of a user</string>
 								<reference key="NSControlView" ref="514791403"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="34460039"/>
@@ -396,6 +397,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 80}, {45, 17}}</string>
 							<reference key="NSSuperview" ref="845608932"/>
+							<reference key="NSNextKeyView" ref="514791403"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="918541897">
 								<int key="NSCellFlags">68288064</int>
@@ -440,7 +442,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="299958378">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Remove subscription</string>
 								<reference key="NSSupport" ref="739828074"/>
 								<reference key="NSControlView" ref="282676886"/>
@@ -456,11 +458,11 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 106}, {404, 20}}</string>
 							<reference key="NSSuperview" ref="668325988"/>
-							<reference key="NSNextKeyView" ref="320820871"/>
+							<reference key="NSNextKeyView" ref="594594008"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="704986519">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Enter the JID you want the virtual machine to unsubscribe from.</string>
 								<reference key="NSSupport" ref="940602514"/>
 								<reference key="NSControlView" ref="928565043"/>
@@ -477,10 +479,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="394142974">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="227545601"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">JID of the user</string>
 								<reference key="NSControlView" ref="320820871"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="34460039"/>
@@ -562,6 +564,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 81}, {45, 17}}</string>
 							<reference key="NSSuperview" ref="668325988"/>
+							<reference key="NSNextKeyView" ref="320820871"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="650125592">
 								<int key="NSCellFlags">68288064</int>
@@ -602,7 +605,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="55534581">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">New virtual machine</string>
 								<reference key="NSSupport" ref="739828074"/>
 								<reference key="NSControlView" ref="13781869"/>
@@ -618,11 +621,11 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 104}, {374, 20}}</string>
 							<reference key="NSSuperview" ref="419021176"/>
-							<reference key="NSNextKeyView" ref="1031643846"/>
+							<reference key="NSNextKeyView" ref="588293536"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="886213126">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">If you leave name blank, the name will be generated.</string>
 								<reference key="NSSupport" ref="940602514"/>
 								<reference key="NSControlView" ref="743773501"/>
@@ -639,10 +642,10 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="198432150">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="227545601"/>
-								<string key="NSPlaceholderString"/>
+								<string key="NSPlaceholderString">Archipel VM</string>
 								<reference key="NSControlView" ref="1031643846"/>
 								<bool key="NSDrawsBackground">YES</bool>
 								<reference key="NSBackgroundColor" ref="34460039"/>
@@ -724,10 +727,11 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 78}, {46, 17}}</string>
 							<reference key="NSSuperview" ref="419021176"/>
+							<reference key="NSNextKeyView" ref="1031643846"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="642696251">
 								<int key="NSCellFlags">68288064</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">268436480</int>
 								<string key="NSContents">Name:</string>
 								<reference key="NSSupport" ref="888678750"/>
 								<reference key="NSControlView" ref="588293536"/>
@@ -741,6 +745,7 @@
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMaxSize">{1e+13, 1e+13}</string>
+				<string key="NSFrameAutosaveName"/>
 			</object>
 		</object>
 		<object class="IBObjectContainer" key="IBDocument.Objects">
@@ -889,6 +894,118 @@
 						<reference key="destination" ref="481356683"/>
 					</object>
 					<int key="connectionID">79</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="782418495"/>
+						<reference key="destination" ref="514791403"/>
+					</object>
+					<int key="connectionID">80</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="514791403"/>
+						<reference key="destination" ref="466085976"/>
+					</object>
+					<int key="connectionID">81</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="466085976"/>
+						<reference key="destination" ref="854176317"/>
+					</object>
+					<int key="connectionID">82</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="854176317"/>
+						<reference key="destination" ref="514791403"/>
+					</object>
+					<int key="connectionID">83</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="741875174"/>
+						<reference key="destination" ref="320820871"/>
+					</object>
+					<int key="connectionID">84</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="320820871"/>
+						<reference key="destination" ref="735135430"/>
+					</object>
+					<int key="connectionID">85</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="735135430"/>
+						<reference key="destination" ref="141180765"/>
+					</object>
+					<int key="connectionID">86</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="141180765"/>
+						<reference key="destination" ref="320820871"/>
+					</object>
+					<int key="connectionID">87</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">initialFirstResponder</string>
+						<reference key="source" ref="663849404"/>
+						<reference key="destination" ref="1031643846"/>
+					</object>
+					<int key="connectionID">88</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="1031643846"/>
+						<reference key="destination" ref="434914358"/>
+					</object>
+					<int key="connectionID">89</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="434914358"/>
+						<reference key="destination" ref="227086769"/>
+					</object>
+					<int key="connectionID">90</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">nextKeyView</string>
+						<reference key="source" ref="227086769"/>
+						<reference key="destination" ref="1031643846"/>
+					</object>
+					<int key="connectionID">91</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="854176317"/>
+						<reference key="destination" ref="514791403"/>
+					</object>
+					<int key="connectionID">92</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">performClick:</string>
+						<reference key="source" ref="141180765"/>
+						<reference key="destination" ref="320820871"/>
+					</object>
+					<int key="connectionID">93</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1511,7 +1628,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">79</int>
+			<int key="maxID">93</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
