@@ -181,7 +181,6 @@
 								<string key="NSFrameSize">{620, 26}</string>
 								<reference key="NSSuperview" ref="363565048"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="84824461">
@@ -273,7 +272,6 @@
 						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
 						<reference key="NSSuperview" ref="53253902"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="158328889">
 							<int key="NSCellFlags">67239424</int>
@@ -403,7 +401,6 @@
 							<string key="NSFrame">{{319, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="983160507">
 								<int key="NSCellFlags">-2080244224</int>
@@ -697,7 +694,6 @@
 							<string key="NSFrame">{{319, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="732191811"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="73012921">
 								<int key="NSCellFlags">-2080244224</int>
@@ -747,7 +743,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="187716749">
 								<int key="NSCellFlags">-1804468671</int>
-								<int key="NSCellFlags2">4195328</int>
+								<int key="NSCellFlags2">1024</int>
 								<string key="NSContents"/>
 								<reference key="NSSupport" ref="247105171"/>
 								<string key="NSPlaceholderString">My drive </string>

@@ -949,6 +949,7 @@
 							<string key="NSFrame">{{141, 173}, {254, 22}}</string>
 							<reference key="NSSuperview" ref="204611370"/>
 							<reference key="NSNextKeyView" ref="572042221"/>
+							<int key="NSTag">2</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="52401270">
 								<int key="NSCellFlags">-1804468671</int>
@@ -1038,6 +1039,7 @@
 							<string key="NSFrame">{{141, 146}, {254, 22}}</string>
 							<reference key="NSSuperview" ref="204611370"/>
 							<reference key="NSNextKeyView" ref="366929574"/>
+							<int key="NSTag">3</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="142124761">
 								<int key="NSCellFlags">-1804468671</int>
@@ -1074,6 +1076,7 @@
 							<string key="NSFrame">{{141, 119}, {254, 22}}</string>
 							<reference key="NSSuperview" ref="204611370"/>
 							<reference key="NSNextKeyView" ref="455285779"/>
+							<int key="NSTag">4</int>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="613256370">
 								<int key="NSCellFlags">-1804468671</int>
@@ -5404,17 +5407,17 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="683286276"/>
 							<reference ref="1036236285"/>
-							<reference ref="10669859"/>
 							<reference ref="615803571"/>
 							<reference ref="274798215"/>
 							<reference ref="572042221"/>
-							<reference ref="1010139735"/>
 							<reference ref="366929574"/>
 							<reference ref="455285779"/>
 							<reference ref="591743054"/>
 							<reference ref="998619390"/>
 							<reference ref="1015968364"/>
 							<reference ref="376104897"/>
+							<reference ref="10669859"/>
+							<reference ref="1010139735"/>
 						</object>
 						<reference key="parent" ref="282302307"/>
 					</object>
