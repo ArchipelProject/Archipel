@@ -949,13 +949,13 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     {
         [propertiesController setEnabled:NO];
         [_hideButton setImage:_hideButtonImageEnable];
-        [defaults setBool:NO forKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain];
+        [defaults setBool:NO forKey:@"TNArchipelPropertyControllerEnabled"];
     }
     else
     {
         [propertiesController setEnabled:YES];
         [_hideButton setImage:_hideButtonImageDisable];
-        [defaults setBool:YES forKey:@"TNArchipelPropertyControllerEnabled" inDomain:CPGlobalDomain];
+        [defaults setBool:YES forKey:@"TNArchipelPropertyControllerEnabled"];
     }
 
     [propertiesController reload];
@@ -1284,7 +1284,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     _tagsVisible = !_tagsVisible;
     [splitViewTagsContents setPosition:(_tagsVisible ? TNArchipelTagViewHeight : 0) ofDividerAtIndex:0];
-    [[CPUserDefaults standardUserDefaults] setBool:_tagsVisible forKey:@"TNArchipelTagsVisible" inDomain:CPGlobalDomain];
+    [[CPUserDefaults standardUserDefaults] setBool:_tagsVisible forKey:@"TNArchipelTagsVisible"];
 }
 
 /*! Action of toolbar imutables toolbar items.
@@ -1365,7 +1365,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:@"expanded" forKey:key inDomain:CPGlobalDomain];
+    [defaults setObject:@"expanded" forKey:key];
 }
 
 /*! Delegate of TNOutlineView
@@ -1379,7 +1379,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         defaults    = [CPUserDefaults standardUserDefaults],
         key         = TNArchipelRememberOpenedGroup + [item name];
 
-    [defaults setObject:@"collapsed" forKey:key inDomain:CPGlobalDomain];
+    [defaults setObject:@"collapsed" forKey:key];
 
     return YES;
 }
@@ -1489,7 +1489,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         newWidth    = [splitView rectOfDividerAtIndex:0].origin.x;
 
     CPLog.info(@"setting the mainSplitViewPosition value in defaults");
-    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition" inDomain:CPGlobalDomain];
+    [defaults setInteger:newWidth forKey:@"mainSplitViewPosition"];
 }
 
 /*! Delegate of splitViewTagsContents. This will save the positionning of splitview in CPUserDefaults

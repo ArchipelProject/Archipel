@@ -146,14 +146,13 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)initCredentials
 {
-
     var defaults            = [CPUserDefaults standardUserDefaults],
         lastBoshService     = [defaults objectForKey:@"TNArchipelBOSHService"],
         lastJID             = [defaults objectForKey:@"TNArchipelBOSHJID"],
         lastPassword        = [defaults objectForKey:@"TNArchipelBOSHPassword"],
         lastRememberCred    = [defaults objectForKey:@"TNArchipelBOSHRememberCredentials"];
 
-    _credentialsHistory = [defaults objectForKey:@"TNArchipelBOSHCredentialHistory"] || [CPDictionary dictionary];
+    _credentialsHistory     = [defaults objectForKey:@"TNArchipelBOSHCredentialHistory"] || [CPDictionary dictionary];
 
     if (lastBoshService)
         [boshService setStringValue:lastBoshService];
@@ -182,7 +181,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
                                                                   [boshService stringValue], @"service"];
 
     [_credentialsHistory setObject:historyToken forKey:[JID stringValue]];
-    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory" inDomain:CPGlobalDomain];
+    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory"];
 }
 
 /*! add History token
@@ -190,7 +189,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 - (void)clearCredentialFromHistory
 {
     [_credentialsHistory removeObjectForKey:[JID stringValue]];
-    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory" inDomain:CPGlobalDomain];
+    [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory"];
 }
 
 /*! will handle the clear after user logout
@@ -241,17 +240,17 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     {
         [self saveCredentialsInHistory];
 
-        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
-        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
-        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService" inDomain:CPGlobalDomain];
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
+        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
+        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
         _credentialRecovered = YES;
         CPLog.info("logging information saved");
     }
     else
     {
         _credentialRecovered = NO;
-        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials" inDomain:CPGlobalDomain];
+        [defaults setBool:NO forKey:@"TNArchipelLoginRememberCredentials"];
     }
 
     var connectionJID   = [TNStropheJID stropheJIDWithString:[[JID stringValue] lowercaseString]];
@@ -283,15 +282,18 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     {
         [self saveCredentialsInHistory];
 
-        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+        [defaults setObject:[JID stringValue] forKey:@"TNArchipelBOSHJID"];
+        [defaults setObject:[password stringValue] forKey:@"TNArchipelBOSHPassword"];
+        [defaults setObject:[boshService stringValue] forKey:@"TNArchipelBOSHService"];
+        [defaults setBool:YES forKey:@"TNArchipelBOSHRememberCredentials"];
     }
     else
     {
         [self clearCredentialFromHistory];
 
-        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
-        [defaults removeObjectForKey:@"TNArchipelBOSHJID" inDomain:CPGlobalDomain];
-        [defaults removeObjectForKey:@"TNArchipelBOSHPassword" inDomain:CPGlobalDomain];
+        [defaults setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
+        [defaults removeObjectForKey:@"TNArchipelBOSHJID"];
+        [defaults removeObjectForKey:@"TNArchipelBOSHPassword"];
     }
 
 
@@ -419,7 +421,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheDisconnected:(TNStropheIMClient)aStropheClient
 {
-    [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials" inDomain:CPGlobalDomain];
+    [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];

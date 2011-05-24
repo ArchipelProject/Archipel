@@ -62,8 +62,6 @@
 */
 - (void)awakeFromCib
 {
-    [scrollViewMessageContainer setBorderedWithHexColor:@"#C0C7D2"];
-
     _messageBoard = [[TNMessageBoard alloc] initWithFrame:[scrollViewMessageContainer bounds]];
     [scrollViewMessageContainer setDocumentView:_messageBoard];
     [_messageBoard setFrameSize:[scrollViewMessageContainer contentSize]];

@@ -62,6 +62,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     CPWindow                _mainWindow                 @accessors(getter=mainWindow);
     id                      _appController              @accessors(property=appController);
+    CPDictionary            _excludedTokens             @accessors(getter=excludedTokens);
 
     CPArray                 _modules;
     TNStrophePrivateStorage _xmppStorage;
@@ -112,6 +113,16 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [switchUseAnimations setToolTip:CPLocalizedString(@"Turn this ON to activate eye candy animation. Turn it off to gain performances", @"Turn this ON to activate eye candy animation. Turn it off to gain performances")];
     [switchUseXMPPMonitoring setToolTip:CPLocalizedString(@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances", @"Turn this ON to activate XMPP monitoring. Turn it off to gain performances")];
     [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
+
+    _excludedTokens = [CPDictionary dictionary];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelPropertyControllerEnabled"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHCredentialHistory"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHJID"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHPassword"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHService"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHRememberCredentials"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelTagsVisible"];
+    [_excludedTokens setObject:[CPNull null] forKey:@"mainSplitViewPosition"];
 }
 
 /*! initialize the XMPP storage
@@ -171,6 +182,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 - (void)_didPreferencesSaveToXMPPServer:(CPNotification)aNotification
 {
     [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Preferences saved" message:@"Your preferences have been saved to the XMPP server"];
+
+    [self reinjectUnwantedTokens];
 }
 
 /*! trigger when storage is sucessfulll
@@ -182,6 +195,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
                                                      message:CPLocalizedString(@"Cannot save your preferences to the XMPP server", @"Cannot save your preferences to the XMPP server")
                                                          icon:TNGrowlIconError];
     CPLog.error("Cannot save your preferences to the XMPP server:" + [[aNotification userInfo] stringValue]);
+
+    [self reinjectUnwantedTokens];
 }
 
 /*! proxy for saveToFromXMPPServer
@@ -317,12 +332,51 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 #pragma mark -
 #pragma mark Archiving
 
+
+/*! exclude tokens
+*/
+- (void)excludeUnwantedTokens
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    for (var i = 0; i < [[_excludedTokens allKeys] count]; i++)
+    {
+        var key = [[_excludedTokens allKeys] objectAtIndex:i];
+
+        [_excludedTokens setObject:[defaults objectForKey:key] forKey:key];
+        [defaults removeObjectForKey:key];
+    }
+}
+
+/*! reinject excluded tokens
+*/
+- (void)reinjectUnwantedTokens
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    for (var i = 0; i < [[_excludedTokens allKeys] count]; i++)
+    {
+        var key = [[_excludedTokens allKeys] objectAtIndex:i],
+            value = [_excludedTokens objectForKey:key];
+
+        [_excludedTokens setObject:[CPNull null] forKey:key];
+        if (value)
+            [defaults setObject:value forKey:key];
+    }
+    [[CPUserDefaults standardUserDefaults] synchronize];
+}
+
+
 /*! send the content of CPUserDefaults in the private storage of the
     XMPP server
 */
 - (void)saveToFromXMPPServer
 {
-    [_xmppStorage setObject:[[CPUserDefaults standardUserDefaults]._domains objectForKey:CPApplicationDomain] forKey:TNArchipelXMPPPrivateStoragePrefsKey];
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    [self excludeUnwantedTokens];
+
+    [_xmppStorage setObject:[defaults._domains objectForKey:CPApplicationDomain] forKey:TNArchipelXMPPPrivateStoragePrefsKey];
 }
 
 - (void)cleanXMPPStorage
@@ -335,6 +389,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)recoverFromXMPPServer
 {
+    [self excludeUnwantedTokens];
     [_xmppStorage objectForKey:TNArchipelXMPPPrivateStoragePrefsKey target:self selector:@selector(_objectRetrievedWithStanza:object:)];
 }
 
@@ -349,7 +404,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
         [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
         [[CPUserDefaults standardUserDefaults] synchronize];
     }
-
+    [self reinjectUnwantedTokens];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];
 
     return NO;

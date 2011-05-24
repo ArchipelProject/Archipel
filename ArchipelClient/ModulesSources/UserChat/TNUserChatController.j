@@ -310,7 +310,7 @@
 
     CPLog.debug(@"count=" + [_messages count] + " location=" + location + " lenght:" + lenght);
 
-    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
+    [defaults setObject:messagesToSave forKey:"communicationWith" + [_entity JID]];
 }
 
 /*! restore the chat
@@ -415,7 +415,7 @@
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [defaults removeObjectForKey:"communicationWith" + [_entity JID] inDomain:CPGlobalDomain];
+    [defaults removeObjectForKey:"communicationWith" + [_entity JID]];
 
     [_messages removeAllObjects];
     [_messageBoard removeAllViews:nil];
