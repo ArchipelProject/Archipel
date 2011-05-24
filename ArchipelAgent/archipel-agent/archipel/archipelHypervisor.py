@@ -567,7 +567,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         del self.virtualmachines[uuid]
         self.update_presence()
 
-    def clone(self, uuid, requester):
+    def clone(self, uuid, requester, wanted_name=None):
         """
         Clone a existing virtual machine.
         @type uuid: string
@@ -585,7 +585,11 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         if not (dominfo[0] == libvirt.VIR_DOMAIN_SHUTOFF or dominfo[0] == libvirt.VIR_DOMAIN_SHUTDOWN):
             raise Exception('The mother vm has to be stopped to be cloned.')
 
-        name = "%s (clone of %s)" % (self.generate_name(), xmppvm.name)
+        if not wanted_name:
+            name = "%s (clone of %s)" % (self.generate_name(), xmppvm.name)
+        else:
+            name = wanted_name
+
         newvm_thread = self.alloc(requester, requested_name=name, start=False)
         newvm = newvm_thread.get_instance()
         newvm.register_hook("HOOK_VM_INITIALIZE",
@@ -736,10 +740,13 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready to send IQ containing the result of the action
         """
         try:
-            reply       = iq.buildReply("result")
-            vmjid       = xmpp.JID(jid=iq.getTag("query").getTag("archipel").getAttr("jid"))
-            vmuuid      = vmjid.getNode()
-            self.clone(vmuuid, iq.getFrom())
+            wanted_name = None
+            reply = iq.buildReply("result")
+            vmjid = xmpp.JID(jid=iq.getTag("query").getTag("archipel").getAttr("jid"))
+            vmuuid = vmjid.getNode()
+            if iq.getTag("query").getTag("archipel").getAttr("name"):
+                wanted_name = iq.getTag("query").getTag("archipel").getAttr("name")
+            self.clone(vmuuid, iq.getFrom(), wanted_name)
             self.shout("virtualmachine", "The Archipel Virtual Machine %s has been cloned by %s" % (vmuuid, iq.getFrom()))
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_HYPERVISOR_CLONE)
