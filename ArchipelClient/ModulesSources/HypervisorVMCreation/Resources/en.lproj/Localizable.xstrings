@@ -12,8 +12,6 @@
 	<string>Added new subscription to virtual machine</string>
 	<key>Adding contact</key>
 	<string>Adding contact</string>
-	<key>Are you sure you want to clone this virtual machine ?</key>
-	<string>Are you sure you want to clone this virtual machine ?</string>
 	<key>Are you sure you want to completely remove theses virtual machines ?</key>
 	<string>Are you sure you want to completely remove theses virtual machines ?</string>
 	<key>Are you sure you want to completely remove this virtual machine ?</key>
@@ -30,12 +28,8 @@
 	<string>Ask the virtual machine to remove a user from its contact</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
-	<key>Clone</key>
-	<string>Clone</string>
 	<key>Clone this virtual machine</key>
 	<string>Clone this virtual machine</string>
-	<key>Cloning a Virtual Machine</key>
-	<string>Cloning a Virtual Machine</string>
 	<key>Create a clone virtual machine from the selected one</key>
 	<string>Create a clone virtual machine from the selected one</string>
 	<key>Create new virtual machine</key>

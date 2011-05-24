@@ -52,15 +52,17 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     @outlet CPButton            buttonAlloc;
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPPopUpButton       popupDeleteMachine;
-    @outlet TNUIKitScrollView   scrollViewListVM;
     @outlet CPSearchField       fieldFilterVM;
+    @outlet CPTextField         fieldCloneVirtualMachineName;
     @outlet CPTextField         fieldNewSubscriptionTarget;
     @outlet CPTextField         fieldNewVMRequestedName;
     @outlet CPTextField         fieldRemoveSubscriptionTarget;
     @outlet CPView              viewTableContainer;
+    @outlet CPWindow            windowCloneVirtualMachine;
     @outlet CPWindow            windowNewSubscription;
     @outlet CPWindow            windowNewVirtualMachine;
     @outlet CPWindow            windowRemoveSubscription;
+    @outlet TNUIKitScrollView   scrollViewListVM;
 
     CPButton                    _cloneButton;
     CPButton                    _minusButton;
@@ -160,7 +162,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     _cloneButton = [CPButtonBar minusButton];
     [_cloneButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/branch.png"] size:CPSizeMake(16, 16)]];
     [_cloneButton setTarget:self];
-    [_cloneButton setAction:@selector(cloneVirtualMachine:)];
+    [_cloneButton setAction:@selector(openCloneVirtualMachineWindow:)];
     [_cloneButton setToolTip:CPBundleLocalizedString(@"Create a clone virtual machine from the selected one", @"Create a clone virtual machine from the selected one")];
 
     [_minusButton setEnabled:NO];
@@ -373,12 +375,32 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [self deleteVirtualMachine];
 }
 
-/*! clone selected virtual machine
+/*! Opens the clone virtual machine window
+    @param sender the sender of the action
+*/
+- (IBAction)openCloneVirtualMachineWindow:(id)aSender
+{
+    if (([_tableVirtualMachines numberOfRows] == 0)
+        || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
+        || ([_tableVirtualMachines numberOfSelectedRows] > 1))
+    {
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                           informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
+         return;
+    }
+
+    [fieldCloneVirtualMachineName setStringValue:@""];
+    [windowCloneVirtualMachine center];
+    [windowCloneVirtualMachine makeKeyAndOrderFront:aSender];
+}
+
+/*! clone a virtual machine
     @param sender the sender of the action
 */
 - (IBAction)cloneVirtualMachine:(id)aSender
 {
-    [self cloneVirtualMachine]
+    [windowCloneVirtualMachine close];
+    [self cloneVirtualMachine];
 }
 
 /*! open the add subscription window
@@ -613,30 +635,9 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [[[TNStropheIMClient defaultClient] roster] removeContact:someUserInfo];
 }
 
-/*! clone a virtual machine. but ask user if he is sure before
+/*! clone a virtual machine.
 */
 - (void)cloneVirtualMachine
-{
-    if (([_tableVirtualMachines numberOfRows] == 0)
-        || ([_tableVirtualMachines numberOfSelectedRows] <= 0)
-        || ([_tableVirtualMachines numberOfSelectedRows] > 1))
-    {
-         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
-                           informative:CPBundleLocalizedString(@"You must select one (and only one) virtual machine", @"You must select one (and only one) virtual machine")];
-         return;
-    }
-
-    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Cloning a Virtual Machine", @"Cloning a Virtual Machine")
-                              informative:CPBundleLocalizedString(@"Are you sure you want to clone this virtual machine ?", @"Are you sure you want to clone this virtual machine ?")
-                                 target:self
-                                 actions:[[CPBundleLocalizedString(@"Clone", @"Clone"), @selector(performCloneVirtualMachine:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
-    [alert runModal];
-
-}
-
-/*! delete a virtual machine
-*/
-- (void)performCloneVirtualMachine:(id)someUserInfo
 {
     var index   = [[_tableVirtualMachines selectedRowIndexes] firstIndex],
         vm      = [_virtualMachinesDatasource objectAtIndex:index],
@@ -645,9 +646,20 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_tableVirtualMachines deselectAll];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorControl}];
-    [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeHypervisorControlClone,
-        "jid": [[vm JID] bare]}];
+
+    if ([fieldCloneVirtualMachineName stringValue] && [fieldCloneVirtualMachineName stringValue] != @"")
+    {
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeHypervisorControlClone,
+            "jid": [[vm JID] bare],
+            "name": [fieldCloneVirtualMachineName stringValue]}];
+    }
+    else
+    {
+        [stanza addChildWithName:@"archipel" andAttributes:{
+            "action": TNArchipelTypeHypervisorControlClone,
+            "jid": [[vm JID] bare]}];
+    }
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didCloneVirtualMachine:) ofObject:self];
 }

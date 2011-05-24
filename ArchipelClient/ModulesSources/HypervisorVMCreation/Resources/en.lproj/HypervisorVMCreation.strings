@@ -77,3 +77,27 @@
 /* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "60"; */
 "60.title" = "Name:";
 
+/* Class = "NSWindow"; title = "Clone virtual machine"; ObjectID = "94"; */
+"94.title" = "Clone virtual machine";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "102"; */
+"102.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My Cloned VM"; ObjectID = "103"; */
+"103.placeholderString" = "My Cloned VM";
+
+/* Class = "NSTextFieldCell"; title = "Choose the name for the clone. Leave it blank to generate."; ObjectID = "104"; */
+"104.title" = "Choose the name for the clone. Leave it blank to generate.";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "105"; */
+"105.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "Clone virtual machine"; ObjectID = "106"; */
+"106.title" = "Clone virtual machine";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "107"; */
+"107.title" = "Create";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "108"; */
+"108.title" = "Cancel";
+

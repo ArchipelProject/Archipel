@@ -13,9 +13,6 @@
 /* Adding contact */
 "Adding contact" = "Adding contact";
 
-/* Are you sure you want to clone this virtual machine ? */
-"Are you sure you want to clone this virtual machine ?" = "Are you sure you want to clone this virtual machine ?";
-
 /* Are you sure you want to completely remove theses virtual machines ? */
 "Are you sure you want to completely remove theses virtual machines ?" = "Are you sure you want to completely remove theses virtual machines ?";
 
@@ -40,14 +37,8 @@
 /* Cancel */
 "Cancel" = "Cancel";
 
-/* Clone */
-"Clone" = "Clone";
-
 /* Clone this virtual machine */
 "Clone this virtual machine" = "Clone this virtual machine";
-
-/* Cloning a Virtual Machine */
-"Cloning a Virtual Machine" = "Cloning a Virtual Machine";
 
 /* Create a clone virtual machine from the selected one */
 "Create a clone virtual machine from the selected one" = "Create a clone virtual machine from the selected one";
