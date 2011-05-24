@@ -130,7 +130,7 @@ var TNArchipelTypeHypervisorHealth              = @"archipel:hypervisor:health",
     [imageLoadLoading setHidden:YES];
     [imageDiskLoading setHidden:YES];
 
-    var colorGraphsContainer = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"Backgrounds/dark-bg-soft.png"]]];
+    var colorGraphsContainer = [CPColor whiteColor];
     [viewGraphCPUContainer setBackgroundColor:colorGraphsContainer];
     [viewGraphMemoryContainer setBackgroundColor:colorGraphsContainer];
     [viewGraphLoadContainer setBackgroundColor:colorGraphsContainer];
