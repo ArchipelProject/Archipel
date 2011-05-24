@@ -20,3 +20,6 @@
 /* Class = "NSTextFieldCell"; title = "Room name"; ObjectID = "28"; */
 "28.title" = "Nom de salle";
 
+/* Class = "NSBox"; title = "Box"; ObjectID = "34"; */
+"34.title" = "Box";
+
