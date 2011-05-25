@@ -55,14 +55,15 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPTextField     fieldBOSHResource;
     @outlet CPTextField     fieldModuleLoadingDelay;
     @outlet CPTextField     fieldWelcomePageUrl;
-    @outlet CPView          viewPreferencesGeneral;
     @outlet CPView          viewContentWindowPreferences;
+    @outlet CPView          viewPreferencesGeneral;
     @outlet TNSwitch        switchUseAnimations;
     @outlet TNSwitch        switchUseXMPPMonitoring;
 
+    CPArray                 _excludedTokensNames;
+    CPDictionary            _excludedTokens             @accessors(getter=excludedTokens);
     CPWindow                _mainWindow                 @accessors(getter=mainWindow);
     id                      _appController              @accessors(property=appController);
-    CPDictionary            _excludedTokens             @accessors(getter=excludedTokens);
 
     CPArray                 _modules;
     TNStrophePrivateStorage _xmppStorage;
@@ -115,14 +116,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
 
     _excludedTokens = [CPDictionary dictionary];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelPropertyControllerEnabled"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHCredentialHistory"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHJID"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHPassword"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHService"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelBOSHRememberCredentials"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"TNArchipelTagsVisible"];
-    [_excludedTokens setObject:[CPNull null] forKey:@"mainSplitViewPosition"];
+    _excludedTokensNames = [@"TNArchipelPropertyControllerEnabled", @"TNArchipelBOSHCredentialHistory", @"TNArchipelBOSHJID",
+                            @"TNArchipelBOSHPassword", @"TNArchipelBOSHService", @"TNArchipelBOSHRememberCredentials",
+                            @"TNArchipelTagsVisible", @"mainSplitViewPosition", @"TNArchipelModuleControllerOpenedTabRegistry"];
 }
 
 /*! initialize the XMPP storage
@@ -339,11 +335,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    for (var i = 0; i < [[_excludedTokens allKeys] count]; i++)
+    for (var i = 0; i < [_excludedTokensNames count]; i++)
     {
-        var key = [[_excludedTokens allKeys] objectAtIndex:i];
+        var key = [_excludedTokensNames objectAtIndex:i],
+            value = [defaults objectForKey:key];
 
-        [_excludedTokens setObject:[defaults objectForKey:key] forKey:key];
+        [_excludedTokens setObject:value forKey:key];
         [defaults removeObjectForKey:key];
     }
 }
@@ -354,14 +351,26 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    for (var i = 0; i < [[_excludedTokens allKeys] count]; i++)
+    for (var i = 0; i < [_excludedTokensNames count]; i++)
     {
-        var key = [[_excludedTokens allKeys] objectAtIndex:i],
+        var key = [_excludedTokensNames objectAtIndex:i],
             value = [_excludedTokens objectForKey:key];
 
-        [_excludedTokens setObject:[CPNull null] forKey:key];
+        [_excludedTokens removeObjectForKey:key];
         if (value)
-            [defaults setObject:value forKey:key];
+        {
+            switch (typeof(value))
+            {
+                case "number":
+                    [defaults setInteger:value forKey:key];
+                    break;
+                case "boolean":
+                    [defaults setBool:value forKey:key];
+                    break;
+                default:
+                    [defaults setObject:value forKey:key];
+            }
+        }
     }
     [[CPUserDefaults standardUserDefaults] synchronize];
 }

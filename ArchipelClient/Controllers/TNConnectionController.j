@@ -124,7 +124,7 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 
 - (void)_didJIDChange:(CPNotification)aNotification
 {
-    if ([_credentialsHistory containsKey:[JID stringValue]])
+    if (_credentialsHistory && [_credentialsHistory containsKey:[JID stringValue]])
     {
         [password setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"password"]];
         [boshService setStringValue:[[_credentialsHistory objectForKey:[JID stringValue]] objectForKey:@"service"]];

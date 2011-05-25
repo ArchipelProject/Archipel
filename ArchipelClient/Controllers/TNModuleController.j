@@ -103,6 +103,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     CPArray                         _bundles;
     CPDictionary                    _modulesMenuItems;
+    CPDictionary                    _openedTabsRegistry;
     CPString                        _previousXMPPShow;
     CPToolbarItem                   _currentToolbarItem;
     CPView                          _currentToolbarModule;
@@ -110,6 +111,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     int                             _numberOfModulesLoaded;
     int                             _numberOfModulesToLoad;
 }
+
 
 #pragma mark -
 #pragma mark Initialization
@@ -121,6 +123,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     if (self = [super init])
     {
+        var defaults = [CPUserDefaults standardUserDefaults];
+
         _loadedTabModulesScrollViews            = [CPDictionary dictionary];
         _loadedToolbarModulesScrollViews        = [CPDictionary dictionary];
         _modulesMenuItems                       = [CPDictionary dictionary];
@@ -134,6 +138,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _allModulesReady                        = NO;
         _deactivateModuleTabItemPositionStorage = NO;
         _moduleLoadingStarted                   = NO;
+        _openedTabsRegistry                     = [CPDictionary dictionary];
+
+        if  (![defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"])
+            [defaults setObject:_openedTabsRegistry forKey:@"TNArchipelModuleControllerOpenedTabRegistry"];
     }
 
     return self;
@@ -236,11 +244,12 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         identifier              = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid                   = @"selectedTabIndexFor" + identifier;
 
-    if (currentSelectedIndex == [defaults integerForKey:memid])
+    if (currentSelectedIndex == [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid])
         return;
 
-    CPLog.debug("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
-    [defaults setInteger:currentSelectedIndex forKey:memid];
+    CPLog.warn("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
+    [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] setObject:currentSelectedIndex forKey:memid];
+    CPLog.warn("---> "+ [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid]);
 }
 
 /*! Reselect the last remembered tab index for entity
@@ -250,13 +259,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     var defaults            = [CPUserDefaults standardUserDefaults],
         identifier          = ([_entity isKindOfClass:TNStropheContact]) ? [_entity JID] : [_entity name],
         memid               = @"selectedTabIndexFor" + identifier,
-        oldSelectedIndex    = [defaults integerForKey:memid],
+        oldSelectedIndex    = [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid] || 0,
         numberOfTabItems    = [_mainTabView numberOfTabViewItems];
 
     if (!(_entity && (numberOfTabItems > 0) && ((numberOfTabItems - 1) >= oldSelectedIndex) && (oldSelectedIndex != -1)))
         return;
 
-    CPLog.debug("recovering last selected tab index " + oldSelectedIndex);
+    CPLog.warn("recovering last selected tab index " + oldSelectedIndex);
     [_mainTabView selectTabViewItemAtIndex:oldSelectedIndex];
 }
 
