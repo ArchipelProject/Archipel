@@ -51,6 +51,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 @implementation TNVirtualMachineAppliancesController : TNModule
 {
+    @outlet CPButton                    buttonCreate;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTextField                 fieldNewApplianceName;
@@ -73,6 +74,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)awakeFromCib
 {
+    [windowNewAppliance setDefaultButton:buttonCreate];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // Media table view

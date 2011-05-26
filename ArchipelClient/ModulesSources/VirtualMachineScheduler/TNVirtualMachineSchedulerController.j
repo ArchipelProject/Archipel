@@ -49,6 +49,7 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 @implementation TNVirtualMachineScheduler : TNModule
 {
+    @outlet CPButton                buttonNewJobOK;
     @outlet CPButtonBar             buttonBarJobs;
     @outlet CPCheckBox              checkBoxEveryDay;
     @outlet CPCheckBox              checkBoxEveryHour;
@@ -89,6 +90,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
 - (void)awakeFromCib
 {
+    [windowNewJob setDefaultButton:buttonNewJobOK];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceJobs     = [[TNTableViewDataSource alloc] init];

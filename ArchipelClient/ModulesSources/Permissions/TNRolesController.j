@@ -24,6 +24,7 @@
 */
 @implementation TNRolesController : CPObject
 {
+    @outlet CPButton                buttonSave;
     @outlet CPButtonBar             buttonBar;
     @outlet TNUIKitScrollView       scrollViewTableRoles;
     @outlet CPSearchField           filterField;
@@ -48,6 +49,8 @@
 */
 - (void)awakeFromCib
 {
+    [windowNewTemplate setDefaultButton:buttonSave];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     _datasourceRoles    = [[TNTableViewDataSource alloc] init];

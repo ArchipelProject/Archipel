@@ -31,6 +31,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
 @implementation TNNewDriveController : CPObject
 {
+    @outlet CPButton        buttonOK;
     @outlet CPCheckBox      checkBoxUseQCOW2Preallocation;
     @outlet CPPopUpButton   buttonNewDiskFormat;
     @outlet CPPopUpButton   buttonNewDiskSizeUnit;
@@ -49,6 +50,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
+    [mainWindow setDefaultButton:buttonOK];
+
     [buttonNewDiskFormat removeAllItems];
     [buttonNewDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
 

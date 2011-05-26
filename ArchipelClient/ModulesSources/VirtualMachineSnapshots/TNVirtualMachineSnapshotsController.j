@@ -52,6 +52,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 @implementation TNVirtualMachineSnapshotsController : TNModule
 {
+    @outlet CPButton                    buttonSnapshotTake;
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilter;
     @outlet CPTextField                 fieldInfo;
@@ -76,6 +77,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)awakeFromCib
 {
+    [windowNewSnapshot setDefaultButton:buttonSnapshotTake];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;

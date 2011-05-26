@@ -60,14 +60,15 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 */
 @implementation TNDriveController : CPObject
 {
-    @outlet CPWindow        mainWindow;
+    @outlet CPButton        buttonOK;
     @outlet CPPopUpButton   buttonBus;
+    @outlet CPPopUpButton   buttonCache;
+    @outlet CPPopUpButton   buttonDeviceType;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonTarget;
     @outlet CPPopUpButton   buttonType;
-    @outlet CPPopUpButton   buttonCache;
-    @outlet CPPopUpButton   buttonDeviceType;
     @outlet CPTextField     fieldDevicePath;
+    @outlet CPWindow        mainWindow;
 
     id                      _delegate       @accessors(property=delegate);
     CPTableView             _table          @accessors(property=table);
@@ -83,6 +84,8 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 */
 - (void)awakeFromCib
 {
+    [mainWindow setDefaultButton:buttonOK];
+
     [buttonDeviceType removeAllItems];
     [buttonType removeAllItems];
     [buttonTarget removeAllItems];

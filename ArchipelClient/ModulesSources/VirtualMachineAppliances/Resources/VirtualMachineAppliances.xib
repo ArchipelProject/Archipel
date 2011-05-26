@@ -49,7 +49,7 @@
 				<string key="NSClassName">NSApplication</string>
 			</object>
 			<object class="NSCustomView" id="417908996">
-				<reference key="NSNextResponder"/>
+				<nil key="NSNextResponder"/>
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
@@ -70,7 +70,6 @@
 						</object>
 						<string key="NSFrame">{{699, 496}, {16, 16}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="689982466"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSImageCell" key="NSCell" id="278892624">
@@ -93,8 +92,6 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="896725779"/>
-								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="248363153">
@@ -102,14 +99,12 @@
 								<int key="NSvFlags">274</int>
 								<string key="NSFrame">{{0, 26}, {687, 365}}</string>
 								<reference key="NSSuperview" ref="896725779"/>
-								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="1073660176"/>
 								<string key="NSClassName">TNUIKitScrollView</string>
 							</object>
 						</object>
 						<string key="NSFrame">{{20, 19}, {685, 391}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="248363153"/>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -118,7 +113,6 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{498, 418}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="896725779"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSearchFieldCell" key="NSCell" id="594697988">
@@ -201,7 +195,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 448}, {622, 20}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="281192649"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="305166580">
@@ -231,7 +224,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 476}, {214, 26}}</string>
 						<reference key="NSSuperview" ref="417908996"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="43283298"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="833758935">
@@ -253,8 +245,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{725, 522}</string>
-				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="702408257"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -362,7 +352,6 @@
 							<string key="NSFrame">{{379, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="307555981"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="899779922">
 								<int key="NSCellFlags">-2080244224</int>
@@ -469,7 +458,6 @@
 						<string key="NSFrame">{{76, 140}, {237, 28}}</string>
 						<reference key="NSSuperview" ref="1070831010"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="254957470">
 							<int key="NSCellFlags">67239424</int>
@@ -638,12 +626,12 @@
 					<int key="connectionID">62</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="321280977"/>
-						<reference key="destination" ref="527357079"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonCreate</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="321280977"/>
 					</object>
-					<int key="connectionID">63</int>
+					<int key="connectionID">64</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1036,7 +1024,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">63</int>
+			<int key="maxID">64</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1160,6 +1148,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarControl</string>
+							<string>buttonCreate</string>
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
@@ -1170,6 +1159,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPButtonBar</string>
+							<string>NSButton</string>
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
 							<string>TNUIKitScrollView</string>
@@ -1183,6 +1173,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarControl</string>
+							<string>buttonCreate</string>
 							<string>fieldFilterAppliance</string>
 							<string>fieldNewApplianceName</string>
 							<string>mainScrollView</string>
@@ -1195,6 +1186,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarControl</string>
 								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonCreate</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldFilterAppliance</string>

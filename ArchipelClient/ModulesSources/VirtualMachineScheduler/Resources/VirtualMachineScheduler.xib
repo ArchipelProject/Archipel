@@ -98,7 +98,6 @@
 								<string key="NSFrameSize">{685, 26}</string>
 								<reference key="NSSuperview" ref="966007610"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 							<object class="NSCustomView" id="685615126">
@@ -272,8 +271,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 59}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="946740024">
 							<int key="NSCellFlags">-2080244224</int>
@@ -301,7 +298,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 56}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="774610742"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -310,7 +306,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 60}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="194327992"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="937682270">
@@ -332,7 +327,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 90}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="777533224"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="299463306">
@@ -356,7 +350,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 87}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="177004010"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -365,7 +358,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 91}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1062745502"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="294763095">
@@ -383,7 +375,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 121}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="628779469"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="13339990">
@@ -407,7 +398,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 118}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="596660873"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -416,7 +406,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 122}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="901044267"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="528807300">
@@ -434,7 +423,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 152}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="223512618"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="893530000">
@@ -458,7 +446,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 149}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="820161049"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -467,7 +454,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 153}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="371840650"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="940270759">
@@ -485,7 +471,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 183}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="780306623"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="952476289">
@@ -509,7 +494,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 180}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="356248350"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -518,7 +502,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 184}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="264104437"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="119423000">
@@ -536,7 +519,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{194, 214}, {63, 18}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="311193293"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSButtonCell" key="NSCell" id="501576357">
@@ -560,7 +542,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{108, 211}, {77, 25}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="331670051"/>
 						<string key="NSClassName">TNTextFieldStepper</string>
 					</object>
@@ -569,7 +550,6 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{36, 215}, {68, 17}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="1072211664"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="587532093">
@@ -587,7 +567,6 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 257}, {272, 20}}</string>
 						<reference key="NSSuperview" ref="604783526"/>
-						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="996807419"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="1023839350">
@@ -603,7 +582,6 @@
 				</object>
 				<string key="NSFrameSize">{294, 292}</string>
 				<reference key="NSSuperview"/>
-				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="894126289"/>
 				<string key="NSClassName">NSView</string>
 			</object>
@@ -645,7 +623,6 @@
 						<string key="NSFrame">{{430, 228}, {22, 20}}</string>
 						<reference key="NSSuperview" ref="80957552"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="981855152">
 							<int key="NSCellFlags">68288064</int>
@@ -795,7 +772,6 @@
 							<string key="NSFrame">{{362, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="1014393156"/>
 							<reference key="NSWindow"/>
-							<reference key="NSNextKeyView"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="588188350">
 								<int key="NSCellFlags">-2080244224</int>
@@ -1295,6 +1271,14 @@
 						<reference key="destination" ref="266563233"/>
 					</object>
 					<int key="connectionID">205</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonNewJobOK</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="399064852"/>
+					</object>
+					<int key="connectionID">206</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2111,7 +2095,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">205</int>
+			<int key="maxID">206</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2229,6 +2213,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarJobs</string>
 							<string>buttonNewJobAction</string>
+							<string>buttonNewJobOK</string>
 							<string>calendarViewNewJob</string>
 							<string>checkBoxEveryDay</string>
 							<string>checkBoxEveryHour</string>
@@ -2258,6 +2243,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPButtonBar</string>
 							<string>NSPopUpButton</string>
+							<string>NSButton</string>
 							<string>TNCalendarView</string>
 							<string>CPCheckBox</string>
 							<string>CPCheckBox</string>
@@ -2290,6 +2276,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarJobs</string>
 							<string>buttonNewJobAction</string>
+							<string>buttonNewJobOK</string>
 							<string>calendarViewNewJob</string>
 							<string>checkBoxEveryDay</string>
 							<string>checkBoxEveryHour</string>
@@ -2324,6 +2311,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonNewJobAction</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonNewJobOK</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">calendarViewNewJob</string>

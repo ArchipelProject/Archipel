@@ -1156,22 +1156,6 @@
 					<int key="connectionID">91</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="854176317"/>
-						<reference key="destination" ref="514791403"/>
-					</object>
-					<int key="connectionID">92</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="141180765"/>
-						<reference key="destination" ref="320820871"/>
-					</object>
-					<int key="connectionID">93</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">initialFirstResponder</string>
 						<reference key="source" ref="906490297"/>
@@ -1229,19 +1213,43 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="771616922"/>
-						<reference key="destination" ref="67898124"/>
-					</object>
-					<int key="connectionID">118</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
 						<string key="label">performClose:</string>
 						<reference key="source" ref="906490297"/>
 						<reference key="destination" ref="87663397"/>
 					</object>
 					<int key="connectionID">119</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonAlloc</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="227086769"/>
+					</object>
+					<int key="connectionID">120</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonClone</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="771616922"/>
+					</object>
+					<int key="connectionID">121</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonAddSubscription</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="854176317"/>
+					</object>
+					<int key="connectionID">122</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonRemoveSubscription</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="141180765"/>
+					</object>
+					<int key="connectionID">123</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2013,7 +2021,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">119</int>
+			<int key="maxID">124</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2113,8 +2121,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAddSubscription</string>
 							<string>buttonAlloc</string>
 							<string>buttonBarControl</string>
+							<string>buttonClone</string>
+							<string>buttonRemoveSubscription</string>
 							<string>fieldCloneVirtualMachineName</string>
 							<string>fieldFilterVM</string>
 							<string>fieldNewSubscriptionTarget</string>
@@ -2131,7 +2142,10 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>CPButtonBar</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
 							<string>NSTextField</string>
@@ -2150,8 +2164,11 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>buttonAddSubscription</string>
 							<string>buttonAlloc</string>
 							<string>buttonBarControl</string>
+							<string>buttonClone</string>
+							<string>buttonRemoveSubscription</string>
 							<string>fieldCloneVirtualMachineName</string>
 							<string>fieldFilterVM</string>
 							<string>fieldNewSubscriptionTarget</string>
@@ -2168,12 +2185,24 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
+								<string key="name">buttonAddSubscription</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">buttonAlloc</string>
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarControl</string>
 								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonClone</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonRemoveSubscription</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldCloneVirtualMachineName</string>

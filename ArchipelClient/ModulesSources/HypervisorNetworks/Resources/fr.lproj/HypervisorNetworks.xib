@@ -1257,6 +1257,14 @@
 					</object>
 					<int key="connectionID">126</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonOK</string>
+						<reference key="source" ref="416875448"/>
+						<reference key="destination" ref="204776721"/>
+					</object>
+					<int key="connectionID">127</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -2061,7 +2069,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">126</int>
+			<int key="maxID">127</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2330,6 +2338,7 @@
 							<string>buttonBarControlDHCPRanges</string>
 							<string>buttonForwardDevice</string>
 							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
 							<string>checkBoxDHCPEnabled</string>
 							<string>checkBoxSTPEnabled</string>
 							<string>fieldBridgeDelay</string>
@@ -2352,6 +2361,7 @@
 							<string>CPButtonBar</string>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
+							<string>NSButton</string>
 							<string>CPCheckBox</string>
 							<string>CPCheckBox</string>
 							<string>NSTextField</string>
@@ -2377,6 +2387,7 @@
 							<string>buttonBarControlDHCPRanges</string>
 							<string>buttonForwardDevice</string>
 							<string>buttonForwardMode</string>
+							<string>buttonOK</string>
 							<string>checkBoxDHCPEnabled</string>
 							<string>checkBoxSTPEnabled</string>
 							<string>fieldBridgeDelay</string>
@@ -2410,6 +2421,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonForwardMode</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">checkBoxDHCPEnabled</string>

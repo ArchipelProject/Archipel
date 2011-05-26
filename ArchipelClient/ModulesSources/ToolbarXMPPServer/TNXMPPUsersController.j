@@ -43,10 +43,11 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 */
 @implementation TNXMPPUsersController : CPObject
 {
+    @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarControl;
     @outlet TNUIKitScrollView   scrollViewUsers;
     @outlet CPSearchField       filterField;
-    @outlet CPTextField            fieldNewUserPassword;
+    @outlet CPTextField         fieldNewUserPassword;
     @outlet CPTextField         fieldNewUserPasswordConfirm;
     @outlet CPTextField         fieldNewUserUsername;
     @outlet CPView              mainView                        @accessors(getter=mainView);
@@ -71,6 +72,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 
 - (void)awakeFromCib
 {
+    [windowNewUser setDefaultButton:buttonCreate];
+
     var bundle                  = [CPBundle bundleForClass:[self class]];
 
     _datasourceUsers            = [[TNTableViewDataSource alloc] init];

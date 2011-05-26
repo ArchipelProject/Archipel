@@ -333,7 +333,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 168}, {214, 26}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="916880766"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="260807464">
@@ -354,7 +353,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 135}, {417, 20}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="967434996"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="275610342">
@@ -372,7 +370,6 @@
 							<int key="NSvFlags">34</int>
 							<string key="NSFrame">{{0, 58}, {451, 5}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="304734839"/>
 							<string key="NSOffsets">{0, 0}</string>
 							<object class="NSTextFieldCell" key="NSTitleCell">
@@ -400,7 +397,6 @@
 							<int key="NSvFlags">289</int>
 							<string key="NSFrame">{{319, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="983160507">
 								<int key="NSCellFlags">-2080244224</int>
@@ -422,7 +418,6 @@
 							<int key="NSvFlags">265</int>
 							<string key="NSFrame">{{307, 69}, {130, 32}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="944122977"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="388182031">
@@ -445,7 +440,6 @@
 							<int key="NSvFlags">289</int>
 							<string key="NSFrame">{{201, 12}, {118, 32}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="723233098"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSButtonCell" key="NSCell" id="20095541">
@@ -468,7 +462,6 @@
 							<int key="NSvFlags">266</int>
 							<string key="NSFrame">{{92, 105}, {339, 22}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="379389145"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="179040338">
@@ -493,7 +486,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 109}, {70, 17}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="940346522"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="326722514">
@@ -515,7 +507,6 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 79}, {70, 17}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="587710888"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="607156413">
@@ -533,7 +524,6 @@
 							<int key="NSvFlags">266</int>
 							<string key="NSFrame">{{89, 73}, {219, 26}}</string>
 							<reference key="NSSuperview" ref="106403693"/>
-							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="301338893"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSPopUpButtonCell" key="NSCell" id="582167146">
@@ -605,7 +595,6 @@
 					</object>
 					<string key="NSFrame">{{7, 11}, {451, 214}}</string>
 					<reference key="NSSuperview"/>
-					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="435329776"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
@@ -1221,14 +1210,6 @@
 					<int key="connectionID">113</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="723233098"/>
-						<reference key="destination" ref="940346522"/>
-					</object>
-					<int key="connectionID">114</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">initialFirstResponder</string>
 						<reference key="source" ref="340980878"/>
@@ -1253,20 +1234,20 @@
 					<int key="connectionID">117</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="86912642"/>
-						<reference key="destination" ref="657339050"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonOK</string>
+						<reference key="source" ref="762612592"/>
+						<reference key="destination" ref="723233098"/>
 					</object>
-					<int key="connectionID">118</int>
+					<int key="connectionID">120</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="86912642"/>
-						<reference key="destination" ref="551032222"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonOK</string>
+						<reference key="source" ref="923147024"/>
+						<reference key="destination" ref="86912642"/>
 					</object>
-					<int key="connectionID">119</int>
+					<int key="connectionID">121</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2066,7 +2047,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">119</int>
+			<int key="maxID">121</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2112,6 +2093,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonConvert</string>
 							<string>buttonEditDiskFormat</string>
+							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
 							<string>mainWindow</string>
 						</object>
@@ -2119,6 +2101,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSButton</string>
 							<string>NSPopUpButton</string>
+							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSWindow</string>
 						</object>
@@ -2129,6 +2112,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonConvert</string>
 							<string>buttonEditDiskFormat</string>
+							<string>buttonOK</string>
 							<string>fieldEditDiskName</string>
 							<string>mainWindow</string>
 						</object>
@@ -2141,6 +2125,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonEditDiskFormat</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">fieldEditDiskName</string>
@@ -2256,6 +2244,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonNewDiskFormat</string>
 							<string>buttonNewDiskSizeUnit</string>
+							<string>buttonOK</string>
 							<string>checkBoxUseQCOW2Preallocation</string>
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
@@ -2265,6 +2254,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
+							<string>NSButton</string>
 							<string>CPCheckBox</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
@@ -2277,6 +2267,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonNewDiskFormat</string>
 							<string>buttonNewDiskSizeUnit</string>
+							<string>buttonOK</string>
 							<string>checkBoxUseQCOW2Preallocation</string>
 							<string>fieldNewDiskName</string>
 							<string>fieldNewDiskSize</string>
@@ -2291,6 +2282,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonNewDiskSizeUnit</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonOK</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">checkBoxUseQCOW2Preallocation</string>

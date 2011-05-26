@@ -49,7 +49,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 @implementation TNHypervisorVMCreationController : TNModule
 {
+    @outlet CPButton            buttonAddSubscription;
     @outlet CPButton            buttonAlloc;
+    @outlet CPButton            buttonClone;
+    @outlet CPButton            buttonRemoveSubscription;
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPPopUpButton       popupDeleteMachine;
     @outlet CPSearchField       fieldFilterVM;
@@ -81,6 +84,11 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 */
 - (void)awakeFromCib
 {
+    [windowNewVirtualMachine setDefaultButton:buttonAlloc];
+    [windowCloneVirtualMachine setDefaultButton:buttonClone];
+    [windowNewSubscription setDefaultButton:buttonAddSubscription];
+    [windowRemoveSubscription setDefaultButton:buttonRemoveSubscription];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     // VM table view

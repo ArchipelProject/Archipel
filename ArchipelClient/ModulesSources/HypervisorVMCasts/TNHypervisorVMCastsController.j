@@ -57,6 +57,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 @implementation TNHypervisorVMCastsController : TNModule
 {
+    @outlet CPButton            buttonNewVMCast;
     @outlet CPButtonBar         buttonBarControl;
     @outlet CPCheckBox          checkBoxOnlyInstalled;
     @outlet TNUIKitScrollView   mainScrollView;
@@ -81,6 +82,8 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 */
 - (void)awakeFromCib
 {
+    [windowNewCastURL setDefaultButton:buttonNewVMCast];
+
     [viewTableContainer setBorderedWithHexColor:@"#C0C7D2"];
 
     [fieldNewURL setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
@@ -590,7 +593,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 - (BOOL)_didRemoveVMCast:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") 
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast")
                                                          message:CPBundleLocalizedString(@"VMcast has been unregistred", @"VMcast has been unregistred")];
     else
         [self handleIqErrorFromStanza:aStanza];
@@ -607,7 +610,7 @@ var TNArchipelVMCastsOpenedVMCasts                      = @"TNArchipelVMCastsOpe
 
     if (([item status] != TNArchipelApplianceNotInstalled) && ([item status] != TNArchipelApplianceInstallationError))
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast") 
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"VMCast", @"VMCast")
                                                          message:CPBundleLocalizedString(@"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.", @"Appliance is already downloaded. If you want to instanciante it, create a new Virtual Machine and choose Packaging module.")
                                                             icon:TNGrowlIconError];
 

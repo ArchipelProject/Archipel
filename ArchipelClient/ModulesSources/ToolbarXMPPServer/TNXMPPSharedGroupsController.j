@@ -47,6 +47,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 @implementation TNXMPPSharedGroupsController : CPObject
 {
+    @outlet CPButton            buttonCreate;
     @outlet CPButtonBar         buttonBarGroups;
     @outlet CPButtonBar         buttonBarUsersInGroups;
     @outlet TNUIKitScrollView   scrollViewGroups;
@@ -89,6 +90,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 */
 - (void)awakeFromCib
 {
+    [windowNewGroup setDefaultButton:buttonCreate];
+
     /* table Users */
     [splitViewVertical setBorderedWithHexColor:@"#C0C7D2"];
     [splitViewVertical setIsPaneSplitter:YES];

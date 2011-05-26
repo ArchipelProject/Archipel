@@ -48,6 +48,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     @outlet CPButton                buttonExternalWindow;
     @outlet CPButton                buttonGetPasteBoard;
+    @outlet CPButton                buttonPasswordSend;
+    @outlet CPButton                buttonPasteBoardSend;
     @outlet CPButton                buttonSendCtrlAtlDel;
     @outlet CPButton                buttonSendPasteBoard;
     @outlet CPButton                buttonZoomFitToWindow;
@@ -83,6 +85,9 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)awakeFromCib
 {
+    [windowPassword setDefaultButton:buttonPasswordSend];
+    [windowPasteBoard setDefaultButton:buttonPasteBoardSend];
+
     [imageViewSecureConnection setHidden:YES];
 
     var bundle  = [CPBundle bundleForClass:[self class]],

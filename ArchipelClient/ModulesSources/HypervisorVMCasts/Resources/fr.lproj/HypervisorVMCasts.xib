@@ -622,12 +622,12 @@
 					<int key="connectionID">55</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="637107661"/>
-						<reference key="destination" ref="902649609"/>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonNewVMCast</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="637107661"/>
 					</object>
-					<int key="connectionID">56</int>
+					<int key="connectionID">57</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1004,7 +1004,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">56</int>
+			<int key="maxID">57</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1098,6 +1098,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarControl</string>
+							<string>buttonNewVMCast</string>
 							<string>checkBoxOnlyInstalled</string>
 							<string>downloadIndicator</string>
 							<string>fieldFilter</string>
@@ -1110,6 +1111,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>CPButtonBar</string>
+							<string>NSButton</string>
 							<string>CPCheckBox</string>
 							<string>NSProgressIndicator</string>
 							<string>NSSearchField</string>
@@ -1125,6 +1127,7 @@
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>buttonBarControl</string>
+							<string>buttonNewVMCast</string>
 							<string>checkBoxOnlyInstalled</string>
 							<string>downloadIndicator</string>
 							<string>fieldFilter</string>
@@ -1139,6 +1142,10 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonBarControl</string>
 								<string key="candidateClassName">CPButtonBar</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonNewVMCast</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">checkBoxOnlyInstalled</string>

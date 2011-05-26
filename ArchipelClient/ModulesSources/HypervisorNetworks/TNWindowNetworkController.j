@@ -40,6 +40,7 @@
 */
 @implementation TNWindowNetworkController : CPObject
 {
+    @outlet CPButton            buttonOK;
     @outlet CPButtonBar         buttonBarControlDHCPHosts;
     @outlet CPButtonBar         buttonBarControlDHCPRanges;
     @outlet CPCheckBox          checkBoxDHCPEnabled;
@@ -79,6 +80,8 @@
 
 - (void)awakeFromCib
 {
+    [mainWindow setDefaultButton:buttonOK];
+
     _plusButtonDHCPHosts = [CPButtonBar plusButton];
     [_plusButtonDHCPHosts setTarget:self];
     [_plusButtonDHCPHosts setAction:@selector(addDHCPHost:)];

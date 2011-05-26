@@ -4499,30 +4499,6 @@
 					<int key="connectionID">1382</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="998619390"/>
-						<reference key="destination" ref="10669859"/>
-					</object>
-					<int key="connectionID">1383</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="998619390"/>
-						<reference key="destination" ref="274798215"/>
-					</object>
-					<int key="connectionID">1384</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="998619390"/>
-						<reference key="destination" ref="1010139735"/>
-					</object>
-					<int key="connectionID">1385</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">nextKeyView</string>
 						<reference key="source" ref="273849810"/>
@@ -4571,36 +4547,12 @@
 					<int key="connectionID">1391</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="230941535"/>
-						<reference key="destination" ref="220272675"/>
-					</object>
-					<int key="connectionID">1392</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="481676244"/>
-						<reference key="destination" ref="804717396"/>
-					</object>
-					<int key="connectionID">1393</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">initialFirstResponder</string>
 						<reference key="source" ref="241087567"/>
 						<reference key="destination" ref="885899097"/>
 					</object>
 					<int key="connectionID">1394</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">performClick:</string>
-						<reference key="source" ref="848391559"/>
-						<reference key="destination" ref="885899097"/>
-					</object>
-					<int key="connectionID">1395</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -7616,7 +7568,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1395</int>
+			<int key="maxID">1397</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

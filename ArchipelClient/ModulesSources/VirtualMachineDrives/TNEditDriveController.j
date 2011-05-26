@@ -35,6 +35,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 @implementation TNEditDriveController : CPObject
 {
     @outlet CPButton                buttonConvert;
+    @outlet CPButton                buttonOK;
     @outlet CPPopUpButton           buttonEditDiskFormat;
     @outlet CPTextField             fieldEditDiskName;
     @outlet CPWindow                mainWindow;
@@ -51,6 +52,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)awakeFromCib
 {
+    [mainWindow setDefaultButton:buttonOK];
+
     [buttonEditDiskFormat removeAllItems];
     [buttonEditDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
 

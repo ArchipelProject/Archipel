@@ -120,10 +120,11 @@
 }
 
 /*! add a group according to the outlets
-    @param sender the sender
+    @param aSender the sender
 */
-- (IBAction)addGroup:(id)sender
+- (IBAction)addGroup:(id)aSender
 {
+    alert("PIF " + [newGroupName stringValue] + "sender " + aSender);
     if ([newGroupName stringValue] == "")
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Group addition error", @"Group addition error")
@@ -142,7 +143,7 @@
         [growl pushNotificationWithTitle:CPLocalizedString(@"Group", @"Group")
                                  message:CPLocalizedString(@"Group ", @"Group ") + groupName + CPLocalizedString(@" has been created", @" has been created")];
 
-        [mainWindow performClose:nil];
+        [mainWindow performClose:aSender];
     }
 }
 

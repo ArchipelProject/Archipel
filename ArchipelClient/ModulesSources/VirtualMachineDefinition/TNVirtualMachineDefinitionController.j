@@ -114,6 +114,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet CPButton                buttonOnReboot;
     @outlet CPButton                buttonUndefine;
     @outlet CPButton                buttonXMLEditor;
+    @outlet CPButton                buttonXMLEditorDefine;
     @outlet CPButtonBar             buttonBarControlDrives;
     @outlet CPButtonBar             buttonBarControlNics;
     @outlet CPPopUpButton           buttonBoot;
@@ -188,6 +189,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 */
 - (void)awakeFromCib
 {
+    [windowXMLEditor setDefaultButton:buttonXMLEditorDefine];
+
     var bundle      = [CPBundle bundleForClass:[self class]],
         defaults    = [CPUserDefaults standardUserDefaults],
         imageBg     = [[CPImage alloc] initWithContentsOfFile:[[CPBundle bundleForClass:[self class]] pathForResource:@"bg-controls.png"]];

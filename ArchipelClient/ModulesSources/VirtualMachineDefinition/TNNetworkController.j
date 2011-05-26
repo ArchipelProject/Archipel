@@ -30,11 +30,12 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 @implementation TNNetworkController : CPObject
 {
-    @outlet CPWindow        mainWindow;
+    @outlet CPButton        buttonOK;
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonType;
     @outlet CPTextField     fieldMac;
+    @outlet CPWindow        mainWindow;
 
     id                      _delegate   @accessors(property=delegate);
     CPTableView             _table      @accessors(property=table);
@@ -49,6 +50,8 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 - (void)awakeFromCib
 {
+    [mainWindow setDefaultButton:buttonOK];
+
     [buttonType removeAllItems];
     [buttonModel removeAllItems];
     [buttonSource removeAllItems];
