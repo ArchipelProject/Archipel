@@ -21,10 +21,14 @@ import os
 import sqlite3
 import sys
 import shutil
+import string
+import uuid
+from socket import gethostname, getfqdn
+from random import choice
 from optparse import OptionParser
 
 
-def prepare_environment(prefix="", force=False):
+def prepare_environment(prefix="", force=False, xmpp_server="auto", hypervisor_name="auto"):
     from pkg_resources import Requirement, resource_filename
     import errno
     init_script     = resource_filename(Requirement.parse("archipel-agent"),"install/etc/init.d/archipel")
@@ -74,6 +78,24 @@ def prepare_environment(prefix="", force=False):
         shutil.copytree(conf_folder, "%s/etc/archipel/" % prefix)
         os.system("chmod 600 '%s/etc/archipel/archipel.conf'" % prefix)
         print "      \033[32m[OK]\033[0m"
+
+        sys.stdout.write(" - pre-configuring %s/etc/archipel/archipel.conf:" % prefix)
+        conf_in = open("%s/archipel.conf" % conf_folder)
+        conf_out = open("%s/etc/archipel/archipel.conf" % prefix, "w")
+        uuidgen = str(uuid.uuid4())
+        if hypervisor_name == "default":
+            hypervisor_name = gethostname()
+        if xmpp_server == "default":
+            xmpp_server = getfqdn()
+        hypervisor_password = ''.join([choice(string.letters + string.digits) for i in xrange(8)])
+        for line in conf_in:
+            line = line.replace("PARAM_UUID",uuidgen)
+            line = line.replace("PARAM_HYPERVISOR_NAME", hypervisor_name)
+            line = line.replace("PARAM_HYPERVISOR_PASSWORD", hypervisor_password)
+            line = line.replace("PARAM_XMPP_SERVER", xmpp_server)
+            conf_out.write(line)
+        conf_in.close()
+        conf_out.close()
     except OSError as (n, strerror):
         if n == errno.ENOENT:
             print "      \033[31m[ERROR]\033[0m"
@@ -124,7 +146,17 @@ if __name__ == "__main__":
                         help="before installing, clean all existing folder and files. IT WILL DESTROY YOUR CURRENT INSTALLATION, VM DRIVES etc. Be warned!",
                         metavar="SERVER",
                         default=False)
+    parser.add_option("-x", "--xmpp-server",
+                        dest="xmpp_server",
+                        help="set the fqdn of the XMPP server, defaults to local fqdn",
+                        metavar="FQDN",
+                        default="auto")
+    parser.add_option("-n", "--name",
+                        dest="hypervisor_name",
+                        help="set the name of the hypervisor (left part of the JID), defaults to <hostname>",
+                        metavar="SERVER",
+                        default="auto")
 
     options, args = parser.parse_args()
 
-    prepare_environment(options.prefix, options.clean)
+    prepare_environment(options.prefix, options.clean, options.xmpp_server, options.hypervisor_name)
