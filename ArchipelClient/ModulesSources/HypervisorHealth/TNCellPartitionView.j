@@ -17,12 +17,15 @@
  */
 
 @import <Foundation/Foundation.j>
+@import <AppKit/CPLevelIndicator.j>
+@import <AppKit/CPProgressIndicator.j>
+@import <AppKit/CPTextField.j>
 
 /*! represent a Partition object in a CPTableView
 */
 @implementation TNCellPartitionView : CPView
 {
-    CPProgressIndicator     _progressBar;
+    CPLevelIndicator        _levelIndicator;
     CPTextField             _nameLabel;
     CPTextField             _totalLabel;
     CPTextField             _usedLabel;
@@ -49,23 +52,27 @@
         [_usedLabel setFont:[CPFont systemFontOfSize:10.0]];
         [_usedLabel setFrameOrigin:CPPointMake(260.0, 3.0)];
         [_usedLabel setAutoresizingMask:CPViewMinXMargin];
-        [_usedLabel sizeToFit];
+        [_usedLabel setAlignment:CPRightTextAlignment];
 
         _availableLabel = [CPTextField labelWithTitle:CPBundleLocalizedString(@"Available: ", @"Available: ")];
         [_availableLabel setFont:[CPFont systemFontOfSize:10.0]];
         [_availableLabel setFrameOrigin:CPPointMake(330.0, 3.0)];
         [_availableLabel setAutoresizingMask:CPViewMinXMargin];
-        [_availableLabel sizeToFit];
+        [_availableLabel setAlignment:CPRightTextAlignment];
 
-        _progressBar = [[CPProgressIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, 410.0, 16.0)];
-        [_progressBar setAutoresizingMask:CPViewWidthSizable];
-        [_progressBar setMaxValue:100];
-        [_progressBar setMinValue:0];
+        _levelIndicator = [[CPLevelIndicator alloc] initWithFrame:CPRectMake(3.0, 20.0, aFrame.size.width - 6, 18.0)];
+        [_levelIndicator setEditable:NO];
+        [_levelIndicator setNumberOfTickMarks:50.0];
+        [_levelIndicator setMaxValue:50.0];
+        [_levelIndicator setMinValue:0.0];
+        [_levelIndicator setCriticalValue:10.0];
+        [_levelIndicator setWarningValue:30.0];
+        [_levelIndicator setAutoresizingMask:CPViewWidthSizable];
 
         [self addSubview:_nameLabel];
         [self addSubview:_usedLabel];
         [self addSubview:_availableLabel];
-        [self addSubview:_progressBar];
+        [self addSubview:_levelIndicator];
     }
 
     return self;
@@ -107,7 +114,8 @@
 */
 - (void)setObjectValue:(CPDictionary)aContent
 {
-    [_progressBar setDoubleValue:parseInt([aContent objectForKey:@"capacity"])];
+    var capacity = parseInt([aContent objectForKey:@"capacity"]);
+    [_levelIndicator setDoubleValue:50 - capacity / 2];
 
     [_nameLabel setStringValue:[aContent objectForKey:@"mount"]];
     [_nameLabel sizeToFit];
@@ -127,7 +135,7 @@
 {
     if (self = [super initWithCoder:aCoder])
     {
-        _progressBar    = [aCoder decodeObjectForKey:@"_progressBar"];
+        _levelIndicator = [aCoder decodeObjectForKey:@"_levelIndicator"];
         _nameLabel      = [aCoder decodeObjectForKey:@"_nameLabel"];
         _usedLabel      = [aCoder decodeObjectForKey:@"_usedLabel"];
         _availableLabel = [aCoder decodeObjectForKey:@"_availableLabel"];
@@ -141,7 +149,7 @@
     [super encodeWithCoder:aCoder];
 
     [aCoder encodeObject:_nameLabel forKey:@"_nameLabel"];
-    [aCoder encodeObject:_progressBar forKey:@"_progressBar"];
+    [aCoder encodeObject:_levelIndicator forKey:@"_levelIndicator"];
     [aCoder encodeObject:_usedLabel forKey:@"_usedLabel"];
     [aCoder encodeObject:_availableLabel forKey:@"_availableLabel"];
 }
