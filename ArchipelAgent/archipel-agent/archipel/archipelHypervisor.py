@@ -844,7 +844,10 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready-to-send IQ containing the results
         """
         try:
-            network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
+            if self.configuration.has_option("GLOBAL", "migration_uri"):
+                network_libvirt_uri = self.configuration.get("GLOBAL", "migration_uri")
+            else:
+                network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
             reply = iq.buildReply("result")
             reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri)
         except Exception as ex:
