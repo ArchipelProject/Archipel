@@ -37,7 +37,6 @@ fail.
 import libvirt
 import os
 import shutil
-import sqlite3
 import thread
 import xmpp
 from threading import Timer
