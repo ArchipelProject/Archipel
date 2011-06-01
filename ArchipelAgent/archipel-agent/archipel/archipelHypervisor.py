@@ -607,6 +607,15 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         capp = xmpp.simplexml.NodeBuilder(data=self.libvirt_connection.getCapabilities()).getDom()
         return capp
 
+    def migration_libvirt_uri(self):
+        """
+        Return the libvirt URI
+        """
+        if self.configuration.has_option("GLOBAL", "migration_uri"):
+            return self.configuration.get("GLOBAL", "migration_uri")
+        else:
+            return self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
+
 
     ###  Hypervisor IQs
 
@@ -844,10 +853,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready-to-send IQ containing the results
         """
         try:
-            if self.configuration.has_option("GLOBAL", "migration_uri"):
-                network_libvirt_uri = self.configuration.get("GLOBAL", "migration_uri")
-            else:
-                network_libvirt_uri = self.local_libvirt_uri.replace("///", "//%s/" % self.ipaddr)
+            network_libvirt_uri = self.migration_libvirt_uri()
             reply = iq.buildReply("result")
             reply.getTag("query").addChild(name="uri", payload=network_libvirt_uri)
         except Exception as ex:
@@ -863,7 +869,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         @return: a ready to send Message containing the result of the action
         """
         try:
-            return "Sure, my libvirt URI is %s" % self.local_libvirt_uri.replace("///", "//%s/" % self.resource)
+            return "Sure, my libvirt URI is %s" % self.migration_libvirt_uri()
         except Exception as ex:
             return build_error_message(self, ex)
 
