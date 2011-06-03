@@ -83,9 +83,9 @@ def prepare_environment(prefix="", force=False, xmpp_server="auto", hypervisor_n
         conf_in = open("%s/archipel.conf" % conf_folder)
         conf_out = open("%s/etc/archipel/archipel.conf" % prefix, "w")
         uuidgen = str(uuid.uuid4())
-        if hypervisor_name == "default":
+        if hypervisor_name == "auto":
             hypervisor_name = gethostname()
-        if xmpp_server == "default":
+        if xmpp_server == "auto":
             xmpp_server = getfqdn()
         hypervisor_password = ''.join([choice(string.letters + string.digits) for i in xrange(8)])
         for line in conf_in:
@@ -129,8 +129,11 @@ def prepare_environment(prefix="", force=False, xmpp_server="auto", hypervisor_n
     print ""
     print "\033[32m[SUCCESS]\033[0m : installation initialization complete"
     print ""
-    print "\033[35m ** IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf top match your informations **\033[0m"
-    print "\033[35m ** IMPORTANT NOTE 2: if this is not already done, you need to run archipel-tagnode and archipel-rolesnode **\033[0m"
+    print "\033[35m ** IMPORTANT NOTE 1: you now need to edit /etc/archipel/archipel.conf top match your informations         **\033[0m"
+    print "\033[35m ** IMPORTANT NOTE 2: If you have used --name=auto and/or --xmpp-server=auto, please check these values    **\033[0m"
+    print "\033[35m **                   - xmpp_server                                                                        **\033[0m"
+    print "\033[35m **                   - hypervisor_xmpp_jid                                                                **\033[0m"
+    print "\033[35m ** IMPORTANT NOTE 3: if this is not already done, you need to run archipel-tagnode and archipel-rolesnode **\033[0m"
     print ""
 
 
