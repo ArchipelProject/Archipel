@@ -124,7 +124,6 @@
 */
 - (IBAction)addGroup:(id)aSender
 {
-    alert("PIF " + [newGroupName stringValue] + "sender " + aSender);
     if ([newGroupName stringValue] == "")
     {
         [TNAlert showAlertWithMessage:CPLocalizedString(@"Group addition error", @"Group addition error")
