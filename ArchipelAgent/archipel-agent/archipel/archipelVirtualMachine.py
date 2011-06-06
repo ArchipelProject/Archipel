@@ -106,8 +106,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.domain                     = None
         self.definition                 = None
         self.uuid                       = self.jid.getNode()
-        self.vm_disk_base_path          = self.configuration.get("VIRTUALMACHINE", "vm_base_path") + "/"
-        self.folder                     = self.vm_disk_base_path + self.uuid
+        self.vm_disk_base_path          = self.configuration.get("VIRTUALMACHINE", "vm_base_path")
+        self.folder                     = "%s/%s" % (self.vm_disk_base_path, self.uuid)
         self.locked                     = False
         self.lock_timer                 = None
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
@@ -115,6 +115,13 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.libvirt_event_callback_id  = None
         self.entity_type                = "virtualmachine"
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
+
+        if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
+	    self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
+	else:
+            self.vm_perm_base_path  = self.vm_disk_base_path
+        
+	self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
 
         self.connect_libvirt()
 
@@ -129,8 +136,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if not os.path.isdir(self.folder):
             os.makedirs(self.folder)
 
+        
         # permissions
-        self.permission_db_file = self.folder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
+        if not os.path.isdir(self.permfolder):
+            os.makedirs(self.permfolder)
+
+        self.permission_db_file = self.permfolder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
         permission_admin_names  = self.configuration.get("GLOBAL", "archipel_root_admins").split()
         self.permission_center  = TNArchipelPermissionCenter(self.permission_db_file, permission_admin_names)
         self.init_permissions()
@@ -281,6 +292,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         Remove the folder of the virtual with all its contents.
         """
         shutil.rmtree(self.folder)
+        shutil.rmtree(self.permfolder)
 
     def set_automatic_libvirt_description(self, xmldesc):
         """
