@@ -121,7 +121,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         else:
             self.vm_perm_base_path  = self.vm_disk_base_path
         
-self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
+        self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
 
         self.connect_libvirt()
 
