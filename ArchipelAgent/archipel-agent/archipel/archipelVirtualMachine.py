@@ -141,7 +141,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if not os.path.isdir(self.permfolder):
             os.makedirs(self.permfolder)
 
-        self.permission_db_file = self.permfolder + "/" + self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path")
+        self.permission_db_file = "%s/%s" % (self.permfolder, self.configuration.get("VIRTUALMACHINE", "vm_permissions_database_path"))
         permission_admin_names  = self.configuration.get("GLOBAL", "archipel_root_admins").split()
         self.permission_center  = TNArchipelPermissionCenter(self.permission_db_file, permission_admin_names)
         self.init_permissions()
