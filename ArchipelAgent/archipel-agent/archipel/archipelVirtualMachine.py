@@ -117,11 +117,11 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.default_avatar             = self.configuration.get("VIRTUALMACHINE", "vm_default_avatar")
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
-	    self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
-	else:
+            self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
+        else:
             self.vm_perm_base_path  = self.vm_disk_base_path
         
-	self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
+self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
 
         self.connect_libvirt()
 
