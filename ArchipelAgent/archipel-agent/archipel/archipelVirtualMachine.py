@@ -108,6 +108,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         self.uuid                       = self.jid.getNode()
         self.vm_disk_base_path          = self.configuration.get("VIRTUALMACHINE", "vm_base_path")
         self.folder                     = "%s/%s" % (self.vm_disk_base_path, self.uuid)
+        self.vm_perm_base_path          = self.vm_disk_base_path
         self.locked                     = False
         self.lock_timer                 = None
         self.maximum_lock_time          = self.configuration.getint("VIRTUALMACHINE", "maximum_lock_time")
@@ -118,9 +119,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
 
         if self.configuration.has_option("VIRTUALMACHINE", "vm_perm_path"):
             self.vm_perm_base_path  = self.configuration.get("VIRTUALMACHINE", "vm_perm_path")
-        else:
-            self.vm_perm_base_path  = self.vm_disk_base_path
-        
         self.permfolder = "%s/%s" % (self.vm_perm_base_path, self.uuid)
 
         self.connect_libvirt()
@@ -136,7 +134,6 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if not os.path.isdir(self.folder):
             os.makedirs(self.folder)
 
-        
         # permissions
         if not os.path.isdir(self.permfolder):
             os.makedirs(self.permfolder)
