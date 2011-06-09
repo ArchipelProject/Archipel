@@ -536,7 +536,7 @@ class TNArchipelEntity (object):
 
     ### XMPP Utilities
 
-    def change_presence(self, presence_show=None, presence_status=None):
+    def change_presence(self, presence_show=None, presence_status=None, callback=None):
         """
         Change the presence of the entity.
         @type presence_show: string
@@ -544,11 +544,16 @@ class TNArchipelEntity (object):
         @type presence_status: string
         @param presence_status: the value of the XMPP status
         """
-        self.xmppstatus     = presence_status
-        self.xmppstatusshow = presence_show
-        self.log.info("status change: %s show:%s" % (self.xmppstatus, self.xmppstatusshow))
-        pres = xmpp.Presence(status=self.xmppstatus, show=self.xmppstatusshow)
-        self.xmppclient.send(pres)
+        self.log.info("status change: %s show:%s" % (presence_status, presence_show))
+        pres = xmpp.Presence(status=presence_status, show=presence_show)
+
+        def presence_callback(conn, resp):
+            self.xmppstatus     = presence_status
+            self.xmppstatusshow = presence_show
+            if callback:
+                callback(conn, resp)
+
+        self.xmppclient.SendAndCallForResponse(stanza=pres, func=presence_callback)
 
     def change_status(self, presence_status):
         """
