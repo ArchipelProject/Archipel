@@ -255,13 +255,29 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 
     CPLog.info(@"PUSH NOTIFICATION: from: " + sender + ", type: " + type + ", change: " + change);
 
-    if (change == @"applianceinstalled")
+    switch (change)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Appliance is installed"];
-    }
+        case @"packaging":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Packaging started."];
+            break;
 
-    if ((change != "applianceunpacking") && (change != "applianceunpacked") && (change != @"appliancecopying"))
-        [self getInstalledAppliances];
+        case @"packagingerror":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Unable to create package. Check agent logs" icon:TNGrowlIconError];
+            break;
+
+        case @"packaged":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Packaging successful."];
+            [self getInstalledAppliances];
+            break
+
+        case @"applianceinstalled":
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Appliance is installed."];
+            [self getInstalledAppliances];
+            break;
+
+        default:
+            [self getInstalledAppliances];
+    }
 
     return YES;
 }
@@ -535,14 +551,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (BOOL)_didPackageAppliance:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
-    {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Virtual machine has been packaged"];
-    }
-    else
-    {
+    if ([aStanza type] != @"result")
         [self handleIqErrorFromStanza:aStanza];
-    }
 
     return NO;
 }
