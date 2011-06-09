@@ -55,6 +55,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     @outlet CPButtonBar                 buttonBarControl;
     @outlet CPSearchField               fieldFilterAppliance;
     @outlet CPTextField                 fieldNewApplianceName;
+    @outlet CPCheckBox                  checkBoxShouldGZIP;
     @outlet CPView                      viewTableContainer;
     @outlet CPWindow                    windowNewAppliance;
     @outlet TNUIKitScrollView           mainScrollView;
@@ -289,6 +290,7 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 - (IBAction)openNewApplianceWindow:(id)aSender
 {
     [fieldNewApplianceName setStringValue:[CPString UUID]];
+    [checkBoxShouldGZIP setState:CPOnState];
     [windowNewAppliance center];
     [windowNewAppliance makeFirstResponder:fieldNewApplianceName];
     [windowNewAppliance makeKeyAndOrderFront:nil];
@@ -513,13 +515,15 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
          return;
     }
 
-    var stanza  = [TNStropheStanza iqWithType:@"get"],
-        name    = [fieldNewApplianceName stringValue];
+    var stanza      = [TNStropheStanza iqWithType:@"get"],
+        name        = [fieldNewApplianceName stringValue],
+        shouldGZIP  = [checkBoxShouldGZIP state] == CPOnState ? "True" : "False";
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineVMCasting}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineVMCastingPackage,
-        "name": name}];
+        "name": name,
+        "gzip": shouldGZIP}];
 
     [_entity sendStanza:stanza andRegisterSelector:@selector(_didPackageAppliance:) ofObject:self];
 

@@ -284,9 +284,20 @@ class TNVMApplianceManager (TNArchipelPlugin):
                 raise Exception("Virtual machine is already installing a package.")
             if not self.entity.definition:
                 raise Exception("Virtual machine is not defined.")
-            disk_nodes      = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
-            package_name    = iq.getTag("query").getTag("archipel").getAttr("name")
-            paths           = []
+            disk_nodes          = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
+            package_name        = iq.getTag("query").getTag("archipel").getAttr("name")
+            package_should_gzip = iq.getTag("query").getTag("archipel").getAttr("gzip")
+
+            if package_should_gzip:
+                package_should_gzip = package_should_gzip.lower() in ["true", "1", "y", "yes"];
+
+            conf_should_gzip    = self.configuration.getboolean("VMCASTING", "should_gzip_drives")
+            conf_force_gzip     = self.configuration.getboolean("VMCASTING", "ignore_user_gzip_choice")
+
+            if  package_should_gzip == None or conf_force_gzip:
+                package_should_gzip = conf_should_gzip
+
+            paths = []
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
                 self.entity.log.error(self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. Aborting.")
                 raise Exception("Appliance with name %s is already in hypervisor repository." % package_name)
@@ -307,7 +318,7 @@ class TNVMApplianceManager (TNArchipelPlugin):
             ## create directories if needed
             if not os.path.exists(working_dir):
                 os.makedirs(working_dir)
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity)
+            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity, package_should_gzip)
             self.is_installing = True
             self.entity.push_change("vmcasting", "packaging")
             compressor.start()

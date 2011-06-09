@@ -30,7 +30,7 @@ from threading import Thread
 
 class TNApplianceCompresser (Thread):
 
-    def __init__(self, name, paths, xml_definition, xml_snapshots, working_dir, vm_dir, hypervisor_repo_path, callback, entity):
+    def __init__(self, name, paths, xml_definition, xml_snapshots, working_dir, vm_dir, hypervisor_repo_path, callback, entity, should_gzip=False):
         """
         Initialize a TNApplianceCompresser.
         @type name: string
@@ -49,6 +49,10 @@ class TNApplianceCompresser (Thread):
         @param hypervisor_repo_path: the path for the hypervisor repository
         @type callback: function
         @param callback: called when compression is done
+        @type entity: TNArchipelEntity
+        @param entity: The requester virtual machine
+        @type should_gzip: Boolean
+        @param should_gzip: if set to False, TNApplianceCompresser will not gzip drives (faster but bigger)
         """
         Thread.__init__(self)
         self.name                   = name.replace(" ", "_").replace("/", "_").replace("\\", "_").replace("..", "_")
@@ -60,6 +64,7 @@ class TNApplianceCompresser (Thread):
         self.working_dir            = tempfile.mkdtemp(dir=working_dir)
         self.hypervisor_repo_path   = hypervisor_repo_path
         self.entity                 = entity
+        self.should_gzip            = should_gzip
         self.entity.log.debug("TNApplianceCompresser: working temp dir is: %s" % self.working_dir)
 
     def run(self):
@@ -78,6 +83,7 @@ class TNApplianceCompresser (Thread):
         f.close()
         tar.add(self.working_dir + "/description.xml", "/description.xml")
         os.unlink(self.working_dir + "/description.xml")
+
         for i, snapshot in enumerate(self.xml_snapshots):
             snapshotXML = str(snapshot).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
             descName = "/snapshot-%d.xml" % i
@@ -87,18 +93,28 @@ class TNApplianceCompresser (Thread):
             f.close()
             tar.add(descPath, descName)
             os.unlink(descPath)
-        zipped_file_paths = []
+
+        drives_paths = []
         for path in self.paths:
+            if not os.path.exists(path):
+                self.entity.log.warning("TNApplianceCompresser: path %s is in description but is not found. ignored" % path)
+                continue
             self.entity.log.info("TNApplianceCompresser: zipping file %s" % path)
-            zipped_file_path = self.compress_disk(path)
-            definitionXML = definitionXML.replace(path, zipped_file_path.split('/')[-1])
-            zipped_file_paths.append(zipped_file_path)
-            self.entity.log.info("TNApplianceCompresser: file zipped %s" % zipped_file_path)
-        for zipped_file_path in zipped_file_paths:
-            self.entity.log.info("TNApplianceCompresser: adding to tar file %s" % zipped_file_path)
-            tar.add(zipped_file_path, "/" + zipped_file_path.split("/")[-1])
-            os.unlink(zipped_file_path)
+            if self.should_gzip:
+                drive_path = self.compress_disk(path)
+            else:
+                drive_path = path
+            definitionXML = definitionXML.replace(path, drive_path.split('/')[-1])
+            drives_paths.append(drive_path)
+            self.entity.log.info("TNApplianceCompresser: file zipped %s" % drive_path)
+
+        for drive_path in drives_paths:
+            self.entity.log.info("TNApplianceCompresser: adding to tar file %s" % drive_path)
+            tar.add(drive_path, "/" + drive_path.split("/")[-1])
+            if self.should_gzip:
+                os.unlink(drive_path)
         tar.close()
+
         self.entity.log.info("TNApplianceCompresser: moving the tar file %s to repo %s" % (tar_file, self.hypervisor_repo_path))
         shutil.move(tar_file, self.hypervisor_repo_path)
         self.entity.log.info("TNApplianceCompresser: cleaning the working temp dir")
