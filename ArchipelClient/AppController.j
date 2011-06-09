@@ -51,6 +51,7 @@
 @import "Controllers/TNGroupsController.j"
 @import "Controllers/TNHintController.j"
 @import "Controllers/TNModuleController.j"
+@import "Controllers/TNNotificationHistoryController.j"
 @import "Controllers/TNPermissionsCenter.j"
 @import "Controllers/TNPreferencesController.j"
 @import "Controllers/TNPropertiesController.j"
@@ -137,65 +138,66 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 @implementation AppController : CPObject
 {
-    @outlet CPButtonBar             buttonBarLeft;
-    @outlet CPImageView             imageViewLogoAbout;
-    @outlet CPImageView             ledIn;
-    @outlet CPImageView             ledOut;
-    @outlet CPProgressIndicator     progressIndicatorModulesLoading;
-    @outlet CPSplitView             splitViewHorizontalRoster;
-    @outlet CPSplitView             splitViewMain;
-    @outlet CPSplitView             splitViewTagsContents;
-    @outlet CPTextField             labelCurrentUser;
-    @outlet CPTextField             textFieldAboutVersion;
-    @outlet CPView                  filterView;
-    @outlet CPView                  rightView;
-    @outlet CPView                  statusBar;
-    @outlet CPView                  viewAboutWindowLogoContainer;
-    @outlet CPView                  viewRosterMask;
-    @outlet CPWebView               helpView;
-    @outlet CPWebView               webViewAboutCredits;
-    @outlet CPWindow                theWindow;
-    @outlet CPWindow                windowAboutArchipel;
-    @outlet TNAvatarController      avatarController;
-    @outlet TNConnectionController  connectionController;
-    @outlet TNContactsController    contactsController;
-    @outlet TNFlipView              leftView;
-    @outlet TNGroupsController      groupsController;
-    @outlet TNHintController        hintController;
-    @outlet TNModuleController      moduleController;
-    @outlet TNPreferencesController preferencesController;
-    @outlet TNPropertiesController  propertiesController;
-    @outlet TNSearchField           filterField;
-    @outlet TNTagsController        tagsController;
-    @outlet TNUpdateController      updateController;
-    @outlet TNUserAvatarController  userAvatarController;
+    @outlet CPButtonBar                         buttonBarLeft;
+    @outlet CPImageView                         imageViewLogoAbout;
+    @outlet CPImageView                         ledIn;
+    @outlet CPImageView                         ledOut;
+    @outlet CPProgressIndicator                 progressIndicatorModulesLoading;
+    @outlet CPSplitView                         splitViewHorizontalRoster;
+    @outlet CPSplitView                         splitViewMain;
+    @outlet CPSplitView                         splitViewTagsContents;
+    @outlet CPTextField                         labelCurrentUser;
+    @outlet CPTextField                         textFieldAboutVersion;
+    @outlet CPView                              filterView;
+    @outlet CPView                              rightView;
+    @outlet CPView                              statusBar;
+    @outlet CPView                              viewAboutWindowLogoContainer;
+    @outlet CPView                              viewRosterMask;
+    @outlet CPWebView                           helpView;
+    @outlet CPWebView                           webViewAboutCredits;
+    @outlet CPWindow                            theWindow;
+    @outlet CPWindow                            windowAboutArchipel;
+    @outlet TNAvatarController                  avatarController;
+    @outlet TNConnectionController              connectionController;
+    @outlet TNContactsController                contactsController;
+    @outlet TNFlipView                          leftView;
+    @outlet TNGroupsController                  groupsController;
+    @outlet TNHintController                    hintController;
+    @outlet TNModuleController                  moduleController;
+    @outlet TNPreferencesController             preferencesController;
+    @outlet TNPropertiesController              propertiesController;
+    @outlet TNSearchField                       filterField;
+    @outlet TNTagsController                    tagsController;
+    @outlet TNUpdateController                  updateController;
+    @outlet TNUserAvatarController              userAvatarController;
+    @outlet TNNotificationHistoryController     notificationHistoryController;
 
-    BOOL                            _shouldShowHelpView;
-    BOOL                            _tagsVisible;
-    CPButton                        _hideButton;
-    CPButton                        _userAvatarButton;
-    CPImage                         _hideButtonImageDisable;
-    CPImage                         _hideButtonImageEnable;
-    CPImage                         _imageLedInData;
-    CPImage                         _imageLedNoData;
-    CPImage                         _imageLedOutData;
-    CPMenu                          _mainMenu;
-    CPMenu                          _modulesMenu;
-    CPPlatformWindow                _platformHelpWindow;
-    TNUIKitScrollView              _outlineScrollView;
-    CPTextField                     _rightViewTextField;
-    CPTimer                         _ledInTimer;
-    CPTimer                         _ledOutTimer;
-    CPTimer                         _moduleLoadingDelay;
-    CPWindow                        _helpWindow;
-    int                             _tempNumberOfReadyModules;
-    TNiTunesTabView                 _moduleTabView;
-    TNOutlineViewRoster             _rosterOutlineView;
-    TNPubSubController              _pubSubController;
-    TNRosterDataViewContact         _rosterDataViewForContacts;
-    TNRosterDataViewGroup           _rosterDataViewForGroups;
-    TNToolbar                       _mainToolbar;
-    TNViewHypervisorControl         _currentRightViewContent;
+    BOOL                                        _shouldShowHelpView;
+    BOOL                                        _tagsVisible;
+    CPButton                                    _hideButton;
+    CPButton                                    _userAvatarButton;
+    CPImage                                     _hideButtonImageDisable;
+    CPImage                                     _hideButtonImageEnable;
+    CPImage                                     _imageLedInData;
+    CPImage                                     _imageLedNoData;
+    CPImage                                     _imageLedOutData;
+    CPMenu                                      _mainMenu;
+    CPMenu                                      _modulesMenu;
+    CPPlatformWindow                            _platformHelpWindow;
+    TNUIKitScrollView                           _outlineScrollView;
+    CPTextField                                 _rightViewTextField;
+    CPTimer                                     _ledInTimer;
+    CPTimer                                     _ledOutTimer;
+    CPTimer                                     _moduleLoadingDelay;
+    CPWindow                                    _helpWindow;
+    int                                         _tempNumberOfReadyModules;
+    TNiTunesTabView                             _moduleTabView;
+    TNOutlineViewRoster                         _rosterOutlineView;
+    TNPubSubController                          _pubSubController;
+    TNRosterDataViewContact                     _rosterDataViewForContacts;
+    TNRosterDataViewGroup                       _rosterDataViewForGroups;
+    TNToolbar                                   _mainToolbar;
+    TNViewHypervisorControl                     _currentRightViewContent;
 }
 
 
@@ -466,6 +468,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:CPLocalizedString(@"Preferences", @"Preferences") action:@selector(showPreferencesWindow:) keyEquivalent:@","];
+    [archipelMenu addItem:[CPMenuItem separatorItem]];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"Notifications", @"Notification") action:@selector(showNotificationWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:CPLocalizedString(@"Log out", @"Log out") action:@selector(logout:) keyEquivalent:@"Q"];
     [archipelMenu addItemWithTitle:CPLocalizedString(@"Quit", @"Quit") action:nil keyEquivalent:@""];
@@ -1171,6 +1175,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (IBAction)showPreferencesWindow:(id)sender
 {
     [preferencesController showWindow:sender];
+}
+
+/*! shows the Notification history window
+    @param the sender of the action
+*/
+- (IBAction)showNotificationWindow:(id)aSender
+{
+    [notificationHistoryController showWindow:aSender];
 }
 
 

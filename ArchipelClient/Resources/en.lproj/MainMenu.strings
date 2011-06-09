@@ -365,3 +365,42 @@
 /* Class = "NSBox"; title = "Box"; ObjectID = "1376"; */
 "1376.title" = "Box";
 
+/* Class = "NSWindow"; title = "Notification History"; ObjectID = "1400"; */
+"1400.title" = "Notification History";
+
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "1408"; */
+"1408.headerCell.title" = "Title";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1409"; */
+"1409.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1410"; */
+"1410.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Message"; ObjectID = "1413"; */
+"1413.headerCell.title" = "Message";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1414"; */
+"1414.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Date"; ObjectID = "1415"; */
+"1415.headerCell.title" = "Date";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1416"; */
+"1416.title" = "Text Cell";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1427"; */
+"1427.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Clean"; ObjectID = "1432"; */
+"1432.title" = "Clean";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "1433"; */
+"1433.title" = "Close";
+
+/* Class = "NSTextFieldCell"; title = "Notifications history"; ObjectID = "1440"; */
+"1440.title" = "Notifications history";
+
+/* Class = "NSTextFieldCell"; title = "This table lists all the previous notification displayed during the current session."; ObjectID = "1442"; */
+"1442.title" = "This table lists all the previous notification displayed during the current session.";
+

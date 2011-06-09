@@ -124,6 +124,8 @@
 	<string>Modules</string>
 	<key>Navigation</key>
 	<string>Navigation</string>
+	<key>Notifications</key>
+	<string>Notifications</string>
 	<key>Paste</key>
 	<string>Paste</string>
 	<key>Preferences</key>
