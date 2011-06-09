@@ -597,6 +597,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         _numberOfActiveModules      = 0;
         _allModulesReady            = NO;
 
+        [_infoTextField setStringValue:@""];
         [self _removeAllTabsFromModulesTabView];
         [self _populateModulesTabView];
     }
