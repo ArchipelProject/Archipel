@@ -116,35 +116,48 @@ class TNVMApplianceManager (TNArchipelPlugin):
         """
         Used as callback for TNApplianceDecompresser.
         """
+        def presence_callback(conn, resp):
+            self.entity.push_change("vmcasting", "applianceinstalled")
+            self.entity.change_status("Off")
+            self.entity.shout("appliance", "I've terminated to install from applicance.")
         self.is_installed = True
         self.is_installing = False
         self.installing_media_uuid = None
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceinstalled")
-        self.entity.change_status("Off")
-        self.entity.shout("appliance", "I've terminated to install from applicance.")
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status, callback=presence_callback)
 
     def error_installing(self, exception):
         """
         Used as callback for TNApplianceDecompresser.
         """
+        def presence_callback(conn, resp):
+            self.entity.push_change("vmcasting", "applianceerror")
+            self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
         self.is_installed = False
         self.is_installing = False
         self.installing_media_uuid = None
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
-        self.entity.push_change("vmcasting", "applianceerror")
-        self.entity.change_status("Cannot install appliance")
-        self.entity.shout("appliance", "Cannot install appliance: %s" % str(exception))
+        self.entity.change_presence(presence_show=self.old_show, presence_status="Cannot install appliance", callback=presence_callback)
 
     def finish_packaging(self):
         """
         Used as callback for TNApplianceCompresser.
         """
+        def presence_callback(conn, resp):
+            self.entity.push_change("vmcasting", "packaged")
         self.is_installing = False
-        self.entity.push_change("vmcasting", "packaged")
         hypervisor_vmcast_plugin = self.entity.hypervisor.get_plugin("hypervisor_vmcasts")
         hypervisor_vmcast_plugin.parse_own_repo(loop=False)
-        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status)
+        self.entity.change_presence(presence_show=self.old_show, presence_status=self.old_status, callback=presence_callback)
+
+    def error_packaging(self, exception):
+        """
+        Used as callback for TNApplianceCompresser.
+        """
+        def presence_callback(conn, resp):
+            self.entity.push_change("vmcasting", "packagingerror")
+            self.entity.shout("appliance", "Cannot package virtual machine: %s" % str(exception))
+        self.is_installing = False
+        self.entity.change_presence(presence_show=self.old_show, presence_status="Cannot package appliance", callback=presence_callback)
+
 
 
     ### XMPP Processing
@@ -239,8 +252,8 @@ class TNVMApplianceManager (TNArchipelPlugin):
             self.entity.log.debug("Supported extensions : %s " % str(self.disks_extensions))
             self.entity.log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
             appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, self.error_installing, uuid, requester)
-            self.old_status  = self.entity.xmppstatus
-            self.old_show    = self.entity.xmppstatusshow
+            self.old_status = self.entity.xmppstatus
+            self.old_show = self.entity.xmppstatusshow
             self.entity.change_presence(presence_show="dnd", presence_status="Installing from appliance...")
             self.is_installing = True
             self.installing_media_uuid = uuid
@@ -284,15 +297,16 @@ class TNVMApplianceManager (TNArchipelPlugin):
                 raise Exception("Virtual machine is already installing a package.")
             if not self.entity.definition:
                 raise Exception("Virtual machine is not defined.")
-            disk_nodes          = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
-            package_name        = iq.getTag("query").getTag("archipel").getAttr("name")
+
+            disk_nodes = self.entity.definition.getTag('devices').getTags('disk', attrs={'type': 'file'})
+            package_name = iq.getTag("query").getTag("archipel").getAttr("name")
             package_should_gzip = iq.getTag("query").getTag("archipel").getAttr("gzip")
 
             if package_should_gzip:
                 package_should_gzip = package_should_gzip.lower() in ["true", "1", "y", "yes"];
 
-            conf_should_gzip    = self.configuration.getboolean("VMCASTING", "should_gzip_drives")
-            conf_force_gzip     = self.configuration.getboolean("VMCASTING", "ignore_user_gzip_choice")
+            conf_should_gzip = self.configuration.getboolean("VMCASTING", "should_gzip_drives")
+            conf_force_gzip = self.configuration.getboolean("VMCASTING", "ignore_user_gzip_choice")
 
             if  package_should_gzip == None or conf_force_gzip:
                 package_should_gzip = conf_should_gzip
@@ -301,27 +315,35 @@ class TNVMApplianceManager (TNArchipelPlugin):
             if os.path.exists(self.hypervisor_repo_path + "/" + package_name + ".xvm2"):
                 self.entity.log.error(self.hypervisor_repo_path + "/" + package_name + ".xvm2 already exists. Aborting.")
                 raise Exception("Appliance with name %s is already in hypervisor repository." % package_name)
-            self.old_status  = self.entity.xmppstatus
-            self.old_show    = self.entity.xmppstatusshow
-            self.entity.change_presence(presence_show="dnd", presence_status="Packaging myself...")
-            for disk_node in disk_nodes:
-                path = disk_node.getTag('source').getAttr('file')
-                paths.append(path)
-            snapshots = []
-            if self.entity.domain.hasCurrentSnapshot(0):
-                snapshot_names = self.entity.domain.snapshotListNames(0)
-                for snapshot_name in snapshot_names:
-                    snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
-                    desc = snapshotObject.getXMLDesc(0)
-                    snapshots.append(desc)
-            working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
-            ## create directories if needed
-            if not os.path.exists(working_dir):
-                os.makedirs(working_dir)
-            compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir, self.entity.folder, self.hypervisor_repo_path, self.finish_packaging, self.entity, package_should_gzip)
-            self.is_installing = True
+
             self.entity.push_change("vmcasting", "packaging")
-            compressor.start()
+            self.old_status = self.entity.xmppstatus
+            self.old_show = self.entity.xmppstatusshow
+
+            def perform_packaging(conn, resp):
+                for disk_node in disk_nodes:
+                    path = disk_node.getTag('source').getAttr('file')
+                    paths.append(path)
+
+                snapshots = []
+                if self.entity.domain.hasCurrentSnapshot(0):
+                    snapshot_names = self.entity.domain.snapshotListNames(0)
+                    for snapshot_name in snapshot_names:
+                        snapshotObject = self.entity.domain.snapshotLookupByName(snapshot_name, 0)
+                        desc = snapshotObject.getXMLDesc(0)
+                        snapshots.append(desc)
+                working_dir = self.entity.configuration.get("VMCASTING", "temp_path")
+                ## create directories if needed
+                if not os.path.exists(working_dir):
+                    os.makedirs(working_dir)
+                compressor = appliancecompresser.TNApplianceCompresser(package_name, paths, self.entity.definition, snapshots, working_dir,
+                                                                        self.entity.folder, self.hypervisor_repo_path, self.finish_packaging,
+                                                                        self.error_packaging, self.entity, package_should_gzip)
+                self.is_installing = True
+                compressor.start()
+
+            self.entity.change_presence(presence_show="dnd", presence_status="Packaging myself...", callback=perform_packaging)
+
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_PACKAGE)
         return reply
