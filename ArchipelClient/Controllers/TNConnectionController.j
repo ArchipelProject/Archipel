@@ -192,15 +192,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
     [[CPUserDefaults standardUserDefaults] setObject:_credentialsHistory forKey:@"TNArchipelBOSHCredentialHistory"];
 }
 
-/*! will handle the clear after user logout
-*/
-- (void)userLogout
-{
-    [JID setStringValue:nil];
-    [password setStringValue:nil];
-    [credentialRemember setOn:YES animated:YES sendAction:YES];
-}
-
 
 #pragma mark -
 #pragma mark Actions
@@ -421,7 +412,6 @@ TNConnectionControllerConnectionStarted         = @"TNConnectionControllerConnec
 */
 - (void)onStropheDisconnected:(TNStropheIMClient)aStropheClient
 {
-    [[CPUserDefaults standardUserDefaults] setBool:NO forKey:@"TNArchipelBOSHRememberCredentials"];
     [spinning setHidden:YES];
     [connectButton setEnabled:YES];
     [connectButton setTitle:CPLocalizedString(@"connect", @"connect")];

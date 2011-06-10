@@ -225,7 +225,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"registering for notification TNStropheConnectionSuccessNotification");
     [center addObserver:self selector:@selector(loginStrophe:) name:TNStropheConnectionStatusConnected object:nil];
     CPLog.trace(@"registering for notification TNStropheDisconnectionNotification");
-    [center addObserver:self selector:@selector(logoutStrophe:) name:TNStropheConnectionStatusDisconnecting object:nil];
+    [center addObserver:self selector:@selector(XMPPDisconnecting:) name:TNStropheConnectionStatusDisconnecting object:nil];
+    CPLog.trace(@"registering for notification TNStropheConnectionStatusDisconnected");
+    [center addObserver:self selector:@selector(XMPPDisconnected:) name:TNStropheConnectionStatusDisconnected object:nil];
     CPLog.trace(@"registering for notification CPApplicationWillTerminateNotification");
     [center addObserver:self selector:@selector(onApplicationTerminate:) name:CPApplicationWillTerminateNotification object:nil];
     CPLog.trace(@"registering for notification TNStropheContactMessageReceivedNotification");
@@ -787,8 +789,18 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     will be performed on logout
     @param aNotification the received notification. This notification will contains as object the TNStropheConnection
 */
-- (void)logoutStrophe:(CPNotification)aNotification
+- (void)XMPPDisconnecting:(CPNotification)aNotification
 {
+    CPLog.info("disconnecting...");
+}
+
+/*! Notification responder of TNStropheConnection
+    will be performed on logout
+    @param aNotification the received notification. This notification will contains as object the TNStropheConnection
+*/
+- (void)XMPPDisconnected:(CPNotification)aNotification
+{
+    CPLog.info("Successfuly disconnected.");
     [theWindow close];
     [connectionController showWindow:nil];
     [labelCurrentUser setStringValue:@""];
@@ -971,9 +983,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (IBAction)logout:(id)sender
 {
     var defaults = [CPUserDefaults standardUserDefaults];
-
-    [connectionController userLogout];
-
     CPLog.info(@"starting to disconnect");
     [[TNStropheIMClient defaultClient] disconnect];
 }
