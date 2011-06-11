@@ -288,8 +288,10 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         """
         Remove the folder of the virtual with all its contents.
         """
-        shutil.rmtree(self.folder)
-        shutil.rmtree(self.permfolder)
+        if os.path.exists(self.folder):
+            shutil.rmtree(self.folder)
+        if os.path.exists(self.permfolder):
+            shutil.rmtree(self.permfolder)
 
     def set_automatic_libvirt_description(self, xmldesc):
         """
