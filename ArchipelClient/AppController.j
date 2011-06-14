@@ -1540,8 +1540,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)moduleLoader:(TNModuleController)aLoader loadedBundle:(CPBundle)aBundle progress:(float)percent
 {
+    var defaults = [CPUserDefaults standardUserDefaults],
+        moduleLabel = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
+
+    if ([moduleLabel isKindOfClass:CPDictionary] && [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"])
+        moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewRosterMask viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"]];
+    [[viewRosterMask viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded

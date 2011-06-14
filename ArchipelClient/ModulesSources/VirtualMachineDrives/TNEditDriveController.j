@@ -57,8 +57,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonEditDiskFormat removeAllItems];
     [buttonEditDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
 
-    [fieldEditDiskName setToolTip:@"Set the name of the virtual drive"];
-    [buttonEditDiskFormat setToolTip:@"Choose the format of the virtual drive"];
+    [fieldEditDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the virtual drive", @"Set the name of the virtual drive")];
+    [buttonEditDiskFormat setToolTip:CPBundleLocalizedString(@"Choose the format of the virtual drive", @"Choose the format of the virtual drive")];
 }
 
 
@@ -122,7 +122,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if (_currentEditedDisk && [_currentEditedDisk format] == [buttonEditDiskFormat title])
     {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must choose a different format"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You must choose a different format", @"You must choose a different format")];
         return;
     }
 
@@ -145,7 +146,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (BOOL)_didConvertDisk:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"Disk has been converted"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                         message:CPBundleLocalizedString(@"Disk has been converted", @"Disk has been converted")];
     else if ([aStanza type] == @"error")
         [self handleIqErrorFromStanza:aStanza];
 
@@ -158,7 +160,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if ([_delegate isActive])
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                         message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine") icon:TNGrowlIconError];
         return;
     }
 
@@ -189,7 +192,8 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 - (BOOL)_didRename:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"Disk has been renamed"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                         message:CPBundleLocalizedString(@"Disk has been renamed", @"Disk has been renamed")];
     else if ([aStanza type] == @"error")
         [self handleIqErrorFromStanza:aStanza];
 
@@ -197,3 +201,12 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNEditDriveController], comment);
+}
+

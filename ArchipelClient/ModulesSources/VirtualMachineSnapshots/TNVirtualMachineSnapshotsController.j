@@ -109,15 +109,15 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     [outlineColumn setWidth:16];
 
-    [[columnName headerView] setStringValue:@"UUID"];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"UUID", @"UUID")];
     [columnName setWidth:100];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
-    [[columnDescription headerView] setStringValue:@"Description"];
+    [[columnDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
     [columnDescription setWidth:400];
     [columnDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
 
-    [[columnCreationTime headerView] setStringValue:@"Creation date"];
+    [[columnCreationTime headerView] setStringValue:CPBundleLocalizedString(@"Creation date", @"Creation date")];
     [columnCreationTime setWidth:130];
     [columnCreationTime setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"creationTime" ascending:YES]];
 
@@ -145,29 +145,29 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     [_outlineViewSnapshots setDataSource:_datasourceSnapshots];
 
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Create new snapshot" action:@selector(openWindowNewSnapshot:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Delete" action:@selector(deleteSnapshot:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Restore" action:@selector(restoreSnapshot:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Create new snapshot", @"Create new snapshot") action:@selector(openWindowNewSnapshot:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteSnapshot:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Restore", @"Restore") action:@selector(restoreSnapshot:) keyEquivalent:@""];
     [_outlineViewSnapshots setMenu:menu];
 
     _plusButton = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-add.png"] size:CPSizeMake(14, 14)]];
     [_plusButton setAction:@selector(openWindowNewSnapshot:)];
-    [_plusButton setToolTip:@"Take a new snapshot"];
+    [_plusButton setToolTip:CPBundleLocalizedString(@"Take a new snapshot", @"Take a new snapshot")];
 
     _minusButton = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/photo-remove.png"] size:CPSizeMake(14, 14)]];
     [_minusButton setAction:@selector(deleteSnapshot:)];
-    [_minusButton setToolTip:@"Delete selected snapshot"];
+    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot")];
     [_minusButton setEnabled:NO];
 
     _revertButton = [CPButtonBar minusButton];
     [_revertButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/revert.png"] size:CPSizeMake(14, 14)]];
     [_revertButton setTarget:self];
     [_revertButton setAction:@selector(revertSnapshot:)];
-    [_revertButton setToolTip:@"Revert virtual machine to the state stored in selected snapshot"];
+    [_revertButton setToolTip:CPBundleLocalizedString(@"Revert virtual machine to the state stored in selected snapshot", @"Revert virtual machine to the state stored in selected snapshot")];
     [_revertButton setEnabled:NO];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _revertButton]];
@@ -228,10 +228,10 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Take a snapshot" action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Revert to selected drive" action:@selector(revertSnapshot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Take a snapshot", @"Take a snapshot") action:@selector(openWindowNewSnapshot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Revert to selected drive", @"Revert to selected drive") action:@selector(revertSnapshot:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Delete selected snapshot" action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected snapshot", @"Delete selected snapshot") action:@selector(deleteSnapshot:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -405,7 +405,7 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
     }
     else if ([aStanza type] == @"ignore")
     {
-        [fieldInfo setStringValue:@"There is no snapshot for this virtual machine"];
+        [fieldInfo setStringValue:CPBundleLocalizedString(@"There is no snapshot for this virtual machine", @"There is no snapshot for this virtual machine")];
         [self setModuleStatus:TNArchipelModuleStatusReady];
     }
     else if ([aStanza type] == @"error")
@@ -439,7 +439,6 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     [stanza addChildWithName:@"description"];
     [stanza addTextNode:[[fieldNewSnapshotDescription stringValue] stringByReplacingOccurrencesOfString:@"\n" withString:@""]];
-    //[stanza addTextNode:[fieldNewSnapshotDescription stringValue]];
     [stanza up];
 
     [self sendStanza:stanza andRegisterSelector:@selector(_didTakeSnapshot:)];
@@ -456,7 +455,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshoting sucessfull"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"Snapshoting sucessfull", @"Snapshoting sucessfull")];
     }
     else
     {
@@ -474,22 +474,26 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     if ([selectedIndexes count] > 1)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"You must select only one snapshot", @"You must select only one snapshot")
+                                                            icon:TNGrowlIconError];
 
         return;
     }
 
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"You must select one snapshot", @"You must select one snapshot")
+                                                            icon:TNGrowlIconError];
 
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Delete to snapshot"
-                                informative:@"Are you sure you want to destory this snapshot ? this is not reversible."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete to snapshot", @"Delete to snapshot")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to destory this snapshot ? this is not reversible.", @"Are you sure you want to destory this snapshot ? this is not reversible.")
                                  target:self
-                                 actions:[["Delete", @selector(performDeleteSnapshot:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Delete", @"Delete"), @selector(performDeleteSnapshot:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
 }
 
@@ -519,7 +523,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshot deleted"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"Snapshot deleted", @"Snapshot deleted")];
     }
     else if ([aStanza type] == @"error")
     {
@@ -535,15 +540,17 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([_outlineViewSnapshots numberOfSelectedRows] == 0)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"You must select one snapshot", @"You must select one snapshot")
+                                                            icon:TNGrowlIconError];
 
         return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Revert to snapshot"
-                                informative:@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Revert to snapshot", @"Revert to snapshot")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.", @"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.")
                                  target:self
-                                 actions:[["Revert", @selector(performRevertSnapshot:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Revert", @"Revert"), @selector(performRevertSnapshot:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
 }
 
@@ -556,7 +563,9 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 
     if ([selectedIndexes count] > 1)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"You must select only one snapshot" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"You must select only one snapshot", @"You must select only one snapshot")
+                                                            icon:TNGrowlIconError];
 
         return;
     }
@@ -579,7 +588,8 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Snapshot" message:@"Snapshot sucessfully reverted"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Snapshot", @"Snapshot")
+                                                         message:CPBundleLocalizedString(@"Snapshot sucessfully reverted", @"Snapshot sucessfully reverted")];
     }
     else
     {
@@ -630,3 +640,13 @@ var TNArchipelSnapshotsOpenedSnapshots          = @"TNArchipelSnapshotsOpenedSna
 }
 
 @end
+
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineSnapshotsController], comment);
+}
+

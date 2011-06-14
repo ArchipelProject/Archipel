@@ -1,0 +1,88 @@
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine controls"; ObjectID = "3"; */
+"3.title" = "Virtual machine controls";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "18"; */
+"18.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "You can move virtual machine to another hypervisor."; ObjectID = "23"; */
+"23.title" = "You can move virtual machine to another hypervisor.";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "24"; */
+"24.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "OOM adjust:"; ObjectID = "26"; */
+"26.title" = "OOM adjust:";
+
+/* Class = "NSTextFieldCell"; title = "Prevent OOM:"; ObjectID = "27"; */
+"27.title" = "Prevent OOM:";
+
+/* Class = "NSTextFieldCell"; title = "Auto start:"; ObjectID = "28"; */
+"28.title" = "Auto start:";
+
+/* Class = "NSTextFieldCell"; title = "Virtual CPUs:"; ObjectID = "29"; */
+"29.title" = "Virtual CPUs:";
+
+/* Class = "NSTextFieldCell"; title = "Memory:"; ObjectID = "30"; */
+"30.title" = "Memory:";
+
+/* Class = "NSTextFieldCell"; title = "Status:"; ObjectID = "31"; */
+"31.title" = "Status:";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "41"; */
+"41.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "OOM score:"; ObjectID = "43"; */
+"43.title" = "OOM score:";
+
+/* Class = "NSTextFieldCell"; title = "CPU time:"; ObjectID = "44"; */
+"44.title" = "CPU time:";
+
+/* Class = "NSTextFieldCell"; title = "Adjust memory:"; ObjectID = "45"; */
+"45.title" = "Adjust memory:";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "47"; */
+"47.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "0%"; ObjectID = "54"; */
+"54.title" = "0%";
+
+/* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "56"; */
+"56.title" = "100%";
+
+/* Class = "NSTextFieldCell"; title = "Live migration"; ObjectID = "62"; */
+"62.title" = "Live migration";
+
+/* Class = "NSTextFieldCell"; title = "..."; ObjectID = "64"; */
+"64.title" = "...";
+
+/* Class = "NSTextFieldCell"; title = "Kill the virtual machine"; ObjectID = "71"; */
+"71.title" = "Kill the virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Killing a virtual machine is definitive. It will be completely removed."; ObjectID = "73"; */
+"73.title" = "Killing a virtual machine is definitive. It will be completely removed.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine controls preferences"; ObjectID = "96"; */
+"96.title" = "Virtual machine controls preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for virtual machine controls module."; ObjectID = "97"; */
+"97.title" = "You can configure preferences for virtual machine controls module.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Maximum virtual CPUs"; ObjectID = "98"; */
+"98.placeholderString" = "Maximum virtual CPUs";
+
+/* Class = "NSTextFieldCell"; title = "Max number of CPUs:"; ObjectID = "101"; */
+"101.title" = "Max number of CPUs:";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is not defined."; ObjectID = "133"; */
+"133.title" = "Virtual machine is not defined.";
+
+/* Class = "NSTextFieldCell"; title = "You first need to define it using the \"definition\" tab."; ObjectID = "134"; */
+"134.title" = "You first need to define it using the \"definition\" tab.";
+
+/* Class = "NSButtonCell"; title = "Kill"; ObjectID = "139"; */
+"139.title" = "Kill";
+
+/* Class = "NSTextFieldCell"; title = "To enable live migration, you must start the virtual machine."; ObjectID = "143"; */
+"143.title" = "To enable live migration, you must start the virtual machine.";
+

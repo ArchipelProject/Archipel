@@ -1,0 +1,165 @@
+/* Adjust the maximum amout of memory of the VM (only when running) */
+"Adjust the maximum amout of memory of the VM (only when running)" = "Adjust the maximum amout of memory of the VM (only when running)";
+
+/* Adjust the number of virtual CPUs of the VM (only when running) */
+"Adjust the number of virtual CPUs of the VM (only when running)" = "Adjust the number of virtual CPUs of the VM (only when running)";
+
+/* Are you sure you want to migrate this virtual machine ? */
+"Are you sure you want to migrate this virtual machine ?" = "Are you sure you want to migrate this virtual machine ?";
+
+/* Autostart */
+"Autostart" = "Autostart";
+
+/* Autostart has been set. */
+"Autostart has been set." = "Autostart has been set.";
+
+/* Autostart has been unset. */
+"Autostart has been unset." = "Autostart has been unset.";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Control the virtual machine */
+"Control the virtual machine" = "Control the virtual machine";
+
+/* Crashed */
+"Crashed" = "Crashed";
+
+/* Current amount of memory */
+"Current amount of memory" = "Current amount of memory";
+
+/* Current OOM adjust value of the virtual machine */
+"Current OOM adjust value of the virtual machine" = "Current OOM adjust value of the virtual machine";
+
+/* Current OOM score for the virtual machine */
+"Current OOM score for the virtual machine" = "Current OOM score for the virtual machine";
+
+/* Current state of the virtual machine */
+"Current state of the virtual machine" = "Current state of the virtual machine";
+
+/* Destroy */
+"Destroy" = "Destroy";
+
+/* Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer. */
+"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer." = "Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.";
+
+/* If ON, the virtual machine process will never been destroyed by OOM killer */
+"If ON, the virtual machine process will never been destroyed by OOM killer" = "If ON, the virtual machine process will never been destroyed by OOM killer";
+
+/* If ON, the virtual machine will start with hypervisor */
+"If ON, the virtual machine will start with hypervisor" = "If ON, the virtual machine will start with hypervisor";
+
+/* Kill */
+"Kill" = "Kill";
+
+/* Kill virtual machine? */
+"Kill virtual machine?" = "Kill virtual machine?";
+
+/* Max number of virtual CPUs */
+"Max number of virtual CPUs" = "Max number of virtual CPUs";
+
+/* Migrate */
+"Migrate" = "Migrate";
+
+/* Migration */
+"Migration" = "Migration";
+
+/* Migration has started. */
+"Migration has started." = "Migration has started.";
+
+/* Name */
+"Name" = "Name";
+
+/* No status */
+"No status" = "No status";
+
+/* OOM */
+"OOM" = "OOM";
+
+/* OOM Killer can kill this virtual machine. */
+"OOM Killer can kill this virtual machine." = "OOM Killer can kill this virtual machine.";
+
+/* OOM Killer cannot kill this virtual machine. */
+"OOM Killer cannot kill this virtual machine." = "OOM Killer cannot kill this virtual machine.";
+
+/* Pause */
+"Pause" = "Pause";
+
+/* Pause / Resume */
+"Pause / Resume" = "Pause / Resume";
+
+/* Paused */
+"Paused" = "Paused";
+
+/* Play */
+"Play" = "Play";
+
+/* Prevented */
+"Prevented" = "Prevented";
+
+/* Reboot */
+"Reboot" = "Reboot";
+
+/* Resume */
+"Resume" = "Resume";
+
+/* Running */
+"Running" = "Running";
+
+/* Shutdown */
+"Shutdown" = "Shutdown";
+
+/* Start */
+"Start" = "Start";
+
+/* Stop */
+"Stop" = "Stop";
+
+/* Total of consumed physical CPU time */
+"Total of consumed physical CPU time" = "Total of consumed physical CPU time";
+
+/* Trigger a live migration from current hypervisor to selected one */
+"Trigger a live migration from current hypervisor to selected one" = "Trigger a live migration from current hypervisor to selected one";
+
+/* Unplug */
+"Unplug" = "Unplug";
+
+/* Unplug Virtual Machine ? */
+"Unplug Virtual Machine ?" = "Unplug Virtual Machine ?";
+
+/* Virtual Machine */
+"Virtual Machine" = "Virtual Machine";
+
+/* Virtual machine has been destroyed. */
+"Virtual machine has been destroyed." = "Virtual machine has been destroyed.";
+
+/* Virtual machine is paused. */
+"Virtual machine is paused." = "Virtual machine is paused.";
+
+/* Virtual machine is rebooting. */
+"Virtual machine is rebooting." = "Virtual machine is rebooting.";
+
+/* Virtual machine is running. */
+"Virtual machine is running." = "Virtual machine is running.";
+
+/* Virtual machine is shutting down. */
+"Virtual machine is shutting down." = "Virtual machine is shutting down.";
+
+/* Virtual machine killed. */
+"Virtual machine killed." = "Virtual machine killed.";
+
+/* Virtual machine was resumed. */
+"Virtual machine was resumed." = "Virtual machine was resumed.";
+
+/* Will definitly delete the virtual machine, and all it's informations */
+"Will definitly delete the virtual machine, and all it's informations" = "Will definitly delete the virtual machine, and all it's informations";
+
+/* You can't migrate to the initial virtual machine's hypervisor. */
+"You can't migrate to the initial virtual machine's hypervisor." = "You can't migrate to the initial virtual machine's hypervisor.";
+
+/* You may continue to use this machine while migrating */
+"You may continue to use this machine while migrating" = "You may continue to use this machine while migrating";
+
+/* You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure? */
+"You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?" = "You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?";
+

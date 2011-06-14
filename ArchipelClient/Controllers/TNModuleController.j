@@ -429,8 +429,10 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     else
     {
         currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-
     }
+
+    if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
+        moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [currentModuleController initializeModule];
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
@@ -462,7 +464,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     }
 
     [_loadedTabModules addObject:currentModuleController];
-
 }
 
 /*! Insert a toolbar item module
@@ -471,6 +472,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 - (void)manageToolbarItemLoad:(CPBundle)aBundle
 {
     var currentModuleController,
+        defaults                = [CPUserDefaults standardUserDefaults],
         moduleName              = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
         moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
         moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
@@ -480,8 +482,15 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         moduleToolbarIndex      = [aBundle objectForInfoDictionaryKey:@"ToolbarIndex"],
         toolbarOnly             = [aBundle objectForInfoDictionaryKey:@"ToolbarItemOnly"],
         mandatoryPermissions    = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
+        bundleLocale            = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
         frame                   = [_mainModuleView bounds],
         moduleToolbarItem       = [[CPToolbarItem alloc] initWithItemIdentifier:moduleName];
+
+    if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
+        moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+
+    if ([moduleToolTip isKindOfClass:CPDictionary] && bundleLocale)
+        moduleToolTip = [moduleToolTip objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
 
     [moduleToolbarItem setLabel:moduleLabel];
     [moduleToolbarItem setImage:[[CPImage alloc] initWithContentsOfFile:[aBundle pathForResource:@"icon.png"] size:CPSizeMake(32, 32)]];
@@ -492,16 +501,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if (toolbarOnly)
     {
         currentModuleController =  [[[aBundle principalClass] alloc] init];
-
         [currentModuleController setToolbarItemOnly:YES];
         [moduleToolbarItem setTarget:currentModuleController];
         [moduleToolbarItem setAction:@selector(toolbarItemClicked:)];
     }
     else
     {
-        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"],
-            defaults            = [CPUserDefaults standardUserDefaults],
-            bundleLocale        = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
+        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"]
             localizedCibName    = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName;
 
         if (bundleLocale)
@@ -527,7 +533,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 
     [_mainToolbar addItem:moduleToolbarItem withIdentifier:moduleName];
     [_mainToolbar setPosition:moduleToolbarIndex forToolbarItemIdentifier:moduleName];
-    //[_mainToolbar _reloadToolbarItems];
 
     [currentModuleController initializeModule];
     [currentModuleController setName:moduleName];

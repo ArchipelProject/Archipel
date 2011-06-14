@@ -1,0 +1,16 @@
+
+/* Class = "NSTextFieldCell"; placeholderString = "Your message"; ObjectID = "5"; */
+"5.placeholderString" = "Your message";
+
+/* Class = "NSTextFieldCell"; title = "Chat preferences"; ObjectID = "35"; */
+"35.title" = "Chat preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for chat module."; ObjectID = "36"; */
+"36.title" = "You can configure preferences for chat module.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Maximum saved messages"; ObjectID = "37"; */
+"37.placeholderString" = "Maximum saved messages";
+
+/* Class = "NSTextFieldCell"; title = "Max chat entries:"; ObjectID = "40"; */
+"40.title" = "Max chat entries:";
+

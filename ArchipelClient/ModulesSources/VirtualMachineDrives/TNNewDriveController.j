@@ -56,16 +56,16 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [buttonNewDiskFormat addItemsWithTitles:TNArchipelDrivesFormats];
 
     [buttonNewDiskSizeUnit removeAllItems];
-    [buttonNewDiskSizeUnit addItemsWithTitles:["Go", "Mo"]];
+    [buttonNewDiskSizeUnit addItemsWithTitles:[CPBundleLocalizedString(@"GB", @"GB"), CPBundleLocalizedString(@"MB", @"MB")]];
 
     [fieldNewDiskName setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
     [fieldNewDiskSize setValue:[CPColor grayColor] forThemeAttribute:@"text-color" inState:CPTextFieldStatePlaceholder];
 
-    [fieldNewDiskName setToolTip:@"Set the name of the new virtual drive"];
-    [fieldNewDiskSize setToolTip:@"Set the size of the new virtual drive"];
-    [buttonNewDiskFormat setToolTip:@"Set the format of the new virtual drive"];
-    [buttonNewDiskSizeUnit setToolTip:@"Set the unit of size for the new virtual drive"];
-    [checkBoxUseQCOW2Preallocation setToolTip:@"If checked, the drive will not be in sparse mode"];
+    [fieldNewDiskName setToolTip:CPBundleLocalizedString(@"Set the name of the new virtual drive", @"Set the name of the new virtual drive")];
+    [fieldNewDiskSize setToolTip:CPBundleLocalizedString(@"Set the size of the new virtual drive", @"Set the size of the new virtual drive")];
+    [buttonNewDiskFormat setToolTip:CPBundleLocalizedString(@"Set the format of the new virtual drive", @"Set the format of the new virtual drive")];
+    [buttonNewDiskSizeUnit setToolTip:CPBundleLocalizedString(@"Set the unit of size for the new virtual drive", @"Set the unit of size for the new virtual drive")];
+    [checkBoxUseQCOW2Preallocation setToolTip:CPBundleLocalizedString(@"If checked, the drive will not be in sparse mode", @"If checked, the drive will not be in sparse mode")];
 }
 
 
@@ -131,23 +131,27 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
     if (dSize == @"" || isNaN(dSize))
     {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a numeric value" style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You must enter a numeric value", @"You must enter a numeric value")
+                                style:CPCriticalAlertStyle];
         return;
     }
 
     if (dName == @"")
     {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must enter a valid name" style:CPCriticalAlertStyle];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You must enter a valid name", @"You must enter a valid name")
+                                style:CPCriticalAlertStyle];
         return;
     }
 
     switch ([buttonNewDiskSizeUnit title])
     {
-        case "Go":
+        case CPBundleLocalizedString(@"GB", @"GB"):
             dUnit = "G";
             break;
 
-        case "Mo":
+        case CPBundleLocalizedString(@"MB", @"MB"):
             dUnit = "M";
             break;
     }
@@ -178,3 +182,11 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNNewDriveController], comment);
+}

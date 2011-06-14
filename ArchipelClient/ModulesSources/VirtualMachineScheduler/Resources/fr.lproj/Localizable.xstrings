@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Action</key>
+	<string>Action</string>
+	<key>Action has been scheduled</key>
+	<string>Action has been scheduled</string>
+	<key>Add a new scheduled action</key>
+	<string>Add a new scheduled action</string>
+	<key>Are you sure you want to unschedule these jobs ?</key>
+	<string>Are you sure you want to unschedule these jobs ?</string>
+	<key>Are you sure you want to unschedule this job ?</key>
+	<string>Are you sure you want to unschedule this job ?</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Comment</key>
+	<string>Comment</string>
+	<key>Date</key>
+	<string>Date</string>
+	<key>Error</key>
+	<string>Error</string>
+	<key>Recurent</key>
+	<string>Recurent</string>
+	<key>Remove selected scheduled action</key>
+	<string>Remove selected scheduled action</string>
+	<key>Schedule new action</key>
+	<string>Schedule new action</string>
+	<key>Scheduler</key>
+	<string>Scheduler</string>
+	<key>Unique</key>
+	<string>Unique</string>
+	<key>Unschedule</key>
+	<string>Unschedule</string>
+	<key>Unschedule Jobs</key>
+	<string>Unschedule Jobs</string>
+	<key>Unschedule job</key>
+	<string>Unschedule job</string>
+	<key>Unschedule selected action</key>
+	<string>Unschedule selected action</string>
+	<key>You must select a date</key>
+	<string>You must select a date</string>
+	<key>You must select a job</key>
+	<string>You must select a job</string>
+</dict>
+</plist>

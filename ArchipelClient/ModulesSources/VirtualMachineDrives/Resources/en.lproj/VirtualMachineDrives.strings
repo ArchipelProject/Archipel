@@ -1,0 +1,115 @@
+
+/* Class = "NSTextFieldCell"; title = "Manage virtual drives"; ObjectID = "3"; */
+"3.title" = "Manage virtual drives";
+
+/* Class = "NSTextFieldCell"; title = "You can create a new virtual hard drive or edit, delete, convert any existing one."; ObjectID = "5"; */
+"5.title" = "You can create a new virtual hard drive or edit, delete, convert any existing one.";
+
+/* Class = "NSWindow"; title = "Disk properties"; ObjectID = "11"; */
+"11.title" = "Disk properties";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "18"; */
+"18.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "21"; */
+"21.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "New name"; ObjectID = "22"; */
+"22.placeholderString" = "New name";
+
+/* Class = "NSTextFieldCell"; title = "Set the properties of your new hard drive."; ObjectID = "23"; */
+"23.title" = "Set the properties of your new hard drive.";
+
+/* Class = "NSTextFieldCell"; title = "Disk edition"; ObjectID = "24"; */
+"24.title" = "Disk edition";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "25"; */
+"25.title" = "OK";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "26"; */
+"26.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Convert"; ObjectID = "30"; */
+"30.title" = "Convert";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "33"; */
+"33.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "34"; */
+"34.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "35"; */
+"35.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "36"; */
+"36.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Format:"; ObjectID = "38"; */
+"38.title" = "Format:";
+
+/* Class = "NSWindow"; title = "Create a new disk"; ObjectID = "39"; */
+"39.title" = "Create a new disk";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "46"; */
+"46.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "51"; */
+"51.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "52"; */
+"52.title" = "OK";
+
+/* Class = "NSTextFieldCell"; title = "New disk"; ObjectID = "53"; */
+"53.title" = "New disk";
+
+/* Class = "NSTextFieldCell"; title = "Set the properties of your new hard drive."; ObjectID = "54"; */
+"54.title" = "Set the properties of your new hard drive.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My drive "; ObjectID = "55"; */
+"55.placeholderString" = "My drive ";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "56"; */
+"56.title" = "Name:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "59"; */
+"59.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "60"; */
+"60.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "61"; */
+"61.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "62"; */
+"62.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Size:"; ObjectID = "63"; */
+"63.title" = "Size:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "10"; ObjectID = "66"; */
+"66.placeholderString" = "10";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "71"; */
+"71.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "72"; */
+"72.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "73"; */
+"73.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "74"; */
+"74.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "Format:"; ObjectID = "75"; */
+"75.title" = "Format:";
+
+/* Class = "NSButtonCell"; title = "Use metadata preallocation"; ObjectID = "78"; */
+"78.title" = "Use metadata preallocation";
+
+/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage its drives."; ObjectID = "107"; */
+"107.title" = "You need to stop the virtual machine to be able to manage its drives.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is running"; ObjectID = "108"; */
+"108.title" = "Virtual machine is running";
+

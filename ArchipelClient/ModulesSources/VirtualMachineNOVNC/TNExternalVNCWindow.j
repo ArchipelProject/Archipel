@@ -67,11 +67,11 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         [zoomSlider setMaxValue:200.0];
 
         [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              " view:nil target:nil action:nil];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:@"Get Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:@"Send Clipboard" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:@"Full Screen" icon:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] target:self action:@selector(setFullScreen:)];
-        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:@"Ctrl Alt Del" icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
-        zoomItem = [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:@"Zoom" view:zoomSlider target:self action:@selector(changeScale:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarGetPasteboard label:CPBundleLocalizedString(@"Get Clipboard", @"Get Clipboard") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarGetPasteboard.png"] target:self action:@selector(getPasteboard:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarSendPasteboard label:CPBundleLocalizedString(@"Send Clipboard", @"Send Clipboard") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarSendPasteboard.png"] target:self action:@selector(sendPasteboard:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarFullScreen label:CPBundleLocalizedString(@"Full Screen", @"Full Screen") icon:[[CPBundle mainBundle] pathForResource:@"IconsButtons/fullscreen.png"] target:self action:@selector(setFullScreen:)];
+        [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarCtrlAltDel label:CPBundleLocalizedString(@"Ctrl Alt Del", @"Ctrl Alt Del") icon:[[CPBundle bundleForClass:[self class]] pathForResource:@"toolbarCtrlAtlDel.png"] target:self action:@selector(sendCtrlAltDel:)];
+        zoomItem = [_mainToolbar addItemWithIdentifier:TNVNCWindowToolBarZoom label:CPBundleLocalizedString(@"Zoom", @"Zoom") view:zoomSlider target:self action:@selector(changeScale:)];
 
         [zoomItem setMinSize:CGSizeMake(120.0, 24.0)];
         [zoomItem setMaxSize:CGSizeMake(120.0, 24.0)];
@@ -106,7 +106,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 */
 - (void)_entityNicknameUpdated:(CPNotification)aNotification
 {
-    [self setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
+    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
     [[self platformWindow] setTitle:[self title]];
 }
 
@@ -130,7 +130,7 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityVCardUpdated:) name:TNStropheContactVCardReceivedNotification object:_entity];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_entityNicknameUpdated:) name:TNStropheContactNicknameUpdatedNotification object:_entity];
 
-    [self setTitle:@"Screen for " + [_entity nickname] + " (" + [_entity JID] + ")"];
+    [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
     [[self platformWindow] setTitle:[self title]];
     [[self platformWindow] DOMWindow].onbeforeunload = function(){
         [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
@@ -256,8 +256,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
         case TNVNCCappuccinoStateFailed:
             var growl = [[TNGrowlCenter alloc] init];
             [growl setView:[self contentView]];
-            [growl pushNotificationWithTitle:@"Connection fail"
-                                     message:@"Cannot connect to the VNC screen at " + [_vncView host] + @":" + [_vncView port]
+            [growl pushNotificationWithTitle:CPBundleLocalizedString(@"Connection fail", @"Connection fail")
+                                     message:CPBundleLocalizedString(@"Cannot connect to the VNC screen at ", @"Cannot connect to the VNC screen at ") + [_vncView host] + @":" + [_vncView port]
                                         icon:TNGrowlIconError];
 
             CPLog.error(@"Cannot connect to the VNC screen at " + [_vncView host] + @":" + [_vncView port]);
@@ -288,8 +288,8 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 {
     var growl = [[TNGrowlCenter alloc] init];
     [growl setView:[self contentView]];
-    [growl pushNotificationWithTitle:@"FullScreen not supported"
-                             message:@"Your browser does not support javascript fullscreen"
+    [growl pushNotificationWithTitle:CPBundleLocalizedString(@"FullScreen not supported", @"FullScreen not supported")
+                             message:CPBundleLocalizedString(@"Your browser does not support javascript fullscreen", @"Your browser does not support javascript fullscreen")
                                 icon:TNGrowlIconWarning];
 }
 
@@ -308,3 +308,11 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 }
 
 @end
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNExternalVNCWindow], comment);
+}
+

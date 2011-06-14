@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Are you sure you want to destory this snapshot ? this is not reversible.</key>
+	<string>Are you sure you want to destory this snapshot ? this is not reversible.</string>
+	<key>Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.</key>
+	<string>Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Create new snapshot</key>
+	<string>Create new snapshot</string>
+	<key>Creation date</key>
+	<string>Creation date</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete selected snapshot</key>
+	<string>Delete selected snapshot</string>
+	<key>Delete to snapshot</key>
+	<string>Delete to snapshot</string>
+	<key>Description</key>
+	<string>Description</string>
+	<key>Restore</key>
+	<string>Restore</string>
+	<key>Revert</key>
+	<string>Revert</string>
+	<key>Revert to selected drive</key>
+	<string>Revert to selected drive</string>
+	<key>Revert to snapshot</key>
+	<string>Revert to snapshot</string>
+	<key>Revert virtual machine to the state stored in selected snapshot</key>
+	<string>Revert virtual machine to the state stored in selected snapshot</string>
+	<key>Snapshot</key>
+	<string>Snapshot</string>
+	<key>Snapshot deleted</key>
+	<string>Snapshot deleted</string>
+	<key>Snapshot sucessfully reverted</key>
+	<string>Snapshot sucessfully reverted</string>
+	<key>Snapshoting sucessfull</key>
+	<string>Snapshoting sucessfull</string>
+	<key>Take a new snapshot</key>
+	<string>Take a new snapshot</string>
+	<key>Take a snapshot</key>
+	<string>Take a snapshot</string>
+	<key>There is no snapshot for this virtual machine</key>
+	<string>There is no snapshot for this virtual machine</string>
+	<key>UUID</key>
+	<string>UUID</string>
+	<key>You must select one snapshot</key>
+	<string>You must select one snapshot</string>
+	<key>You must select only one snapshot</key>
+	<string>You must select only one snapshot</string>
+</dict>
+</plist>

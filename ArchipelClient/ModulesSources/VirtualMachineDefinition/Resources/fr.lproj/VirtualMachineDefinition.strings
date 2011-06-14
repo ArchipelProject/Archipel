@@ -1,0 +1,625 @@
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine properties"; ObjectID = "3"; */
+"3.title" = "Virtual machine properties";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "4"; */
+"4.title" = "Box";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "7"; */
+"7.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "8"; */
+"8.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "9"; */
+"9.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "10"; */
+"10.title" = "Item 3";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "11"; */
+"11.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Basic settings"; ObjectID = "13"; */
+"13.title" = "Basic settings";
+
+/* Class = "NSTextFieldCell"; title = "Configure basics behaviours of the virtual machine"; ObjectID = "15"; */
+"15.title" = "Configure basics behaviours of the virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Memory:"; ObjectID = "17"; */
+"17.title" = "Memory:";
+
+/* Class = "NSTextFieldCell"; title = "Virtual CPUs:"; ObjectID = "19"; */
+"19.title" = "Virtual CPUs:";
+
+/* Class = "NSTextFieldCell"; title = "Boot from:"; ObjectID = "21"; */
+"21.title" = "Boot from:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "24"; */
+"24.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
+"27.title" = "MB";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "28"; */
+"28.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "VNC password:"; ObjectID = "40"; */
+"40.title" = "VNC password:";
+
+/* Class = "NSTextFieldCell"; title = "VNC keymap:"; ObjectID = "41"; */
+"41.title" = "VNC keymap:";
+
+/* Class = "NSTextFieldCell"; title = "Input type:"; ObjectID = "42"; */
+"42.title" = "Input type:";
+
+/* Class = "NSTextFieldCell"; title = "Configure the access of the virtual machine"; ObjectID = "43"; */
+"43.title" = "Configure the access of the virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Controls"; ObjectID = "44"; */
+"44.title" = "Controls";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My passsword"; ObjectID = "48"; */
+"48.placeholderString" = "My passsword";
+
+/* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "69"; */
+"69.title" = "Machine:";
+
+/* Class = "NSTextFieldCell"; title = "Domain type:"; ObjectID = "70"; */
+"70.title" = "Domain type:";
+
+/* Class = "NSTextFieldCell"; title = "Set how the hypervisor manages this virtual machine"; ObjectID = "71"; */
+"71.title" = "Set how the hypervisor manages this virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Hypervisor management"; ObjectID = "72"; */
+"72.title" = "Hypervisor management";
+
+/* Class = "NSTextFieldCell"; title = "On crash:"; ObjectID = "76"; */
+"76.title" = "On crash:";
+
+/* Class = "NSTextFieldCell"; title = "On reboot:"; ObjectID = "77"; */
+"77.title" = "On reboot:";
+
+/* Class = "NSTextFieldCell"; title = "On power off:"; ObjectID = "78"; */
+"78.title" = "On power off:";
+
+/* Class = "NSTextFieldCell"; title = "Set the lifecycle of the virtual machines"; ObjectID = "79"; */
+"79.title" = "Set the lifecycle of the virtual machines";
+
+/* Class = "NSTextFieldCell"; title = "Life cycle"; ObjectID = "80"; */
+"80.title" = "Life cycle";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "98"; */
+"98.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "APIC:"; ObjectID = "103"; */
+"103.title" = "APIC:";
+
+/* Class = "NSTextFieldCell"; title = "ACPI:"; ObjectID = "104"; */
+"104.title" = "ACPI:";
+
+/* Class = "NSTextFieldCell"; title = "PAE:"; ObjectID = "105"; */
+"105.title" = "PAE:";
+
+/* Class = "NSTextFieldCell"; title = "Configure advanced features of virtual machine"; ObjectID = "106"; */
+"106.title" = "Configure advanced features of virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Advanced features"; ObjectID = "107"; */
+"107.title" = "Advanced features";
+
+/* Class = "NSTextFieldCell"; title = "Huge pages:"; ObjectID = "110"; */
+"110.title" = "Huge pages:";
+
+/* Class = "NSTextFieldCell"; title = "Clock:"; ObjectID = "113"; */
+"113.title" = "Clock:";
+
+/* Class = "NSWindow"; title = "Drives"; ObjectID = "117"; */
+"117.title" = "Drives";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "128"; */
+"128.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Bus:"; ObjectID = "132"; */
+"132.title" = "Bus:";
+
+/* Class = "NSTextFieldCell"; title = "Source type:"; ObjectID = "133"; */
+"133.title" = "Source type:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "/dev/cdrom"; ObjectID = "134"; */
+"134.placeholderString" = "/dev/cdrom";
+
+/* Class = "NSTextFieldCell"; title = "Note that you must have created at least one disk."; ObjectID = "135"; */
+"135.title" = "Note that you must have created at least one disk.";
+
+/* Class = "NSTextFieldCell"; title = "Physical bindings"; ObjectID = "136"; */
+"136.title" = "Physical bindings";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "137"; */
+"137.title" = "OK";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "138"; */
+"138.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Drive type:"; ObjectID = "154"; */
+"154.title" = "Drive type:";
+
+/* Class = "NSTextFieldCell"; title = "Source:"; ObjectID = "162"; */
+"162.title" = "Source:";
+
+/* Class = "NSTextFieldCell"; title = "Cache mode:"; ObjectID = "165"; */
+"165.title" = "Cache mode:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "166"; */
+"166.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Virtual bindings"; ObjectID = "168"; */
+"168.title" = "Virtual bindings";
+
+/* Class = "NSTextFieldCell"; title = "Target:"; ObjectID = "172"; */
+"172.title" = "Target:";
+
+/* Class = "NSWindow"; title = "Network"; ObjectID = "175"; */
+"175.title" = "Network";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "183"; */
+"183.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "192"; */
+"192.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "197"; */
+"197.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "198"; */
+"198.title" = "OK";
+
+/* Class = "NSTextFieldCell"; title = "Physical bindings"; ObjectID = "199"; */
+"199.title" = "Physical bindings";
+
+/* Class = "NSTextFieldCell"; title = "Type:"; ObjectID = "201"; */
+"201.title" = "Type:";
+
+/* Class = "NSTextFieldCell"; title = "Source:"; ObjectID = "205"; */
+"205.title" = "Source:";
+
+/* Class = "NSTextFieldCell"; title = "Interface properties"; ObjectID = "208"; */
+"208.title" = "Interface properties";
+
+/* Class = "NSTextFieldCell"; title = "Model:"; ObjectID = "209"; */
+"209.title" = "Model:";
+
+/* Class = "NSTextFieldCell"; title = "MAC address:"; ObjectID = "211"; */
+"211.title" = "MAC address:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "00:00:DE:AD:BE:EF"; ObjectID = "215"; */
+"215.placeholderString" = "00:00:DE:AD:BE:EF";
+
+/* Class = "NSWindow"; title = "XML Editor"; ObjectID = "217"; */
+"217.title" = "XML Editor";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "223"; */
+"223.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Manual XML editor"; ObjectID = "225"; */
+"225.title" = "Manual XML editor";
+
+/* Class = "NSTextFieldCell"; title = "You can manually define the virtual machine XML description. No controls will be done."; ObjectID = "226"; */
+"226.title" = "You can manually define the virtual machine XML description. No controls will be done.";
+
+/* Class = "NSTextFieldCell"; title = "Do not change UUID or name. It would be bad."; ObjectID = "228"; */
+"228.title" = "Do not change UUID or name. It would be bad.";
+
+/* Class = "NSButtonCell"; title = "Define"; ObjectID = "229"; */
+"229.title" = "Define";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "231"; */
+"231.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Virtual drives"; ObjectID = "238"; */
+"238.title" = "Virtual drives";
+
+/* Class = "NSTextFieldCell"; title = "You can plug virtual drives or CD/DVD-Rom."; ObjectID = "239"; */
+"239.title" = "You can plug virtual drives or CD/DVD-Rom.";
+
+/* Class = "NSTextFieldCell"; title = "You can plug virtual networks interfaces."; ObjectID = "261"; */
+"261.title" = "You can plug virtual networks interfaces.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual networks interfaces"; ObjectID = "262"; */
+"262.title" = "Virtual networks interfaces";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine definition preferences"; ObjectID = "304"; */
+"304.title" = "Virtual machine definition preferences";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for virtual machine definition module."; ObjectID = "305"; */
+"305.title" = "You can configure preferences for virtual machine definition module.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "306"; */
+"306.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Default guest"; ObjectID = "307"; */
+"307.placeholderString" = "Default guest";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Default type"; ObjectID = "308"; */
+"308.placeholderString" = "Default type";
+
+/* Class = "NSTextFieldCell"; title = "Memory:"; ObjectID = "309"; */
+"309.title" = "Memory:";
+
+/* Class = "NSTextFieldCell"; title = "Guest:"; ObjectID = "318"; */
+"318.title" = "Guest:";
+
+/* Class = "NSTextFieldCell"; title = "Domain type:"; ObjectID = "320"; */
+"320.title" = "Domain type:";
+
+/* Class = "NSTextFieldCell"; title = "Input:"; ObjectID = "322"; */
+"322.title" = "Input:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Default machine"; ObjectID = "325"; */
+"325.placeholderString" = "Default machine";
+
+/* Class = "NSTextFieldCell"; title = "Machine:"; ObjectID = "326"; */
+"326.title" = "Machine:";
+
+/* Class = "NSTextFieldCell"; title = "Huge pages:"; ObjectID = "328"; */
+"328.title" = "Huge pages:";
+
+/* Class = "NSTextFieldCell"; title = "Cache mode:"; ObjectID = "330"; */
+"330.title" = "Cache mode:";
+
+/* Class = "NSTextFieldCell"; title = "Number of CPUs:"; ObjectID = "333"; */
+"333.title" = "Number of CPUs:";
+
+/* Class = "NSTextFieldCell"; title = "Boot:"; ObjectID = "336"; */
+"336.title" = "Boot:";
+
+/* Class = "NSTextFieldCell"; title = "On power off:"; ObjectID = "344"; */
+"344.title" = "On power off:";
+
+/* Class = "NSTextFieldCell"; title = "VNC keymap:"; ObjectID = "345"; */
+"345.title" = "VNC keymap:";
+
+/* Class = "NSTextFieldCell"; title = "Clock offset:"; ObjectID = "352"; */
+"352.title" = "Clock offset:";
+
+/* Class = "NSTextFieldCell"; title = "On crash:"; ObjectID = "353"; */
+"353.title" = "On crash:";
+
+/* Class = "NSTextFieldCell"; title = "On reboot:"; ObjectID = "354"; */
+"354.title" = "On reboot:";
+
+/* Class = "NSTextFieldCell"; title = "Advanced controls:"; ObjectID = "380"; */
+"380.title" = "Advanced controls:";
+
+/* Class = "NSButtonCell"; title = "Validate"; ObjectID = "386"; */
+"386.title" = "Validate";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "485"; */
+"485.title" = "Virtual machine is running.";
+
+/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to edit its definition."; ObjectID = "487"; */
+"487.title" = "You need to stop the virtual machine to be able to edit its definition.";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "502"; */
+"502.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "503"; */
+"503.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "504"; */
+"504.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "505"; */
+"505.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "510"; */
+"510.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "511"; */
+"511.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "512"; */
+"512.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "513"; */
+"513.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "518"; */
+"518.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "519"; */
+"519.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "520"; */
+"520.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "521"; */
+"521.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "525"; */
+"525.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "526"; */
+"526.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "527"; */
+"527.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "528"; */
+"528.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "533"; */
+"533.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "534"; */
+"534.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "535"; */
+"535.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "536"; */
+"536.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "542"; */
+"542.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "543"; */
+"543.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "544"; */
+"544.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "545"; */
+"545.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "550"; */
+"550.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "551"; */
+"551.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "552"; */
+"552.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "553"; */
+"553.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "557"; */
+"557.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "558"; */
+"558.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "559"; */
+"559.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "560"; */
+"560.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "565"; */
+"565.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "566"; */
+"566.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "567"; */
+"567.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "568"; */
+"568.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "573"; */
+"573.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "574"; */
+"574.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "575"; */
+"575.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "576"; */
+"576.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "581"; */
+"581.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "582"; */
+"582.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "583"; */
+"583.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "584"; */
+"584.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "588"; */
+"588.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "589"; */
+"589.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "590"; */
+"590.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "591"; */
+"591.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "595"; */
+"595.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "596"; */
+"596.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "597"; */
+"597.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "598"; */
+"598.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "602"; */
+"602.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "603"; */
+"603.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "604"; */
+"604.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "605"; */
+"605.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "610"; */
+"610.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "611"; */
+"611.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "612"; */
+"612.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "613"; */
+"613.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "617"; */
+"617.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "618"; */
+"618.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "619"; */
+"619.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "620"; */
+"620.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "624"; */
+"624.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "625"; */
+"625.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "626"; */
+"626.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "627"; */
+"627.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "631"; */
+"631.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "632"; */
+"632.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "633"; */
+"633.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "634"; */
+"634.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "638"; */
+"638.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "639"; */
+"639.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "640"; */
+"640.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "641"; */
+"641.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "646"; */
+"646.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "647"; */
+"647.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "648"; */
+"648.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "649"; */
+"649.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "655"; */
+"655.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "656"; */
+"656.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "657"; */
+"657.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "658"; */
+"658.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "663"; */
+"663.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "664"; */
+"664.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "665"; */
+"665.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "666"; */
+"666.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "671"; */
+"671.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "672"; */
+"672.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "673"; */
+"673.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "674"; */
+"674.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "679"; */
+"679.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "680"; */
+"680.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "681"; */
+"681.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "682"; */
+"682.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "687"; */
+"687.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "688"; */
+"688.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "689"; */
+"689.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "690"; */
+"690.title" = "Item 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "695"; */
+"695.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "696"; */
+"696.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "697"; */
+"697.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "698"; */
+"698.title" = "Item 1";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "703"; */
+"703.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "704"; */
+"704.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "705"; */
+"705.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "706"; */
+"706.title" = "Item 3";
+

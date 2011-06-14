@@ -59,9 +59,9 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     [buttonModel addItemsWithTitles:TNArchipelNICModels];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
 
-    [buttonSource setToolTip:@"Set the source to use"];
-    [buttonModel setToolTip:@"Set the model of the card"];
-    [fieldMac setToolTip:@"Set the MAC address of the card"];
+    [buttonSource setToolTip:CPBundleLocalizedString(@"Set the source to use", @"Set the source to use")];
+    [buttonModel setToolTip:CPBundleLocalizedString(@"Set the model of the card", @"Set the model of the card")];
+    [fieldMac setToolTip:CPBundleLocalizedString(@"Set the MAC address of the card", @"Set the MAC address of the card")];
 }
 
 
@@ -260,3 +260,11 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNNetworkController], comment);
+}

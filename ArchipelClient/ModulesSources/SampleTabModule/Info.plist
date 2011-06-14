@@ -7,51 +7,62 @@
         -->
         <key>CPBundleIdentifier</key>
         <string>org.archipelproject.sampletabmodule</string>
-        
+
+        <!--
+            The default locale to use
+        -->
+        <key>CPBundleLocale</key>
+        <string>en</string>
+
         <!--
             Version of this plist file. Must be 1.0
         -->
         <key>CPBundleInfoDictionaryVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The package type. Must be 280N
         -->
         <key>CPBundlePackageType</key>
         <string>280N</string>
-        
+
         <!--
             The version of CPBundle. Must be 1.0
         -->
         <key>CPBundleVersion</key>
         <string>1.0</string>
-        
+
         <!--
             The name of the bundle
         -->
         <key>CPBundleName</key>
         <string>SampleTabModule</string>
-        
+
         <!--
             The main class of the module.
         -->
         <key>CPPrincipalClass</key>
         <string>TNSampleTabModuleController</string>
-        
+
         <!--
             The plugin display name. This will be display as name of
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
-        <string>Sample</string>
-        
+        <dict>
+            <key>en</key>
+            <string>Sample</string>
+            <key>fr</key>
+            <string>Exemple</string>
+        </dict>
+
         <!--
             The desired tabulation index. If two module have the same tabIndex,
             they are displayed in the load order.
         -->
         <key>TabIndex</key>
         <integer>0</integer>
-        
+
         <!--
             The type of the module. It can be
              - tab : for tabbed modules
@@ -59,9 +70,9 @@
         -->
         <key>InsertionType</key>
         <string>tab</string>
-        
+
         <!--
-            This defines on which entity type the module have to been displayed. It 
+            This defines on which entity type the module have to been displayed. It
             can be the following :
              - virtualmachine
              - hypervisor
@@ -75,14 +86,14 @@
             <string>user</string>
             <string>group</string>
         </array>
-        
+
         <!--
             If set to 0, the module will not register menu item
         -->
         <key>UseModuleMenu</key>
 		<integer>1</integer>
-        
-        
+
+
         <!--
             This indicate to the module loader which CIB to load.
             It must be the fileName without the .cib extension

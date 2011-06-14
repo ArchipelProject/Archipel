@@ -1,0 +1,79 @@
+
+/* Class = "NSTextFieldCell"; title = "Controls:"; ObjectID = "12"; */
+"12.title" = "Controls:";
+
+/* Class = "NSTextFieldCell"; title = "Zoom: 0%"; ObjectID = "14"; */
+"14.title" = "Zoom: 0%";
+
+/* Class = "NSTextFieldCell"; title = "100%"; ObjectID = "16"; */
+"16.title" = "100%";
+
+/* Class = "NSWindow"; title = "Password"; ObjectID = "30"; */
+"30.title" = "Password";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "38"; */
+"38.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My password"; ObjectID = "43"; */
+"43.placeholderString" = "My password";
+
+/* Class = "NSTextFieldCell"; title = "Accessing this virtual machine screen require a valid password."; ObjectID = "44"; */
+"44.title" = "Accessing this virtual machine screen require a valid password.";
+
+/* Class = "NSTextFieldCell"; title = "Authentification"; ObjectID = "45"; */
+"45.title" = "Authentification";
+
+/* Class = "NSButtonCell"; title = "Authentify"; ObjectID = "46"; */
+"46.title" = "Authentify";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "48"; */
+"48.title" = "Password:";
+
+/* Class = "NSButtonCell"; title = "Remember"; ObjectID = "51"; */
+"51.title" = "Remember";
+
+/* Class = "NSWindow"; title = "Pasteboard"; ObjectID = "52"; */
+"52.title" = "Pasteboard";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "56"; */
+"56.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Send"; ObjectID = "62"; */
+"62.title" = "Send";
+
+/* Class = "NSTextFieldCell"; title = "Javascript doesn't support access to global PasteBoard."; ObjectID = "63"; */
+"63.title" = "Javascript doesn't support access to global PasteBoard.";
+
+/* Class = "NSTextFieldCell"; title = "Pasteboard"; ObjectID = "65"; */
+"65.title" = "Pasteboard";
+
+/* Class = "NSTextFieldCell"; title = "FBU refresh rate:"; ObjectID = "74"; */
+"74.title" = "FBU refresh rate:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Refresh rate"; ObjectID = "75"; */
+"75.placeholderString" = "Refresh rate";
+
+/* Class = "NSTextFieldCell"; title = "You can configure preferences for virtual machine VNC module."; ObjectID = "76"; */
+"76.title" = "You can configure preferences for virtual machine VNC module.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine VNC preferences"; ObjectID = "77"; */
+"77.title" = "Virtual machine VNC preferences";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Check rate"; ObjectID = "80"; */
+"80.placeholderString" = "Check rate";
+
+/* Class = "NSTextFieldCell"; title = "Check rate:"; ObjectID = "81"; */
+"81.title" = "Check rate:";
+
+/* Class = "NSTextFieldCell"; title = "Prefer SSL:"; ObjectID = "83"; */
+"83.title" = "Prefer SSL:";
+
+/* Class = "NSTextFieldCell"; title = "Please copy in the following area what you want to send to virtual machine's clipboard."; ObjectID = "86"; */
+"86.title" = "Please copy in the following area what you want to send to virtual machine's clipboard.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is shutdowned."; ObjectID = "124"; */
+"124.title" = "Virtual machine is shutdowned.";
+
+/* Class = "NSTextFieldCell"; title = "The virtual machine has to be started to be able to access its screen."; ObjectID = "125"; */
+"125.title" = "The virtual machine has to be started to be able to access its screen.";
+

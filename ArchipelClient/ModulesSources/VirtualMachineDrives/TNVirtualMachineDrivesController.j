@@ -103,23 +103,23 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         mediaColumPath = [[CPTableColumn alloc] initWithIdentifier:@"path"];
 
     [mediaColumName setWidth:150];
-    [[mediaColumName headerView] setStringValue:@"Name"];
+    [[mediaColumName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [mediaColumName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [mediaColumFormat setWidth:80];
-    [[mediaColumFormat headerView] setStringValue:@"Format"];
+    [[mediaColumFormat headerView] setStringValue:CPBundleLocalizedString(@"Format", @"Format")];
     [mediaColumFormat setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"format" ascending:YES]];
 
     [mediaColumVirtualSize setWidth:80];
-    [[mediaColumVirtualSize headerView] setStringValue:@"Virtual size"];
+    [[mediaColumVirtualSize headerView] setStringValue:CPBundleLocalizedString(@"Virtual size", @"Virtual size")];
     [mediaColumVirtualSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"virtualSize" ascending:YES]];
 
     [mediaColumDiskSize setWidth:80];
-    [[mediaColumDiskSize headerView] setStringValue:@"Real size"];
+    [[mediaColumDiskSize headerView] setStringValue:CPBundleLocalizedString(@"Real size", @"Real size")];
     [mediaColumDiskSize setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"diskSize" ascending:YES]];
 
     [mediaColumPath setWidth:300];
-    [[mediaColumPath headerView] setStringValue:@"Path"];
+    [[mediaColumPath headerView] setStringValue:CPBundleLocalizedString(@"Path", @"Path")];
     [mediaColumPath setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"path" ascending:YES]];
 
     [_tableMedias addTableColumn:mediaColumName];
@@ -141,27 +141,27 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [fieldFilter setAction:@selector(filterObjects:)];
 
     var menu = [[CPMenu alloc] init];
-    [menu addItemWithTitle:@"Rename" action:@selector(openEditWindow:) keyEquivalent:@""];
-    [menu addItemWithTitle:@"Delete" action:@selector(removeDisk:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Rename", @"Rename") action:@selector(openEditWindow:) keyEquivalent:@""];
+    [menu addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(removeDisk:) keyEquivalent:@""];
     [_tableMedias setMenu:menu];
 
     _plusButton  = [CPButtonBar plusButton];
     [_plusButton setTarget:self];
     [_plusButton setAction:@selector(openNewDiskWindow:)];
-    [_plusButton setToolTip:@"Create a new virtual drive"];
+    [_plusButton setToolTip:CPBundleLocalizedString(@"Create a new virtual drive", @"Create a new virtual drive")];
 
     _minusButton  = [CPButtonBar minusButton];
     [_minusButton setTarget:self];
     [_minusButton setAction:@selector(removeDisk:)];
     [_minusButton setEnabled:NO];
-    [_minusButton setToolTip:@"Delete selected virtual drives"];
+    [_minusButton setToolTip:CPBundleLocalizedString(@"Delete selected virtual drives", @"Delete selected virtual drives")];
 
     _editButton  = [CPButtonBar plusButton];
     [_editButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButton setTarget:self];
     [_editButton setAction:@selector(openEditWindow:)];
     [_editButton setEnabled:NO];
-    [_editButton setToolTip:@"Edit selected virtual drive"];
+    [_editButton setToolTip:CPBundleLocalizedString(@"Edit selected virtual drive", @"Edit selected virtual drive")];
 
     [buttonBarControl setButtons:[_plusButton, _minusButton, _editButton]];
 
@@ -191,7 +191,7 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
     [_tableMedias setDelegate:nil];
-    [_tableMedias setDelegate:self]; // hum....
+    [_tableMedias setDelegate:self];
 
     [self getDisksInfo];
 }
@@ -213,10 +213,10 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Create a drive" action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(openEditWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create a drive", @"Create a drive") action:@selector(openNewDiskWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(openEditWindow:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Delete selected drive" action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Delete selected drive", @"Delete selected drive") action:@selector(removeDisk:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -262,9 +262,11 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
     if (type == TNArchipelPushNotificationDisk)
     {
         if (change == @"created")
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"Disk has been created"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                             message:CPBundleLocalizedString(@"Disk has been created", @"Disk has been created")];
         else if (change == @"deleted")
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"Disk has been removed"];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                             message:CPBundleLocalizedString(@"Disk has been removed", @"Disk has been removed")];
     }
 
     [self getDisksInfo];
@@ -311,7 +313,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
         return;
 
     if (_isActive)
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit disks of a running virtual machine" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                         message:CPBundleLocalizedString(@"You can't edit disks of a running virtual machine", @"You can't edit disks of a running virtual machine")
+                                                            icon:TNGrowlIconError];
     else
     {
         if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
@@ -319,7 +323,9 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
         if ([_tableMedias numberOfSelectedRows] > 1)
         {
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Disk" message:@"You can't edit multiple disk" icon:TNGrowlIconError];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Disk", @"Disk")
+                                                             message:CPBundleLocalizedString(@"You can't edit multiple disk", @"You can't edit multiple disk")
+                                                                icon:TNGrowlIconError];
             return;
         }
 
@@ -398,14 +404,15 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 {
     if (([_tableMedias numberOfRows]) && ([_tableMedias numberOfSelectedRows] <= 0))
     {
-         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a media"];
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                           informative:CPBundleLocalizedString(@"You must select a media", @"You must select a media")];
          return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Delete to drive"
-                                informative:@"Are you sure you want to destroy this drive ? this is not reversible."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Delete to drive", @"Delete to drive")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to destroy this drive ? this is not reversible.", @"Are you sure you want to destroy this drive ? this is not reversible.")
                                  target:self
-                                 actions:[["Delete", @selector(performRemoveDisk:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Delete", @"Delete"), @selector(performRemoveDisk:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
 }
 
@@ -458,3 +465,12 @@ var TNArchipelTypeVirtualMachineDisk        = @"archipel:vm:disk",
 
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineDrivesController], comment);
+}
+

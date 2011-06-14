@@ -1,57 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<dict>
+    <key>CPBundleIdentifier</key>
+    <string>org.archipelproject.HypervisorVMCasts</string>
+    <key>CPBundleLocale</key>
+    <string>en</string>
+    <key>CPBundleInfoDictionaryVersion</key>
+    <string>1.0</string>
+    <key>CPBundlePackageType</key>
+    <string>280N</string>
+    <key>CPBundleVersion</key>
+    <string>1.0</string>
+    <key>CPBundleName</key>
+    <string>HypervisorVMCasts</string>
+    <key>CPPrincipalClass</key>
+    <string>TNHypervisorVMCastsController</string>
+    <key>PluginDisplayName</key>
     <dict>
-        <!--
-            the bundle identifier. It MUST BE UNIQUE
-        -->
-        <key>CPBundleIdentifier</key>
-        <string>org.archipelproject.HypervisorVMCasts</string>
-        
-        <key>CPBundleLocale</key>
-    	<string>en</string>
-    	
-        <key>CPBundleInfoDictionaryVersion</key>
-        <string>1.0</string>
-
-        <key>CPBundlePackageType</key>
-        <string>280N</string>
-
-        <key>CPBundleVersion</key>
-        <string>1.0</string>
-
-        <key>CPBundleName</key>
-        <string>HypervisorVMCasts</string>
-
-        <key>CPPrincipalClass</key>
-        <string>TNHypervisorVMCastsController</string>
-
-        <key>PluginDisplayName</key>
+        <key>en</key>
         <string>VMCasts</string>
-
-        <key>InsertionType</key>
-        <string>tab</string>
-
-        <key>TabIndex</key>
-        <string>4</string>
-
-        <key>SupportedEntityTypes</key>
-        <array>
-            <string>hypervisor</string>
-        </array>
-
-        <key>UseModuleMenu</key>
-		<integer>1</integer>
-
-        <key>FullscreenModule</key>
-        <integer>1</integer>
-
-        <key>CibName</key>
-        <string>HypervisorVMCasts</string>
-
-        <key>MandatoryPermissions</key>
-        <array>
-            <string>vmcasting_get</string>
-        </array>
+        <key>fr</key>
+        <string>VMCasts</string>
     </dict>
+    <key>InsertionType</key>
+    <string>tab</string>
+    <key>TabIndex</key>
+    <string>4</string>
+    <key>SupportedEntityTypes</key>
+    <array>
+        <string>hypervisor</string>
+    </array>
+    <key>UseModuleMenu</key>
+    <integer>1</integer>
+    <key>FullscreenModule</key>
+    <integer>1</integer>
+    <key>CibName</key>
+    <string>HypervisorVMCasts</string>
+    <key>MandatoryPermissions</key>
+    <array>
+        <string>vmcasting_get</string>
+    </array>
+</dict>
 </plist>

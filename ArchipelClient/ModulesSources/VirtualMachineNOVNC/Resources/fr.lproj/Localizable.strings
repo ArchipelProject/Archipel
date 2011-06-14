@@ -1,0 +1,69 @@
+/* Adjust zoom */
+"Adjust zoom" = "Adjust zoom";
+
+/* Cannot connect to the VNC screen at  */
+"Cannot connect to the VNC screen at " = "Cannot connect to the VNC screen at ";
+
+/* Connection fail */
+"Connection fail" = "Connection fail";
+
+/* Ctrl Alt Del */
+"Ctrl Alt Del" = "Ctrl Alt Del";
+
+/* Fit screen to window */
+"Fit screen to window" = "Fit screen to window";
+
+/* Full Screen */
+"Full Screen" = "Full Screen";
+
+/* FullScreen not supported */
+"FullScreen not supported" = "FullScreen not supported";
+
+/* Get Clipboard */
+"Get Clipboard" = "Get Clipboard";
+
+/* Get the distant pasteboard (not implemented) */
+"Get the distant pasteboard (not implemented)" = "Get the distant pasteboard (not implemented)";
+
+/* Make the screen fit the current window */
+"Make the screen fit the current window" = "Make the screen fit the current window";
+
+/* Open external VNC program */
+"Open external VNC program" = "Open external VNC program";
+
+/* Open the virtual screen in a new window */
+"Open the virtual screen in a new window" = "Open the virtual screen in a new window";
+
+/* Prefer SSL connection if possible */
+"Prefer SSL connection if possible" = "Prefer SSL connection if possible";
+
+/* Reset the zoom */
+"Reset the zoom" = "Reset the zoom";
+
+/* Reset zoom */
+"Reset zoom" = "Reset zoom";
+
+/* Screen for  */
+"Screen for " = "Screen for ";
+
+/* Send Clipboard */
+"Send Clipboard" = "Send Clipboard";
+
+/* Send local pasteboard to the distant one (not implemented) */
+"Send local pasteboard to the distant one (not implemented)" = "Send local pasteboard to the distant one (not implemented)";
+
+/* Send the CTRL+ALT+DEL key combinaison */
+"Send the CTRL+ALT+DEL key combinaison" = "Send the CTRL+ALT+DEL key combinaison";
+
+/* Set the VNC check rate value */
+"Set the VNC check rate value" = "Set the VNC check rate value";
+
+/* Set the VNC FBU refresg rate value */
+"Set the VNC FBU refresg rate value" = "Set the VNC FBU refresg rate value";
+
+/* Your browser does not support javascript fullscreen */
+"Your browser does not support javascript fullscreen" = "Your browser does not support javascript fullscreen";
+
+/* Zoom */
+"Zoom" = "Zoom";
+

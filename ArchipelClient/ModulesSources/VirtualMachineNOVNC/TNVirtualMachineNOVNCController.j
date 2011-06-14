@@ -137,17 +137,17 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [sliderScaling setMinValue:1];
     [sliderScaling setMaxValue:200];
 
-    [buttonGetPasteBoard setToolTip:@"Get the distant pasteboard (not implemented)"];
-    [buttonSendPasteBoard setToolTip:@"Send local pasteboard to the distant one (not implemented)"];
-    [buttonSendCtrlAtlDel setToolTip:@"Send the CTRL+ALT+DEL key combinaison"];
-    [buttonExternalWindow setToolTip:@"Open the virtual screen in a new window"];
-    [buttonZoomFitToWindow setToolTip:@"Make the screen fit the current window"];
-    [buttonZoomReset setToolTip:@"Reset the zoom"];
-    [sliderScaling setToolTip:@"Adjust zoom"];
+    [buttonGetPasteBoard setToolTip:CPBundleLocalizedString(@"Get the distant pasteboard (not implemented)", @"Get the distant pasteboard (not implemented)")];
+    [buttonSendPasteBoard setToolTip:CPBundleLocalizedString(@"Send local pasteboard to the distant one (not implemented)", @"Send local pasteboard to the distant one (not implemented)")];
+    [buttonSendCtrlAtlDel setToolTip:CPBundleLocalizedString(@"Send the CTRL+ALT+DEL key combinaison", @"Send the CTRL+ALT+DEL key combinaison")];
+    [buttonExternalWindow setToolTip:CPBundleLocalizedString(@"Open the virtual screen in a new window", @"Open the virtual screen in a new window")];
+    [buttonZoomFitToWindow setToolTip:CPBundleLocalizedString(@"Make the screen fit the current window", @"Make the screen fit the current window")];
+    [buttonZoomReset setToolTip:CPBundleLocalizedString(@"Reset the zoom", @"Reset the zoom")];
+    [sliderScaling setToolTip:CPBundleLocalizedString(@"Adjust zoom", @"Adjust zoom")];
 
-    [fieldPreferencesCheckRate setToolTip:@"Set the VNC check rate value"];
-    [fieldPreferencesFBURefreshRate setToolTip:@"Set the VNC FBU refresg rate value"];
-    [switchPreferencesPreferSSL setToolTip:@"Prefer SSL connection if possible"];
+    [fieldPreferencesCheckRate setToolTip:CPBundleLocalizedString(@"Set the VNC check rate value", @"Set the VNC check rate value")];
+    [fieldPreferencesFBURefreshRate setToolTip:CPBundleLocalizedString(@"Set the VNC FBU refresg rate value", @"Set the VNC FBU refresg rate value")];
+    [switchPreferencesPreferSSL setToolTip:CPBundleLocalizedString(@"Prefer SSL connection if possible", @"Prefer SSL connection if possible")];
 }
 
 
@@ -248,10 +248,10 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Fit screen to window" action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Reset zoom" action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Fit screen to window", @"Fit screen to window") action:@selector(fitToScreen:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reset zoom", @"Reset zoom") action:@selector(resetZoom:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Open external VNC program" action:@selector(openExternalWindow:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Open external VNC program", @"Open external VNC program") action:@selector(openExternalWindow:) keyEquivalent:@""] setTarget:self];
 }
 
 
@@ -673,3 +673,12 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineNOVNCController], comment);
+}
+

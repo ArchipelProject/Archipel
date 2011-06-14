@@ -145,14 +145,14 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonKill setTitle:@"Kill"];
 
     [sliderMemory setContinuous:YES];
-    [sliderMemory setToolTip:@"Adjust the maximum amout of memory of the VM (only when running)"];
+    [sliderMemory setToolTip:CPBundleLocalizedString(@"Adjust the maximum amout of memory of the VM (only when running)", @"Adjust the maximum amout of memory of the VM (only when running)")];
     [stepperCPU setTarget:self];
     [stepperCPU setAction:@selector(setVCPUs:)];
     [stepperCPU setMinValue:1];
     [stepperCPU setMaxValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
     [stepperCPU setValueWraps:NO];
     [stepperCPU setAutorepeat:NO];
-    [stepperCPU setToolTip:@"Adjust the number of virtual CPUs of the VM (only when running)"];
+    [stepperCPU setToolTip:CPBundleLocalizedString(@"Adjust the number of virtual CPUs of the VM (only when running)", @"Adjust the number of virtual CPUs of the VM (only when running)")];
 
     _imagePlay              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/play.png"] size:CGSizeMake(16, 16)];
     _imageStop              = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop.png"] size:CGSizeMake(16, 16)];
@@ -170,13 +170,13 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _imageStopSelected      = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/stop-selected.png"] size:CGSizeMake(16, 16)];
     _imageResume            = [[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/pause-selected.png"] size:CGSizeMake(16, 16)];
 
-    [buttonBarTransport setToolTip:@"Control the virtual machine"];
+    [buttonBarTransport setToolTip:CPBundleLocalizedString(@"Control the virtual machine", @"Control the virtual machine")];
     [buttonBarTransport setSegmentCount:5];
-    [buttonBarTransport setLabel:@"Play" forSegment:TNArchipelTransportBarPlay];
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
-    [buttonBarTransport setLabel:@"Stop" forSegment:TNArchipelTransportBarStop];
-    [buttonBarTransport setLabel:@"Destroy" forSegment:TNArchipelTransportBarDestroy];
-    [buttonBarTransport setLabel:@"Reboot" forSegment:TNArchipelTransportBarReboot];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Play", @"Play") forSegment:TNArchipelTransportBarPlay];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Stop", @"Stop") forSegment:TNArchipelTransportBarStop];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Destroy", @"Destroy") forSegment:TNArchipelTransportBarDestroy];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Reboot", @"Reboot") forSegment:TNArchipelTransportBarReboot];
 
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setWidth:100 forSegment:TNArchipelTransportBarPause];
@@ -218,7 +218,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [columnName setWidth:200]
-    [[columnName headerView] setStringValue:@"Name"];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
 
     [imgView setImageScaling:CPScaleNone];
@@ -243,25 +243,25 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [_migrateButton setTarget:self];
     [_migrateButton setAction:@selector(migrate:)];
     [_migrateButton setEnabled:NO];
-    [_migrateButton setToolTip:@"Trigger a live migration from current hypervisor to selected one"];
+    [_migrateButton setToolTip:CPBundleLocalizedString(@"Trigger a live migration from current hypervisor to selected one", @"Trigger a live migration from current hypervisor to selected one")];
 
     [buttonBarMigration setButtons:[_migrateButton]];
 
     [switchAutoStart setTarget:self];
     [switchAutoStart setAction:@selector(setAutostart:)];
-    [switchAutoStart setToolTip:@"If ON, the virtual machine will start with hypervisor"];
+    [switchAutoStart setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine will start with hypervisor", @"If ON, the virtual machine will start with hypervisor")];
 
     [switchPreventOOMKiller setTarget:self];
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
-    [switchPreventOOMKiller setToolTip:@"If ON, the virtual machine process will never been destroyed by OOM killer"];
+    [switchPreventOOMKiller setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine process will never been destroyed by OOM killer", @"If ON, the virtual machine process will never been destroyed by OOM killer")];
 
-    [fieldInfoMem setToolTip:@"Current amount of memory"];
-    [fieldInfoConsumedCPU setToolTip:@"Total of consumed physical CPU time"];
-    [fieldInfoState setToolTip:@"Current state of the virtual machine"];
-    [fieldOOMScore setToolTip:@"Current OOM score for the virtual machine"];
-    [fieldOOMAdjust setToolTip:@"Current OOM adjust value of the virtual machine"];
-    [buttonKill setToolTip:@"Will definitly delete the virtual machine, and all it's informations"];
-    [fieldPreferencesMaxCPUs setToolTip:@"Max number of virtual CPUs"];
+    [fieldInfoMem setToolTip:CPBundleLocalizedString(@"Current amount of memory", @"Current amount of memory")];
+    [fieldInfoConsumedCPU setToolTip:CPBundleLocalizedString(@"Total of consumed physical CPU time", @"Total of consumed physical CPU time")];
+    [fieldInfoState setToolTip:CPBundleLocalizedString(@"Current state of the virtual machine", @"Current state of the virtual machine")];
+    [fieldOOMScore setToolTip:CPBundleLocalizedString(@"Current OOM score for the virtual machine", @"Current OOM score for the virtual machine")];
+    [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
+    [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
+    [fieldPreferencesMaxCPUs setToolTip:CPBundleLocalizedString(@"Max number of virtual CPUs", @"Max number of virtual CPUs")];
 }
 
 
@@ -300,7 +300,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [imageState setImage:nil];
 
     [self disableAllButtons];
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
     [super willUnload];
 }
@@ -341,11 +341,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Start" action:@selector(play:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Shutdown" action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Pause / Resume" action:@selector(pause:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Reboot" action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Destroy" action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Start", @"Start") action:@selector(play:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Shutdown", @"Shutdown") action:@selector(shutdown:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Pause / Resume", @"Pause / Resume") action:@selector(pause:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Reboot", @"Reboot") action:@selector(reboot:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Destroy", @"Destroy") action:@selector(destroy:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when user saves preferences
@@ -505,27 +505,27 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     switch ([libvirtState intValue])
     {
         case VIR_DOMAIN_NOSTATE:
-            humanState = @"No status";
+            humanState = CPBundleLocalizedString(@"No status", @"No status");
             break;
         case VIR_DOMAIN_RUNNING:
         case VIR_DOMAIN_BLOCKED:
             [self enableButtonsForRunning];
-            humanState = @"Running";
+            humanState = CPBundleLocalizedString(@"Running", @"Running");
             break;
         case VIR_DOMAIN_PAUSED:
             [self enableButtonsForPaused]
-            humanState = @"Paused";
+            humanState = CPBundleLocalizedString(@"Paused", @"Paused");
             break;
         case VIR_DOMAIN_SHUTDOWN:
             [self enableButtonsForShutdowned]
-            humanState = @"Shutdown";
+            humanState = CPBundleLocalizedString(@"Shutdown", @"Shutdown");
             break;
         case VIR_DOMAIN_SHUTOFF:
             [self enableButtonsForShutdowned]
-            humanState = @"Shutdown";
+            humanState = CPBundleLocalizedString(@"Shutdown", @"Shutdown");
             break;
         case VIR_DOMAIN_CRASHED:
-            humanState = @"Crashed";
+            humanState = CPBundleLocalizedString(@"Crashed", @"Crashed");
             break;
   }
   [fieldInfoState setStringValue:humanState];
@@ -545,7 +545,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarPause enabledAccordingToPermissions:[@"suspend", @"resume"]];
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
     [buttonBarTransport setImage:_imagePlaySelected forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
@@ -571,7 +571,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarPause enabledAccordingToPermissions:[@"suspend", @"resume"]];
     [self setControl:buttonBarTransport segment:TNArchipelTransportBarReboot enabledAccordingToPermission:@"reboot"];
 
-    [buttonBarTransport setLabel:@"Resume" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Resume", @"Resume") forSegment:TNArchipelTransportBarPause];
 
     [buttonBarTransport setImage:_imagePlayDisabled forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setImage:_imageStop forSegment:TNArchipelTransportBarStop];
@@ -595,7 +595,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarPause];
     [buttonBarTransport setEnabled:NO forSegment:TNArchipelTransportBarReboot];
 
-    [buttonBarTransport setLabel:@"Pause" forSegment:TNArchipelTransportBarPause];
+    [buttonBarTransport setLabel:CPBundleLocalizedString(@"Pause", @"Pause") forSegment:TNArchipelTransportBarPause];
 
     [buttonBarTransport setImage:_imagePlay forSegment:TNArchipelTransportBarPlay];
     [buttonBarTransport setImage:_imageStopSelected forSegment:TNArchipelTransportBarStop];
@@ -882,7 +882,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is running."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine is running.", @"Virtual machine is running.")];
     }
     else
     {
@@ -929,7 +930,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         [self enableButtonsForPaused];
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is paused."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine is paused.", @"Virtual machine is paused.")];
     }
     else
     {
@@ -948,7 +950,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine was resumed."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine was resumed.", @"Virtual machine was resumed.")];
     }
     else
     {
@@ -980,7 +983,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is shutting down."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine is shutting down.", @"Virtual machine is shutting down.")];
     }
     else
     {
@@ -994,10 +998,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)destroy
 {
-    var alert = [TNAlert alertWithMessage:@"Unplug Virtual Machine ?"
-                                informative:@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unplug Virtual Machine ?", @"Unplug Virtual Machine ?")
+                                informative:CPBundleLocalizedString(@"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.", @"Destroying a virtual machine is dangerous. It is equivalent to removing the power plug of a real computer.")
                                  target:self
-                                 actions:[["Unplug", @selector(performDestroy:)], ["Cancel", @selector(doNotPerformDestroy:)]]];
+                                 actions:[[CPBundleLocalizedString(@"Unplug", @"Unplug"), @selector(performDestroy:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), @selector(doNotPerformDestroy:)]]];
 
     [alert runModal];
 }
@@ -1029,7 +1033,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine has been destroyed."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine has been destroyed.", @"Virtual machine has been destroyed.")];
     }
     else
     {
@@ -1059,7 +1064,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine is rebooting."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine is rebooting.", @"Virtual machine is rebooting.")];
     }
     else
     {
@@ -1092,9 +1098,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         if ([switchAutoStart isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been set."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Autostart", @"Autostart")
+                                                             message:CPBundleLocalizedString(@"Autostart has been set.", @"Autostart has been set.")];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"Autostart has been unset."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Autostart", @"Autostart")
+                                                             message:CPBundleLocalizedString(@"Autostart has been unset.", @"Autostart has been unset.")];
     }
     else
     {
@@ -1134,7 +1142,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
             [switchPreventOOMKiller setOn:NO animated:YES sendAction:NO];
 
         [fieldOOMScore setStringValue:scoreValue];
-        [fieldOOMAdjust setStringValue:(adjustValue == -17) ? @"Prevented" : adjustValue];
+        [fieldOOMAdjust setStringValue:(adjustValue == -17) ? CPBundleLocalizedString(@"Prevented", @"Prevented") : adjustValue];
     }
     else
     {
@@ -1167,9 +1175,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         if ([switchPreventOOMKiller isOn])
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"OOM" message:@"OOM Killer cannot kill this virtual machine."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"OOM", @"OOM")
+                                                             message:CPBundleLocalizedString(@"OOM Killer cannot kill this virtual machine.", @"OOM Killer cannot kill this virtual machine.")];
         else
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Autostart" message:@"OOM Killer can kill this virtual machine."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"OOM", @"OOM")
+                                                             message:CPBundleLocalizedString(@"OOM Killer can kill this virtual machine.", @"OOM Killer can kill this virtual machine.")];
 
         if ([self currentEntityHasPermission:@"oom_getadjust"])
             [self getOOMKiller];
@@ -1253,14 +1263,16 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     if ([destinationHypervisor fullJID] == _currentHypervisorJID)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"You can't migrate to the initial virtual machine's hypervisor." icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+                                                         message:CPBundleLocalizedString(@"You can't migrate to the initial virtual machine's hypervisor.", @"You can't migrate to the initial virtual machine's hypervisor.")
+                                                            icon:TNGrowlIconError];
         return
     }
 
-    var alert = [TNAlert alertWithMessage:@"Are you sure you want to migrate this virtual machine ?"
-                                informative:@"You may continue to use this machine while migrating"
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Are you sure you want to migrate this virtual machine ?", @"Are you sure you want to migrate this virtual machine ?")
+                                informative:CPBundleLocalizedString(@"You may continue to use this machine while migrating", @"You may continue to use this machine while migrating")
                                  target:self
-                                 actions:[["Migrate", @selector(performMigrate:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Migrate", @"Migrate"), @selector(performMigrate:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
     [alert setUserInfo:destinationHypervisor]
     [alert runModal];
@@ -1288,7 +1300,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+                                                         message:CPBundleLocalizedString(@"Migration has started.", @"Migration has started.")];
     }
     else
     {
@@ -1302,10 +1315,10 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)free
 {
-    var alert = [TNAlert alertWithMessage:@"Kill virtual machine?"
-                                informative:@"You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?"
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Kill virtual machine?", @"Kill virtual machine?")
+                                informative:CPBundleLocalizedString(@"You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?", @"You will loose this virtual machine. It will be destroyed, send to a black hole and it will never come back again. Sure?")
                                  target:self
-                                 actions:[["Kill", @selector(performFree:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Kill", @"Kill"), @selector(performFree:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
     [alert runModal];
 }
@@ -1332,7 +1345,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         [[[TNStropheIMClient defaultClient] roster] removeContact:_virtualMachineToFree];
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual Machine" message:@"Virtual machine killed."];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine killed.", @"Virtual machine killed.")];
         [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewDeselectAll object:self];
         _virtualMachineToFree = nil;
     }
@@ -1368,3 +1382,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineControlsController], comment);
+}

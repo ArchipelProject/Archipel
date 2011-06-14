@@ -114,12 +114,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
         columnComment   = [[CPTableColumn alloc] initWithIdentifier:@"comment"];
 
     [columnAction setWidth:120];
-    [[columnAction headerView] setStringValue:@"Action"];
+    [[columnAction headerView] setStringValue:CPBundleLocalizedString(@"Action", @"Action")];
 
     [columnDate setWidth:150];
-    [[columnDate headerView] setStringValue:@"Date"];
+    [[columnDate headerView] setStringValue:CPBundleLocalizedString(@"Date", @"Date")];
 
-    [[columnComment headerView] setStringValue:@"Comment"];
+    [[columnComment headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
 
     [_tableJobs addTableColumn:columnAction];
     [_tableJobs addTableColumn:columnDate];
@@ -135,12 +135,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
     [_buttonSchedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/plus.png"] size:CPSizeMake(16, 16)]];
     [_buttonSchedule setTarget:self];
     [_buttonSchedule setAction:@selector(openNewJobWindow:)];
-    [_buttonSchedule setToolTip:@"Add a new scheduled action"];
+    [_buttonSchedule setToolTip:CPBundleLocalizedString(@"Add a new scheduled action", @"Add a new scheduled action")];
 
     [_buttonUnschedule setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/minus.png"] size:CPSizeMake(16, 16)]];
     [_buttonUnschedule setTarget:self];
     [_buttonUnschedule setAction:@selector(unschedule:)];
-    [_buttonUnschedule setToolTip:@"Remove selected scheduled action"];
+    [_buttonUnschedule setToolTip:CPBundleLocalizedString(@"Remove selected scheduled action", @"Remove selected scheduled action")];
 
     [buttonBarJobs setButtons:[_buttonSchedule, _buttonUnschedule]];
 
@@ -154,12 +154,12 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 
     //tabview
     var itemOneShot = [[CPTabViewItem alloc] initWithIdentifier:@"itemOneShot"];
-    [itemOneShot setLabel:@"Unique"];
+    [itemOneShot setLabel:CPBundleLocalizedString(@"Unique", @"Unique")];
     [itemOneShot setView:viewNewJobOneShot];
     [tabViewJobSchedule addTabViewItem:itemOneShot];
 
     var itemRecurrent = [[CPTabViewItem alloc] initWithIdentifier:@"itemRecurrent"];
-    [itemRecurrent setLabel:@"Recurent"];
+    [itemRecurrent setLabel:CPBundleLocalizedString(@"Recurent", @"Recurent")];
     [itemRecurrent setView:viewNewJobRecurent];
     [tabViewJobSchedule addTabViewItem:itemRecurrent];
 
@@ -208,8 +208,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Schedule new action" action:@selector(openNewJobWindowq:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Unschedule selected action" action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Schedule new action", @"Schedule new action") action:@selector(openNewJobWindowq:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Unschedule selected action", @"Unschedule selected action") action:@selector(unschedule:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -410,7 +410,9 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 {
     if (!_scheduledDate)
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Scheduler" message:@"You must select a date" icon:TNGrowlIconError];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Scheduler", @"Scheduler")
+                                                         message:CPBundleLocalizedString(@"You must select a date", @"You must select a date")
+                                                            icon:TNGrowlIconError];
         return;
     }
 
@@ -464,7 +466,8 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Scheduler" message:@"Action has been scheduled"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Scheduler", @"Scheduler")
+                                                         message:CPBundleLocalizedString(@"Action has been scheduled", @"Action has been scheduled")];
     }
     else
     {
@@ -481,23 +484,24 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 {
     if (([_tableJobs numberOfRows] == 0) || ([_tableJobs numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select a job"];
+         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
+                         message:CPBundleLocalizedString(@"You must select a job", @"You must select a job")];
          return;
     }
 
-    var title = @"Unschedule Jobs",
-        msg   = @"Are you sure you want to unschedule these jobs ?";
+    var title = CPBundleLocalizedString(@"Unschedule Jobs", @"Unschedule Jobs"),
+        msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule these jobs ?", @"Are you sure you want to unschedule these jobs ?");
 
     if ([[_tableJobs selectedRowIndexes] count] < 2)
     {
-        title = @"Unschedule job";
-        msg   = @"Are you sure you want to unschedule this job ?";
+        title = CPBundleLocalizedString(@"Unschedule job", @"Unschedule job");
+        msg   = CPBundleLocalizedString(@"Are you sure you want to unschedule this job ?", @"Are you sure you want to unschedule this job ?");
     }
 
     var alert = [TNAlert alertWithMessage:title
                                 informative:msg
                                  target:self
-                                 actions:[["Unschedule", @selector(performUnschedule:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Unschedule", @"Unschedule"), @selector(performUnschedule:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
 
     [alert setUserInfo:[_tableJobs selectedRowIndexes]];
 
@@ -551,4 +555,10 @@ var TNArchipelPushNotificationScheduler     = @"archipel:push:scheduler",
 @end
 
 
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineScheduler], comment);
+}
 

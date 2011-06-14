@@ -1,0 +1,117 @@
+/* Are you sure you want to destroy this drive ? this is not reversible. */
+"Are you sure you want to destroy this drive ? this is not reversible." = "Are you sure you want to destroy this drive ? this is not reversible.";
+
+/* B */
+"B" = "B";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Choose the format of the virtual drive */
+"Choose the format of the virtual drive" = "Choose the format of the virtual drive";
+
+/* Create a drive */
+"Create a drive" = "Create a drive";
+
+/* Create a new virtual drive */
+"Create a new virtual drive" = "Create a new virtual drive";
+
+/* Delete */
+"Delete" = "Delete";
+
+/* Delete selected drive */
+"Delete selected drive" = "Delete selected drive";
+
+/* Delete selected virtual drives */
+"Delete selected virtual drives" = "Delete selected virtual drives";
+
+/* Delete to drive */
+"Delete to drive" = "Delete to drive";
+
+/* Disk */
+"Disk" = "Disk";
+
+/* Disk has been converted */
+"Disk has been converted" = "Disk has been converted";
+
+/* Disk has been created */
+"Disk has been created" = "Disk has been created";
+
+/* Disk has been removed */
+"Disk has been removed" = "Disk has been removed";
+
+/* Disk has been renamed */
+"Disk has been renamed" = "Disk has been renamed";
+
+/* Edit selected drive */
+"Edit selected drive" = "Edit selected drive";
+
+/* Edit selected virtual drive */
+"Edit selected virtual drive" = "Edit selected virtual drive";
+
+/* Error */
+"Error" = "Error";
+
+/* Format */
+"Format" = "Format";
+
+/* GB */
+"GB" = "GB";
+
+/* If checked, the drive will not be in sparse mode */
+"If checked, the drive will not be in sparse mode" = "If checked, the drive will not be in sparse mode";
+
+/* KB */
+"KB" = "KB";
+
+/* MB */
+"MB" = "MB";
+
+/* Name */
+"Name" = "Name";
+
+/* Path */
+"Path" = "Path";
+
+/* Real size */
+"Real size" = "Real size";
+
+/* Rename */
+"Rename" = "Rename";
+
+/* Set the format of the new virtual drive */
+"Set the format of the new virtual drive" = "Set the format of the new virtual drive";
+
+/* Set the name of the new virtual drive */
+"Set the name of the new virtual drive" = "Set the name of the new virtual drive";
+
+/* Set the name of the virtual drive */
+"Set the name of the virtual drive" = "Set the name of the virtual drive";
+
+/* Set the size of the new virtual drive */
+"Set the size of the new virtual drive" = "Set the size of the new virtual drive";
+
+/* Set the unit of size for the new virtual drive */
+"Set the unit of size for the new virtual drive" = "Set the unit of size for the new virtual drive";
+
+/* Virtual size */
+"Virtual size" = "Virtual size";
+
+/* You can't edit disks of a running virtual machine */
+"You can't edit disks of a running virtual machine" = "You can't edit disks of a running virtual machine";
+
+/* You can't edit multiple disk */
+"You can't edit multiple disk" = "You can't edit multiple disk";
+
+/* You must choose a different format */
+"You must choose a different format" = "You must choose a different format";
+
+/* You must enter a numeric value */
+"You must enter a numeric value" = "You must enter a numeric value";
+
+/* You must enter a valid name */
+"You must enter a valid name" = "You must enter a valid name";
+
+/* You must select a media */
+"You must select a media" = "You must select a media";
+

@@ -249,20 +249,20 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
-    [_plusButtonDrives setToolTip:@"Add a virtual drive"];
+    [_plusButtonDrives setToolTip:CPBundleLocalizedString(@"Add a virtual drive", @"Add a virtual drive")];
 
     _minusButtonDrives = [CPButtonBar minusButton];
     [_minusButtonDrives setTarget:self];
     [_minusButtonDrives setAction:@selector(deleteDrive:)];
     [_minusButtonDrives setEnabled:NO];
-    [_minusButtonDrives setToolTip:@"Delete selected drives"];
+    [_minusButtonDrives setToolTip:CPBundleLocalizedString(@"Delete selected drives", @"Delete selected drives")];
 
     _editButtonDrives = [CPButtonBar plusButton];
     [_editButtonDrives setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonDrives setTarget:self];
     [_editButtonDrives setAction:@selector(editDrive:)];
     [_editButtonDrives setEnabled:NO];
-    [_editButtonDrives setToolTip:@"Edit selected drive"];
+    [_editButtonDrives setToolTip:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive")];
 
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
 
@@ -270,20 +270,20 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
-    [_plusButtonNics setToolTip:@"Add a virtual network card"];
+    [_plusButtonNics setToolTip:CPBundleLocalizedString(@"Add a virtual network card", @"Add a virtual network card")];
 
     _minusButtonNics = [CPButtonBar minusButton];
     [_minusButtonNics setTarget:self];
     [_minusButtonNics setAction:@selector(deleteNetworkCard:)];
     [_minusButtonNics setEnabled:NO];
-    [_minusButtonNics setToolTip:@"Remove selected virtual network card"];
+    [_minusButtonNics setToolTip:CPBundleLocalizedString(@"Remove selected virtual network card", @"Remove selected virtual network card")];
 
     _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
     [_editButtonNics setAction:@selector(editNetworkCard:)];
     [_editButtonNics setEnabled:NO];
-    [_editButtonNics setToolTip:@"Edit selected virtual network card"];
+    [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected virtual network card", @"Edit selected virtual network card")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
 
@@ -295,8 +295,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [networkController setDelegate:self];
 
     //drives
-    _drivesDatasource       = [[TNTableViewDataSource alloc] init];
-    _tableDrives            = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
+    _drivesDatasource = [[TNTableViewDataSource alloc] init];
+    _tableDrives = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
 
     [scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
     [scrollViewForDrives setAutohidesScrollers:YES];
@@ -320,32 +320,32 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         driveColumnFormat = [[CPTableColumn alloc] initWithIdentifier:@"format"],
         driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
 
-    [[driveColumnType headerView] setStringValue:@"Type"];
+    [[driveColumnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
     [driveColumnType setWidth:80.0];
     [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
 
-    [[driveColumnDevice headerView] setStringValue:@"Device"];
+    [[driveColumnDevice headerView] setStringValue:CPBundleLocalizedString(@"Device", @"Device")];
     [driveColumnDevice setWidth:80.0];
     [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
 
-    [[driveColumnTarget headerView] setStringValue:@"Target"];
+    [[driveColumnTarget headerView] setStringValue:CPBundleLocalizedString(@"Target", @"Target")];
     [driveColumnTarget setWidth:80.0];
     [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
 
-    [[driveColumnBus headerView] setStringValue:@"Bus"];
+    [[driveColumnBus headerView] setStringValue:CPBundleLocalizedString(@"Bus", @"Bus")];
     [driveColumnBus setWidth:80.0];
     [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
 
-    [[driveColumnCache headerView] setStringValue:@"Cache mode"];
+    [[driveColumnCache headerView] setStringValue:CPBundleLocalizedString(@"Cache mode", @"Cache mode")];
     [driveColumnCache setWidth:80.0];
     [driveColumnCache setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"cache" ascending:YES]];
 
-    [[driveColumnFormat headerView] setStringValue:@"Format"];
+    [[driveColumnFormat headerView] setStringValue:CPBundleLocalizedString(@"Format", @"Format")];
     [driveColumnFormat setWidth:80.0];
     [driveColumnFormat setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"format" ascending:YES]];
 
     [driveColumnSource setWidth:300];
-    [[driveColumnSource headerView] setStringValue:@"Source"];
+    [[driveColumnSource headerView] setStringValue:CPBundleLocalizedString(@"Source", @"Source")];
     [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
     [_tableDrives addTableColumn:driveColumnType];
@@ -387,17 +387,17 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"],
         columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
 
-    [[columnType headerView] setStringValue:@"Type"];
+    [[columnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
     [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
 
-    [[columnModel headerView] setStringValue:@"Model"];
+    [[columnModel headerView] setStringValue:CPBundleLocalizedString(@"Model", @"Model")];
     [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
 
     [columnMac setWidth:150];
-    [[columnMac headerView] setStringValue:@"MAC"];
+    [[columnMac headerView] setStringValue:CPBundleLocalizedString(@"MAC", @"MAC")];
     [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
 
-    [[columnSource headerView] setStringValue:@"Source"];
+    [[columnSource headerView] setStringValue:CPBundleLocalizedString(@"Source", @"Source")];
     [columnSource setWidth:250];
     [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
 
@@ -422,11 +422,11 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     var tabViewItemDrives = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemDrives"],
         tabViewItemNics = [[CPTabViewItem alloc] initWithIdentifier:@"IDtabViewItemNics"];
 
-    [tabViewItemDrives setLabel:@"Virtual Medias"];
+    [tabViewItemDrives setLabel:CPBundleLocalizedString(@"Virtual Medias", @"Virtual Medias")];
     [tabViewItemDrives setView:viewDeviceVirtualDrives];
     [tabViewDevices addTabViewItem:tabViewItemDrives];
 
-    [tabViewItemNics setLabel:@"Virtual Nics"];
+    [tabViewItemNics setLabel:CPBundleLocalizedString(@"Virtual Nics", @"Virtual Nics")];
     [tabViewItemNics setView:viewDeviceVirtualNics];
     [tabViewDevices addTabViewItem:tabViewItemNics];
 
@@ -484,16 +484,16 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     var menuNet = [[CPMenu alloc] init],
         menuDrive = [[CPMenu alloc] init];
 
-    [menuNet addItemWithTitle:@"Create new network interface" action:@selector(addNetworkCard:) keyEquivalent:@""];
+    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Create new network interface", @"Create new network interface") action:@selector(addNetworkCard:) keyEquivalent:@""];
     [menuNet addItem:[CPMenuItem separatorItem]];
-    [menuNet addItemWithTitle:@"Edit" action:@selector(editNetworkCard:) keyEquivalent:@""];
-    [menuNet addItemWithTitle:@"Delete" action:@selector(deleteNetworkCard:) keyEquivalent:@""];
+    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editNetworkCard:) keyEquivalent:@""];
+    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteNetworkCard:) keyEquivalent:@""];
     [_tableNetworkNics setMenu:menuNet];
 
-    [menuDrive addItemWithTitle:@"Create new drive" action:@selector(addDrive:) keyEquivalent:@""];
+    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Create new drive", @"Create new drive") action:@selector(addDrive:) keyEquivalent:@""];
     [menuDrive addItem:[CPMenuItem separatorItem]];
-    [menuDrive addItemWithTitle:@"Edit" action:@selector(editDrive:) keyEquivalent:@""];
-    [menuDrive addItemWithTitle:@"Delete" action:@selector(deleteDrive:) keyEquivalent:@""];
+    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editDrive:) keyEquivalent:@""];
+    [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteDrive:) keyEquivalent:@""];
     [_tableDrives setMenu:menuDrive];
 
     [fieldVNCPassword setSecure:YES];
@@ -508,11 +508,11 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [switchACPI setAction:@selector(makeDefinitionEdited:)];
     [switchPAE setTarget:self];
     [switchPAE setAction:@selector(makeDefinitionEdited:)];
-    [switchAPIC setToolTip:@"Enable or disable PAE"];
+    [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable or disable PAE", @"Enable or disable PAE")];
 
     [switchHugePages setTarget:self];
     [switchHugePages setAction:@selector(makeDefinitionEdited:)];
-    [switchHugePages setToolTip:@"Enable or disable usage of huge pages backed memory"];
+    [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
 
     //CPUStepper
     [stepperNumberCPUs setMaxValue:4];
@@ -522,44 +522,44 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
     [stepperNumberCPUs setAction:@selector(makeDefinitionEdited:)];
-    [stepperNumberCPUs setToolTip:@"Set the number of virtual CPUs"];
+    [stepperNumberCPUs setToolTip:CPBundleLocalizedString(@"Set the number of virtual CPUs", @"Set the number of virtual CPUs")];
 
     _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
     _imageDefining = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"spinner.gif"] size:CPSizeMake(16.0, 16.0)];
     [buttonDefine setEnabled:NO];
-    [buttonDefine setToolTip:@"Save changes"];
+    [buttonDefine setToolTip:CPBundleLocalizedString(@"Save changes", @"Save changes")];
 
-    [buttonXMLEditor setToolTip:@"Open the XML editor"];
-    [buttonBoot setToolTip:@"Set boot origin"];
-    [buttonClocks setToolTip:@"Set the mode of the virtual machine clock"];
-    [buttonDomainType setToolTip:@"Set the domain type"];
-    [buttonGuests setToolTip:@"Set the guest type"];
-    [buttonInputType setToolTip:@"Set the input device"];
-    [buttonMachines setToolTip:@"Set the domain machine type"];
-    [buttonOnCrash setToolTip:@"Set what to do when virtual machine crashes"];
-    [buttonOnPowerOff setToolTip:@"Set what to do when virtual machine is stopped"];
-    [buttonOnReboot setToolTip:@"Set what to do when virtual machine is rebooted"];
-    [buttonUndefine setToolTip:@"Undefine the domain"];
-    [buttonVNCKeymap setToolTip:@"Set the VNC keymap to use"];
-    [switchPAE setToolTip:@"Enable usage of PAE"];
-    [switchAPIC setToolTip:@"Enable usage of APIC"];
-    [switchACPI setToolTip:@"Enable usage of ACPI (allow to use 'shutdown' control)"];
-    [fieldMemory setToolTip:@"Set amount of memort (in Mb)"];
-    [fieldVNCPassword setToolTip:@"Set the VNC password (no password if blank)"];
-    [buttonPreferencesBoot setToolTip:@"Set the default boot device for new domains"];
-    [buttonPreferencesClockOffset setToolTip:@"Set the default clock offset for new domains"];
-    [buttonPreferencesInput setToolTip:@"Set the default input type for new domains"];
-    [buttonPreferencesNumberOfCPUs setToolTip:@"Set the default number of CPUs for new domains"];
-    [buttonPreferencesOnCrash setToolTip:@"Set the default behaviour on crash for new domains"];
-    [buttonPreferencesOnPowerOff setToolTip:@"Set the default behaviour on power off for new domains"];
-    [buttonPreferencesOnReboot setToolTip:@"Set the default behaviour on reboot for new domains"];
-    [buttonPreferencesVNCKeyMap setToolTip:@"Set the default VNC keymap for new domains"];
-    [buttonPreferencesDriveCache setToolTip:@"Set the default drive cache for new drives"];
-    [fieldPreferencesDomainType setToolTip:@"Set the default domain type for new domains"];
-    [fieldPreferencesGuest setToolTip:@"Set the default guest for new domains"];
-    [fieldPreferencesMachine setToolTip:@"Set the default machine type for new domains"];
-    [fieldPreferencesMemory setToolTip:@"Set the default amount of memory for new domains"];
-    [switchPreferencesHugePages setToolTip:@"Set the default usage of huge pages for new domains"];
+    [buttonXMLEditor setToolTip:CPBundleLocalizedString(@"Open the XML editor", @"Open the XML editor")];
+    [buttonBoot setToolTip:CPBundleLocalizedString(@"Set boot origin", @"Set boot origin")];
+    [buttonClocks setToolTip:CPBundleLocalizedString(@"Set the mode of the virtual machine clock", @"Set the mode of the virtual machine clock")];
+    [buttonDomainType setToolTip:CPBundleLocalizedString(@"Set the domain type", @"Set the domain type")];
+    [buttonGuests setToolTip:CPBundleLocalizedString(@"Set the guest type", @"Set the guest type")];
+    [buttonInputType setToolTip:CPBundleLocalizedString(@"Set the input device", @"Set the input device")];
+    [buttonMachines setToolTip:CPBundleLocalizedString(@"Set the domain machine type", @"Set the domain machine type")];
+    [buttonOnCrash setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine crashes", @"Set what to do when virtual machine crashes")];
+    [buttonOnPowerOff setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is stopped", @"Set what to do when virtual machine is stopped")];
+    [buttonOnReboot setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is rebooted", @"Set what to do when virtual machine is rebooted")];
+    [buttonUndefine setToolTip:CPBundleLocalizedString(@"Undefine the domain", @"Undefine the domain")];
+    [buttonVNCKeymap setToolTip:CPBundleLocalizedString(@"Set the VNC keymap to use", @"Set the VNC keymap to use")];
+    [switchPAE setToolTip:CPBundleLocalizedString(@"Enable usage of PAE", @"Enable usage of PAE")];
+    [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable usage of APIC", @"Enable usage of APIC")];
+    [switchACPI setToolTip:CPBundleLocalizedString(@"Enable usage of ACPI (allow to use 'shutdown' control)", @"Enable usage of ACPI (allow to use 'shutdown' control)")];
+    [fieldMemory setToolTip:CPBundleLocalizedString(@"Set amount of memort (in Mb)", @"Set amount of memort (in Mb)")];
+    [fieldVNCPassword setToolTip:CPBundleLocalizedString(@"Set the VNC password (no password if blank)", @"Set the VNC password (no password if blank)")];
+    [buttonPreferencesBoot setToolTip:CPBundleLocalizedString(@"Set the default boot device for new domains", @"Set the default boot device for new domains")];
+    [buttonPreferencesClockOffset setToolTip:CPBundleLocalizedString(@"Set the default clock offset for new domains", @"Set the default clock offset for new domains")];
+    [buttonPreferencesInput setToolTip:CPBundleLocalizedString(@"Set the default input type for new domains", @"Set the default input type for new domains")];
+    [buttonPreferencesNumberOfCPUs setToolTip:CPBundleLocalizedString(@"Set the default number of CPUs for new domains", @"Set the default number of CPUs for new domains")];
+    [buttonPreferencesOnCrash setToolTip:CPBundleLocalizedString(@"Set the default behaviour on crash for new domains", @"Set the default behaviour on crash for new domains")];
+    [buttonPreferencesOnPowerOff setToolTip:CPBundleLocalizedString(@"Set the default behaviour on power off for new domains", @"Set the default behaviour on power off for new domains")];
+    [buttonPreferencesOnReboot setToolTip:CPBundleLocalizedString(@"Set the default behaviour on reboot for new domains", @"Set the default behaviour on reboot for new domains")];
+    [buttonPreferencesVNCKeyMap setToolTip:CPBundleLocalizedString(@"Set the default VNC keymap for new domains", @"Set the default VNC keymap for new domains")];
+    [buttonPreferencesDriveCache setToolTip:CPBundleLocalizedString(@"Set the default drive cache for new drives", @"Set the default drive cache for new drives")];
+    [fieldPreferencesDomainType setToolTip:CPBundleLocalizedString(@"Set the default domain type for new domains", @"Set the default domain type for new domains")];
+    [fieldPreferencesGuest setToolTip:CPBundleLocalizedString(@"Set the default guest for new domains", @"Set the default guest for new domains")];
+    [fieldPreferencesMachine setToolTip:CPBundleLocalizedString(@"Set the default machine type for new domains", @"Set the default machine type for new domains")];
+    [fieldPreferencesMemory setToolTip:CPBundleLocalizedString(@"Set the default amount of memory for new domains", @"Set the default amount of memory for new domains")];
+    [switchPreferencesHugePages setToolTip:CPBundleLocalizedString(@"Set the default usage of huge pages for new domains", @"Set the default usage of huge pages for new domains")];
 }
 
 
@@ -637,10 +637,10 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 {
     if (_definitionEdited)
     {
-        var alert = [TNAlert alertWithMessage:@"Unsaved changes"
-                                    informative:@"You have made some changes in the virtual machine definition. Would you like save these changes?"
+        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unsaved changes", @"Unsaved changes")
+                                    informative:CPBundleLocalizedString(@"You have made some changes in the virtual machine definition. Would you like save these changes?", @"You have made some changes in the virtual machine definition. Would you like save these changes?")
                                      target:self
-                                     actions:[["Validate", @selector(saveChanges:)], ["Discard", @selector(discardChanges:)]]];
+                                     actions:[[CPBundleLocalizedString(@"Validate", @"Validate"), @selector(saveChanges:)], [CPBundleLocalizedString(@"Discard", @"Discard"), @selector(discardChanges:)]]];
 
         [alert setUserInfo:[CPArray arrayWithObjects:nextItem, anObject]];
         [alert runModal];
@@ -698,13 +698,13 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Undefine" action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Undefine", @"Undefine") action:@selector(undefineXML:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Add drive" action:@selector(addDrive:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Edit selected drive" action:@selector(editDrive:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add drive", @"Add drive") action:@selector(addDrive:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(editDrive:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Add network card" action:@selector(addNetworkCard:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Edit selected network card" action:@selector(editNetworkCard:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add network card", @"Add network card") action:@selector(addNetworkCard:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network card", @"Edit selected network card") action:@selector(editNetworkCard:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
@@ -842,13 +842,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         if (!_definitionRecovered)
             return;
 
-        // if ([self doesBasicValueMatchGUI])
-        // {
-        //     _definitionEdited = NO;
-        //     [self markGUIAsNotEdited];
-        //     return;
-        // }
-
         _definitionEdited = YES;
         [self markGUIAsEdited];
     }
@@ -875,32 +868,6 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [buttonDefine setImage:nil];
     [buttonDefine setEnabled:NO];
     [buttonDefine unsetThemeState:CPThemeStateDefault];
-}
-
-/*! return YES if all values of the GUI matches ones stored
-    in _currentBasicSettingsValues
-    @return boolean YES or NO
-*/
-- (BOOL)doesBasicValueMatchGUI
-{
-    return (([_currentBasicSettingsValues objectForKey:@"memory"] == [fieldMemory intValue] * 1024)
-        && [_currentBasicSettingsValues objectForKey:@"vcpu"] == [stepperNumberCPUs intValue]
-        && [_currentBasicSettingsValues objectForKey:@"boot"] == [buttonBoot title]
-        && [_currentBasicSettingsValues objectForKey:@"input"] == [buttonInputType title]
-        && [_currentBasicSettingsValues objectForKey:@"keymap"] == [buttonVNCKeymap title]
-        && (![_currentBasicSettingsValues objectForKey:@"passwd"]
-            || [_currentBasicSettingsValues objectForKey:@"passwd"] == [fieldVNCPassword stringValue])
-        && [_currentBasicSettingsValues objectForKey:@"onCrash"] == [buttonOnCrash title]
-        && [_currentBasicSettingsValues objectForKey:@"onReboot"] == [buttonOnReboot title]
-        && [_currentBasicSettingsValues objectForKey:@"onPowerOff"] == [buttonOnPowerOff title]
-        && [_currentBasicSettingsValues objectForKey:@"hypervisor"] == [buttonDomainType title]
-        && [_currentBasicSettingsValues objectForKey:@"machine"] == [buttonMachines title]
-        && [_currentBasicSettingsValues objectForKey:@"clock"] == [buttonClocks title]
-        && [_currentBasicSettingsValues valueForKey:@"acpi"] == [switchACPI isOn]
-        && [_currentBasicSettingsValues valueForKey:@"apic"] == [switchAPIC isOn]
-        && [_currentBasicSettingsValues valueForKey:@"pae"] == [switchPAE isOn]
-        && [_currentBasicSettingsValues valueForKey:@"hugepages"] == [switchHugePages isOn]
-        && [_currentBasicSettingsValues objectForKey:@"type"] + @" (" + [_currentBasicSettingsValues objectForKey:@"arch"] + @")" == [buttonGuests title])
 }
 
 /*! generate a random Mac address.
@@ -972,7 +939,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     {
         [self showMaskView:YES];
         if (_definitionEdited)
-            [TNAlert showAlertWithMessage:@"Definition edited" informative:@"You started the virtual machine, but you haven't save the current changes."];
+            [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Definition edited", @"Definition edited")
+                              informative:CPBundleLocalizedString(@"You started the virtual machine, but you haven't save the current changes.", @"You started the virtual machine, but you haven't save the current changes.")];
     }
     else
     {
@@ -1226,7 +1194,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
     if ([_tableNetworkNics numberOfSelectedRows] <= 0)
     {
-         [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a network interface"];
+         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                           informative:CPBundleLocalizedString(@"You must select a network interface", @"You must select a network interface")];
          return;
     }
 
@@ -1287,7 +1256,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
     if ([_tableDrives numberOfSelectedRows] <= 0)
     {
-        [TNAlert showAlertWithMessage:@"Error" informative:@"You must select a drive"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
+                          informative:CPBundleLocalizedString(@"You must select a drive", @"You must select a drive")];
         return;
     }
 
@@ -1378,7 +1348,9 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 
         if ([guests count] == 0)
         {
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Capabilities" message:@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry." icon:TNGrowlIconError];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Capabilities", @"Capabilities")
+                                                             message:CPBundleLocalizedString(@"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.", @"Your hypervisor have not pushed any guest support. For some reason, you can't create domains. Sorry.")
+                                                                icon:TNGrowlIconError];
             [self showMaskView:YES];
         }
 
@@ -1996,10 +1968,10 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 */
 - (void)undefineXML
 {
-        var alert = [TNAlert alertWithMessage:@"Are you sure you want to undefine this virtual machine ?"
-                                informative:@"All your changes will be definitly lost."
+        var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Are you sure you want to undefine this virtual machine ?", @"Are you sure you want to undefine this virtual machine ?")
+                                informative:CPBundleLocalizedString(@"All your changes will be definitly lost.", @"All your changes will be definitly lost.")
                                      target:self
-                                     actions:[["Undefine", @selector(performUndefineXML:)], ["Cancel", nil]]];
+                                     actions:[[CPBundleLocalizedString(@"Undefine", @"Undefine"), @selector(performUndefineXML:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
         [alert runModal];
 }
 
@@ -2022,7 +1994,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Virtual machine" message:@"Virtual machine has been undefined"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual machine", @"Virtual machine")
+                                                         message:CPBundleLocalizedString(@"Virtual machine has been undefined", @"Virtual machine has been undefined")];
         [self setDefaultValues];
         [self getXMLDesc];
     }
@@ -2064,3 +2037,12 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 }
 
 @end
+
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineDefinitionController], comment);
+}

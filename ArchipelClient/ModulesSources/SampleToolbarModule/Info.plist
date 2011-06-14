@@ -9,6 +9,12 @@
         <string>org.archipelproject.sampletabmodule</string>
 
         <!--
+            The default locale to use
+        -->
+        <key>CPBundleLocale</key>
+        <string>en</string>
+
+        <!--
             Version of this plist file. Must be 1.0
         -->
         <key>CPBundleInfoDictionaryVersion</key>
@@ -43,7 +49,12 @@
             the module in the GUI
         -->
         <key>PluginDisplayName</key>
-        <string>Show Sample</string>
+        <dict>
+            <key>en</key>
+            <string>Sample</string>
+            <key>fr</key>
+            <string>Exemple</string>
+        </dict>
 
         <!--
             The tooltip of the toolbar item icon

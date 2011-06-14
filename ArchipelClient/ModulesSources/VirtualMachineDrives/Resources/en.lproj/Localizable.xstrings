@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Are you sure you want to destroy this drive ? this is not reversible.</key>
+	<string>Are you sure you want to destroy this drive ? this is not reversible.</string>
+	<key>B</key>
+	<string>B</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Choose the format of the virtual drive</key>
+	<string>Choose the format of the virtual drive</string>
+	<key>Create a drive</key>
+	<string>Create a drive</string>
+	<key>Create a new virtual drive</key>
+	<string>Create a new virtual drive</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete selected drive</key>
+	<string>Delete selected drive</string>
+	<key>Delete selected virtual drives</key>
+	<string>Delete selected virtual drives</string>
+	<key>Delete to drive</key>
+	<string>Delete to drive</string>
+	<key>Disk</key>
+	<string>Disk</string>
+	<key>Disk has been converted</key>
+	<string>Disk has been converted</string>
+	<key>Disk has been created</key>
+	<string>Disk has been created</string>
+	<key>Disk has been removed</key>
+	<string>Disk has been removed</string>
+	<key>Disk has been renamed</key>
+	<string>Disk has been renamed</string>
+	<key>Edit selected drive</key>
+	<string>Edit selected drive</string>
+	<key>Edit selected virtual drive</key>
+	<string>Edit selected virtual drive</string>
+	<key>Error</key>
+	<string>Error</string>
+	<key>Format</key>
+	<string>Format</string>
+	<key>GB</key>
+	<string>GB</string>
+	<key>If checked, the drive will not be in sparse mode</key>
+	<string>If checked, the drive will not be in sparse mode</string>
+	<key>KB</key>
+	<string>KB</string>
+	<key>MB</key>
+	<string>MB</string>
+	<key>Name</key>
+	<string>Name</string>
+	<key>Path</key>
+	<string>Path</string>
+	<key>Real size</key>
+	<string>Real size</string>
+	<key>Rename</key>
+	<string>Rename</string>
+	<key>Set the format of the new virtual drive</key>
+	<string>Set the format of the new virtual drive</string>
+	<key>Set the name of the new virtual drive</key>
+	<string>Set the name of the new virtual drive</string>
+	<key>Set the name of the virtual drive</key>
+	<string>Set the name of the virtual drive</string>
+	<key>Set the size of the new virtual drive</key>
+	<string>Set the size of the new virtual drive</string>
+	<key>Set the unit of size for the new virtual drive</key>
+	<string>Set the unit of size for the new virtual drive</string>
+	<key>Virtual size</key>
+	<string>Virtual size</string>
+	<key>You can't edit disks of a running virtual machine</key>
+	<string>You can't edit disks of a running virtual machine</string>
+	<key>You can't edit multiple disk</key>
+	<string>You can't edit multiple disk</string>
+	<key>You must choose a different format</key>
+	<string>You must choose a different format</string>
+	<key>You must enter a numeric value</key>
+	<string>You must enter a numeric value</string>
+	<key>You must enter a valid name</key>
+	<string>You must enter a valid name</string>
+	<key>You must select a media</key>
+	<string>You must select a media</string>
+</dict>
+</plist>

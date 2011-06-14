@@ -1,0 +1,75 @@
+/* Appliance */
+"Appliance" = "Appliance";
+
+/* Appliance has been detached */
+"Appliance has been detached" = "Appliance has been detached";
+
+/* Appliance is installed. */
+"Appliance is installed." = "Appliance is installed.";
+
+/* Are you sure you want to attach this appliance? This will reset all your virtual machine. */
+"Are you sure you want to attach this appliance? This will reset all your virtual machine." = "Are you sure you want to attach this appliance? This will reset all your virtual machine.";
+
+/* Are you sure you want to detach virtual machine from this appliance? */
+"Are you sure you want to detach virtual machine from this appliance?" = "Are you sure you want to detach virtual machine from this appliance?";
+
+/* Attach */
+"Attach" = "Attach";
+
+/* Attach appliance */
+"Attach appliance" = "Attach appliance";
+
+/* Attach selected appliance */
+"Attach selected appliance" = "Attach selected appliance";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Comment */
+"Comment" = "Comment";
+
+/* Create a package from the virtual machine and publish it into the hypervisor's VMCast feed */
+"Create a package from the virtual machine and publish it into the hypervisor's VMCast feed" = "Create a package from the virtual machine and publish it into the hypervisor's VMCast feed";
+
+/* Create appliance from this virtual machine */
+"Create appliance from this virtual machine" = "Create appliance from this virtual machine";
+
+/* Detach */
+"Detach" = "Detach";
+
+/* Detach from appliance */
+"Detach from appliance" = "Detach from appliance";
+
+/* Dettach from selected appliance */
+"Dettach from selected appliance" = "Dettach from selected appliance";
+
+/* Error */
+"Error" = "Error";
+
+/* Instanciation has started */
+"Instanciation has started" = "Instanciation has started";
+
+/* Name */
+"Name" = "Name";
+
+/* Packaging started. */
+"Packaging started." = "Packaging started.";
+
+/* Packaging successful. */
+"Packaging successful." = "Packaging successful.";
+
+/* Stop using selected appliance for this virtual machine (it will allow to change appliance) */
+"Stop using selected appliance for this virtual machine (it will allow to change appliance)" = "Stop using selected appliance for this virtual machine (it will allow to change appliance)";
+
+/* Unable to create package. Check agent logs */
+"Unable to create package. Check agent logs" = "Unable to create package. Check agent logs";
+
+/* Use the selected appliance for this virtual machine */
+"Use the selected appliance for this virtual machine" = "Use the selected appliance for this virtual machine";
+
+/* Virtual machine must not be running to package it. */
+"Virtual machine must not be running to package it." = "Virtual machine must not be running to package it.";
+
+/* You must select an appliance */
+"You must select an appliance" = "You must select an appliance";
+

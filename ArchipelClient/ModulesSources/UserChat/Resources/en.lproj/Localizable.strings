@@ -1,0 +1,15 @@
+/* Clear all the content of the chat history */
+"Clear all the content of the chat history" = "Clear all the content of the chat history";
+
+/* Clear history */
+"Clear history" = "Clear history";
+
+/* Open chat in a new window */
+"Open chat in a new window" = "Open chat in a new window";
+
+/* Send message */
+"Send message" = "Send message";
+
+/* Set the max number of message to store. High value can decrease performances */
+"Set the max number of message to store. High value can decrease performances" = "Set the max number of message to store. High value can decrease performances";
+

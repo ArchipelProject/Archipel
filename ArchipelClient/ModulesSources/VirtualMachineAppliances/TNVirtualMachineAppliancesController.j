@@ -104,11 +104,11 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
         imgView         = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [columnName setWidth:200]
-    [[columnName headerView] setStringValue:@"Name"];
+    [[columnName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columnName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [columnComment setWidth:250];
-    [[columnComment headerView] setStringValue:@"Comment"];
+    [[columnComment headerView] setStringValue:CPBundleLocalizedString(@"Comment", @"Comment")];
     [columnComment setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"comment" ascending:YES]];
 
     [imgView setImageScaling:CPScaleNone];
@@ -137,21 +137,21 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     [_packageButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/package.png"] size:CPSizeMake(16, 16)]];
     [_packageButton setTarget:self];
     [_packageButton setAction:@selector(openNewApplianceWindow:)];
-    [_packageButton setToolTip:@"Create a package from the virtual machine and publish it into the hypervisor's VMCast feed"];
+    [_packageButton setToolTip:CPBundleLocalizedString(@"Create a package from the virtual machine and publish it into the hypervisor's VMCast feed", @"Create a package from the virtual machine and publish it into the hypervisor's VMCast feed")];
 
     _attachButton  = [CPButtonBar plusButton];
     [_attachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/lock.png"] size:CPSizeMake(16, 16)]];
     [_attachButton setTarget:self];
     [_attachButton setAction:@selector(attach:)];
     [_attachButton setEnabled:NO];
-    [_attachButton setToolTip:@"Use the selected appliance for this virtual machine"];
+    [_attachButton setToolTip:CPBundleLocalizedString(@"Use the selected appliance for this virtual machine", @"Use the selected appliance for this virtual machine")];
 
     _detachButton  = [CPButtonBar plusButton];
     [_detachButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/unlock.png"] size:CPSizeMake(16, 16)]];
     [_detachButton setTarget:self];
     [_detachButton setAction:@selector(detach:)];
     [_detachButton setEnabled:NO];
-    [_detachButton setToolTip:@"Stop using selected appliance for this virtual machine (it will allow to change appliance)"];
+    [_detachButton setToolTip:CPBundleLocalizedString(@"Stop using selected appliance for this virtual machine (it will allow to change appliance)", @"Stop using selected appliance for this virtual machine (it will allow to change appliance)")];
 
     [buttonBarControl setButtons:[_attachButton, _detachButton, _packageButton]];
 }
@@ -211,10 +211,10 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 */
 - (void)menuReady
 {
-    [[_menu addItemWithTitle:@"Attach selected appliance" action:@selector(attach:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:@"Dettach from selected appliance" action:@selector(detach:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Attach selected appliance", @"Attach selected appliance") action:@selector(attach:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Dettach from selected appliance", @"Dettach from selected appliance") action:@selector(detach:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
-    [[_menu addItemWithTitle:@"Create appliance from this virtual machine" action:@selector(package:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Create appliance from this virtual machine", @"Create appliance from this virtual machine") action:@selector(package:) keyEquivalent:@""] setTarget:self];
 }
 
 /*! called when permissions changes
@@ -258,20 +258,25 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
     switch (change)
     {
         case @"packaging":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Packaging started."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance")
+                                                             message:CPBundleLocalizedString(@"Packaging started.", @"Packaging started.")];
             break;
 
         case @"packagingerror":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Unable to create package. Check agent logs" icon:TNGrowlIconError];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance"
+                                                             message:CPBundleLocalizedString(@"Unable to create package. Check agent logs", @"Unable to create package. Check agent logs")
+                                                                icon:TNGrowlIconError];
             break;
 
         case @"packaged":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Packaging successful."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance")
+                                                             message:CPBundleLocalizedString(@"Packaging successful.", @"Packaging successful.")];
             [self getInstalledAppliances];
             break
 
         case @"applianceinstalled":
-            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:"Appliance is installed."];
+            [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance")
+                                                             message:CPBundleLocalizedString(@"Appliance is installed.", @"Appliance is installed.")];
             [self getInstalledAppliances];
             break;
 
@@ -414,14 +419,15 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
+         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
+                         message:CPBundleLocalizedString(@"You must select an appliance", @"You must select an appliance")];
          return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Attach appliance"
-                                informative:@"Are you sure you want to attach this appliance? This will reset all your virtual machine."
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Attach appliance", @"Attach appliance")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to attach this appliance? This will reset all your virtual machine.", @"Are you sure you want to attach this appliance? This will reset all your virtual machine.")
                                  target:self
-                                 actions:[["Attach", @selector(performAttach:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Attach", @"Attach"), @selector(performAttach:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
 
 
@@ -453,7 +459,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Instanciation has started"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance")
+                                                         message:CPBundleLocalizedString(@"Instanciation has started", @"Instanciation has started")];
     }
     else
     {
@@ -469,14 +476,15 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if (([_tableAppliances numberOfRows]) && ([_tableAppliances numberOfSelectedRows] <= 0))
     {
-         [CPAlert alertWithTitle:@"Error" message:@"You must select an appliance"];
+         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
+                         message:CPBundleLocalizedString(@"You must select an appliance", @"You must select an appliance")];
          return;
     }
 
-    var alert = [TNAlert alertWithMessage:@"Detach from appliance"
-                                informative:@"Are you sure you want to detach virtual machine from this appliance?"
+    var alert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Detach from appliance", @"Detach from appliance")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to detach virtual machine from this appliance?", @"Are you sure you want to detach virtual machine from this appliance?")
                                  target:self
-                                 actions:[["Detach", @selector(performDetach:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString(@"Detach", @"Detach"), @selector(performDetach:)], [CPBundleLocalizedString(@"Cancel", @"Cancel"), nil]]];
     [alert runModal];
 }
 
@@ -509,7 +517,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Appliance" message:@"Appliance has been detached"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Appliance", @"Appliance")
+                                                         message:CPBundleLocalizedString(@"Appliance has been detached", @"Appliance has been detached")];
 
         [self setControl:_attachButton enabledAccordingToPermission:@"appliance_attach"];
     }
@@ -527,7 +536,8 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 {
     if ([_entity XMPPShow] != TNStropheContactStatusBusy)
     {
-         [CPAlert alertWithTitle:@"Error" message:@"Virtual machine must not be running to package it."];
+         [CPAlert alertWithTitle:CPBundleLocalizedString(@"Error", @"Error")
+                         message:CPBundleLocalizedString(@"Virtual machine must not be running to package it.", @"Virtual machine must not be running to package it.")];
          return;
     }
 
@@ -579,3 +589,11 @@ var TNArchipelTypeVirtualMachineVMCasting           = @"archipel:virtualmachine:
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNVirtualMachineAppliancesController], comment);
+}

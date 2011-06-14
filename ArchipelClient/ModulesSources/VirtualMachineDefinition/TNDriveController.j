@@ -99,11 +99,11 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
     [buttonBus addItemsWithTitles:TNXMLDescDiskBuses];
     [buttonCache addItemsWithTitles:TNXMLDescDiskCaches];
 
-    [buttonBus setToolTip:@"Set the bus to use for the drive"];
-    [buttonSource setToolTip:@"Set the source to use for the drive"];
-    [buttonTarget setToolTip:@"Set the target to use for the drive"];
-    [buttonTarget setToolTip:@"Set the type of the drive"];
-    [buttonCache setToolTip:@"Set the cache mode the drive"];
+    [buttonBus setToolTip:CPBundleLocalizedString(@"Set the bus to use for the drive", @"Set the bus to use for the drive")];
+    [buttonSource setToolTip:CPBundleLocalizedString(@"Set the source to use for the drive", @"Set the source to use for the drive")];
+    [buttonTarget setToolTip:CPBundleLocalizedString(@"Set the target to use for the drive", @"Set the target to use for the drive")];
+    [buttonTarget setToolTip:CPBundleLocalizedString(@"Set the type of the drive", @"Set the type of the drive")];
+    [buttonCache setToolTip:CPBundleLocalizedString(@"Set the cache mode the drive", @"Set the cache mode the drive")];
 }
 
 
@@ -407,3 +407,12 @@ TNXMLDescDiskCaches                     = [TNXMLDescDiskCacheDefault, TNXMLDescD
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNDriveController], comment);
+}
+

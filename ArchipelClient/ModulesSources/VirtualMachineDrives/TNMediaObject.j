@@ -62,12 +62,20 @@ TNArchipelDrivesFormats = [@"qcow2", @"qcow", @"cow", @"raw", @"vmdk"];
 - (CPString)diskSize
 {
     if (Math.round(_diskSize / 1024 / 1024 / 1024) > 0)
-        return Math.round(_diskSize / 1024 / 1024 / 1024) + @"GB";
+        return Math.round(_diskSize / 1024 / 1024 / 1024) + CPBundleLocalizedString(@"GB", @"GB");
     else if (Math.round(_diskSize / 1024 / 1024) > 0)
-        return Math.round(_diskSize / 1024 / 1024) + @"MB";
+        return Math.round(_diskSize / 1024 / 1024) + CPBundleLocalizedString(@"MB", @"MB");
     else if (Math.round(_diskSize / 1024) > 0)
-        return Math.round(_diskSize / 1024) + @"KB";
+        return Math.round(_diskSize / 1024) + CPBundleLocalizedString(@"KB", @"KB");
     else
-        return _diskSize + @"B";
+        return _diskSize + CPBundleLocalizedString(@"B", @"B");
 }
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNMedia], comment);
+}

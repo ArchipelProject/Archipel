@@ -1,0 +1,31 @@
+
+/* Class = "NSTextFieldCell"; title = "Here is the list of all snapshots of this virtual machine."; ObjectID = "10"; */
+"10.title" = "Here is the list of all snapshots of this virtual machine.";
+
+/* Class = "NSTextFieldCell"; title = "Snapshots"; ObjectID = "11"; */
+"11.title" = "Snapshots";
+
+/* Class = "NSWindow"; title = "New snapshot"; ObjectID = "14"; */
+"14.title" = "New snapshot";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "20"; */
+"20.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "UUID:"; ObjectID = "27"; */
+"27.title" = "UUID:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "28"; */
+"28.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "29"; */
+"29.title" = "Create";
+
+/* Class = "NSTextFieldCell"; title = "New snapshot"; ObjectID = "30"; */
+"30.title" = "New snapshot";
+
+/* Class = "NSTextFieldCell"; title = "Description:"; ObjectID = "34"; */
+"34.title" = "Description:";
+
+/* Class = "NSTextFieldCell"; title = "XXX-XXX-XXX-XXXX-XXXX"; ObjectID = "39"; */
+"39.title" = "XXX-XXX-XXX-XXXX-XXXX";
+

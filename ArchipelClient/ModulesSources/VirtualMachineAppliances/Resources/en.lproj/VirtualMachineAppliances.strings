@@ -1,0 +1,49 @@
+
+/* Class = "NSTextFieldCell"; title = "Available appliances"; ObjectID = "7"; */
+"7.title" = "Available appliances";
+
+/* Class = "NSTextFieldCell"; title = "Select the installed appliance into hypervisor you want to use for this virtual machine."; ObjectID = "8"; */
+"8.title" = "Select the installed appliance into hypervisor you want to use for this virtual machine.";
+
+/* Class = "NSWindow"; title = "Create a new appliance"; ObjectID = "12"; */
+"12.title" = "Create a new appliance";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "18"; */
+"18.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "26"; */
+"26.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "27"; */
+"27.title" = "Create";
+
+/* Class = "NSTextFieldCell"; title = "Create an appliance"; ObjectID = "28"; */
+"28.title" = "Create an appliance";
+
+/* Class = "NSTextFieldCell"; title = "You can create an appliance from this virtual machine actual configuration."; ObjectID = "29"; */
+"29.title" = "You can create an appliance from this virtual machine actual configuration.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Name of appliance"; ObjectID = "31"; */
+"31.placeholderString" = "Name of appliance";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "32"; */
+"32.title" = "Name:";
+
+/* Class = "NSTextFieldCell"; title = "It will be published to the local VMCast of the virtual machine's hypervisor."; ObjectID = "37"; */
+"37.title" = "It will be published to the local VMCast of the virtual machine's hypervisor.";
+
+/* Class = "NSTextFieldCell"; title = "Virtual machine is running."; ObjectID = "51"; */
+"51.title" = "Virtual machine is running.";
+
+/* Class = "NSTextFieldCell"; title = "You need to stop the virtual machine to be able to manage the appliances."; ObjectID = "52"; */
+"52.title" = "You need to stop the virtual machine to be able to manage the appliances.";
+
+/* Class = "NSTextFieldCell"; title = "Compress:"; ObjectID = "66"; */
+"66.title" = "Compress:";
+
+/* Class = "NSButtonCell"; title = "Use GZIP compression for drives"; ObjectID = "68"; */
+"68.title" = "Use GZIP compression for drives";
+
+/* Class = "NSTextFieldCell"; title = "This parameter can eventually be ignored according to the agent configuration."; ObjectID = "72"; */
+"72.title" = "This parameter can eventually be ignored according to the agent configuration.";
+

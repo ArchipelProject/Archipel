@@ -114,10 +114,10 @@
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didReceiveMessage:) name:TNStropheContactMessageReceivedNotification object:nil];
 
-    [buttonClear setToolTip:@"Clear all the content of the chat history"];
-    [buttonDetach setToolTip:@"Open chat in a new window"];
+    [buttonClear setToolTip:CPBundleLocalizedString(@"Clear all the content of the chat history", @"Clear all the content of the chat history")];
+    [buttonDetach setToolTip:CPBundleLocalizedString(@"Open chat in a new window", @"Open chat in a new window")];
 
-    [fieldPreferencesMaxChatMessage setToolTip:@"Set the max number of message to store. High value can decrease performances"];
+    [fieldPreferencesMaxChatMessage setToolTip:CPBundleLocalizedString(@"Set the max number of message to store. High value can decrease performances", @"Set the max number of message to store. High value can decrease performances")];
 }
 
 
@@ -215,8 +215,8 @@
 */
 - (void)menuReady
 {
-    var sendMenu    = [_menu addItemWithTitle:@"Send message" action:@selector(sendMessage:) keyEquivalent:@""],
-        clearMenu   = [_menu addItemWithTitle:@"Clear history" action:@selector(clearHistory:) keyEquivalent:@""];
+    var sendMenu    = [_menu addItemWithTitle:CPBundleLocalizedString(@"Send message", @"Send message") action:@selector(sendMessage:) keyEquivalent:@""],
+        clearMenu   = [_menu addItemWithTitle:CPBundleLocalizedString(@"Clear history", @"Clear history") action:@selector(clearHistory:) keyEquivalent:@""];
 
     [sendMenu setTarget:self];
     [clearMenu setTarget:self];
@@ -446,3 +446,11 @@
     [_detachedChats removeObjectForKey:aJID];
 }
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNUserChatController], comment);
+}

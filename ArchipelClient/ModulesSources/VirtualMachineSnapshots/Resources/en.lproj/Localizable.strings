@@ -1,0 +1,72 @@
+/* Are you sure you want to destory this snapshot ? this is not reversible. */
+"Are you sure you want to destory this snapshot ? this is not reversible." = "Are you sure you want to destory this snapshot ? this is not reversible.";
+
+/* Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost. */
+"Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost." = "Are you sure you want to revert to this snasphot ? All unsnapshoted changes will be lost.";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Create new snapshot */
+"Create new snapshot" = "Create new snapshot";
+
+/* Creation date */
+"Creation date" = "Creation date";
+
+/* Delete */
+"Delete" = "Delete";
+
+/* Delete selected snapshot */
+"Delete selected snapshot" = "Delete selected snapshot";
+
+/* Delete to snapshot */
+"Delete to snapshot" = "Delete to snapshot";
+
+/* Description */
+"Description" = "Description";
+
+/* Restore */
+"Restore" = "Restore";
+
+/* Revert */
+"Revert" = "Revert";
+
+/* Revert to selected drive */
+"Revert to selected drive" = "Revert to selected drive";
+
+/* Revert to snapshot */
+"Revert to snapshot" = "Revert to snapshot";
+
+/* Revert virtual machine to the state stored in selected snapshot */
+"Revert virtual machine to the state stored in selected snapshot" = "Revert virtual machine to the state stored in selected snapshot";
+
+/* Snapshot */
+"Snapshot" = "Snapshot";
+
+/* Snapshot deleted */
+"Snapshot deleted" = "Snapshot deleted";
+
+/* Snapshot sucessfully reverted */
+"Snapshot sucessfully reverted" = "Snapshot sucessfully reverted";
+
+/* Snapshoting sucessfull */
+"Snapshoting sucessfull" = "Snapshoting sucessfull";
+
+/* Take a new snapshot */
+"Take a new snapshot" = "Take a new snapshot";
+
+/* Take a snapshot */
+"Take a snapshot" = "Take a snapshot";
+
+/* There is no snapshot for this virtual machine */
+"There is no snapshot for this virtual machine" = "There is no snapshot for this virtual machine";
+
+/* UUID */
+"UUID" = "UUID";
+
+/* You must select one snapshot */
+"You must select one snapshot" = "You must select one snapshot";
+
+/* You must select only one snapshot */
+"You must select only one snapshot" = "You must select only one snapshot";
+

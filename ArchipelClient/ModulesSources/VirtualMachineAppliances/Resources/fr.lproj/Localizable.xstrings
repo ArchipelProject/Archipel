@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Appliance</key>
+	<string>Appliance</string>
+	<key>Appliance has been detached</key>
+	<string>Appliance has been detached</string>
+	<key>Appliance is installed.</key>
+	<string>Appliance is installed.</string>
+	<key>Are you sure you want to attach this appliance? This will reset all your virtual machine.</key>
+	<string>Are you sure you want to attach this appliance? This will reset all your virtual machine.</string>
+	<key>Are you sure you want to detach virtual machine from this appliance?</key>
+	<string>Are you sure you want to detach virtual machine from this appliance?</string>
+	<key>Attach</key>
+	<string>Attach</string>
+	<key>Attach appliance</key>
+	<string>Attach appliance</string>
+	<key>Attach selected appliance</key>
+	<string>Attach selected appliance</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Comment</key>
+	<string>Comment</string>
+	<key>Create a package from the virtual machine and publish it into the hypervisor's VMCast feed</key>
+	<string>Create a package from the virtual machine and publish it into the hypervisor's VMCast feed</string>
+	<key>Create appliance from this virtual machine</key>
+	<string>Create appliance from this virtual machine</string>
+	<key>Detach</key>
+	<string>Detach</string>
+	<key>Detach from appliance</key>
+	<string>Detach from appliance</string>
+	<key>Dettach from selected appliance</key>
+	<string>Dettach from selected appliance</string>
+	<key>Error</key>
+	<string>Error</string>
+	<key>Instanciation has started</key>
+	<string>Instanciation has started</string>
+	<key>Name</key>
+	<string>Name</string>
+	<key>Packaging started.</key>
+	<string>Packaging started.</string>
+	<key>Packaging successful.</key>
+	<string>Packaging successful.</string>
+	<key>Stop using selected appliance for this virtual machine (it will allow to change appliance)</key>
+	<string>Stop using selected appliance for this virtual machine (it will allow to change appliance)</string>
+	<key>Unable to create package. Check agent logs</key>
+	<string>Unable to create package. Check agent logs</string>
+	<key>Use the selected appliance for this virtual machine</key>
+	<string>Use the selected appliance for this virtual machine</string>
+	<key>Virtual machine must not be running to package it.</key>
+	<string>Virtual machine must not be running to package it.</string>
+	<key>You must select an appliance</key>
+	<string>You must select an appliance</string>
+</dict>
+</plist>
