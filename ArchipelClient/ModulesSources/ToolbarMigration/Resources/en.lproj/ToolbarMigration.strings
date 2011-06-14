@@ -1,0 +1,18 @@
+
+/* Class = "NSTextFieldCell"; title = "Origin hypervisor"; ObjectID = "8"; */
+"8.title" = "Origin hypervisor";
+
+/* Class = "NSTextFieldCell"; title = "Choose origin hypervisor"; ObjectID = "12"; */
+"12.title" = "Choose origin hypervisor";
+
+/* Class = "NSTextFieldCell"; title = "Choose a virtual machine"; ObjectID = "14"; */
+"14.title" = "Choose a virtual machine";
+
+/* Class = "NSTextFieldCell"; title = "Destination hypervisor"; ObjectID = "16"; */
+"16.title" = "Destination hypervisor";
+
+/* Class = "NSTextFieldCell"; title = "Choose a destination hypervisor"; ObjectID = "18"; */
+"18.title" = "Choose a destination hypervisor";
+
+/* Class = "NSButtonCell"; title = "Migrate"; ObjectID = "33"; */
+"33.title" = "Migrate";

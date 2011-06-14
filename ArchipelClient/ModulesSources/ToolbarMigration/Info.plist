@@ -4,6 +4,8 @@
 <dict>
 	<key>AlternativePluginDisplayName</key>
 	<string>Hide Sample</string>
+	<key>CPBundleLocale</key>
+	<string>en</string>
 	<key>AlternativeToolbarIcon</key>
 	<string>icon-alt.png</string>
 	<key>CibName</key>

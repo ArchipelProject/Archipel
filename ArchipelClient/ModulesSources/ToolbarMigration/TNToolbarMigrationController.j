@@ -92,7 +92,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         imgView1                 = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [columnHypervisorName setWidth:250];
-    [[columnHypervisorName headerView] setStringValue:@"Name"];
+    [[columnHypervisorName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columnHypervisorName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
 
     [imgView1 setImageScaling:CPScaleNone];
@@ -131,7 +131,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         imgView2        = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [columnVMName setWidth:250];
-    [[columnVMName headerView] setStringValue:@"Name"];
+    [[columnVMName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columnVMName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
 
     [imgView2 setImageScaling:CPScaleNone];
@@ -170,7 +170,7 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         imgView3                    = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [columnHypervisorDestName setWidth:250];
-    [[columnHypervisorDestName headerView] setStringValue:@"Name"];
+    [[columnHypervisorDestName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [columnHypervisorDestName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"nickname" ascending:YES]];
 
     [imgView3 setImageScaling:CPScaleNone];
@@ -356,7 +356,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
         [_tableHypervisorVirtualMachines deselectAll];
         [_tableHypervisorOrigin deselectAll];
 
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+                                                         message:CPBundleLocalizedString(@"Migration has started. It can take a while", @"Migration has started. It can take a while")];
     }
     else
     {
@@ -456,6 +457,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 }
 
 @end
+
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNToolbarMigrationController], comment);
+}
 
 
 
