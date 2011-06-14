@@ -119,11 +119,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
         iconView    = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [colName setWidth:275];
-    [[colName headerView] setStringValue:@"Name"];
+    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colJID setWidth:200];
-    [[colJID headerView] setStringValue:@"JID"];
+    [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
     [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [iconView setImageScaling:CPScaleNone];
@@ -166,11 +166,11 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
         colDescription  = [[CPTableColumn alloc] initWithIdentifier:@"description"];
 
     [colName setWidth:175];
-    [[colName headerView] setStringValue:@"Name"];
+    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colDescription setWidth:450];
-    [[colDescription headerView] setStringValue:@"Description"];
+    [[colDescription headerView] setStringValue:CPBundleLocalizedString(@"Description", @"Description")];
     [colDescription setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"description" ascending:YES]];
 
     [_tableGroups addTableColumn:colName];
@@ -185,13 +185,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_addGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-add.png"] size:CPSizeMake(16, 16)]];
     [_addGroupButton setTarget:self];
     [_addGroupButton setAction:@selector(openNewGroupWindow:)];
-    [_addGroupButton setToolTip:@"Create a new shared group"];
+    [_addGroupButton setToolTip:CPBundleLocalizedString(@"Create a new shared group", @"Create a new shared group")];
 
     _deleteGroupButton = [CPButtonBar plusButton];
     [_deleteGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/group-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteGroupButton setTarget:self];
     [_deleteGroupButton setAction:@selector(deleteGroup:)];
-    [_deleteGroupButton setToolTip:@"Delete selected shared group"];
+    [_deleteGroupButton setToolTip:CPBundleLocalizedString(@"Delete selected shared group", @"Delete selected shared group")];
 
     [buttonBarGroups setButtons:[_addGroupButton, _deleteGroupButton]];
 
@@ -221,7 +221,7 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     var colUserName = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
 
     [colUserName setWidth:175];
-    [[colUserName headerView] setStringValue:@"jid"];
+    [[colUserName headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
     [colUserName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [_tableUsersInGroup addTableColumn:colUserName];
@@ -234,13 +234,13 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
     [_addUserInGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
     [_addUserInGroupButton setTarget:self];
     [_addUserInGroupButton setAction:@selector(openAddUserInGroupWindow:)];
-    [_addUserInGroupButton setToolTip:@"Add users into selected shared group"];
+    [_addUserInGroupButton setToolTip:CPBundleLocalizedString(@"Add users into selected shared group", @"Add users into selected shared group")];
 
     _deleteUserFromGroupButton = [CPButtonBar plusButton];
     [_deleteUserFromGroupButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteUserFromGroupButton setTarget:self];
     [_deleteUserFromGroupButton setAction:@selector(removeUsersFromGroup:)];
-    [_deleteUserFromGroupButton setToolTip:@"Remove users from selected shared group"];
+    [_deleteUserFromGroupButton setToolTip:CPBundleLocalizedString(@"Remove users from selected shared group", @"Remove users from selected shared group")];
 
     [buttonBarUsersInGroups setButtons:[_addUserInGroupButton, _deleteUserFromGroupButton]];
 
@@ -322,7 +322,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     if ([[fieldNewGroupName stringValue] length] < 3)
     {
-        [TNAlert showAlertWithMessage:@"Wrong name" informative:@"You must enter a name containing at least 4 characters"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong name", @"Wrong name")
+                          informative:CPBundleLocalizedString(@"You must enter a name containing at least 4 characters", @"You must enter a name containing at least 4 characters")];
         return;
     }
 
@@ -337,7 +338,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     if (!_currentSelectedGroup)
     {
-        [TNAlert showAlertWithMessage:@"Wrong group" informative:@"You must select a group"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong group", @"Wrong group")
+                          informative:CPBundleLocalizedString(@"You must select a group", @"You must select a group")];
         return;
     }
 
@@ -364,7 +366,8 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 {
     if ([_tableUsersInGroup numberOfSelectedRows] < 1)
     {
-        [TNAlert showAlertWithMessage:@"Wrong users" informative:@"You must select at least one user"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Wrong users", @"Wrong users")
+                          informative:CPBundleLocalizedString(@"You must select at least one user", @"You must select at least one user")];
         return;
     }
 
@@ -596,3 +599,10 @@ var TNArchipelTypeXMPPServerGroups              = @"archipel:xmppserver:groups",
 }
 
 @end
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNXMPPSharedGroupsController], comment);
+}

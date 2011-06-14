@@ -101,11 +101,11 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         colJID  = [[CPTableColumn alloc] initWithIdentifier:@"jid"];
 
     [colName setWidth:325];
-    [[colName headerView] setStringValue:@"Name"];
+    [[colName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
     [colName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]];
 
     [colJID setWidth:450];
-    [[colJID headerView] setStringValue:@"JID"];
+    [[colJID headerView] setStringValue:CPBundleLocalizedString(@"JID", @"JID")];
     [colJID setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"jid" ascending:YES]];
 
     [_tableUsers addTableColumn:colName];
@@ -119,13 +119,13 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
     [_addButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-add.png"] size:CPSizeMake(16, 16)]];
     [_addButton setTarget:self];
     [_addButton setAction:@selector(openRegisterUserWindow:)];
-    [_addButton setToolTip:@"Create a new user account"];
+    [_addButton setToolTip:CPBundleLocalizedString(@"Create a new user account", @"Create a new user account")];
 
     _deleteButton = [CPButtonBar plusButton];
     [_deleteButton setImage:[[CPImage alloc] initWithContentsOfFile:[[CPBundle mainBundle] pathForResource:@"IconsButtons/user-remove.png"] size:CPSizeMake(16, 16)]];
     [_deleteButton setTarget:self];
     [_deleteButton setAction:@selector(unregisterUser:)];
-    [_deleteButton setToolTip:@"Delete selected user accounts"];
+    [_deleteButton setToolTip:CPBundleLocalizedString(@"Delete selected user accounts", @"Delete selected user accounts")];
 
     [buttonBarControl setButtons:[_addButton, _deleteButton]];
 
@@ -184,13 +184,15 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     if ([fieldNewUserPassword stringValue] != [fieldNewUserPasswordConfirm stringValue])
     {
-        [TNAlert showAlertWithMessage:@"Password doesn't match" informative:@"You have to enter identical passwords"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Password doesn't match", @"Password doesn't match")
+                          informative:CPBundleLocalizedString(@"You have to enter identical passwords", @"You have to enter identical passwords")];
         return;
     }
 
     if ([[fieldNewUserPassword stringValue] length] < 8)
     {
-        [TNAlert showAlertWithMessage:@"Bad password" informative:@"The password is too short. it must be at least 8 characters"];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Bad password", @"Bad password")
+                          informative:CPBundleLocalizedString(@"The password is too short. it must be at least 8 characters", @"The password is too short. it must be at least 8 characters")];
         return;
     }
 
@@ -205,7 +207,8 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 {
     if ([_tableUsers numberOfSelectedRows] < 1)
     {
-        [TNAlert showAlertWithMessage:@"You must select one user" informative:@""];
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"You must select one user", @"You must select one user")
+                          informative:@""];
         return;
     }
 
@@ -219,10 +222,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
         [usernames addObject:[[user objectForKey:@"jid"] node]];
     }
 
-    var thealert = [TNAlert alertWithMessage:@"Unregister"
-                                informative:@"Are you sure you want to unregister selected user(s) ?"
+    var thealert = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Unregister", @"Unregister")
+                                informative:CPBundleLocalizedString(@"Are you sure you want to unregister selected user(s) ?", @"Are you sure you want to unregister selected user(s) ?")
                                  target:self
-                                 actions:[["Confirm", @selector(unregisterUserWithNames:)], ["Cancel", nil]]];
+                                 actions:[[CPBundleLocalizedString("Confirm", "Confirm"), @selector(unregisterUserWithNames:)], [CPBundleLocalizedString("Cancel", "Cancel"), nil]]];
 
     [thealert setUserInfo:usernames];
     [thealert runModal];
@@ -366,3 +369,10 @@ var TNArchipelTypeXMPPServerUsers                   = @"archipel:xmppserver:user
 }
 
 @end
+
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNXMPPUsersController], comment);
+}

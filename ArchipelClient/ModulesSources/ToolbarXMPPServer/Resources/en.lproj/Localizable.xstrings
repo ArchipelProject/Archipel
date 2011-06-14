@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Add users into selected shared group</key>
+	<string>Add users into selected shared group</string>
+	<key>Are you sure you want to unregister selected user(s) ?</key>
+	<string>Are you sure you want to unregister selected user(s) ?</string>
+	<key>Bad password</key>
+	<string>Bad password</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Confirm</key>
+	<string>Confirm</string>
+	<key>Create a new shared group</key>
+	<string>Create a new shared group</string>
+	<key>Create a new user account</key>
+	<string>Create a new user account</string>
+	<key>Delete selected shared group</key>
+	<string>Delete selected shared group</string>
+	<key>Delete selected user accounts</key>
+	<string>Delete selected user accounts</string>
+	<key>Description</key>
+	<string>Description</string>
+	<key>JID</key>
+	<string>JID</string>
+	<key>Name</key>
+	<string>Name</string>
+	<key>Password doesn't match</key>
+	<string>Password doesn't match</string>
+	<key>Remove users from selected shared group</key>
+	<string>Remove users from selected shared group</string>
+	<key>Select the hypervisor to use. It will configure its own XMPP server</key>
+	<string>Select the hypervisor to use. It will configure its own XMPP server</string>
+	<key>Shared Groups</key>
+	<string>Shared Groups</string>
+	<key>The password is too short. it must be at least 8 characters</key>
+	<string>The password is too short. it must be at least 8 characters</string>
+	<key>Unregister</key>
+	<string>Unregister</string>
+	<key>Wrong group</key>
+	<string>Wrong group</string>
+	<key>Wrong name</key>
+	<string>Wrong name</string>
+	<key>Wrong users</key>
+	<string>Wrong users</string>
+	<key>XMPP Users</key>
+	<string>XMPP Users</string>
+	<key>You have to enter identical passwords</key>
+	<string>You have to enter identical passwords</string>
+	<key>You must enter a name containing at least 4 characters</key>
+	<string>You must enter a name containing at least 4 characters</string>
+	<key>You must select a group</key>
+	<string>You must select a group</string>
+	<key>You must select at least one user</key>
+	<string>You must select at least one user</string>
+	<key>You must select one user</key>
+	<string>You must select one user</string>
+</dict>
+</plist>

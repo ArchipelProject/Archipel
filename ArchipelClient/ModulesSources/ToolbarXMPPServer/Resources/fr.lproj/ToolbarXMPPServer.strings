@@ -1,0 +1,123 @@
+
+/* Class = "NSTextFieldCell"; title = "XMPP server administration"; ObjectID = "3"; */
+"3.title" = "XMPP server administration";
+
+/* Class = "NSTextFieldCell"; title = "You can interact directly with XMPP servers using this module. Be warned."; ObjectID = "5"; */
+"5.title" = "You can interact directly with XMPP servers using this module. Be warned.";
+
+/* Class = "NSTextFieldCell"; title = "XMPP Server:"; ObjectID = "9"; */
+"9.title" = "XMPP Server:";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "12"; */
+"12.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "13"; */
+"13.title" = "Item 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "14"; */
+"14.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "15"; */
+"15.title" = "Item 3";
+
+/* Class = "NSTextFieldCell"; title = "XMPP Users"; ObjectID = "22"; */
+"22.title" = "XMPP Users";
+
+/* Class = "NSTextFieldCell"; title = "You can manage XMPP users of the selected server."; ObjectID = "24"; */
+"24.title" = "You can manage XMPP users of the selected server.";
+
+/* Class = "NSWindow"; title = "New user"; ObjectID = "31"; */
+"31.title" = "New user";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "39"; */
+"39.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Username"; ObjectID = "40"; */
+"40.placeholderString" = "Username";
+
+/* Class = "NSTextFieldCell"; title = "Just enter the username without the @domain."; ObjectID = "41"; */
+"41.title" = "Just enter the username without the @domain.";
+
+/* Class = "NSTextFieldCell"; title = "New XMPP user"; ObjectID = "42"; */
+"42.title" = "New XMPP user";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "43"; */
+"43.title" = "Create";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "44"; */
+"44.title" = "Cancel";
+
+/* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "45"; */
+"45.title" = "Username:";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "49"; */
+"49.title" = "Password:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Desired password"; ObjectID = "50"; */
+"50.placeholderString" = "Desired password";
+
+/* Class = "NSTextFieldCell"; title = "Confirm:"; ObjectID = "53"; */
+"53.title" = "Confirm:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Password confirmation"; ObjectID = "54"; */
+"54.placeholderString" = "Password confirmation";
+
+/* Class = "NSTextFieldCell"; title = "Shared groups"; ObjectID = "71"; */
+"71.title" = "Shared groups";
+
+/* Class = "NSTextFieldCell"; title = "Shared groups are automatic roster groups."; ObjectID = "72"; */
+"72.title" = "Shared groups are automatic roster groups.";
+
+/* Class = "NSTextFieldCell"; title = "Groups"; ObjectID = "87"; */
+"87.title" = "Groups";
+
+/* Class = "NSTextFieldCell"; title = "Users"; ObjectID = "89"; */
+"89.title" = "Users";
+
+/* Class = "NSWindow"; title = "New shared group"; ObjectID = "111"; */
+"111.title" = "New shared group";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "117"; */
+"117.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "124"; */
+"124.title" = "Name:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "125"; */
+"125.title" = "Cancel";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "126"; */
+"126.title" = "Create";
+
+/* Class = "NSTextFieldCell"; title = "New shared group"; ObjectID = "127"; */
+"127.title" = "New shared group";
+
+/* Class = "NSTextFieldCell"; title = "You can create a new shared group."; ObjectID = "128"; */
+"128.title" = "You can create a new shared group.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My awesome group"; ObjectID = "129"; */
+"129.placeholderString" = "My awesome group";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Awesome group is awesome"; ObjectID = "130"; */
+"130.placeholderString" = "Awesome group is awesome";
+
+/* Class = "NSTextFieldCell"; title = "Description:"; ObjectID = "131"; */
+"131.title" = "Description:";
+
+/* Class = "NSWindow"; title = "Add users in group"; ObjectID = "136"; */
+"136.title" = "Add users in group";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "144"; */
+"144.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Select users you want to add in the selected group."; ObjectID = "150"; */
+"150.title" = "Select users you want to add in the selected group.";
+
+/* Class = "NSTextFieldCell"; title = "Add users in group"; ObjectID = "151"; */
+"151.title" = "Add users in group";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "152"; */
+"152.title" = "Add";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "153"; */
+"153.title" = "Cancel";
