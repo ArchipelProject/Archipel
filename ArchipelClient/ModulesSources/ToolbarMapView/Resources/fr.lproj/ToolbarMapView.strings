@@ -1,0 +1,13 @@
+
+/* Class = "NSTextFieldCell"; title = "Origin:"; ObjectID = "17"; */
+"17.title" = "Origin:";
+
+/* Class = "NSTextFieldCell"; title = "Destination:"; ObjectID = "19"; */
+"19.title" = "Destination:";
+
+/* Class = "NSTextFieldCell"; title = "Select to pin to set origin"; ObjectID = "21"; */
+"21.title" = "Select to pin to set origin";
+
+/* Class = "NSTextFieldCell"; title = "Select a pin to set destination"; ObjectID = "23"; */
+"23.title" = "Select a pin to set destination";
+

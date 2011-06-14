@@ -126,14 +126,14 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
     [_tableVMOrigin setAllowsEmptySelection:YES];
 
     var vmColumNickname = [[CPTableColumn alloc] initWithIdentifier:@"nickname"],
-        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:@"JID"],
+        vmColumJID = [[CPTableColumn alloc] initWithIdentifier:CPBundleLocalizedString(@"JID", @"JID")],
         vmColumStatusIcon = [[CPTableColumn alloc] initWithIdentifier:@"statusIcon"],
         imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)];
 
     [vmColumNickname setWidth:150];
-    [[vmColumNickname headerView] setStringValue:@"Name"];
+    [[vmColumNickname headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
 
-    [[vmColumJID headerView] setStringValue:@"Jabber ID"];
+    [[vmColumJID headerView] setStringValue:CPBundleLocalizedString(@"Jabber ID", @"Jabber ID")];
 
     [imgView setImageScaling:CPScaleNone];
     [vmColumStatusIcon setDataView:imgView];
@@ -412,7 +412,8 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 {
     if ([aStanza type] == @"result")
     {
-        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Migration" message:@"Migration has started. It can take a while"];
+        [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Migration", @"Migration")
+                                                         message:CPBundleLocalizedString(@"Migration has started. It can take a while", @"Migration has started. It can take a while")];
     }
     else
     {
@@ -445,10 +446,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 - (void)markerClicked:(MKMarker)aMarker userInfo:(CPDictionary)someUserInfo
 {
     var item    = [someUserInfo objectForKey:@"rosterItem"],
-        alert   = [TNAlert alertWithMessage:@"Define path"
-                                informative:@"Please choose if this " + [item nickname] + @" is origin or destination of the migration."
+        alert   = [TNAlert alertWithMessage:CPBundleLocalizedString(@"Define path", @"Define path")
+                                informative:CPBundleLocalizedString(@"Please choose if this ", @"Please choose if this ") + [item nickname] + CPBundleLocalizedString(@" is origin or destination of the migration.", @" is origin or destination of the migration.")
                                  target:self
-                                 actions:[[@"Cancel", nil], ["Destination",  @selector(setDestinationHypervisor:)], ["Origin", @selector(setOriginHypervisor:)]]];
+                                 actions:[[CPBundleLocalizedString(@"Cancel", @"Cancel"), nil], [CPBundleLocalizedString("Destination", "Destination"),  @selector(setDestinationHypervisor:)], [CPBundleLocalizedString("Origin", "Origin"), @selector(setOriginHypervisor:)]]];
     [alert setUserInfo:item];
     [alert runModal];
 }
@@ -466,4 +467,10 @@ var TNArchipelTypeHypervisorControl             = @"archipel:hypervisor:control"
 @end
 
 
+// add this code to make the CPLocalizedString looking at
+// the current bundle.
+function CPBundleLocalizedString(key, comment)
+{
+    return CPLocalizedStringFromTableInBundle(key, nil, [CPBundle bundleForClass:TNMapViewController], comment);
+}
 

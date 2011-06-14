@@ -1,0 +1,33 @@
+/*  is origin or destination of the migration. */
+" is origin or destination of the migration." = " is origin or destination of the migration.";
+
+/* Cancel */
+"Cancel" = "Cancel";
+
+/* Define path */
+"Define path" = "Define path";
+
+/* Destination */
+"Destination" = "Destination";
+
+/* Jabber ID */
+"Jabber ID" = "Jabber ID";
+
+/* JID */
+"JID" = "JID";
+
+/* Migration */
+"Migration" = "Migration";
+
+/* Migration has started. It can take a while */
+"Migration has started. It can take a while" = "Migration has started. It can take a while";
+
+/* Name */
+"Name" = "Name";
+
+/* Origin */
+"Origin" = "Origin";
+
+/* Please choose if this  */
+"Please choose if this " = "Please choose if this ";
+
