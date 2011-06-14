@@ -292,7 +292,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         for vm in c:
             string_jid, password, date, comment, name = vm
             jid = xmpp.JID(string_jid)
-            jid.setResource(self.jid.getNode())
+            jid.setResource(self.jid.getNode().lower())
             vm_thread = self.create_threaded_vm(jid, password, name)
             self.virtualmachines[vm_thread.jid.getNode()] = vm_thread.get_instance()
             vm_thread.start()
@@ -504,7 +504,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         """
         uuid = jid.getNode()
 
-        jid.setResource(self.jid.getNode())
+        jid.setResource(self.jid.getNode().lower())
         self.log.info("Starting xmpp threaded virtual machine with incoming jid : %s" % jid)
         vm_thread = self.create_threaded_vm(jid, password, name)
         vm = vm_thread.get_instance()

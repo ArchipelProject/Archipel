@@ -317,7 +317,7 @@ class TNArchipelEntity (object):
         """
         Authentify the client to the XMPP server.
         """
-        self.log.info("Trying to authentify the client.")
+        self.log.info("Trying to authentify the client with username %s and resource %s" % (self.jid.getNode(), self.resource))
         if self.xmppclient.auth(self.jid.getNode(), self.password, self.resource) == None:
             self.isAuth = False
             if (self.auto_register):
