@@ -84,6 +84,10 @@
 	<string>Ne pas déranger</string>
 	<key>Edit</key>
 	<string>Editer</string>
+	<key>Enter the new password for your account. You will need to enter this password at the next connection</key>
+	<string>Entrez vore nouveau mot de passe. Vous devrez utiliser ce mot de passe lors de la prochaine connexion</string>
+	<key>Error</key>
+	<string>Erreur</string>
 	<key>Expand all groups</key>
 	<string>Etendre tous les groupes</string>
 	<key>Expand group</key>
@@ -126,6 +130,8 @@
 	<string>Navigation</string>
 	<key>Notifications</key>
 	<string>Notifications</string>
+	<key>Password error</key>
+	<string>Erreur de mot de passe</string>
 	<key>Paste</key>
 	<string>Coller</string>
 	<key>Preferences</key>
@@ -148,6 +154,8 @@
 	<string>Rapporter un bug</string>
 	<key>Resource</key>
 	<string>Resource</string>
+	<key>Retype the password</key>
+	<string>Retapez votre mot de passe</string>
 	<key>Search entity</key>
 	<string>Rechercher une entité</string>
 	<key>Select all</key>
@@ -190,6 +198,8 @@
 	<string>Le nom du nouveau groupe</string>
 	<key>The password associated to your XMPP account</key>
 	<string>Le mot de passe associé au compte XMPP</string>
+	<key>The passwords you entered don't match.</key>
+	<string>Les mots de passes ne concordent pas.</string>
 	<key>The resource to use</key>
 	<string>La ressource à utiliser</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
@@ -202,6 +212,8 @@
 	<string>Active la surveillance XMPP. La surveillance XMPP réduit les performances</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
 	<string>Active les animations. Les animations réduisent les performances</string>
+	<key>Unable to update your password</key>
+	<string>Impossible de mettre à jour votre mot de passe</string>
 	<key>Undo</key>
 	<string>Defaire</string>
 	<key>Update your current XMPP status</key>
@@ -212,10 +224,12 @@
 	<string>Supprimer un utilisateur</string>
 	<key>Virtual machine</key>
 	<string>Machine virtuelle</string>
+	<key>XMPP Account</key>
+	<string>Compte XMPP</string>
 	<key>You are not registred to the entity events.</key>
-	<string>You are not registred to the entity events.</string>
+	<string>Vous n'êtes pas abonné aux evenements de cette entité.</string>
 	<key>You are registred to the entity events.</key>
-	<string>You are registred to the entity events.</string>
+	<string>Vous êtes abonné aux evenements de cette entité.</string>
 	<key>You can't assign tags here</key>
 	<string>Vous ne pouvez pas assigner d'étiquettes ici.</string>
 	<key>You have to enter a valid group name.</key>
@@ -228,6 +242,8 @@
 	<string>Vous devez entrer un JID de la forme utilisateur@domaine.com.</string>
 	<key>You need to reload the application to complete the locale change.</key>
 	<string>Vous devez recharger l'application pour que le changement de langue prenne effet.</string>
+	<key>Your password has been successfully updated</key>
+	<string>Votre mot de passe a été mis à jour</string>
 	<key>Your status is now </key>
 	<string>Votre statut est maintenant </string>
 	<key>authenticating</key>

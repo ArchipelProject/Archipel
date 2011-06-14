@@ -149,6 +149,12 @@
 /* Edit */
 "Edit" = "Edit";
 
+/* Enter the new password for your account. You will need to enter this password at the next connection */
+"Enter the new password for your account. You will need to enter this password at the next connection" = "Enter the new password for your account. You will need to enter this password at the next connection";
+
+/* Error */
+"Error" = "Error";
+
 /* Expand all groups */
 "Expand all groups" = "Expand all groups";
 
@@ -215,6 +221,9 @@
 /* Notification */
 "Notifications" = "Notifications";
 
+/* Password error */
+"Password error" = "Password error";
+
 /* Paste */
 "Paste" = "Paste";
 
@@ -247,6 +256,9 @@
 
 /* Resource */
 "Resource" = "Resource";
+
+/* Retype the password */
+"Retype the password" = "Retype the password";
 
 /* Search entity */
 "Search entity" = "Search entity";
@@ -305,6 +317,9 @@
 /* The password associated to your XMPP account */
 "The password associated to your XMPP account" = "The password associated to your XMPP account";
 
+/* The passwords you entered don't match. */
+"The passwords you entered don't match." = "The passwords you entered don't match.";
+
 /* The resource to use */
 "The resource to use" = "The resource to use";
 
@@ -329,6 +344,9 @@
 /* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
 "Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Turn this ON to activate XMPP monitoring. Turn it off to gain performances";
 
+/* Unable to update your password */
+"Unable to update your password" = "Unable to update your password";
+
 /* Undo */
 "Undo" = "Undo";
 
@@ -346,6 +364,9 @@
 
 /* Virtual machine */
 "Virtual machine" = "Virtual machine";
+
+/* XMPP Account */
+"XMPP Account" = "XMPP Account";
 
 /* You are not registred to the entity events. */
 "You are not registred to the entity events." = "You are not registred to the entity events.";
@@ -370,6 +391,9 @@
 
 /* You need to reload the application to complete the locale change. */
 "You need to reload the application to complete the locale change." = "You need to reload the application to complete the locale change.";
+
+/* Your password has been successfully updated */
+"Your password has been successfully updated" = "Your password has been successfully updated";
 
 /* Your status is now  */
 "Your status is now " = "Your status is now ";

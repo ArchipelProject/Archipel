@@ -170,7 +170,7 @@ var TNArchipelTypeAvatar                = @"archipel:avatar",
 #pragma mark -
 #pragma mark Actions
 
-/*! overide the super makeKeyAndOrderFront in order to getAvailableAvatars on display
+/*! Open the main window
     @param sender the sender of the action
 */
 - (IBAction)showWindow:(id)aSender

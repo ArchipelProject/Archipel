@@ -84,6 +84,10 @@
 	<string>Do not disturb</string>
 	<key>Edit</key>
 	<string>Edit</string>
+	<key>Enter the new password for your account. You will need to enter this password at the next connection</key>
+	<string>Enter the new password for your account. You will need to enter this password at the next connection</string>
+	<key>Error</key>
+	<string>Error</string>
 	<key>Expand all groups</key>
 	<string>Expand all groups</string>
 	<key>Expand group</key>
@@ -126,6 +130,8 @@
 	<string>Navigation</string>
 	<key>Notifications</key>
 	<string>Notifications</string>
+	<key>Password error</key>
+	<string>Password error</string>
 	<key>Paste</key>
 	<string>Paste</string>
 	<key>Preferences</key>
@@ -148,6 +154,8 @@
 	<string>Report a bug</string>
 	<key>Resource</key>
 	<string>Resource</string>
+	<key>Retype the password</key>
+	<string>Retype the password</string>
 	<key>Search entity</key>
 	<string>Search entity</string>
 	<key>Select all</key>
@@ -190,6 +198,8 @@
 	<string>The name of the new group</string>
 	<key>The password associated to your XMPP account</key>
 	<string>The password associated to your XMPP account</string>
+	<key>The passwords you entered don't match.</key>
+	<string>The passwords you entered don't match.</string>
 	<key>The resource to use</key>
 	<string>The resource to use</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
@@ -202,6 +212,8 @@
 	<string>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</string>
 	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
 	<string>Turn this ON to activate eye candy animation. Turn it off to gain performances</string>
+	<key>Unable to update your password</key>
+	<string>Unable to update your password</string>
 	<key>Undo</key>
 	<string>Undo</string>
 	<key>Update your current XMPP status</key>
@@ -212,6 +224,8 @@
 	<string>User supression</string>
 	<key>Virtual machine</key>
 	<string>Virtual machine</string>
+	<key>XMPP Account</key>
+	<string>XMPP Account</string>
 	<key>You are not registred to the entity events.</key>
 	<string>You are not registred to the entity events.</string>
 	<key>You are registred to the entity events.</key>
@@ -228,6 +242,8 @@
 	<string>You must enter a JID using the form user@domain.</string>
 	<key>You need to reload the application to complete the locale change.</key>
 	<string>You need to reload the application to complete the locale change.</string>
+	<key>Your password has been successfully updated</key>
+	<string>Your password has been successfully updated</string>
 	<key>Your status is now </key>
 	<string>Your status is now </string>
 	<key>authenticating</key>

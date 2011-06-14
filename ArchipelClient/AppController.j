@@ -58,6 +58,7 @@
 @import "Controllers/TNTagsController.j"
 @import "Controllers/TNUpdateController.j"
 @import "Controllers/TNUserAvatarController.j"
+@import "Controllers/TNXMPPAccountController.j"
 @import "Model/TNDatasourceRoster.j"
 @import "Model/TNModule.j"
 @import "Model/TNVersion.j"
@@ -164,13 +165,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNGroupsController                  groupsController;
     @outlet TNHintController                    hintController;
     @outlet TNModuleController                  moduleController;
+    @outlet TNNotificationHistoryController     notificationHistoryController;
     @outlet TNPreferencesController             preferencesController;
     @outlet TNPropertiesController              propertiesController;
     @outlet TNSearchField                       filterField;
     @outlet TNTagsController                    tagsController;
     @outlet TNUpdateController                  updateController;
     @outlet TNUserAvatarController              userAvatarController;
-    @outlet TNNotificationHistoryController     notificationHistoryController;
+    @outlet TNXMPPAccountController             XMPPAccountController;
 
     BOOL                                        _shouldShowHelpView;
     BOOL                                        _tagsVisible;
@@ -470,6 +472,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:CPLocalizedString(@"Preferences", @"Preferences") action:@selector(showPreferencesWindow:) keyEquivalent:@","];
+    [archipelMenu addItemWithTitle:CPLocalizedString(@"XMPP Account", @"XMPP Account") action:@selector(showXMPPAccountWindow:) keyEquivalent:@";"];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
     [archipelMenu addItemWithTitle:CPLocalizedString(@"Notifications", @"Notification") action:@selector(showNotificationWindow:) keyEquivalent:@""];
     [archipelMenu addItem:[CPMenuItem separatorItem]];
@@ -1192,6 +1195,14 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (IBAction)showNotificationWindow:(id)aSender
 {
     [notificationHistoryController showWindow:aSender];
+}
+
+/*! shows the XMPP Account window
+    @param the sender of the action
+*/
+- (IBAction)showXMPPAccountWindow:(id)aSender
+{
+    [XMPPAccountController showWindow:aSender];
 }
 
 

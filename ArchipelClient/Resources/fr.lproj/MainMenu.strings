@@ -404,3 +404,36 @@
 /* Class = "NSTextFieldCell"; title = "This table lists all the previous notification displayed during the current session."; ObjectID = "1442"; */
 "1442.title" = "Cette table contient toutes les notifications affichées durant la sessions courante.";
 
+/* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "1445"; */
+"1445.title" = "Choix de l'avatar";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1452"; */
+"1452.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "You can modify your XMPP account properties."; ObjectID = "1454"; */
+"1454.title" = "Vous pouvez modifier certaines options de votre compte XMPP.";
+
+/* Class = "NSTextFieldCell"; title = "Manage XMPP account"; ObjectID = "1458"; */
+"1458.title" = "Gérez votre compte XMPP";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "1459"; */
+"1459.title" = "Sauver";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1460"; */
+"1460.title" = "Annuler";
+
+/* Class = "NSTextFieldCell"; placeholderString = "New password"; ObjectID = "1469"; */
+"1469.placeholderString" = "Nouveau mot de passe";
+
+/* Class = "NSTextFieldCell"; title = "New password"; ObjectID = "1470"; */
+"1470.title" = "Nouveau mot de passe";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Retype new password"; ObjectID = "1474"; */
+"1474.placeholderString" = "Confirmation";
+
+/* Class = "NSTextFieldCell"; title = "Confirmation"; ObjectID = "1475"; */
+"1475.title" = "Confirmation";
+
+/* Class = "NSTextFieldCell"; title = "More to come..."; ObjectID = "1478"; */
+"1478.title" = "Plus à venir...";
+

@@ -149,6 +149,12 @@
 /* Edit */
 "Edit" = "Editer";
 
+/* Enter the new password for your account. You will need to enter this password at the next connection */
+"Enter the new password for your account. You will need to enter this password at the next connection" = "Entrez vore nouveau mot de passe. Vous devrez utiliser ce mot de passe lors de la prochaine connexion";
+
+/* Error */
+"Error" = "Erreur";
+
 /* Expand all groups */
 "Expand all groups" = "Etendre tous les groupes";
 
@@ -215,6 +221,9 @@
 /* Notification */
 "Notifications" = "Notifications";
 
+/* Password error */
+"Password error" = "Erreur de mot de passe";
+
 /* Paste */
 "Paste" = "Coller";
 
@@ -247,6 +256,9 @@
 
 /* Resource */
 "Resource" = "Resource";
+
+/* Retype the password */
+"Retype the password" = "Retapez votre mot de passe";
 
 /* Search entity */
 "Search entity" = "Rechercher une entité";
@@ -305,6 +317,9 @@
 /* The password associated to your XMPP account */
 "The password associated to your XMPP account" = "Le mot de passe associé au compte XMPP";
 
+/* The passwords you entered don't match. */
+"The passwords you entered don't match." = "Les mots de passes ne concordent pas.";
+
 /* The resource to use */
 "The resource to use" = "La ressource à utiliser";
 
@@ -329,6 +344,9 @@
 /* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
 "Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Active la surveillance XMPP. La surveillance XMPP réduit les performances";
 
+/* Unable to update your password */
+"Unable to update your password" = "Impossible de mettre à jour votre mot de passe";
+
 /* Undo */
 "Undo" = "Defaire";
 
@@ -347,11 +365,14 @@
 /* Virtual machine */
 "Virtual machine" = "Machine virtuelle";
 
+/* XMPP Account */
+"XMPP Account" = "Compte XMPP";
+
 /* You are not registred to the entity events. */
-"You are not registred to the entity events." = "You are not registred to the entity events.";
+"You are not registred to the entity events." = "Vous n'êtes pas abonné aux evenements de cette entité.";
 
 /* You are registred to the entity events. */
-"You are registred to the entity events." = "You are registred to the entity events.";
+"You are registred to the entity events." = "Vous êtes abonné aux evenements de cette entité.";
 
 /* You can't assign tags here */
 "You can't assign tags here" = "Vous ne pouvez pas assigner d'étiquettes ici.";
@@ -370,6 +391,9 @@
 
 /* You need to reload the application to complete the locale change. */
 "You need to reload the application to complete the locale change." = "Vous devez recharger l'application pour que le changement de langue prenne effet.";
+
+/* Your password has been successfully updated */
+"Your password has been successfully updated" = "Votre mot de passe a été mis à jour";
 
 /* Your status is now  */
 "Your status is now " = "Votre statut est maintenant ";
