@@ -167,32 +167,35 @@ class TNArchipelEntity (object):
            self.log.error("PLUGIN: loading_module_policy in configuration must be set to 'restrictive' or 'permissive'. Consider this as a major failure.")
            return
         for factory_method in iter_entry_points(group=group, name="factory"):
-            method              = factory_method.load()
-            plugins             = method(self.configuration, self, group)
-            for plugin in plugins:
-                plugin_info     = plugin["info"]
+            try:
+                method              = factory_method.load()
+                plugins             = method(self.configuration, self, group)
+                for plugin in plugins:
+                    plugin_info     = plugin["info"]
 
-                if loading_module_policy == "restrictive":
-                    if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
-                        self.log.info("PLUGIN: plugin %s has not been loaded as it is not desfined in configuration and loading mode is restrictive." % plugin_info["identifier"])
-                        continue
-                elif loading_module_policy == "permissive":
-                    if self.configuration.has_option("MODULES", plugin_info["identifier"]):
-                        if not self.configuration.getboolean("MODULES", plugin_info["identifier"]):
-                            self.log.info("PLUGIN: plugin %s has not been loaded as it is excluded by configuration." % plugin_info["identifier"])
+                    if loading_module_policy == "restrictive":
+                        if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
+                            self.log.info("PLUGIN: plugin %s has not been loaded as it is not desfined in configuration and loading mode is restrictive." % plugin_info["identifier"])
                             continue
-                if plugin_info["configuration-section"]:
-                    if not self.configuration.has_section(plugin_info["configuration-section"]):
-                        excluded_plugins.append(plugin_info["identifier"])
-                        self.log.error("PLUGIN: plugin %s needs configuration section with name [%s]" % (plugin_info["identifier"], plugin_info["configuration-section"]))
-                        sys.exit(-1)
-                    for needed_token in plugin_info["configuration-tokens"]:
-                        if not self.configuration.has_option(plugin_info["configuration-section"], needed_token):
+                    elif loading_module_policy == "permissive":
+                        if self.configuration.has_option("MODULES", plugin_info["identifier"]):
+                            if not self.configuration.getboolean("MODULES", plugin_info["identifier"]):
+                                self.log.info("PLUGIN: plugin %s has not been loaded as it is excluded by configuration." % plugin_info["identifier"])
+                                continue
+                    if plugin_info["configuration-section"]:
+                        if not self.configuration.has_section(plugin_info["configuration-section"]):
                             excluded_plugins.append(plugin_info["identifier"])
-                            self.log.error("PLUGIN: plugin %s needs configuration option with name %s" % (plugin_info["identifier"], needed_token))
+                            self.log.error("PLUGIN: plugin %s needs configuration section with name [%s]" % (plugin_info["identifier"], plugin_info["configuration-section"]))
                             sys.exit(-1)
-                self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
-                self.plugins.append(plugin)
+                        for needed_token in plugin_info["configuration-tokens"]:
+                            if not self.configuration.has_option(plugin_info["configuration-section"], needed_token):
+                                excluded_plugins.append(plugin_info["identifier"])
+                                self.log.error("PLUGIN: plugin %s needs configuration option with name %s" % (plugin_info["identifier"], needed_token))
+                                sys.exit(-1)
+                    self.log.info("PLUGIN: loaded plugin %s " % plugin_info["identifier"])
+                    self.plugins.append(plugin)
+            except Exception as ex:
+                self.log.error("PLUGIN: unable to load plugin %s: %s" % (str(plugins), str(ex)))
 
     def get_plugin(self, identifier):
         """
