@@ -59,6 +59,8 @@ class TNStorageManagement (TNArchipelPlugin):
             self.qemu_img_bin = self.configuration.get("STORAGE", "qemu_img_bin_path")
         else:
             self.qemu_img_bin = "qemu-img"
+        if not os.path.exists(self.qemu_img_bin):
+            raise Exception("qemu-img is not found at path %s. You may need to install it" % self.qemu_img_bin)
         if not os.path.exists(self.shared_isos_folder):
             os.makedirs(self.shared_isos_folder)
         # permissions
