@@ -68,7 +68,10 @@ var TNArchipelVNCInformationRecoveredNotification = @"TNArchipelVNCInformationRe
 
 - (void)didVNCInformationRecovered:(CPNotification)aNotification
 {
-    _vncReady = YES;
+    if (![[aNotification object] valueForAttribute:@"host"])
+        _vncReady = NO;
+    else
+        _vncReady = YES;
     [self setGUIAccordingToStatus:nil];
 }
 

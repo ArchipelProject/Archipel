@@ -607,8 +607,14 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
         _useSSL         = NO;
 
+        if (!_VMHost || !_vncProxyPort)
+        {
+            [self showMaskView:YES];
+            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
+        }
+
         if (parseInt(_vncProxyPort) != -1)
-            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:self];
+            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
     }
     else if ([aStanza type] == @"error")
     {

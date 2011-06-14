@@ -71,9 +71,9 @@
 /* Class = "NSTextFieldCell"; title = "Please copy in the following area what you want to send to virtual machine's clipboard."; ObjectID = "86"; */
 "86.title" = "Please copy in the following area what you want to send to virtual machine's clipboard.";
 
-/* Class = "NSTextFieldCell"; title = "Virtual machine is shutdowned."; ObjectID = "124"; */
+/* Class = "NSTextFieldCell"; title = "Virtual machine is shutdowned or doesn't have a VNC screen"; ObjectID = "124"; */
 "124.title" = "Virtual machine is shutdowned.";
 
-/* Class = "NSTextFieldCell"; title = "The virtual machine has to be started to be able to access its screen."; ObjectID = "125"; */
+/* Class = "NSTextFieldCell"; title = "The virtual machine has to be started and must have VNC enabled to be able to access its screen."; ObjectID = "125"; */
 "125.title" = "The virtual machine has to be started to be able to access its screen.";
 
