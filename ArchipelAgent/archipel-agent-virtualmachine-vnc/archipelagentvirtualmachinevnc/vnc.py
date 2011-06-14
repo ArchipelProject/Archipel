@@ -129,8 +129,11 @@ class TNArchipelVNC (TNArchipelPlugin):
         if not self.entity.is_hypervisor((archipel.archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.entity.log.warning("Aborting the VNC proxy creation cause current hypervisor %s doesn't support it." % self.entity.libvirt_connection.getType())
             return
-        current_vnc_port        = self.display()["direct"]
-        novnc_proxy_port        = self.display()["proxy"]
+        infos = self.display()
+        if not infos:
+            return
+        current_vnc_port = infos["direct"]
+        novnc_proxy_port = infos["proxy"]
         self.entity.log.info("NOVNC: current proxy port is %d" % novnc_proxy_port)
         cert = self.configuration.get("VNC", "vnc_certificate_file")
         if cert.lower() in ("none", "no", "false"):
@@ -192,22 +195,25 @@ class TNArchipelVNC (TNArchipelPlugin):
         """
         xmldesc = self.entity.domain.XMLDesc(0)
         xmldescnode = xmpp.simplexml.NodeBuilder(data=xmldesc).getDom()
-        directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
-        if directport == -1:
-            return {"direct"        : -1,
-                    "proxy"         : -1,
-                    "onlyssl"       : False,
-                    "supportssl"    : False}
-        proxyport = directport + 1000
-        supportSSL = self.configuration.get("VNC", "vnc_certificate_file")
-        if supportSSL.lower() in ("none", "no", "false"):
-            supportSSL = False
-        else:
-            supportSSL = True
-        return {"direct"        : directport,
-                "proxy"         : proxyport,
-                "onlyssl"       : self.configuration.getboolean("VNC", "vnc_only_ssl"),
-                "supportssl"    : supportSSL}
+        try:
+            directport = int(xmldescnode.getTag(name="devices").getTag(name="graphics").getAttr("port"))
+            if directport == -1:
+                return {"direct"        : -1,
+                        "proxy"         : -1,
+                        "onlyssl"       : False,
+                        "supportssl"    : False}
+            proxyport = directport + 1000
+            supportSSL = self.configuration.get("VNC", "vnc_certificate_file")
+            if supportSSL.lower() in ("none", "no", "false"):
+                supportSSL = False
+            else:
+                supportSSL = True
+            return {"direct"        : directport,
+                    "proxy"         : proxyport,
+                    "onlyssl"       : self.configuration.getboolean("VNC", "vnc_only_ssl"),
+                    "supportssl"    : supportSSL}
+        except Exception as ex:
+            return None
 
     def iq_display(self, iq):
         """
@@ -222,7 +228,10 @@ class TNArchipelVNC (TNArchipelPlugin):
             if not self.entity.domain:
                 return iq.buildReply('ignore')
             ports = self.display()
-            payload = xmpp.Node("display", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
+            if not ports:
+                payload = xmpp.Node("display", attrs={})
+            else:
+                payload = xmpp.Node("display", attrs={"port": str(ports["direct"]), "proxy": str(ports["proxy"]), "host": self.entity.ipaddr, "onlyssl": str(ports["onlyssl"]), "supportssl": str(ports["supportssl"])})
             reply.setQueryPayload([payload])
         except libvirt.libvirtError as ex:
             reply = build_error_iq(self, ex, iq, ex.get_error_code(), ns=archipel.archipelLibvirtEntity.ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR)
