@@ -152,9 +152,11 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     @outlet TNNetworkController     networkController;
     @outlet TNSwitch                switchACPI;
     @outlet TNSwitch                switchAPIC;
+    @outlet TNSwitch                switchEnableVNC;
     @outlet TNSwitch                switchHugePages;
     @outlet TNSwitch                switchPAE;
     @outlet TNSwitch                switchPreferencesHugePages;
+    @outlet TNSwitch                switchPreferencesEnableVNC;
     @outlet TNTextFieldStepper      stepperNumberCPUs;
     @outlet TNUIKitScrollView       scrollViewContentView;
     @outlet TNUIKitScrollView       scrollViewForDrives;
@@ -225,6 +227,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultOnCrash"], @"TNDescDefaultOnCrash",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultClockOffset"], @"TNDescDefaultClockOffset",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultHugePages"], @"TNDescDefaultHugePages",
+            [bundle objectForInfoDictionaryKey:@"TNDescDefaultEnableVNC"], @"TNDescDefaultEnableVNC",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultInputType"], @"TNDescDefaultInputType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultDomainType"], @"TNDescDefaultDomainType",
             [bundle objectForInfoDictionaryKey:@"TNDescDefaultGuest"], @"TNDescDefaultGuest",
@@ -514,6 +517,10 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [switchHugePages setAction:@selector(makeDefinitionEdited:)];
     [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
 
+    [switchEnableVNC setTarget:self]
+    [switchEnableVNC setAction:@selector(toggleVNCEnabled:)];
+    [switchEnableVNC setToolTip:CPLocalizedString(@"Enable or disable the VNC screen for this virtual machine", @"Enable or disable the VNC screen for this virtual machine")];
+
     //CPUStepper
     [stepperNumberCPUs setMaxValue:4];
     [stepperNumberCPUs setMinValue:1];
@@ -560,6 +567,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [fieldPreferencesMachine setToolTip:CPBundleLocalizedString(@"Set the default machine type for new domains", @"Set the default machine type for new domains")];
     [fieldPreferencesMemory setToolTip:CPBundleLocalizedString(@"Set the default amount of memory for new domains", @"Set the default amount of memory for new domains")];
     [switchPreferencesHugePages setToolTip:CPBundleLocalizedString(@"Set the default usage of huge pages for new domains", @"Set the default usage of huge pages for new domains")];
+    [switchPreferencesEnableVNC setToolTip:CPBundleLocalizedString(@"Set the defaulut usage of VNC for new domains", @"Set the defaulut usage of VNC for new domains")];
 }
 
 
@@ -657,6 +665,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setBool:[switchPreferencesHugePages isOn] forKey:@"TNDescDefaultHugePages"];
+    [defaults setBool:[switchPreferencesEnableVNC isOn] forKey:@"TNDescDefaultEnableVNC"];
     [defaults setObject:[buttonPreferencesBoot title] forKey:@"TNDescDefaultBoot"];
     [defaults setObject:[buttonPreferencesClockOffset title] forKey:@"TNDescDefaultClockOffset"];
     [defaults setObject:[buttonPreferencesInput title] forKey:@"TNDescDefaultInputType"];
@@ -692,6 +701,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [fieldPreferencesMachine setIntValue:[defaults objectForKey:@"TNDescDefaultMachine"]];
     [fieldPreferencesMemory setStringValue:[defaults objectForKey:@"TNDescDefaultMemory"]];
     [switchPreferencesHugePages setOn:[defaults boolForKey:@"TNDescDefaultHugePages"] animated:YES sendAction:NO];
+    [switchPreferencesEnableVNC setOn:[defaults boolForKey:@"TNDescDefaultEnableVNC"] animated:YES sendAction:NO];
 }
 
 /*! called when MainMenu is ready
@@ -723,10 +733,8 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [self setControl:buttonOnPowerOff enabledAccordingToPermission:@"define"];
     [self setControl:buttonOnReboot enabledAccordingToPermission:@"define"];
     [self setControl:buttonUndefine enabledAccordingToPermission:@"undefine"];
-    [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
     [self setControl:buttonXMLEditor enabledAccordingToPermission:@"define"];
     [self setControl:fieldMemory enabledAccordingToPermission:@"define"];
-    [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
     [self setControl:stepperNumberCPUs enabledAccordingToPermission:@"define"];
     [self setControl:switchACPI enabledAccordingToPermission:@"define"];
     [self setControl:switchAPIC enabledAccordingToPermission:@"define"];
@@ -739,6 +747,16 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [self setControl:_plusButtonDrives enabledAccordingToPermission:@"define"];
     [self setControl:_plusButtonNics enabledAccordingToPermission:@"define"];
 
+    if ([switchEnableVNC isOn])
+    {
+        [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
+        [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
+    }
+    else
+    {
+        [buttonVNCKeymap setEnabled:NO];
+        [fieldVNCPassword setEnabled:NO];
+    }
 
     if (![self currentEntityHasPermission:@"define"])
     {
@@ -898,6 +916,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
         or          = [defaults objectForKey:@"TNDescDefaultOnReboot"],
         oc          = [defaults objectForKey:@"TNDescDefaultOnCrash"],
         hp          = [defaults boolForKey:@"TNDescDefaultHugePages"],
+        vnc         = [defaults boolForKey:@"TNDescDefaultEnableVNC"],
         clock       = [defaults objectForKey:@"TNDescDefaultClockOffset"],
         pae         = [defaults boolForKey:@"TNDescDefaultPAE"],
         acpi        = [defaults boolForKey:@"TNDescDefaultACPI"],
@@ -918,9 +937,20 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchHugePages setOn:((hp == 1) ? YES : NO) animated:YES sendAction:NO];
-
+    [switchEnableVNC setOn:((vnc == 1) ? YES : NO) animated:YES sendAction:NO];
     [buttonMachines removeAllItems];
     [buttonDomainType removeAllItems];
+
+    if (vnc == 1)
+    {
+        [buttonVNCKeymap setEnabled:YES];
+        [fieldVNCPassword setEnabled:YES];
+    }
+    else
+    {
+        [buttonVNCKeymap setEnabled:NO];
+        [fieldVNCPassword setEnabled:NO];
+    }
 
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
@@ -1124,6 +1154,16 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
 - (IBAction)makeDefinitionEdited:(id)aSender
 {
     [self handleDefinitionEdition:YES];
+}
+
+/*! toggle VNC enabled for this virtual machine
+    @param sender the sender of the action
+*/
+- (IBAction)toggleVNCEnabled:(id)aSender
+{
+    [fieldVNCPassword setEnabled:[aSender isOn]];
+    [buttonVNCKeymap setEnabled:[aSender isOn]];
+    [self makeDefinitionEdited:aSender];
 }
 
 /*! define XML
@@ -1514,8 +1554,19 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     // graphics
     if ([self isHypervisor:hypervisor inList:[TNXMLDescHypervisorKVM, TNXMLDescHypervisorQemu, TNXMLDescHypervisorKQemu]])
     {
-        [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
-        [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
+        [self setControl:switchEnableVNC enabledAccordingToPermission:@"define"];
+        [switchEnableVNC setOn:([graphics count] > 0) animated:YES sendAction:NO];
+
+        if ([switchEnableVNC isOn])
+        {
+            [self setControl:fieldVNCPassword enabledAccordingToPermission:@"define"];
+            [self setControl:buttonVNCKeymap enabledAccordingToPermission:@"define"];
+        }
+        else
+        {
+            [fieldVNCPassword setEnabled:NO];
+            [buttonVNCKeymap setEnabled:NO];
+        }
 
         for (var i = 0; i < [graphics count]; i++)
         {
@@ -1542,6 +1593,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     }
     else
     {
+        [switchEnableVNC setEnabled:NO];
         [fieldVNCPassword setEnabled:NO];
         [buttonVNCKeymap setEnabled:NO];
     }
@@ -1897,24 +1949,27 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
             [stanza up];
         }
 
-        if ([fieldVNCPassword stringValue] != @"")
+        if ([switchEnableVNC isOn])
         {
-            [stanza addChildWithName:@"graphics" andAttributes:{
-                "autoport": "yes",
-                "type": "vnc",
-                "port": "-1",
-                "keymap": VNCKeymap,
-                "passwd": VNCPassword}];
-            [stanza up];
-        }
-        else
-        {
-            [stanza addChildWithName:@"graphics" andAttributes:{
-                "autoport": "yes",
-                "type": "vnc",
-                "port": "-1",
-                "keymap": VNCKeymap}];
-            [stanza up];
+            if ([fieldVNCPassword stringValue] != @"")
+            {
+                [stanza addChildWithName:@"graphics" andAttributes:{
+                    "autoport": "yes",
+                    "type": "vnc",
+                    "port": "-1",
+                    "keymap": VNCKeymap,
+                    "passwd": VNCPassword}];
+                [stanza up];
+            }
+            else
+            {
+                [stanza addChildWithName:@"graphics" andAttributes:{
+                    "autoport": "yes",
+                    "type": "vnc",
+                    "port": "-1",
+                    "keymap": VNCKeymap}];
+                [stanza up];
+            }
         }
     }
 

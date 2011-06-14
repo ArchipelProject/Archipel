@@ -41,9 +41,6 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
 "27.title" = "MB";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "28"; */
-"28.title" = "Box";
-
 /* Class = "NSTextFieldCell"; title = "VNC password:"; ObjectID = "40"; */
 "40.title" = "VNC password:";
 
@@ -53,10 +50,10 @@
 /* Class = "NSTextFieldCell"; title = "Input type:"; ObjectID = "42"; */
 "42.title" = "Input type:";
 
-/* Class = "NSTextFieldCell"; title = "Configure the access of the virtual machine"; ObjectID = "43"; */
+/* Class = "NSTextFieldCell"; title = "Configure the VNC behaviours of the virtual machine"; ObjectID = "43"; */
 "43.title" = "Configure the access of the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Controls"; ObjectID = "44"; */
+/* Class = "NSTextFieldCell"; title = "VNC"; ObjectID = "44"; */
 "44.title" = "Controls";
 
 /* Class = "NSTextFieldCell"; placeholderString = "My passsword"; ObjectID = "48"; */
@@ -622,4 +619,13 @@
 
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "706"; */
 "706.title" = "Item 3";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "716"; */
+"716.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Enable VNC:"; ObjectID = "718"; */
+"718.title" = "Enable VNC:";
+
+/* Class = "NSTextFieldCell"; title = "Use VNC:"; ObjectID = "723"; */
+"723.title" = "Use VNC:";
 

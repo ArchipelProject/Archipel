@@ -151,6 +151,9 @@
 /* Set the default VNC keymap for new domains */
 "Set the default VNC keymap for new domains" = "Set the default VNC keymap for new domains";
 
+/* Set the defaulut usage of VNC for new domains */
+"Set the defaulut usage of VNC for new domains" = "Set the defaulut usage of VNC for new domains";
+
 /* Set the domain machine type */
 "Set the domain machine type" = "Set the domain machine type";
 

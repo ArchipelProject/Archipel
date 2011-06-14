@@ -110,6 +110,8 @@
 	<string>Set the default number of CPUs for new domains</string>
 	<key>Set the default usage of huge pages for new domains</key>
 	<string>Set the default usage of huge pages for new domains</string>
+	<key>Set the defaulut usage of VNC for new domains</key>
+	<string>Set the defaulut usage of VNC for new domains</string>
 	<key>Set the domain machine type</key>
 	<string>Set the domain machine type</string>
 	<key>Set the domain type</key>

@@ -54,6 +54,8 @@
     <string>hvm (x86_64)</string>
     <key>TNDescDefaultHugePages</key>
     <integer>0</integer>
+    <key>TNDescDefaultEnableVNC</key>
+    <integer>1</integer>
     <key>TNDescDefaultHypervisor</key>
     <string>kvm</string>
     <key>TNDescDefaultInputType</key>
