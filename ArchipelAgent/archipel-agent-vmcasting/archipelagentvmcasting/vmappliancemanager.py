@@ -25,7 +25,7 @@ import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
 from archipel.archipelVirtualMachine import ARCHIPEL_ERROR_CODE_VM_MIGRATING
-from archipelcore.utils import build_error_iq
+from archipelcore.utils import build_error_iq, build_error_message
 
 import appliancecompresser
 import appliancedecompresser
@@ -71,6 +71,26 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.entity.permission_center.create_permission("appliance_attach", "Authorizes user attach appliance to virtual machine", False)
         self.entity.permission_center.create_permission("appliance_detach", "Authorizes user to detach appliance_detach from virtual machine", False)
         self.entity.permission_center.create_permission("appliance_package", "Authorizes user to package new appliance from virtual machine", False)
+
+        # chat
+        registrar_items = [
+                            {   "commands" : ["list appliances"],
+                                "parameters": [],
+                                "method": self.message_get,
+                                "permissions": ["appliance_get"],
+                                "description": "List all appliances" },
+                            {   "commands" : ["attach appliance"],
+                                "parameters": [{"name": "identifier", "description": "The identifer of the appliance, UUID or name"}],
+                                "method": self.message_attach,
+                                "permissions": ["appliance_attach"],
+                                "description": "Start the given network" },
+                            {   "commands" : ["detach appliance"],
+                                "parameters": [],
+                                "method": self.message_detach,
+                                "permissions": ["appliance_detach"],
+                                "description": "Stop the given network" }
+                            ]
+        self.entity.add_message_registrar_items(registrar_items)
 
 
     ### Plugin interface
@@ -159,6 +179,78 @@ class TNVMApplianceManager (TNArchipelPlugin):
         self.entity.change_presence(presence_show=self.old_show, presence_status="Cannot package appliance", callback=presence_callback)
 
 
+    ### Processing
+
+    def get(self):
+        """
+        return the list of appliance
+        @rtype: array
+        @return: array of appliances
+        """
+        ret = []
+        self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
+        for values in self.cursor:
+            path = values[0]
+            name = values[1]
+            description = values[2]
+            uuid = values[3]
+            status = "none"
+            if self.is_installing and (self.installing_media_uuid == uuid):
+                status = "installing"
+            else:
+                try:
+                    f = open(self.entity.folder + "/current.package", "r")
+                    puuid = f.read()
+                    f.close()
+                    if puuid == uuid:
+                        status = "installed"
+                        self.is_installed = True
+                except:
+                    pass
+            ret.append({"path": path, "name": name, "description": description, "uuid": uuid, "status": status})
+        return ret
+
+    def attach(self, uuid, requester):
+        """
+        attach the appliance identified by given UUID
+        @type uuid: string
+        @param uuid: the UUID of the appliance
+        @type requester: JID
+        @param requester: the JID of the requester
+        """
+        if self.is_installing:
+            raise Exception("Virtual machine is already installing a package.")
+        if (self.is_installed):
+            raise Exception("You must detach from already attached template.")
+        self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid))
+        try:
+            name, description, url, uuid, status, source, save_path = self.cursor.fetchone()
+        except Exception as ex:
+            raise Exception("Cannot find appliance with UUID %s" % uuid)
+        self.entity.log.debug("Supported extensions : %s " % str(self.disks_extensions))
+        self.entity.log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
+        appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, self.error_installing, uuid, requester)
+        self.old_status = self.entity.xmppstatus
+        self.old_show = self.entity.xmppstatusshow
+        self.entity.change_presence(presence_show="dnd", presence_status="Installing from appliance...")
+        self.is_installing = True
+        self.installing_media_uuid = uuid
+        appliance_packager.start()
+        self.entity.push_change("vmcasting", "applianceinstalling")
+
+    def detach(self):
+        """
+        detach the current appliance
+        """
+        if self.is_installing:
+            raise Exception("Virtual machine is already installing a package.")
+        package_file_path = self.entity.folder + "/current.package"
+        if not os.path.exists(package_file_path):
+            raise Exception("No appliance is attached.")
+        os.unlink(package_file_path)
+        self.is_installed = False
+        self.entity.push_change("vmcasting", "appliancedetached")
+
 
     ### XMPP Processing
 
@@ -201,34 +293,33 @@ class TNVMApplianceManager (TNArchipelPlugin):
         @return: a ready-to-send IQ containing the results
         """
         try:
-            #uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             nodes = []
             reply = iq.buildReply("result")
-            self.cursor.execute("SELECT save_path, name, description, uuid FROM vmcastappliances WHERE status=%d" % (ARCHIPEL_APPLIANCES_INSTALLED))
-            for values in self.cursor:
-                path = values[0]
-                name = values[1]
-                description = values[2]
-                uuid = values[3]
-                status = "none"
-                if self.is_installing and (self.installing_media_uuid == uuid):
-                    status = "installing"
-                else:
-                    try:
-                        f = open(self.entity.folder + "/current.package", "r")
-                        puuid = f.read()
-                        f.close()
-                        if puuid == uuid:
-                            status = "installed"
-                            self.is_installed = True
-                    except:
-                        pass
-                node = xmpp.Node(tag="appliance", attrs={"path": path, "name": name, "description": description, "uuid": uuid, "status": status})
+            appliances = self.get()
+            for appliance in appliances:
+                node = xmpp.Node(tag="appliance", attrs=appliance)
                 nodes.append(node)
             reply.setQueryPayload(nodes)
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_GET)
         return reply
+
+    def message_get(self, msg):
+        """
+        Create the message response to list appliances.
+        @type msg: xmpp.Protocol.Message
+        @param msg: the message containing the request
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            appliances = self.get()
+            ret = "Sure. Here are available appliances:\n"
+            for app in appliances:
+                ret += "    - %s (%s)\n" % (app["name"], app["uuid"])
+            return ret
+        except Exception as ex:
+            return build_error_message(self, ex)
 
     def iq_attach(self, iq):
         """
@@ -240,28 +331,32 @@ class TNVMApplianceManager (TNArchipelPlugin):
         """
         reply = iq.buildReply("result")
         try:
-            if self.is_installing:
-                raise Exception("Virtual machine is already installing a package.")
-            if (self.is_installed):
-                raise Exception("You must detach from already attached template.")
             uuid = iq.getTag("query").getTag("archipel").getAttr("uuid")
             requester = iq.getFrom()
-            self.cursor.execute("SELECT * FROM vmcastappliances WHERE uuid=\"%s\"" % (uuid))
-            for values in self.cursor:
-                name, description, url, uuid, status, source, save_path = values
-            self.entity.log.debug("Supported extensions : %s " % str(self.disks_extensions))
-            self.entity.log.info("will install appliance with uuid %s at path %s"  % (uuid, save_path))
-            appliance_packager = appliancedecompresser.TNApplianceDecompresser(self.temp_directory, self.disks_extensions, save_path, self.entity, self.finish_installing, self.error_installing, uuid, requester)
-            self.old_status = self.entity.xmppstatus
-            self.old_show = self.entity.xmppstatusshow
-            self.entity.change_presence(presence_show="dnd", presence_status="Installing from appliance...")
-            self.is_installing = True
-            self.installing_media_uuid = uuid
-            appliance_packager.start()
-            self.entity.push_change("vmcasting", "applianceinstalling")
+            self.attach(uuid, requester);
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_INSTALL)
         return reply
+
+    def message_attach(self, msg):
+        """
+        Attach the appliance identified by UUID from the given msg
+        @type msg: xmpp.Protocol.Message
+        @param msg: the message containing the request
+        @rtype: string
+        @return: the answer
+        """
+        try:
+            tokens = msg.getBody().split()
+            if not len(tokens) == 3:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            uuid = tokens[-1:][0]
+            requester = msg.getFrom()
+            self.attach(uuid, requester)
+            return "Appliance installation as started"
+        except Exception as ex:
+            return build_error_message(self, ex)
+
 
     def iq_detach(self, iq):
         """
@@ -273,15 +368,24 @@ class TNVMApplianceManager (TNArchipelPlugin):
         """
         reply = iq.buildReply("result")
         try:
-            if self.is_installing:
-                raise Exception("Virtual machine is already installing a package.")
-            package_file_path = self.entity.folder + "/current.package"
-            os.unlink(package_file_path)
-            self.is_installed = False
-            self.entity.push_change("vmcasting", "appliancedetached")
+            self.detach()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VMAPPLIANCES_DETACH)
         return reply
+
+    def message_detach(self, msg):
+        """
+        detach the current attached appliance
+        """
+        try:
+            tokens = msg.getBody().split()
+            if not len(tokens) == 2:
+                return "I'm sorry, you use a wrong format. You can type 'help' to get help."
+            self.detach()
+            return "Appliance is now detached"
+        except Exception as ex:
+            return build_error_message(self, ex)
+
 
     def iq_package(self, iq):
         """
