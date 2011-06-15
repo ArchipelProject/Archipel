@@ -71,6 +71,7 @@ ARCHIPEL_ERROR_CODE_VM_MEMORY                   = -1016
 ARCHIPEL_ERROR_CODE_VM_NETWORKINFO              = -1017
 ARCHIPEL_ERROR_CODE_VM_HYPERVISOR_CAPABILITIES  = -1019
 ARCHIPEL_ERROR_CODE_VM_FREE                     = -1020
+ARCHIPEL_ERROR_CODE_VM_SCREENSHOT               = -1021
 ARCHIPEL_ERROR_CODE_VM_MIGRATING                = -43
 
 ARCHIPEL_NS_VM_CONTROL                          = "archipel:vm:control"
@@ -513,6 +514,8 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             reply = self.iq_networkinfo(iq)
         elif action == "free":
             reply = self.iq_free(iq)
+        elif action == "screenshot":
+            reply = self.iq_screenshot(iq)
         # elif action == "setpincpus":
         #     reply = self.iq_setcpuspin(iq)
         if reply:
@@ -615,6 +618,36 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         if ret == 0 and not self.is_hypervisor((archipelLibvirtEntity.ARCHIPEL_HYPERVISOR_TYPE_QEMU)):
             self.on_domain_event(self.libvirt_connection, self.domain, libvirt.VIR_DOMAIN_EVENT_RESUMED, libvirt.VIR_DOMAIN_EVENT_RESUMED_UNPAUSED, None)
 
+    def screenshot(self):
+        """
+        take a screenshot of the virtualmachine and
+        return image as base64encoded PNG
+        @rtype: string
+        @return: base64 encoded PNG data
+        """
+        state = self.domain.info()[0]
+        if hasattr(self.domain, "screenshot") and (state == libvirt.VIR_DOMAIN_PAUSED or state == libvirt.VIR_DOMAIN_RUNNING):
+            # temporary solution. screenshot API is not
+            # working yet with python libvirt
+            import tempfile
+            import base64
+            f = tempfile.NamedTemporaryFile(delete=False)
+            f.close()
+            ret = os.system("virsh screenshot %s %s" % (self.uuid, f.name))
+            if not ret == 0:
+                self.log.error("Cannot use virsh to take screenshot")
+                return None
+            ret = os.system("convert %s %s.png" % (f.name, f.name))
+            if not ret == 0:
+                self.log.error("Cannot use convert (ImageMagick) to convert screenshot")
+                return None
+            os.unlink(f.name)
+            png = open("%s.png" % f.name)
+            data = base64.b64encode(png.read())
+            png.close()
+            os.unlink("%s.png" % f.name)
+            return data
+        return None
 
     def info(self):
         """
@@ -1417,4 +1450,24 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
             self.free()
         except Exception as ex:
             reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_FREE)
+        return reply
+
+    def iq_screenshot(self, iq):
+        """
+        Returns base64 encoded screenshot of the screen of the virtual machine
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            self.log.info("Screenhot sent")
+            data = self.screenshot()
+            if data:
+                node = xmpp.Node("screenshot", attrs={"mime": "image/png"})
+                node.setData(data)
+                reply.setQueryPayload([node])
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_VM_SCREENSHOT)
         return reply
