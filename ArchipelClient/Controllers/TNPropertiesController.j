@@ -66,11 +66,11 @@
     @outlet TNFlipView              mainView            @accessors(readonly);
 
     BOOL                            _enabled            @accessors(getter=isEnabled);
+    BOOL                            _isCollapsed        @accessors(getter=isCollapsed);
     TNAvatarController              _avatarManager      @accessors(getter=avatarManager);
     TNPubSubController              _pubSubController   @accessors(property=pubSubController);
     TNStropheContact                _entity             @accessors(getter=entity);
 
-    BOOL                            _isCollapsed;
     CPImage                         _groupUserImage;
     CPImage                         _pubsubDisabledImage;
     CPImage                         _pubsubImage;

@@ -342,7 +342,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
     [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_outlineScrollView setAutohidesScrollers:YES];
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithHexString:@"DDE4EA"]];
+
+    var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
+    //[CPColor colorWithHexString:@"DDE4EA"]
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
     [_outlineScrollView setDocumentView:_rosterOutlineView];
 
 
@@ -410,7 +413,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     /* connection label */
     [labelCurrentUser setFont:[CPFont systemFontOfSize:9.0]];
     [labelCurrentUser setStringValue:@""];
-    [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"6C707F"]];
+    [labelCurrentUser setTextColor:[CPColor colorWithHexString:@"353535"]];
     [labelCurrentUser setTextShadowOffset:CPSizeMake(0.0, 1.0)];
     [labelCurrentUser setValue:[CPColor colorWithHexString:@"C6CAD9"] forThemeAttribute:@"text-shadow-color"];
     [labelCurrentUser setToolTip:CPLocalizedString(@"The current logged account", @"The current logged account")];
@@ -711,12 +714,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         bundle  = [CPBundle mainBundle],
         copy = document.createElement("div");
 
-    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-statusbar.png"]]]];
+    [statusBar setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/statusbar-bg.png"]]]];
 
     copy.id = "copyright_label";
     copy.style.position = "absolute";
     copy.style.fontSize = "9px";
-    copy.style.color = "#6C707F";
+    copy.style.color = "#353535";
     copy.style.width = "700px";
     copy.style.bottom = "8px";
     copy.style.left = "50%";
@@ -1056,6 +1059,16 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)renameContact:(id)sender
 {
+    if ([[_rosterOutlineView selectedRowIndexes] firstIndex] == -1)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Select a contact", @"Select a contact")
+                          informative:CPLocalizedString(@"Please select a contact first.", @"Please select a contact first.")];
+        return;
+    }
+
+    if ([propertiesController isCollapsed])
+        [self toggleShowPropertiesView:sender];
+
     [[propertiesController entryName] mouseDown:nil];
 }
 
@@ -1064,6 +1077,16 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (IBAction)renameGroup:(id)sender
 {
+    if ([[_rosterOutlineView selectedRowIndexes] firstIndex] == -1)
+    {
+        [TNAlert showAlertWithMessage:CPLocalizedString(@"Select a group", @"Select a group")
+                          informative:CPLocalizedString(@"Please select a group first.", @"Please select a group first.")];
+        return;
+    }
+
+    if ([propertiesController isCollapsed])
+        [self toggleShowPropertiesView:sender];
+
     [[propertiesController entryName] mouseDown:nil];
 }
 

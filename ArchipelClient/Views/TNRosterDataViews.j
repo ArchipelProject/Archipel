@@ -94,15 +94,19 @@
         [_events setHidden:YES];
 
         [_name setFont:[CPFont systemFontOfSize:contactFontSizeName]];
-        [_name setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_name setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
         [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
-        [_name setValue:[CPFont boldSystemFontOfSize:contactFontSizeName] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView ];
+        [_name setValue:CGSizeMake(0.0, .0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
+        [_name setValue:[CPFont boldSystemFontOfSize:contactFontSizeName] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
 
         [_status setFont:[CPFont systemFontOfSize:contactFontSizeStatus]];
-        [_status setValue:[CPColor colorWithHexString:@"f2f0e4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_status setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
+        [_status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
         [_status setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         [_status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
+        [_status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
 
         var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
             actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
