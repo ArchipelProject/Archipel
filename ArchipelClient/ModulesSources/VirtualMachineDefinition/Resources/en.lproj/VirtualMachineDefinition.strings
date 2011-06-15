@@ -41,10 +41,10 @@
 /* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "27"; */
 "27.title" = "MB";
 
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "40"; */
+/* Class = "NSTextFieldCell"; title = "VNC password:"; ObjectID = "40"; */
 "40.title" = "VNC password:";
 
-/* Class = "NSTextFieldCell"; title = "Keymap:"; ObjectID = "41"; */
+/* Class = "NSTextFieldCell"; title = "VNC keymap:"; ObjectID = "41"; */
 "41.title" = "VNC keymap:";
 
 /* Class = "NSTextFieldCell"; title = "Input type:"; ObjectID = "42"; */
@@ -53,7 +53,7 @@
 /* Class = "NSTextFieldCell"; title = "Configure the access of the virtual machine"; ObjectID = "43"; */
 "43.title" = "Configure the access of the virtual machine";
 
-/* Class = "NSTextFieldCell"; title = "Screen"; ObjectID = "44"; */
+/* Class = "NSTextFieldCell"; title = "Controls"; ObjectID = "44"; */
 "44.title" = "Controls";
 
 /* Class = "NSTextFieldCell"; placeholderString = "My passsword"; ObjectID = "48"; */

@@ -1092,7 +1092,7 @@
 					<object class="NSTextField" id="38692368">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{22, 322}, {106, 17}}</string>
+						<string key="NSFrame">{{17, 322}, {121, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="425724000"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1152,7 +1152,7 @@
 					<object class="NSTextField" id="210741058">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{55, 349}, {72, 17}}</string>
+						<string key="NSFrame">{{17, 349}, {121, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="556787766"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1169,7 +1169,7 @@
 					<object class="NSTextField" id="419863807">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{26, 377}, {101, 17}}</string>
+						<string key="NSFrame">{{17, 377}, {121, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="559380890"/>
 						<bool key="NSEnabled">YES</bool>
@@ -1186,7 +1186,7 @@
 					<object class="NSTextField" id="979092159">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
-						<string key="NSFrame">{{26, 408}, {101, 17}}</string>
+						<string key="NSFrame">{{17, 407}, {120, 17}}</string>
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="523450510"/>
 						<bool key="NSEnabled">YES</bool>
@@ -5258,11 +5258,11 @@
 							<reference ref="110727323"/>
 							<reference ref="556787766"/>
 							<reference ref="419863807"/>
-							<reference ref="210741058"/>
 							<reference ref="559380890"/>
 							<reference ref="425724000"/>
 							<reference ref="38692368"/>
 							<reference ref="600200884"/>
+							<reference ref="210741058"/>
 						</object>
 						<reference key="parent" ref="0"/>
 						<string key="objectName">definition view</string>
