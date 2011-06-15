@@ -39,6 +39,8 @@
     <integer>0</integer>
     <key>TNArchipelControlsMaxVCPUs</key>
     <integer>4</integer>
+    <key>TNArchipelControlsScreenshotRefresh</key>
+    <integer>10</integer>
     <key>UseModuleMenu</key>
     <integer>1</integer>
 </dict>

@@ -86,3 +86,9 @@
 /* Class = "NSTextFieldCell"; title = "To enable live migration, you must start the virtual machine."; ObjectID = "143"; */
 "143.title" = "To enable live migration, you must start the virtual machine.";
 
+/* Class = "NSTextFieldCell"; placeholderString = "Delay between screenshots"; ObjectID = "157"; */
+"157.placeholderString" = "Delay between screenshots";
+
+/* Class = "NSTextFieldCell"; title = "Screenshot refresh time:"; ObjectID = "158"; */
+"158.title" = "Screenshot refresh time:";
+

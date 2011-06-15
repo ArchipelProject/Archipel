@@ -33,6 +33,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
 @import <TNKit/TNUIKitScrollView.j>
+@import <StropheCappuccino/TNBase64Image.j>
 
 @import "TNExtendedContactObject.j"
 
@@ -62,6 +63,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     TNArchipelTypeVirtualMachineControlAutostart    = @"autostart",
     TNArchipelTypeVirtualMachineControlMemory       = @"memory",
     TNArchipelTypeVirtualMachineControlVCPUs        = @"setvcpus",
+    TNArchipelTypeVirtualMachineControlScreenshot   = @"screenshot",
     TNArchipelTypeVirtualMachineOOMSetAdjust        = @"setadjust",
     TNArchipelTypeVirtualMachineOOMGetAdjust        = @"getadjust",
     VIR_DOMAIN_NOSTATE                              = 0,
@@ -89,6 +91,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     @outlet CPButton                buttonKill;
     @outlet CPButtonBar             buttonBarMigration;
+    @outlet CPImageView             imageScreenshot;
     @outlet CPImageView             imageState;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
@@ -99,6 +102,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     @outlet CPTextField             fieldOOMAdjust;
     @outlet CPTextField             fieldOOMScore;
     @outlet CPTextField             fieldPreferencesMaxCPUs;
+    @outlet CPTextField             fieldPreferencesScreenshotRefresh;
     @outlet CPView                  viewTableHypervisorsContainer;
     @outlet TNSwitch                switchAutoStart;
     @outlet TNSwitch                switchPreventOOMKiller;
@@ -119,9 +123,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     CPImage                         _imageStop;
     CPImage                         _imageStopDisabled;
     CPImage                         _imageStopSelected;
+    CPImage                         _imageScreenShutdowned;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
     CPTableView                     _tableHypervisors;
+    CPTimer                         _screenshotTimer;
     TNStropheContact                _virtualMachineToFree;
     TNTableViewDataSource           _datasourceHypervisors;
 }
@@ -139,7 +145,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs"
+           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsMaxVCPUs"], @"TNArchipelControlsMaxVCPUs",
+           [bundle objectForInfoDictionaryKey:@"TNArchipelControlsScreenshotRefresh"], @"TNArchipelControlsScreenshotRefresh"
     ]];
 
     [buttonKill setTitle:@"Kill"];
@@ -255,6 +262,11 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [switchPreventOOMKiller setAction:@selector(setPreventOOMKiller:)];
     [switchPreventOOMKiller setToolTip:CPBundleLocalizedString(@"If ON, the virtual machine process will never been destroyed by OOM killer", @"If ON, the virtual machine process will never been destroyed by OOM killer")];
 
+    // screenshot image
+    _imageScreenShutdowned = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdowned.png"] size:CGSizeMake(216, 162)];
+    [imageScreenshot setBackgroundColor:[CPColor blackColor]];
+
+
     [fieldInfoMem setToolTip:CPBundleLocalizedString(@"Current amount of memory", @"Current amount of memory")];
     [fieldInfoConsumedCPU setToolTip:CPBundleLocalizedString(@"Total of consumed physical CPU time", @"Total of consumed physical CPU time")];
     [fieldInfoState setToolTip:CPBundleLocalizedString(@"Current state of the virtual machine", @"Current state of the virtual machine")];
@@ -262,6 +274,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [fieldOOMAdjust setToolTip:CPBundleLocalizedString(@"Current OOM adjust value of the virtual machine", @"Current OOM adjust value of the virtual machine")];
     [buttonKill setToolTip:CPBundleLocalizedString(@"Will definitly delete the virtual machine, and all it's informations", @"Will definitly delete the virtual machine, and all it's informations")];
     [fieldPreferencesMaxCPUs setToolTip:CPBundleLocalizedString(@"Max number of virtual CPUs", @"Max number of virtual CPUs")];
+    [fieldPreferencesScreenshotRefresh setToolTip:CPLocalizedString(@"Set the delay between two virtual machine screenshots", @"Set the delay between two virtual machine screenshots")];
 }
 
 
@@ -314,6 +327,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     [self checkIfRunning];
 
+    [imageScreenshot setImage:_imageScreenShutdowned];
     [_tableHypervisors setDelegate:nil];
     [_tableHypervisors setDelegate:self];
 
@@ -334,6 +348,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)willHide
 {
+    if (_screenshotTimer)
+    {
+        [_screenshotTimer invalidate];
+        _screenshotTimer = nil;
+    }
+    [imageScreenshot setImage:_imageScreenShutdowned];
     [super willHide];
 }
 
@@ -355,6 +375,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [defaults setInteger:[fieldPreferencesMaxCPUs intValue] forKey:@"TNArchipelControlsMaxVCPUs"];
+    [defaults setInteger:[fieldPreferencesScreenshotRefresh intValue] forKey:@"TNArchipelControlsScreenshotRefresh"];
 }
 
 /*! called when user gets preferences
@@ -364,6 +385,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     var defaults = [CPUserDefaults standardUserDefaults];
 
     [fieldPreferencesMaxCPUs setIntValue:[defaults integerForKey:@"TNArchipelControlsMaxVCPUs"]];
+    [fieldPreferencesScreenshotRefresh setIntValue:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]];
 }
 
 /*! called when permissions changes
@@ -782,6 +804,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if ([aStanza type] == @"result")
     {
         var humanState,
+            defaults            = [CPUserDefaults standardUserDefaults],
             infoNode            = [aStanza firstChildWithName:@"info"],
             libvirtState        = [infoNode valueForAttribute:@"state"],
             cpuTime             = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 60000000000),
@@ -807,9 +830,22 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
             [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
             [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
+
+            if (!_screenshotTimer)
+            {
+                [self getScreenshot:nil];
+                _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
+                                                 target:self
+                                               selector:@selector(getScreenshot:)
+                                               userInfo:nil
+                                                repeats:NO];
+            }
         }
         else
         {
+            if (_screenshotTimer)
+                [_screenshotTimer invalidate];
+
             [sliderMemory setEnabled:NO];
             [sliderMemory setMinValue:0];
             [sliderMemory setMaxValue:100];
@@ -862,6 +898,49 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     return NO;
 }
+
+/*! ask virtual machine screenshot
+*/
+- (void)getScreenshot:(CPTimer)aTimer
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlScreenshot}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveScreenshot:)];
+}
+
+/*! compute virtual machine send it's screenshot
+*/
+- (BOOL)_didReceiveScreenshot:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var dataNode = [aStanza firstChildWithName:@"screenshot"];
+
+        if (!dataNode)
+        {
+            [imageScreenshot setImage:_imageScreenShutdowned];
+            return NO;
+        }
+
+        var base64Data = [dataNode text],
+            cType = [[aStanza firstChildWithName:@"screenshot"] valueForAttribute:@"mime"],
+            screenshot = [TNBase64Image base64ImageWithContentType:cType data:base64Data delegate:self];
+
+        if (_screenshotTimer)
+        {
+            [_screenshotTimer invalidate];
+            _screenshotTimer = nil;
+        }
+
+        // next part will be done in imageDidLoad: to ensure image is ready
+    }
+    return NO;
+}
+
 
 /*! send play command
 */
@@ -1033,6 +1112,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
+        [imageScreenshot setImage:_imageScreenShutdowned];
+        if (_screenshotTimer)
+        {
+            [_screenshotTimer invalidate];
+            _screenshotTimer = nil;
+        }
         [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPBundleLocalizedString(@"Virtual Machine", @"Virtual Machine")
                                                          message:CPBundleLocalizedString(@"Virtual machine has been destroyed.", @"Virtual machine has been destroyed.")];
     }
@@ -1379,6 +1464,21 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         [_migrateButton setEnabled:YES];
     else
         [_migrateButton setEnabled:NO];
+}
+
+- (void)imageDidLoad:(TNBase64Image)anImage
+{
+    [imageScreenshot setImage:anImage];
+
+    if (!_screenshotTimer)
+    {
+        var defaults = [CPUserDefaults standardUserDefaults];
+        _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
+                                                            target:self
+                                                          selector:@selector(getScreenshot:)
+                                                          userInfo:nil
+                                                           repeats:NO];
+    }
 }
 
 @end
