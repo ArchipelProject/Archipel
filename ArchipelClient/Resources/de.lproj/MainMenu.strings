@@ -1,0 +1,439 @@
+
+/* Class = "NSWindow"; title = "Archipel"; ObjectID = "367"; */
+"367.title" = "Archipel";
+
+/* Class = "NSTextFieldCell"; title = "Connected as ..."; ObjectID = "840"; */
+"840.title" = "Verbunden als ...";
+
+/* Class = "NSWindow"; title = "New group"; ObjectID = "856"; */
+"856.title" = "Neue Gruppe";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "862"; */
+"862.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "870"; */
+"870.title" = "Abbrechen";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "871"; */
+"871.title" = "Erstellen";
+
+/* Class = "NSTextFieldCell"; title = "Create a group"; ObjectID = "872"; */
+"872.title" = "Gruppe erstellen";
+
+/* Class = "NSTextFieldCell"; title = "You can sort object into groups."; ObjectID = "873"; */
+"873.title" = "Sie können Objekte in Gruppen einsortieren.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My Group"; ObjectID = "874"; */
+"874.placeholderString" = "Meine Gruppe";
+
+/* Class = "NSWindow"; title = "Add contact"; ObjectID = "880"; */
+"880.title" = "Kontakt hinzufügen";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "888"; */
+"888.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "john@doe.com"; ObjectID = "889"; */
+"889.placeholderString" = "john@doe.com";
+
+/* Class = "NSTextFieldCell"; title = "Enter the JID of the virtual machine, hypervisor or user."; ObjectID = "890"; */
+"890.title" = "Geben Sie die JID einer virtuellen Maschine, eines Hypervisors oder eines Benutzers ein.";
+
+/* Class = "NSButtonCell"; title = "Add"; ObjectID = "892"; */
+"892.title" = "Hinzufügen";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "893"; */
+"893.title" = "Abbrechen";
+
+/* Class = "NSTextFieldCell"; title = "JID"; ObjectID = "894"; */
+"894.title" = "JID";
+
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "898"; */
+"898.title" = "Nickname";
+
+/* Class = "NSTextFieldCell"; placeholderString = "John Doe"; ObjectID = "899"; */
+"899.placeholderString" = "John Doe";
+
+/* Class = "NSWindow"; title = "About Archipel"; ObjectID = "900"; */
+"900.title" = "Über Archipel";
+
+/* Class = "NSTextFieldCell"; title = "Version XX"; ObjectID = "910"; */
+"910.title" = "Version XX";
+
+/* Class = "NSTextFieldCell"; title = "Archipel Client"; ObjectID = "911"; */
+"911.title" = "Archipel Client";
+
+/* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "919"; */
+"919.title" = "Avatar wähler";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "927"; */
+"927.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Pick up the new avatar of the entity from the following list."; ObjectID = "929"; */
+"929.title" = "Wählen Sie einen neuen Avatar aus der folgenden Liste aus.";
+
+/* Class = "NSTextFieldCell"; title = "Change avatar"; ObjectID = "930"; */
+"930.title" = "Avatar ändern";
+
+/* Class = "NSButtonCell"; title = "Choose"; ObjectID = "931"; */
+"931.title" = "Auswählen";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "932"; */
+"932.title" = "Abbrechen";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "944"; */
+"944.title" = "Abbrechen";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "945"; */
+"945.title" = "Speichern";
+
+/* Class = "NSButtonCell"; title = "Reset"; ObjectID = "950"; */
+"950.title" = "Zurücksetzen";
+
+/* Class = "NSWindow"; title = "Update available"; ObjectID = "952"; */
+"952.title" = "Aktuallisierung verfügbar";
+
+/* Class = "NSTextFieldCell"; title = "New version available"; ObjectID = "958"; */
+"958.title" = "Neue Version verfügbar";
+
+/* Class = "NSTextFieldCell"; title = "Current version"; ObjectID = "959"; */
+"959.title" = "Momentane Version";
+
+/* Class = "NSTextFieldCell"; title = "New version"; ObjectID = "962"; */
+"962.title" = "Neue version";
+
+/* Class = "NSTextFieldCell"; title = "Release date"; ObjectID = "964"; */
+"964.title" = "Veröffentlichungsdatum";
+
+/* Class = "NSTextFieldCell"; title = "x.x.x"; ObjectID = "966"; */
+"966.title" = "x.x.x";
+
+/* Class = "NSTextFieldCell"; title = "x.x.x"; ObjectID = "968"; */
+"968.title" = "x.x.x";
+
+/* Class = "NSTextFieldCell"; title = "x.x.x"; ObjectID = "970"; */
+"970.title" = "x.x.x";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "971"; */
+"971.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Ignore"; ObjectID = "975"; */
+"975.title" = "Ignorieren";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "976"; */
+"976.title" = "Abbrechen";
+
+/* Class = "NSButtonCell"; title = "Update"; ObjectID = "977"; */
+"977.title" = "Aktuallisieren";
+
+/* Class = "TNModalWindow"; title = "Connection"; ObjectID = "980"; */
+"980.title" = "Verbindung";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "988"; */
+"988.title" = "Box";
+
+/* Class = "NSTextFieldCell"; placeholderString = "user@domain.com"; ObjectID = "989"; */
+"989.placeholderString" = "user@domain.com";
+
+/* Class = "NSTextFieldCell"; title = "Logon"; ObjectID = "991"; */
+"991.title" = "Login";
+
+/* Class = "NSButtonCell"; title = "Connect"; ObjectID = "992"; */
+"992.title" = "Verbinden";
+
+/* Class = "NSTextFieldCell"; title = "Jabber ID"; ObjectID = "994"; */
+"994.title" = "Jabber ID";
+
+/* Class = "NSTextFieldCell"; title = "Password"; ObjectID = "998"; */
+"998.title" = "Passwort";
+
+/* Class = "NSTextFieldCell"; placeholderString = "My password"; ObjectID = "999"; */
+"999.placeholderString" = "Mein Passwort";
+
+/* Class = "NSTextFieldCell"; title = "BOSH service"; ObjectID = "1002"; */
+"1002.title" = "BOSH service";
+
+/* Class = "NSTextFieldCell"; placeholderString = "http://domain.com:5280/http-bind"; ObjectID = "1003"; */
+"1003.placeholderString" = "http://domain.com:5280/http-bind";
+
+/* Class = "NSTextFieldCell"; title = "Remember"; ObjectID = "1005"; */
+"1005.title" = "Merken";
+
+/* Class = "NSTextFieldCell"; title = "Nickname"; ObjectID = "1009"; */
+"1009.title" = "Nickname";
+
+/* Class = "NSTextFieldCell"; title = "resource"; ObjectID = "1011"; */
+"1011.title" = "ressource";
+
+/* Class = "NSTextFieldCell"; title = "Resource"; ObjectID = "1019"; */
+"1019.title" = "Ressource";
+
+/* Class = "NSTextFieldCell"; title = "Domain"; ObjectID = "1022"; */
+"1022.title" = "Domain";
+
+/* Class = "NSTextFieldCell"; title = "domain"; ObjectID = "1023"; */
+"1023.title" = "domain";
+
+/* Class = "NSTextFieldCell"; title = "Type"; ObjectID = "1028"; */
+"1028.title" = "Typ";
+
+/* Class = "NSTextFieldCell"; title = "type"; ObjectID = "1029"; */
+"1029.title" = "typ";
+
+/* Class = "NSTextFieldCell"; title = "Status"; ObjectID = "1030"; */
+"1030.title" = "Status";
+
+/* Class = "NSTextFieldCell"; title = "status"; ObjectID = "1031"; */
+"1031.title" = "status";
+
+/* Class = "NSTextFieldCell"; title = "General preferences"; ObjectID = "1051"; */
+"1051.title" = "Allgemeine Einstellungen";
+
+/* Class = "NSTextFieldCell"; title = "You can configure general preferences of Archipel. This is stored using local storage."; ObjectID = "1052"; */
+"1052.title" = "Sie können allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.";
+
+/* Class = "NSTextFieldCell"; placeholderString = "URL that will be displayed at login"; ObjectID = "1053"; */
+"1053.placeholderString" = "URL welche beim Login angezeigt wird";
+
+/* Class = "NSTextFieldCell"; placeholderString = "0.15"; ObjectID = "1054"; */
+"1054.placeholderString" = "0.15";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Office"; ObjectID = "1055"; */
+"1055.placeholderString" = "Büro";
+
+/* Class = "NSTextFieldCell"; title = "Welcome page URL"; ObjectID = "1056"; */
+"1056.title" = "URL der Willkommensseite";
+
+/* Class = "NSTextFieldCell"; title = "Module loading delay"; ObjectID = "1057"; */
+"1057.title" = "Modul Ladeverzögerung";
+
+/* Class = "NSTextFieldCell"; title = "BOSH resource"; ObjectID = "1058"; */
+"1058.title" = "BOSH ressource";
+
+/* Class = "NSTextFieldCell"; title = "Debug level"; ObjectID = "1059"; */
+"1059.title" = "Debug level";
+
+/* Class = "NSTextFieldCell"; title = "Use animation"; ObjectID = "1060"; */
+"1060.title" = "Verwende Animationen";
+
+/* Class = "NSTextFieldCell"; title = "This change need to reconnect to be considered by XMPP server."; ObjectID = "1063"; */
+"1063.title" = "Diese Änderung benötigt eine Neuverbindung um vom XMPP Server berücksichtigt zu werden.";
+
+/* Class = "NSTextFieldCell"; title = "Using animations can slow down the performances."; ObjectID = "1065"; */
+"1065.title" = "Das Verwenden von Animationen geht zu Lasten der Performance.";
+
+/* Class = "NSTextFieldCell"; title = "Using XMPP monitoring can slow down the performances."; ObjectID = "1074"; */
+"1074.title" = "Das Verwenden der XMPP Überwachung geht zu Lasten der Performance.";
+
+/* Class = "NSTextFieldCell"; title = "XMPP monitoring"; ObjectID = "1075"; */
+"1075.title" = "XMPP Überwachung";
+
+/* Class = "NSTextFieldCell"; title = "Updates"; ObjectID = "1077"; */
+"1077.title" = "Aktuallisierungen";
+
+/* Class = "NSButtonCell"; title = "Check now"; ObjectID = "1079"; */
+"1079.title" = "Überprüfe jetzt";
+
+/* Class = "NSButtonCell"; title = "Check at startup"; ObjectID = "1081"; */
+"1081.title" = "Überprüfe beim Start";
+
+/* Class = "NSTextFieldCell"; title = "Permission denied"; ObjectID = "1086"; */
+"1086.title" = "Zugriff verweigert";
+
+/* Class = "NSTextFieldCell"; title = "You do not seem to have the minimal required permissions"; ObjectID = "1088"; */
+"1088.title" = "Sie scheinen nicht die minimal benötigten Rechte zu besitzen";
+
+/* Class = "NSTextFieldCell"; title = "to display this module. You can ask your administrator to"; ObjectID = "1090"; */
+"1090.title" = "um das Modul anzuzeigen. Fragen Sie Ihren Administrator";
+
+/* Class = "NSTextFieldCell"; title = "increase your permissions if you really need it."; ObjectID = "1092"; */
+"1092.title" = "Erhöhen Sie Ihre Rechte wenn Sie sie wirklich brauchen.";
+
+/* Class = "NSTextFieldCell"; title = "vCard"; ObjectID = "1108"; */
+"1108.title" = "vCard";
+
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1111"; */
+"1111.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "locality"; ObjectID = "1113"; */
+"1113.title" = "standort";
+
+/* Class = "NSTextFieldCell"; title = "Locality"; ObjectID = "1114"; */
+"1114.title" = "Standort";
+
+/* Class = "NSTextFieldCell"; title = "company"; ObjectID = "1115"; */
+"1115.title" = "firma";
+
+/* Class = "NSTextFieldCell"; title = "Company"; ObjectID = "1116"; */
+"1116.title" = "Firma";
+
+/* Class = "NSTextFieldCell"; title = "role"; ObjectID = "1117"; */
+"1117.title" = "rolle";
+
+/* Class = "NSTextFieldCell"; title = "Role"; ObjectID = "1118"; */
+"1118.title" = "Rolle";
+
+/* Class = "NSTextFieldCell"; title = "Website"; ObjectID = "1123"; */
+"1123.title" = "Webseite";
+
+/* Class = "NSTextFieldCell"; title = "website"; ObjectID = "1124"; */
+"1124.title" = "webseite";
+
+/* Class = "NSTextFieldCell"; title = "EMail"; ObjectID = "1125"; */
+"1125.title" = "EMail";
+
+/* Class = "NSTextFieldCell"; title = "email"; ObjectID = "1126"; */
+"1126.title" = "email";
+
+/* Class = "NSTextFieldCell"; title = "Welcome to Archipel!"; ObjectID = "1133"; */
+"1133.title" = "Willkommen bei Archipel!";
+
+/* Class = "NSTextFieldCell"; title = "Archipel is a new kind of orchestrator, where everything is about real time. It introduces some new concepts that are not common to the virtualization world. We would like to thank you for choosing Archipel and we hope that you will enjoy using it as much as we enjoy making it."; ObjectID = "1135"; */
+"1135.title" = "Archipel ist eine neue Art der Orchestrierung, bei der alles über Echtzeit läuft. Es führt einige neue Konzepte welche nicht alltäglich in der Welt der Virtualisierung sind ein. Wir danken Ihnen, dass Sie sich für Archipel entschieden haben und hoffen das Sie es so fest geniessen können wie wir Genuss hatten es zu machen.";
+
+/* Class = "NSTextFieldCell"; title = "Loading modules"; ObjectID = "1139"; */
+"1139.title" = "Lade Module";
+
+/* Class = "NSTextFieldCell"; title = "Loading..."; ObjectID = "1141"; */
+"1141.title" = "Lädt...";
+
+/* Class = "NSTextFieldCell"; title = "Name"; ObjectID = "1292"; */
+"1292.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Add a contact"; ObjectID = "1294"; */
+"1294.title" = "Einen Kontakt hinzufügen";
+
+/* Class = "NSTextFieldCell"; title = "The next generation orchestrator"; ObjectID = "1312"; */
+"1312.title" = "The next generation orchestrator";
+
+/* Class = "NSTextFieldCell"; title = "For now, your roster is empty. You should already have installed an Archipel Agent on your hypervisor and you can now add it as a \"friend\" just like you would do on standard messaging application. To do so, click on the \"+\" button at the bottom left of the interface and choose \"Add contact\" ."; ObjectID = "1316"; */
+"1316.title" = "Momentan ist Ihre Kontaktliste leer. Sie sollten bereits einen Archipel Agent auf Ihrem Hypervisor installiert haben und können ihn jetzt als \"Freund\" hinzufügen. Um dies zu machen, klicken sie auf den \"+\" Knopf unten links im Interface und wählen Sie dann im Menü die Option \"Kontakt hinzufügen\" aus.";
+
+/* Class = "NSTextFieldCell"; title = "Quick start"; ObjectID = "1317"; */
+"1317.title" = "Schnellstart";
+
+/* Class = "NSTextFieldCell"; title = "Now your first hypervisor is in your roster, you can start to play with. Select it, then go to the \"Virtual Machine\" tab and ask for a new virtual machine."; ObjectID = "1322"; */
+"1322.title" = "Nun ist der erste Hypervisor in Ihrer Benutzerliste. Sie können anfangen mit Ihm zu spielen. Wählen Sie Ihn aus und gehen Sie dann auf die Registerkarte \"Virtuelle Maschinen\" und fragen Sie um eine neue virtuelle Maschine.";
+
+/* Class = "NSTextFieldCell"; title = "And then ?"; ObjectID = "1323"; */
+"1323.title" = "Und dann ?";
+
+/* Class = "NSButtonCell"; title = "Open documentation"; ObjectID = "1328"; */
+"1328.title" = "Öffne Dokumentation";
+
+/* Class = "NSButtonCell"; title = "Display"; ObjectID = "1333"; */
+"1333.title" = "Anzeigen";
+
+/* Class = "NSTextFieldCell"; title = "Display welcome message"; ObjectID = "1334"; */
+"1334.title" = "Zeige Willkommensnachricht";
+
+/* Class = "NSTextFieldCell"; title = "Language"; ObjectID = "1339"; */
+"1339.title" = "Sprache";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1348"; */
+"1348.title" = "Andere Ansichten";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1349"; */
+"1349.title" = "Gegenstand 1";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1350"; */
+"1350.title" = "Gegenstand 2";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1351"; */
+"1351.title" = "Gegenstand 3";
+
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "1355"; */
+"1355.title" = "Andere Ansichten";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "1356"; */
+"1356.title" = "Gegenstand 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "1357"; */
+"1357.title" = "Gegenstand 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "1358"; */
+"1358.title" = "Gegenstand 1";
+
+/* Class = "NSTextFieldCell"; title = "Label"; ObjectID = "1372"; */
+"1372.title" = "Schild";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1374"; */
+"1374.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1375"; */
+"1375.title" = "Box";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1376"; */
+"1376.title" = "Box";
+
+/* Class = "NSWindow"; title = "Notification History"; ObjectID = "1400"; */
+"1400.title" = "Benachrichtigungen";
+
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "1408"; */
+"1408.headerCell.title" = "Titel";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1409"; */
+"1409.title" = "Textzeile";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1410"; */
+"1410.title" = "Textzeile";
+
+/* Class = "NSTableColumn"; headerCell.title = "Message"; ObjectID = "1413"; */
+"1413.headerCell.title" = "Nachricht";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1414"; */
+"1414.title" = "Textzeile";
+
+/* Class = "NSTableColumn"; headerCell.title = "Date"; ObjectID = "1415"; */
+"1415.headerCell.title" = "Datum";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "1416"; */
+"1416.title" = "Textzeile";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1427"; */
+"1427.title" = "Box";
+
+/* Class = "NSButtonCell"; title = "Clean"; ObjectID = "1432"; */
+"1432.title" = "Säubern";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "1433"; */
+"1433.title" = "Abbrechen";
+
+/* Class = "NSTextFieldCell"; title = "Notifications history"; ObjectID = "1440"; */
+"1440.title" = "Benachrichtigungen";
+
+/* Class = "NSTextFieldCell"; title = "This table lists all the previous notification displayed during the current session."; ObjectID = "1442"; */
+"1442.title" = "Diese Tabelle listet alle vergangenen Benachrichtigungen der momentanen Sitzung auf.";
+
+/* Class = "NSWindow"; title = "Avatar chooser"; ObjectID = "1445"; */
+"1445.title" = "Avatar wähler";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "1452"; */
+"1452.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "You can modify your XMPP account properties."; ObjectID = "1454"; */
+"1454.title" = "Sie können die Einstellungen Ihres XMPP Konto verändern";
+
+/* Class = "NSTextFieldCell"; title = "Manage XMPP account"; ObjectID = "1458"; */
+"1458.title" = "XMPP Account verwalten";
+
+/* Class = "NSButtonCell"; title = "Save"; ObjectID = "1459"; */
+"1459.title" = "Speichern";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "1460"; */
+"1460.title" = "Abbrechen";
+
+/* Class = "NSTextFieldCell"; placeholderString = "New password"; ObjectID = "1469"; */
+"1469.placeholderString" = "Neues Passwort";
+
+/* Class = "NSTextFieldCell"; title = "New password"; ObjectID = "1470"; */
+"1470.title" = "Neues Passwort";
+
+/* Class = "NSTextFieldCell"; placeholderString = "Retype new password"; ObjectID = "1474"; */
+"1474.placeholderString" = "Neues Passwort bestätigen";
+
+/* Class = "NSTextFieldCell"; title = "Confirmation"; ObjectID = "1475"; */
+"1475.title" = "Bestätigung";
+
+/* Class = "NSTextFieldCell"; title = "More to come..."; ObjectID = "1478"; */
+"1478.title" = "Mehr kommt später...";
+

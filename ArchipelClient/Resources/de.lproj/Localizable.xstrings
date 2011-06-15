@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key> contact in group</key>
+	<string> contact in group</string>
+	<key> contacts in group</key>
+	<string> contacts in group</string>
+	<key> has been added</key>
+	<string> has been added</string>
+	<key> has been created</key>
+	<string> has been created</string>
+	<key> has been removed</key>
+	<string> has been removed</string>
+	<key> is asking you subscription. Do you want to authorize it ?</key>
+	<string> is asking you subscription. Do you want to authorize it ?</string>
+	<key>About Archipel</key>
+	<string>About Archipel</string>
+	<key>Accept</key>
+	<string>Accept</string>
+	<key>Add a contact</key>
+	<string>Add a contact</string>
+	<key>Add a group</key>
+	<string>Add a group</string>
+	<key>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</key>
+	<string>Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.</string>
+	<key>Add contact</key>
+	<string>Add contact</string>
+	<key>Add group</key>
+	<string>Add group</string>
+	<key>Archipel</key>
+	<string>Archipel</string>
+	<key>Archipel Help</key>
+	<string>Archipel Help</string>
+	<key>Are you sure you want to delete this contact?</key>
+	<string>Are you sure you want to delete this contact?</string>
+	<key>Are you sure you want to delete this group?</key>
+	<string>Are you sure you want to delete this group?</string>
+	<key>Available</key>
+	<string>Available</string>
+	<key>Away</key>
+	<string>Away</string>
+	<key>Busy</key>
+	<string>Busy</string>
+	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
+	<string>Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.</string>
+	<key>Cancel</key>
+	<string>Cancel</string>
+	<key>Cannot save your preferences to the XMPP server</key>
+	<string>Cannot save your preferences to the XMPP server</string>
+	<key>Change your current avatar. This picture will be visible by all your contacts</key>
+	<string>Change your current avatar. This picture will be visible by all your contacts</string>
+	<key>Collapse all groups</key>
+	<string>Collapse all groups</string>
+	<key>Collapse group</key>
+	<string>Collapse group</string>
+	<key>Connected as </key>
+	<string>Connected as </string>
+	<key>Contact</key>
+	<string>Contact</string>
+	<key>Contact </key>
+	<string>Contact </string>
+	<key>Contacts</key>
+	<string>Contacts</string>
+	<key>Contents</key>
+	<string>Contents</string>
+	<key>Copy</key>
+	<string>Copy</string>
+	<key>Cut</key>
+	<string>Cut</string>
+	<key>Decline</key>
+	<string>Decline</string>
+	<key>Delay before loading a module. This avoid to load server with stanzas</key>
+	<string>Delay before loading a module. This avoid to load server with stanzas</string>
+	<key>Delete</key>
+	<string>Delete</string>
+	<key>Delete contact</key>
+	<string>Delete contact</string>
+	<key>Delete group</key>
+	<string>Delete group</string>
+	<key>Display or hide the properties view</key>
+	<string>Display or hide the properties view</string>
+	<key>Do not disturb</key>
+	<string>Do not disturb</string>
+	<key>Edit</key>
+	<string>Edit</string>
+	<key>Enter the new password for your account. You will need to enter this password at the next connection</key>
+	<string>Enter the new password for your account. You will need to enter this password at the next connection</string>
+	<key>Error</key>
+	<string>Error</string>
+	<key>Expand all groups</key>
+	<string>Expand all groups</string>
+	<key>Expand group</key>
+	<string>Expand group</string>
+	<key>Filter contacts by name or tags</key>
+	<string>Filter contacts by name or tags</string>
+	<key>Go to website</key>
+	<string>Go to website</string>
+	<key>Group</key>
+	<string>Group</string>
+	<key>Group </key>
+	<string>Group </string>
+	<key>Group addition error</key>
+	<string>Group addition error</string>
+	<key>Group supression</key>
+	<string>Group supression</string>
+	<key>Groups</key>
+	<string>Groups</string>
+	<key>Help</key>
+	<string>Help</string>
+	<key>Hide main menu</key>
+	<string>Hide main menu</string>
+	<key>Hypervisor</key>
+	<string>Hypervisor</string>
+	<key>JID is not valid</key>
+	<string>JID is not valid</string>
+	<key>Loaded </key>
+	<string>Loaded </string>
+	<key>Locale change</key>
+	<string>Locale change</string>
+	<key>Log out</key>
+	<string>Log out</string>
+	<key>Logon</key>
+	<string>Logon</string>
+	<key>Make a donation</key>
+	<string>Make a donation</string>
+	<key>Modules</key>
+	<string>Modules</string>
+	<key>Navigation</key>
+	<string>Navigation</string>
+	<key>Notifications</key>
+	<string>Notifications</string>
+	<key>Password error</key>
+	<string>Password error</string>
+	<key>Paste</key>
+	<string>Paste</string>
+	<key>Preferences</key>
+	<string>Preferences</string>
+	<key>Preferences saved</key>
+	<string>Preferences saved</string>
+	<key>Quit</key>
+	<string>Quit</string>
+	<key>Redo</key>
+	<string>Redo</string>
+	<key>Release note</key>
+	<string>Release note</string>
+	<key>Remove the selected contact. It will only remove it from your roster.</key>
+	<string>Remove the selected contact. It will only remove it from your roster.</string>
+	<key>Rename contact</key>
+	<string>Rename contact</string>
+	<key>Rename group</key>
+	<string>Rename group</string>
+	<key>Report a bug</key>
+	<string>Report a bug</string>
+	<key>Resource</key>
+	<string>Resource</string>
+	<key>Retype the password</key>
+	<string>Retype the password</string>
+	<key>Search entity</key>
+	<string>Search entity</string>
+	<key>Select all</key>
+	<string>Select all</string>
+	<key>Select next entity</key>
+	<string>Select next entity</string>
+	<key>Select previous entity</key>
+	<string>Select previous entity</string>
+	<key>Set custom status</key>
+	<string>Set custom status</string>
+	<key>Set status available</key>
+	<string>Set status available</string>
+	<key>Set status away</key>
+	<string>Set status away</string>
+	<key>Set status busy</key>
+	<string>Set status busy</string>
+	<key>Set the log level of the client. The more verbose, the less performance.</key>
+	<string>Set the log level of the client. The more verbose, the less performance.</string>
+	<key>Status</key>
+	<string>Status</string>
+	<key>Subscription request</key>
+	<string>Subscription request</string>
+	<key>Tags</key>
+	<string>Tags</string>
+	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
+	<string>The JID to use to connect. It is always formatted like user@domain.com</string>
+	<key>The URL of the welcome page</key>
+	<string>The URL of the welcome page</string>
+	<key>The XMPP JID of the contact</key>
+	<string>The XMPP JID of the contact</string>
+	<key>The current logged account</key>
+	<string>The current logged account</string>
+	<key>The display name of the new contact</key>
+	<string>The display name of the new contact</string>
+	<key>The group has been removed</key>
+	<string>The group has been removed</string>
+	<key>The group must be empty</key>
+	<string>The group must be empty</string>
+	<key>The name of the new group</key>
+	<string>The name of the new group</string>
+	<key>The password associated to your XMPP account</key>
+	<string>The password associated to your XMPP account</string>
+	<key>The passwords you entered don't match.</key>
+	<string>The passwords you entered don't match.</string>
+	<key>The resource to use</key>
+	<string>The resource to use</string>
+	<key>The service BOSH (XMPP over HTTP) to use</key>
+	<string>The service BOSH (XMPP over HTTP) to use</string>
+	<key>This LED is ON when XMPP data are received</key>
+	<string>This LED is ON when XMPP data are received</string>
+	<key>This LED is ON when XMPP data are sent</key>
+	<string>This LED is ON when XMPP data are sent</string>
+	<key>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</key>
+	<string>Turn this ON to activate XMPP monitoring. Turn it off to gain performances</string>
+	<key>Turn this ON to activate eye candy animation. Turn it off to gain performances</key>
+	<string>Turn this ON to activate eye candy animation. Turn it off to gain performances</string>
+	<key>Unable to update your password</key>
+	<string>Unable to update your password</string>
+	<key>Undo</key>
+	<string>Undo</string>
+	<key>Update your current XMPP status</key>
+	<string>Update your current XMPP status</string>
+	<key>User</key>
+	<string>User</string>
+	<key>User supression</key>
+	<string>User supression</string>
+	<key>Virtual machine</key>
+	<string>Virtual machine</string>
+	<key>XMPP Account</key>
+	<string>XMPP Account</string>
+	<key>You are not registred to the entity events.</key>
+	<string>You are not registred to the entity events.</string>
+	<key>You are registred to the entity events.</key>
+	<string>You are registred to the entity events.</string>
+	<key>You can't assign tags here</key>
+	<string>You can't assign tags here</string>
+	<key>You have to enter a valid group name.</key>
+	<string>You have to enter a valid group name.</string>
+	<key>You must choose a contact</key>
+	<string>You must choose a contact</string>
+	<key>You must choose a group</key>
+	<string>You must choose a group</string>
+	<key>You must enter a JID using the form user@domain.</key>
+	<string>You must enter a JID using the form user@domain.</string>
+	<key>You need to reload the application to complete the locale change.</key>
+	<string>You need to reload the application to complete the locale change.</string>
+	<key>Your password has been successfully updated</key>
+	<string>Your password has been successfully updated</string>
+	<key>Your status is now </key>
+	<string>Your status is now </string>
+	<key>authenticating</key>
+	<string>authenticating</string>
+	<key>authentification-failed</key>
+	<string>authentification-failed</string>
+	<key>cancel</key>
+	<string>Cancel</string>
+	<key>connect</key>
+	<string>Connect</string>
+	<key>connected</key>
+	<string>Connected</string>
+	<key>connecting</key>
+	<string>Connecting</string>
+	<key>connection-failed</key>
+	<string>Connection failed</string>
+	<key>disconnected</key>
+	<string>disconnected</string>
+	<key>disconnecting</key>
+	<string>disconnecting</string>
+	<key>host-unreachable</key>
+	<string>host-unreachable</string>
+	<key>unknown-error</key>
+	<string>unknown-error</string>
+</dict>
+</plist>
