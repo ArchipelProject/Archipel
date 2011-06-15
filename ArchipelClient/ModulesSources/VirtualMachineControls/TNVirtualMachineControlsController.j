@@ -325,6 +325,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (![super willShow])
         return NO;
 
+    _screenshotTimer = nil;
     [self checkIfRunning];
 
     [imageScreenshot setImage:_imageScreenShutdowned];
@@ -349,10 +350,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 - (void)willHide
 {
     if (_screenshotTimer)
-    {
         [_screenshotTimer invalidate];
-        _screenshotTimer = nil;
-    }
+    _screenshotTimer = nil;
     [imageScreenshot setImage:_imageScreenShutdowned];
     [super willHide];
 }
