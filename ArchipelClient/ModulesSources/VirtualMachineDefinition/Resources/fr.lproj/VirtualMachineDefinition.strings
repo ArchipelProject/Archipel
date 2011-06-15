@@ -629,3 +629,12 @@
 /* Class = "NSTextFieldCell"; title = "Use VNC:"; ObjectID = "723"; */
 "723.title" = "Use VNC:";
 
+/* Class = "NSTextFieldCell"; title = "Listen address:"; ObjectID = "727"; */
+"727.title" = "Listen address:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "127.0.0.1"; ObjectID = "728"; */
+"728.placeholderString" = "127.0.0.1";
+
+/* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "733"; */
+"733.placeholderString" = "auto";
+
