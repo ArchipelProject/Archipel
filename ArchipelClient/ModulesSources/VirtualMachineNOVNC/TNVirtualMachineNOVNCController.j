@@ -38,7 +38,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     TNArchipelTypeVirtualMachineVNCDisplay          = @"display",
     TNArchipelVNCScaleFactor                        = @"TNArchipelVNCScaleFactor_",
     TNArchipelVNCInformationRecoveredNotification   = @"TNArchipelVNCInformationRecoveredNotification",
-    TNArchipelVNCShowExternalWindowNotification     = @"TNArchipelVNCShowExternalWindowNotification";
+    TNArchipelVNCShowExternalWindowNotification     = @"TNArchipelVNCShowExternalWindowNotification",
+    TNArchipelDefinitionUpdatedNotification         = @"TNArchipelDefinitionUpdatedNotification";
 
 
 /*! @ingroup virtualmachinenovnc
@@ -160,17 +161,19 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 {
     [super willLoad];
 
-    var center = [CPNotificationCenter defaultCenter];
-    [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(_showExternalScreen:) name:TNArchipelVNCShowExternalWindowNotification object:nil];
-    [center addObserver:self selector:@selector(_didVNCInformationRecovered:) name:TNArchipelVNCInformationRecoveredNotification object:self];
+    [[CPNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_showExternalScreen:)
+                                                 name:TNArchipelVNCShowExternalWindowNotification
+                                               object:nil];
+
+   [[CPNotificationCenter defaultCenter] addObserver:self
+                                            selector:@selector(_didDefinitionUpdated:)
+                                                name:TNArchipelDefinitionUpdatedNotification
+                                              object:nil];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationVNC];
 
-    [center postNotificationName:TNArchipelModulesReadyNotification object:self];
-
-    if ([_entity XMPPShow] == TNStropheContactStatusOnline)
-        [self getVirtualMachineVNCDisplay];
+    [self getVirtualMachineVNCDisplay];
 }
 
 /*! called when module is unloaded
@@ -190,13 +193,12 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
 /*! called when module becomes visible
 */
-- (void)willShow
+- (BOOL)willShow
 {
     if (![super willShow])
         return NO;
 
-    [self checkIfRunning];
-
+    [self handleDisplayVNCScreen];
     [[self view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
     [[self view] setFrame:[[[self view] superview] bounds]];
 
@@ -211,8 +213,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     if ([windowPassword isVisible])
         [windowPassword close];
 
-    if (([_vncView state] != TNVNCCappuccinoStateDisconnected)
-        || ([_vncView state] == TNVNCCappuccinoStateDisconnect))
+    if ([self isConnected])
     {
         [_vncView disconnect:nil];
         [_vncView resetSize];
@@ -275,25 +276,11 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
             break;
 
         case @"websocketvncstop":
-            _VMHost         = nil;
-            _vncProxyPort   = nil;
-            _vncDirectPort  = nil;
-            _vncSupportSSL  = nil;
-            _vncOnlySSL     = nil;
-            [_vncView unfocus];
-            [_vncView resetSize];
+            [self handleDisplayVNCScreen];
             break;
     }
 
     return YES;
-}
-
-/*! called when contact presence has changed
-    @param aNotification the notification
-*/
-- (void)_didUpdatePresence:(CPNotification)aNotification
-{
-    [self checkIfRunning];
 }
 
 /*! called when TNArchipelVNCShowExternalWindowNotification is received
@@ -304,76 +291,57 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [self openVNCInNewWindow];
 }
 
-/*! called when TNArchipelVNCInformationRecoveredNotification is received
+/*! called when TNArchipelDefinitionUpdatedNotification is received
+    it will request VNC information again.
     @param aNotification the notification
 */
-- (void)_didVNCInformationRecovered:(CPNotification)aNotification
+- (void)_didDefinitionUpdated:(CPNotification)aNotification
 {
-    if ((_isVisible) && (([_vncView state] == TNVNCCappuccinoStateDisconnected) || ([_vncView state] == TNVNCCappuccinoStateDisconnect)))
-        [self prepareVNCScreen];
+    [self getVirtualMachineVNCDisplay];
 }
 
 
 #pragma mark -
 #pragma mark Utilities
 
+/*! check if VNC is currenttly connected
+    @return Boolean.
+*/
+- (BOOL)isConnected
+{
+    return ([_vncView state] != TNVNCCappuccinoStateDisconnected || [_vncView state] == TNVNCCappuccinoStateDisconnect)
+}
+
 /*! Check if virtual machine is running. if not displays the masking view
 */
-- (void)checkIfRunning
+- (void)handleDisplayVNCScreen
 {
-    if ([_entity XMPPShow] == TNStropheContactStatusOnline)
+    if (([_entity XMPPShow] != TNStropheContactStatusOnline  && [_entity XMPPShow] != TNStropheContactStatusAway)
+        || _vncProxyPort == -1
+        || !_vncProxyPort)
     {
-        [self showMaskView:NO];
-        [self getVirtualMachineVNCDisplay];
-    }
-    else
-    {
-        if (([_vncView state] != TNVNCCappuccinoStateDisconnected) && ([_vncView state] != TNVNCCappuccinoStateDisconnect))
+        _VMHost         = nil;
+        _vncProxyPort   = nil;
+        _vncDirectPort  = nil;
+        _vncSupportSSL  = nil;
+        _vncOnlySSL     = nil;
+
+        if ([self isConnected])
         {
-            [_vncView disconnect:nil];
-            [_vncView resetSize];
             [_vncView unfocus];
-
-            _VMHost         = nil;
-            _vncProxyPort   = nil;
-            _vncDirectPort  = nil;
-            _vncSupportSSL  = nil;
-            _vncOnlySSL     = nil;
+            [_vncView disconnect:nil];
         }
+
+        [_vncView setHidden:YES];
         [self showMaskView:YES];
-    }
-}
 
-/*! create a zoom animation between two zoom factor
-    @param aStartZoom float containing the initial zoom factor
-    @param aEndZoom float containing the final zoom factor
-*/
-- (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
-{
-    var defaults = [CPUserDefaults standardUserDefaults];
-
-    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
-    {
-        var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
-
-        [anim setDelegate:self];
-        [anim setStartZoomValue:aStartZoom];
-        [anim setEndZoomValue:aEndZoom];
-        [anim startAnimation];
-    }
-    else
-    {
-        [sliderScaling setDoubleValue:aEndZoom];
-        [self changeScale:sliderScaling];
-    }
-}
-
-/*! perform operation to display the screen according the gathered values
-*/
-- (void)prepareVNCScreen
-{
-    if (_vncProxyPort == -1)
         return;
+    }
+
+    if (![self isVisible])
+    {
+        return;
+    }
 
     var defaults    = [CPUserDefaults standardUserDefaults],
         scaleKey    = TNArchipelVNCScaleFactor + [[self entity] JID],
@@ -424,13 +392,41 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
     [_vncView setTrueColor:YES];
     [_vncView setEncrypted:_useSSL];
     [_vncView setDelegate:self];
+    [_vncView setHidden:NO];
+    [self showMaskView:NO];
 
     CPLog.info("VNC: connecting to " + _VMHost + ":" + _vncProxyPort + " using SSL:"
                 + _useSSL + "(checkRate: " + [defaults integerForKey:@"NOVNCheckRate"]
                 + ", FBURate: " + [defaults integerForKey:@"NOVNCFBURate"]);
+
     [_vncView load];
     [_vncView connect:nil];
 }
+
+/*! create a zoom animation between two zoom factor
+    @param aStartZoom float containing the initial zoom factor
+    @param aEndZoom float containing the final zoom factor
+*/
+- (void)animateChangeScaleFrom:(float)aStartZoom to:(float)aEndZoom
+{
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    if ([defaults boolForKey:@"TNArchipelUseAnimations"])
+    {
+        var anim = [[TNZoomAnimation alloc] initWithDuration:0.2 animationCurve:CPAnimationEaseOut];
+
+        [anim setDelegate:self];
+        [anim setStartZoomValue:aStartZoom];
+        [anim setEndZoomValue:aEndZoom];
+        [anim startAnimation];
+    }
+    else
+    {
+        [sliderScaling setDoubleValue:aEndZoom];
+        [self changeScale:sliderScaling];
+    }
+}
+
 
 /*! Open the VNCView in a new physical window
 */
@@ -607,14 +603,8 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
         _vncOnlySSL     = ([displayNode valueForAttribute:@"onlyssl"] == "True") ? YES : NO;
         _useSSL         = NO;
 
-        if (!_VMHost || !_vncProxyPort)
-        {
-            [self showMaskView:YES];
-            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
-        }
-
-        if (parseInt(_vncProxyPort) != -1)
-            [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelVNCInformationRecoveredNotification object:displayNode];
+        [self handleDisplayVNCScreen];
     }
     else if ([aStanza type] == @"error")
     {

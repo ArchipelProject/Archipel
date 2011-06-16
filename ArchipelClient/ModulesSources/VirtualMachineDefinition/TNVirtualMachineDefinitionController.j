@@ -44,7 +44,8 @@
 
 
 
-var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control",
+var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinitionUpdatedNotification",
+    TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control",
     TNArchipelTypeVirtualMachineDefinition              = @"archipel:vm:definition",
     TNArchipelTypeVirtualMachineControlXMLDesc          = @"xmldesc",
     TNArchipelTypeVirtualMachineDefinitionDefine        = @"define",
@@ -2001,6 +2002,7 @@ var TNArchipelTypeVirtualMachineControl                 = @"archipel:vm:control"
     if (responseType == @"result")
     {
         CPLog.info(@"Definition of virtual machine " + [_entity nickname] + " sucessfuly updated")
+        [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelDefinitionUpdatedNotification object:self];
         [self handleDefinitionEdition:NO];
     }
     else if (responseType == @"error")
