@@ -453,7 +453,11 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         currentModuleController     = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
 
     if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
+    {
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+        if (!moduleLabel)
+            moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
+    }
 
     [currentModuleController initializeModule];
     [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable];
