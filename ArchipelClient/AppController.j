@@ -1577,10 +1577,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     var defaults = [CPUserDefaults standardUserDefaults],
         moduleLabel = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"];
 
-    if ([moduleLabel isKindOfClass:CPDictionary]
-        && [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"]
-        && [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]])
+    if ([moduleLabel isKindOfClass:CPDictionary] && [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"])
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
+
+    if (!moduleLabel)
+        moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
 
     [progressIndicatorModulesLoading setDoubleValue:percent];
     [[viewRosterMask viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
