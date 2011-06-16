@@ -83,7 +83,7 @@
 /* Class = "NSButtonCell"; title = "Kill"; ObjectID = "139"; */
 "139.title" = "Kill";
 
-/* Class = "NSTextFieldCell"; title = "To enable live migration, you must start the virtual machine."; ObjectID = "143"; */
+/* Class = "NSTextFieldCell"; title = "To enable live migration, you must start\nthe virtual machine."; ObjectID = "143"; */
 "143.title" = "To enable live migration, you must start the virtual machine.";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Delay between screenshots"; ObjectID = "157"; */

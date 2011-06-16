@@ -54,6 +54,38 @@
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSTextField" id="810005415">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">269</int>
+						<string key="NSFrame">{{266, 197}, {472, 38}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="743849093"/>
+						<bool key="NSEnabled">YES</bool>
+						<object class="NSTextFieldCell" key="NSCell" id="182903603">
+							<int key="NSCellFlags">68288064</int>
+							<int key="NSCellFlags2">138413056</int>
+							<string key="NSContents">To enable live migration, you must start the virtual machine.</string>
+							<object class="NSFont" key="NSSupport">
+								<string key="NSName">LucidaGrande-Bold</string>
+								<double key="NSSize">15</double>
+								<int key="NSfFlags">16</int>
+							</object>
+							<reference key="NSControlView" ref="810005415"/>
+							<object class="NSColor" key="NSBackgroundColor" id="977635433">
+								<int key="NSColorSpace">6</int>
+								<string key="NSCatalogName">System</string>
+								<string key="NSColorName">controlColor</string>
+								<object class="NSColor" key="NSColor">
+									<int key="NSColorSpace">3</int>
+									<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
+								</object>
+							</object>
+							<object class="NSColor" key="NSTextColor">
+								<int key="NSColorSpace">2</int>
+								<bytes key="NSRGB">MC42OTQxMTc2NjUzIDAuNjk0MTE3NjY1MyAwLjY5NDExNzY2NTMAA</bytes>
+							</object>
+						</object>
+					</object>
 					<object class="NSButton" id="683077610">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">289</int>
@@ -84,7 +116,7 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{777, 277}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="911079387"/>
+						<reference key="NSNextKeyView" ref="810005415"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSearchFieldCell" key="NSCell" id="1016342060">
 							<int key="NSCellFlags">343014976</int>
@@ -165,46 +197,17 @@
 							<object class="NSCustomView" id="773593849">
 								<reference key="NSNextResponder" ref="911079387"/>
 								<int key="NSvFlags">274</int>
-								<string key="NSFrame">{{0, 26}, {966, 111}}</string>
+								<string key="NSFrame">{{-2, 26}, {966, 111}}</string>
 								<reference key="NSSuperview" ref="911079387"/>
 								<reference key="NSNextKeyView" ref="597178269"/>
 								<string key="NSClassName">TNUIKitScrollView</string>
-							</object>
-							<object class="NSTextField" id="810005415">
-								<reference key="NSNextResponder" ref="911079387"/>
-								<int key="NSvFlags">269</int>
-								<string key="NSFrame">{{270, 58}, {425, 20}}</string>
-								<reference key="NSSuperview" ref="911079387"/>
-								<reference key="NSNextKeyView" ref="743849093"/>
-								<bool key="NSEnabled">YES</bool>
-								<object class="NSTextFieldCell" key="NSCell" id="182903603">
-									<int key="NSCellFlags">68288064</int>
-									<int key="NSCellFlags2">138413056</int>
-									<string key="NSContents">To enable live migration, you must start the virtual machine.</string>
-									<object class="NSFont" key="NSSupport" id="279289462">
-										<string key="NSName">LucidaGrande</string>
-										<double key="NSSize">13</double>
-										<int key="NSfFlags">16</int>
-									</object>
-									<reference key="NSControlView" ref="810005415"/>
-									<object class="NSColor" key="NSBackgroundColor" id="977635433">
-										<int key="NSColorSpace">6</int>
-										<string key="NSCatalogName">System</string>
-										<string key="NSColorName">controlColor</string>
-										<object class="NSColor" key="NSColor">
-											<int key="NSColorSpace">3</int>
-											<bytes key="NSWhite">MC42NjY2NjY2NjY3AA</bytes>
-										</object>
-									</object>
-									<reference key="NSTextColor" ref="96033734"/>
-								</object>
 							</object>
 							<object class="NSCustomView" id="597178269">
 								<reference key="NSNextResponder" ref="911079387"/>
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{964, 26}</string>
 								<reference key="NSSuperview" ref="911079387"/>
-								<reference key="NSNextKeyView" ref="810005415"/>
+								<reference key="NSNextKeyView" ref="683077610"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 						</object>
@@ -223,7 +226,11 @@
 						<object class="NSSegmentedCell" key="NSCell" id="390272215">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
-							<reference key="NSSupport" ref="279289462"/>
+							<object class="NSFont" key="NSSupport" id="279289462">
+								<string key="NSName">LucidaGrande</string>
+								<double key="NSSize">13</double>
+								<int key="NSfFlags">16</int>
+							</object>
 							<reference key="NSControlView" ref="737200575"/>
 							<object class="NSMutableArray" key="NSSegmentImages">
 								<bool key="EncodedWithXMLCoder">YES</bool>
@@ -507,7 +514,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 60}, {431, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="683077610"/>
+						<reference key="NSNextKeyView" ref="911079387"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="449018482">
 							<int key="NSCellFlags">68288064</int>
@@ -1170,6 +1177,7 @@
 							<reference ref="911079387"/>
 							<reference ref="321440825"/>
 							<reference ref="683077610"/>
+							<reference ref="810005415"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -1502,7 +1510,6 @@
 						<object class="NSMutableArray" key="children">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="597178269"/>
-							<reference ref="810005415"/>
 							<reference ref="773593849"/>
 						</object>
 						<reference key="parent" ref="1005"/>
@@ -1726,7 +1733,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<reference ref="182903603"/>
 						</object>
-						<reference key="parent" ref="911079387"/>
+						<reference key="parent" ref="1005"/>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">143</int>
