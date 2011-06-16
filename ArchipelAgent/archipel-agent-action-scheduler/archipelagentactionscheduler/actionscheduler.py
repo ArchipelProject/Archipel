@@ -177,7 +177,12 @@ class TNActionScheduler (TNArchipelPlugin):
         @type uid: string
         @param uid: the uid of the job
         """
-        for job in self.scheduler.jobs:
+        if hasattr(self.scheduler, "get_jobs"):
+            jobs = self.scheduler.get_jobs()
+        else:
+            jobs = self.scheduler.jobs
+
+        for job in jobs:
             if str(job.args[1]) == uid:
                 return job
         return None
@@ -322,7 +327,12 @@ class TNActionScheduler (TNArchipelPlugin):
         try:
             reply = iq.buildReply("result")
             nodes = []
-            for job in self.scheduler.jobs:
+            if hasattr(self.scheduler, "get_jobs"):
+                jobs = self.scheduler.get_jobs()
+            else:
+                jobs = self.scheduler.jobs
+
+            for job in jobs:
                 job_node = xmpp.Node(tag="job", attrs={"action": str(job.args[0]), "uid": str(job.args[1]), "date": str(job.args[2]), "comment": job.args[3]})
                 nodes.append(job_node)
             reply.setQueryPayload(nodes)
