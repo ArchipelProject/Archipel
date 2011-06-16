@@ -990,7 +990,6 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         [_imageViewFullScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
         [_attachedWindowScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
-        console.warn([_attachedWindowScreenshot frame].size.height);
         [_imageViewFullScreenshot setImage:screenshot];
         [_attachedWindowScreenshot positionRelativeToView:buttonScreenshot gravity:TNAttachedWindowGravityAuto];
     }
