@@ -134,6 +134,10 @@
 	<string>Erreur de mot de passe</string>
 	<key>Paste</key>
 	<string>Coller</string>
+	<key>Please select a contact first.</key>
+	<string>Please select a contact first.</string>
+	<key>Please select a group first.</key>
+	<string>Please select a group first.</string>
 	<key>Preferences</key>
 	<string>Préférences</string>
 	<key>Preferences saved</key>
@@ -158,6 +162,10 @@
 	<string>Retapez votre mot de passe</string>
 	<key>Search entity</key>
 	<string>Rechercher une entité</string>
+	<key>Select a contact</key>
+	<string>Select a contact</string>
+	<key>Select a group</key>
+	<string>Select a group</string>
 	<key>Select all</key>
 	<string>Tout séléctionner</string>
 	<key>Select next entity</key>

@@ -227,6 +227,12 @@
 /* Paste */
 "Paste" = "Coller";
 
+/* Please select a contact first. */
+"Please select a contact first." = "Please select a contact first.";
+
+/* Please select a group first. */
+"Please select a group first." = "Please select a group first.";
+
 /* Preferences */
 "Preferences" = "Préférences";
 
@@ -262,6 +268,12 @@
 
 /* Search entity */
 "Search entity" = "Rechercher une entité";
+
+/* Select a contact */
+"Select a contact" = "Select a contact";
+
+/* Select a group */
+"Select a group" = "Select a group";
 
 /* Select all */
 "Select all" = "Tout séléctionner";
