@@ -110,7 +110,7 @@
     [entryName setTextColor:[CPColor blackColor]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
-    [entryName setToolTip:@"Click here to change the displayed named of the current contact or group"];
+    [entryName setToolTip:CPLocalizedString(@"Click here to change the displayed named of the current contact or group", @"Click here to change the displayed named of the current contact or group")];
 
     [labelResource setTextColor:[CPColor blackColor]];
     [labelStatus setTextColor:[CPColor blackColor]];
@@ -121,17 +121,17 @@
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
     [entryAvatar setImageScaling:CPScaleProportionally];
     [entryAvatar setImage:_unknownUserImage];
-    [entryAvatar setToolTip:@"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)"];
+    [entryAvatar setToolTip:CPLocalizedString(@"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)", @"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)")];
 
     [buttonEventSubscription setToolTip:@"Click on avatar to change it."];
     [buttonEventSubscription setBordered:NO];
     [buttonEventSubscription setImageScaling:CPScaleProportionally];
     [buttonEventSubscription setHidden:YES];
 
-    [entryResource setToolTip:@"The resource of the contact"];
-    [entryDomain setToolTip:@"The domain (XMPP server) of the contact"];
-    [entryStatus setToolTip:@"The current status of the contact"];
-    [entryType setToolTip:@"The type of contact (hypervisor, virtual machine or user)"];
+    [entryResource setToolTip:CPLocalizedString(@"The resource of the contact", @"The resource of the contact")];
+    [entryDomain setToolTip:CPLocalizedString(@"The domain (XMPP server) of the contact", @"The domain (XMPP server) of the contact")];
+    [entryStatus setToolTip:CPLocalizedString(@"The current status of the contact", @"The current status of the contact")];
+    [entryType setToolTip:CPLocalizedString(@"The type of contact (hypervisor, virtual machine or user)", @"The type of contact (hypervisor, virtual machine or user)")];
 
     [imageViewVCardPhoto setImageScaling:CPScaleProportionally];
 

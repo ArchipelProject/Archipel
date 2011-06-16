@@ -100,7 +100,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [buttonDebugLevel addItemsWithTitles:[@"trace", @"debug", @"info", @"warn", @"error", @"critical"]];
 
     [buttonLanguage removeAllItems];
-    [buttonLanguage addItemsWithTitles:[@"en", @"fr"]];
+    [buttonLanguage addItemsWithTitles:[@"en", @"fr", @"de"]];
 
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didModulesLoadComplete:) name:TNArchipelModulesLoadingCompleteNotification object:nil];
     [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(_didPreferencesSaveToXMPPServer:) name:TNStrophePrivateStorageSetNotification object:nil];
@@ -177,7 +177,8 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 */
 - (void)_didPreferencesSaveToXMPPServer:(CPNotification)aNotification
 {
-    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:@"Preferences saved" message:@"Your preferences have been saved to the XMPP server"];
+    [[TNGrowlCenter defaultCenter] pushNotificationWithTitle:CPLocalizedString(@"Preferences saved", @"Preferences saved")
+                                                     message:CPLocalizedString(@"Your preferences have been saved to the XMPP server", @"Your preferences have been saved to the XMPP server")];
 
     [self reinjectUnwantedTokens];
 }
