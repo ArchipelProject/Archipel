@@ -395,6 +395,45 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     [_mainTabView addTabViewItem:newViewItem];
 }
 
+- (void)_loadLocalizedModuleController:(CPString)bundleLocale forBundle:(CPBundle)aBundle
+{
+    var defaults = [CPUserDefaults standardUserDefaults],
+        moduleIdentifier = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
+        moduleCibName = [aBundle objectForInfoDictionaryKey:@"CibName"],
+        localizedCibName = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName;
+
+    if (bundleLocale)
+    {
+        var request = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
+            response = [CPURLConnection sendSynchronousRequest:request returningResponse:nil];
+
+        if (response && [response rawString] != @"")
+        {
+            var plist = [CPPropertyListSerialization propertyListFromData:response format:nil];
+
+            [aBundle setDictionary:plist forTable:@"Localizable"];
+
+            return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
+        }
+        else
+        {
+            CPLog.warn("Unable to get default translation " + [defaults objectForKey:@"CPBundleLocale"] + " for module " + moduleIdentifier + ". Getting english");
+            var request = [CPURLRequest requestWithURL:@"en.lproj/Localizable.xstrings"],
+                response = [CPURLConnection sendSynchronousRequest:request returningResponse:response],
+                plist = [CPPropertyListSerialization propertyListFromData:response format:nil],
+                localizedCibName = @"en.lproj/" + moduleCibName;
+
+            [aBundle setDictionary:plist forTable:@"Localizable"];
+
+            return [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
+        }
+    }
+    else
+    {
+        return [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
+    }
+}
+
 /*! Insert a Tab item module
     @param aBundle the CPBundle contaning the TNModule
 */
@@ -402,34 +441,16 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 {
     var defaults                    = [CPUserDefaults standardUserDefaults],
         moduleName                  = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
-        moduleCibName               = [aBundle objectForInfoDictionaryKey:@"CibName"],
         moduleLabel                 = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
-        moduleIdentifier            = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
         moduleTabIndex              = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
         supportedTypes              = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
         useMenu                     = [aBundle objectForInfoDictionaryKey:@"UseModuleMenu"],
         mandatoryPermissions        = [aBundle objectForInfoDictionaryKey:@"MandatoryPermissions"],
         bundleLocale                = [aBundle objectForInfoDictionaryKey:@"CPBundleLocale"],
-        localizedCibName            = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName,
         moduleItem                  = [[CPMenuItem alloc] init],
         moduleRootMenu              = [[CPMenu alloc] init],
         frame                       = [_mainModuleView bounds],
-        currentModuleController;
-
-    // check if bundle is localized
-    if (bundleLocale)
-    {
-        var request     = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
-            response    = [CPURLConnection sendSynchronousRequest:request returningResponse:response error:nil],
-            plist       = [CPPropertyListSerialization propertyListFromData:response format:nil errorDescription:nil];
-
-        [aBundle setDictionary:plist forTable:@"Localizable"];
-        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
-    }
-    else
-    {
-        currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-    }
+        currentModuleController     = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
 
     if ([moduleLabel isKindOfClass:CPDictionary] && bundleLocale)
         moduleLabel = [moduleLabel objectForKey:[defaults objectForKey:@"CPBundleLocale"]];
@@ -475,7 +496,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
         defaults                = [CPUserDefaults standardUserDefaults],
         moduleName              = [aBundle objectForInfoDictionaryKey:@"CPBundleName"],
         moduleLabel             = [aBundle objectForInfoDictionaryKey:@"PluginDisplayName"],
-        moduleIdentifier        = [aBundle objectForInfoDictionaryKey:@"CPBundleIdentifier"],
         moduleTabIndex          = [aBundle objectForInfoDictionaryKey:@"TabIndex"],
         moduleToolTip           = [aBundle objectForInfoDictionaryKey:@"ToolTip"],
         supportedTypes          = [aBundle objectForInfoDictionaryKey:@"SupportedEntityTypes"],
@@ -507,22 +527,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     }
     else
     {
-        var moduleCibName       = [aBundle objectForInfoDictionaryKey:@"CibName"]
-            localizedCibName    = [defaults objectForKey:@"CPBundleLocale"] + @".lproj/" + moduleCibName;
-
-        if (bundleLocale)
-        {
-            var request     = [CPURLRequest requestWithURL:[aBundle pathForResource:[aBundle bundleLocale] + ".lproj/Localizable.xstrings"]],
-                response    = [CPURLConnection sendSynchronousRequest:request returningResponse:response error:nil],
-                plist       = [CPPropertyListSerialization propertyListFromData:response format:nil errorDescription:nil];
-
-            [aBundle setDictionary:plist forTable:@"Localizable"];
-            currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:localizedCibName bundle:aBundle];
-        }
-        else
-        {
-            currentModuleController = [[[aBundle principalClass] alloc] initWithCibName:moduleCibName bundle:aBundle];
-        }
+        currentModuleController  = [self _loadLocalizedModuleController:bundleLocale forBundle:aBundle];
 
         [currentModuleController setToolbarItemOnly:NO];
         [[currentModuleController view] setAutoresizingMask:CPViewWidthSizable | CPViewHeightSizable];
