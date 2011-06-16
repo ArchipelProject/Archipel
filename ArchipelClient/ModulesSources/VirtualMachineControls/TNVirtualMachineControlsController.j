@@ -90,8 +90,8 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 @implementation TNVirtualMachineControlsController : TNModule
 {
     @outlet CPButton                buttonKill;
+    @outlet CPButton                buttonScreenshot;
     @outlet CPButtonBar             buttonBarMigration;
-    @outlet CPImageView             imageScreenshot;
     @outlet CPImageView             imageState;
     @outlet CPSearchField           filterHypervisors;
     @outlet CPSegmentedControl      buttonBarTransport;
@@ -120,14 +120,16 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     CPImage                         _imageReboot;
     CPImage                         _imageRebootDisabled;
     CPImage                         _imageResume;
+    CPImage                         _imageScreenShutdowned;
     CPImage                         _imageStop;
     CPImage                         _imageStopDisabled;
     CPImage                         _imageStopSelected;
-    CPImage                         _imageScreenShutdowned;
+    CPImageView                     _imageViewFullScreenshot;
     CPNumber                        _VMLibvirtStatus;
     CPString                        _currentHypervisorJID;
     CPTableView                     _tableHypervisors;
     CPTimer                         _screenshotTimer;
+    TNAttachedWindow                _attachedWindowScreenshot;
     TNStropheContact                _virtualMachineToFree;
     TNTableViewDataSource           _datasourceHypervisors;
 }
@@ -264,8 +266,13 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
     // screenshot image
     _imageScreenShutdowned = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shutdowned.png"] size:CGSizeMake(216, 162)];
-    [imageScreenshot setBackgroundColor:[CPColor blackColor]];
+    [buttonScreenshot setBackgroundColor:[CPColor blackColor]];
+    [buttonScreenshot setBordered:NO];
+    [buttonScreenshot setToolTip:CPLocalizedString(@"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot", @"This display a thumbnail of the virtual machine screen. Click on it to get full size screenshot")];
 
+    _attachedWindowScreenshot = [[TNAttachedWindow alloc] initWithContentRect:CPRectMake(0.0, 0.0, 800.0, 620.0) styleMask:TNAttachedBlackWindowMask | CPClosableWindowMask];
+    _imageViewFullScreenshot = [[CPImageView alloc] initWithFrame:CPRectMake(0.0, 20.0, 800.0, 600.0)],
+    [[_attachedWindowScreenshot contentView] addSubview:_imageViewFullScreenshot];
 
     [fieldInfoMem setToolTip:CPBundleLocalizedString(@"Current amount of memory", @"Current amount of memory")];
     [fieldInfoConsumedCPU setToolTip:CPBundleLocalizedString(@"Total of consumed physical CPU time", @"Total of consumed physical CPU time")];
@@ -328,7 +335,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     _screenshotTimer = nil;
     [self checkIfRunning];
 
-    [imageScreenshot setImage:_imageScreenShutdowned];
+    [buttonScreenshot setImage:_imageScreenShutdowned];
     [_tableHypervisors setDelegate:nil];
     [_tableHypervisors setDelegate:self];
 
@@ -352,7 +359,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     if (_screenshotTimer)
         [_screenshotTimer invalidate];
     _screenshotTimer = nil;
-    [imageScreenshot setImage:_imageScreenShutdowned];
+    [buttonScreenshot setImage:_imageScreenShutdowned];
     [super willHide];
 }
 
@@ -472,6 +479,12 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     }
 }
 
+/*! proxy for screenshot timer
+*/
+- (void)getThumbnailScreenshot:(CPTimer)aTimer
+{
+    [self getThumbnailScreenshot];
+}
 
 #pragma mark -
 #pragma mark Utilities
@@ -779,6 +792,13 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
     [self free];
 }
 
+/*! open the full screenshot window
+    @param aSender the sender of the action
+*/
+- (IBAction)openFullScreenshotWindow:(id)aSender
+{
+    [self getFullScreenshot];
+}
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -800,99 +820,95 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (BOOL)_didReceiveVirtualMachineInfo:(TNStropheStanza)aStanza
 {
-    if ([aStanza type] == @"result")
+    if ([aStanza type] != @"result")
+        return NO;
+
+    var humanState,
+        defaults            = [CPUserDefaults standardUserDefaults],
+        infoNode            = [aStanza firstChildWithName:@"info"],
+        libvirtState        = [infoNode valueForAttribute:@"state"],
+        cpuTime             = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 60000000000),
+        mem                 = parseFloat([infoNode valueForAttribute:@"memory"]),
+        maxMem              = parseFloat([infoNode valueForAttribute:@"maxMem"]),
+        autostart           = parseInt([infoNode valueForAttribute:@"autostart"]),
+        hypervisor          = [infoNode valueForAttribute:@"hypervisor"],
+        nvCPUs              = [infoNode valueForAttribute:@"nrVirtCpu"];
+
+    _currentHypervisorJID = hypervisor;
+
+    [fieldInfoMem setTextColor:[CPColor blackColor]];
+    [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
+    [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
+
+    [stepperCPU setDoubleValue:[nvCPUs intValue]];
+
+    if ([_entity XMPPShow] == TNStropheContactStatusOnline || [_entity XMPPShow] == TNStropheContactStatusAway)
     {
-        var humanState,
-            defaults            = [CPUserDefaults standardUserDefaults],
-            infoNode            = [aStanza firstChildWithName:@"info"],
-            libvirtState        = [infoNode valueForAttribute:@"state"],
-            cpuTime             = Math.round(parseInt([infoNode valueForAttribute:@"cpuTime"]) / 60000000000),
-            mem                 = parseFloat([infoNode valueForAttribute:@"memory"]),
-            maxMem              = parseFloat([infoNode valueForAttribute:@"maxMem"]),
-            autostart           = parseInt([infoNode valueForAttribute:@"autostart"]),
-            hypervisor          = [infoNode valueForAttribute:@"hypervisor"],
-            nvCPUs              = [infoNode valueForAttribute:@"nrVirtCpu"];
+        [sliderMemory setMinValue:0];
+        [sliderMemory setMaxValue:parseInt(maxMem)];
+        [sliderMemory setIntValue:parseInt(mem)];
 
-        _currentHypervisorJID = hypervisor;
+        [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
+        [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
 
-        [fieldInfoMem setTextColor:[CPColor blackColor]];
-        [fieldInfoMem setStringValue:parseInt(mem / 1024) + @" MB"];
-        [fieldInfoConsumedCPU setStringValue:cpuTime + @" min"];
-
-        [stepperCPU setDoubleValue:[nvCPUs intValue]];
-
-        if ([_entity XMPPShow] == TNStropheContactStatusOnline)
+        if (!_screenshotTimer)
         {
-            [sliderMemory setMinValue:0];
-            [sliderMemory setMaxValue:parseInt(maxMem)];
-            [sliderMemory setIntValue:parseInt(mem)];
-
-            [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
-            [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
-
-            if (!_screenshotTimer)
-            {
-                [self getScreenshot:nil];
-                _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
-                                                 target:self
-                                               selector:@selector(getScreenshot:)
-                                               userInfo:nil
-                                                repeats:NO];
-            }
+            [self getThumbnailScreenshot];
+            _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
+                                             target:self
+                                           selector:@selector(getThumbnailScreenshot:)
+                                           userInfo:nil
+                                            repeats:NO];
         }
+
+        if ([self currentEntityHasPermission:@"migrate"])
+        {
+            [viewTableHypervisorsContainer setHidden:NO];
+            [filterHypervisors setHidden:NO];
+        }
+    }
+    else
+    {
+        if (_screenshotTimer)
+            [_screenshotTimer invalidate];
+
+        [sliderMemory setEnabled:NO];
+        [sliderMemory setMinValue:0];
+        [sliderMemory setMaxValue:100];
+        [sliderMemory setIntValue:0];
+        [stepperCPU setEnabled:NO];
+    }
+
+    [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
+
+    if (autostart == 1)
+        [switchAutoStart setOn:YES animated:YES sendAction:NO];
+    else
+        [switchAutoStart setOn:NO animated:YES sendAction:NO];
+
+    _VMLibvirtStatus = libvirtState;
+
+    [self disableAllButtons];
+    [self layoutButtons:libvirtState];
+
+    for (var i = 0; i < [_datasourceHypervisors count]; i++ )
+    {
+        var item = [_datasourceHypervisors objectAtIndex:i];
+
+        if ([item fullJID] == _currentHypervisorJID)
+            [item setSelected:YES];
         else
-        {
-            if (_screenshotTimer)
-                [_screenshotTimer invalidate];
+            [item setSelected:NO];
+    }
+    [_tableHypervisors reloadData];
 
-            [sliderMemory setEnabled:NO];
-            [sliderMemory setMinValue:0];
-            [sliderMemory setMaxValue:100];
-            [sliderMemory setIntValue:0];
-            [stepperCPU setEnabled:NO];
-        }
+    var index = [[_tableHypervisors selectedRowIndexes] firstIndex];
+    if (index != -1)
+    {
+        var selectedHypervisor = [_datasourceHypervisors objectAtIndex:index];
 
-        [self setControl:switchAutoStart enabledAccordingToPermission:@"autostart"];
-
-        if (autostart == 1)
-            [switchAutoStart setOn:YES animated:YES sendAction:NO];
-        else
-            [switchAutoStart setOn:NO animated:YES sendAction:NO];
-
-        _VMLibvirtStatus = libvirtState;
-
-        [self disableAllButtons];
-
-        [self layoutButtons:libvirtState];
-
-        for (var i = 0; i < [_datasourceHypervisors count]; i++ )
-        {
-            var item = [_datasourceHypervisors objectAtIndex:i];
-
-            if ([item fullJID] == _currentHypervisorJID)
-                [item setSelected:YES];
-            else
-                [item setSelected:NO];
-        }
-        [_tableHypervisors reloadData];
-
-        if ([_entity XMPPShow] == TNStropheContactStatusOnline)
-        {
-            if ([self currentEntityHasPermission:@"migrate"])
-            {
-                [viewTableHypervisorsContainer setHidden:NO];
-                [filterHypervisors setHidden:NO];
-            }
-        }
-
-        var index = [[_tableHypervisors selectedRowIndexes] firstIndex];
-        if (index != -1)
-        {
-            var selectedHypervisor = [_datasourceHypervisors objectAtIndex:index];
-
-            if ([selectedHypervisor fullJID] == _currentHypervisorJID)
-                [_migrateButton setEnabled:NO];
-        }
+        if ([selectedHypervisor fullJID] == _currentHypervisorJID)
+            [_migrateButton setEnabled:NO];
     }
 
     return NO;
@@ -900,20 +916,21 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 /*! ask virtual machine screenshot
 */
-- (void)getScreenshot:(CPTimer)aTimer
+- (void)getThumbnailScreenshot
 {
     var stanza  = [TNStropheStanza iqWithType:@"get"];
 
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
     [stanza addChildWithName:@"archipel" andAttributes:{
-        "action": TNArchipelTypeVirtualMachineControlScreenshot}];
+        "action": TNArchipelTypeVirtualMachineControlScreenshot,
+        "size": "thumbnail"}];
 
-    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveScreenshot:)];
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveThumbnailScreenshot:)];
 }
 
 /*! compute virtual machine send it's screenshot
 */
-- (BOOL)_didReceiveScreenshot:(TNStropheStanza)aStanza
+- (BOOL)_didReceiveThumbnailScreenshot:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -921,7 +938,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
         if (!dataNode)
         {
-            [imageScreenshot setImage:_imageScreenShutdowned];
+            [buttonScreenshot setImage:_imageScreenShutdowned];
             return NO;
         }
 
@@ -936,6 +953,46 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         }
 
         // next part will be done in imageDidLoad: to ensure image is ready
+    }
+    return NO;
+}
+
+/*! ask virtual machine screenshot
+*/
+- (void)getFullScreenshot
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineControl}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeVirtualMachineControlScreenshot,
+        "size": "full"}];
+
+    [self sendStanza:stanza andRegisterSelector:@selector(_didReceiveFullScreenshot:)];
+}
+
+/*! compute virtual machine send it's screenshot
+*/
+- (BOOL)_didReceiveFullScreenshot:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var dataNode = [aStanza firstChildWithName:@"screenshot"];
+
+        if (!dataNode)
+            return NO;
+
+        var base64Data = [dataNode text],
+            mime = [dataNode valueForAttribute:@"mime"],
+            screenshotWidth = [dataNode valueForAttribute:@"width"],
+            screenshotHeight = [dataNode valueForAttribute:@"height"],
+            screenshot = [TNBase64Image base64ImageWithContentType:mime data:base64Data delegate:nil];
+
+        [_imageViewFullScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
+        [_attachedWindowScreenshot setFrameSize:CPSizeMake(screenshotWidth, screenshotHeight)];
+        console.warn([_attachedWindowScreenshot frame].size.height);
+        [_imageViewFullScreenshot setImage:screenshot];
+        [_attachedWindowScreenshot positionRelativeToView:buttonScreenshot gravity:TNAttachedWindowGravityAuto];
     }
     return NO;
 }
@@ -1111,7 +1168,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     if ([aStanza type] == @"result")
     {
-        [imageScreenshot setImage:_imageScreenShutdowned];
+        [buttonScreenshot setImage:_imageScreenShutdowned];
         if (_screenshotTimer)
         {
             [_screenshotTimer invalidate];
@@ -1467,14 +1524,14 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 
 - (void)imageDidLoad:(TNBase64Image)anImage
 {
-    [imageScreenshot setImage:anImage];
+    [buttonScreenshot setImage:anImage];
 
     if (!_screenshotTimer)
     {
         var defaults = [CPUserDefaults standardUserDefaults];
         _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
                                                             target:self
-                                                          selector:@selector(getScreenshot:)
+                                                          selector:@selector(getThumbnailScreenshot:)
                                                           userInfo:nil
                                                            repeats:NO];
     }

@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A480b</string>
+		<string key="IBDocument.SystemVersion">11A494a</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1592</string>
-		<string key="IBDocument.AppKitVersion">1127</string>
-		<string key="IBDocument.HIToolboxVersion">561.00</string>
+		<string key="IBDocument.AppKitVersion">1128</string>
+		<string key="IBDocument.HIToolboxVersion">564.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<string key="NS.key.0">com.apple.InterfaceBuilder.CocoaPlugin</string>
 			<string key="NS.object.0">1592</string>
@@ -54,12 +54,21 @@
 				<int key="NSvFlags">268</int>
 				<object class="NSMutableArray" key="NSSubviews">
 					<bool key="EncodedWithXMLCoder">YES</bool>
+					<object class="NSCustomView" id="1022529771">
+						<reference key="NSNextResponder" ref="1005"/>
+						<int key="NSvFlags">268</int>
+						<string key="NSFrame">{{20, 356}, {216, 162}}</string>
+						<reference key="NSSuperview" ref="1005"/>
+						<reference key="NSNextKeyView" ref="743849093"/>
+						<string key="NSReuseIdentifierKey">_NS:499</string>
+						<string key="NSClassName">NSButton</string>
+					</object>
 					<object class="NSTextField" id="810005415">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{266, 197}, {472, 38}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="743849093"/>
+						<reference key="NSNextKeyView" ref="1022529771"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="182903603">
 							<int key="NSCellFlags">68288064</int>
@@ -116,7 +125,7 @@
 						<int key="NSvFlags">265</int>
 						<string key="NSFrame">{{777, 277}, {207, 22}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="810005415"/>
+						<reference key="NSNextKeyView" ref="911079387"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSSearchFieldCell" key="NSCell" id="1016342060">
 							<int key="NSCellFlags">343014976</int>
@@ -207,7 +216,7 @@
 								<int key="NSvFlags">290</int>
 								<string key="NSFrameSize">{964, 26}</string>
 								<reference key="NSSuperview" ref="911079387"/>
-								<reference key="NSNextKeyView" ref="683077610"/>
+								<reference key="NSNextKeyView" ref="810005415"/>
 								<string key="NSClassName">CPButtonBar</string>
 							</object>
 						</object>
@@ -344,35 +353,6 @@
 						<reference key="NSSuperview" ref="1005"/>
 						<reference key="NSNextKeyView" ref="842116646"/>
 						<string key="NSClassName">TNSwitch</string>
-					</object>
-					<object class="NSImageView" id="297843430">
-						<reference key="NSNextResponder" ref="1005"/>
-						<int key="NSvFlags">268</int>
-						<object class="NSMutableSet" key="NSDragTypes">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<object class="NSArray" key="set.sortedObjects">
-								<bool key="EncodedWithXMLCoder">YES</bool>
-								<string>Apple PDF pasteboard type</string>
-								<string>Apple PICT pasteboard type</string>
-								<string>Apple PNG pasteboard type</string>
-								<string>NSFilenamesPboardType</string>
-								<string>NeXT Encapsulated PostScript v1.2 pasteboard type</string>
-								<string>NeXT TIFF v4.0 pasteboard type</string>
-							</object>
-						</object>
-						<string key="NSFrame">{{21, 356}, {216, 162}}</string>
-						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="163596273"/>
-						<bool key="NSEnabled">YES</bool>
-						<object class="NSImageCell" key="NSCell" id="354915035">
-							<int key="NSCellFlags">130560</int>
-							<int key="NSCellFlags2">33554432</int>
-							<int key="NSAlign">0</int>
-							<int key="NSScale">0</int>
-							<int key="NSStyle">0</int>
-							<bool key="NSAnimates">NO</bool>
-						</object>
-						<bool key="NSEditable">YES</bool>
 					</object>
 					<object class="NSImageView" id="500137522">
 						<reference key="NSNextResponder" ref="1005"/>
@@ -514,7 +494,7 @@
 						<int key="NSvFlags">268</int>
 						<string key="NSFrame">{{17, 60}, {431, 20}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="911079387"/>
+						<reference key="NSNextKeyView" ref="683077610"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="449018482">
 							<int key="NSCellFlags">68288064</int>
@@ -745,7 +725,6 @@
 					</object>
 				</object>
 				<string key="NSFrameSize">{1003, 538}</string>
-				<reference key="NSNextKeyView" ref="297843430"/>
 				<string key="NSClassName">NSView</string>
 			</object>
 			<object class="NSCustomView" id="802415413">
@@ -1099,19 +1078,27 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">imageScreenshot</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="297843430"/>
-					</object>
-					<int key="connectionID">152</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">fieldPreferencesScreenshotRefresh</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="525034696"/>
 					</object>
 					<int key="connectionID">159</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonScreenshot</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1022529771"/>
+					</object>
+					<int key="connectionID">164</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">openFullScreenshotWindow:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="1022529771"/>
+					</object>
+					<int key="connectionID">165</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1152,7 +1139,6 @@
 							<reference ref="793795978"/>
 							<reference ref="929790345"/>
 							<reference ref="976703076"/>
-							<reference ref="297843430"/>
 							<reference ref="163596273"/>
 							<reference ref="906035852"/>
 							<reference ref="842116646"/>
@@ -1178,6 +1164,7 @@
 							<reference ref="321440825"/>
 							<reference ref="683077610"/>
 							<reference ref="810005415"/>
+							<reference ref="1022529771"/>
 						</object>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -1685,20 +1672,6 @@
 						<reference key="parent" ref="683077610"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">150</int>
-						<reference key="object" ref="297843430"/>
-						<object class="NSMutableArray" key="children">
-							<bool key="EncodedWithXMLCoder">YES</bool>
-							<reference ref="354915035"/>
-						</object>
-						<reference key="parent" ref="1005"/>
-					</object>
-					<object class="IBObjectRecord">
-						<int key="objectID">151</int>
-						<reference key="object" ref="354915035"/>
-						<reference key="parent" ref="297843430"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">155</int>
 						<reference key="object" ref="954345060"/>
 						<object class="NSMutableArray" key="children">
@@ -1745,6 +1718,11 @@
 						<reference key="object" ref="773593849"/>
 						<reference key="parent" ref="911079387"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">163</int>
+						<reference key="object" ref="1022529771"/>
+						<reference key="parent" ref="1005"/>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -1767,12 +1745,11 @@
 					<string>139.IBPluginDependency</string>
 					<string>142.IBPluginDependency</string>
 					<string>143.IBPluginDependency</string>
-					<string>150.IBPluginDependency</string>
-					<string>151.IBPluginDependency</string>
 					<string>155.IBPluginDependency</string>
 					<string>156.IBPluginDependency</string>
 					<string>157.IBPluginDependency</string>
 					<string>158.IBPluginDependency</string>
+					<string>163.IBPluginDependency</string>
 					<string>17.IBPluginDependency</string>
 					<string>18.IBPluginDependency</string>
 					<string>2.IBPluginDependency</string>
@@ -1921,7 +1898,6 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="unlocalizedProperties">
@@ -1936,7 +1912,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">159</int>
+			<int key="maxID">165</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2009,6 +1985,7 @@
 							<string>destroy:</string>
 							<string>free:</string>
 							<string>migrate:</string>
+							<string>openFullScreenshotWindow:</string>
 							<string>pause:</string>
 							<string>play:</string>
 							<string>reboot:</string>
@@ -2033,6 +2010,7 @@
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
+							<string>id</string>
 						</object>
 					</object>
 					<object class="NSMutableDictionary" key="actionInfosByName">
@@ -2042,6 +2020,7 @@
 							<string>destroy:</string>
 							<string>free:</string>
 							<string>migrate:</string>
+							<string>openFullScreenshotWindow:</string>
 							<string>pause:</string>
 							<string>play:</string>
 							<string>reboot:</string>
@@ -2064,6 +2043,10 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">migrate:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">openFullScreenshotWindow:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -2111,6 +2094,7 @@
 							<string>buttonBarMigration</string>
 							<string>buttonBarTransport</string>
 							<string>buttonKill</string>
+							<string>buttonScreenshot</string>
 							<string>fieldInfoCPUs</string>
 							<string>fieldInfoConsumedCPU</string>
 							<string>fieldInfoMem</string>
@@ -2120,7 +2104,6 @@
 							<string>fieldPreferencesMaxCPUs</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
-							<string>imageScreenshot</string>
 							<string>imageState</string>
 							<string>maskingView</string>
 							<string>scrollViewTableHypervisors</string>
@@ -2135,6 +2118,7 @@
 							<string>CPButtonBar</string>
 							<string>NSSegmentedControl</string>
 							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSTextField</string>
@@ -2144,7 +2128,6 @@
 							<string>NSTextField</string>
 							<string>NSTextField</string>
 							<string>NSSearchField</string>
-							<string>NSImageView</string>
 							<string>NSImageView</string>
 							<string>NSView</string>
 							<string>TNUIKitScrollView</string>
@@ -2162,6 +2145,7 @@
 							<string>buttonBarMigration</string>
 							<string>buttonBarTransport</string>
 							<string>buttonKill</string>
+							<string>buttonScreenshot</string>
 							<string>fieldInfoCPUs</string>
 							<string>fieldInfoConsumedCPU</string>
 							<string>fieldInfoMem</string>
@@ -2171,7 +2155,6 @@
 							<string>fieldPreferencesMaxCPUs</string>
 							<string>fieldPreferencesScreenshotRefresh</string>
 							<string>filterHypervisors</string>
-							<string>imageScreenshot</string>
 							<string>imageState</string>
 							<string>maskingView</string>
 							<string>scrollViewTableHypervisors</string>
@@ -2193,6 +2176,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonKill</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonScreenshot</string>
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -2230,10 +2217,6 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">filterHypervisors</string>
 								<string key="candidateClassName">NSSearchField</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">imageScreenshot</string>
-								<string key="candidateClassName">NSImageView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">imageState</string>
