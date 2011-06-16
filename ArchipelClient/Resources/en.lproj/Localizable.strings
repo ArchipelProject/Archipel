@@ -76,6 +76,12 @@
 /* Change your current avatar. This picture will be visible by all your contacts */
 "Change your current avatar. This picture will be visible by all your contacts" = "Change your current avatar. This picture will be visible by all your contacts";
 
+/* Click here to change the displayed named of the current contact or group */
+"Click here to change the displayed named of the current contact or group" = "Click here to change the displayed named of the current contact or group";
+
+/* Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users) */
+"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)" = "Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)";
+
 /* Collapse all groups */
 "Collapse all groups" = "Collapse all groups";
 
@@ -227,6 +233,12 @@
 /* Paste */
 "Paste" = "Paste";
 
+/* Please select a contact first. */
+"Please select a contact first." = "Please select a contact first.";
+
+/* Please select a group first. */
+"Please select a group first." = "Please select a group first.";
+
 /* Preferences */
 "Preferences" = "Preferences";
 
@@ -262,6 +274,12 @@
 
 /* Search entity */
 "Search entity" = "Search entity";
+
+/* Select a contact */
+"Select a contact" = "Select a contact";
+
+/* Select a group */
+"Select a group" = "Select a group";
 
 /* Select all */
 "Select all" = "Select all";
@@ -299,8 +317,14 @@
 /* The current logged account */
 "The current logged account" = "The current logged account";
 
+/* The current status of the contact */
+"The current status of the contact" = "The current status of the contact";
+
 /* The display name of the new contact */
 "The display name of the new contact" = "The display name of the new contact";
+
+/* The domain (XMPP server) of the contact */
+"The domain (XMPP server) of the contact" = "The domain (XMPP server) of the contact";
 
 /* The group has been removed */
 "The group has been removed" = "The group has been removed";
@@ -320,11 +344,17 @@
 /* The passwords you entered don't match. */
 "The passwords you entered don't match." = "The passwords you entered don't match.";
 
+/* The resource of the contact */
+"The resource of the contact" = "The resource of the contact";
+
 /* The resource to use */
 "The resource to use" = "The resource to use";
 
 /* The service BOSH (XMPP over HTTP) to use */
 "The service BOSH (XMPP over HTTP) to use" = "The service BOSH (XMPP over HTTP) to use";
+
+/* The type of contact (hypervisor, virtual machine or user) */
+"The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
 
 /* The URL of the welcome page */
 "The URL of the welcome page" = "The URL of the welcome page";
@@ -394,6 +424,9 @@
 
 /* Your password has been successfully updated */
 "Your password has been successfully updated" = "Your password has been successfully updated";
+
+/* Your preferences have been saved to the XMPP server */
+"Your preferences have been saved to the XMPP server" = "Your preferences have been saved to the XMPP server";
 
 /* Your status is now  */
 "Your status is now " = "Your status is now ";

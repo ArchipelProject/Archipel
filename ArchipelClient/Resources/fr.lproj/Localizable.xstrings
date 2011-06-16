@@ -50,6 +50,10 @@
 	<string>Impossible de sauvegarder les préférences dans le serveur XMPP.</string>
 	<key>Change your current avatar. This picture will be visible by all your contacts</key>
 	<string>Changer votre avatar. Cette image sera visible par tous vos contacts</string>
+	<key>Click here to change the displayed named of the current contact or group</key>
+	<string>Cliquez ici pour changer le nom du contact ou du group</string>
+	<key>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</key>
+	<string>Cliquez ici pour changer l'avatar du contact (seulement pour les contacts Archipel. Pas les utilisateurs)</string>
 	<key>Collapse all groups</key>
 	<string>Reduire tous les groupes</string>
 	<key>Collapse group</key>
@@ -134,6 +138,10 @@
 	<string>Erreur de mot de passe</string>
 	<key>Paste</key>
 	<string>Coller</string>
+	<key>Please select a contact first.</key>
+	<string>Veuillez choisir un contact.</string>
+	<key>Please select a group first.</key>
+	<string>Veuillez choisir un groupe.</string>
 	<key>Preferences</key>
 	<string>Préférences</string>
 	<key>Preferences saved</key>
@@ -158,6 +166,10 @@
 	<string>Retapez votre mot de passe</string>
 	<key>Search entity</key>
 	<string>Rechercher une entité</string>
+	<key>Select a contact</key>
+	<string>Select a contact</string>
+	<key>Select a group</key>
+	<string>Select a group</string>
 	<key>Select all</key>
 	<string>Tout séléctionner</string>
 	<key>Select next entity</key>
@@ -188,8 +200,12 @@
 	<string>Le JID du contact</string>
 	<key>The current logged account</key>
 	<string>Le compte courrant</string>
+	<key>The current status of the contact</key>
+	<string>The current status of the contact</string>
 	<key>The display name of the new contact</key>
 	<string>Le nom du contact</string>
+	<key>The domain (XMPP server) of the contact</key>
+	<string>The domain (XMPP server) of the contact</string>
 	<key>The group has been removed</key>
 	<string>Le groupe a été supprimé</string>
 	<key>The group must be empty</key>
@@ -200,10 +216,14 @@
 	<string>Le mot de passe associé au compte XMPP</string>
 	<key>The passwords you entered don't match.</key>
 	<string>Les mots de passes ne concordent pas.</string>
+	<key>The resource of the contact</key>
+	<string>La ressource du contact</string>
 	<key>The resource to use</key>
 	<string>La ressource à utiliser</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
 	<string>The service BOSH (XMPP sur HTTP) à utiliser</string>
+	<key>The type of contact (hypervisor, virtual machine or user)</key>
+	<string>The type of contact (hypervisor, virtual machine or user)</string>
 	<key>This LED is ON when XMPP data are received</key>
 	<string>Cette LED est allumée lors de la reception de donnnées XMPP</string>
 	<key>This LED is ON when XMPP data are sent</key>
@@ -244,6 +264,8 @@
 	<string>Vous devez recharger l'application pour que le changement de langue prenne effet.</string>
 	<key>Your password has been successfully updated</key>
 	<string>Votre mot de passe a été mis à jour</string>
+	<key>Your preferences have been saved to the XMPP server</key>
+	<string>Vos préférences ont été sauvegardée dans le serveur XMPP</string>
 	<key>Your status is now </key>
 	<string>Votre statut est maintenant </string>
 	<key>authenticating</key>

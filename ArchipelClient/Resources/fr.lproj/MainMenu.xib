@@ -2,10 +2,10 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.10">
 	<data>
 		<int key="IBDocument.SystemTarget">1070</int>
-		<string key="IBDocument.SystemVersion">11A480b</string>
+		<string key="IBDocument.SystemVersion">11A494a</string>
 		<string key="IBDocument.InterfaceBuilderVersion">1592</string>
-		<string key="IBDocument.AppKitVersion">1127</string>
-		<string key="IBDocument.HIToolboxVersion">561.00</string>
+		<string key="IBDocument.AppKitVersion">1128</string>
+		<string key="IBDocument.HIToolboxVersion">564.00</string>
 		<object class="NSMutableDictionary" key="IBDocument.PluginVersions">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<object class="NSArray" key="dict.sortedKeys">
@@ -613,7 +613,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="447790938">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Now your first hypervisor is in your roster, you can start to play with. Select it, then go to the "Virtual Machine" tab and ask for a new virtual machine.</string>
+							<string key="NSContents">Maintenant que votre hyperviseur est dans votre roster, vous pouvez commencer à l'utiliser. Sélectionnez-le, puis allez dans l'onglet "Machine Virtuelle" et demandez une nouvelle machine virtuelle.</string>
 							<object class="NSFont" key="NSSupport" id="647643796">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">11</double>
@@ -634,7 +634,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="77525915">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">And then ?</string>
+							<string key="NSContents">Et ensuite ?</string>
 							<object class="NSFont" key="NSSupport" id="891076155">
 								<string key="NSName">LucidaGrande-Bold</string>
 								<double key="NSSize">13</double>
@@ -688,7 +688,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="371919378">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">For now, your roster is empty. You should already have installed an Archipel Agent on your hypervisor and you can now add it as a "friend" just like you would do on standard messaging application. To do so, click on the "+" button at the bottom left of the interface and choose "Add contact" .</string>
+							<string key="NSContents">Pour le moment, votre roster est vide. You devriez déjà disposer d'au moins un agent Archipel sur votre hyperviseur et vous pouvez maintenant l'ajouter en tant que contact, de la même manière qu'avec n'importe quelle application de discussion. Cliquez sur le bouton "+" en bas de l'interface en choisisse "Ajouter un contact".</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="357865818"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -752,7 +752,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="624781105">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">205520896</int>
-							<string key="NSContents">Archipel is a new kind of orchestrator, where everything is about real time. It introduces some new concepts that are not common to the virtualization world. We would like to thank you for choosing Archipel and we hope that you will enjoy using it as much as we enjoy making it.</string>
+							<string key="NSContents">Archipel est un nouveau type d'orchestrateur, où tout est en temps réél. Archipel introduit de nouveaux concept qui ne sont pas habituel dans le monde la virtualisation. Nous vous remercions d'avoir choisi Archipel et nous espérons que apprecierez l'utiliser autant que nous apprécions le developper.</string>
 							<reference key="NSSupport" ref="647643796"/>
 							<reference key="NSControlView" ref="404933532"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -769,7 +769,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="935116494">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">The next generation orchestrator</string>
+							<string key="NSContents">L'orchestrateur nouvelle génératon</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="340149196"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1475,7 +1475,7 @@
 							</object>
 							<bool key="NSMenuItemRespectAlignment">YES</bool>
 							<object class="NSMenu" key="NSMenu" id="1003579154">
-								<string key="NSTitle">OtherViews</string>
+								<string key="NSTitle">Autre vues</string>
 								<object class="NSMutableArray" key="NSMenuItems">
 									<bool key="EncodedWithXMLCoder">YES</bool>
 									<reference ref="306845485"/>
@@ -1695,7 +1695,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1037946653">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">Ce parametre nécessite de redemarrer.</string>
+							<string key="NSContents">Ce paramêtre nécessite de redemarrer.</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="879337540"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -1899,7 +1899,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1042222612">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">268436480</int>
-							<string key="NSContents">Preferences Generales</string>
+							<string key="NSContents">Préférences Generales</string>
 							<reference key="NSSupport" ref="619662178"/>
 							<reference key="NSControlView" ref="196965198"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
@@ -2630,7 +2630,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="430148903">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">4195328</int>
-							<string key="NSContents">status</string>
+							<string key="NSContents">statuts</string>
 							<reference key="NSSupport" ref="53254714"/>
 							<reference key="NSControlView" ref="385015156"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
