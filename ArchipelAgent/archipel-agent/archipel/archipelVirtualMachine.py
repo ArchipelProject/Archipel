@@ -308,7 +308,7 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         xmldesc.getTag('description').setData("%s::::%s" % (self.jid.getStripped(), self.password))
         if not xmldesc.getTag('name'):
             xmldesc.addChild(name='name')
-        xmldesc.getTag('name').setData(self.name)
+        xmldesc.getTag('name').setData(self.name.encode("ascii", "replace"))
         ret = str(xmldesc).replace('xmlns="http://www.gajim.org/xmlns/undeclared" ', '')
         self.log.debug("Generated XML desc is : %s" % ret)
         return ret
