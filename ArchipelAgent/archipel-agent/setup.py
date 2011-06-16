@@ -78,7 +78,8 @@ setup(name='archipel-agent',
         "archipel-agent-virtualmachine-storage>=0.2.2beta",
         "archipel-agent-vmcasting>=0.2.2beta",
         "archipel-agent-xmppserver>=0.2.2beta",
-        "archipel-agent-virtualmachine-vnc>=0.2.2beta"
+        "archipel-agent-virtualmachine-vnc>=0.2.2beta",
+        "PIL"
       ],
       entry_points="""
         # -*- Entry points: -*-
