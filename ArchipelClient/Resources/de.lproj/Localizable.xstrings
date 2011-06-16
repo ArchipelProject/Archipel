@@ -50,6 +50,10 @@
 	<string>Ihre Einstellungen konnten auf dem XMPP Server nicht gespeichert werden</string>
 	<key>Change your current avatar. This picture will be visible by all your contacts</key>
 	<string>Ändern Sie Ihr momentanes Anzeigebild. Dieses Bild ist für Ihre Kontakte sichtbar.</string>
+	<key>Click here to change the displayed named of the current contact or group</key>
+	<string>Click here to change the displayed named of the current contact or group</string>
+	<key>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</key>
+	<string>Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)</string>
 	<key>Collapse all groups</key>
 	<string>Alle Gruppen zusammenklappen</string>
 	<key>Collapse group</key>
@@ -196,8 +200,12 @@
 	<string>Die XMPP JID des Kontakts</string>
 	<key>The current logged account</key>
 	<string>Der aktuell angemeldete Account</string>
+	<key>The current status of the contact</key>
+	<string>The current status of the contact</string>
 	<key>The display name of the new contact</key>
 	<string>Der Anzeigename des neuen Kontakts</string>
+	<key>The domain (XMPP server) of the contact</key>
+	<string>The domain (XMPP server) of the contact</string>
 	<key>The group has been removed</key>
 	<string>Die Gruppe wurde entfernt</string>
 	<key>The group must be empty</key>
@@ -208,10 +216,14 @@
 	<string>Das Passwort, welches zum XMPP Account gehört</string>
 	<key>The passwords you entered don't match.</key>
 	<string>Die Passwörter, welche Sie eingegeben haben, stimmen nicht überein.</string>
+	<key>The resource of the contact</key>
+	<string>The resource of the contact</string>
 	<key>The resource to use</key>
 	<string>Die zu verwendende Ressource</string>
 	<key>The service BOSH (XMPP over HTTP) to use</key>
 	<string>Der zu verwendende BOSH (XMPP über HTTP)</string>
+	<key>The type of contact (hypervisor, virtual machine or user)</key>
+	<string>The type of contact (hypervisor, virtual machine or user)</string>
 	<key>This LED is ON when XMPP data are received</key>
 	<string>Diese LED ist an, wenn XMPP Daten empfangen werden</string>
 	<key>This LED is ON when XMPP data are sent</key>
@@ -252,6 +264,8 @@
 	<string>Sie müssen diese Anwendung neu laden um die Gebietsshemaänderung abzuschliessen.</string>
 	<key>Your password has been successfully updated</key>
 	<string>Ihr Passwort wurde erfolgreich geändert</string>
+	<key>Your preferences have been saved to the XMPP server</key>
+	<string>Your preferences have been saved to the XMPP server</string>
 	<key>Your status is now </key>
 	<string>Ihr Status ist nun </string>
 	<key>authenticating</key>
