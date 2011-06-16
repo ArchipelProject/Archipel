@@ -493,18 +493,15 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 */
 - (void)checkIfRunning
 {
+    if (![self isVisible])
+        return;
+
     var XMPPShow = [_entity XMPPShow];
 
     [self getVirtualMachineInfo];
 
     if ([self currentEntityHasPermission:@"oom_getadjust"])
         [self getOOMKiller];
-
-
-    if ((XMPPShow == TNStropheContactStatusDND))
-        [self showMaskView:YES];
-    else
-        [self showMaskView:NO];
 }
 
 /*! populate the migration table with all hypervisors in roster
@@ -851,7 +848,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
         [self setControl:sliderMemory enabledAccordingToPermission:@"memory"];
         [self setControl:stepperCPU enabledAccordingToPermission:@"setvcpus"];
 
-        if (!_screenshotTimer)
+        if (!_screenshotTimer && [self isVisible])
         {
             [self getThumbnailScreenshot];
             _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
@@ -1525,7 +1522,7 @@ var TNArchipelPushNotificationDefinition            = @"archipel:push:virtualmac
 {
     [buttonScreenshot setImage:anImage];
 
-    if (!_screenshotTimer)
+    if (!_screenshotTimer && [self isVisible])
     {
         var defaults = [CPUserDefaults standardUserDefaults];
         _screenshotTimer = [CPTimer scheduledTimerWithTimeInterval:[defaults integerForKey:@"TNArchipelControlsScreenshotRefresh"]
