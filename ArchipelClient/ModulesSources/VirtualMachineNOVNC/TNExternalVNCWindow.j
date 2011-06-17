@@ -132,11 +132,21 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
 
     [self setTitle:CPBundleLocalizedString(@"Screen for ", @"Screen for ") + [_entity nickname] + " (" + [_entity JID] + ")"];
     [[self platformWindow] setTitle:[self title]];
-    [[self platformWindow] DOMWindow].onbeforeunload = function(){
-        [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
-        [self close];
-        // FIXME: should we free self ?
-    };
+
+    var domWindow = [[self platformWindow] DOMWindow],
+        unloadFunction = function(){
+            [[CPRunLoop currentRunLoop] limitDateForMode:CPDefaultRunLoopMode];
+            [self close];
+        };
+
+    if (domWindow.onbeforeunload)
+        domWindow.onbeforeunload = unloadFunction
+    else (domWindow.onunload)
+        domWindow.onunload = unloadFunction
+    else
+        alert("Warning! I'm not happy to use javascript alert, but I have no other way to do it. Listen. I have no much time." +
+            " Your browser don't support any known unload event. This will result as big memory leak each time you close this window!"+
+            " Please report a bug at https://gitbub.com/primalmotion/Archipel/issues. I have to go! Good luck!");
 
     _imageViewVirtualMachineAvatar = [[CPImageView alloc] initWithFrame:CPRectMake(7.0, 4.0, 50.0, 50.0)];
     [_imageViewVirtualMachineAvatar setImage:[_entity avatar]];
