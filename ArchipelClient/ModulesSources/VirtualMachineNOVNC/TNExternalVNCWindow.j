@@ -139,9 +139,9 @@ var TNVNCWindowToolBarCtrlAltDel        = @"TNVNCWindowToolBarCtrlAltDel",
             [self close];
         };
 
-    if (domWindow.onbeforeunload)
+    if (window.onbeforeunload)
         domWindow.onbeforeunload = unloadFunction
-    else if (domWindow.onunload)
+    else if (window.onunload)
         domWindow.onunload = unloadFunction
     else
         alert("Warning! I'm not happy to use javascript alert, but I have no other way to do it. Listen. I have no much time." +
