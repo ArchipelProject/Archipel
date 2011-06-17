@@ -97,12 +97,12 @@ def main():
     try:
         hyp.connect()
     except Exception as ex:
-        log.error("RUNARCHIPEL: Cannot connect using JID %s. Initialization aborted: %s" % (jid, str(ex)))
+        print "\033[31mRUNARCHIPEL: Cannot connect using JID %s. Initialization aborted: %s\033[0m" % (jid, str(ex))
         sys.exit(ARCHIPEL_INIT_ERROR_CONNECTION)
     try:
         hyp.loop()
     except Exception as ex:
-        log.error("RUNARCHIPEL: Exception has stoped the hypervisor main loop: %s" % str(ex))
+        print "\033[31mRUNARCHIPEL: Exception has stoped the hypervisor main loop: %s\033[0m" % str(ex)
         sys.exit(ARCHIPEL_INIT_ERROR_LOOP_INTERRUPTION)
 
 
