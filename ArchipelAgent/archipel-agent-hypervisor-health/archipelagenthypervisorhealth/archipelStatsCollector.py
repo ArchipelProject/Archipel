@@ -229,7 +229,7 @@ class TNThreadedHealthCollector (Thread):
             rx = int(info[0])
             tx = int(info[8])
             records[dev] = {"rx": rx, "tx": tx}
-            if self.current_record:
+            if self.current_record and dev in self.current_record:
                 delta_usage = (rx - self.current_record[dev]["rx"]) + (tx - self.current_record[dev]["tx"])
             else:
                 delta_usage = 0;
