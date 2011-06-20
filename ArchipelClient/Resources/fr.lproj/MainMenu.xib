@@ -1519,7 +1519,7 @@
 						<object class="NSButtonCell" key="NSCell" id="195755768">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">0</int>
-							<string key="NSContents">Hide offline users</string>
+							<string key="NSContents">Cacher les contacts hors ligne</string>
 							<reference key="NSSupport" ref="649011811"/>
 							<reference key="NSControlView" ref="716723755"/>
 							<int key="NSButtonFlags">1211912703</int>
@@ -1547,7 +1547,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="842647899">
 							<int key="NSCellFlags">68288064</int>
 							<int key="NSCellFlags2">71304192</int>
-							<string key="NSContents">Offline users</string>
+							<string key="NSContents">Contacts hors ligne</string>
 							<reference key="NSSupport" ref="891076155"/>
 							<reference key="NSControlView" ref="957728669"/>
 							<reference key="NSBackgroundColor" ref="970791577"/>
