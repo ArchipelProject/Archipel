@@ -344,7 +344,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             return None
         return self.virtualmachines[uuid.lower()]
 
-    def get_vm_by_identifer(self, identifier):
+    def get_vm_by_identifier(self, identifier):
         """
         Return the vm object by identifier. Identifier can be the UUID of the name.
         @type identifier : string
@@ -716,7 +716,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             tokens = msg.getBody().split(None, 1)
             if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             identifier = tokens[1]
-            vm = self.get_vm_by_identifer(identifier)
+            vm = self.get_vm_by_identifier(identifier)
             if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
             self.free(vm.jid)
             return "Archipel VM with JID %s has been freed." % (vm.jid)
@@ -768,7 +768,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
             tokens = msg.getBody().split(None, 1)
             if not len(tokens) == 2: return "I'm sorry, you use a wrong format. You can type 'help' to get help"
             identifier = tokens[1]
-            vm = self.get_vm_by_identifer(identifier)
+            vm = self.get_vm_by_identifier(identifier)
             if not vm: return "It seems that vm with identifer %s doesn't exists." % identifier
             self.clone(vm.uuid, msg.getFrom())
             return "Cloning of virtual machine %s has started." % (vm.jid)
