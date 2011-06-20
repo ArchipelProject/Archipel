@@ -151,6 +151,7 @@ def localize(path, routine):
         xibs = [name for name in os.listdir(language) if name.endswith('.xib')]
         xibs = map(lambda x: "%s/%s" % (language, x), xibs)
         for xib in xibs:
+            print " * working on %s" % xib
             bname = os.path.basename(xib);
             bname_noext = os.path.splitext(bname)[0];
 
