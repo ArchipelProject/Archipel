@@ -437,3 +437,9 @@
 /* Class = "NSTextFieldCell"; title = "More to come..."; ObjectID = "1478"; */
 "1478.title" = "More to come...";
 
+/* Class = "NSButtonCell"; title = "Hide offline users"; ObjectID = "1488"; */
+"1488.title" = "Hide offline users";
+
+/* Class = "NSTextFieldCell"; title = "Offline users"; ObjectID = "1489"; */
+"1489.title" = "Offline users";
+

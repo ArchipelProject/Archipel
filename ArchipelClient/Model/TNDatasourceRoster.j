@@ -39,8 +39,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 */
 @implementation TNDatasourceRoster  : TNStropheRoster
 {
-    CPSearchField               _filterField        @accessors(property=filterField);
-    CPString                    _filter             @accessors(property=filter);
+    BOOL                        _hideOfflineContacts    @accessors(getter=isOfflineContactsHidden, setter=setHideOfflineContacts:);
+    CPSearchField               _filterField            @accessors(property=filterField);
+    CPString                    _filter                 @accessors(property=filter);
 
     BOOL                        _shouldDragDuplicate;
     CPDictionary                _tagsRegistry;
@@ -65,8 +66,9 @@ TNDragTypeContact   = @"TNDragTypeContact";
 {
     if (self = [super initWithConnection:aConnection])
     {
-        _filter                 = nil;
-        _shouldDragDuplicate    = NO;
+        _filter                     = nil;
+        _shouldDragDuplicate        = NO;
+        _hideOfflineContacts        = NO;
 
         // register for notifications that should trigger outlineview reload
         var center = [CPNotificationCenter defaultCenter];
@@ -213,6 +215,35 @@ TNDragTypeContact   = @"TNDragTypeContact";
 
 
 #pragma mark -
+#pragma mark Utilities
+
+/*! return group content.
+    @param aGroup the group to parse
+    @param onlyOnline is TRUE, only online contacts will be returned
+    @return CPArray containing group's content
+*/
+- (CPArray)contentsOfGroup:(TNStropheGroup)aGroup hideOffline:(BOOL)shouldHideOffline
+{
+    if (!shouldHideOffline)
+        return [aGroup content];
+
+    var c = [CPArray array];
+
+    for (var i = 0; i < [[aGroup content] count]; i++)
+    {
+        var item = [[aGroup content] objectAtIndex:i];
+
+        if ([item isKindOfClass:TNStropheGroup])
+            [c addObject:item];
+        else if ([item XMPPShow] != TNStropheContactStatusOffline)
+            [c addObject:item];
+    }
+
+    return c;
+}
+
+
+#pragma mark -
 #pragma mark Delegates
 
 /*! delegate of TNPubSubNode that will be sent when an pubsub event is recieved
@@ -238,9 +269,13 @@ TNDragTypeContact   = @"TNDragTypeContact";
         return [_content count];
     else
     {
-        return ([item isKindOfClass:TNStropheContact]) ? 0 : [[item content] count];
+        if ([item isKindOfClass:TNStropheContact])
+            return 0;
+        else
+        {
+            return [[self contentsOfGroup:item hideOffline:_hideOfflineContacts] count];
+        }
     }
-
 }
 
 /*! CPOutlineView Datasource
@@ -265,7 +300,7 @@ TNDragTypeContact   = @"TNDragTypeContact";
     else
     {
         if ([item isKindOfClass:TNStropheGroup])
-            return [[item content] objectAtIndex:index];
+            return [[self contentsOfGroup:item hideOffline:_hideOfflineContacts] objectAtIndex:index];
         else
             return nil;
     }

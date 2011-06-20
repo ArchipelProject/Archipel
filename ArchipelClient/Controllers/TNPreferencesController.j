@@ -49,6 +49,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPButton        buttonCancel;
     @outlet CPButton        buttonSave;
     @outlet CPCheckBox      checkBoxUpdate;
+    @outlet CPCheckBox      checkBoxHideOfflineContacts;
     @outlet CPPopUpButton   buttonDebugLevel;
     @outlet CPPopUpButton   buttonLanguage;
     @outlet CPTabView       tabViewMain;
@@ -230,6 +231,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [switchUseAnimations setOn:[defaults boolForKey:@"TNArchipelUseAnimations"] animated:YES sendAction:NO];
     [switchUseXMPPMonitoring setOn:[defaults boolForKey:@"TNArchipelMonitorStanza"] animated:YES sendAction:NO];
     [checkBoxUpdate setState:([defaults boolForKey:@"TNArchipelAutoCheckUpdate"]) ? CPOnState : CPOffState];
+    [checkBoxHideOfflineContacts setState:([defaults boolForKey:@"TNHideOfflineContacts"]) ? CPOnState : CPOffState];
 
     for (var i = 0; i < [_modules count]; i++)
     {
@@ -268,7 +270,12 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     [defaults setObject:[buttonLanguage title] forKey:@"CPBundleLocale"];
     [defaults setBool:[switchUseAnimations isOn] forKey:@"TNArchipelUseAnimations"];
     [defaults setBool:([checkBoxUpdate state] == CPOnState) forKey:@"TNArchipelAutoCheckUpdate"];
+    [defaults setBool:([checkBoxHideOfflineContacts state] == CPOnState) forKey:@"TNHideOfflineContacts"];
     [defaults setBool:[switchUseXMPPMonitoring isOn] forKey:@"TNArchipelMonitorStanza"];
+
+    // reload the roster in order to take care of hiding offline contacts changes
+    [[[TNStropheIMClient defaultClient] roster] setHideOfflineContacts:[defaults boolForKey:@"TNHideOfflineContacts"]];
+    [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelRosterOutlineViewReload object:self];
 
     CPLogUnregister(CPLogConsole);
     CPLogRegister(CPLogConsole, [buttonDebugLevel title]);
@@ -413,6 +420,10 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
         [[CPUserDefaults standardUserDefaults]._domains setObject:anObject forKey:CPApplicationDomain];
         [CPUserDefaults standardUserDefaults]._searchListNeedsReload = YES;
         [[CPUserDefaults standardUserDefaults] synchronize];
+    }
+    else
+    {
+        CPLog.warn("Unable to get configuration from XMPP Storage.")
     }
     [self reinjectUnwantedTokens];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNPreferencesControllerRestoredNotification object:self];

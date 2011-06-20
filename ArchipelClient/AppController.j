@@ -257,6 +257,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelUseAnimations"], @"TNArchipelUseAnimations",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
+            [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
             [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale"
     ]];
 
@@ -469,7 +470,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         contactsMenu    = [[CPMenu alloc] init],
         statusMenu      = [[CPMenu alloc] init],
         navigationMenu  = [[CPMenu alloc] init],
-        helpMenu        = [[CPMenu alloc] init];
+        helpMenu        = [[CPMenu alloc] init],
+        defaults        = [CPUserDefaults standardUserDefaults];
 
     // Archipel
     [archipelMenu addItemWithTitle:CPLocalizedString(@"About Archipel", @"About Archipel") action:@selector(showAboutWindow:) keyEquivalent:@""];
@@ -535,6 +537,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [navigationMenu addItem:[CPMenuItem separatorItem]];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Expand all groups", @"Expand all groups") action:@selector(expandAllGroups:) keyEquivalent:@""];
     [navigationMenu addItemWithTitle:CPLocalizedString(@"Collapse all groups", @"Collapse all groups") action:@selector(collapseAllGroups:) keyEquivalent:@""];
+    [navigationMenu addItem:[CPMenuItem separatorItem]];
     [_mainMenu setSubmenu:navigationMenu forItem:navigationItem];
 
     // Modules
@@ -770,6 +773,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [[[TNStropheIMClient defaultClient] roster] setDelegate:contactsController];
     [[[TNStropheIMClient defaultClient] roster] setFilterField:filterField];
+    [[[TNStropheIMClient defaultClient] roster] setHideOfflineContacts:[[CPUserDefaults standardUserDefaults] boolForKey:@"TNHideOfflineContacts"]];
 
     if ([[CPUserDefaults standardUserDefaults] boolForKey:@"TNArchipelMonitorStanza"])
         [self monitorXMPP:YES];
@@ -1221,7 +1225,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 }
 
 /*! shows the XMPP Account window
-    @param the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)showXMPPAccountWindow:(id)aSender
 {
