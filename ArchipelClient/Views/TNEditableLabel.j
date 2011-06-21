@@ -30,6 +30,24 @@
     id          _previousResponder  @accessors(property=previousResponder);
 }
 
+- (void)awakeFromCib
+{
+    var bundle = [CPBundle mainBundle],
+        bezelColorEdited = [CPColor colorWithPatternImage:[[CPThreePartImage alloc] initWithImageSlices:
+            [
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNEditableLabel/TNEditableLabelEditedLeft.png"] size:CGSizeMake(1.0, 18.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNEditableLabel/TNEditableLabelEditedCenter.png"] size:CGSizeMake(1.0, 18.0)],
+                [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"TNEditableLabel/TNEditableLabelEditedRight.png"] size:CGSizeMake(1.0, 1.0)]
+            ]
+        isVertical:NO]];
+
+    [self setValue:CGInsetMake(2.0, 0.0, 0.0, 3.0) forThemeAttribute:@"content-inset"];
+    [self setValue:CGInsetMake(1.0, 0.0, 0.0, 3.0) forThemeAttribute:@"content-inset" inState:CPThemeStateEditing];
+    [self setValue:bezelColorEdited forThemeAttribute:@"bezel-color" inState:CPThemeStateEditing];
+
+    [self setNeedsLayout];
+}
+
 - (void)mouseDown:(CPEvent)anEvent
 {
     [self setEditable:YES];
