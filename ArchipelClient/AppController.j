@@ -144,6 +144,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPImageView                         imageViewLogoAbout;
     @outlet CPImageView                         ledIn;
     @outlet CPImageView                         ledOut;
+    @outlet CPImageView                         imageViewBundleLoading;
     @outlet CPProgressIndicator                 progressIndicatorModulesLoading;
     @outlet CPSplitView                         splitViewHorizontalRoster;
     @outlet CPSplitView                         splitViewMain;
@@ -151,17 +152,18 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPTextField                         labelCurrentUser;
     @outlet CPTextField                         textFieldAboutVersion;
     @outlet CPView                              filterView;
-    @outlet CPView                              rightView;
     @outlet CPView                              statusBar;
     @outlet CPView                              viewAboutWindowLogoContainer;
-    @outlet CPView                              viewRosterMask;
+    @outlet CPView                              viewLoading;
     @outlet CPWebView                           webViewAboutCredits;
     @outlet CPWindow                            theWindow;
     @outlet CPWindow                            windowAboutArchipel;
     @outlet TNAvatarController                  avatarController;
     @outlet TNConnectionController              connectionController;
     @outlet TNContactsController                contactsController;
+    @outlet TNFlipView                          rightView;
     @outlet TNFlipView                          leftView;
+
     @outlet TNGroupsController                  groupsController;
     @outlet TNHintController                    hintController;
     @outlet TNModuleController                  moduleController;
@@ -299,31 +301,50 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"initializing _rosterOutlineView");
     _rosterOutlineView = [[TNOutlineViewRoster alloc] initWithFrame:[leftView bounds]];
     [_rosterOutlineView setDelegate:self];
+    [_rosterOutlineView setEnabled:NO];
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
-    [filterField setOutlineView:_rosterOutlineView];
-    [filterField setMaximumRecents:10];
-    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
 
+    /* init scroll view of the outline view */
+    CPLog.trace(@"initializing _outlineScrollView");
+    _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
+    [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_outlineScrollView setAutohidesScrollers:YES];
+    var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
+    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
+    [_outlineScrollView setDocumentView:_rosterOutlineView];
+
+    /* left view */
+    [leftView setFrontView:_outlineScrollView];
+    [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
 
     /* right view */
     CPLog.trace(@"initializing rightView");
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
 
-    /* filter view. */
-    CPLog.trace(@"initializing the filterView");
-    [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
-
-
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [_moduleTabView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
-    [rightView addSubview:_moduleTabView];
+    [rightView setBackView:_moduleTabView];
 
+    /* loading view */
+    var leftViewBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
+        maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
+        archipelBundleIcon = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pluginIconArchipel.png"]];
+
+    [imageViewBundleLoading setImage:archipelBundleIcon];
+    [viewLoading setFrame:[rightView bounds]];
+    [viewLoading setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
+    [viewLoading setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [rightView setFrontView:viewLoading];
+    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
+    [progressIndicatorModulesLoading setMinValue:0.0];
+    [progressIndicatorModulesLoading setMaxValue:1.0];
+    [progressIndicatorModulesLoading setDoubleValue:0.0];
 
     /* message in _moduleTabView */
     var bounds  = [_moduleTabView bounds];
@@ -336,36 +357,12 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rightViewTextField setTextColor:[CPColor grayColor]];
     [_moduleTabView addSubview:_rightViewTextField];
 
-
-    /* init scroll view of the outline view */
-    CPLog.trace(@"initializing _outlineScrollView");
-    _outlineScrollView = [[TNUIKitScrollView alloc] initWithFrame:[leftView bounds]];
-    [_outlineScrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [_outlineScrollView setAutohidesScrollers:YES];
-
-    var rosterbg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/rosterbg.png"]];
-    //[CPColor colorWithHexString:@"DDE4EA"]
-    [[_outlineScrollView contentView] setBackgroundColor:[CPColor colorWithPatternImage:rosterbg]];
-    [_outlineScrollView setDocumentView:_rosterOutlineView];
-
-
-    /* left view */
-    var leftViewBg = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]],
-        maskBackgroundImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]];
-
-    [viewRosterMask setFrame:[leftView bounds]];
-    [viewRosterMask setBackgroundColor:[CPColor colorWithPatternImage:maskBackgroundImage]];
-    [viewRosterMask setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-
-    [leftView setBackView:_outlineScrollView];
-    [leftView setFrontView:viewRosterMask];
-    [leftView setBackgroundColor:[CPColor colorWithPatternImage:leftViewBg]];
-
-    [progressIndicatorModulesLoading setStyle:CPProgressIndicatorHUDBarStyle];
-    [progressIndicatorModulesLoading setMinValue:0.0];
-    [progressIndicatorModulesLoading setMaxValue:1.0];
-    [progressIndicatorModulesLoading setDoubleValue:0.0];
-
+    /* filter view. */
+    CPLog.trace(@"initializing the filterView");
+    [filterView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-filter.png"]]]];
+    [filterField setOutlineView:_rosterOutlineView];
+    [filterField setMaximumRecents:10];
+    [filterField setToolTip:CPLocalizedString(@"Filter contacts by name or tags", @"Filter contacts by name or tags")];
 
     /* Growl */
     CPLog.trace(@"initializing Growl");
@@ -1474,7 +1471,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         moduleLabel = [[aBundle objectForInfoDictionaryKey:@"PluginDisplayName"] objectForKey:@"en"];
 
     [progressIndicatorModulesLoading setDoubleValue:percent];
-    [[viewRosterMask viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
+    [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
@@ -1483,8 +1480,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 {
     CPLog.info(@"All modules have been loaded");
 
-    [_mainToolbar reloadToolbarItems]
-    [leftView flip:nil];
+    [_mainToolbar reloadToolbarItems];
+    [_rosterOutlineView setEnabled:YES];
+    [rightView flip:nil];
     [updateController check];
     [self performModuleChange:nil];
 }
