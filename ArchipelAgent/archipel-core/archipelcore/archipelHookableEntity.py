@@ -112,6 +112,9 @@ class TNHookableEntity (object):
         """
         self.log.info("HOOK: going to run methods for hook %s" % hookname)
         hook_to_remove = []
+        if not hookname in self.hooks:
+            self.log.warning("No hook with name %s found" % hookname)
+            return
         for info in self.hooks[hookname]:
             m           = info["method"]
             oneshot     = info["oneshot"]
