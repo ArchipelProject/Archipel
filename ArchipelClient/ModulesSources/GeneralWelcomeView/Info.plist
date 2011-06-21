@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CibName</key>
+    <string>GeneralWelcomeView</string>
+    <key>CPBundleLocale</key>
+    <string>en</string>
+    <key>CPBundleIdentifier</key>
+    <string>org.archipelproject.GeneralWelcomeView</string>
+    <key>CPBundleInfoDictionaryVersion</key>
+    <string>1.0</string>
+    <key>CPBundleName</key>
+    <string>GeneralWelcomeView</string>
+    <key>CPBundlePackageType</key>
+    <string>280N</string>
+    <key>CPBundleVersion</key>
+    <string>1.0</string>
+    <key>CPPrincipalClass</key>
+    <string>TNGeneralWelcomeViewController</string>
+    <key>FullscreenModule</key>
+    <integer>1</integer>
+    <key>InsertionType</key>
+    <string>tab</string>
+    <key>PluginDisplayName</key>
+    <dict>
+        <key>en</key>
+        <string>Welcome</string>
+        <key>fr</key>
+        <string>Bienvenue</string>
+    </dict>
+    <key>SupportedEntityTypes</key>
+    <array>
+        <string>general</string>
+    </array>
+    <key>TabIndex</key>
+    <integer>0</integer>
+    <key>UseModuleMenu</key>
+    <integer>1</integer>
+
+    <key>TNArchipelHelpWindowURL</key>
+    <string>http://welcome.archipelproject.org/</string>
+</dict>
+</plist>

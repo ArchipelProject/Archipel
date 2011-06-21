@@ -1,0 +1,16 @@
+
+/* Class = "NSTextFieldCell"; placeholderString = "http://welcome.archipelproject.org"; ObjectID = "95"; */
+"95.placeholderString" = "http://welcome.archipelproject.org";
+
+/* Class = "NSTextFieldCell"; title = "Welcome view URL"; ObjectID = "99"; */
+"99.title" = "Welcome view URL";
+
+/* Class = "NSTextFieldCell"; title = "You can configure the preferences for the welcome view."; ObjectID = "100"; */
+"100.title" = "You can configure the preferences for the welcome view.";
+
+/* Class = "NSTextFieldCell"; title = "Welcome view preferences"; ObjectID = "101"; */
+"101.title" = "Welcome view preferences";
+
+/* Class = "NSTextFieldCell"; title = "Loading"; ObjectID = "110"; */
+"110.title" = "Loading";
+
