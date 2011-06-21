@@ -315,7 +315,7 @@ class TNArchipelHypervisor (TNArchipelEntity, archipelLibvirtEntity.TNArchipelLi
         while search:
             currentName = self.generated_names[random.randint(0, self.number_of_names)].replace("\n", "")
             if not self.get_vm_by_name(currentName):
-                self.log.info("Trying to use generate name %s but it's already taken. Generating another one." % currentName)
+                self.log.info("Generated name %s available. Using it." % currentName)
                 search = False
         return currentName
 
