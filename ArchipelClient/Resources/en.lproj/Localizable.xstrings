@@ -43,7 +43,7 @@
 	<key>Busy</key>
 	<string>Busy</string>
 	<key>CREDENTIAL_REMEMBER_TOOLTIP</key>
-	<string>Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.</string>
+	<string>CREDENTIAL_REMEMBER_TOOLTIP</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Cannot save your preferences to the XMPP server</key>
@@ -194,8 +194,6 @@
 	<string>Tags</string>
 	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
 	<string>The JID to use to connect. It is always formatted like user@domain.com</string>
-	<key>The URL of the welcome page</key>
-	<string>The URL of the welcome page</string>
 	<key>The XMPP JID of the contact</key>
 	<string>The XMPP JID of the contact</string>
 	<key>The current logged account</key>
@@ -273,15 +271,15 @@
 	<key>authentification-failed</key>
 	<string>authentification-failed</string>
 	<key>cancel</key>
-	<string>Cancel</string>
+	<string>cancel</string>
 	<key>connect</key>
-	<string>Connect</string>
+	<string>connect</string>
 	<key>connected</key>
-	<string>Connected</string>
+	<string>connected</string>
 	<key>connecting</key>
-	<string>Connecting</string>
+	<string>connecting</string>
 	<key>connection-failed</key>
-	<string>Connection failed</string>
+	<string>connection-failed</string>
 	<key>disconnected</key>
 	<string>disconnected</string>
 	<key>disconnecting</key>

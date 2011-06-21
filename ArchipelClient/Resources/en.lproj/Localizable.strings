@@ -68,7 +68,7 @@
 "Cancel" = "Cancel";
 
 /* cancel */
-"cancel" = "Cancel";
+"cancel" = "cancel";
 
 /* Cannot save your preferences to the XMPP server */
 "Cannot save your preferences to the XMPP server" = "Cannot save your preferences to the XMPP server";
@@ -89,19 +89,19 @@
 "Collapse group" = "Collapse group";
 
 /* connect */
-"connect" = "Connect";
+"connect" = "connect";
 
 /* connected */
-"connected" = "Connected";
+"connected" = "connected";
 
 /* Connected as  */
 "Connected as " = "Connected as ";
 
 /* connecting */
-"connecting" = "Connecting";
+"connecting" = "connecting";
 
 /* connection-failed */
-"connection-failed" = "Connection failed";
+"connection-failed" = "connection-failed";
 
 /* Contact */
 "Contact" = "Contact";
@@ -119,7 +119,7 @@
 "Copy" = "Copy";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "CREDENTIAL_REMEMBER_TOOLTIP";
 
 /* Cut */
 "Cut" = "Cut";
@@ -355,9 +355,6 @@
 
 /* The type of contact (hypervisor, virtual machine or user) */
 "The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
-
-/* The URL of the welcome page */
-"The URL of the welcome page" = "The URL of the welcome page";
 
 /* The XMPP JID of the contact */
 "The XMPP JID of the contact" = "The XMPP JID of the contact";

@@ -1,107 +1,107 @@
 /*  contact in group */
-" contact in group" = " contact dans le groupe";
+" contact in group" = " contact in group";
 
 /*  contacts in group */
-" contacts in group" = " contacts dans le groupe";
+" contacts in group" = " contacts in group";
 
 /*  has been added */
-" has been added" = " a ete ajouté";
+" has been added" = " has been added";
 
 /*  has been created */
-" has been created" = " a été créé";
+" has been created" = " has been created";
 
 /*  has been removed */
-" has been removed" = " a été supprimé";
+" has been removed" = " has been removed";
 
 /*  is asking you subscription. Do you want to authorize it ? */
-" is asking you subscription. Do you want to authorize it ?" = " vous demande une souscription. Voulez-vous l'accepter ?";
+" is asking you subscription. Do you want to authorize it ?" = " is asking you subscription. Do you want to authorize it ?";
 
 /* About Archipel */
-"About Archipel" = "A propos d'Archipel";
+"About Archipel" = "About Archipel";
 
 /* Accept */
-"Accept" = "Accepter";
+"Accept" = "Accept";
 
 /* Add a contact */
-"Add a contact" = "Ajouter un contact";
+"Add a contact" = "Add a contact";
 
 /* Add a group */
-"Add a group" = "Ajouter un groupe";
+"Add a group" = "Add a group";
 
 /* Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user. */
-"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user." = "Ajouter un nouveau contact ou un groupe. Les contacts peuvent être un hyperviseur, une machine virtuelle ou un utilisateur";
+"Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user." = "Add a new contact or group. Contacts can be a hypervisor, a virtual machine or a user.";
 
 /* Add contact */
-"Add contact" = "Ajouter le contact";
+"Add contact" = "Add contact";
 
 /* Add group */
-"Add group" = "Ajouter le groupe";
+"Add group" = "Add group";
 
 /* Archipel */
 "Archipel" = "Archipel";
 
 /* Archipel Help */
-"Archipel Help" = "Aide Archipel";
+"Archipel Help" = "Archipel Help";
 
 /* Are you sure you want to delete this contact? */
-"Are you sure you want to delete this contact?" = "Etes-vous sûr de vouloir supprimer ce contact ?";
+"Are you sure you want to delete this contact?" = "Are you sure you want to delete this contact?";
 
 /* Are you sure you want to delete this group? */
-"Are you sure you want to delete this group?" = "Etes-vous sûr de vouloir supprimer ce groupe ?";
+"Are you sure you want to delete this group?" = "Are you sure you want to delete this group?";
 
 /* authenticating */
-"authenticating" = "Authentification";
+"authenticating" = "authenticating";
 
 /* authentification-failed */
-"authentification-failed" = "Echec d'Authentification";
+"authentification-failed" = "authentification-failed";
 
 /* Available */
-"Available" = "Disponible";
+"Available" = "Available";
 
 /* Away */
-"Away" = "Parti(e)";
+"Away" = "Away";
 
 /* Busy */
-"Busy" = "Occupé";
+"Busy" = "Busy";
 
 /* Cancel */
-"Cancel" = "Annuler";
+"Cancel" = "Cancel";
 
 /* cancel */
-"cancel" = "Annuler";
+"cancel" = "cancel";
 
 /* Cannot save your preferences to the XMPP server */
-"Cannot save your preferences to the XMPP server" = "Impossible de sauvegarder les préférences dans le serveur XMPP.";
+"Cannot save your preferences to the XMPP server" = "Cannot save your preferences to the XMPP server";
 
 /* Change your current avatar. This picture will be visible by all your contacts */
-"Change your current avatar. This picture will be visible by all your contacts" = "Changer votre avatar. Cette image sera visible par tous vos contacts";
+"Change your current avatar. This picture will be visible by all your contacts" = "Change your current avatar. This picture will be visible by all your contacts";
 
 /* Click here to change the displayed named of the current contact or group */
-"Click here to change the displayed named of the current contact or group" = "Cliquez ici pour changer le nom du contact ou du group";
+"Click here to change the displayed named of the current contact or group" = "Click here to change the displayed named of the current contact or group";
 
 /* Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users) */
-"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)" = "Cliquez ici pour changer l'avatar du contact (seulement pour les contacts Archipel. Pas les utilisateurs)";
+"Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)" = "Click here to choose the avatar of the current contact (this only works with Archipel contacts, not users)";
 
 /* Collapse all groups */
-"Collapse all groups" = "Reduire tous les groupes";
+"Collapse all groups" = "Collapse all groups";
 
 /* Expand group */
-"Collapse group" = "Reduire le groupe";
+"Collapse group" = "Collapse group";
 
 /* connect */
-"connect" = "Connexion";
+"connect" = "connect";
 
 /* connected */
-"connected" = "Connecté";
+"connected" = "connected";
 
 /* Connected as  */
-"Connected as " = "Connecté en tant que ";
+"Connected as " = "Connected as ";
 
 /* connecting */
-"connecting" = "Connexion...";
+"connecting" = "connecting";
 
 /* connection-failed */
-"connection-failed" = "Echec de la connexion";
+"connection-failed" = "connection-failed";
 
 /* Contact */
 "Contact" = "Contact";
@@ -113,110 +113,110 @@
 "Contacts" = "Contacts";
 
 /* Contents */
-"Contents" = "Contenu";
+"Contents" = "Contents";
 
 /* Copy */
-"Copy" = "Copier";
+"Copy" = "Copy";
 
 /* Turn this ON to remember your credential and connect automatically. Note that all passwords are stored in clear in your browser local storage. It is extremly easy to find. So easy that you have to at your own risk. So we turn this in our disasventage, making your life easier. If you want to remove your credentials from the history, just be sure to have entered your JID and switch down the button.                \n */
-"CREDENTIAL_REMEMBER_TOOLTIP" = "Activer ce boutton pour enregistrer vos identifiants. Notez que tous les mots de passes sont stockés en clair dans le stockage local de votre navigateur et qu'ils sont très facile à récupérer. Utilisez cette fonctionnalitée à vos risques et périls. Toutefois, cette fonctionnalité vous facilite la vie. Si vous désirer effacer vos identifiants du stockage local, entrez les, puis placer ce bouton en position Off.";
+"CREDENTIAL_REMEMBER_TOOLTIP" = "CREDENTIAL_REMEMBER_TOOLTIP";
 
 /* Cut */
-"Cut" = "Couper";
+"Cut" = "Cut";
 
 /* Decline */
-"Decline" = "Refuser";
+"Decline" = "Decline";
 
 /* Delay before loading a module. This avoid to load server with stanzas */
-"Delay before loading a module. This avoid to load server with stanzas" = "Delai de chargement des modules. Cela evite de surcharger le serveur XMPP.";
+"Delay before loading a module. This avoid to load server with stanzas" = "Delay before loading a module. This avoid to load server with stanzas";
 
 /* Delete */
-"Delete" = "Supprimer";
+"Delete" = "Delete";
 
 /* Delete contact
    Delete contacts */
-"Delete contact" = "Supprimer le contact";
+"Delete contact" = "Delete contact";
 
 /* Delete group */
-"Delete group" = "Supprimer le groupe";
+"Delete group" = "Delete group";
 
 /* disconnected */
-"disconnected" = "Deconnecté";
+"disconnected" = "disconnected";
 
 /* disconnecting */
-"disconnecting" = "Deconnexion...";
+"disconnecting" = "disconnecting";
 
 /* Display or hide the properties view */
-"Display or hide the properties view" = "Affiche les proprietés.";
+"Display or hide the properties view" = "Display or hide the properties view";
 
 /* Do not disturb */
-"Do not disturb" = "Ne pas déranger";
+"Do not disturb" = "Do not disturb";
 
 /* Edit */
-"Edit" = "Editer";
+"Edit" = "Edit";
 
 /* Enter the new password for your account. You will need to enter this password at the next connection */
-"Enter the new password for your account. You will need to enter this password at the next connection" = "Entrez vore nouveau mot de passe. Vous devrez utiliser ce mot de passe lors de la prochaine connexion";
+"Enter the new password for your account. You will need to enter this password at the next connection" = "Enter the new password for your account. You will need to enter this password at the next connection";
 
 /* Error */
-"Error" = "Erreur";
+"Error" = "Error";
 
 /* Expand all groups */
-"Expand all groups" = "Etendre tous les groupes";
+"Expand all groups" = "Expand all groups";
 
 /* Expand group */
-"Expand group" = "Etendre le groupe";
+"Expand group" = "Expand group";
 
 /* Filter contacts by name or tags */
-"Filter contacts by name or tags" = "Filtrer par nom ou par étiquette";
+"Filter contacts by name or tags" = "Filter contacts by name or tags";
 
 /* Go to website */
-"Go to website" = "Visiter le site web";
+"Go to website" = "Go to website";
 
 /* Group */
-"Group" = "Groupe";
+"Group" = "Group";
 
 /* Group  */
-"Group " = "Groupe ";
+"Group " = "Group ";
 
 /* Group addition error */
-"Group addition error" = "Erreur d'ajout de groupe";
+"Group addition error" = "Group addition error";
 
 /* Group supression */
-"Group supression" = "Supprimer le groupe";
+"Group supression" = "Group supression";
 
 /* Groups */
-"Groups" = "Groupes";
+"Groups" = "Groups";
 
 /* Help */
-"Help" = "Aide";
+"Help" = "Help";
 
 /* Hide main menu */
-"Hide main menu" = "Chacher le menu principal";
+"Hide main menu" = "Hide main menu";
 
 /* host-unreachable */
-"host-unreachable" = "hôte injoingnable";
+"host-unreachable" = "host-unreachable";
 
 /* Hypervisor */
-"Hypervisor" = "Hyperviseur";
+"Hypervisor" = "Hypervisor";
 
 /* JID is not valid */
-"JID is not valid" = "le JID n'est pas valide";
+"JID is not valid" = "JID is not valid";
 
 /* Loaded  */
-"Loaded " = "Chargé ";
+"Loaded " = "Loaded ";
 
 /* Locale change */
-"Locale change" = "Changement de langue";
+"Locale change" = "Locale change";
 
 /* Log out */
-"Log out" = "Déconnexion";
+"Log out" = "Log out";
 
 /* Logon */
-"Logon" = "Connexion";
+"Logon" = "Logon";
 
 /* Make a donation */
-"Make a donation" = "Faire un don";
+"Make a donation" = "Make a donation";
 
 /* Modules */
 "Modules" = "Modules";
@@ -228,52 +228,52 @@
 "Notifications" = "Notifications";
 
 /* Password error */
-"Password error" = "Erreur de mot de passe";
+"Password error" = "Password error";
 
 /* Paste */
-"Paste" = "Coller";
+"Paste" = "Paste";
 
 /* Please select a contact first. */
-"Please select a contact first." = "Veuillez choisir un contact.";
+"Please select a contact first." = "Please select a contact first.";
 
 /* Please select a group first. */
-"Please select a group first." = "Veuillez choisir un groupe.";
+"Please select a group first." = "Please select a group first.";
 
 /* Preferences */
-"Preferences" = "Préférences";
+"Preferences" = "Preferences";
 
 /* Preferences saved */
-"Preferences saved" = "Préférences sauvegardées";
+"Preferences saved" = "Preferences saved";
 
 /* Quit */
-"Quit" = "Quitter";
+"Quit" = "Quit";
 
 /* Undo */
-"Redo" = "Refaire";
+"Redo" = "Redo";
 
 /* Release note */
-"Release note" = "Note de version";
+"Release note" = "Release note";
 
 /* Remove the selected contact. It will only remove it from your roster. */
-"Remove the selected contact. It will only remove it from your roster." = "Supprime le contact de votre roster";
+"Remove the selected contact. It will only remove it from your roster." = "Remove the selected contact. It will only remove it from your roster.";
 
 /* Rename contact */
-"Rename contact" = "Renommer le contact";
+"Rename contact" = "Rename contact";
 
 /* Rename group */
-"Rename group" = "Renommer le groupe";
+"Rename group" = "Rename group";
 
 /* Report a bug */
-"Report a bug" = "Rapporter un bug";
+"Report a bug" = "Report a bug";
 
 /* Resource */
 "Resource" = "Resource";
 
 /* Retype the password */
-"Retype the password" = "Retapez votre mot de passe";
+"Retype the password" = "Retype the password";
 
 /* Search entity */
-"Search entity" = "Rechercher une entité";
+"Search entity" = "Search entity";
 
 /* Select a contact */
 "Select a contact" = "Select a contact";
@@ -282,152 +282,149 @@
 "Select a group" = "Select a group";
 
 /* Select all */
-"Select all" = "Tout séléctionner";
+"Select all" = "Select all";
 
 /* Select next entity */
-"Select next entity" = "Séléctionner l'entité suivante";
+"Select next entity" = "Select next entity";
 
 /* Select previous entity */
-"Select previous entity" = "Séléctionner l'entité précédente";
+"Select previous entity" = "Select previous entity";
 
 /* Set custom status */
-"Set custom status" = "Définir le statut personalisé";
+"Set custom status" = "Set custom status";
 
 /* Set status available */
-"Set status available" = "Définir le statut 'Disponible'";
+"Set status available" = "Set status available";
 
 /* Set status away */
-"Set status away" = "Définir le statut 'Parti(e)'";
+"Set status away" = "Set status away";
 
 /* Set status busy */
-"Set status busy" = "Définir le statut 'Occupé'";
+"Set status busy" = "Set status busy";
 
 /* Set the log level of the client. The more verbose, the less performance. */
-"Set the log level of the client. The more verbose, the less performance." = "Configure le niveau de log du client. Un niveau de log trop élevé entraine une baisse des performances";
+"Set the log level of the client. The more verbose, the less performance." = "Set the log level of the client. The more verbose, the less performance.";
 
 /* Status */
-"Status" = "Statut";
+"Status" = "Status";
 
 /* Subscription request */
-"Subscription request" = "Demande de souscription";
+"Subscription request" = "Subscription request";
 
 /* Tags */
-"Tags" = "Etiquettes";
+"Tags" = "Tags";
 
 /* The current logged account */
-"The current logged account" = "Le compte courrant";
+"The current logged account" = "The current logged account";
 
 /* The current status of the contact */
 "The current status of the contact" = "The current status of the contact";
 
 /* The display name of the new contact */
-"The display name of the new contact" = "Le nom du contact";
+"The display name of the new contact" = "The display name of the new contact";
 
 /* The domain (XMPP server) of the contact */
 "The domain (XMPP server) of the contact" = "The domain (XMPP server) of the contact";
 
 /* The group has been removed */
-"The group has been removed" = "Le groupe a été supprimé";
+"The group has been removed" = "The group has been removed";
 
 /* The group must be empty */
-"The group must be empty" = "Le groupe doit être vide";
+"The group must be empty" = "The group must be empty";
 
 /* The JID to use to connect. It is always formatted like user@domain.com */
-"The JID to use to connect. It is always formatted like user@domain.com" = "Le JID à utiliser. Il est toujours formaté de la sorte: utilisateur@domaine.com";
+"The JID to use to connect. It is always formatted like user@domain.com" = "The JID to use to connect. It is always formatted like user@domain.com";
 
 /* The name of the new group */
-"The name of the new group" = "Le nom du nouveau groupe";
+"The name of the new group" = "The name of the new group";
 
 /* The password associated to your XMPP account */
-"The password associated to your XMPP account" = "Le mot de passe associé au compte XMPP";
+"The password associated to your XMPP account" = "The password associated to your XMPP account";
 
 /* The passwords you entered don't match. */
-"The passwords you entered don't match." = "Les mots de passes ne concordent pas.";
+"The passwords you entered don't match." = "The passwords you entered don't match.";
 
 /* The resource of the contact */
-"The resource of the contact" = "La ressource du contact";
+"The resource of the contact" = "The resource of the contact";
 
 /* The resource to use */
-"The resource to use" = "La ressource à utiliser";
+"The resource to use" = "The resource to use";
 
 /* The service BOSH (XMPP over HTTP) to use */
-"The service BOSH (XMPP over HTTP) to use" = "The service BOSH (XMPP sur HTTP) à utiliser";
+"The service BOSH (XMPP over HTTP) to use" = "The service BOSH (XMPP over HTTP) to use";
 
 /* The type of contact (hypervisor, virtual machine or user) */
 "The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
 
-/* The URL of the welcome page */
-"The URL of the welcome page" = "L'adresse de la page de bienvenue";
-
 /* The XMPP JID of the contact */
-"The XMPP JID of the contact" = "Le JID du contact";
+"The XMPP JID of the contact" = "The XMPP JID of the contact";
 
 /* This LED is ON when XMPP data are received */
-"This LED is ON when XMPP data are received" = "Cette LED est allumée lors de la reception de donnnées XMPP";
+"This LED is ON when XMPP data are received" = "This LED is ON when XMPP data are received";
 
 /* This LED is ON when XMPP data are sent */
-"This LED is ON when XMPP data are sent" = "Cette LED est allumée lors de l'envoi de donnnées XMPP";
+"This LED is ON when XMPP data are sent" = "This LED is ON when XMPP data are sent";
 
 /* Turn this ON to activate eye candy animation. Turn it off to gain performances */
-"Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Active les animations. Les animations réduisent les performances";
+"Turn this ON to activate eye candy animation. Turn it off to gain performances" = "Turn this ON to activate eye candy animation. Turn it off to gain performances";
 
 /* Turn this ON to activate XMPP monitoring. Turn it off to gain performances */
-"Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Active la surveillance XMPP. La surveillance XMPP réduit les performances";
+"Turn this ON to activate XMPP monitoring. Turn it off to gain performances" = "Turn this ON to activate XMPP monitoring. Turn it off to gain performances";
 
 /* Unable to update your password */
-"Unable to update your password" = "Impossible de mettre à jour votre mot de passe";
+"Unable to update your password" = "Unable to update your password";
 
 /* Undo */
-"Undo" = "Defaire";
+"Undo" = "Undo";
 
 /* unknown-error */
-"unknown-error" = "Erreur inconnue";
+"unknown-error" = "unknown-error";
 
 /* Update your current XMPP status */
-"Update your current XMPP status" = "Mettre à jour le statut XMPP";
+"Update your current XMPP status" = "Update your current XMPP status";
 
 /* User */
-"User" = "Utilisateur";
+"User" = "User";
 
 /* User supression */
-"User supression" = "Supprimer un utilisateur";
+"User supression" = "User supression";
 
 /* Virtual machine */
-"Virtual machine" = "Machine virtuelle";
+"Virtual machine" = "Virtual machine";
 
 /* XMPP Account */
-"XMPP Account" = "Compte XMPP";
+"XMPP Account" = "XMPP Account";
 
 /* You are not registred to the entity events. */
-"You are not registred to the entity events." = "Vous n'êtes pas abonné aux evenements de cette entité.";
+"You are not registred to the entity events." = "You are not registred to the entity events.";
 
 /* You are registred to the entity events. */
-"You are registred to the entity events." = "Vous êtes abonné aux evenements de cette entité.";
+"You are registred to the entity events." = "You are registred to the entity events.";
 
 /* You can't assign tags here */
-"You can't assign tags here" = "Vous ne pouvez pas assigner d'étiquettes ici.";
+"You can't assign tags here" = "You can't assign tags here";
 
 /* You have to enter a valid group name. */
-"You have to enter a valid group name." = "Vous devez entrer un nom de groupe valide";
+"You have to enter a valid group name." = "You have to enter a valid group name.";
 
 /* You must choose a contact */
-"You must choose a contact" = "Vous devez choisir un contact";
+"You must choose a contact" = "You must choose a contact";
 
 /* You must choose a group */
-"You must choose a group" = "Vous devez choisir un groupe";
+"You must choose a group" = "You must choose a group";
 
 /* You must enter a JID using the form user@domain. */
-"You must enter a JID using the form user@domain." = "Vous devez entrer un JID de la forme utilisateur@domaine.com.";
+"You must enter a JID using the form user@domain." = "You must enter a JID using the form user@domain.";
 
 /* You need to reload the application to complete the locale change. */
-"You need to reload the application to complete the locale change." = "Vous devez recharger l'application pour que le changement de langue prenne effet.";
+"You need to reload the application to complete the locale change." = "You need to reload the application to complete the locale change.";
 
 /* Your password has been successfully updated */
-"Your password has been successfully updated" = "Votre mot de passe a été mis à jour";
+"Your password has been successfully updated" = "Your password has been successfully updated";
 
 /* Your preferences have been saved to the XMPP server */
-"Your preferences have been saved to the XMPP server" = "Vos préférences ont été sauvegardée dans le serveur XMPP";
+"Your preferences have been saved to the XMPP server" = "Your preferences have been saved to the XMPP server";
 
 /* Your status is now  */
-"Your status is now " = "Votre statut est maintenant ";
+"Your status is now " = "Your status is now ";
 

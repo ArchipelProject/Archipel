@@ -356,9 +356,6 @@
 /* The type of contact (hypervisor, virtual machine or user) */
 "The type of contact (hypervisor, virtual machine or user)" = "The type of contact (hypervisor, virtual machine or user)";
 
-/* The URL of the welcome page */
-"The URL of the welcome page" = "Die URL der Willkommensseite";
-
 /* The XMPP JID of the contact */
 "The XMPP JID of the contact" = "Die XMPP JID des Kontakts";
 

@@ -191,17 +191,11 @@
 /* Class = "NSTextFieldCell"; title = "You can configure general preferences of Archipel. This is stored using local storage."; ObjectID = "1052"; */
 "1052.title" = "Sie können allgemeine Einstellungen konfigurieren. Diese werden im lokalen Speicher gespeichert.";
 
-/* Class = "NSTextFieldCell"; placeholderString = "URL that will be displayed at login"; ObjectID = "1053"; */
-"1053.placeholderString" = "URL welche beim Login angezeigt wird";
-
 /* Class = "NSTextFieldCell"; placeholderString = "0.15"; ObjectID = "1054"; */
 "1054.placeholderString" = "0.15";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Office"; ObjectID = "1055"; */
 "1055.placeholderString" = "Büro";
-
-/* Class = "NSTextFieldCell"; title = "Welcome page URL"; ObjectID = "1056"; */
-"1056.title" = "URL der Willkommensseite";
 
 /* Class = "NSTextFieldCell"; title = "Module loading delay"; ObjectID = "1057"; */
 "1057.title" = "Modul Ladeverzögerung";

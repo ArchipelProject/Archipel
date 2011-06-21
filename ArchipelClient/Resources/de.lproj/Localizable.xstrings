@@ -194,8 +194,6 @@
 	<string>Tags</string>
 	<key>The JID to use to connect. It is always formatted like user@domain.com</key>
 	<string>Die JID welche für die Verbindung verwendet wird. (user@domain.com)</string>
-	<key>The URL of the welcome page</key>
-	<string>Die URL der Willkommensseite</string>
 	<key>The XMPP JID of the contact</key>
 	<string>Die XMPP JID des Kontakts</string>
 	<key>The current logged account</key>
