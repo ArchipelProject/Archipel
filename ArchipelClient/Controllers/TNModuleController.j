@@ -154,7 +154,7 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 */
 - (BOOL)setEntity:(id)anEntity ofType:(CPString)aType
 {
-    if (anEntity === _entity)
+    if ((anEntity === _entity) && (anEntity != nil))
         return NO;
 
     var center = [CPNotificationCenter defaultCenter];
@@ -169,9 +169,6 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     _moduleType             = aType;
 
     [center removeObserver:self];
-
-    if (!_entity)
-        return;
 
     [center addObserver:self selector:@selector(_didPresenceUpdate:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
     [center addObserver:self selector:@selector(_didReceiveVcard:) name:TNStropheContactVCardReceivedNotification object:_entity];
@@ -247,9 +244,8 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
     if (currentSelectedIndex == [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid])
         return;
 
-    CPLog.warn("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
+    CPLog.info("remembered last selected tabindex " + currentSelectedIndex + " for entity " + _entity);
     [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] setObject:currentSelectedIndex forKey:memid];
-    CPLog.warn("---> "+ [[defaults objectForKey:@"TNArchipelModuleControllerOpenedTabRegistry"] objectForKey:memid]);
 }
 
 /*! Reselect the last remembered tab index for entity

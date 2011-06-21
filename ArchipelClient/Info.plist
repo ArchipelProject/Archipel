@@ -36,8 +36,6 @@
     <string>Copyright 2011 Antoine Mercadal</string>
     <key>TNArchipelDisplayXMPPManageContactsButton</key>
     <integer>1</integer>
-    <key>TNArchipelHelpWindowURL</key>
-    <string>http://welcome.archipelproject.org/</string>
     <key>TNArchipelModuleLoadingDelay</key>
     <real>0.15</real>
     <key>TNArchipelMonitorStanza</key>

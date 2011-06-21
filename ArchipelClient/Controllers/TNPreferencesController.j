@@ -55,7 +55,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     @outlet CPTabView       tabViewMain;
     @outlet CPTextField     fieldBOSHResource;
     @outlet CPTextField     fieldModuleLoadingDelay;
-    @outlet CPTextField     fieldWelcomePageUrl;
     @outlet CPView          viewContentWindowPreferences;
     @outlet CPView          viewPreferencesGeneral;
     @outlet TNSwitch        switchUseAnimations;
@@ -111,7 +110,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     [fieldBOSHResource setToolTip:CPLocalizedString(@"The resource to use", @"The resource to use")];
     [fieldModuleLoadingDelay setToolTip:CPLocalizedString(@"Delay before loading a module. This avoid to load server with stanzas", @"Delay before loading a module. This avoid to load server with stanzas")];
-    [fieldWelcomePageUrl setToolTip:CPLocalizedString(@"The URL of the welcome page", @"The URL of the welcome page")];
     [switchUseAnimations setToolTip:CPLocalizedString(@"Turn this ON to activate eye candy animation. Turn it off to gain performances", @"Turn this ON to activate eye candy animation. Turn it off to gain performances")];
     [switchUseXMPPMonitoring setToolTip:CPLocalizedString(@"Turn this ON to activate XMPP monitoring. Turn it off to gain performances", @"Turn this ON to activate XMPP monitoring. Turn it off to gain performances")];
     [buttonDebugLevel setToolTip:CPLocalizedString(@"Set the log level of the client. The more verbose, the less performance.", @"Set the log level of the client. The more verbose, the less performance.")]
@@ -223,7 +221,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [fieldWelcomePageUrl setStringValue:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
     [fieldModuleLoadingDelay setFloatValue:[defaults floatForKey:@"TNArchipelModuleLoadingDelay"]];
     [fieldBOSHResource setStringValue:[defaults objectForKey:@"TNArchipelBOSHResource"]];
     [buttonDebugLevel selectItemWithTitle:[defaults objectForKey:@"TNArchipelConsoleDebugLevel"]];
@@ -263,7 +260,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     var defaults = [CPUserDefaults standardUserDefaults],
         oldLocale = [defaults objectForKey:@"CPBundleLocale"];
 
-    [defaults setObject:[fieldWelcomePageUrl stringValue] forKey:@"TNArchipelHelpWindowURL"];
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
     [defaults setObject:[buttonDebugLevel title] forKey:@"TNArchipelConsoleDebugLevel"];

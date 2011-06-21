@@ -113,6 +113,7 @@ TNArchipelNotificationRosterSelectionChanged            = @"TNArchipelNotificati
 */
 TNArchipelRememberOpenedGroup                           = @"TNArchipelRememberOpenedGroup_";
 
+TNArchipelEntityTypeGeneral                             = @"general";
 
 // this doesn't work with xcodecapp for some mysterious reasons
 TNUserAvatarSize            = nil;
@@ -154,7 +155,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet CPView                              statusBar;
     @outlet CPView                              viewAboutWindowLogoContainer;
     @outlet CPView                              viewRosterMask;
-    @outlet CPWebView                           helpView;
     @outlet CPWebView                           webViewAboutCredits;
     @outlet CPWindow                            theWindow;
     @outlet CPWindow                            windowAboutArchipel;
@@ -174,7 +174,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     @outlet TNUserAvatarController              userAvatarController;
     @outlet TNXMPPAccountController             XMPPAccountController;
 
-    BOOL                                        _shouldShowHelpView;
     BOOL                                        _tagsVisible;
     CPButton                                    _hideButton;
     CPButton                                    _userAvatarButton;
@@ -246,7 +245,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     /* register defaults defaults */
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
-            [bundle objectForInfoDictionaryKey:@"TNArchipelHelpWindowURL"], @"TNArchipelHelpWindowURL",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersionHuman"], @"TNArchipelVersionHuman",
             [bundle objectForInfoDictionaryKey:@"TNArchipelVersion"], @"TNArchipelVersion",
             [bundle objectForInfoDictionaryKey:@"TNArchipelModuleLoadingDelay"], @"TNArchipelModuleLoadingDelay",
@@ -323,6 +321,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     CPLog.trace(@"initializing the _moduleTabView");
     _moduleTabView = [[TNiTunesTabView alloc] initWithFrame:[rightView bounds]];
     [_moduleTabView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
+    [_moduleTabView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
     [rightView addSubview:_moduleTabView];
 
 
@@ -366,12 +365,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [progressIndicatorModulesLoading setMinValue:0.0];
     [progressIndicatorModulesLoading setMaxValue:1.0];
     [progressIndicatorModulesLoading setDoubleValue:0.0];
-
-
-    /* help window */
-    CPLog.trace(@"Display _helpWindow");
-    _shouldShowHelpView = YES;
-    [helpView setScrollMode:CPWebViewScrollNative];
 
 
     /* Growl */
@@ -575,7 +568,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     // ok the next following line is a terrible awfull hack.
     [_mainToolbar addItemWithIdentifier:@"CUSTOMSPACE" label:@"              "/* incredible huh ?*/ view:nil target:nil action:nil];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemLogout label:CPLocalizedString(@"Log out", @"Log out") icon:[bundle pathForResource:@"IconsToolbar/logout.png"] target:self action:@selector(toolbarItemLogoutClick:) toolTip:@"Log out from the application"];
-    [_mainToolbar addItemWithIdentifier:TNToolBarItemHelp label:CPLocalizedString(@"Help", @"Help") icon:[bundle pathForResource:@"IconsToolbar/help.png"] target:self action:@selector(toolbarItemHelpClick:) toolTip:@"Detach the welcome view in an external window"];
     [_mainToolbar addItemWithIdentifier:TNToolBarItemTags label:CPLocalizedString(@"Tags", @"Tags") icon:[bundle pathForResource:@"IconsToolbar/tags.png"] target:self action:@selector(toolbarItemTagsClick:) toolTip:@"Show or hide the tags field"];
 
     var statusSelector  = [[CPPopUpButton alloc] initWithFrame:CPRectMake(0.0, 0.0, 130.0, 24.0)],
@@ -849,9 +841,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
         CPLog.trace(@"Starting loading all modules");
         [moduleController load];
     }
-
-    [[CPNotificationCenter defaultCenter] addObserver:self selector:@selector(didInitialHelpViewLoad:) name:CPWebViewProgressFinishedNotification object:nil];
-    [self showHelpView];
 }
 
 /*! Notification responder for CPApplicationWillTerminateNotification
@@ -873,48 +862,9 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView reloadData];
 }
 
-/*! called the first time the helpView is loaded. the start module loading
-    @param aNotification the notification
-*/
-- (void)didInitialHelpViewLoad:(CPNotification)aNotification
-{
-    if (![moduleController isModuleLoadingStarted])
-    {
-        CPLog.trace(@"Starting loading all modules");
-        [moduleController load];
-    }
-        [[CPNotificationCenter defaultCenter] removeObserver:self name:CPWebViewProgressFinishedNotification object:nil];
-}
-
 
 #pragma mark -
 #pragma mark Utilities
-
-/*! Display the helpView in the rightView
-*/
-- (void)showHelpView
-{
-    var bundle      = [CPBundle mainBundle],
-        defaults    = [CPUserDefaults standardUserDefaults],
-        url         = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-        locale      = [defaults objectForKey:@"CPBundleLocale"],
-        version     = [defaults objectForKey:@"TNArchipelVersionHuman"];
-
-    if (!url || (url == @"local"))
-        url = @"help/index.html";
-
-    [helpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version + "&lang=" + locale];
-
-    [helpView setFrame:[rightView bounds]];
-    [rightView addSubview:helpView];
-}
-
-/*! Hide the helpView from the rightView
-*/
-- (void)hideHelpView
-{
-    [helpView removeFromSuperview];
-}
 
 /*! Enable or disable the XMPP monitoring
     @param shouldMonitor YES or NO
@@ -1237,63 +1187,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 #pragma mark Toolbar Actions
 
 /*! Action of toolbar imutables toolbar items.
-    Trigger on delete help item click.
-    This will show a window conataining the helpView
-    To have more information about the toolbar, see TNToolbar
-*/
-- (IBAction)toolbarItemHelpClick:(id)sender
-{
-    if (_helpWindow)
-    {
-        if ([CPPlatform isBrowser])
-            [_platformHelpWindow orderOut:nil];
-
-        [_helpWindow close];
-        _helpWindow = nil;
-    }
-
-    if ([CPPlatform isBrowser])
-        _platformHelpWindow = [[CPPlatformWindow alloc] initWithContentRect:CPRectMake(0,0,950,600)];
-
-    if ([CPPlatform isBrowser])
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CPRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask | CPBorderlessBridgeWindowMask];
-    else
-        _helpWindow     = [[CPWindow alloc] initWithContentRect:CPRectMake(0,0,950,600) styleMask:CPTitledWindowMask | CPClosableWindowMask | CPMiniaturizableWindowMask | CPResizableWindowMask];
-
-    var scrollView  = [[CPScrollView alloc] initWithFrame:[[_helpWindow contentView] bounds]];
-
-    if ([CPPlatform isBrowser])
-    {
-        [_helpWindow setPlatformWindow:_platformHelpWindow];
-        [_platformHelpWindow orderFront:nil];
-        [_platformHelpWindow setTitle:@"Welcome to Archipel"];
-    }
-
-    [_helpWindow setDelegate:self];
-
-    var bundle          = [CPBundle mainBundle],
-        defaults        = [CPUserDefaults standardUserDefaults],
-        newHelpView     = [[CPWebView alloc] initWithFrame:[[_helpWindow contentView] bounds]],
-        url             = [defaults objectForKey:@"TNArchipelHelpWindowURL"],
-        version         = [defaults objectForKey:@"TNArchipelVersionHuman"];
-
-    if (!url || (url == @"local"))
-        url = @"help/index.html";
-
-    [newHelpView setScrollMode:CPWebViewScrollNative];
-    [newHelpView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [newHelpView setMainFrameURL:[bundle pathForResource:url] + "?version=" + version];
-
-    [scrollView setAutohidesScrollers:YES];
-    [scrollView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
-    [scrollView setDocumentView:newHelpView];
-
-    [_helpWindow setContentView:scrollView];
-    [_helpWindow center];
-    [_helpWindow makeKeyAndOrderFront:nil];
-}
-
-/*! Action of toolbar imutables toolbar items.
     Trigger presence item change.
     This will change your own XMPP status
 */
@@ -1379,7 +1272,6 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)didRetreiveUserVCard:(CPNotification)aNotification
 {
-
     var vCard = [connectionController userVCard],
         photoNode;
 
@@ -1502,34 +1394,28 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 */
 - (void)performModuleChange:(CPTimer)aTimer
 {
-    if ([_rosterOutlineView numberOfSelectedRows] == 0)
+    var item = [aTimer valueForKey:@"userInfo"];
+
+    switch ([item class])
     {
-        [moduleController setEntity:nil ofType:nil];
-        [moduleController setCurrentEntityForToolbarModules:nil];
-        [self showHelpView];
-        [propertiesController hideView];
-    }
-    else
-    {
-        var item = [aTimer valueForKey:@"userInfo"];
+        case TNStropheGroup:
+            [moduleController setEntity:item ofType:@"group"];
+            [moduleController setCurrentEntityForToolbarModules:nil];
+            break;
 
-        [self hideHelpView];
+        case TNStropheContact:
+            var vCard       = [item vCard],
+                entityType  = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
+            [[TNPermissionsCenter defaultCenter] cachePermissionsForEntityIfNeeded:item];
+            [moduleController setEntity:item ofType:entityType];
+            [moduleController setCurrentEntityForToolbarModules:item];
+            break;
 
-        switch ([item class])
-        {
-            case TNStropheGroup:
-                [moduleController setEntity:item ofType:@"group"];
-                [moduleController setCurrentEntityForToolbarModules:nil];
-                break;
-
-            case TNStropheContact:
-                var vCard       = [item vCard],
-                    entityType  = [[[TNStropheIMClient defaultClient] roster] analyseVCard:vCard];
-                [[TNPermissionsCenter defaultCenter] cachePermissionsForEntityIfNeeded:item];
-                [moduleController setEntity:item ofType:entityType];
-                [moduleController setCurrentEntityForToolbarModules:item];
-                break;
-        }
+        case nil:
+            [moduleController setEntity:nil ofType:TNArchipelEntityTypeGeneral];
+            [moduleController setCurrentEntityForToolbarModules:nil];
+            [propertiesController hideView];
+            break;
     }
 
     // post a system wide notification about the changes
@@ -1596,11 +1482,11 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 - (void)moduleLoaderLoadingComplete:(TNModuleController)aLoader
 {
     CPLog.info(@"All modules have been loaded");
-    CPLog.trace(@"Positionning the connection window");
 
     [_mainToolbar reloadToolbarItems]
     [leftView flip:nil];
     [updateController check];
+    [self performModuleChange:nil];
 }
 
 /*! delegate of StropheCappuccino that will be trigger on Raw input traffic
