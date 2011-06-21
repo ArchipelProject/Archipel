@@ -443,3 +443,9 @@
 /* Class = "NSTextFieldCell"; title = "Offline users"; ObjectID = "1489"; */
 "1489.title" = "Contacts hors ligne";
 
+/* Class = "NSTextFieldCell"; title = "Node"; ObjectID = "1493"; */
+"1493.title" = "Node";
+
+/* Class = "NSTextFieldCell"; title = "node"; ObjectID = "1494"; */
+"1494.title" = "node";
+

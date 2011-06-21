@@ -46,10 +46,12 @@
     @outlet CPImageView             entryStatusIcon;
     @outlet CPImageView             imageViewVCardPhoto;
     @outlet CPTextField             entryDomain;
+    @outlet CPTextField             entryNode;
     @outlet CPTextField             entryResource;
     @outlet CPTextField             entryStatus;
     @outlet CPTextField             entryType;
     @outlet CPTextField             labelDomain;
+    @outlet CPTextField             labelNode;
     @outlet CPTextField             labelResource;
     @outlet CPTextField             labelStatus;
     @outlet CPTextField             labelType;
@@ -61,6 +63,7 @@
     @outlet CPTextField             labelVCardWebiste;
     @outlet CPView                  backView;
     @outlet CPView                  frontView;
+    @outlet CPView                  viewNicknameContainer;
     @outlet TNContactsController    contactsController;
     @outlet TNEditableLabel         entryName           @accessors(readonly);
     @outlet TNFlipView              mainView            @accessors(readonly);
@@ -106,16 +109,25 @@
 
     [frontView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
+    [viewNicknameContainer setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]]];
+
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
-    [entryName setTextColor:[CPColor blackColor]];
+    [entryName setTextColor:[CPColor colorWithHexString:@"576066"]];
     [entryName setTarget:self];
     [entryName setAction:@selector(changeNickName:)];
     [entryName setToolTip:CPLocalizedString(@"Click here to change the displayed named of the current contact or group", @"Click here to change the displayed named of the current contact or group")];
+    [entryName setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
+    [entryName setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
+    [entryName setLineBreakMode:CPLineBreakByTruncatingTail];
 
     [labelResource setTextColor:[CPColor blackColor]];
     [labelStatus setTextColor:[CPColor blackColor]];
     [labelType setTextColor:[CPColor blackColor]];
     [labelDomain setTextColor:[CPColor blackColor]];
+    [labelNode setTextColor:[CPColor blackColor]];
+
+    [entryNode setSelectable:YES];
+    [entryNode setLineBreakMode:CPLineBreakByTruncatingTail];
 
     [entryAvatar setBordered:NO];
     [entryAvatar setAutoresizingMask:CPViewMaxXMargin | CPViewMinXMargin];
@@ -153,6 +165,13 @@
     [buttonBackViewFlip setImage:snapImage]; // this avoid the blinking..
     [buttonBackViewFlip setValue:snapImage forThemeAttribute:@"image"];
     [buttonBackViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+
+    [labelVCardCompany setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardEmail setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardFN setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardLocality setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardRole setLineBreakMode:CPLineBreakByTruncatingTail];
+    [labelVCardWebiste setLineBreakMode:CPLineBreakByTruncatingTail];
 }
 
 
@@ -271,6 +290,8 @@
         [labelStatus setHidden:NO];
         [labelDomain setHidden:NO];
         [labelType setHidden:NO];
+        [labelNode setHidden:NO];
+        [entryNode setHidden:NO];
         [entryAvatar setHidden:NO];
         [entryType setHidden:NO];
 
@@ -281,6 +302,7 @@
         [entryDomain setStringValue:[[_entity JID] domain]];
         [entryResource setStringValue:[[_entity resources] lastObject]];
         [entryStatus setStringValue:[_entity XMPPStatus]];
+        [entryNode setStringValue:[[_entity JID] node]];
 
         switch ([[[TNStropheIMClient defaultClient] roster] analyseVCard:[_entity vCard]])
         {
@@ -350,6 +372,8 @@
         [labelStatus setHidden:YES];
         [labelDomain setHidden:YES];
         [labelType setHidden:YES];
+        [labelNode setHidden:YES];
+        [entryNode setHidden:YES];
         [entryAvatar setHidden:YES];
         [entryType setHidden:YES];
 

@@ -68,17 +68,19 @@
                                                  [[rosterLayout objectForKey:@"TNRosterDataViewContactImageSizeStatus"] objectForKey:@"height"]);
 
         _shouldDisplayAvatar            = !![rosterLayout objectForKey:@"TNOutlineViewRosterDisplayAvatar"],
-        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 1, 16, 16)];
-        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 3, 170, 100)];
-        _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(33 + contactPlacementOffset, 18, 170, 100)];
+        _statusIcon                     = [[CPImageView alloc] initWithFrame:CGRectMake(35 + contactPlacementOffset, 1, 16, 16)];
+        _name                           = [[CPTextField alloc] initWithFrame:CGRectMake(48 + contactPlacementOffset, 1, aFrame.size.width - (54 + contactPlacementOffset), 15)];
+        _status                         = [[CPTextField alloc] initWithFrame:CGRectMake(35 + contactPlacementOffset, 16, aFrame.size.width - (39 + contactPlacementOffset), 15)];
         _events                         = [[CPTextField alloc] initWithFrame:CGRectMake(CPRectGetMaxX(aFrame) - 25, 10, 23, 14)];
         _unknownUserImage               = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"user-unknown.png"]];
         _normalStateCartoucheColor      = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche.png"]]];
         _selectedStateCartoucheColor    = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"cartouche-selected.png"]]];
 
         if (_shouldDisplayAvatar)
+        {
             _avatar = [[CPImageView alloc] initWithFrame:CGRectMake(0, 3, 29, 29)];
             [_avatar setFrameSize:contactImageSizeAvatar];
+        }
 
         [_events setBackgroundColor:_normalStateCartoucheColor];
         [_events setAlignment:CPCenterTextAlignment];
@@ -94,19 +96,23 @@
         [_events setHidden:YES];
 
         [_name setFont:[CPFont systemFontOfSize:contactFontSizeName]];
+        [_name setAutoresizingMask:CPViewWidthSizable];
         [_name setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_name setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
         [_name setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [_name setValue:CGSizeMake(0.0, .0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView];
         [_name setValue:[CPFont boldSystemFontOfSize:contactFontSizeName] forThemeAttribute:@"font" inState:CPThemeStateSelectedDataView];
+        [_name setLineBreakMode:CPLineBreakByTruncatingTail];
 
         [_status setFont:[CPFont systemFontOfSize:contactFontSizeStatus]];
+        [_status setAutoresizingMask:CPViewWidthSizable];
         [_status setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [_status setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateNormal];
         [_status setValue:[CPFont systemFontOfSize:9.0] forThemeAttribute:@"font" inState:CPThemeStateNormal];
         [_status setValue:[CPColor colorWithHexString:@"808080"] forThemeAttribute:@"text-color" inState:CPThemeStateNormal];
         [_status setValue:[CPColor whiteColor] forThemeAttribute:@"text-color" inState:CPThemeStateSelectedDataView];
         [_status setValue:CGSizeMake(0.0, 0.0) forThemeAttribute:@"text-shadow-offset" inState:CPThemeStateSelectedDataView]
+        [_status setLineBreakMode:CPLineBreakByTruncatingTail];
 
         var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
             actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
@@ -148,17 +154,17 @@
     _contact = aContact;
 
     [_name setStringValue:[aContact nickname]];
-    [_name sizeToFit];
+    // [_name sizeToFit];
     [_status setStringValue:[aContact XMPPStatus]];
-    [_status sizeToFit];
+    // [_status sizeToFit];
 
-    var boundsName = [_name frame];
-    boundsName.size.width += 10;
-    [_name setFrame:boundsName];
+    // var boundsName = [_name frame];
+    // boundsName.size.width += 10;
+    // [_name setFrame:boundsName];
 
-    var boundsShow = [_status frame];
-    boundsShow.size.width += 10;
-    [_status setFrame:boundsShow];
+    // var boundsShow = [_status frame];
+    // boundsShow.size.width += 10;
+    // [_status setFrame:boundsShow];
 
     [_statusIcon setImage:[aContact statusIcon]];
 
@@ -318,6 +324,7 @@
         [self setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateNormal];
         [self setValue:[CPColor colorWithHexString:@"7485a0"] forThemeAttribute:@"text-shadow-color" inState:CPThemeStateSelectedDataView];
         [self setVerticalAlignment:CPCenterVerticalTextAlignment];
+        [self setLineBreakMode:CPLineBreakByTruncatingTail];
     }
 
     return self;

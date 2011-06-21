@@ -59,9 +59,9 @@
         <key>TNRosterDataViewContactImageSizeAvatar</key>
         <dict>
             <key>height</key>
-            <real>22</real>
+            <real>24</real>
             <key>width</key>
-            <real>22</real>
+            <real>24</real>
         </dict>
         <key>TNRosterDataViewContactImageSizeStatus</key>
         <dict>

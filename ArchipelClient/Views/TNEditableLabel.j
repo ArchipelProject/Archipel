@@ -49,7 +49,7 @@
     [super textDidBlur:aNotification];
     [self setEditable:NO];
     [self setSelectedRange:CPMakeRange(0, 0)];
-    [self setTextColor:[CPColor blackColor]];
+    [self setTextColor:[CPColor colorWithHexString:@"576066"]];
 }
 
 @end
