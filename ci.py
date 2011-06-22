@@ -34,6 +34,10 @@ EXPORT_PATH="/var/www/archipelproject.org/nightlies/old/"
 API_PATH="/var/www/archipelproject.org/api/"
 
 
+def updateSubmodules():
+    os.system("bash ./pull.sh")
+
+
 def buildCappuccino():
     os.system("echo \* Starting to build Cappuccino")
     if os.system("cd ./ArchipelClient/Libraries/Cappuccino && jake release && jake debug"):
@@ -188,7 +192,8 @@ if __name__ == "__main__":
     if "#nobuild" in out:
         os.system("echo \* Build skipped according to last commit message (contains #nobuild)")
         sys.exit(0)
-    
+
+    updateSubmodules()
     if BUILD_CAPPUCCINO or FORCE:        buildCappuccino()
     if BUILD_GROWLCAPPUCCINO or FORCE:   buildGrowlCappuccino()
     if BUILD_ITUNESTABVIEW or FORCE:     buildiTunesTabView()
