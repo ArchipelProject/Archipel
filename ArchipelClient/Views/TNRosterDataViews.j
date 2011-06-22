@@ -117,21 +117,21 @@
         var actionImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction.png"] size:CPSizeMake(14.0, 14.0)],
             actionImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"quickaction-pressed.png"] size:CPSizeMake(14.0, 14.0)];
 
-        _buttonAction = [[CPButton alloc] initWithFrame:CPRectMake(CPRectGetMaxX(aFrame) - 24, CPRectGetMidY(aFrame) - 18, 16, 16)];
-        [_buttonAction setAutoresizingMask:CPViewMinXMargin];
-        [_buttonAction setBordered:NO];
-        [_buttonAction setImage:actionImage];
-        [_buttonAction setValue:actionImage forThemeAttribute:@"image"];
-        [_buttonAction setValue:actionImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
-        [_buttonAction setHidden:YES];
-        [_buttonAction setTarget:self];
-        [_buttonAction setAction:@selector(openQuickActionWindow:)];
+        // _buttonAction = [[CPButton alloc] initWithFrame:CPRectMake(CPRectGetMaxX(aFrame) - 24, CPRectGetMidY(aFrame) - 18, 16, 16)];
+        // [_buttonAction setAutoresizingMask:CPViewMinXMargin];
+        // [_buttonAction setBordered:NO];
+        // [_buttonAction setImage:actionImage];
+        // [_buttonAction setValue:actionImage forThemeAttribute:@"image"];
+        // [_buttonAction setValue:actionImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+        // [_buttonAction setHidden:YES];
+        // [_buttonAction setTarget:self];
+        // [_buttonAction setAction:@selector(openQuickActionWindow:)];
 
         [self addSubview:_statusIcon];
         [self addSubview:_name];
         [self addSubview:_events];
         [self addSubview:_status];
-        [self addSubview:_buttonAction];
+        // [self addSubview:_buttonAction];
 
         if (_shouldDisplayAvatar)
             [self addSubview:_avatar];
@@ -201,8 +201,8 @@
     [_status setThemeState:aState];
     [_events setThemeState:aState];
 
-    if ((aState == CPThemeStateSelectedDataView) && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_contact vCard]] != TNArchipelEntityTypeUser)
-        [_buttonAction setHidden:NO];
+    // if ((aState == CPThemeStateSelectedDataView) && [[[TNStropheIMClient defaultClient] roster] analyseVCard:[_contact vCard]] != TNArchipelEntityTypeUser)
+    //     [_buttonAction setHidden:NO];
 }
 
 /*! implement theming in order to allow change color of selected item
@@ -215,11 +215,11 @@
     [_status unsetThemeState:aState];
     [_events unsetThemeState:aState];
 
-    if (aState == CPThemeStateSelectedDataView)
-    {
-        [_buttonAction setHidden:YES];
-        [_quickActionWindow close:nil];
-    }
+    // if (aState == CPThemeStateSelectedDataView)
+    // {
+    //     [_buttonAction setHidden:YES];
+    //     [_quickActionWindow close:nil];
+    // }
 }
 
 
@@ -270,7 +270,7 @@
         _statusIcon             = [aCoder decodeObjectForKey:@"_statusIcon"];
         _events                 = [aCoder decodeObjectForKey:@"_events"];
         _avatar                 = [aCoder decodeObjectForKey:@"_avatar"];
-        _buttonAction           = [aCoder decodeObjectForKey:@"_buttonAction"];
+        // _buttonAction           = [aCoder decodeObjectForKey:@"_buttonAction"];
     }
 
     return self;
@@ -292,7 +292,7 @@
     [aCoder encodeObject:_avatar forKey:@"_avatar"];
     [aCoder encodeObject:_normalStateCartoucheColor forKey:@"_normalStateCartoucheColor"];
     [aCoder encodeObject:_selectedStateCartoucheColor forKey:@"_selectedStateCartoucheColor"];
-    [aCoder encodeObject:_buttonAction forKey:@"_buttonAction"];
+    // [aCoder encodeObject:_buttonAction forKey:@"_buttonAction"];
 }
 
 @end
