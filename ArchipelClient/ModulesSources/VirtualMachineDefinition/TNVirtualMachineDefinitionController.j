@@ -1099,7 +1099,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         }
 
         var defaultDomainType = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDomainType"];
-        if (defaultDomainType)
+        if (defaultDomainType && [buttonDomainType itemWithTitle:defaultDomainType])
             [buttonDomainType selectItemWithTitle:defaultDomainType];
         else
             [buttonDomainType selectItemAtIndex:0];
@@ -1364,7 +1364,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [buttonMachines setEnabled:NO];
 
     var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
-    if (defaultMachine)
+    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
         [buttonMachines selectItemWithTitle:defaultMachine];
     else
         [buttonMachines selectItemAtIndex:0];
@@ -1733,6 +1733,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         VNCPort         = [fieldVNCPort stringValue],
         stanza          = [TNStropheStanza iqWithAttributes:{"to": [[_entity JID] full], "id": uid, "type": "set"}];
 
+    if (!arch || !machine || !hypervisor)
+    {
+        [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Missing vital value", @"Missing vital value")
+                          informative:CPLocalizedString(@"It seems that Architecture, Machine or Hypervisor value is not set. It's impossible to define the virtual machine", @"It seems that Architecture, Machine or Hypervisor value is not set. It's impossible to define the virtual machine")
+                          style:CPWarningAlertStyle];
+        return;
+    }
+
     [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeVirtualMachineDefinition}];
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
@@ -1770,6 +1778,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [stanza up];
     }
 
+
     // cpu
     [stanza addChildWithName:@"vcpu"];
     [stanza addTextNode:@"" + nCPUs + @""];
@@ -1798,7 +1807,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
                 [stanza addChildWithName:@"type" andAttributes:{"machine": machine, "arch": arch}];
             else
                 [stanza addChildWithName:@"type" andAttributes:{"arch": arch}];
-
             [stanza addTextNode:(OSType == "hvm" ? OSType : @"linux")]; // TODO: improve this
             [stanza up];
 
@@ -1806,10 +1814,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             if ([[capabilities firstChildWithName:@"arch"] containsChildrenWithName:@"loader"])
             {
                 [stanza addChildWithName:@"loader"];
-                [stanza addTextNode:[[[capabilities firstChildWithName:@"arch"] firstChildWithName:@"loader"] text]]
+                [stanza addTextNode:[[[capabilities firstChildWithName:@"arch"] firstChildWithName:@"loader"] text]];
                 [stanza up];
             }
-
             [stanza addChildWithName:@"boot" andAttributes:{"dev": boot}]
             [stanza up];
             break;
@@ -1827,7 +1834,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             break;
     }
     [stanza up];
-
 
     // POWER MANAGEMENT
 
