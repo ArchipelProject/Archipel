@@ -258,7 +258,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
             [bundle objectForInfoDictionaryKey:@"TNArchipelAutoCheckUpdate"], @"TNArchipelAutoCheckUpdate",
             [bundle objectForInfoDictionaryKey:@"TNArchipelMonitorStanza"], @"TNArchipelMonitorStanza",
             [bundle objectForInfoDictionaryKey:@"TNHideOfflineContacts"], @"TNHideOfflineContacts",
-            [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale"
+            [bundle objectForInfoDictionaryKey:@"CPBundleLocale"], @"CPBundleLocale",
+            [bundle objectForInfoDictionaryKey:@"TNArchipelPropertyControllerEnabled"], @"TNArchipelPropertyControllerEnabled"
     ]];
 
     /* images */

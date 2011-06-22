@@ -86,5 +86,7 @@
     </dict>
     <key>TNArchipelVersionHuman</key>
     <string>Archipel Beta 2 (Jupiter)</string>
+    <key>TNArchipelPropertyControllerEnabled</key>
+    <integer>1</integer>
 </dict>
 </plist>
