@@ -374,7 +374,7 @@ var TNArchipelPushNotificationVNC                   = @"archipel:push:virtualmac
 
     if ([defaults stringForKey:passwordKey])
     {
-        [fieldPassword setStringValue:[defaults stringForKey:key]];
+        [fieldPassword setStringValue:[defaults stringForKey:passwordKey]];
         [checkboxPasswordRemember setState:CPOnState];
     }
     else
