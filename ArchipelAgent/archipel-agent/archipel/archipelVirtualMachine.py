@@ -777,6 +777,12 @@ class TNArchipelVirtualMachine (TNArchipelEntity, archipelLibvirtEntity.TNArchip
         @rtype: xmpp.Node
         @return: the XML description
         """
+        if self.configuration.has_option("VIRTUALMACHINE", "enable_block_device_access"):
+            if not self.configuration.getboolean("VIRTUALMACHINE", "enable_block_device_access"):
+                if xmldesc.getTag("devices"):
+                    for disk in xmldesc.getTag("devices").getTags("disk"):
+                        if disk.getAttr("type") == "block":
+                            raise Exception("The agent policy doesn't allow to use block devices.")
         ret = self.libvirt_connection.defineXML(self.set_automatic_libvirt_description(xmldesc))
         if not self.domain:
             self.connect_domain()
