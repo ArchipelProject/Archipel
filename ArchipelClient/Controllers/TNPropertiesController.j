@@ -44,6 +44,7 @@
     @outlet CPButton                buttonFrontViewFlip;
     @outlet CPButton                entryAvatar;
     @outlet CPImageView             entryStatusIcon;
+    @outlet CPImageView             imageVCardIcon;
     @outlet CPImageView             imageViewVCardPhoto;
     @outlet CPTextField             entryDomain;
     @outlet CPTextField             entryNode;
@@ -55,6 +56,7 @@
     @outlet CPTextField             labelResource;
     @outlet CPTextField             labelStatus;
     @outlet CPTextField             labelType;
+    @outlet CPTextField             labelVCard;
     @outlet CPTextField             labelVCardCompany;
     @outlet CPTextField             labelVCardEmail;
     @outlet CPTextField             labelVCardFN;
@@ -64,6 +66,7 @@
     @outlet CPView                  backView;
     @outlet CPView                  frontView;
     @outlet CPView                  viewNicknameContainer;
+    @outlet CPView                  viewVCardContainer;
     @outlet TNContactsController    contactsController;
     @outlet TNEditableLabel         entryName           @accessors(readonly);
     @outlet TNFlipView              mainView            @accessors(readonly);
@@ -99,8 +102,8 @@
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
     _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
-    // [mainView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
+    [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
     [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
     [mainView setFrontView:frontView];
     [mainView setBackView:backView];
@@ -109,7 +112,17 @@
 
     [frontView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
-    [viewNicknameContainer setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]]];
+    var gradColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]];
+    [viewNicknameContainer setBackgroundColor:gradColor];
+    [viewVCardContainer setBackgroundColor:gradColor];
+
+    [imageVCardIcon setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"vcard-icon.png"]]];
+
+    [labelVCard setFont:[CPFont boldSystemFontOfSize:13]];
+    [labelVCard setTextColor:[CPColor colorWithHexString:@"576066"]];
+    [labelVCard setValue:[CPColor colorWithHexString:@"f4f4f4"] forThemeAttribute:@"text-shadow-color"];
+    [labelVCard setValue:CGSizeMake(0.0, 1.0) forThemeAttribute:@"text-shadow-offset"];
+    [labelVCard setLineBreakMode:CPLineBreakByTruncatingTail];
 
     [entryName setFont:[CPFont boldSystemFontOfSize:13]];
     [entryName setTextColor:[CPColor colorWithHexString:@"576066"]];
