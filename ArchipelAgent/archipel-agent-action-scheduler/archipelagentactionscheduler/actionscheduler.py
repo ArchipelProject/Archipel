@@ -35,7 +35,7 @@ ARCHIPEL_SCHED_HYPERVISOR_UID   = "schedule-hypervisor-uid"
 
 class TNActionScheduler (TNArchipelPlugin):
     """
-    This plugin allows to create shceduled actions.
+    This plugin allows to create scheduled actions.
     """
 
     def __init__(self, configuration, entity, entry_point_group):
