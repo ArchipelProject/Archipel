@@ -325,7 +325,7 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [rightView setAutoresizingMask:CPViewHeightSizable | CPViewWidthSizable];
     [rightView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/modules-bg.png"]]]];
     [rightView setAnimationDuration:1.0];
-    [rightView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateVertical];
+    [rightView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
 
     /* tab module view */
     CPLog.trace(@"initializing the _moduleTabView");
