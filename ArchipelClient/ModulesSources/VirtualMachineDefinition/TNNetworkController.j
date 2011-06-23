@@ -21,6 +21,7 @@
 var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network",
     TNArchipelTypeHypervisorNetworkGetNames     = @"getnames",
     TNArchipelTypeHypervisorNetworkBridges      = @"bridges",
+    TNArchipelTypeHypervisorNetworkGetNWFilters = @"getnwfilters",
     TNArchipelNICModels = ["ne2k_isa", "i82551", "i82557b", "i82559er", "ne2k_pci", "pcnet", "rtl8139", "e1000", "virtio"],
     TNArchipelNICTypes  = ["network", "bridge", "user"];
 
@@ -34,13 +35,19 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     @outlet CPPopUpButton   buttonModel;
     @outlet CPPopUpButton   buttonSource;
     @outlet CPPopUpButton   buttonType;
+    @outlet CPPopUpButton   buttonNetworkFilter;
     @outlet CPTextField     fieldMac;
     @outlet CPWindow        mainWindow;
+    @outlet CPTableView     tableViewNetworkFilterParameters;
+    @outlet CPButtonBar     buttonBarNetworkParameters;
+    @outlet CPView          viewNWFilterParametersContainer;
 
     id                      _delegate   @accessors(property=delegate);
     CPTableView             _table      @accessors(property=table);
     TNNetworkInterface      _nic        @accessors(property=nic);
     TNStropheContact        _entity     @accessors(property=entity);
+
+    TNTableViewDataSource   _datasourceNWFilterParameters;
 }
 
 #pragma mark -
@@ -50,11 +57,14 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 */
 - (void)awakeFromCib
 {
+    [viewNWFilterParametersContainer setBorderedWithHexColor:@"#C0C7D2"];
+
     [mainWindow setDefaultButton:buttonOK];
 
     [buttonType removeAllItems];
     [buttonModel removeAllItems];
     [buttonSource removeAllItems];
+    [buttonNetworkFilter removeAllItems];
 
     [buttonModel addItemsWithTitles:TNArchipelNICModels];
     [buttonType addItemsWithTitles: TNArchipelNICTypes];
@@ -62,6 +72,16 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
     [buttonSource setToolTip:CPBundleLocalizedString(@"Set the source to use", @"Set the source to use")];
     [buttonModel setToolTip:CPBundleLocalizedString(@"Set the model of the card", @"Set the model of the card")];
     [fieldMac setToolTip:CPBundleLocalizedString(@"Set the MAC address of the card", @"Set the MAC address of the card")];
+
+    var addButton  = [CPButtonBar plusButton];
+    [addButton setTarget:self];
+    [addButton setAction:@selector(addNWFilterParameter:)];
+
+    var removeButton  = [CPButtonBar minusButton];
+    [removeButton setTarget:self];
+    [removeButton setAction:@selector(removeNWFilterParameter:)];
+
+    [buttonBarNetworkParameters setButtons:[addButton, removeButton]];
 }
 
 
@@ -85,6 +105,7 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
         [fieldMac setStringValue:[_nic mac]];
 
     [buttonSource removeAllItems];
+    [buttonNetworkFilter removeAllItems];
 
     [buttonType selectItemWithTitle:[_nic type]];
     [self performNicTypeChanged:nil];
@@ -92,28 +113,68 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
 
     [buttonModel selectItemWithTitle:[_nic model]];
     [buttonSource selectItemWithTitle:[_nic source]];
+
+    _datasourceNWFilterParameters = [[TNTableViewDataSource alloc] init];
+    [tableViewNetworkFilterParameters setDataSource:_datasourceNWFilterParameters];
+    [_datasourceNWFilterParameters setTable:tableViewNetworkFilterParameters];
+    [_datasourceNWFilterParameters removeAllObjects];
+    if ([_nic networkFilterParameters])
+        [_datasourceNWFilterParameters setContent:[_nic networkFilterParameters]];
+    [tableViewNetworkFilterParameters reloadData];
 }
 
 
 #pragma mark -
 #pragma mark Actions
 
+
+/*! add a new entry in the network filter parameter
+    @param aSender the sender of the action
+*/
+- (void)addNWFilterParameter:(id)aSender
+{
+    [_datasourceNWFilterParameters addObject:[CPDictionary dictionaryWithObjectsAndKeys:@"parameter", @"name", @"value", @"value"]];
+    [tableViewNetworkFilterParameters reloadData];
+}
+
+/*! remove the selected network filter parameter entries.
+    @param aSender the sender of the action
+*/
+- (void)removeNWFilterParameter:(id)aSender
+{
+    var index = [tableViewNetworkFilterParameters selectedRow];
+
+    if (index != -1)
+        [_datasourceNWFilterParameters removeObjectAtIndex:index];
+
+    [tableViewNetworkFilterParameters reloadData];
+}
+
 /*! saves the change
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)save:(id)aSender
 {
     [_nic setMac:[fieldMac stringValue]];
     [_nic setModel:[buttonModel title]];
     [_nic setSource:[buttonSource title]];
-
+    if ([buttonNetworkFilter title] != @"None")
+    {
+        [_nic setNetworkFilter:[buttonNetworkFilter title]];
+        [_nic setNetworkFilterParameters:[_datasourceNWFilterParameters content]];
+    }
+    else
+    {
+        [_nic setNetworkFilter:nil];
+        [_nic setNetworkFilterParameters:nil];
+    }
     [_delegate handleDefinitionEdition:YES];
     [_table reloadData];
     [mainWindow close];
 }
 
 /*! change the type of the network
-    @param sender the sender of the action
+    @param aSender the sender of the action
 */
 - (IBAction)performNicTypeChanged:(id)aSender
 {
@@ -150,6 +211,8 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
             [buttonSource setEnabled:NO];
             break;
     }
+
+    [self getHypervisorNWFilters];
 }
 
 /*! show the main window
@@ -257,6 +320,45 @@ var TNArchipelTypeHypervisorNetwork             = @"archipel:hypervisor:network"
         [_delegate handleIqErrorFromStanza:aStanza];
 
     return NO;
+}
+
+/*! get existing nics on the hypervisor
+*/
+- (void)getHypervisorNWFilters
+{
+    var stanza  = [TNStropheStanza iqWithType:@"get"];
+
+    [stanza addChildWithName:@"query" andAttributes:{"xmlns": TNArchipelTypeHypervisorNetwork}];
+    [stanza addChildWithName:@"archipel" andAttributes:{
+        "action": TNArchipelTypeHypervisorNetworkGetNWFilters}];
+
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveHypervisorNWFilters:) ofObject:self];
+}
+
+/*! compute the answer containing the nics information
+*/
+- (void)_didReceiveHypervisorNWFilters:(TNStropheStanza)aStanza
+{
+    if ([aStanza type] == @"result")
+    {
+        var filters = [aStanza childrenWithName:@"filter"];
+
+        [buttonNetworkFilter removeAllItems];
+        [buttonNetworkFilter addItemWithTitle:@"None"]
+        for (var i = 0; i < [filters count]; i++)
+        {
+            var filter = [filters objectAtIndex:i],
+                name = [filter valueForAttribute:@"name"];
+            [buttonNetworkFilter addItemWithTitle:name];
+        }
+
+        if ([_nic networkFilter])
+            [buttonNetworkFilter selectItemWithTitle:[_nic networkFilter]];
+        else
+            [buttonNetworkFilter selectItemWithTitle:@"None"];
+    }
+    else
+        [_delegate handleIqErrorFromStanza:aStanza];
 }
 
 @end

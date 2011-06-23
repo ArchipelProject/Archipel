@@ -25,10 +25,12 @@
 */
 @implementation TNNetworkInterface : CPObject
 {
-    CPString _mac    @accessors(property=mac);
-    CPString _model  @accessors(property=model);
-    CPString _source @accessors(property=source);
-    CPString _type   @accessors(property=type);
+    CPString    _mac                        @accessors(property=mac);
+    CPString    _model                      @accessors(property=model);
+    CPString    _source                     @accessors(property=source);
+    CPString    _type                       @accessors(property=type);
+    CPString    _networkFilter              @accessors(property=networkFilter);
+    CPArray     _networkFilterParameters    @accessors(property=networkFilterParameters);
 }
 
 
@@ -40,15 +42,24 @@
     @param aModel the network card model
     @param aMac the network card MAC addr
     @param aSource the network card source
+    @param aNetworkFilter the name of the network filter
+    @param someParameters parameters for newtwork filter
     @return initialized TNNetworkInterface
 */
-+ (TNNetworkInterface)networkInterfaceWithType:(CPString)aType model:(CPString)aModel mac:(CPString)aMac source:(CPString)aSource
++ (TNNetworkInterface)networkInterfaceWithType:(CPString)aType 
+                                         model:(CPString)aModel
+                                           mac:(CPString)aMac
+                                        source:(CPString)aSource
+                                 networkFilter:(CPString)aNetworkFilter
+                       networkFilterParameters:(CPArray)someParameters
 {
     var card = [[TNNetworkInterface alloc] init];
     [card setType:aType];
     [card setModel:aModel];
     [card setMac:aMac];
     [card setSource:aSource];
+    [card setNetworkFilter:aNetworkFilter];
+    [card setNetworkFilterParameters:someParameters];
 
     return card;
 }

@@ -390,7 +390,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"],
         columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"],
         columnMac = [[CPTableColumn alloc] initWithIdentifier:@"mac"],
-        columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"];
+        columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source"],
+        columnNWFilter = [[CPTableColumn alloc] initWithIdentifier:@"networkFilter"];
 
     [[columnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
     [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
@@ -402,6 +403,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[columnMac headerView] setStringValue:CPBundleLocalizedString(@"MAC", @"MAC")];
     [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
 
+    [columnNWFilter setWidth:150];
+    [[columnNWFilter headerView] setStringValue:CPBundleLocalizedString(@"Network Filter", @"Network Filter")];
+    [columnNWFilter setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkFilter" ascending:YES]];
+
+
     [[columnSource headerView] setStringValue:CPBundleLocalizedString(@"Source", @"Source")];
     [columnSource setWidth:250];
     [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
@@ -410,6 +416,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_tableNetworkNics addTableColumn:columnType];
     [_tableNetworkNics addTableColumn:columnModel];
     [_tableNetworkNics addTableColumn:columnMac];
+    [_tableNetworkNics addTableColumn:columnNWFilter];
 
     [_nicsDatasource setTable:_tableNetworkNics];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"mac", @"source"]];
@@ -1211,7 +1218,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)addNetworkCard:(id)aSender
 {
-    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge" model:@"pcnet" mac:[self generateMacAddr] source:@"virbr0"];
+    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge"
+                                                            model:@"pcnet"
+                                                             mac:[self generateMacAddr]
+                                                          source:@"virbr0"
+                                                   networkFilter:@"None"
+                                         networkFilterParameters:nil];
 
     [_nicsDatasource addObject:defaultNic];
     [_tableNetworkNics reloadData];
@@ -1699,8 +1711,26 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             iType               = [currentInterface valueForAttribute:@"type"],
             iModel              = ([currentInterface firstChildWithName:@"model"]) ? [[currentInterface firstChildWithName:@"model"] valueForAttribute:@"type"] : @"pcnet",
             iMac                = [[currentInterface firstChildWithName:@"mac"] valueForAttribute:@"address"],
+            iNWFilter           = [[currentInterface firstChildWithName:@"filterref"] valueForAttribute:@"filter"],
+            iNWFilterParameters = [[currentInterface firstChildWithName:@"filterref"] childrenWithName:@"parameter"],
             iSource             = (iType == "bridge") ? [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"bridge"] : [[currentInterface firstChildWithName:@"source"] valueForAttribute:@"network"],
-            newNic              = [TNNetworkInterface networkInterfaceWithType:iType model:iModel mac:iMac source:iSource];
+            NWFilterParamArray  = [CPArray array];
+
+        for (var j = 0; j < [iNWFilterParameters count]; j++)
+        {
+            var pName = [[iNWFilterParameters objectAtIndex:j] valueForAttribute:@"name"],
+                pValue = [[iNWFilterParameters objectAtIndex:j] valueForAttribute:@"value"];
+
+            [NWFilterParamArray addObject:[CPDictionary dictionaryWithObjectsAndKeys:pName, @"name",
+                                                                                     pValue, @"value"]]
+        }
+
+        var newNic = [TNNetworkInterface networkInterfaceWithType:iType
+                                                            model:iModel
+                                                              mac:iMac
+                                                           source:iSource
+                                                    networkFilter:iNWFilter
+                                          networkFilterParameters:NWFilterParamArray];
 
         [_nicsDatasource addObject:newNic];
     }
@@ -1927,6 +1957,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [stanza addChildWithName:@"interface" andAttributes:{"type": nicType}];
         [stanza addChildWithName:@"mac" andAttributes:{"address": [nic mac]}];
         [stanza up];
+        if ([nic networkFilter] && [nic networkFilter] != @"" && [nic networkFilter] != @"None")
+        {
+            [stanza addChildWithName:@"filterref" andAttributes:{"filter": [nic networkFilter]}];
+            for (var j = 0; j < [[nic networkFilterParameters] count]; j++)
+            {
+                var parameterItem = [[nic networkFilterParameters] objectAtIndex:j];
+                [stanza addChildWithName:@"parameter" andAttributes:{
+                        "name": [parameterItem objectForKey:@"name"],
+                        "value": [parameterItem objectForKey:@"value"]}];
+                [stanza up];
+            }
+            [stanza up];
+        }
 
         [stanza addChildWithName:@"model" andAttributes:{"type": [nic model]}];
         [stanza up];

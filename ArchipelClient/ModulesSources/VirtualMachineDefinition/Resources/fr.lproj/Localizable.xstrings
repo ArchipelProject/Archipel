@@ -60,8 +60,12 @@
 	<string>Format</string>
 	<key>MAC</key>
 	<string>MAC</string>
+	<key>Missing vital value</key>
+	<string>Missing vital value</string>
 	<key>Model</key>
 	<string>Model</string>
+	<key>Network Filter</key>
+	<string>Network Filter</string>
 	<key>Open the XML editor</key>
 	<string>Open the XML editor</string>
 	<key>Remove selected virtual network card</key>

@@ -638,3 +638,39 @@
 /* Class = "NSTextFieldCell"; placeholderString = "auto"; ObjectID = "733"; */
 "733.placeholderString" = "auto";
 
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "745"; */
+"745.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "746"; */
+"746.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "747"; */
+"747.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "748"; */
+"748.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Filter:"; ObjectID = "749"; */
+"749.title" = "Filter:";
+
+/* Class = "NSBox"; title = "Box"; ObjectID = "753"; */
+"753.title" = "Box";
+
+/* Class = "NSTextFieldCell"; title = "Network filters"; ObjectID = "754"; */
+"754.title" = "Network filters";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "760"; */
+"760.headerCell.title" = "Name";
+
+/* Class = "NSTableColumn"; headerCell.title = "Value"; ObjectID = "761"; */
+"761.headerCell.title" = "Value";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "762"; */
+"762.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "763"; */
+"763.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
+"765.title" = "Filter parameters";
+

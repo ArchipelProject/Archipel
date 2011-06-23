@@ -85,8 +85,14 @@
 /* MAC */
 "MAC" = "MAC";
 
+/* Missing vital value */
+"Missing vital value" = "Missing vital value";
+
 /* Model */
 "Model" = "Model";
+
+/* Network Filter */
+"Network Filter" = "Network Filter";
 
 /* Open the XML editor */
 "Open the XML editor" = "Open the XML editor";
