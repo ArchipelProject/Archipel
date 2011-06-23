@@ -94,7 +94,6 @@
 
     [buttonBarControlDHCPHosts setButtons:[_plusButtonDHCPHosts, _minusButtonDHCPHosts]];
 
-
     _plusButtonDHCPRanges = [CPButtonBar plusButton];
     [_plusButtonDHCPRanges setTarget:self];
     [_plusButtonDHCPRanges setAction:@selector(addDHCPRange:)];

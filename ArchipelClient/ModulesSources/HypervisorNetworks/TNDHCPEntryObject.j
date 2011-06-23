@@ -28,10 +28,10 @@ var TNDHCPEntryTypeRange    = @"TNDHCPEntryTypeRange",
 */
 @implementation TNDHCPEntry : CPObject
 {
-    CPString    -name    @accessors(property = name);
     CPString    _end     @accessors(property = end);
     CPString    _IP      @accessors(property = IP);
     CPString    _mac     @accessors(property = mac);
+    CPString    _name    @accessors(property = name);
     CPString    _start   @accessors(property = start);
     CPString    _type    @accessors(property = type);
 }

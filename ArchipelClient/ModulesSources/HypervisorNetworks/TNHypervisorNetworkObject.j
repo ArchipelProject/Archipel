@@ -45,6 +45,7 @@
     CPString    _UUID                    @accessors(property=UUID);
 }
 
+
 #pragma mark -
 #pragma mark  Initialization
 

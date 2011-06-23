@@ -33,7 +33,7 @@
 @import "TNDHCPEntryObject.j"
 @import "TNHypervisorNetworkObject.j"
 @import "TNWindowNetworkController.j"
-
+@import "TNNetworkDataView.j";
 
 
 var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
@@ -59,6 +59,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
     @outlet CPSearchField               fieldFilterNetworks;
     @outlet CPView                      viewTableContainer;
     @outlet TNUIKitScrollView           scrollViewNetworks;
+    @outlet TNNetworkDataView           networkDataViewPrototype;
     @outlet TNWindowNetworkController   networkController;
 
     CPButton                            _activateButton;
@@ -91,65 +92,30 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
 
     [_tableViewNetworks setUsesAlternatingRowBackgroundColors:YES];
     [_tableViewNetworks setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
+    [_tableViewNetworks setColumnAutoresizingStyle:CPTableViewFirstColumnOnlyAutoresizingStyle];
     [_tableViewNetworks setAllowsColumnResizing:YES];
     [_tableViewNetworks setAllowsEmptySelection:YES];
     [_tableViewNetworks setAllowsMultipleSelection:YES];
+    [_tableViewNetworks setRowHeight:146.0];
+    [_tableViewNetworks setHeaderView:nil];
     [_tableViewNetworks setTarget:self];
     [_tableViewNetworks setDelegate:self];
     [_tableViewNetworks setDoubleAction:@selector(editNetwork:)];
 
-    var columNetworkEnabled = [[CPTableColumn alloc] initWithIdentifier:@"icon"],
-        imgView = [[CPImageView alloc] initWithFrame:CGRectMake(0,0,16,16)],
-        columNetworkName = [[CPTableColumn alloc] initWithIdentifier:@"networkName"],
-        columBridgeName = [[CPTableColumn alloc] initWithIdentifier:@"bridgeName"],
-        columForwardMode = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardMode"],
-        columForwardDevice = [[CPTableColumn alloc] initWithIdentifier:@"bridgeForwardDevice"],
-        columBridgeIP = [[CPTableColumn alloc] initWithIdentifier:@"bridgeIP"],
-        columBridgeNetmask = [[CPTableColumn alloc] initWithIdentifier:@"bridgeNetmask"];
+    var prototype = [CPKeyedArchiver archivedDataWithRootObject:networkDataViewPrototype],
+        columnNetwork = [[CPTableColumn alloc] initWithIdentifier:@"self"];
 
+    // I don't know why I need to copy it. But without this, it fails
+    [columnNetwork setDataView:[CPKeyedUnarchiver unarchiveObjectWithData:prototype]];
+    [columnNetwork setWidth:[_tableViewNetworks bounds].size.width];
 
-    [imgView setImageScaling:CPScaleNone];
-    [columNetworkEnabled setDataView:imgView];
-    [columNetworkEnabled setWidth:16];
-    [[columNetworkEnabled headerView] setStringValue:@""];
-
-    [[columNetworkName headerView] setStringValue:CPBundleLocalizedString(@"Name", @"Name")];
-    [columNetworkName setWidth:250];
-    [columNetworkName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkName" ascending:YES]];
-
-    [[columBridgeName headerView] setStringValue:CPBundleLocalizedString(@"Bridge", @"Bridge")];
-    [columBridgeName setWidth:80];
-    [columBridgeName setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeName" ascending:YES]];
-
-    [[columForwardMode headerView] setStringValue:CPBundleLocalizedString(@"Forward Mode", @"Forward Mode")];
-    [columForwardMode setWidth:120];
-    [columForwardMode setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardMode" ascending:YES]];
-
-    [[columForwardDevice headerView] setStringValue:CPBundleLocalizedString(@"Forward Device", @"Forward Device")];
-    [columForwardDevice setWidth:120];
-    [columForwardDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeForwardDevice" ascending:YES]];
-
-    [[columBridgeIP headerView] setStringValue:CPBundleLocalizedString(@"Bridge IP", @"Bridge IP")];
-    [columBridgeIP setWidth:90];
-    [columBridgeIP setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeIP" ascending:YES]];
-
-    [[columBridgeNetmask headerView] setStringValue:CPBundleLocalizedString(@"Bridge Netmask", @"Bridge Netmask")];
-    [columBridgeNetmask setWidth:150];
-    [columBridgeNetmask setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bridgeNetmask" ascending:YES]];
-
-    [_tableViewNetworks addTableColumn:columNetworkEnabled];
-    [_tableViewNetworks addTableColumn:columNetworkName];
-    [_tableViewNetworks addTableColumn:columBridgeName];
-    [_tableViewNetworks addTableColumn:columForwardMode];
-    [_tableViewNetworks addTableColumn:columForwardDevice];
-    [_tableViewNetworks addTableColumn:columBridgeIP];
-    [_tableViewNetworks addTableColumn:columBridgeNetmask];
+    [_tableViewNetworks addTableColumn:columnNetwork];
 
     [_datasourceNetworks setTable:_tableViewNetworks];
-    [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"bridgeName", @"bridgeForwardMode", @"bridgeForwardDevice", @"bridgeIP", @"bridgeNetmask"]];
+    // [_datasourceNetworks setSearchableKeyPaths:[@"networkName", @"bridgeName", @"bridgeForwardMode", @"bridgeForwardDevice", @"bridgeIP", @"bridgeNetmask"]];
 
-    [fieldFilterNetworks setTarget:_datasourceNetworks];
-    [fieldFilterNetworks setAction:@selector(filterObjects:)];
+    // [fieldFilterNetworks setTarget:_datasourceNetworks];
+    // [fieldFilterNetworks setAction:@selector(filterObjects:)];
 
     [_tableViewNetworks setDataSource:_datasourceNetworks];
     [_tableViewNetworks setDelegate:self];
@@ -653,6 +619,7 @@ var TNArchipelPushNotificationNetworks          = @"archipel:push:network",
         [self handleIqErrorFromStanza:aStanza];
     }
 }
+
 
 /*! define the given network
     @param aNetwork the network to define
