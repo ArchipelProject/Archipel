@@ -18,12 +18,6 @@
 	<string>Are you sure you want to deactivate this network ? Virtual machines that are in this network will loose connectivity.</string>
 	<key>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</key>
 	<string>Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.</string>
-	<key>Bridge</key>
-	<string>Bridge</string>
-	<key>Bridge IP</key>
-	<string>Bridge IP</string>
-	<key>Bridge Netmask</key>
-	<string>Bridge Netmask</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Choose the forward mode for this virtual network</key>
@@ -72,10 +66,6 @@
 	<string>Enter the value of delay for the bridge</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>Forward Device</key>
-	<string>Forward Device</string>
-	<key>Forward Mode</key>
-	<string>Forward Mode</string>
 	<key>IP</key>
 	<string>IP</string>
 	<key>MAC Address</key>

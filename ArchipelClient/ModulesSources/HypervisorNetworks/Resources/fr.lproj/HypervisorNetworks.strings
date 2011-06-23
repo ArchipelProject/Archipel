@@ -92,3 +92,87 @@
 /* Class = "NSTextFieldCell"; title = "You can create host address reservation."; ObjectID = "89"; */
 "89.title" = "You can create host address reservation.";
 
+/* Class = "NSTextFieldCell"; title = "Network name"; ObjectID = "206"; */
+"206.title" = "Network name";
+
+/* Class = "NSTextFieldCell"; title = "Bridge information"; ObjectID = "208"; */
+"208.title" = "Bridge information";
+
+/* Class = "NSTextFieldCell"; title = "Name: "; ObjectID = "210"; */
+"210.title" = "Name: ";
+
+/* Class = "NSTextFieldCell"; title = "name"; ObjectID = "212"; */
+"212.title" = "name";
+
+/* Class = "NSTextFieldCell"; title = "x.x.x.x"; ObjectID = "215"; */
+"215.title" = "x.x.x.x";
+
+/* Class = "NSTextFieldCell"; title = "Device:"; ObjectID = "216"; */
+"216.title" = "Device:";
+
+/* Class = "NSTextFieldCell"; title = "mode"; ObjectID = "219"; */
+"219.title" = "mode";
+
+/* Class = "NSTextFieldCell"; title = "Mode:"; ObjectID = "220"; */
+"220.title" = "Mode:";
+
+/* Class = "NSTextFieldCell"; title = "STP"; ObjectID = "227"; */
+"227.title" = "STP";
+
+/* Class = "NSTextFieldCell"; title = "STP:"; ObjectID = "228"; */
+"228.title" = "STP:";
+
+/* Class = "NSTextFieldCell"; title = "IP:"; ObjectID = "232"; */
+"232.title" = "IP:";
+
+/* Class = "NSTextFieldCell"; title = "Mask:"; ObjectID = "236"; */
+"236.title" = "Mask:";
+
+/* Class = "NSTextFieldCell"; title = "device"; ObjectID = "238"; */
+"238.title" = "device";
+
+/* Class = "NSTextFieldCell"; title = "255.255.255.255"; ObjectID = "240"; */
+"240.title" = "255.255.255.255";
+
+/* Class = "NSTextFieldCell"; title = "Delay:"; ObjectID = "243"; */
+"243.title" = "Delay:";
+
+/* Class = "NSTextFieldCell"; title = "delay"; ObjectID = "244"; */
+"244.title" = "delay";
+
+/* Class = "NSTableColumn"; headerCell.title = "Start"; ObjectID = "259"; */
+"259.headerCell.title" = "Start";
+
+/* Class = "NSTableColumn"; headerCell.title = "End"; ObjectID = "260"; */
+"260.headerCell.title" = "End";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "261"; */
+"261.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "262"; */
+"262.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "DHCP Ranges"; ObjectID = "265"; */
+"265.title" = "DHCP Ranges";
+
+/* Class = "NSTableColumn"; headerCell.title = "IP"; ObjectID = "271"; */
+"271.headerCell.title" = "IP";
+
+/* Class = "NSTableColumn"; headerCell.title = "MAC"; ObjectID = "272"; */
+"272.headerCell.title" = "MAC";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "273"; */
+"273.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "274"; */
+"274.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "IP Reservation"; ObjectID = "275"; */
+"275.title" = "IP Reservation";
+
+/* Class = "NSTableColumn"; headerCell.title = "Name"; ObjectID = "276"; */
+"276.headerCell.title" = "Name";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "277"; */
+"277.title" = "Text Cell";
+

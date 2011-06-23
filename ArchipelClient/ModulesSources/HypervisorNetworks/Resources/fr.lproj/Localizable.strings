@@ -22,15 +22,6 @@
 /* Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity. */
 "Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity." = "Are you sure you want to destroy this network ? Virtual machines that are in this network will loose connectivity.";
 
-/* Bridge */
-"Bridge" = "Bridge";
-
-/* Bridge IP */
-"Bridge IP" = "Bridge IP";
-
-/* Bridge Netmask */
-"Bridge Netmask" = "Bridge Netmask";
-
 /* Cancel */
 "Cancel" = "Cancel";
 
@@ -105,12 +96,6 @@
 
 /* Error */
 "Error" = "Error";
-
-/* Forward Device */
-"Forward Device" = "Forward Device";
-
-/* Forward Mode */
-"Forward Mode" = "Forward Mode";
 
 /* IP */
 "IP" = "IP";
