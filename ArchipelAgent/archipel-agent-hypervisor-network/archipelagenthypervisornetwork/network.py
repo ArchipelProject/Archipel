@@ -22,6 +22,7 @@
 
 import commands
 import libvirt
+import os
 import xmpp
 
 from archipelcore.archipelPlugin import TNArchipelPlugin
@@ -30,15 +31,16 @@ from archipelcore.utils import build_error_iq, build_error_message
 from archipel.archipelLibvirtEntity import ARCHIPEL_NS_LIBVIRT_GENERIC_ERROR
 
 
-ARCHIPEL_NS_HYPERVISOR_NETWORK          = "archipel:hypervisor:network"
-ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE     = -7001
-ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE   = -7002
-ARCHIPEL_ERROR_CODE_NETWORKS_CREATE     = -7003
-ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY    = -7004
-ARCHIPEL_ERROR_CODE_NETWORKS_GET        = -7005
-ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES    = -7006
-ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES   = -7007
-ARCHIPEL_ERROR_CODE_NETWORKS_GETNICS    = -7008
+ARCHIPEL_NS_HYPERVISOR_NETWORK              = "archipel:hypervisor:network"
+ARCHIPEL_ERROR_CODE_NETWORKS_DEFINE         = -7001
+ARCHIPEL_ERROR_CODE_NETWORKS_UNDEFINE       = -7002
+ARCHIPEL_ERROR_CODE_NETWORKS_CREATE         = -7003
+ARCHIPEL_ERROR_CODE_NETWORKS_DESTROY        = -7004
+ARCHIPEL_ERROR_CODE_NETWORKS_GET            = -7005
+ARCHIPEL_ERROR_CODE_NETWORKS_BRIDGES        = -7006
+ARCHIPEL_ERROR_CODE_NETWORKS_GETNAMES       = -7007
+ARCHIPEL_ERROR_CODE_NETWORKS_GETNICS        = -7008
+ARCHIPEL_ERROR_CODE_NETWORKS_GETNWFILTERS   = -7009
 
 
 class TNHypervisorNetworks (TNArchipelPlugin):
@@ -54,6 +56,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         @param entry_point_group: the group name of plugin entry_point
         """
         TNArchipelPlugin.__init__(self, configuration=configuration, entity=entity, entry_point_group=entry_point_group)
+        self.folder_nwfilters = self.configuration.get("NETWORKS", "libvirt_nw_filters_path")
         # permissions
         if self.entity.__class__.__name__ == "TNArchipelVirtualMachine":
             self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
@@ -67,6 +70,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             self.entity.permission_center.create_permission("network_getnames", "Authorizes user to get the existing network names", False)
             self.entity.permission_center.create_permission("network_bridges", "Authorizes user to get existing bridges", False)
             self.entity.permission_center.create_permission("network_getnics", "Authorizes user to get existing network interfaces", False)
+            self.entity.permission_center.create_permission("network_getnwfilters", "Authorizes user to get existing libvirt network filters", False)
             registrar_items = [
                                 {   "commands" : ["list networks"],
                                     "parameters": [],
@@ -123,8 +127,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         """
         plugin_friendly_name           = "Hypervisor Networks"
         plugin_identifier              = "hypervisor_network"
-        plugin_configuration_section   = None
-        plugin_configuration_tokens    = None
+        plugin_configuration_section   = "NETWORKS"
+        plugin_configuration_tokens    = ["libvirt_nw_filters_path"]
         return {    "common-name"               : plugin_friendly_name,
                     "identifier"                : plugin_identifier,
                     "configuration-section"     : plugin_configuration_section,
@@ -214,6 +218,17 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         splitted = content.split('\n')[2:-1]
         return map(lambda x: x.split(":")[0].replace(" ", ""), splitted)
 
+    def getnwfilters(self):
+        """
+        Return the list of all libvirt network filters.
+        @rtype: list
+        @return: list containing network cards names
+        """
+        ret = []
+        for nwfilter in os.listdir(self.folder_nwfilters):
+            ret.append(os.path.splitext(nwfilter)[0])
+        return ret
+
 
     ### XMPP Processing
 
@@ -263,6 +278,7 @@ class TNHypervisorNetworks (TNArchipelPlugin):
         It understands IQ of type:
             - bridges
             - getnames
+            - getnwfilters
         @type conn: xmpp.Dispatcher
         @param conn: ths instance of the current connection that send the stanza
         @type iq: xmpp.Protocol.Iq
@@ -275,6 +291,8 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             reply = self.iq_get_names(iq)
         elif action == "bridges":
             reply = self.iq_bridges(iq)
+        elif action == "getnwfilters":
+            reply = self.iq_get_nwfilters(iq)
         if reply:
             conn.send(reply)
             raise xmpp.protocol.NodeProcessed
@@ -520,3 +538,21 @@ class TNHypervisorNetworks (TNArchipelPlugin):
             return ret
         except Exception as ex:
             return build_error_message(self, ex)
+
+    def iq_get_nwfilters(self, iq):
+        """
+        List all existing libvirt network filters.
+        @type iq: xmpp.Protocol.Iq
+        @param iq: the received IQ
+        @rtype: xmpp.Protocol.Iq
+        @return: a ready to send IQ containing the result of the action
+        """
+        try:
+            reply = iq.buildReply("result")
+            nodes = []
+            for nwfilter in self.getnwfilters():
+                nodes.append(xmpp.Node("filter", attrs={"name": nwfilter}))
+            reply.setQueryPayload(nodes)
+        except Exception as ex:
+            reply = build_error_iq(self, ex, iq, ARCHIPEL_ERROR_CODE_NETWORKS_GETNWFILTERS)
+        return reply
