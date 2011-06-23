@@ -306,6 +306,8 @@ var TNArchipelStatusAvailableLabel  = @"Available",
     [_rosterOutlineView registerForDraggedTypes:[TNDragTypeContact]];
     [_rosterOutlineView setSearchField:filterField];
     [_rosterOutlineView setEntityRenameField:[propertiesController entryName]];
+    [_rosterOutlineView setAlphaValue:0.0];
+    _rosterOutlineView._DOMElement.style.WebkitTransition = "opacity 0.3s";
 
     /* init scroll view of the outline view */
     CPLog.trace(@"initializing _outlineScrollView");
@@ -1475,6 +1477,10 @@ var TNArchipelStatusAvailableLabel  = @"Available",
 
     [progressIndicatorModulesLoading setDoubleValue:percent];
     [[viewLoading viewWithTag:1] setStringValue:CPLocalizedString(@"Loaded ", @"Loaded ") + moduleLabel];
+
+    [_rosterOutlineView setAlphaValue:Math.pow(percent, 3)];
+    if (percent == 1)
+        _rosterOutlineView._DOMElement.style.WebkitTransition = "";
 }
 
 /*! delegate of TNModuleController sent when all modules are loaded
