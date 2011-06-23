@@ -70,7 +70,9 @@
 
     var defaults = [CPUserDefaults standardUserDefaults];
 
-    [mainWebView setHidden:YES];
+    [mainWebView setAlphaValue:0.0];
+    mainWebView._DOMElement.style.WebkitTransition = "opacity 0.3s";
+
     [mainWebView setFrameLoadDelegate:self];
     [mainWebView setMainFrameURL:[defaults objectForKey:@"TNArchipelHelpWindowURL"]];
 
@@ -103,7 +105,7 @@
 
 - (void)webView:(CPWebView)aWebView didFinishLoadForFrame:(id)aFrame
 {
-    [mainWebView setHidden:NO];
+    [mainWebView setAlphaValue:1.0];
 }
 
 @end
