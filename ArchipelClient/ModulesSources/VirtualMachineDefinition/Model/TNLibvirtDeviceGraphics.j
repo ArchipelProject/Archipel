@@ -78,7 +78,7 @@
     if (!_type)
         [CPException raise:@"Missing graphic type" reason:@"graphic type is required"];
 
-    var node = [TNXMLNode nodeWithName:@"graphic" andAttributes:{@"type": _type}];
+    var node = [TNXMLNode nodeWithName:@"graphics" andAttributes:{@"type": _type}];
 
     if (_display)
         [node setValue:_display forAttribute:@"display"];
