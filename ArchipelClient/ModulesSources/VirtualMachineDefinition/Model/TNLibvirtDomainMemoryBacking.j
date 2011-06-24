@@ -1,5 +1,5 @@
 /*  
- * Jakefile
+ * TNLibvirtDomainMemoryBacking.j
  *    
  * Copyright (C) 2010 Antoine Mercadal <antoine.mercadal@inframonde.eu>
  * This program is free software: you can redistribute it and/or modify
@@ -16,15 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* enter the following information about you and your module */ 
-AUTHOR		= "Antoine Mercadal";
-EMAIL		= "antoine.mercadal@inframonde.eu";
-COMPANY		= "org.archipelproject";
-NAME 		= "VirtualMachineDefinition";
-SUMMARY		= "Module that allows to define virtual machines";
-VERSION		= "1.0";
+@import <Foundation/Foundation.j>
+@import <StropheCappuccino/TNXMLNode.j>
 
-FileList = require("jake").FileList
-FILELIST = new FileList("*.j", "Model/*.j");
+@import "TNLibvirtBase.j";
 
-require("../modulescommon.jake")
+@implementation TNLibvirtDomainMemoryBacking : TNLibvirtBase
+{
+    BOOL _hugePages @accessors(getter=isUsingHugePages, setter=setUseHugePages:);
+}
+
+- (TNXMLNode)XMLNode
+{
+    var node = [TNXMLNode nodeWithName:@"memoryBacking"];
+    
+    if (_hugePages)
+    {
+        [node addChildWithName:@"hugepages"];
+        [node up];
+    }
+    
+    return node;
+}
+
+@end
