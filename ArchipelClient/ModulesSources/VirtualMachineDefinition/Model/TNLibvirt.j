@@ -22,7 +22,7 @@
 @import "TNLibvirtDeviceDiskSource.j"
 @import "TNLibvirtDeviceDiskSourceHost.j"
 @import "TNLibvirtDeviceDiskTarget.j"
-@import "TNLibvirtDeviceGraphic.j"
+@import "TNLibvirtDeviceGraphics.j"
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
 @import "TNLibvirtDeviceInterfaceSource.j"

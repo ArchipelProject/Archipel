@@ -22,12 +22,43 @@
 @import "TNLibvirtBase.j";
 
 
+/*! @ingroup virtualmachinedefinition
+    Model for input
+*/
 @implementation TNLibvirtDeviceInput : TNLibvirtBase
 {
-    CPString    _type   @accessors(property=type);
     CPString    _bus    @accessors(property=bus);
+    CPString    _type   @accessors(property=type);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize the object with a given XML node
+    @param aNode the node to use
+*/
+- (id)initWithXMLNode:(TNXMLNode)aNode
+{
+    if (self = [super initWithXMLNode:aNode])
+    {
+        if ([aNode name] != @"input")
+            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid input"];
+
+        _bus        = [aNode valueForAttribute:@"display"];
+        _type       = [aNode valueForAttribute:@"type"];
+    }
+
+    return self;
+}
+
+
+#pragma mark -
+#pragma mark Generation
+
+/*! return a TNXMLNode representing the object
+    @return TNXMLNode
+*/
 - (TNXMLNode)XMLNode
 {
     var node = [TNXMLNode nodeWithName:@"input"];

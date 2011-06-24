@@ -22,11 +22,41 @@
 @import "TNLibvirtBase.j";
 
 
+/*! @ingroup virtualmachinedefinition
+    Model for interface target
+*/
 @implementation TNLibvirtDeviceInterfaceTarget : TNLibvirtBase
 {
     CPString    _dev    @accessors(property=dev);
 }
 
+
+#pragma mark -
+#pragma mark Initialization
+
+/*! initialize the object with a given XML node
+    @param aNode the node to use
+*/
+- (id)initWithXMLNode:(TNXMLNode)aNode
+{
+    if (self = [super initWithXMLNode:aNode])
+    {
+        if ([aNode name] != @"target")
+            [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid interface target"];
+
+        _dev = [aNode valueForAttribute:@"dev"];
+    }
+
+    return self;
+}
+
+
+#pragma mark -
+#pragma mark Generation
+
+/*! return a TNXMLNode representing the object
+    @return TNXMLNode
+*/
 - (TNXMLNode)XMLNode
 {
     var node = [TNXMLNode nodeWithName:@"target"];
