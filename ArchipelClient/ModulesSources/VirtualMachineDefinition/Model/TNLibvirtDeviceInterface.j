@@ -27,13 +27,13 @@
 */
 @implementation TNLibvirtDeviceInterface : TNLibvirtBase
 {
-    CPString                        _filter         @accessors(property=filter);
-    CPString                        _MAC            @accessors(property=MAC);
-    CPString                        _model          @accessors(property=model);
-    CPString                        _script         @accessors(property=script);
-    CPString                        _type           @accessors(property=type);
-    TNLibvirtDeviceInterfaceSource  _source         @accessors(property=source);
-    TNLibvirtDeviceInterfaceTarget  _target         @accessors(property=target);
+    CPString                            _MAC            @accessors(property=MAC);
+    CPString                            _model          @accessors(property=model);
+    CPString                            _script         @accessors(property=script);
+    CPString                            _type           @accessors(property=type);
+    TNLibvirtDeviceInterfaceFilterRef   _filterref      @accessors(property=filter);
+    TNLibvirtDeviceInterfaceSource      _source         @accessors(property=source);
+    TNLibvirtDeviceInterfaceTarget      _target         @accessors(property=target);
 }
 
 
@@ -50,14 +50,14 @@
         if ([aNode name] != @"interface")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid interface"];
 
-        _filter = [[aNode firstChildWithName:@"filterref"] valueForAttribute:@"filter"];
         _MAC    = [[aNode firstChildWithName:@"mac"] valueForAttribute:@"address"];
         _model  = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
         _script = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
         _type   = [aNode valueForAttribute:@"type"];
-
-        _source = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
-        _target = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
+        
+        _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
+        _source     = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
+        _target     = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
     }
 
     return self;
@@ -87,14 +87,14 @@
         [node addChildWithName:@"script" andAttributes:{"path": _script}];
         [node up];
     }
-    if (_filter)
-    {
-        [node addChildWithName:@"filterref" andAttributes:{"filter": _filter}];
-        [node up];
-    }
     if (_model)
     {
         [node addChildWithName:@"model" andAttributes:{"type": _model}];
+        [node up];
+    }
+    if (_filterref)
+    {
+        [node addNode:[_filterref XMLNode]];
         [node up];
     }
     if (_source)

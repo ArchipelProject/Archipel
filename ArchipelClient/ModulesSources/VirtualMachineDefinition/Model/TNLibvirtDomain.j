@@ -29,7 +29,7 @@
 {
     CPString                        _bootloader         @accessors(property=bootloader);
     CPString                        _description        @accessors(property=description);
-    CPString                        _domainType         @accessors(property=domainType);
+    CPString                        _type               @accessors(property=type);
     CPString                        _name               @accessors(property=name);
     CPString                        _onCrash            @accessors(property=onCrash);
     CPString                        _onPowerOff         @accessors(property=onPowerOff);
@@ -64,7 +64,7 @@
         _bootloader     = [[aNode firstChildWithName:@"bootloaded"] text];
         _currentMemory  = [[[aNode firstChildWithName:@"currentMemory"] text] intValue];
         _description    = [[aNode firstChildWithName:@"description"] text];
-        _domainType     = [aNode valueForAttribute:@"type"];
+        _type           = [aNode valueForAttribute:@"type"];
         _memory         = [[[aNode firstChildWithName:@"memory"] text] intValue];
         _name           = [[aNode firstChildWithName:@"name"] text];
         _onCrash        = [[aNode firstChildWithName:@"on_crash"] text];
@@ -95,10 +95,10 @@
 */
 - (TNXMLNode)XMLNode
 {
-    if (!_domainType)
+    if (!_type)
         [CPException raise:@"Missing domainType" reason:@"domainType is required"];
 
-    var node = [TNXMLNode nodeWithName:@"domain" andAttributes:{@"type":_domainType}];
+    var node = [TNXMLNode nodeWithName:@"domain" andAttributes:{@"type":_type}];
 
     if (_name)
     {

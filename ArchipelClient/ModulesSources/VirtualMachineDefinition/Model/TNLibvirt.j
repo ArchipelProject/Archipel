@@ -19,12 +19,14 @@
 
 @import "TNLibvirtBase.j"
 @import "TNLibvirtDeviceDisk.j"
+@import "TNLibvirtDeviceDiskDriver.j"
 @import "TNLibvirtDeviceDiskSource.j"
 @import "TNLibvirtDeviceDiskSourceHost.j"
 @import "TNLibvirtDeviceDiskTarget.j"
 @import "TNLibvirtDeviceGraphics.j"
 @import "TNLibvirtDeviceInput.j"
 @import "TNLibvirtDeviceInterface.j"
+@import "TNLibvirtDeviceInterfaceFilterRef.j"
 @import "TNLibvirtDeviceInterfaceSource.j"
 @import "TNLibvirtDeviceInterfaceTarget.j"
 @import "TNLibvirtDevices.j"
@@ -36,27 +38,3 @@
 @import "TNLibvirtDomainMemoryTune.j"
 @import "TNLibvirtDomainOS.j"
 @import "TNLibvirtDomainOSType.j"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -31,6 +31,7 @@
     CPString                    _type       @accessors(property=type);
     TNLibvirtDeviceDiskSource   _source     @accessors(property=source);
     TNLibvirtDeviceDiskTarget   _target     @accessors(property=target);
+    TNLibvirtDeviceDiskDriver   _driver     @accessors(property=driver);
 }
 
 
@@ -52,6 +53,7 @@
 
         _source = [[TNLibvirtDeviceDiskSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target = [[TNLibvirtDeviceDiskTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];
+        _driver = [[TNLibvirtDeviceDiskDriver alloc] initWithXMLNode:[aNode firstChildWithName:@"driver"]];
     }
 
     return self;
@@ -87,6 +89,13 @@
         [node addNode:[_target XMLNode]];
         [node up];
     }
+    
+    if (_driver)
+    {
+        [node addNode:[_driver XMLNode]];
+        [node up];
+    }
+    
 
     return node;
 }
