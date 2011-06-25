@@ -125,6 +125,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNUIKitScrollView       scrollViewContentView;
     @outlet TNUIKitScrollView       scrollViewForDrives;
     @outlet TNUIKitScrollView       scrollViewForNics;
+    @outlet CPTableView             tableDrives;
+    @outlet CPTableView             tableInterfaces;
 
     BOOL                            _definitionEdited @accessors(setter=setBasicDefinitionEdited:);
     BOOL                            _definitionRecovered;
@@ -140,8 +142,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     CPImage                         _imageDefining;
     CPImage                         _imageEdited;
     CPString                        _stringXMLDesc;
-    CPTableView                     _tableDrives;
-    CPTableView                     _tableNetworkNics;
+
     TNTableViewDataSource           _drivesDatasource;
     TNTableViewDataSource           _nicsDatasource;
     TNLibvirtDomain                 _libvirtDomain;
@@ -263,127 +264,16 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     //drives
     _drivesDatasource = [[TNTableViewDataSource alloc] init];
-    _tableDrives = [[CPTableView alloc] initWithFrame:[scrollViewForDrives bounds]];
-
-    [scrollViewForDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewForDrives setAutohidesScrollers:YES];
-    [scrollViewForDrives setDocumentView:_tableDrives];
-
-    [_tableDrives setUsesAlternatingRowBackgroundColors:YES];
-    [_tableDrives setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableDrives setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableDrives setAllowsColumnResizing:YES];
-    [_tableDrives setAllowsEmptySelection:YES];
-    [_tableDrives setAllowsMultipleSelection:YES];
-    [_tableDrives setTarget:self];
-    [_tableDrives setDelegate:self];
-    [_tableDrives setDoubleAction:@selector(editDrive:)];
-
-    var driveColumnType = [[CPTableColumn alloc] initWithIdentifier:@"type"],
-        driveColumnDevice = [[CPTableColumn alloc] initWithIdentifier:@"device"],
-        driveColumnTarget = [[CPTableColumn alloc] initWithIdentifier:@"target.device"],
-        driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"target.bus"],
-        driveColumnCache = [[CPTableColumn alloc] initWithIdentifier:@"driver.cache"],
-        driveColumnFormat = [[CPTableColumn alloc] initWithIdentifier:@"driver.type"],
-        driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source.sourceObject"];
-
-    [[driveColumnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
-    [driveColumnType setWidth:80.0];
-    [driveColumnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
-
-    [[driveColumnDevice headerView] setStringValue:CPBundleLocalizedString(@"Device", @"Device")];
-    [driveColumnDevice setWidth:80.0];
-    [driveColumnDevice setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"device" ascending:YES]];
-
-    [[driveColumnTarget headerView] setStringValue:CPBundleLocalizedString(@"Target", @"Target")];
-    [driveColumnTarget setWidth:80.0];
-    [driveColumnTarget setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"target" ascending:YES]];
-
-    [[driveColumnBus headerView] setStringValue:CPBundleLocalizedString(@"Bus", @"Bus")];
-    [driveColumnBus setWidth:80.0];
-    [driveColumnBus setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"bus" ascending:YES]];
-
-    [[driveColumnCache headerView] setStringValue:CPBundleLocalizedString(@"Cache mode", @"Cache mode")];
-    [driveColumnCache setWidth:80.0];
-    [driveColumnCache setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"cache" ascending:YES]];
-
-    [[driveColumnFormat headerView] setStringValue:CPBundleLocalizedString(@"Format", @"Format")];
-    [driveColumnFormat setWidth:80.0];
-    [driveColumnFormat setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"format" ascending:YES]];
-
-    [driveColumnSource setWidth:300];
-    [[driveColumnSource headerView] setStringValue:CPBundleLocalizedString(@"Source", @"Source")];
-    [driveColumnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
-
-    [_tableDrives addTableColumn:driveColumnType];
-    [_tableDrives addTableColumn:driveColumnDevice];
-    [_tableDrives addTableColumn:driveColumnTarget];
-    [_tableDrives addTableColumn:driveColumnBus];
-    [_tableDrives addTableColumn:driveColumnCache];
-    [_tableDrives addTableColumn:driveColumnFormat];
-    [_tableDrives addTableColumn:driveColumnSource];
-
-    [_drivesDatasource setTable:_tableDrives];
+    [_drivesDatasource setTable:tableDrives];
     [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
-
-    [_tableDrives setDataSource:_drivesDatasource];
+    [tableDrives setDataSource:_drivesDatasource];
 
 
     // NICs
-    _nicsDatasource      = [[TNTableViewDataSource alloc] init];
-    _tableNetworkNics   = [[CPTableView alloc] initWithFrame:[scrollViewForNics bounds]];
-
-    [scrollViewForNics setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [scrollViewForNics setDocumentView:_tableNetworkNics];
-    [scrollViewForNics setAutohidesScrollers:YES];
-
-    [_tableNetworkNics setUsesAlternatingRowBackgroundColors:YES];
-    [_tableNetworkNics setAutoresizingMask: CPViewWidthSizable | CPViewHeightSizable];
-    [_tableNetworkNics setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-    [_tableNetworkNics setAllowsColumnResizing:YES];
-    [_tableNetworkNics setAllowsEmptySelection:YES];
-    [_tableNetworkNics setAllowsEmptySelection:YES];
-    [_tableNetworkNics setAllowsMultipleSelection:YES];
-    [_tableNetworkNics setTarget:self];
-    [_tableNetworkNics setDelegate:self];
-    [_tableNetworkNics setDoubleAction:@selector(editNetworkCard:)];
-    [_tableNetworkNics setColumnAutoresizingStyle:CPTableViewLastColumnOnlyAutoresizingStyle];
-
-    var columnType = [[CPTableColumn alloc] initWithIdentifier:@"type"],
-        columnModel = [[CPTableColumn alloc] initWithIdentifier:@"model"],
-        columnMac = [[CPTableColumn alloc] initWithIdentifier:@"MAC"],
-        columnSource = [[CPTableColumn alloc] initWithIdentifier:@"source.bridge"],
-        columnNWFilter = [[CPTableColumn alloc] initWithIdentifier:@"filterref.name"];
-
-    [[columnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
-    [columnType setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"type" ascending:YES]];
-
-    [[columnModel headerView] setStringValue:CPBundleLocalizedString(@"Model", @"Model")];
-    [columnModel setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"model" ascending:YES]];
-
-    [columnMac setWidth:150];
-    [[columnMac headerView] setStringValue:CPBundleLocalizedString(@"MAC", @"MAC")];
-    [columnMac setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"mac" ascending:YES]];
-
-    [columnNWFilter setWidth:150];
-    [[columnNWFilter headerView] setStringValue:CPBundleLocalizedString(@"Network Filter", @"Network Filter")];
-    [columnNWFilter setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"networkFilter" ascending:YES]];
-
-
-    [[columnSource headerView] setStringValue:CPBundleLocalizedString(@"Source", @"Source")];
-    [columnSource setWidth:250];
-    [columnSource setSortDescriptorPrototype:[CPSortDescriptor sortDescriptorWithKey:@"source" ascending:YES]];
-
-    [_tableNetworkNics addTableColumn:columnSource];
-    [_tableNetworkNics addTableColumn:columnType];
-    [_tableNetworkNics addTableColumn:columnModel];
-    [_tableNetworkNics addTableColumn:columnMac];
-    [_tableNetworkNics addTableColumn:columnNWFilter];
-
-    [_nicsDatasource setTable:_tableNetworkNics];
+    _nicsDatasource = [[TNTableViewDataSource alloc] init];
+    [_nicsDatasource setTable:tableInterfaces];
     [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"MAC", @"source.bridge"]];
-
-    [_tableNetworkNics setDataSource:_nicsDatasource];
+    [tableInterfaces setDataSource:_nicsDatasource];
 
     [fieldFilterDrives setTarget:_drivesDatasource];
     [fieldFilterDrives setAction:@selector(filterObjects:)];
@@ -462,18 +352,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [menuNet addItem:[CPMenuItem separatorItem]];
     [menuNet addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editNetworkCard:) keyEquivalent:@""];
     [menuNet addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteNetworkCard:) keyEquivalent:@""];
-    [_tableNetworkNics setMenu:menuNet];
+    [tableInterfaces setMenu:menuNet];
 
     [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Create new drive", @"Create new drive") action:@selector(addDrive:) keyEquivalent:@""];
     [menuDrive addItem:[CPMenuItem separatorItem]];
     [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editDrive:) keyEquivalent:@""];
     [menuDrive addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteDrive:) keyEquivalent:@""];
-    [_tableDrives setMenu:menuDrive];
+    [tableDrives setMenu:menuDrive];
 
     [fieldVNCPassword setSecure:YES];
 
-    [driveController setTable:_tableDrives];
-    [networkController setTable:_tableNetworkNics];
+    [driveController setTable:tableDrives];
+    [networkController setTable:tableInterfaces];
 
     // switch
     [switchAPIC setTarget:self];
@@ -568,10 +458,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [center postNotificationName:TNArchipelModulesReadyNotification object:self];
 
-    [_tableDrives setDelegate:nil];
-    [_tableDrives setDelegate:self];
-    [_tableNetworkNics setDelegate:nil];
-    [_tableNetworkNics setDelegate:self];
+    [tableDrives setDelegate:nil];
+    [tableDrives setDelegate:self];
+    [tableInterfaces setDelegate:nil];
+    [tableInterfaces setDelegate:self];
 
     [driveController setDelegate:nil];
     [driveController setDelegate:self];
@@ -588,8 +478,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self getCapabilities];
 
     // seems to be necessary
-    [_tableDrives reloadData];
-    [_tableNetworkNics reloadData];
+    [tableDrives reloadData];
+    [tableInterfaces reloadData];
 }
 
 /*! called when module is unloaded
@@ -937,8 +827,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [_nicsDatasource removeAllObjects];
     [_drivesDatasource removeAllObjects];
-    [_tableNetworkNics reloadData];
-    [_tableDrives reloadData];
+    [tableInterfaces reloadData];
+    [tableDrives reloadData];
 
 }
 
@@ -1158,7 +1048,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     //                                      networkFilterParameters:nil];
 
     [_nicsDatasource addObject:defaultNic];
-    [_tableNetworkNics reloadData];
+    [tableInterfaces reloadData];
     [networkController setNic:defaultNic];
     [networkController showWindow:aSender];
     [self makeDefinitionEdited:YES];
@@ -1172,12 +1062,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([[_tableNetworkNics selectedRowIndexes] count] != 1)
+    if ([[tableInterfaces selectedRowIndexes] count] != 1)
     {
          [self addNetworkCard:aSender];
          return;
     }
-    var selectedIndex   = [[_tableNetworkNics selectedRowIndexes] firstIndex],
+    var selectedIndex   = [[tableInterfaces selectedRowIndexes] firstIndex],
         nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
 
     [networkController setNic:nicObject];
@@ -1192,19 +1082,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([_tableNetworkNics numberOfSelectedRows] <= 0)
+    if ([tableInterfaces numberOfSelectedRows] <= 0)
     {
          [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                            informative:CPBundleLocalizedString(@"You must select a network interface", @"You must select a network interface")];
          return;
     }
 
-     var selectedIndexes = [_tableNetworkNics selectedRowIndexes];
+     var selectedIndexes = [tableInterfaces selectedRowIndexes];
 
      [_nicsDatasource removeObjectsAtIndexes:selectedIndexes];
 
-     [_tableNetworkNics reloadData];
-     [_tableNetworkNics deselectAll];
+     [tableInterfaces reloadData];
+     [tableInterfaces deselectAll];
      [self handleDefinitionEdition:YES];
 }
 
@@ -1237,7 +1127,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     //[[[_libvirtDomain devices] disks] addObject:newDrive];
     [_drivesDatasource addObject:newDrive];
-    [_tableDrives reloadData];
+    [tableDrives reloadData];
     [driveController setDrive:newDrive];
 
     [driveController showWindow:aSender];
@@ -1252,13 +1142,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([_tableDrives numberOfSelectedRows] <= 0)
+    if ([tableDrives numberOfSelectedRows] <= 0)
     {
          [self addDrive:aSender];
          return;
     }
 
-    var driveObject = [_drivesDatasource objectAtIndex:[_tableDrives selectedRow]];
+    var driveObject = [_drivesDatasource objectAtIndex:[tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
     [driveController showWindow:aSender];
@@ -1272,19 +1162,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([_tableDrives numberOfSelectedRows] <= 0)
+    if ([tableDrives numberOfSelectedRows] <= 0)
     {
         [TNAlert showAlertWithMessage:CPBundleLocalizedString(@"Error", @"Error")
                           informative:CPBundleLocalizedString(@"You must select a drive", @"You must select a drive")];
         return;
     }
 
-     var selectedIndexes = [_tableDrives selectedRowIndexes];
+     var selectedIndexes = [tableDrives selectedRowIndexes];
 
      [_drivesDatasource removeObjectsAtIndexes:selectedIndexes];
 
-     [_tableDrives reloadData];
-     [_tableDrives deselectAll];
+     [tableDrives reloadData];
+     [tableDrives deselectAll];
      [self handleDefinitionEdition:YES];
 }
 
@@ -1525,11 +1415,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     // DRIVES
     [_drivesDatasource setContent:[[_libvirtDomain devices] disks]];
-    [_tableDrives reloadData];
+    [tableDrives reloadData];
 
     // NICS
     [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
-    [_tableNetworkNics reloadData];
+    [tableInterfaces reloadData];
 
     // MANUAL
     _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
@@ -1656,7 +1546,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_minusButtonDrives setEnabled:NO];
     [_editButtonDrives setEnabled:NO];
 
-    if ([aNotification object] == _tableDrives)
+    if ([aNotification object] == tableDrives)
     {
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
@@ -1664,7 +1554,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
             [self setControl:_editButtonDrives enabledAccordingToPermission:@"define"];
         }
     }
-    else if ([aNotification object] == _tableNetworkNics)
+    else if ([aNotification object] == tableInterfaces)
     {
         if ([[aNotification object] numberOfSelectedRows] > 0)
         {
