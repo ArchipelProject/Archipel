@@ -29,7 +29,7 @@
 {
     CPString    _address        @accessors(property=address);
     CPString    _bridge         @accessors(property=bridge);
-    CPString    _dev            @accessors(property=dev);
+    CPString    _device         @accessors(property=device);
     CPString    _mode           @accessors(property=mode);
     CPString    _network        @accessors(property=network);
     CPString    _port           @accessors(property=port);
@@ -51,7 +51,7 @@
 
         _address    = [aNode valueForAttribute:@"address"];
         _bridge     = [aNode valueForAttribute:@"bridge"];
-        _dev        = [aNode valueForAttribute:@"dev"];
+        _device     = [aNode valueForAttribute:@"dev"];
         _mode       = [aNode valueForAttribute:@"mode"];
         _network    = [aNode valueForAttribute:@"network"];
         _port       = [aNode valueForAttribute:@"port"];
@@ -64,7 +64,7 @@
 #pragma mark -
 #pragma mark Setters / Getters
 
-/*! return the current source object, _bridge, _dev or _network
+/*! return the current source object, _bridge, _device or _network
     @return CPString containing the source object
 */
 - (CPString)sourceObject
@@ -73,8 +73,8 @@
         return _bridge;
     if (_network)
         return _network;
-    if (_dev)
-        return _dev;
+    if (_device)
+        return _device;
 }
 
 
@@ -90,8 +90,8 @@
 
     if (_bridge)
         [node setValue:_bridge forAttribute:@"bridge"];
-    if (_dev)
-        [node setValue:_dev forAttribute:@"dev"];
+    if (_device)
+        [node setValue:_device forAttribute:@"dev"];
     if (_network)
         [node setValue:_network forAttribute:@"network"];
     if (_mode)

@@ -28,7 +28,7 @@
 @implementation TNLibvirtDeviceInterfaceFilterRef : TNLibvirtBase
 {
     CPString        _filter         @accessors(property=name);
-    CPArray         _parameters     @accessors(property=model);
+    CPArray         _parameters     @accessors(property=parameters);
 }
 
 
@@ -76,7 +76,7 @@
 
     for (var i = 0; i < [_parameters count]; i++)
     {
-        [node addNodeWithName:@"parameter" andAttributes:{
+        [node addChildWithName:@"parameter" andAttributes:{
             @"name": [[_parameters objectAtIndex:i] valueForKey:@"name"],
             @"value": [[_parameters objectAtIndex:i] valueForKey:@"value"]
         }];

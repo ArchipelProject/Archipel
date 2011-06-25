@@ -214,6 +214,20 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _buttonBezelHighlighted     = [CPColor colorWithPatternImage:centerBezelHighlighted];
     _buttonBezelSelected        = [CPColor colorWithPatternImage:centerBezelSelected];
 
+
+    // DRIVES
+    _drivesDatasource = [[TNTableViewDataSource alloc] init];
+    [_drivesDatasource setTable:tableDrives];
+    [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
+    [tableDrives setDataSource:_drivesDatasource];
+
+    [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
+
+    [driveController setDelegate:self];
+
+    [fieldFilterDrives setTarget:_drivesDatasource];
+    [fieldFilterDrives setAction:@selector(filterObjects:)];
+
     _plusButtonDrives = [CPButtonBar plusButton];
     [_plusButtonDrives setTarget:self];
     [_plusButtonDrives setAction:@selector(addDrive:)];
@@ -235,6 +249,19 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonBarControlDrives setButtons:[_plusButtonDrives, _minusButtonDrives, _editButtonDrives]];
 
 
+    // NICs
+    _nicsDatasource = [[TNTableViewDataSource alloc] init];
+    [_nicsDatasource setTable:tableInterfaces];
+    [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"MAC", @"source.bridge"]];
+    [tableInterfaces setDataSource:_nicsDatasource];
+
+    [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
+
+    [networkController setDelegate:self];
+
+    [fieldFilterNics setTarget:_nicsDatasource];
+    [fieldFilterNics setAction:@selector(filterObjects:)];
+
     _plusButtonNics = [CPButtonBar plusButton];
     [_plusButtonNics setTarget:self];
     [_plusButtonNics setAction:@selector(addNetworkCard:)];
@@ -249,37 +276,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     _editButtonNics = [CPButtonBar plusButton];
     [_editButtonNics setImage:[[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"IconsButtons/edit.png"] size:CPSizeMake(16, 16)]];
     [_editButtonNics setTarget:self];
-    [_editButtonNics setAction:@selector(editNetworkCard:)];
+    [_editButtonNics setAction:@selector(editInterface:)];
     [_editButtonNics setEnabled:NO];
     [_editButtonNics setToolTip:CPBundleLocalizedString(@"Edit selected virtual network card", @"Edit selected virtual network card")];
 
     [buttonBarControlNics setButtons:[_plusButtonNics, _minusButtonNics, _editButtonNics]];
-
-
-    [viewDrivesContainer setBorderedWithHexColor:@"#C0C7D2"];
-    [viewNicsContainer setBorderedWithHexColor:@"#C0C7D2"];
-
-    [networkController setDelegate:self];
-    [networkController setDelegate:self];
-
-    //drives
-    _drivesDatasource = [[TNTableViewDataSource alloc] init];
-    [_drivesDatasource setTable:tableDrives];
-    [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
-    [tableDrives setDataSource:_drivesDatasource];
-
-
-    // NICs
-    _nicsDatasource = [[TNTableViewDataSource alloc] init];
-    [_nicsDatasource setTable:tableInterfaces];
-    [_nicsDatasource setSearchableKeyPaths:[@"type", @"model", @"MAC", @"source.bridge"]];
-    [tableInterfaces setDataSource:_nicsDatasource];
-
-    [fieldFilterDrives setTarget:_drivesDatasource];
-    [fieldFilterDrives setAction:@selector(filterObjects:)];
-    [fieldFilterNics setTarget:_nicsDatasource];
-    [fieldFilterNics setAction:@selector(filterObjects:)];
-
 
     // device tabView
     [tabViewDevices setAutoresizingMask:CPViewWidthSizable];
@@ -350,7 +351,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [menuNet addItemWithTitle:CPBundleLocalizedString(@"Create new network interface", @"Create new network interface") action:@selector(addNetworkCard:) keyEquivalent:@""];
     [menuNet addItem:[CPMenuItem separatorItem]];
-    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editNetworkCard:) keyEquivalent:@""];
+    [menuNet addItemWithTitle:CPBundleLocalizedString(@"Edit", @"Edit") action:@selector(editInterface:) keyEquivalent:@""];
     [menuNet addItemWithTitle:CPBundleLocalizedString(@"Delete", @"Delete") action:@selector(deleteNetworkCard:) keyEquivalent:@""];
     [tableInterfaces setMenu:menuNet];
 
@@ -578,7 +579,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected drive", @"Edit selected drive") action:@selector(editDrive:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:CPBundleLocalizedString(@"Add network card", @"Add network card") action:@selector(addNetworkCard:) keyEquivalent:@""] setTarget:self];
-    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network card", @"Edit selected network card") action:@selector(editNetworkCard:) keyEquivalent:@""] setTarget:self];
+    [[_menu addItemWithTitle:CPBundleLocalizedString(@"Edit selected network card", @"Edit selected network card") action:@selector(editInterface:) keyEquivalent:@""] setTarget:self];
     [_menu addItem:[CPMenuItem separatorItem]];
     [[_menu addItemWithTitle:@"Open XML editor" action:@selector(openXMLEditor:) keyEquivalent:@""] setTarget:self];
 }
@@ -1040,16 +1041,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)addNetworkCard:(id)aSender
 {
-    // var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge"
-    //                                                         model:@"pcnet"
-    //                                                          mac:[self generateMacAddr]
-    //                                                       source:@"virbr0"
-    //                                                networkFilter:@"None"
-    //                                      networkFilterParameters:nil];
+    var newNic = [[TNLibvirtDeviceInterface alloc] init],
+        newNicSource = [[TNLibvirtDeviceInterfaceSource alloc] init];
 
-    [_nicsDatasource addObject:defaultNic];
+    [newNic setType:TNLibvirtDeviceInterfaceTypeBridge];
+    [newNic setModel:TNLibvirtDeviceInterfaceModelPCNET];
+    [newNic setMAC:[self generateMacAddr]];
+    [newNic setSource:newNicSource];
+
+    [_nicsDatasource addObject:newNic];
     [tableInterfaces reloadData];
-    [networkController setNic:defaultNic];
+    [networkController setNic:newNic];
     [networkController showWindow:aSender];
     [self makeDefinitionEdited:YES];
 }
@@ -1057,18 +1059,18 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 /*! open the network editor
     @param sender the sender of the action
 */
-- (IBAction)editNetworkCard:(id)aSender
+- (IBAction)editInterface:(id)aSender
 {
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([[tableInterfaces selectedRowIndexes] count] != 1)
+    if ([tableInterfaces numberOfSelectedRows] <= 0)
     {
          [self addNetworkCard:aSender];
          return;
     }
-    var selectedIndex   = [[tableInterfaces selectedRowIndexes] firstIndex],
-        nicObject       = [_nicsDatasource objectAtIndex:selectedIndex];
+
+    var nicObject = [_nicsDatasource objectAtIndex:[tableInterfaces selectedRow]];
 
     [networkController setNic:nicObject];
     [networkController showWindow:aSender];
@@ -1125,7 +1127,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [newDrive setTarget:newDriveTarget];
     [newDrive setDriver:newDriveDriver];
 
-    //[[[_libvirtDomain devices] disks] addObject:newDrive];
     [_drivesDatasource addObject:newDrive];
     [tableDrives reloadData];
     [driveController setDrive:newDrive];

@@ -58,7 +58,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
     CPString                            _model          @accessors(property=model);
     CPString                            _script         @accessors(property=script);
     CPString                            _type           @accessors(property=type);
-    TNLibvirtDeviceInterfaceFilterRef   _filterref      @accessors(property=filter);
+    TNLibvirtDeviceInterfaceFilterRef   _filterref      @accessors(property=filterref);
     TNLibvirtDeviceInterfaceSource      _source         @accessors(property=source);
     TNLibvirtDeviceInterfaceTarget      _target         @accessors(property=target);
 }
