@@ -36,8 +36,6 @@
 @import <TNKit/TNTextFieldStepper.j>
 @import <TNKit/TNUIKitScrollView.j>
 
-@import "TNDriveObject.j"
-@import "TNNetworkInterfaceObject.j"
 @import "TNDriveController.j"
 @import "TNNetworkController.j"
 @import "TNVirtualMachineGuestItem.j"
@@ -58,44 +56,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     VIR_DOMAIN_PAUSED                                   =   3,
     VIR_DOMAIN_SHUTDOWN                                 =   4,
     VIR_DOMAIN_SHUTOFF                                  =   5,
-    VIR_DOMAIN_CRASHED                                  =   6,
-    TNXMLDescBootHardDrive                              = @"hd",
-    TNXMLDescBootCDROM                                  = @"cdrom",
-    TNXMLDescBootNetwork                                = @"network",
-    TNXMLDescBootFileDescriptor                         = @"fd",
-    TNXMLDescBoots                                      = [ TNXMLDescBootHardDrive, TNXMLDescBootCDROM,
-                                                            TNXMLDescBootNetwork, TNXMLDescBootFileDescriptor],
-    TNXMLDescHypervisorKVM                              = @"kvm",
-    TNXMLDescHypervisorXen                              = @"xen",
-    TNXMLDescHypervisorOpenVZ                           = @"openvz",
-    TNXMLDescHypervisorQemu                             = @"qemu",
-    TNXMLDescHypervisorKQemu                            = @"kqemu",
-    TNXMLDescHypervisorLXC                              = @"lxc",
-    TNXMLDescHypervisorUML                              = @"uml",
-    TNXMLDescHypervisorVBox                             = @"vbox",
-    TNXMLDescHypervisorVMWare                           = @"vmware",
-    TNXMLDescHypervisorOpenNebula                       = @"one",
-    TNXMLDescVNCKeymapFR                                = @"fr",
-    TNXMLDescVNCKeymapEN_US                             = @"en-us",
-    TNXMLDescVNCKeymapDeutch                            = @"de",
-    TNXMLDescVNCKeymaps                                 = [TNXMLDescVNCKeymapEN_US, TNXMLDescVNCKeymapFR, TNXMLDescVNCKeymapDeutch],
-    TNXMLDescLifeCycleDestroy                           = @"destroy",
-    TNXMLDescLifeCycleRestart                           = @"restart",
-    TNXMLDescLifeCyclePreserve                          = @"preserve",
-    TNXMLDescLifeCycleRenameRestart                     = @"rename-restart",
-    TNXMLDescLifeCycles                                 = [TNXMLDescLifeCycleDestroy, TNXMLDescLifeCycleRestart,
-                                                            TNXMLDescLifeCyclePreserve, TNXMLDescLifeCycleRenameRestart],
-    TNXMLDescFeaturePAE                                 = @"pae",
-    TNXMLDescFeatureACPI                                = @"acpi",
-    TNXMLDescFeatureAPIC                                = @"apic",
-    TNXMLDescClockUTC                                   = @"utc",
-    TNXMLDescClockLocalTime                             = @"localtime",
-    TNXMLDescClockTimezone                              = @"timezone",
-    TNXMLDescClockVariable                              = @"variable",
-    TNXMLDescClocks                                     = [TNXMLDescClockUTC, TNXMLDescClockLocalTime],
-    TNXMLDescInputTypeMouse                             = @"mouse",
-    TNXMLDescInputTypeTablet                            = @"tablet",
-    TNXMLDescInputTypes                                 = [TNXMLDescInputTypeMouse, TNXMLDescInputTypeTablet];
+    VIR_DOMAIN_CRASHED                                  =   6;
 
 
 /*! @defgroup virtualmachinedefinition Module VirtualMachine Definition
@@ -324,7 +285,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         driveColumnBus = [[CPTableColumn alloc] initWithIdentifier:@"target.bus"],
         driveColumnCache = [[CPTableColumn alloc] initWithIdentifier:@"driver.cache"],
         driveColumnFormat = [[CPTableColumn alloc] initWithIdentifier:@"driver.type"],
-        driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source.file"];
+        driveColumnSource = [[CPTableColumn alloc] initWithIdentifier:@"source.sourceObject"];
 
     [[driveColumnType headerView] setStringValue:CPBundleLocalizedString(@"Type", @"Type")];
     [driveColumnType setWidth:80.0];
@@ -363,7 +324,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [_tableDrives addTableColumn:driveColumnSource];
 
     [_drivesDatasource setTable:_tableDrives];
-    [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.file", @"target.bus", @"driver.cache"]];
+    [_drivesDatasource setSearchableKeyPaths:[@"type", @"driver.type", @"target.device", @"source.sourceObject", @"target.bus", @"driver.cache"]];
 
     [_tableDrives setDataSource:_drivesDatasource];
 
@@ -465,30 +426,30 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonPreferencesInput removeAllItems];
     [buttonPreferencesDriveCache removeAllItems];
 
-    [buttonBoot addItemsWithTitles:TNXMLDescBoots];
-    [buttonPreferencesBoot addItemsWithTitles:TNXMLDescBoots];
+    [buttonBoot addItemsWithTitles:TNLibvirtDomainOSBoots];
+    [buttonPreferencesBoot addItemsWithTitles:TNLibvirtDomainOSBoots];
 
     [buttonPreferencesNumberOfCPUs addItemsWithTitles:[@"1", @"2", @"3", @"4"]];
 
-    [buttonVNCKeymap addItemsWithTitles:TNXMLDescVNCKeymaps];
-    [buttonPreferencesVNCKeyMap addItemsWithTitles:TNXMLDescVNCKeymaps];
+    [buttonVNCKeymap addItemsWithTitles:TNLibvirtDeviceGraphicsVNCKeymaps];
+    [buttonPreferencesVNCKeyMap addItemsWithTitles:TNLibvirtDeviceGraphicsVNCKeymaps];
 
-    [buttonOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
-    [buttonPreferencesOnPowerOff addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonOnPowerOff addItemsWithTitles:TNLibvirtDomainLifeCycles];
+    [buttonPreferencesOnPowerOff addItemsWithTitles:TNLibvirtDomainLifeCycles];
 
-    [buttonOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
-    [buttonPreferencesOnReboot addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonOnReboot addItemsWithTitles:TNLibvirtDomainLifeCycles];
+    [buttonPreferencesOnReboot addItemsWithTitles:TNLibvirtDomainLifeCycles];
 
-    [buttonOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
-    [buttonPreferencesOnCrash addItemsWithTitles:TNXMLDescLifeCycles];
+    [buttonOnCrash addItemsWithTitles:TNLibvirtDomainLifeCycles];
+    [buttonPreferencesOnCrash addItemsWithTitles:TNLibvirtDomainLifeCycles];
 
-    [buttonClocks addItemsWithTitles:TNXMLDescClocks];
-    [buttonPreferencesClockOffset addItemsWithTitles:TNXMLDescClocks];
+    [buttonClocks addItemsWithTitles:TNLibvirtDomainClockClocks];
+    [buttonPreferencesClockOffset addItemsWithTitles:TNLibvirtDomainClockClocks];
 
-    [buttonInputType addItemsWithTitles:TNXMLDescInputTypes];
-    [buttonPreferencesInput addItemsWithTitles:TNXMLDescInputTypes];
+    [buttonInputType addItemsWithTitles:TNLibvirtDeviceInputTypes];
+    [buttonPreferencesInput addItemsWithTitles:TNLibvirtDeviceInputTypes];
 
-    [buttonPreferencesDriveCache addItemsWithTitles:TNXMLDescDiskCaches];
+    [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
     [switchPAE setOn:NO animated:YES sendAction:NO];
     [switchACPI setOn:NO animated:YES sendAction:NO];
@@ -598,10 +559,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var center = [CPNotificationCenter defaultCenter];
 
     [center addObserver:self selector:@selector(_didUpdatePresence:) name:TNStropheContactPresenceUpdatedNotification object:_entity];
-    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldMemory];
-    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
-    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCListen];
-    [center addObserver:self selector:@selector(_didBasicDefinitionEdit:) name:CPControlTextDidChangeNotification object:fieldVNCPort];
+    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldMemory];
+    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCPassword];
+    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCListen];
+    [center addObserver:self selector:@selector(_didEditDefinition:) name:CPControlTextDidChangeNotification object:fieldVNCPort];
 
     [self registerSelector:@selector(_didReceivePush:) forPushNotificationType:TNArchipelPushNotificationDefinitition];
 
@@ -817,7 +778,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 /*! called when a basic definition field has changed
     @param aNotification the notification
 */
-- (void)_didBasicDefinitionEdit:(CPNotification)aNotification
+- (void)_didEditDefinition:(CPNotification)aNotification
 {
     [self handleDefinitionEdition:YES];
 }
@@ -998,36 +959,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     {
         [self showMaskView:NO];
     }
-}
-
-/*! check if given hypervisor is in given list (hum I think this will be throw away...)
-    @param anHypervisor an Hypervisor type
-    @param anArray an array of string
-*/
-- (BOOL)isHypervisor:(CPString)anHypervisor inList:(CPArray)anArray
-{
-    return [anArray containsObject:anHypervisor];
-}
-
-/*! return the emulator value of the current selected guest
-    @return current emulator
-*/
-- (CPString)emulatorOfCurrentGuest
-{
-    var currentGuest        = [[buttonGuests selectedItem] XMLGuest],
-        currentDomainType   = [buttonDomainType title],
-        defaultEmulator     = [[[currentGuest firstChildWithName:@"arch"] firstChildWithName:@"emulator"] text],
-        domains             = [[currentGuest firstChildWithName:@"arch"] childrenWithName:@"domain"];
-
-    for (var i = 0; i < [domains count]; i++)
-    {
-        var domain = [domains objectAtIndex:i];
-
-        if ([domain valueForAttribute:@"type"] == currentDomainType && [domain containsChildrenWithName:@"emulator"])
-            return [[domain firstChildWithName:@"emulator"] text];
-    }
-
-    return defaultEmulator;
 }
 
 /*! get the domain of the current guest with given type
@@ -1219,12 +1150,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)addNetworkCard:(id)aSender
 {
-    var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge"
-                                                            model:@"pcnet"
-                                                             mac:[self generateMacAddr]
-                                                          source:@"virbr0"
-                                                   networkFilter:@"None"
-                                         networkFilterParameters:nil];
+    // var defaultNic = [TNNetworkInterface networkInterfaceWithType:@"bridge"
+    //                                                         model:@"pcnet"
+    //                                                          mac:[self generateMacAddr]
+    //                                                       source:@"virbr0"
+    //                                                networkFilter:@"None"
+    //                                      networkFilterParameters:nil];
 
     [_nicsDatasource addObject:defaultNic];
     [_tableNetworkNics reloadData];
@@ -1285,23 +1216,30 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    var target = @"hda",
-        bus = @"ide";
 
-    if ([[[[buttonGuests selectedItem] XMLGuest] firstChildWithName:@"domain"] valueForAttribute:@"type"] == TNXMLDescHypervisorXen)
-    {
-        target = @"xvda";
-        bus = @"xen";
-        [driveController setHypervisor:TNXMLDescHypervisorXen];
-    }
-    else
-        [driveController setHypervisor:TNXMLDescHypervisorKVM];
+    var newDrive = [[TNLibvirtDeviceDisk alloc] init],
+        newDriveSource = [[TNLibvirtDeviceDiskSource alloc] init],
+        newDriveTarget = [[TNLibvirtDeviceDiskTarget alloc] init],
+        newDriveDriver = [[TNLibvirtDeviceDiskDriver alloc] init]
 
-    var defaultDrive = [TNDrive driveWithType:@"file" device:@"disk" source:"/drives/drive.img" target:target bus:bus cache:[[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultDriveCacheMode"] format:nil];
+    [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheNone];
 
-    [_drivesDatasource addObject:defaultDrive];
+    [newDriveTarget setBus:TNLibvirtDeviceDiskTargetBusIDE];
+    [newDriveTarget setDevice:TNLibvirtDeviceDiskTargetDeviceHda];
+
+    [newDriveSource setFile:@"/dev/null"];
+
+    [newDrive setType:TNLibvirtDeviceDiskTypeFile];
+    [newDrive setDevice:TNLibvirtDeviceDiskDeviceDisk];
+    [newDrive setSource:newDriveSource];
+    [newDrive setTarget:newDriveTarget];
+    [newDrive setDriver:newDriveDriver];
+
+    //[[[_libvirtDomain devices] disks] addObject:newDrive];
+    [_drivesDatasource addObject:newDrive];
     [_tableDrives reloadData];
-    [driveController setDrive:defaultDrive];
+    [driveController setDrive:newDrive];
+
     [driveController showWindow:aSender];
     [self makeDefinitionEdited:YES];
 }
@@ -1314,14 +1252,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     if (![self currentEntityHasPermission:@"define"])
         return;
 
-    if ([[_tableDrives selectedRowIndexes] count] != 1)
+    if ([_tableDrives numberOfSelectedRows] <= 0)
     {
          [self addDrive:aSender];
          return;
     }
 
-    var selectedIndex   = [[_tableDrives selectedRowIndexes] firstIndex],
-        driveObject     = [_drivesDatasource objectAtIndex:selectedIndex];
+    var driveObject = [_drivesDatasource objectAtIndex:[_tableDrives selectedRow]];
 
     [driveController setDrive:driveObject];
     [driveController showWindow:aSender];
@@ -1411,13 +1348,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionCapabilities}];
 
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveXMLCapabilities:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMLCapabilities:) ofObject:self];
 }
 
 /*! compute hypervisor capabilities
     @param aStanza TNStropheStanza containing the answer
 */
-- (BOOL)_didReceiveXMLCapabilities:(TNStropheStanza)aStanza
+- (BOOL)_didGetXMLCapabilities:(TNStropheStanza)aStanza
 {
     if ([aStanza type] == @"result")
     {
@@ -1467,7 +1404,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     return NO;
 }
 
-
 /*! ask hypervisor for its description
 */
 - (void)getXMLDesc
@@ -1479,15 +1415,17 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         "action": TNArchipelTypeVirtualMachineControlXMLDesc}];
 
     _libvirtDomain = nil;
-    [_entity sendStanza:stanza andRegisterSelector:@selector(_didReceiveXMLDesc:) ofObject:self];
+    [_entity sendStanza:stanza andRegisterSelector:@selector(_didGetXMLDescription:) ofObject:self];
 }
 
 /*! compute hypervisor description
     @param aStanza TNStropheStanza containing the answer
 */
-- (BOOL)_didReceiveXMLDesc:(TNStropheStanza)aStanza
+- (BOOL)_didGetXMLDescription:(TNStropheStanza)aStanza
 {
-    var defaults = [CPUserDefaults standardUserDefaults];
+    var defaults = [CPUserDefaults standardUserDefaults],
+        bindingOptions = [CPDictionary dictionaryWithObjectsAndKeys:YES, CPContinuouslyUpdatesValueBindingOption,
+                                                                    YES, CPValidatesImmediatelyBindingOption]
 
     if ([aStanza type] == @"error")
     {
@@ -1515,14 +1453,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
 
     // Memory
-    [fieldMemory setStringValue:([_libvirtDomain memory] / 1024)];
+    [fieldMemory bind:CPValueBinding toObject:_libvirtDomain withKeyPath:@"memory" options:bindingOptions];
 
     // CPUs
-    [stepperNumberCPUs setDoubleValue:[_libvirtDomain VCPU]];
+    [stepperNumberCPUs bind:CPValueBinding toObject:_libvirtDomain withKeyPath:@"VCPU" options:bindingOptions];
 
     // button BOOT
     [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
-    [buttonBoot selectItemWithTitle:([[_libvirtDomain OS] boot] == "cdrom") ? TNXMLDescBootCDROM : TNXMLDescBootHardDrive];
+    [buttonBoot selectItemWithTitle:[[_libvirtDomain OS] boot]];
 
     // LIFECYCLE
     [buttonOnPowerOff selectItemWithTitle:[_libvirtDomain onPowerOff]];
@@ -1554,9 +1492,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         if ([graphic type] == "vnc")
         {
             [buttonVNCKeymap selectItemWithTitle:[graphic keymap]];
-            [fieldVNCPassword setStringValue:[graphic password]];
-            [fieldVNCListen setStringValue:[graphic listen]];
-            [fieldVNCPort setStringValue:[graphic port]];
+
+            [fieldVNCPassword bind:CPValueBinding toObject:graphic withKeyPath:@"password" options:bindingOptions];
+            [fieldVNCListen bind:CPValueBinding toObject:graphic withKeyPath:@"listen" options:bindingOptions];
+            [fieldVNCPort bind:CPValueBinding toObject:graphic withKeyPath:@"port" options:bindingOptions];
         }
     }
 
@@ -1585,17 +1524,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonClocks selectItemWithTitle:[[_libvirtDomain clock] offset]];
 
     // DRIVES
-    [_drivesDatasource removeAllObjects];
-    for (var i = 0; i < [[[_libvirtDomain devices] disks] count]; i++)
-        [_drivesDatasource addObject:[[[_libvirtDomain devices] disks] objectAtIndex:i]];
+    [_drivesDatasource setContent:[[_libvirtDomain devices] disks]];
     [_tableDrives reloadData];
 
     // NICS
-    [_nicsDatasource removeAllObjects];
-    for (var i = 0; i < [[[_libvirtDomain devices] disks] count]; i++)
-        [_nicsDatasource addObject:[[[_libvirtDomain devices] interfaces] objectAtIndex:i]];
+    [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
     [_tableNetworkNics reloadData];
-
 
     // MANUAL
     _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
