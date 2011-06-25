@@ -66,7 +66,7 @@
 #pragma mark -
 #pragma mark Setters / Getters
 
-/*! return the current source object, path, network or file
+/*! return the current source object, path, hosts or file
     @return CPString containing the source object
 */
 - (CPString)sourceObject

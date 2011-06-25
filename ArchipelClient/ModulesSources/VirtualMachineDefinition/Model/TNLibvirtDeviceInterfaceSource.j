@@ -62,6 +62,23 @@
 
 
 #pragma mark -
+#pragma mark Setters / Getters
+
+/*! return the current source object, _bridge, _dev or _network
+    @return CPString containing the source object
+*/
+- (CPString)sourceObject
+{
+    if (_bridge)
+        return _bridge;
+    if (_network)
+        return _network;
+    if (_dev)
+        return _dev;
+}
+
+
+#pragma mark -
 #pragma mark Generation
 
 /*! return a TNXMLNode representing the object
