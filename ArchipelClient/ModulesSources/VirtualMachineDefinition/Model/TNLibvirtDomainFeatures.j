@@ -19,7 +19,13 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
-@import "TNLibvirtBase.j";
+@import "TNLibvirtBase.j"
+
+
+TNLibvirtDomainFeaturesPAE      = @"pae";
+TNLibvirtDomainFeaturesACPI     = @"acpi";
+TNLibvirtDomainFeaturesAPIC     = @"apic";
+TNLibvirtDomainFeaturesHAP      = @"hap";
 
 
 /*! @ingroup virtualmachinedefinition

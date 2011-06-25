@@ -28,7 +28,7 @@
 @implementation TNLibvirtDeviceDiskSource : TNLibvirtBase
 {
     CPArray     _hosts          @accessors(property=hosts);
-    CPString    _dev            @accessors(property=dev);
+    CPString    _device         @accessors(property=device);
     CPString    _file           @accessors(property=file);
     CPString    _name           @accessors(property=name);
     CPString    _protocol       @accessors(property=protocol);
@@ -48,7 +48,7 @@
         if ([aNode name] != @"source")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid disk source"];
 
-        _dev        = [aNode valueForAttribute:@"dev"];
+        _device     = [aNode valueForAttribute:@"dev"];
         _file       = [aNode valueForAttribute:@"file"];
         _hosts      = [CPArray array];
         _name       = [aNode valueForAttribute:@"name"];
@@ -64,6 +64,23 @@
 
 
 #pragma mark -
+#pragma mark Setters / Getters
+
+/*! return the current source object, path, network or file
+    @return CPString containing the source object
+*/
+- (CPString)sourceObject
+{
+    if (_device)
+        return _device;
+    if (_file)
+        return _file;
+    if (_hosts)
+        return _hosts;
+}
+
+
+#pragma mark -
 #pragma mark Generation
 
 /*! return a TNXMLNode representing the object
@@ -75,8 +92,8 @@
 
     if (_file)
         [node setValue:_file forAttribute:@"file"];
-    if (_dev)
-        [node setValue:_dev forAttribute:@"dev"];
+    if (_device)
+        [node setValue:_device forAttribute:@"dev"];
     if (_protocol)
         [node setValue:_protocol forAttribute:@"protocol"];
     if (_name)

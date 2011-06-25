@@ -23,6 +23,16 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDeviceDiskDriverCacheDefault               = @"default";
+TNLibvirtDeviceDiskDriverCacheNone                  = @"none";
+TNLibvirtDeviceDiskDriverCacheWritethrough          = @"writethrough";
+TNLibvirtDeviceDiskDriverCacheWriteback             = @"writeback";
+
+TNLibvirtDeviceDiskDriverCaches                     = [ TNLibvirtDeviceDiskDriverCacheDefault,
+                                                        TNLibvirtDeviceDiskDriverCacheNone,
+                                                        TNLibvirtDeviceDiskDriverCacheWritethrough,
+                                                        TNLibvirtDeviceDiskDriverCacheWriteback];
+
 /*! @ingroup virtualmachinedefinition
     Model for disk driver
 */

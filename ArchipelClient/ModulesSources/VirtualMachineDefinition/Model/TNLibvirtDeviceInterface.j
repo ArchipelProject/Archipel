@@ -22,6 +22,33 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDeviceInterfaceModelNE2KISA    = @"ne2k_isa";
+TNLibvirtDeviceInterfaceModelI82551     = @"i82551";
+TNLibvirtDeviceInterfaceModelI82557b    = @"i82557b";
+TNLibvirtDeviceInterfaceModelI82559ER   = @"i82559er";
+TNLibvirtDeviceInterfaceModelNE2KPCI    = @"ne2k_pci";
+TNLibvirtDeviceInterfaceModelPCNET      = @"pcnet";
+TNLibvirtDeviceInterfaceModelRTL8139    = @"rtl8139";
+TNLibvirtDeviceInterfaceModelE1000      = @"e1000";
+TNLibvirtDeviceInterfaceModelVIRTIO     = @"virtio";
+
+TNLibvirtDeviceInterfaceModels          = [ TNLibvirtDeviceInterfaceModelNE2KISA,
+                                            TNLibvirtDeviceInterfaceModelI82551,
+                                            TNLibvirtDeviceInterfaceModelI82557b,
+                                            TNLibvirtDeviceInterfaceModelI82559ER,
+                                            TNLibvirtDeviceInterfaceModelNE2KPCI,
+                                            TNLibvirtDeviceInterfaceModelPCNET,
+                                            TNLibvirtDeviceInterfaceModelRTL8139,
+                                            TNLibvirtDeviceInterfaceModelE1000,
+                                            TNLibvirtDeviceInterfaceModelVIRTIO];
+
+TNLibvirtDeviceInterfaceTypeNetwork     = @"network";
+TNLibvirtDeviceInterfaceTypeBridge      = @"bridge";
+TNLibvirtDeviceInterfaceTypeUser        = @"user";
+TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
+                                            TNLibvirtDeviceInterfaceTypeBridge,
+                                            TNLibvirtDeviceInterfaceTypeUser];
+
 /*! @ingroup virtualmachinedefinition
     Model for inteface
 */

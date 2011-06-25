@@ -21,6 +21,15 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDomainOSBootHardDrive          = @"hd";
+TNLibvirtDomainOSBootCDROM              = @"cdrom";
+TNLibvirtDomainOSBootNetwork            = @"network";
+TNLibvirtDomainOSBootFileDescriptor     = @"fd";
+TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
+                                            TNLibvirtDomainOSBootCDROM,
+                                            TNLibvirtDomainOSBootNetwork,
+                                            TNLibvirtDomainOSBootFileDescriptor];
+
 
 /*! @ingroup virtualmachinedefinition
     Model for domain OS

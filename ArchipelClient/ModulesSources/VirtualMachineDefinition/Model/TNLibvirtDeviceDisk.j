@@ -22,6 +22,19 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDeviceDiskTypeFile             = @"file";
+TNLibvirtDeviceDiskTypeBlock            = @"block";
+TNLibvirtDeviceDiskTypes                = [ TNLibvirtDeviceDiskTypeFile,
+                                            TNLibvirtDeviceDiskTypeBlock];
+
+TNLibvirtDeviceDiskDeviceCDROM          = @"cdrom";
+TNLibvirtDeviceDiskDeviceDisk           = @"disk";
+TNLibvirtDeviceDiskDeviceFloppy         = @"floppy";
+TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
+                                            TNLibvirtDeviceDiskDeviceCDROM,
+                                            TNLibvirtDeviceDiskDeviceFloppy];
+
+
 /*! @ingroup virtualmachinedefinition
     Model for disk
 */

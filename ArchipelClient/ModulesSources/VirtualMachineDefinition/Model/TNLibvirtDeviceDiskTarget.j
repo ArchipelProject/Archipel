@@ -21,6 +21,30 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDeviceDiskTargetDeviceHda      = @"hda";
+TNLibvirtDeviceDiskTargetDeviceHdb      = @"hdb";
+TNLibvirtDeviceDiskTargetDeviceHdc      = @"hdc";
+TNLibvirtDeviceDiskTargetDeviceHdd      = @"hdd";
+TNLibvirtDeviceDiskTargetDeviceSda      = @"sda";
+TNLibvirtDeviceDiskTargetDeviceSdb      = @"sdb";
+TNLibvirtDeviceDiskTargetDeviceSdc      = @"sdc";
+TNLibvirtDeviceDiskTargetDeviceSdd      = @"sdd";
+TNLibvirtDeviceDiskTargetDevices        = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
+                                            TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
+                                            TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
+                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd];
+
+TNLibvirtDeviceDiskTargetBusIDE         = @"ide";
+TNLibvirtDeviceDiskTargetBusSCSI        = @"scsi";
+TNLibvirtDeviceDiskTargetBusUSB         = @"usb";
+TNLibvirtDeviceDiskTargetBusVIRTIO      = @"virtio";
+TNLibvirtDeviceDiskTargetBusXEN         = @"xen";
+TNLibvirtDeviceDiskTargetBuses          = [ TNLibvirtDeviceDiskTargetBusIDE,
+                                            TNLibvirtDeviceDiskTargetBusSCSI,
+                                            TNLibvirtDeviceDiskTargetBusVIRTIO,
+                                            TNLibvirtDeviceDiskTargetBusUSB,
+                                            TNLibvirtDeviceDiskTargetBusXEN];
+
 
 /*! @ingroup virtualmachinedefinition
     Model for disk target

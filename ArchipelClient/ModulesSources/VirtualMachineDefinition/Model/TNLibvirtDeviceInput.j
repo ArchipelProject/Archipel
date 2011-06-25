@@ -19,7 +19,14 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
-@import "TNLibvirtBase.j";
+@import "TNLibvirtBase.j"
+
+
+TNLibvirtDeviceInputTypesTypeMouse      = @"mouse";
+TNLibvirtDeviceInputTypesTypeTablet     = @"tablet";
+
+TNLibvirtDeviceInputTypes               = [TNLibvirtDeviceInputTypesTypeTablet,
+                                           TNLibvirtDeviceInputTypesTypeMouse];
 
 
 /*! @ingroup virtualmachinedefinition

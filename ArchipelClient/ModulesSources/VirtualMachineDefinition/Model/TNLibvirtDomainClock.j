@@ -22,6 +22,14 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDomainClockClockUTC        = @"utc";
+TNLibvirtDomainClockClockLocalTime  = @"localtime";
+TNLibvirtDomainClockClockTimezone   = @"timezone";
+TNLibvirtDomainClockClockVariable   = @"variable";
+
+TNLibvirtDomainClockClocks          = [ TNLibvirtDomainClockClockUTC,
+                                        TNLibvirtDomainClockClockLocalTime];
+
 /*! @ingroup virtualmachinedefinition
     Model for clock
 */

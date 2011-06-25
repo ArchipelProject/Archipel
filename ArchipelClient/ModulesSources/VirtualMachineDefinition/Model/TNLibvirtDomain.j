@@ -22,6 +22,28 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDomainTypeKVM                      = @"kvm";
+TNLibvirtDomainTypeXen                      = @"xen";
+TNLibvirtDomainTypeOpenVZ                   = @"openvz";
+TNLibvirtDomainTypeQemu                     = @"qemu";
+TNLibvirtDomainTypeKQemu                    = @"kqemu";
+TNLibvirtDomainTypeLXC                      = @"lxc";
+TNLibvirtDomainTypeUML                      = @"uml";
+TNLibvirtDomainTypeVBox                     = @"vbox";
+TNLibvirtDomainTypeVMWare                   = @"vmware";
+TNLibvirtDomainTypeOpenNebula               = @"one";
+
+TNLibvirtDomainLifeCycleDestroy             = @"destroy";
+TNLibvirtDomainLifeCycleRestart             = @"restart";
+TNLibvirtDomainLifeCyclePreserve            = @"preserve";
+TNLibvirtDomainLifeCycleRenameRestart       = @"rename-restart";
+
+TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
+                                                TNLibvirtDomainLifeCycleRestart,
+                                                TNLibvirtDomainLifeCyclePreserve,
+                                                TNLibvirtDomainLifeCycleRenameRestart];
+
+
 /*! @ingroup virtualmachinedefinition
     Model for domain
 */
@@ -35,9 +57,9 @@
     CPString                        _onPowerOff         @accessors(property=onPowerOff);
     CPString                        _onReboot           @accessors(property=onReboot);
     CPString                        _UUID               @accessors(property=UUID);
-    int                             _currentMemory      @accessors(property=currentMemory);
-    int                             _memory             @accessors(property=memory);
-    int                             _vcpu               @accessors(property=VCPU);
+    CPString                        _currentMemory      @accessors(property=currentMemory);
+    CPString                        _memory             @accessors(property=memory);
+    CPString                        _vcpu               @accessors(property=VCPU);
     TNLibvirtDevices                _devices            @accessors(property=devices);
     TNLibvirtDomainBlockIOTune      _blkiotune          @accessors(property=blkiotune);
     TNLibvirtDomainClock            _clock              @accessors(property=clock);
@@ -80,7 +102,6 @@
         _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] initWithXMLNode:[aNode firstChildWithName:@"memoryBacking"]];
         _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] initWithXMLNode:[aNode firstChildWithName:@"memtune"]];
         _OS             = [[TNLibvirtDomainOS alloc] initWithXMLNode:[aNode firstChildWithName:@"os"]];
-
     }
 
     return self;
@@ -115,19 +136,19 @@
     if (_memory)
     {
         [node addChildWithName:@"memory"];
-        [node addTextNode:[_memory stringValue]];
+        [node addTextNode:@"" + _memory];
         [node up];
     }
     if (_currentMemory)
     {
         [node addChildWithName:@"currentMemory"];
-        [node addTextNode:[_currentMemory stringValue]];
+        [node addTextNode:@"" + _currentMemory];
         [node up];
     }
     if (_vcpu)
     {
         [node addChildWithName:@"vcpu"];
-        [node addTextNode:[_vcpu stringValue]];
+        [node addTextNode:@"" + _vcpu];
         [node up];
     }
     if (_bootloader)

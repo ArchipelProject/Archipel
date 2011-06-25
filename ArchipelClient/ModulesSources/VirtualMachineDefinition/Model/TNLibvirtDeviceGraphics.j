@@ -22,6 +22,15 @@
 @import "TNLibvirtBase.j";
 
 
+TNLibvirtDeviceGraphicsVNCKeymapFR      = @"fr";
+TNLibvirtDeviceGraphicsVNCKeymapEN_US   = @"en-us";
+TNLibvirtDeviceGraphicsVNCKeymapDeutch  = @"de";
+
+TNLibvirtDeviceGraphicsVNCKeymaps       = [ TNLibvirtDeviceGraphicsVNCKeymapEN_US,
+                                            TNLibvirtDeviceGraphicsVNCKeymapFR,
+                                            TNLibvirtDeviceGraphicsVNCKeymapDeutch];
+
+
 /*! @ingroup virtualmachinedefinition
     Model for graphics
 */
