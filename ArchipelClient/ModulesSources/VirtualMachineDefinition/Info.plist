@@ -60,6 +60,8 @@
     <string>kvm</string>
     <key>TNDescDefaultInputType</key>
     <string>tablet</string>
+    <key>TNDescDefaultInputBus</key>
+    <string>usb</string>
     <key>TNDescDefaultMachine</key>
     <string>pc-0.13</string>
     <key>TNDescDefaultMemory</key>

@@ -108,6 +108,8 @@
 	<string>Set the guest type</string>
 	<key>Set the input device</key>
 	<string>Set the input device</string>
+	<key>Set the input device's bus</key>
+	<string>Set the input device's bus</string>
 	<key>Set the mode of the virtual machine clock</key>
 	<string>Set the mode of the virtual machine clock</string>
 	<key>Set the model of the card</key>

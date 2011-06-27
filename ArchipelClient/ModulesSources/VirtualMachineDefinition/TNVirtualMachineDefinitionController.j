@@ -81,6 +81,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPButtonBar             buttonBarControlNics;
     @outlet CPPopUpButton           buttonBoot;
     @outlet CPPopUpButton           buttonGuests;
+    @outlet CPPopUpButton           buttonInputBus;
     @outlet CPPopUpButton           buttonInputType;
     @outlet CPPopUpButton           buttonMachines;
     @outlet CPPopUpButton           buttonPreferencesBoot;
@@ -305,6 +306,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnCrash removeAllItems];
     [buttonClocks removeAllItems];
     [buttonInputType removeAllItems];
+    [buttonInputBus removeAllItems];
     [buttonGuests removeAllItems];
 
     [buttonPreferencesNumberOfCPUs removeAllItems];
@@ -339,6 +341,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonInputType addItemsWithTitles:TNLibvirtDeviceInputTypes];
     [buttonPreferencesInput addItemsWithTitles:TNLibvirtDeviceInputTypes];
+
+    [buttonInputBus addItemsWithTitles:TNLibvirtDeviceInputBuses];
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
@@ -405,6 +409,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonDomainType setToolTip:CPBundleLocalizedString(@"Set the domain type", @"Set the domain type")];
     [buttonGuests setToolTip:CPBundleLocalizedString(@"Set the guest type", @"Set the guest type")];
     [buttonInputType setToolTip:CPBundleLocalizedString(@"Set the input device", @"Set the input device")];
+    [buttonInputBus setToolTip:CPBundleLocalizedString(@"Set the input device's bus", @"Set the input device's bus")];
     [buttonMachines setToolTip:CPBundleLocalizedString(@"Set the domain machine type", @"Set the domain machine type")];
     [buttonOnCrash setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine crashes", @"Set what to do when virtual machine crashes")];
     [buttonOnPowerOff setToolTip:CPBundleLocalizedString(@"Set what to do when virtual machine is stopped", @"Set what to do when virtual machine is stopped")];
@@ -594,6 +599,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:buttonDomainType enabledAccordingToPermission:@"define"];
     [self setControl:buttonGuests enabledAccordingToPermission:@"define"];
     [self setControl:buttonInputType enabledAccordingToPermission:@"define"];
+    [self setControl:buttonInputBus enabledAccordingToPermission:@"define"];
     [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
     [self setControl:buttonOnCrash enabledAccordingToPermission:@"define"];
     [self setControl:buttonOnPowerOff enabledAccordingToPermission:@"define"];
@@ -790,7 +796,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         pae         = [defaults boolForKey:@"TNDescDefaultPAE"],
         acpi        = [defaults boolForKey:@"TNDescDefaultACPI"],
         apic        = [defaults boolForKey:@"TNDescDefaultAPIC"],
-        input       = [defaults objectForKey:@"TNDescDefaultInputType"];
+        inputType   = [defaults objectForKey:@"TNDescDefaultInputType"],
+        inputBus    = [defaults objectForKey:@"TNDescDefaultInputBus"];
 
     [stepperNumberCPUs setDoubleValue:cpu];
     [fieldMemory setStringValue:mem];
@@ -803,7 +810,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonOnReboot selectItemWithTitle:or];
     [buttonOnCrash selectItemWithTitle:oc];
     [buttonClocks selectItemWithTitle:clock];
-    [buttonInputType selectItemWithTitle:input];
+    [buttonInputType selectItemWithTitle:inputType];
+    [buttonInputBus selectItemWithTitle:inputBus];
     [switchPAE setOn:((pae == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchACPI setOn:((acpi == 1) ? YES : NO) animated:YES sendAction:NO];
     [switchAPIC setOn:((apic == 1) ? YES : NO) animated:YES sendAction:NO];
@@ -1426,6 +1434,22 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self makeDefinitionEdited:aSender];
 }
 
+/*! update the value for input Type
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeInputBus:(id)aSender
+{
+    if ([[[_libvirtDomain devices] inputs] count] == 0)
+    {
+        var input = [[TNLibvirtDeviceInput alloc] init];
+        [[[_libvirtDomain devices] inputs] addObject:input];
+    }
+
+    [[[[_libvirtDomain devices] inputs] firstObject] setBus:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+
 /*! update the value for machine
     @param aSender the sender of the action
 */
@@ -1623,6 +1647,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self setControl:buttonInputType enabledAccordingToPermission:@"define"];
     [buttonInputType selectItemWithTitle:[[[[_libvirtDomain devices] inputs] lastObject] type]];
 
+    [self setControl:buttonInputBus enabledAccordingToPermission:@"define"];
+    [buttonInputBus selectItemWithTitle:[[[[_libvirtDomain devices] inputs] lastObject] bus]];
+
     // APIC
     [switchAPIC setOn:NO animated:NO sendAction:NO];
     [switchAPIC setOn:[[_libvirtDomain features] isAPIC] animated:NO sendAction:NO];
@@ -1678,6 +1705,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stanza addChildWithName:@"archipel" andAttributes:{
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
 
+    console.warn([[_libvirtDomain XMLNode] tree]);
     [stanza addNode:[_libvirtDomain XMLNode]];
     [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];

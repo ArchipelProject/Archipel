@@ -746,3 +746,18 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "812"; */
 "812.title" = "Text Cell";
 
+/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "833"; */
+"833.title" = "OtherViews";
+
+/* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "834"; */
+"834.title" = "Item 3";
+
+/* Class = "NSMenuItem"; title = "Item 2"; ObjectID = "835"; */
+"835.title" = "Item 2";
+
+/* Class = "NSMenuItem"; title = "Item 1"; ObjectID = "836"; */
+"836.title" = "Item 1";
+
+/* Class = "NSTextFieldCell"; title = "Input bus:"; ObjectID = "837"; */
+"837.title" = "Input bus:";
+

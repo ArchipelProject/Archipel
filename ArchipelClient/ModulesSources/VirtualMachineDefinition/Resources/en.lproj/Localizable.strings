@@ -148,6 +148,9 @@
 /* Set the input device */
 "Set the input device" = "Set the input device";
 
+/* Set the input device's bus */
+"Set the input device's bus" = "Set the input device's bus";
+
 /* Set the MAC address of the card */
 "Set the MAC address of the card" = "Set the MAC address of the card";
 
