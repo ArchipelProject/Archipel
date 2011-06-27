@@ -1440,7 +1440,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMemory:(id)aSender
 {
-    [_libvirtDomain setMemory:[aSender intValue]];
+    [_libvirtDomain setMemory:([aSender intValue] * 1024)];
     [self makeDefinitionEdited:aSender];
 }
 
@@ -1573,7 +1573,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
 
     // Memory
-    [fieldMemory setStringValue:[_libvirtDomain memory]];
+    [fieldMemory setIntValue:([_libvirtDomain memory] / 1024)];
 
     // CPUs
     [stepperNumberCPUs setDoubleValue:[_libvirtDomain VCPU]];
