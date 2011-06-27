@@ -38,6 +38,19 @@
 #pragma mark -
 #pragma mark Initialization
 
+- (TNLibvirtDevices)init
+{
+    if (self = [super init])
+    {
+        _disks      = [CPArray array];
+        _graphics   = [CPArray array];
+        _inputs     = [CPArray array];
+        _interfaces = [CPArray array];
+    }
+
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */

@@ -49,6 +49,17 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
 #pragma mark -
 #pragma mark Initialization
 
+- (void)init
+{
+    if (self = [super init])
+    {
+        _type   = [[TNLibvirtDomainOSType alloc] init];
+        _boot   = TNLibvirtDomainOSBootHardDrive;
+    }
+
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
@@ -60,7 +71,7 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid os"];
 
         _boot               = [[aNode firstChildWithName:@"boot"] valueForAttribute:@"dev"];
-        _bootMenuEnabled    = ([[aNode firstChildWithName:@"bootmenu"] valueForAttribute:@"enabled"] == @"yes") ? YES : NO;
+        _bootMenuEnabled    = ([[aNode firstChildWithName:@"bootmenu"] valueForAttribute:@"enable"] == @"yes") ? YES : NO;
         _commandLine        = [[aNode firstChildWithName:@"cmdline"] text];
         _initrd             = [[aNode firstChildWithName:@"initrd"] text];
         _kernel             = [[aNode firstChildWithName:@"kernel"] text];
@@ -99,10 +110,10 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
         [node addChildWithName:@"boot" andAttributes:{@"dev": _boot}];
         [node up];
     }
-    if (_bootMenuEnabled)
+    if (_bootMenuEnabled != nil)
     {
         var enabled = (_bootMenuEnabled) ? @"yes" : @"no";
-        [node addChildWithName:@"bootmenu" andAttributes:{@"enabled": enabled}];
+        [node addChildWithName:@"bootmenu" andAttributes:{@"enable": enabled}];
         [node up];
     }
     if (_kernel)

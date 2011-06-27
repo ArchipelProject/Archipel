@@ -19,6 +19,9 @@
 @import <Foundation/Foundation.j>
 @import <StropheCappuccino/TNXMLNode.j>
 
+TNLibvirtDomainOSTypeTypeLinux  = @"linux";
+TNLibvirtDomainOSTypeTypeHVM    = @"hvm";
+
 @import "TNLibvirtBase.j";
 
 
@@ -48,7 +51,6 @@
 
         _architecture       = [aNode valueForAttribute:@"arch"];
         _machine            = [aNode valueForAttribute:@"machine"];
-
         _type               = [aNode text];
     }
 

@@ -68,7 +68,7 @@
         [node addTextNode:_weight];
         [node up];
     }
-    set
+
     return node;
 }
 

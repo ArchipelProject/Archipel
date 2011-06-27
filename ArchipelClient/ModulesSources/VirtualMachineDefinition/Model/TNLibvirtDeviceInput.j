@@ -74,6 +74,8 @@ TNLibvirtDeviceInputTypes               = [TNLibvirtDeviceInputTypesTypeTablet,
         [node setValue:_type forAttribute:@"type"];
     if (_bus)
         [node setValue:_bus forAttribute:@"bus"];
+    else
+        [node setValue:@"usb" forAttribute:@"bus"];
 
     return node;
 }

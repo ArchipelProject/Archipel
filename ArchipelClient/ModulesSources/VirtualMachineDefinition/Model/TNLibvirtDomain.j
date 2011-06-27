@@ -69,9 +69,37 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
     TNLibvirtDomainOS               _OS                 @accessors(property=OS);
 }
 
+#pragma mark -
+#pragma mark Class Method
+
++ (TNLibvirtDomain)defaultDomainWithType:(CPString)aType
+{
+    var domain = [[TNLibvirtDomain alloc] init];
+
+    [domain setType:aType];
+    [[[domain OS] type] setType:TNLibvirtDomainOSTypeTypeHVM];
+
+    return domain;
+}
 
 #pragma mark -
 #pragma mark Initialization
+
+- (TNLibvirtDomain)init
+{
+    if (self = [super init])
+    {
+        _devices        = [[TNLibvirtDevices alloc] init];
+        _blkiotune      = [[TNLibvirtDomainBlockIOTune alloc] init];
+        _features       = [[TNLibvirtDomainFeatures alloc] init];
+        _clock          = [[TNLibvirtDomainClock alloc] init];
+        _memoryBacking  = [[TNLibvirtDomainMemoryBacking alloc] init];
+        _memoryTuning   = [[TNLibvirtDomainMemoryTune alloc] init];
+        _OS             = [[TNLibvirtDomainOS alloc] init];
+    }
+
+    return self;
+}
 
 /*! initialize the object with a given XML node
     @param aNode the node to use

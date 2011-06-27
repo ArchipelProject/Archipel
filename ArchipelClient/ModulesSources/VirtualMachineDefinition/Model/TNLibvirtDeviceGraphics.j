@@ -21,6 +21,8 @@
 
 @import "TNLibvirtBase.j";
 
+TNLibvirtDeviceGraphicsTypeVNC          = @"vnc";
+TNLibvirtDeviceGraphicsTypeSDL          = @"sdl";
 
 TNLibvirtDeviceGraphicsVNCKeymapFR      = @"fr";
 TNLibvirtDeviceGraphicsVNCKeymapEN_US   = @"en-us";
