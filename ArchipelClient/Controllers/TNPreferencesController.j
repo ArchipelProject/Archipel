@@ -67,6 +67,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 
     CPArray                 _modules;
     TNStrophePrivateStorage _xmppStorage;
+    CPString                _oldLocale;
 }
 
 
@@ -238,7 +239,7 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
             [module loadPreferences];
     }
 
-    [CPApp beginSheet:_mainWindow modalForWindow:[CPApp mainWindow] modalDelegate:nil didEndSelector:nil contextInfo:nil];
+    [CPApp beginSheet:_mainWindow modalForWindow:[CPApp mainWindow] modalDelegate:self didEndSelector:@selector(mainViewModalTerminated:) contextInfo:nil];
 }
 
 /*! hide the preference window
@@ -257,8 +258,9 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
 {
     [self hideWindow:nil];
 
-    var defaults = [CPUserDefaults standardUserDefaults],
-        oldLocale = [defaults objectForKey:@"CPBundleLocale"];
+    var defaults = [CPUserDefaults standardUserDefaults];
+
+    _oldLocale = [defaults objectForKey:@"CPBundleLocale"];
 
     [defaults setFloat:[fieldModuleLoadingDelay floatValue] forKey:@"TNArchipelModuleLoadingDelay"];
     [defaults setObject:[fieldBOSHResource stringValue] forKey:@"TNArchipelBOSHResource"];
@@ -287,15 +289,6 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     }
 
     [self saveToFromXMPPServer];
-
-    if (oldLocale != [defaults objectForKey:@"CPBundleLocale"])
-    {
-         var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
-                                informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")
-                                     target:self
-                                    actions:[[CPBundleLocalizedString(@"OK", @"OK"), @selector(_performApplicationReload:)], [CPBundleLocalizedString(@"Later", @"Later"), nil]]];
-        [alert runModal];
-    }
 }
 
 /*! Reload the application
@@ -441,6 +434,21 @@ TNPreferencesControllerRestoredNotification = @"TNPreferencesControllerRestoredN
     newFrame.size.height += 100;
 
     [_mainWindow setFrame:newFrame display:NO animate:YES];
+}
+
+/*! CPWindow modal end delegate
+*/
+- (void)mainViewModalTerminated:(CPWindow)aWindow
+{
+    if (_oldLocale != [[CPUserDefaults standardUserDefaults] objectForKey:@"CPBundleLocale"])
+    {
+         var alert = [TNAlert alertWithMessage:CPLocalizedString(@"Locale change", @"Locale change")
+                                informative:CPLocalizedString(@"You need to reload the application to complete the locale change.", @"You need to reload the application to complete the locale change.")
+                                     target:self
+                                    actions:[[CPBundleLocalizedString(@"OK", @"OK"), @selector(_performApplicationReload:)], [CPBundleLocalizedString(@"Later", @"Later"), nil]]];
+        [alert runModal];
+    }
+    _oldLocale = nil;
 }
 
 @end
