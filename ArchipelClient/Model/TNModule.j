@@ -641,7 +641,8 @@ TNArchipelModuleStatusWaiting           = 2;
         var msg = [[aStanza firstChildWithName:@"text"] text];
 
         [growl pushNotificationWithTitle:@"Error (" + code + " / " + type + ")" message:msg icon:TNGrowlIconError];
-        CPLog.error(msg);
+        CPLog.error("ERROR MESSAGE IS :" + msg);
+        CPLog.error("ERROR STANZA IS :" + aStanza);
     }
     else
     {
