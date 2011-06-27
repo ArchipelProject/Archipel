@@ -29,10 +29,16 @@ TNLibvirtDeviceDiskTargetDeviceSda      = @"sda";
 TNLibvirtDeviceDiskTargetDeviceSdb      = @"sdb";
 TNLibvirtDeviceDiskTargetDeviceSdc      = @"sdc";
 TNLibvirtDeviceDiskTargetDeviceSdd      = @"sdd";
+TNLibvirtDeviceDiskTargetDeviceXVDA     = @"xvda";
+TNLibvirtDeviceDiskTargetDeviceXVDB     = @"xvdb";
+TNLibvirtDeviceDiskTargetDeviceXVDC     = @"xvdc";
+TNLibvirtDeviceDiskTargetDeviceXVDD     = @"xvdd";
 TNLibvirtDeviceDiskTargetDevices        = [ TNLibvirtDeviceDiskTargetDeviceHda, TNLibvirtDeviceDiskTargetDeviceHdb,
                                             TNLibvirtDeviceDiskTargetDeviceHdc, TNLibvirtDeviceDiskTargetDeviceHdd,
                                             TNLibvirtDeviceDiskTargetDeviceSda, TNLibvirtDeviceDiskTargetDeviceSdb,
-                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd];
+                                            TNLibvirtDeviceDiskTargetDeviceSdc, TNLibvirtDeviceDiskTargetDeviceSdd,
+                                            TNLibvirtDeviceDiskTargetDeviceXVDA, TNLibvirtDeviceDiskTargetDeviceXVDB,
+                                            TNLibvirtDeviceDiskTargetDeviceXVDC, TNLibvirtDeviceDiskTargetDeviceXVDD];
 
 TNLibvirtDeviceDiskTargetBusIDE         = @"ide";
 TNLibvirtDeviceDiskTargetBusSCSI        = @"scsi";
