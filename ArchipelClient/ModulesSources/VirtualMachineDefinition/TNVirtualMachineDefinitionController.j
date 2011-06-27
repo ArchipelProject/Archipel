@@ -1562,7 +1562,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     _libvirtDomain = [[TNLibvirtDomain alloc] initWithXMLNode:[aStanza firstChildWithName:@"domain"]];
 
-    [self selectGuestWithType:[_libvirtDomain type] architecture:[[[_libvirtDomain OS] type] architecture]];
+
+    [self selectGuestWithType:[[[_libvirtDomain OS] type] type] architecture:[[[_libvirtDomain OS] type] architecture]];
     [self buildGUIAccordingToCurrentGuest];
 
     // button domainType
