@@ -16,12 +16,6 @@
 /* Are you sure you want to undefine this virtual machine ? */
 "Are you sure you want to undefine this virtual machine ?" = "Are you sure you want to undefine this virtual machine ?";
 
-/* Bus */
-"Bus" = "Bus";
-
-/* Cache mode */
-"Cache mode" = "Cache mode";
-
 /* Cancel */
 "Cancel" = "Cancel";
 
@@ -42,9 +36,6 @@
 
 /* Delete selected drives */
 "Delete selected drives" = "Delete selected drives";
-
-/* Device */
-"Device" = "Device";
 
 /* Discard */
 "Discard" = "Discard";
@@ -78,21 +69,6 @@
 
 /* Error */
 "Error" = "Error";
-
-/* Format */
-"Format" = "Format";
-
-/* MAC */
-"MAC" = "MAC";
-
-/* Missing vital value */
-"Missing vital value" = "Missing vital value";
-
-/* Model */
-"Model" = "Model";
-
-/* Network Filter */
-"Network Filter" = "Network Filter";
 
 /* Open the XML editor */
 "Open the XML editor" = "Open the XML editor";
@@ -193,9 +169,6 @@
 /* Set the target to use for the drive */
 "Set the target to use for the drive" = "Set the target to use for the drive";
 
-/* Set the type of the drive */
-"Set the type of the drive" = "Set the type of the drive";
-
 /* Set the VNC keymap to use */
 "Set the VNC keymap to use" = "Set the VNC keymap to use";
 
@@ -210,15 +183,6 @@
 
 /* Set what to do when virtual machine is stopped */
 "Set what to do when virtual machine is stopped" = "Set what to do when virtual machine is stopped";
-
-/* Source */
-"Source" = "Source";
-
-/* Target */
-"Target" = "Target";
-
-/* Type */
-"Type" = "Type";
 
 /* Undefine */
 "Undefine" = "Undefine";

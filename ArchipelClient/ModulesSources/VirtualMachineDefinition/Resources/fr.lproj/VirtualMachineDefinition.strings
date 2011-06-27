@@ -674,3 +674,75 @@
 /* Class = "NSTextFieldCell"; title = "Filter parameters"; ObjectID = "765"; */
 "765.title" = "Filter parameters";
 
+/* Class = "NSTableColumn"; headerCell.title = "Type"; ObjectID = "783"; */
+"783.headerCell.title" = "Type";
+
+/* Class = "NSTableColumn"; headerCell.title = "Device"; ObjectID = "784"; */
+"784.headerCell.title" = "Device";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "785"; */
+"785.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "786"; */
+"786.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Type"; ObjectID = "792"; */
+"792.headerCell.title" = "Type";
+
+/* Class = "NSTableColumn"; headerCell.title = "Model"; ObjectID = "793"; */
+"793.headerCell.title" = "Model";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "794"; */
+"794.title" = "Text Cell";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "795"; */
+"795.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Target"; ObjectID = "796"; */
+"796.headerCell.title" = "Target";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "797"; */
+"797.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Bus"; ObjectID = "798"; */
+"798.headerCell.title" = "Bus";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "799"; */
+"799.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Cache mode"; ObjectID = "800"; */
+"800.headerCell.title" = "Cache mode";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "801"; */
+"801.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Format"; ObjectID = "802"; */
+"802.headerCell.title" = "Format";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "803"; */
+"803.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Source"; ObjectID = "804"; */
+"804.headerCell.title" = "Source";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "805"; */
+"805.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "MAC"; ObjectID = "807"; */
+"807.headerCell.title" = "MAC";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "808"; */
+"808.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Source"; ObjectID = "809"; */
+"809.headerCell.title" = "Source";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "810"; */
+"810.title" = "Text Cell";
+
+/* Class = "NSTableColumn"; headerCell.title = "Filter"; ObjectID = "811"; */
+"811.headerCell.title" = "Filter";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "812"; */
+"812.title" = "Text Cell";
+

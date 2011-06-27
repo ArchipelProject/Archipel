@@ -14,10 +14,6 @@
 	<string>All your changes will be definitly lost.</string>
 	<key>Are you sure you want to undefine this virtual machine ?</key>
 	<string>Are you sure you want to undefine this virtual machine ?</string>
-	<key>Bus</key>
-	<string>Bus</string>
-	<key>Cache mode</key>
-	<string>Cache mode</string>
 	<key>Cancel</key>
 	<string>Cancel</string>
 	<key>Capabilities</key>
@@ -32,8 +28,6 @@
 	<string>Delete</string>
 	<key>Delete selected drives</key>
 	<string>Delete selected drives</string>
-	<key>Device</key>
-	<string>Device</string>
 	<key>Discard</key>
 	<string>Discard</string>
 	<key>Edit</key>
@@ -56,16 +50,6 @@
 	<string>Enable usage of PAE</string>
 	<key>Error</key>
 	<string>Error</string>
-	<key>Format</key>
-	<string>Format</string>
-	<key>MAC</key>
-	<string>MAC</string>
-	<key>Missing vital value</key>
-	<string>Missing vital value</string>
-	<key>Model</key>
-	<string>Model</string>
-	<key>Network Filter</key>
-	<string>Network Filter</string>
 	<key>Open the XML editor</key>
 	<string>Open the XML editor</string>
 	<key>Remove selected virtual network card</key>
@@ -136,20 +120,12 @@
 	<string>Set the source to use for the drive</string>
 	<key>Set the target to use for the drive</key>
 	<string>Set the target to use for the drive</string>
-	<key>Set the type of the drive</key>
-	<string>Set the type of the drive</string>
 	<key>Set what to do when virtual machine crashes</key>
 	<string>Set what to do when virtual machine crashes</string>
 	<key>Set what to do when virtual machine is rebooted</key>
 	<string>Set what to do when virtual machine is rebooted</string>
 	<key>Set what to do when virtual machine is stopped</key>
 	<string>Set what to do when virtual machine is stopped</string>
-	<key>Source</key>
-	<string>Source</string>
-	<key>Target</key>
-	<string>Target</string>
-	<key>Type</key>
-	<string>Type</string>
 	<key>Undefine</key>
 	<string>Undefine</string>
 	<key>Undefine the domain</key>

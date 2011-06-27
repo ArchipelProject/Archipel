@@ -342,10 +342,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     [buttonPreferencesDriveCache addItemsWithTitles:TNLibvirtDeviceDiskDriverCaches];
 
-    [switchPAE setOn:NO animated:YES sendAction:NO];
-    [switchACPI setOn:NO animated:YES sendAction:NO];
-    [switchAPIC setOn:NO animated:YES sendAction:NO];
-
     var menuNet = [[CPMenu alloc] init],
         menuDrive = [[CPMenu alloc] init];
 
@@ -367,20 +363,25 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [networkController setTable:tableInterfaces];
 
     // switch
-    [switchAPIC setTarget:self];
-    [switchAPIC setAction:@selector(makeDefinitionEdited:)];
-    [switchACPI setTarget:self];
-    [switchACPI setAction:@selector(makeDefinitionEdited:)];
+    [switchPAE setOn:NO animated:YES sendAction:NO];
     [switchPAE setTarget:self];
-    [switchPAE setAction:@selector(makeDefinitionEdited:)];
+    [switchPAE setAction:@selector(didChangeAPIC:)];
+
+    [switchAPIC setOn:NO animated:YES sendAction:NO];
+    [switchAPIC setTarget:self];
+    [switchAPIC setAction:@selector(didChangeAPIC:)];
+
+    [switchACPI setOn:NO animated:YES sendAction:NO];
+    [switchACPI setTarget:self];
+    [switchACPI setAction:@selector(didChangeACPI:)];
     [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable or disable PAE", @"Enable or disable PAE")];
 
     [switchHugePages setTarget:self];
-    [switchHugePages setAction:@selector(makeDefinitionEdited:)];
+    [switchHugePages setAction:@selector(didChangeHugePages:)];
     [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
 
-    [switchEnableVNC setTarget:self]
-    [switchEnableVNC setAction:@selector(toggleVNCEnabled:)];
+    [switchEnableVNC setTarget:self];
+    [switchEnableVNC setAction:@selector(didChangeVNCEnabled:)];
     [switchEnableVNC setToolTip:CPLocalizedString(@"Enable or disable the VNC screen for this virtual machine", @"Enable or disable the VNC screen for this virtual machine")];
 
     //CPUStepper
@@ -390,7 +391,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
     [stepperNumberCPUs setTarget:self];
-    [stepperNumberCPUs setAction:@selector(makeDefinitionEdited:)];
+    [stepperNumberCPUs setAction:@selector(didChangeVCPU:)];
     [stepperNumberCPUs setToolTip:CPBundleLocalizedString(@"Set the number of virtual CPUs", @"Set the number of virtual CPUs")];
 
     _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];
@@ -939,7 +940,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         [buttonMachines setEnabled:NO];
         [buttonMachines removeAllItems];
 
-        [self updateMachinesAccordingToDomainType:nil];
+        [self updateMachinesAccordingToDomainType];
     }
 
     if ([capabilities containsChildrenWithName:@"features"])
@@ -979,6 +980,47 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     }
 }
 
+/*! update the GUI according to selected Domain Type
+*/
+- (void)updateMachinesAccordingToDomainType
+{
+    var currentSelectedGuest    = [buttonGuests selectedItem],
+        capabilities            = [currentSelectedGuest XMLGuest],
+        currentDomain           = [self domainOfCurrentGuestWithType:[buttonDomainType title]],
+        machines                = [currentDomain childrenWithName:@"machine"];
+
+    [buttonMachines removeAllItems];
+    [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
+
+    for (var i = 0; i < [machines count]; i++)
+    {
+        var machine = [machines objectAtIndex:i];
+        [buttonMachines addItemWithTitle:[machine text]];
+    }
+
+    if ([[buttonMachines itemArray] count] == 0)
+    {
+        var defaultMachines = [[capabilities firstChildWithName:@"arch"] childrenWithName:@"machine"];
+        for (var i = 0; i < [defaultMachines count]; i++)
+        {
+            var machine = [defaultMachines objectAtIndex:i];
+            [buttonMachines addItemWithTitle:[machine text]];
+        }
+    }
+
+    if ([[buttonMachines itemArray] count] == 0)
+        [buttonMachines setEnabled:NO];
+
+    var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
+    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
+        [buttonMachines selectItemWithTitle:defaultMachine];
+    else
+        [buttonMachines selectItemAtIndex:0];
+
+    [self handleDefinitionEdition:YES];
+}
+
+
 
 #pragma mark -
 #pragma mark Actions
@@ -998,18 +1040,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)makeDefinitionEdited:(id)aSender
 {
     [self handleDefinitionEdition:YES];
-}
-
-/*! toggle VNC enabled for this virtual machine
-    @param sender the sender of the action
-*/
-- (IBAction)toggleVNCEnabled:(id)aSender
-{
-    [fieldVNCPassword setEnabled:[aSender isOn]];
-    [buttonVNCKeymap setEnabled:[aSender isOn]];
-    [fieldVNCListen setEnabled:[aSender isOn]];
-    [fieldVNCPort setEnabled:[aSender isOn]];
-    [self makeDefinitionEdited:aSender];
 }
 
 /*! define XML
@@ -1182,47 +1212,246 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 /*! perpare the interface according to the selected guest
     @param aSender the sender of the action
 */
-- (IBAction)buildGUIAccordingToCurrentGuest:(id)aSender
+- (IBAction)didChangeGuest:(id)aSender
 {
-    [self buildGUIAccordingToCurrentGuest]
+    var guest       = [[aSender selectedItem] XMLGuest],
+        osType      = [[guest firstChildWithName:@"os_type"] text],
+        arch        = [[guest firstChildWithName:@"arch"] valueForAttribute:@"name"];
+
+    [[[_libvirtDomain OS] type] setArchitecture:arch];
+    [[[_libvirtDomain OS] type] setType:osType];
+
+    [self buildGUIAccordingToCurrentGuest];
+
+    [self didChangeDomainType:buttonDomainType];
+    [self didChangeMachine:buttonMachines];
 }
 
-- (IBAction)updateMachinesAccordingToDomainType:(id)aSender
+/*! update the value for domain type
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeDomainType:(id)aSender
 {
-    var currentSelectedGuest    = [buttonGuests selectedItem],
-        capabilities            = [currentSelectedGuest XMLGuest],
-        currentDomain           = [self domainOfCurrentGuestWithType:[buttonDomainType title]],
-        machines                = [currentDomain childrenWithName:@"machine"];
+    [_libvirtDomain setType:[aSender title]];
+    [self updateMachinesAccordingToDomainType];
+    [self makeDefinitionEdited:aSender];
+}
 
-    [buttonMachines removeAllItems];
-    [self setControl:buttonMachines enabledAccordingToPermission:@"define"];
+/*! update the value for boot
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBoot:(id)aSender
+{
+    [[_libvirtDomain OS] setBoot:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
 
-    for (var i = 0; i < [machines count]; i++)
+/*! update the value for boot
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBoot:(id)aSender
+{
+    [[_libvirtDomain OS] setBoot:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC activation
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVNCEnabled:(id)aSender
+{
+    if ([aSender isOn])
     {
-        var machine = [machines objectAtIndex:i];
-        [buttonMachines addItemWithTitle:[machine text]];
-    }
-
-    if ([[buttonMachines itemArray] count] == 0)
-    {
-        var defaultMachines = [[capabilities firstChildWithName:@"arch"] childrenWithName:@"machine"];
-        for (var i = 0; i < [defaultMachines count]; i++)
+        if ([[[_libvirtDomain devices] graphics] count] == 0)
         {
-            var machine = [defaultMachines objectAtIndex:i];
-            [buttonMachines addItemWithTitle:[machine text]];
+            var graphicVNC = [[TNLibvirtDeviceGraphics alloc] init];
+            [graphicVNC setType:TNLibvirtDeviceGraphicsTypeVNC];
+            [[[_libvirtDomain devices] graphics] addObject:graphicVNC];
+
         }
     }
-
-    if ([[buttonMachines itemArray] count] == 0)
-        [buttonMachines setEnabled:NO];
-
-    var defaultMachine = [[CPUserDefaults standardUserDefaults] objectForKey:@"TNDescDefaultMachine"];
-    if (defaultMachine && [buttonMachines itemWithTitle:defaultMachine])
-        [buttonMachines selectItemWithTitle:defaultMachine];
     else
-        [buttonMachines selectItemAtIndex:0];
+    {
+        [[[_libvirtDomain devices] graphics] removeAllObjects];
+    }
 
-    [self handleDefinitionEdition:YES];
+    [fieldVNCPassword setEnabled:[aSender isOn]];
+    [buttonVNCKeymap setEnabled:[aSender isOn]];
+    [fieldVNCListen setEnabled:[aSender isOn]];
+    [fieldVNCPort setEnabled:[aSender isOn]];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC keymap
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVNCKeymap:(id)aSender
+{
+    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
+    [vnc setKeymap:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC Password
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVNCPassword:(id)aSender
+{
+    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
+    [vnc setPassword:[aSender stringValue]];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC Password
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVNCListen:(id)aSender
+{
+    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
+    [vnc setListen:[aSender stringValue]];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC Password
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVNCPort:(id)aSender
+{
+    var vnc = [[[_libvirtDomain devices] graphics] firstObject];
+
+    if ([aSender stringValue] != @"")
+    {
+        [vnc setPort:[aSender stringValue]];
+        [vnc setAutoPort:NO];
+    }
+    else
+    {
+        [vnc setPort:nil];
+        [vnc setAutoPort:YES];
+    }
+    [self makeDefinitionEdited:aSender];
+}
+
+
+/*! update the value for onPowerOff
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOnPowerOff:(id)aSender
+{
+    [_libvirtDomain setOnPowerOff:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for onReboot
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOnReboot:(id)aSender
+{
+    [_libvirtDomain setOnReboot:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for onCrash
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeOnCrash:(id)aSender
+{
+    [_libvirtDomain setOnCrash:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for PAE
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangePAE:(id)aSender
+{
+    [_libvirtDomain setOnCrash:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for ACPI
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeACPI:(id)aSender
+{
+    [[_libvirtDomain features] setACPI:[aSender isOn]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for APIC
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeAPIC:(id)aSender
+{
+    [[_libvirtDomain features] setAPIC:[aSender isOn]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for hugae page
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeHugePages:(id)aSender
+{
+    if (![_libvirtDomain memoryBacking])
+        [_libvirtDomain setMemoryBacking:[TNLibvirtDomainMemoryBacking new]];
+
+    [[_libvirtDomain memoryBacking] setUseHugePages:[aSender isOn]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for clock
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeClock:(id)aSender
+{
+    [[_libvirtDomain clock] setOffset:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for input Type
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeInputType:(id)aSender
+{
+    if ([[[_libvirtDomain devices] inputs] count] == 0)
+    {
+        var input = [[TNLibvirtDeviceInput alloc] init];
+        [[[_libvirtDomain devices] inputs] addObject:input];
+    }
+
+    [[[[_libvirtDomain devices] inputs] firstObject] setType:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for machine
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMachine:(id)aSender
+{
+    [[[_libvirtDomain OS] type] setMachine:[aSender title]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for memory
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMemory:(id)aSender
+{
+    [_libvirtDomain setMemory:[aSender intValue]];
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for VNC Password
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeVCPU:(id)aSender
+{
+    [_libvirtDomain setVCPU:[aSender intValue]];
+
+    [self makeDefinitionEdited:aSender];
 }
 
 
@@ -1314,13 +1543,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (BOOL)_didGetXMLDescription:(TNStropheStanza)aStanza
 {
-    var defaults = [CPUserDefaults standardUserDefaults],
-        bindingOptions = [CPDictionary dictionaryWithObjectsAndKeys:YES, CPContinuouslyUpdatesValueBindingOption,
-                                                                    YES, CPValidatesImmediatelyBindingOption]
+    var defaults = [CPUserDefaults standardUserDefaults];
 
     if ([aStanza type] == @"error")
     {
-        _libvirtDomain = nil;
+        _libvirtDomain = [TNLibvirtDomain defaultDomainWithType:TNLibvirtDomainTypeKVM];
+        [_libvirtDomain setName:[_entity nickname]];
+        [_libvirtDomain setUUID:[[_entity JID] node]];
         if ([[[aStanza firstChildWithName:@"error"] firstChildWithName:@"text"] text] != "not-defined")
             [self handleIqErrorFromStanza:aStanza];
 
@@ -1340,14 +1569,14 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonDomainType selectItemWithTitle:[_libvirtDomain type]];
 
     // button Machine
-    [self updateMachinesAccordingToDomainType:nil];
+    [self updateMachinesAccordingToDomainType];
     [buttonMachines selectItemWithTitle:[[[_libvirtDomain OS] type] machine]];
 
     // Memory
-    [fieldMemory bind:CPValueBinding toObject:_libvirtDomain withKeyPath:@"memory" options:bindingOptions];
+    [fieldMemory setStringValue:[_libvirtDomain memory]];
 
     // CPUs
-    [stepperNumberCPUs bind:CPValueBinding toObject:_libvirtDomain withKeyPath:@"VCPU" options:bindingOptions];
+    [stepperNumberCPUs setDoubleValue:[_libvirtDomain VCPU]];
 
     // button BOOT
     [self setControl:buttonBoot enabledAccordingToPermission:@"define"];
@@ -1384,9 +1613,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         {
             [buttonVNCKeymap selectItemWithTitle:[graphic keymap]];
 
-            [fieldVNCPassword bind:CPValueBinding toObject:graphic withKeyPath:@"password" options:bindingOptions];
-            [fieldVNCListen bind:CPValueBinding toObject:graphic withKeyPath:@"listen" options:bindingOptions];
-            [fieldVNCPort bind:CPValueBinding toObject:graphic withKeyPath:@"port" options:bindingOptions];
+            [fieldVNCPassword setStringValue:[graphic password]];
+            [fieldVNCListen setStringValue:[graphic listen]];
+            [fieldVNCPort setStringValue:([graphic port] != -1) ? [graphic port] : @""];
         }
     }
 
@@ -1449,7 +1678,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
         "action": TNArchipelTypeVirtualMachineDefinitionDefine}];
 
     [stanza addNode:[_libvirtDomain XMLNode]];
-    CPLog.debug("Sending libvirt XML description: " + _libvirtDomain);
     [buttonDefine setImage:_imageDefining];
     [self sendStanza:stanza andRegisterSelector:@selector(_didDefineXML:)];
 }
