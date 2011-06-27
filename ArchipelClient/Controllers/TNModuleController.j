@@ -116,6 +116,13 @@ TNArchipelModulesAllReadyNotification           = @"TNArchipelModulesAllReadyNot
 #pragma mark -
 #pragma mark Initialization
 
+/*! called at cib awakening
+*/
+- (void)awakeFromCib
+{
+    [viewPermissionDenied setBackgroundColor:[CPColor whiteColor]];
+}
+
 /*! initialize the module loader
     @return an initialized instance of TNModuleLoader
 */
