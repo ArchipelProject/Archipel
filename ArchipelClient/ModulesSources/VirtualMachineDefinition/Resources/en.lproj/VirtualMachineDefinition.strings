@@ -86,9 +86,6 @@
 /* Class = "NSTextFieldCell"; title = "Life cycle"; ObjectID = "80"; */
 "80.title" = "Life cycle";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "98"; */
-"98.title" = "Box";
-
 /* Class = "NSTextFieldCell"; title = "APIC:"; ObjectID = "103"; */
 "103.title" = "APIC:";
 
@@ -620,9 +617,6 @@
 /* Class = "NSMenuItem"; title = "Item 3"; ObjectID = "706"; */
 "706.title" = "Item 3";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "716"; */
-"716.title" = "Box";
-
 /* Class = "NSTextFieldCell"; title = "Enable VNC:"; ObjectID = "718"; */
 "718.title" = "Enable VNC:";
 
@@ -760,4 +754,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Input bus:"; ObjectID = "837"; */
 "837.title" = "Input bus:";
+
+/* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
+"844.title" = "Advanced stuff will be added here";
 

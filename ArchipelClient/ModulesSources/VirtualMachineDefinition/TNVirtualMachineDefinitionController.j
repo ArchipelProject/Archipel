@@ -126,6 +126,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNUIKitScrollView       scrollViewContentView;
     @outlet TNUIKitScrollView       scrollViewForDrives;
     @outlet TNUIKitScrollView       scrollViewForNics;
+    @outlet TNFlipView              flipViewParameters;
+    @outlet CPView                  viewParametersFront;
+    @outlet CPView                  viewParametersBack;
+    @outlet CPView                  viewParametersEffectTop;
+    @outlet CPView                  viewParametersEffectBottom;
+    @outlet CPButton                buttonFlipViewShowFront;
+    @outlet CPButton                buttonFlipViewShowBack;
     @outlet CPTableView             tableDrives;
     @outlet CPTableView             tableInterfaces;
 
@@ -178,9 +185,39 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
+    // flipView
+    var mainBundle = [CPBundle mainBundle],
+        imageButtonFront = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-up.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonFrontPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-up.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonBack = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-down.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonBackPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-down.png"] size:CPSizeMake(14.0, 14.0)],
+        imageFlipViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]];
 
-    // this really sucks, but something have change in capp that made the textfield not take care of the Atlas defined values;
-    [fieldStringXMLDesc setFrameSize:CPSizeMake(591, 378)];
+    [flipViewParameters setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateVertical];
+    [flipViewParameters setFrontView:viewParametersFront];
+    [flipViewParameters setBackView:viewParametersBack];
+    [flipViewParameters setBackgroundColor:[CPColor colorWithPatternImage:imageFlipViewBG]];
+
+    [buttonFlipViewShowFront setBordered:NO];
+    [buttonFlipViewShowFront setTarget:flipViewParameters];
+    [buttonFlipViewShowFront setAction:@selector(flip:)];
+    [buttonFlipViewShowFront setImage:imageButtonFront]; // this avoid the blinking..
+    [buttonFlipViewShowFront setValue:imageButtonFront forThemeAttribute:@"image"];
+    [buttonFlipViewShowFront setValue:imageButtonFrontPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+
+    [buttonFlipViewShowBack setBordered:NO];
+    [buttonFlipViewShowBack setTarget:flipViewParameters];
+    [buttonFlipViewShowBack setAction:@selector(flip:)];
+    [buttonFlipViewShowBack setImage:imageButtonBack]; // this avoid the blinking..
+    [buttonFlipViewShowBack setValue:imageButtonBack forThemeAttribute:@"image"];
+    [buttonFlipViewShowBack setValue:imageButtonBackPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+
+    var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
+        shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CPSizeMake(1.0, 10.0)];
+    [viewParametersEffectTop setBackgroundColor:[CPColor colorWithPatternImage:shadowTop]];
+    [viewParametersEffectBottom setBackgroundColor:[CPColor colorWithPatternImage:shadowBottom]];
+
+    [fieldStringXMLDesc setTextColor:[CPColor blackColor]];
 
     // register defaults defaults
     [defaults registerDefaults:[CPDictionary dictionaryWithObjectsAndKeys:
