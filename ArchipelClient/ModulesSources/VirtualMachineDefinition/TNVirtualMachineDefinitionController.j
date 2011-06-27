@@ -405,24 +405,10 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 
     // switch
     [switchPAE setOn:NO animated:YES sendAction:NO];
-    [switchPAE setTarget:self];
-    [switchPAE setAction:@selector(didChangeAPIC:)];
-
     [switchAPIC setOn:NO animated:YES sendAction:NO];
-    [switchAPIC setTarget:self];
-    [switchAPIC setAction:@selector(didChangeAPIC:)];
-
     [switchACPI setOn:NO animated:YES sendAction:NO];
-    [switchACPI setTarget:self];
-    [switchACPI setAction:@selector(didChangeACPI:)];
     [switchAPIC setToolTip:CPBundleLocalizedString(@"Enable or disable PAE", @"Enable or disable PAE")];
-
-    [switchHugePages setTarget:self];
-    [switchHugePages setAction:@selector(didChangeHugePages:)];
     [switchHugePages setToolTip:CPBundleLocalizedString(@"Enable or disable usage of huge pages backed memory", @"Enable or disable usage of huge pages backed memory")];
-
-    [switchEnableVNC setTarget:self];
-    [switchEnableVNC setAction:@selector(didChangeVNCEnabled:)];
     [switchEnableVNC setToolTip:CPLocalizedString(@"Enable or disable the VNC screen for this virtual machine", @"Enable or disable the VNC screen for this virtual machine")];
 
     //CPUStepper
@@ -431,8 +417,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [stepperNumberCPUs setDoubleValue:1];
     [stepperNumberCPUs setValueWraps:NO];
     [stepperNumberCPUs setAutorepeat:NO];
-    [stepperNumberCPUs setTarget:self];
-    [stepperNumberCPUs setAction:@selector(didChangeVCPU:)];
     [stepperNumberCPUs setToolTip:CPBundleLocalizedString(@"Set the number of virtual CPUs", @"Set the number of virtual CPUs")];
 
     _imageEdited = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"edited.png"] size:CPSizeMake(16.0, 16.0)];

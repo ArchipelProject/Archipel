@@ -1247,7 +1247,7 @@
 						<object class="NSTextField" id="360207634">
 							<reference key="NSNextResponder" ref="97585222"/>
 							<int key="NSvFlags">266</int>
-							<string key="NSFrame">{{106, 325}, {380, 22}}</string>
+							<string key="NSFrame">{{115, 325}, {369, 22}}</string>
 							<reference key="NSSuperview" ref="97585222"/>
 							<reference key="NSNextKeyView" ref="46181441"/>
 							<bool key="NSEnabled">YES</bool>
@@ -4113,7 +4113,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{709, 157}, {130, 26}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="523450510"/>
+						<reference key="NSNextKeyView" ref="979092159"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSPopUpButtonCell" key="NSCell" id="706137673">
 							<int key="NSCellFlags">-2076049856</int>
@@ -4249,7 +4249,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{427, 212}, {130, 26}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="571134493"/>
+						<reference key="NSNextKeyView" ref="207076306"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSPopUpButtonCell" key="NSCell" id="32125003">
 							<int key="NSCellFlags">-2076049856</int>
@@ -4674,6 +4674,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{141, 212}, {130, 26}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
+						<reference key="NSNextKeyView" ref="660153313"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSPopUpButtonCell" key="NSCell" id="65428981">
 							<int key="NSCellFlags">-2076049856</int>
@@ -4741,7 +4742,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{142, 118}, {77, 24}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="1071896499"/>
+						<reference key="NSNextKeyView" ref="422057515"/>
 						<string key="NSClassName">TNSwitch</string>
 					</object>
 					<object class="NSCustomView" id="950475993">
@@ -4749,7 +4750,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{710, 187}, {77, 24}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="930331619"/>
+						<reference key="NSNextKeyView" ref="892466586"/>
 						<string key="NSClassName">TNSwitch</string>
 					</object>
 					<object class="NSCustomView" id="734906881">
@@ -4798,7 +4799,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{597, 191}, {101, 17}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="950475993"/>
+						<reference key="NSNextKeyView" ref="571134493"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="193187948">
 							<int key="NSCellFlags">68288064</int>
@@ -4920,6 +4921,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{312, 123}, {101, 17}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
+						<reference key="NSNextKeyView" ref="1071896499"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="889390250">
 							<int key="NSCellFlags">68288064</int>
@@ -4936,7 +4938,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{325, 150}, {244, 14}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="979092159"/>
+						<reference key="NSNextKeyView" ref="930331619"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="421672321">
 							<int key="NSCellFlags">68288064</int>
@@ -4953,7 +4955,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{321, 171}, {172, 20}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="892466586"/>
+						<reference key="NSNextKeyView" ref="950475993"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="975528249">
 							<int key="NSCellFlags">68288064</int>
@@ -5150,7 +5152,7 @@
 						<int key="NSvFlags">269</int>
 						<string key="NSFrame">{{17, 122}, {120, 17}}</string>
 						<reference key="NSSuperview" ref="248807684"/>
-						<reference key="NSNextKeyView" ref="422057515"/>
+						<reference key="NSNextKeyView" ref="523450510"/>
 						<bool key="NSEnabled">YES</bool>
 						<object class="NSTextFieldCell" key="NSCell" id="603241803">
 							<int key="NSCellFlags">68288064</int>
@@ -6388,6 +6390,54 @@
 					</object>
 					<int key="connectionID">861</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangeVNCEnabled:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="523450510"/>
+					</object>
+					<int key="connectionID">862</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangePAE:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="472603779"/>
+					</object>
+					<int key="connectionID">863</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangeACPI:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="591153622"/>
+					</object>
+					<int key="connectionID">864</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangeAPIC:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="734906881"/>
+					</object>
+					<int key="connectionID">865</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangeHugePages:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="950475993"/>
+					</object>
+					<int key="connectionID">866</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">didChangeVCPU:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="573938017"/>
+					</object>
+					<int key="connectionID">867</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -6743,7 +6793,6 @@
 							<reference ref="78207660"/>
 							<reference ref="1068256600"/>
 							<reference ref="6801618"/>
-							<reference ref="360207634"/>
 							<reference ref="231682756"/>
 							<reference ref="1041473798"/>
 							<reference ref="620043790"/>
@@ -6755,6 +6804,7 @@
 							<reference ref="108965515"/>
 							<reference ref="226471797"/>
 							<reference ref="389147134"/>
+							<reference ref="360207634"/>
 						</object>
 						<reference key="parent" ref="848183292"/>
 					</object>
@@ -10925,11 +10975,27 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">861</int>
+			<int key="maxID">867</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<bool key="EncodedWithXMLCoder">YES</bool>
+				<object class="IBPartialClassDescription">
+					<string key="className">LPMultiLineTextField</string>
+					<string key="superclassName">NSTextField</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/LPMultiLineTextField.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">LPSwitch</string>
+					<string key="superclassName">NSControl</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/LPSwitch.h</string>
+					</object>
+				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">TNDriveController</string>
 					<string key="superclassName">NSObject</string>
@@ -10940,13 +11006,11 @@
 							<string>driveTypeDidChange:</string>
 							<string>hideWindow:</string>
 							<string>performDeviceTypeChanged:</string>
-							<string>populateTargetButton:</string>
 							<string>save:</string>
 							<string>showWindow:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -10961,7 +11025,6 @@
 							<string>driveTypeDidChange:</string>
 							<string>hideWindow:</string>
 							<string>performDeviceTypeChanged:</string>
-							<string>populateTargetButton:</string>
 							<string>save:</string>
 							<string>showWindow:</string>
 						</object>
@@ -10980,10 +11043,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">populateTargetButton:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">save:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -10997,15 +11056,10 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBus</string>
-							<string>buttonCache</string>
 							<string>buttonDevice</string>
-							<string>buttonDeviceType</string>
 							<string>buttonDriverCache</string>
 							<string>buttonOK</string>
-							<string>buttonSource</string>
 							<string>buttonSourcePath</string>
-							<string>buttonTarget</string>
 							<string>buttonTargetBus</string>
 							<string>buttonTargetDevice</string>
 							<string>buttonType</string>
@@ -11016,12 +11070,7 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
 							<string>NSButton</string>
-							<string>NSPopUpButton</string>
-							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
@@ -11034,15 +11083,10 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>buttonBus</string>
-							<string>buttonCache</string>
 							<string>buttonDevice</string>
-							<string>buttonDeviceType</string>
 							<string>buttonDriverCache</string>
 							<string>buttonOK</string>
-							<string>buttonSource</string>
 							<string>buttonSourcePath</string>
-							<string>buttonTarget</string>
 							<string>buttonTargetBus</string>
 							<string>buttonTargetDevice</string>
 							<string>buttonType</string>
@@ -11052,19 +11096,7 @@
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonBus</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonCache</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">buttonDevice</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonDeviceType</string>
 								<string key="candidateClassName">NSPopUpButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -11076,15 +11108,7 @@
 								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
-								<string key="name">buttonSource</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
 								<string key="name">buttonSourcePath</string>
-								<string key="candidateClassName">NSPopUpButton</string>
-							</object>
-							<object class="IBToOneOutletInfo">
-								<string key="name">buttonTarget</string>
 								<string key="candidateClassName">NSPopUpButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
@@ -11112,6 +11136,25 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/TNDriveController.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">TNFlipView</string>
+					<string key="superclassName">NSView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">flip:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">flip:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">flip:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNFlipView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -11323,6 +11366,25 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNTextFieldStepper</string>
+					<string key="superclassName">NSStepper</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">_didTextFieldEdit:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">_didTextFieldEdit:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">_didTextFieldEdit:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNTextFieldStepper.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNVirtualMachineDefinitionController</string>
 					<string key="superclassName">TNModule</string>
 					<object class="NSMutableDictionary" key="actions">
@@ -11331,7 +11393,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addDrive:</string>
 							<string>addNetworkCard:</string>
-							<string>buildGUIAccordingToCurrentGuest:</string>
 							<string>defineXML:</string>
 							<string>defineXMLString:</string>
 							<string>deleteDrive:</string>
@@ -11359,19 +11420,12 @@
 							<string>didChangeVNCPort:</string>
 							<string>editDrive:</string>
 							<string>editInterface:</string>
-							<string>editNetworkCard:</string>
 							<string>makeDefinitionEdited:</string>
 							<string>openXMLEditor:</string>
-							<string>toggleVNCEnabled:</string>
 							<string>undefineXML:</string>
-							<string>updateMachinesAccordingToDomainType:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
-							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
@@ -11412,7 +11466,6 @@
 							<bool key="EncodedWithXMLCoder">YES</bool>
 							<string>addDrive:</string>
 							<string>addNetworkCard:</string>
-							<string>buildGUIAccordingToCurrentGuest:</string>
 							<string>defineXML:</string>
 							<string>defineXMLString:</string>
 							<string>deleteDrive:</string>
@@ -11440,12 +11493,9 @@
 							<string>didChangeVNCPort:</string>
 							<string>editDrive:</string>
 							<string>editInterface:</string>
-							<string>editNetworkCard:</string>
 							<string>makeDefinitionEdited:</string>
 							<string>openXMLEditor:</string>
-							<string>toggleVNCEnabled:</string>
 							<string>undefineXML:</string>
-							<string>updateMachinesAccordingToDomainType:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
@@ -11455,10 +11505,6 @@
 							</object>
 							<object class="IBActionInfo">
 								<string key="name">addNetworkCard:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">buildGUIAccordingToCurrentGuest:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
@@ -11570,10 +11616,6 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">editNetworkCard:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">makeDefinitionEdited:</string>
 								<string key="candidateClassName">id</string>
 							</object>
@@ -11582,15 +11624,7 @@
 								<string key="candidateClassName">id</string>
 							</object>
 							<object class="IBActionInfo">
-								<string key="name">toggleVNCEnabled:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
 								<string key="name">undefineXML:</string>
-								<string key="candidateClassName">id</string>
-							</object>
-							<object class="IBActionInfo">
-								<string key="name">updateMachinesAccordingToDomainType:</string>
 								<string key="candidateClassName">id</string>
 							</object>
 						</object>
