@@ -153,9 +153,12 @@ class TNActionScheduler (TNArchipelPlugin):
             entity_uid = ARCHIPEL_SCHED_HYPERVISOR_UID
         self.cursor.execute("SELECT * FROM scheduler WHERE entity_uuid=?", (entity_uid, ))
         for values in self.cursor:
-            entity_uuid, job_uuid, action, year, month, day, hour, minute, second, comment, params = values
-            str_date = "%s/%s/%s %s:%s:%s" % (year, month, day, hour, minute, second)
-            self.scheduler.add_cron_job(self.do_job_for_vm, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[action, job_uuid, str_date, comment])
+            try:
+                entity_uuid, job_uuid, action, year, month, day, hour, minute, second, comment, params = values
+                str_date = "%s/%s/%s %s:%s:%s" % (year, month, day, hour, minute, second)
+                self.scheduler.add_cron_job(self.do_job_for_vm, year=year, month=month, day=day, hour=hour, minute=minute, second=second, args=[action, job_uuid, str_date, comment])
+            except Exception as ex:
+                self.entity.log.error("unable to restore a job: %s" % str(ex))
 
     def vm_terminate(self, origin, user_info, arguments):
         """
