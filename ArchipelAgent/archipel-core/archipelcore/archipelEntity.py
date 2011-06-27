@@ -175,7 +175,10 @@ class TNArchipelEntity (object):
 
                     if loading_module_policy == "restrictive":
                         if not self.configuration.has_option("MODULES", plugin_info["identifier"]):
-                            self.log.info("PLUGIN: plugin %s has not been loaded as it is not desfined in configuration and loading mode is restrictive." % plugin_info["identifier"])
+                            self.log.info("PLUGIN: plugin %s has not been loaded as it is not defined in configuration and loading mode is restrictive." % plugin_info["identifier"])
+                            continue
+                        elif not self.configuration.getboolean("MODULES", plugin_info["identifier"]):
+                            self.log.info("PLUGIN: plugin %s has not been loaded because it is disabled by configuration." % plugin_info["identifier"])
                             continue
                     elif loading_module_policy == "permissive":
                         if self.configuration.has_option("MODULES", plugin_info["identifier"]):
