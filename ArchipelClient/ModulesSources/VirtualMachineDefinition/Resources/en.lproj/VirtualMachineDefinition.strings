@@ -758,3 +758,57 @@
 /* Class = "NSTextFieldCell"; title = "Advanced stuff will be added here"; ObjectID = "844"; */
 "844.title" = "Advanced stuff will be added here";
 
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "872"; */
+"872.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "Soft limit:"; ObjectID = "873"; */
+"873.title" = "Soft limit:";
+
+/* Class = "NSTextFieldCell"; title = "You can manage limits for memory usage"; ObjectID = "874"; */
+"874.title" = "You can manage limits for memory usage";
+
+/* Class = "NSTextFieldCell"; title = "Memory tuning"; ObjectID = "875"; */
+"875.title" = "Memory tuning";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "878"; */
+"878.title" = "MB";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "882"; */
+"882.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "Hard limit:"; ObjectID = "883"; */
+"883.title" = "Hard limit:";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "884"; */
+"884.title" = "MB";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "889"; */
+"889.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "Guarantee:"; ObjectID = "890"; */
+"890.title" = "Guarantee:";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "891"; */
+"891.title" = "MB";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "896"; */
+"896.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "Swap hard limit:"; ObjectID = "897"; */
+"897.title" = "Swap hard limit:";
+
+/* Class = "NSTextFieldCell"; title = "MB"; ObjectID = "898"; */
+"898.title" = "MB";
+
+/* Class = "NSTextFieldCell"; placeholderString = "1024"; ObjectID = "913"; */
+"913.placeholderString" = "1024";
+
+/* Class = "NSTextFieldCell"; title = "Weight:"; ObjectID = "914"; */
+"914.title" = "Weight:";
+
+/* Class = "NSTextFieldCell"; title = "You can manage the block I/O tuning"; ObjectID = "915"; */
+"915.title" = "You can manage the block I/O tuning";
+
+/* Class = "NSTextFieldCell"; title = "Block I/O tuning"; ObjectID = "916"; */
+"916.title" = "Block I/O tuning";
+

@@ -104,7 +104,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet CPTextField             fieldPreferencesMemory;
     @outlet CPTextField             fieldVNCListen;
     @outlet CPTextField             fieldVNCPort;
+    @outlet CPTextField             fieldMemoryTuneSoftLimit;
+    @outlet CPTextField             fieldMemoryTuneHardLimit;
+    @outlet CPTextField             fieldMemoryTuneGuarantee;
+    @outlet CPTextField             fieldMemoryTuneSwapHardLimit;
     @outlet CPTextField             fieldVNCPassword;
+    @outlet CPTextField             fieldBlockIOTuningWeight;
     @outlet CPView                  viewBottomControl;
     @outlet CPView                  viewDeviceVirtualDrives;
     @outlet CPView                  viewDeviceVirtualNics;
@@ -1499,6 +1504,94 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [self makeDefinitionEdited:aSender];
 }
 
+/*! update the value for memory tuning soft limit
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMemoryTuneSoftLimit:(id)aSender
+{
+    if ([aSender intValue] > 0)
+    {
+        if (![_libvirtDomain memoryTuning])
+            [_libvirtDomain setMemoryTuning:[[TNLibvirtDomainMemoryTune alloc] init]];
+
+        [[_libvirtDomain memoryTuning] setSoftLimit:[aSender intValue] * 1024];
+    }
+    else
+        [[_libvirtDomain memoryTuning] setSoftLimit:nil];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for memory tuning hard limit
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMemoryTuneHardLimit:(id)aSender
+{
+    if ([aSender intValue] > 0)
+    {
+        if (![_libvirtDomain memoryTuning])
+            [_libvirtDomain setMemoryTuning:[[TNLibvirtDomainMemoryTune alloc] init]];
+
+        [[_libvirtDomain memoryTuning] setHardLimit:[aSender intValue] * 1024];
+    }
+    else
+        [[_libvirtDomain memoryTuning] setHardLimit:nil];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for memory tuning guarantee
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMemoryTuneGuarantee:(id)aSender
+{
+    if ([aSender intValue] > 0)
+    {
+        if (![_libvirtDomain memoryTuning])
+            [_libvirtDomain setMemoryTuning:[[TNLibvirtDomainMemoryTune alloc] init]];
+        [[_libvirtDomain memoryTuning] setMinGuarantee:[aSender intValue] * 1024];
+    }
+    else
+        [[_libvirtDomain memoryTuning] setMinGuarantee:nil];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for memory tuning swap hard limit
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeMemoryTuneSwapHardLimit:(id)aSender
+{
+    if ([aSender intValue] > 0)
+    {
+        if (![_libvirtDomain memoryTuning])
+            [_libvirtDomain setMemoryTuning:[[TNLibvirtDomainMemoryTune alloc] init]];
+
+        [[_libvirtDomain memoryTuning] setSwapHardLimit:[aSender intValue] * 1024];
+    }
+    else
+        [[_libvirtDomain memoryTuning] setSwapHardLimit:nil];
+
+    [self makeDefinitionEdited:aSender];
+}
+
+/*! update the value for block IO tuning weight
+    @param aSender the sender of the action
+*/
+- (IBAction)didChangeBlockIOTuningWeight:(id)aSender
+{
+    if ([aSender intValue] > 0)
+    {
+        if (![_libvirtDomain blkiotune])
+            [_libvirtDomain setBlkiotune:[[TNLibvirtDomainBlockIOTune alloc] init]];
+        [[_libvirtDomain blkiotune] setWeight:[aSender intValue]];
+    }
+    else
+        [[_libvirtDomain blkiotune] setWeight:nil];
+
+    [self makeDefinitionEdited:aSender];
+}
+
 
 #pragma mark -
 #pragma mark XMPP Controls
@@ -1699,6 +1792,30 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     // NICS
     [_nicsDatasource setContent:[[_libvirtDomain devices] interfaces]];
     [tableInterfaces reloadData];
+
+    // MEMORY TUNING
+    if ([[_libvirtDomain memoryTuning] softLimit])
+        [fieldMemoryTuneSoftLimit setIntValue:[[_libvirtDomain memoryTuning] softLimit] / 1024];
+    else
+        [fieldMemoryTuneSoftLimit setStringValue:nil];
+    if ([[_libvirtDomain memoryTuning] hardLimit])
+        [fieldMemoryTuneHardLimit setIntValue:[[_libvirtDomain memoryTuning] hardLimit] / 1024];
+    else
+        [fieldMemoryTuneHardLimit setStringValue:nil];
+    if ([[_libvirtDomain memoryTuning] minGuarantee])
+        [fieldMemoryTuneGuarantee setIntValue:[[_libvirtDomain memoryTuning] minGuarantee] / 1024];
+    else
+        [fieldMemoryTuneGuarantee setStringValue:nil];
+    if ([[_libvirtDomain memoryTuning] swapHardLimit])
+        [fieldMemoryTuneSwapHardLimit setIntValue:[[_libvirtDomain memoryTuning] swapHardLimit] / 1024];
+    else
+        [fieldMemoryTuneSwapHardLimit setStringValue:nil];
+
+    // BLOCK IO TUNING
+    if ([[_libvirtDomain blkiotune] weight])
+        [fieldBlockIOTuningWeight setIntValue:[[_libvirtDomain blkiotune] weight]];
+    else
+        [fieldBlockIOTuningWeight setStringValue:nil];
 
     // MANUAL
     _stringXMLDesc  = [[aStanza firstChildWithName:@"domain"] stringValue];
