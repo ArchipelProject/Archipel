@@ -67,16 +67,16 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{0, 300}, {870, 340}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="126110591"/>
+						<reference key="NSNextKeyView" ref="867357855"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
-						<string key="NSClassName">TNFlipView</string>
+						<string key="NSClassName">TNSwipeView</string>
 					</object>
 					<object class="NSCustomView" id="867357855">
 						<reference key="NSNextResponder" ref="1005"/>
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{0, 298}, {869, 10}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="862158691"/>
+						<reference key="NSNextKeyView" ref="126110591"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -85,7 +85,7 @@
 						<int key="NSvFlags">266</int>
 						<string key="NSFrame">{{0, 632}, {869, 10}}</string>
 						<reference key="NSSuperview" ref="1005"/>
-						<reference key="NSNextKeyView" ref="867357855"/>
+						<reference key="NSNextKeyView" ref="862158691"/>
 						<string key="NSReuseIdentifierKey">_NS:499</string>
 						<string key="NSClassName">NSView</string>
 					</object>
@@ -6650,46 +6650,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">flipViewParameters</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="862158691"/>
-					</object>
-					<int key="connectionID">852</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewParametersFront</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="248807684"/>
-					</object>
-					<int key="connectionID">853</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">viewParametersBack</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="927575755"/>
-					</object>
-					<int key="connectionID">854</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonFlipViewShowBack</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="431265555"/>
-					</object>
-					<int key="connectionID">855</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">buttonFlipViewShowFront</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="204575141"/>
-					</object>
-					<int key="connectionID">856</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">viewParametersEffect</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="2937892"/>
@@ -6895,6 +6855,46 @@
 						<reference key="destination" ref="556787766"/>
 					</object>
 					<int key="connectionID">928</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">swipeViewParameters</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="862158691"/>
+					</object>
+					<int key="connectionID">932</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewParametersStandard</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="248807684"/>
+					</object>
+					<int key="connectionID">933</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">viewParametersAdvanced</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="927575755"/>
+					</object>
+					<int key="connectionID">934</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonSwipeNext</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="431265555"/>
+					</object>
+					<int key="connectionID">935</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">buttonSwipePrevious</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="204575141"/>
+					</object>
+					<int key="connectionID">936</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -9422,7 +9422,7 @@
 							<reference ref="431265555"/>
 						</object>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">View param front</string>
+						<string key="objectName">View param standart</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">12</int>
@@ -10397,7 +10397,7 @@
 							<reference ref="393364307"/>
 						</object>
 						<reference key="parent" ref="0"/>
-						<string key="objectName">View param back</string>
+						<string key="objectName">View param advanced</string>
 					</object>
 					<object class="IBObjectRecord">
 						<int key="objectID">843</int>
@@ -11783,7 +11783,7 @@
 				<reference key="dict.values" ref="0"/>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">928</int>
+			<int key="maxID">936</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -12166,6 +12166,46 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">TNSwipeView</string>
+					<string key="superclassName">NSControl</string>
+					<object class="NSMutableDictionary" key="actions">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>nextView:</string>
+							<string>previousView:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+						</object>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<bool key="EncodedWithXMLCoder">YES</bool>
+						<object class="NSArray" key="dict.sortedKeys">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>nextView:</string>
+							<string>previousView:</string>
+						</object>
+						<object class="NSMutableArray" key="dict.values">
+							<bool key="EncodedWithXMLCoder">YES</bool>
+							<object class="IBActionInfo">
+								<string key="name">nextView:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+							<object class="IBActionInfo">
+								<string key="name">previousView:</string>
+								<string key="candidateClassName">id</string>
+							</object>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/TNSwipeView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">TNSwitch</string>
 					<string key="superclassName">LPSwitch</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
@@ -12500,6 +12540,8 @@
 							<string>buttonPreferencesOnPowerOff</string>
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
+							<string>buttonSwipeNext</string>
+							<string>buttonSwipePrevious</string>
 							<string>buttonUndefine</string>
 							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
@@ -12527,6 +12569,7 @@
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
+							<string>swipeViewParameters</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
 							<string>switchEnableVNC</string>
@@ -12543,10 +12586,12 @@
 							<string>viewDrivesContainer</string>
 							<string>viewMainContent</string>
 							<string>viewNicsContainer</string>
+							<string>viewParametersAdvanced</string>
 							<string>viewParametersBack</string>
 							<string>viewParametersEffectBottom</string>
 							<string>viewParametersEffectTop</string>
 							<string>viewParametersFront</string>
+							<string>viewParametersStandard</string>
 							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -12576,6 +12621,8 @@
 							<string>NSPopUpButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
+							<string>NSButton</string>
+							<string>NSButton</string>
 							<string>NSPopUpButton</string>
 							<string>NSButton</string>
 							<string>NSButton</string>
@@ -12602,6 +12649,7 @@
 							<string>TNUIKitScrollView</string>
 							<string>TNUIKitScrollView</string>
 							<string>TNTextFieldStepper</string>
+							<string>TNSwipeView</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
 							<string>TNSwitch</string>
@@ -12612,6 +12660,8 @@
 							<string>NSTabView</string>
 							<string>NSTableView</string>
 							<string>NSTableView</string>
+							<string>NSView</string>
+							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
 							<string>NSView</string>
@@ -12653,6 +12703,8 @@
 							<string>buttonPreferencesOnPowerOff</string>
 							<string>buttonPreferencesOnReboot</string>
 							<string>buttonPreferencesVNCKeyMap</string>
+							<string>buttonSwipeNext</string>
+							<string>buttonSwipePrevious</string>
 							<string>buttonUndefine</string>
 							<string>buttonVNCKeymap</string>
 							<string>buttonXMLEditor</string>
@@ -12680,6 +12732,7 @@
 							<string>scrollViewForDrives</string>
 							<string>scrollViewForNics</string>
 							<string>stepperNumberCPUs</string>
+							<string>swipeViewParameters</string>
 							<string>switchACPI</string>
 							<string>switchAPIC</string>
 							<string>switchEnableVNC</string>
@@ -12696,10 +12749,12 @@
 							<string>viewDrivesContainer</string>
 							<string>viewMainContent</string>
 							<string>viewNicsContainer</string>
+							<string>viewParametersAdvanced</string>
 							<string>viewParametersBack</string>
 							<string>viewParametersEffectBottom</string>
 							<string>viewParametersEffectTop</string>
 							<string>viewParametersFront</string>
+							<string>viewParametersStandard</string>
 							<string>windowXMLEditor</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
@@ -12799,6 +12854,14 @@
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonPreferencesVNCKeyMap</string>
 								<string key="candidateClassName">NSPopUpButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSwipeNext</string>
+								<string key="candidateClassName">NSButton</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">buttonSwipePrevious</string>
+								<string key="candidateClassName">NSButton</string>
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">buttonUndefine</string>
@@ -12909,6 +12972,10 @@
 								<string key="candidateClassName">TNTextFieldStepper</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">swipeViewParameters</string>
+								<string key="candidateClassName">TNSwipeView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">switchACPI</string>
 								<string key="candidateClassName">TNSwitch</string>
 							</object>
@@ -12973,6 +13040,10 @@
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersAdvanced</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
 								<string key="name">viewParametersBack</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
@@ -12986,6 +13057,10 @@
 							</object>
 							<object class="IBToOneOutletInfo">
 								<string key="name">viewParametersFront</string>
+								<string key="candidateClassName">NSView</string>
+							</object>
+							<object class="IBToOneOutletInfo">
+								<string key="name">viewParametersStandard</string>
 								<string key="candidateClassName">NSView</string>
 							</object>
 							<object class="IBToOneOutletInfo">

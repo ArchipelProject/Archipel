@@ -35,6 +35,7 @@
 @import <TNKit/TNTableViewDataSource.j>
 @import <TNKit/TNTextFieldStepper.j>
 @import <TNKit/TNUIKitScrollView.j>
+@import <TNKit/TNSwipeView.j>
 
 @import "TNDriveController.j"
 @import "TNNetworkController.j"
@@ -131,13 +132,13 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     @outlet TNUIKitScrollView       scrollViewContentView;
     @outlet TNUIKitScrollView       scrollViewForDrives;
     @outlet TNUIKitScrollView       scrollViewForNics;
-    @outlet TNFlipView              flipViewParameters;
-    @outlet CPView                  viewParametersFront;
-    @outlet CPView                  viewParametersBack;
+    @outlet TNSwipeView             swipeViewParameters;
+    @outlet CPView                  viewParametersStandard;
+    @outlet CPView                  viewParametersAdvanced;
     @outlet CPView                  viewParametersEffectTop;
     @outlet CPView                  viewParametersEffectBottom;
-    @outlet CPButton                buttonFlipViewShowFront;
-    @outlet CPButton                buttonFlipViewShowBack;
+    @outlet CPButton                buttonSwipeNext;
+    @outlet CPButton                buttonSwipePrevious;
     @outlet CPTableView             tableDrives;
     @outlet CPTableView             tableInterfaces;
 
@@ -190,32 +191,34 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     [buttonXMLEditor setImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"editxml.png"] size:CPSizeMake(16, 16)]];
     [buttonXMLEditor setValue:inset forThemeAttribute:@"content-inset"];
 
-    // flipView
+    // swipeView
     var mainBundle = [CPBundle mainBundle],
-        imageButtonFront = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-up.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonFrontPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-up.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonBack = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-down.png"] size:CPSizeMake(14.0, 14.0)],
-        imageButtonBackPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-down.png"] size:CPSizeMake(14.0, 14.0)],
-        imageFlipViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]];
+        imageButtonNext = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-right.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonNextPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-right.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonPrevious = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CPSizeMake(14.0, 14.0)],
+        imageButtonPreviousPressed = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CPSizeMake(14.0, 14.0)],
+        imageSwipeViewBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/paper-bg-dark.png"]],
+        imageSwipeDarkBG = [[CPImage alloc] initWithContentsOfFile:[mainBundle pathForResource:@"Backgrounds/dark-bg.png"]];
 
-    [flipViewParameters setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateVertical];
-    [flipViewParameters setFrontView:viewParametersFront];
-    [flipViewParameters setBackView:viewParametersBack];
-    [flipViewParameters setBackgroundColor:[CPColor colorWithPatternImage:imageFlipViewBG]];
+    [viewParametersStandard setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
+    [viewParametersAdvanced setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeViewBG]];
+    [swipeViewParameters setBackgroundColor:[CPColor colorWithPatternImage:imageSwipeDarkBG]];
+    [swipeViewParameters setViews:[viewParametersStandard, viewParametersAdvanced]];
+    [swipeViewParameters setMinimalRatio:0.1];
 
-    [buttonFlipViewShowFront setBordered:NO];
-    [buttonFlipViewShowFront setTarget:flipViewParameters];
-    [buttonFlipViewShowFront setAction:@selector(flip:)];
-    [buttonFlipViewShowFront setImage:imageButtonFront]; // this avoid the blinking..
-    [buttonFlipViewShowFront setValue:imageButtonFront forThemeAttribute:@"image"];
-    [buttonFlipViewShowFront setValue:imageButtonFrontPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [buttonSwipeNext setBordered:NO];
+    [buttonSwipeNext setTarget:swipeViewParameters];
+    [buttonSwipeNext setAction:@selector(nextView:)];
+    [buttonSwipeNext setImage:imageButtonNext]; // this avoid the blinking..
+    [buttonSwipeNext setValue:imageButtonNext forThemeAttribute:@"image"];
+    [buttonSwipeNext setValue:imageButtonNextPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
-    [buttonFlipViewShowBack setBordered:NO];
-    [buttonFlipViewShowBack setTarget:flipViewParameters];
-    [buttonFlipViewShowBack setAction:@selector(flip:)];
-    [buttonFlipViewShowBack setImage:imageButtonBack]; // this avoid the blinking..
-    [buttonFlipViewShowBack setValue:imageButtonBack forThemeAttribute:@"image"];
-    [buttonFlipViewShowBack setValue:imageButtonBackPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [buttonSwipePrevious setBordered:NO];
+    [buttonSwipePrevious setTarget:swipeViewParameters];
+    [buttonSwipePrevious setAction:@selector(nextView:)];
+    [buttonSwipePrevious setImage:imageButtonPrevious]; // this avoid the blinking..
+    [buttonSwipePrevious setValue:imageButtonPrevious forThemeAttribute:@"image"];
+    [buttonSwipePrevious setValue:imageButtonPreviousPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
     var shadowTop = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-top.png"] size:CPSizeMake(1.0, 10.0)],
         shadowBottom = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"shadow-bottom.png"] size:CPSizeMake(1.0, 10.0)];
@@ -1176,7 +1179,7 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
     var newDrive = [[TNLibvirtDeviceDisk alloc] init],
         newDriveSource = [[TNLibvirtDeviceDiskSource alloc] init],
         newDriveTarget = [[TNLibvirtDeviceDiskTarget alloc] init],
-        newDriveDriver = [[TNLibvirtDeviceDiskDriver alloc] init]
+        newDriveDriver = [[TNLibvirtDeviceDiskDriver alloc] init];
 
     [newDriveDriver setCache:TNLibvirtDeviceDiskDriverCacheNone];
 
