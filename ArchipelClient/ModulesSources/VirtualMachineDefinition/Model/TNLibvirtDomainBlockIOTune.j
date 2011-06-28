@@ -45,7 +45,7 @@
         if ([aNode name] != @"blkiotune")
             [CPException raise:@"XML not valid" reason:@"The TNXMLNode provided is not a valid blkiotune"];
 
-        _weight = [[aNode firstChildWithName:@"weight"] text];
+        _weight = [[[aNode firstChildWithName:@"weight"] text] intValue];
     }
 
     return self;
@@ -65,7 +65,7 @@
     if (_weight)
     {
         [node addChildWithName:@"weight"];
-        [node addTextNode:_weight];
+        [node addTextNode:[_weight stringValue]];
         [node up];
     }
 

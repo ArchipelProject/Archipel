@@ -233,6 +233,11 @@ TNLibvirtDomainLifeCycles                   = [ TNLibvirtDomainLifeCycleDestroy,
         [node addNode:[_devices XMLNode]];
         [node up];
     }
+    if (_memoryTuning)
+    {
+        [node addNode:[_memoryTuning XMLNode]];
+        [node up];
+    }
 
     return node;
 }
