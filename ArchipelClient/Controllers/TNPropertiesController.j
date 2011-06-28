@@ -27,7 +27,7 @@
 
 @import <StropheCappuccino/PubSub/TNPubSubController.j>
 @import <StropheCappuccino/TNStropheContact.j>
-@import <TNKit/TNFlipView.j>
+@import <TNKit/TNSwipeView.j>
 
 @import "TNContactsController.j"
 @import "TNAvatarController.j"
@@ -39,9 +39,9 @@
 */
 @implementation TNPropertiesController: CPObject
 {
-    @outlet CPButton                buttonBackViewFlip;
+    @outlet CPButton                buttonViewVCardSwipe;
     @outlet CPButton                buttonEventSubscription;
-    @outlet CPButton                buttonFrontViewFlip;
+    @outlet CPButton                buttonViewXMPPInfosSwipe;
     @outlet CPButton                entryAvatar;
     @outlet CPImageView             entryStatusIcon;
     @outlet CPImageView             imageVCardIcon;
@@ -63,13 +63,13 @@
     @outlet CPTextField             labelVCardLocality;
     @outlet CPTextField             labelVCardRole;
     @outlet CPTextField             labelVCardWebiste;
-    @outlet CPView                  backView;
-    @outlet CPView                  frontView;
+    @outlet CPView                  viewVCard;
+    @outlet CPView                  viewXMPPInfos;
     @outlet CPView                  viewNicknameContainer;
     @outlet CPView                  viewVCardContainer;
     @outlet TNContactsController    contactsController;
     @outlet TNEditableLabel         entryName           @accessors(readonly);
-    @outlet TNFlipView              mainView            @accessors(readonly);
+    @outlet TNSwipeView             mainSwipeView;
 
     BOOL                            _enabled            @accessors(getter=isEnabled);
     BOOL                            _isCollapsed        @accessors(getter=isCollapsed);
@@ -102,15 +102,11 @@
     _pubsubImage            = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub.png"]];
     _pubsubDisabledImage    = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"pubsub-disabled.png"]];
 
-    [mainView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
-    [mainView setAnimationStyle:TNFlipViewAnimationStyleTranslate direction:TNFlipViewAnimationStyleTranslateHorizontal];
-    [backView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
-    [mainView setFrontView:frontView];
-    [mainView setBackView:backView];
-    [frontView setFrameOrigin:CPPointMakeZero()];
-    [backView setFrameOrigin:CPPointMakeZero()];
+    [mainSwipeView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/dark-bg.png"]]]];
+    [viewVCard setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
+    [viewXMPPInfos setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
 
-    [frontView setBackgroundColor:[CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/paper-bg.png"]]]];
+    [mainSwipeView setViews:[viewXMPPInfos, viewVCard]];
 
     var gradColor = [CPColor colorWithPatternImage:[[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"Backgrounds/background-nickname.png"]]];
     [viewNicknameContainer setBackgroundColor:gradColor];
@@ -162,22 +158,24 @@
 
     [center addObserver:self selector:@selector(changeNickNameNotification:) name:CPTextFieldDidBlurNotification object:entryName];
 
-    var snapImage = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap.png"] size:CPSizeMake(14.0, 14.0)],
-        snapImagePressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"snap-pressed.png"] size:CPSizeMake(14.0, 14.0)];
+    var imageArrowLeft = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-left.png"] size:CPSizeMake(14.0, 14.0)],
+        imageArrowLeftPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-left.png"] size:CPSizeMake(14.0, 14.0)],
+        imageArrowRight = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-right.png"] size:CPSizeMake(14.0, 14.0)],
+        imageArrowRightPressed = [[CPImage alloc] initWithContentsOfFile:[bundle pathForResource:@"buttonArrows/button-arrow-pressed-right.png"] size:CPSizeMake(14.0, 14.0)];
 
-    [buttonFrontViewFlip setTarget:mainView];
-    [buttonFrontViewFlip setBordered:NO];
-    [buttonFrontViewFlip setAction:@selector(flip:)];
-    [buttonFrontViewFlip setImage:snapImage]; // this avoid the blinking..
-    [buttonFrontViewFlip setValue:snapImage forThemeAttribute:@"image"];
-    [buttonFrontViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [buttonViewXMPPInfosSwipe setTarget:mainSwipeView];
+    [buttonViewXMPPInfosSwipe setBordered:NO];
+    [buttonViewXMPPInfosSwipe setAction:@selector(nextView:)];
+    [buttonViewXMPPInfosSwipe setImage:imageArrowRight]; // this avoid the blinking..
+    [buttonViewXMPPInfosSwipe setValue:imageArrowRight forThemeAttribute:@"image"];
+    [buttonViewXMPPInfosSwipe setValue:imageArrowRightPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
-    [buttonBackViewFlip setTarget:mainView];
-    [buttonBackViewFlip setBordered:NO];
-    [buttonBackViewFlip setAction:@selector(flip:)];
-    [buttonBackViewFlip setImage:snapImage]; // this avoid the blinking..
-    [buttonBackViewFlip setValue:snapImage forThemeAttribute:@"image"];
-    [buttonBackViewFlip setValue:snapImagePressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
+    [buttonViewVCardSwipe setTarget:mainSwipeView];
+    [buttonViewVCardSwipe setBordered:NO];
+    [buttonViewVCardSwipe setAction:@selector(nextView:)];
+    [buttonViewVCardSwipe setImage:imageArrowLeft]; // this avoid the blinking..
+    [buttonViewVCardSwipe setValue:imageArrowLeft forThemeAttribute:@"image"];
+    [buttonViewVCardSwipe setValue:imageArrowLeftPressed forThemeAttribute:@"image" inState:CPThemeStateHighlighted];
 
     [labelVCardCompany setLineBreakMode:CPLineBreakByTruncatingTail];
     [labelVCardEmail setLineBreakMode:CPLineBreakByTruncatingTail];
@@ -270,7 +268,7 @@
 
     _isCollapsed = YES;
 
-    [[mainView superview] setPosition:[[mainView superview] bounds].size.height ofDividerAtIndex:0];
+    [[mainSwipeView superview] setPosition:[[mainSwipeView superview] bounds].size.height ofDividerAtIndex:0];
 }
 
 /*! show the panel
@@ -282,7 +280,7 @@
 
     _isCollapsed = NO;
 
-    [[mainView superview] setPosition:([[mainView superview] bounds].size.height - _height) ofDividerAtIndex:0];
+    [[mainSwipeView superview] setPosition:([[mainSwipeView superview] bounds].size.height - _height) ofDividerAtIndex:0];
     [[CPNotificationCenter defaultCenter] postNotificationName:TNArchipelPropertiesViewDidShowNotification object:self];
 
 }
@@ -365,7 +363,7 @@
         {
             var vCard = [_entity vCard];
 
-            [buttonFrontViewFlip setHidden:NO];
+            [buttonViewVCardSwipe setHidden:NO];
 
             [labelVCardFN setStringValue:[[[vCard firstChildWithName:@"FN"] text] capitalizedString]];
             [labelVCardLocality setStringValue:[[[vCard firstChildWithName:@"LOCALITY"] text] capitalizedString]];
@@ -398,9 +396,8 @@
         [entryResource setStringValue:population];
         [entryStatus setStringValue:@""];
 
-        if ([mainView isFlipped])
-            [mainView flip:nil];
-        [buttonFrontViewFlip setHidden:YES];
+        [mainSwipeView slideToViewIndex:0];
+        [buttonViewVCardSwipe setHidden:YES];
     }
 
     [self showView];
@@ -424,7 +421,7 @@
 */
 - (IBAction)changeNickName:(id)sender
 {
-    [[mainView window] makeFirstResponder:[entryName previousResponder]];
+    [[mainSwipeView window] makeFirstResponder:[entryName previousResponder]];
 }
 
 /*! subscribe (unsubscribe) to (from) the entity pubsub if any

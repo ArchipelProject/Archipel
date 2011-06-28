@@ -42,6 +42,7 @@
 @import <StropheCappuccino/StropheCappuccino.j>
 @import <TNKit/TNToolbar.j>
 @import <TNKit/TNUIKitScrollView.j>
+@import <TNKit/TNFlipView.j>
 @import <VNCCappuccino/VNCCappuccino.j>
 
 @import "Categories/TNCategories.j"
