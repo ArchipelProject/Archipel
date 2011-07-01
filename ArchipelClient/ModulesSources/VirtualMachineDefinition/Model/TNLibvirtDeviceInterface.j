@@ -67,6 +67,20 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
 #pragma mark -
 #pragma mark Initialization
 
+/*! intialize the interface
+*/
+- (void)init
+{
+    if (self = [super init])
+    {
+        _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] init];
+        _source     = [[TNLibvirtDeviceInterfaceSource alloc] init];
+        _target     = [[TNLibvirtDeviceInterfaceTarget alloc] init];
+    }
+
+    return self
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
@@ -81,7 +95,7 @@ TNLibvirtDeviceInterfaceTypes           = [ TNLibvirtDeviceInterfaceTypeNetwork,
         _model  = [[aNode firstChildWithName:@"model"] valueForAttribute:@"type"];
         _script = [[aNode firstChildWithName:@"script"] valueForAttribute:@"path"];
         _type   = [aNode valueForAttribute:@"type"];
-        
+
         _filterref  = [[TNLibvirtDeviceInterfaceFilterRef alloc] initWithXMLNode:[aNode firstChildWithName:@"filterref"]];
         _source     = [[TNLibvirtDeviceInterfaceSource alloc] initWithXMLNode:[aNode firstChildWithName:@"source"]];
         _target     = [[TNLibvirtDeviceInterfaceTarget alloc] initWithXMLNode:[aNode firstChildWithName:@"target"]];

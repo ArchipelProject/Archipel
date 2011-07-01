@@ -51,6 +51,20 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
 #pragma mark -
 #pragma mark Initialization
 
+/*! initialize the Disk
+*/
+- (void)init
+{
+    if (self = [super init])
+    {
+        _source     = [[TNLibvirtDeviceDiskSource alloc] init];
+        _target     = [[TNLibvirtDeviceDiskTarget alloc] init];
+        _driver     = [[TNLibvirtDeviceDiskDriver alloc] init];
+    }
+
+    return self;
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */
@@ -102,13 +116,13 @@ TNLibvirtDeviceDiskDevices              = [ TNLibvirtDeviceDiskDeviceDisk,
         [node addNode:[_target XMLNode]];
         [node up];
     }
-    
+
     if (_driver)
     {
         [node addNode:[_driver XMLNode]];
         [node up];
     }
-    
+
 
     return node;
 }

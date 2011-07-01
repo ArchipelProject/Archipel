@@ -38,6 +38,18 @@
 #pragma mark -
 #pragma mark Initialization
 
+/*! intialize the disk source
+*/
+- (void)init
+{
+    if (self = [super init])
+    {
+        _hosts  = [CPArray array];
+    }
+
+    return self
+}
+
 /*! initialize the object with a given XML node
     @param aNode the node to use
 */

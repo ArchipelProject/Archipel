@@ -54,7 +54,6 @@ TNLibvirtDomainOSBoots                  = [ TNLibvirtDomainOSBootHardDrive,
     if (self = [super init])
     {
         _type   = [[TNLibvirtDomainOSType alloc] init];
-        _boot   = TNLibvirtDomainOSBootHardDrive;
     }
 
     return self;
