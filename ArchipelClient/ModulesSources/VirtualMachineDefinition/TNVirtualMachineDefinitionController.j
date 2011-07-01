@@ -1279,15 +1279,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeBoot:(id)aSender
 {
-    [[_libvirtDomain OS] setBoot:[aSender title]];
-    [self makeDefinitionEdited:aSender];
-}
-
-/*! update the value for boot
-    @param aSender the sender of the action
-*/
-- (IBAction)didChangeBoot:(id)aSender
-{
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
     [[_libvirtDomain OS] setBoot:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1299,6 +1292,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 {
     if ([aSender isOn])
     {
+        if (![_libvirtDomain devices])
+            [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
         if ([[[_libvirtDomain devices] graphics] count] == 0)
         {
             var graphicVNC = [[TNLibvirtDeviceGraphics alloc] init];
@@ -1325,6 +1321,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVNCKeymap:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    if ([[[_libvirtDomain devices] graphics] count] == 0)
+        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
+
     var vnc = [[[_libvirtDomain devices] graphics] firstObject];
     [vnc setKeymap:[aSender title]];
     [self makeDefinitionEdited:aSender];
@@ -1335,6 +1337,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVNCPassword:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    if ([[[_libvirtDomain devices] graphics] count] == 0)
+        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
+
     var vnc = [[[_libvirtDomain devices] graphics] firstObject];
     [vnc setPassword:[aSender stringValue]];
 
@@ -1346,6 +1354,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVNCListen:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    if ([[[_libvirtDomain devices] graphics] count] == 0)
+        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
+
     var vnc = [[[_libvirtDomain devices] graphics] firstObject];
     [vnc setListen:[aSender stringValue]];
 
@@ -1357,6 +1371,12 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeVNCPort:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
+    if ([[[_libvirtDomain devices] graphics] count] == 0)
+        [[[_libvirtDomain devices] graphics] addObject:[[TNLibvirtDeviceGraphics alloc] init]];
+
     var vnc = [[[_libvirtDomain devices] graphics] firstObject];
 
     if ([aSender stringValue] != @"")
@@ -1405,6 +1425,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangePAE:(id)aSender
 {
+    if (![_libvirtDomain features])
+        [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
     [_libvirtDomain setOnCrash:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1414,6 +1436,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeACPI:(id)aSender
 {
+    if (![_libvirtDomain features])
+        [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
     [[_libvirtDomain features] setACPI:[aSender isOn]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1423,6 +1447,8 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeAPIC:(id)aSender
 {
+    if (![_libvirtDomain features])
+        [_libvirtDomain setFeatures:[[TNLibvirtDomainFeatures alloc] init]];
     [[_libvirtDomain features] setAPIC:[aSender isOn]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1444,6 +1470,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeClock:(id)aSender
 {
+    if (![_libvirtDomain clock])
+        [_libvirtDomain setClock:[[TNLibvirtDomainClock alloc] init]];
+
     [[_libvirtDomain clock] setOffset:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1453,11 +1482,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeInputType:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
     if ([[[_libvirtDomain devices] inputs] count] == 0)
-    {
-        var input = [[TNLibvirtDeviceInput alloc] init];
-        [[[_libvirtDomain devices] inputs] addObject:input];
-    }
+        [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
 
     [[[[_libvirtDomain devices] inputs] firstObject] setType:[aSender title]];
     [self makeDefinitionEdited:aSender];
@@ -1468,11 +1497,11 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeInputBus:(id)aSender
 {
+    if (![_libvirtDomain devices])
+        [_libvirtDomain setDevices:[[TNLibvirtDevices alloc] init]];
+
     if ([[[_libvirtDomain devices] inputs] count] == 0)
-    {
-        var input = [[TNLibvirtDeviceInput alloc] init];
-        [[[_libvirtDomain devices] inputs] addObject:input];
-    }
+        [[[_libvirtDomain devices] inputs] addObject:[[TNLibvirtDeviceInput alloc] init]];
 
     [[[[_libvirtDomain devices] inputs] firstObject] setBus:[aSender title]];
     [self makeDefinitionEdited:aSender];
@@ -1484,6 +1513,9 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 */
 - (IBAction)didChangeMachine:(id)aSender
 {
+    if (![_libvirtDomain OS])
+        [_libvirtDomain setOS:[[TNLibvirtDomainOS alloc] init]];
+
     [[[_libvirtDomain OS] type] setMachine:[aSender title]];
     [self makeDefinitionEdited:aSender];
 }
@@ -1503,7 +1535,6 @@ var TNArchipelDefinitionUpdatedNotification             = @"TNArchipelDefinition
 - (IBAction)didChangeVCPU:(id)aSender
 {
     [_libvirtDomain setVCPU:[aSender intValue]];
-
     [self makeDefinitionEdited:aSender];
 }
 
