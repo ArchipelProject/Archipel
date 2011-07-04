@@ -79,6 +79,9 @@
 - (IBAction)cleanHistory:(id)aSender
 {
     [[TNGrowlCenter defaultCenter] clearHistory];
+    // this is weird actually, TNTableViewDataSource seems to still copy the content.
+    // But I have fixed this a while ago...
+    [_datasourceNotification setContent:[[TNGrowlCenter defaultCenter] notificationsHistory]];
     [tableHistory reloadData];
 }
 
